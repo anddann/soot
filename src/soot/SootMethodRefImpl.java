@@ -42,7 +42,7 @@ import soot.util.NumberedString;
  * in the Java Virtual Machine Specification, 2nd ed, section 5.4.3.3.
  */
 
-class SootMethodRefImpl implements SootMethodRef {
+public class SootMethodRefImpl implements SootMethodRef {
 
 	public SootMethodRefImpl(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
 			boolean isStatic) {
@@ -65,9 +65,23 @@ class SootMethodRefImpl implements SootMethodRef {
 
 	private final SootClass declaringClass;
 	private final String name;
-	private final List<Type> parameterTypes;
-	private final Type returnType;
+
+	protected void setParameterTypes(List<Type> parameterTypes) {
+		this.parameterTypes = parameterTypes;
+	}
+
+	private  List<Type> parameterTypes;
+
+	protected void setReturnType(Type returnType) {
+		this.returnType = returnType;
+	}
+
+	private  Type returnType;
 	private final boolean isStatic;
+
+	public void setSubsig(NumberedString subsig) {
+		this.subsig = subsig;
+	}
 
 	private NumberedString subsig;
 

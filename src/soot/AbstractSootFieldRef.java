@@ -30,7 +30,7 @@ import soot.options.Options;
  * Java Virtual Machine Specification, 2nd ed, section 5.4.3.2.
  */
 
-class AbstractSootFieldRef implements SootFieldRef {
+public class AbstractSootFieldRef implements SootFieldRef {
 	public AbstractSootFieldRef(SootClass declaringClass, String name, Type type, boolean isStatic) {
 		this.declaringClass = declaringClass;
 		this.name = name;
@@ -46,7 +46,7 @@ class AbstractSootFieldRef implements SootFieldRef {
 
 	private final SootClass declaringClass;
 	private final String name;
-	private final Type type;
+	private Type type;
 	private final boolean isStatic;
 
 	public SootClass declaringClass() {
@@ -245,6 +245,13 @@ class AbstractSootFieldRef implements SootFieldRef {
 		} else if (!type.equals(other.type))
 			return false;
 		return true;
+	}
+
+
+	//FIXME: look for a better/nicer/fancy options
+	// Type should stay final
+	protected void setType(Type type){
+		this.type = type;
 	}
 
 }

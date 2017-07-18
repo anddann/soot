@@ -47,6 +47,7 @@ import soot.baf.BafBody;
 import soot.baf.toolkits.base.LoadStoreOptimizer;
 import soot.baf.toolkits.base.PeepholeOptimizer;
 import soot.baf.toolkits.base.StoreChainOptimizer;
+import soot.boxing.transformation.BoxingBodyTransformer;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
 import soot.dava.DavaBuildFile;
@@ -176,6 +177,8 @@ public class PackManager {
 			p.add(new Transform("jb.lp", LocalPacker.v()));
 			p.add(new Transform("jb.ne", NopEliminator.v()));
 			p.add(new Transform("jb.uce", UnreachableCodeEliminator.v()));
+			p.add(new Transform("jb.boxing", BoxingBodyTransformer.v()));
+
 		}
 
 		// Java to Jimple - Jimple body creation

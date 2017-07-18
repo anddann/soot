@@ -18,12 +18,15 @@
  */
 package soot.asm;
 
+import com.google.common.base.Optional;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 
+import soot.TagBuilderCallback;
+import soot.options.Options;
 import soot.tagkit.AnnotationConstants;
 import soot.tagkit.AnnotationTag;
 import soot.tagkit.GenericAttribute;
@@ -36,6 +39,9 @@ import soot.tagkit.VisibilityAnnotationTag;
  * @author Aaloan Miftah
  */
 final class TagBuilder {
+
+	private Optional<TagBuilderCallback> tgb = Optional.fromNullable(Options.v().tgb);
+
 
 	private VisibilityAnnotationTag invisibleTag, visibleTag;
 	private final Host host;
@@ -72,6 +78,8 @@ final class TagBuilder {
 			@Override
 			public void visitEnd() {
 				AnnotationTag annotTag = new AnnotationTag(desc, elems);
+				if (tgb.isPresent())
+					tgb.get().tagBuild(TagBuilder.this.host, annotTag);
 				_tag.addAnnotation(annotTag);
 			}
 		};

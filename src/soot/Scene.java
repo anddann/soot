@@ -52,6 +52,8 @@ import java.util.zip.ZipFile;
 import org.xmlpull.v1.XmlPullParser;
 
 import android.content.res.AXmlResourceParser;
+import soot.boxing.transformation.BoxingSootFieldRefImpl;
+import soot.boxing.transformation.BoxingSootMethodRefImpl;
 import soot.dexpler.DalvikThrowAnalysis;
 import soot.jimple.spark.internal.ClientAccessibilityOracle;
 import soot.jimple.spark.internal.PublicAndProtectedAccessibility;
@@ -1718,6 +1720,9 @@ public class Scene // extends AbstractHost
      */
     public SootMethodRef makeMethodRef(SootClass declaringClass, String name, List<Type> parameterTypes,
                                        Type returnType, boolean isStatic) {
+        if (Options.v().use_boxing()) {
+            return BoxingSootMethodRefImpl.v(declaringClass, name, parameterTypes, returnType, isStatic);
+        }
         return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic);
     }
 
@@ -1732,6 +1737,9 @@ public class Scene // extends AbstractHost
      * Create an unresolved reference to a field.
      */
     public SootFieldRef makeFieldRef(SootClass declaringClass, String name, Type type, boolean isStatic) {
+        if (Options.v().use_boxing()) {
+            return BoxingSootFieldRefImpl.v(declaringClass, name, type, isStatic);
+        }
         return new AbstractSootFieldRef(declaringClass, name, type, isStatic);
     }
 

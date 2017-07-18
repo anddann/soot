@@ -419,6 +419,10 @@ public class AntTask extends MatchingTask {
             if(arg) addArg("-force-overwrite");
         }
   
+        public void setuse_boxing(boolean arg) {
+            if(arg) addArg("-use-boxing");
+        }
+  
         public void setplugin(Path arg) {
             if(plugin == null )
                 plugin = new Path(getProject());

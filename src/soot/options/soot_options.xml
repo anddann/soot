@@ -1138,6 +1138,17 @@ with GZip. It does not apply to class files output by Soot.
 	      if they already exist and no further warning will be issued.
 		</long_desc>
 	</boolopt>
+
+
+		<boolopt>
+			<name>Boxe Types</name>
+			<alias>use-boxing</alias>
+			<default>false</default>
+			<short_desc/>
+			<long_desc>
+				Runs JimpleBody Boxing Transformation
+			</long_desc>
+		</boolopt>
 	</section>
 	<section>
 		<name>Processing Options</name>

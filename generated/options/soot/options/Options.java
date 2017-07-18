@@ -33,6 +33,7 @@ public class Options extends OptionsBase {
     public Options(Singletons.Global g) { }
     public static Options v() { return G.v().soot_options_Options(); }
 
+    public TagBuilderCallback tgb = null;
 
     public static final int src_prec_c = 1;
     public static final int src_prec_class = 1;
@@ -929,6 +930,11 @@ public class Options extends OptionsBase {
             )
                 force_overwrite = true;
     	
+            else if( false 
+            || option.equals( "use-boxing" )
+            )
+                use_boxing = true;
+    	
             else if( false
             || option.equals( "plugin" )
             ) {
@@ -1687,6 +1693,10 @@ public class Options extends OptionsBase {
     private boolean force_overwrite = false;
     public void set_force_overwrite( boolean setting ) { force_overwrite = setting; }
   
+    public boolean use_boxing() { return use_boxing; }
+    private boolean use_boxing = false;
+    public void set_use_boxing( boolean setting ) { use_boxing = setting; }
+  
     public List<String> plugin() { 
         if( plugin == null )
             return java.util.Collections.emptyList();
@@ -1895,6 +1905,7 @@ public class Options extends OptionsBase {
 +padOpt(" -show-exception-dests", "Include exception destination edges as well as CFG edges in dumped CFGs" )
 +padOpt(" -gzip", "GZip IR output files" )
 +padOpt(" -force-overwrite", "Force Overwrite Output Files" )
++padOpt(" -use-boxing", "" )
 +"\nProcessing Options:\n"
       
 +padOpt(" -plugin FILE", "Load all plugins found in FILE" )

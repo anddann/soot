@@ -94,6 +94,10 @@ public class JimpleBodyPack extends BodyPack
         	PhaseOptions.v().setPhaseOption("jb.lns", "sort-locals:true");
         	PackManager.v().getTransform( "jb.lns" ).apply( b );
         }
+
+        //FIXME: moved to top since this changes method references
+        if (Options.v().use_boxing())
+            PackManager.v().getTransform("jb.boxing").apply(b);
         
         if(Options.v().time())
             Timers.v().stmtCount += b.getUnits().size();

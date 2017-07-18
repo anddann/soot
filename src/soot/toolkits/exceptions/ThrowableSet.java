@@ -1380,7 +1380,7 @@ public final class ThrowableSet {
 	 * @return an unmodifiable collection view of the <code>Throwable</code>
 	 *         types in this set.
 	 */
-	Collection<RefLikeType> typesIncluded() {
+	public Collection<RefLikeType> typesIncluded() {
 		return exceptionsIncluded;
 	}
 
