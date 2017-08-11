@@ -19,6 +19,8 @@
 package soot.asm;
 
 import com.google.common.base.Optional;
+import java.lang.reflect.Field;
+
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
@@ -46,12 +48,12 @@ final class TagBuilder {
 	private VisibilityAnnotationTag invisibleTag, visibleTag;
 	private final Host host;
 	private final SootClassBuilder scb;
-	
+
 	TagBuilder(Host host, SootClassBuilder scb) {
 		this.host = host;
 		this.scb = scb;
 	}
-	
+
 	/**
 	 * @see FieldVisitor#visitAnnotation(String, boolean)
 	 * @see MethodVisitor#visitAnnotation(String, boolean)
@@ -91,7 +93,16 @@ final class TagBuilder {
 	 * @see ClassVisitor#visitAttribute(Attribute)
 	 */
 	public void visitAttribute(Attribute attr) {
-		host.addTag(new GenericAttribute(attr.type,null));
-		//throw new UnsupportedOperationException("Unknown attribute: " + attr);
+		// SA, 2017-07-21: As of ASM 5.1, there is no better way to obtain
+		// attribute values.
+		byte[] value = null;
+		try {
+			Field fld = Attribute.class.getDeclaredField("value");
+			fld.setAccessible(true);
+			value = (byte[]) fld.get(attr);
+		} catch (Exception ex) {
+			// Just carry on
+		}
+		host.addTag(new GenericAttribute(attr.type, value));
 	}
 }
