@@ -37,6 +37,8 @@ public class BoxingBodyTransformer extends BodyTransformer {
     private LocalGenerator localGenerator = null;
     private Chain<Unit> units = null;
 
+
+
     private Value intCounter = null;
 
     private Body body = null;
@@ -163,8 +165,8 @@ public class BoxingBodyTransformer extends BodyTransformer {
         // extend to Constant for char //changed from NumericConstant
         if (rightValue instanceof NumericConstant) {
             List<Unit> newAssignStmt = this.assignTo(leftValue, originalType, rightValue);
-            units.insertAfter(newAssignStmt, definitionStmt);
-            units.remove(definitionStmt);
+            body.getUnits().insertAfter(newAssignStmt, definitionStmt);
+            body.getUnits().remove(definitionStmt);
             //it.remove();
             return;
         }
@@ -175,8 +177,8 @@ public class BoxingBodyTransformer extends BodyTransformer {
         // then simply assignment
         if (rightValue instanceof Local) {
             Unit newAssignStmt = this.assignLocalTo(leftValue, (Local) rightValue);
-            units.insertAfter(newAssignStmt, definitionStmt);
-            units.remove(definitionStmt);
+            body.getUnits().insertAfter(newAssignStmt, definitionStmt);
+            body.getUnits().remove(definitionStmt);
             //it.remove();
             return;
         }
@@ -201,7 +203,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
         if (rightValue instanceof BinopExpr) {
             handleBinOperationExpression((BinopExpr) rightValue, definitionStmt, leftValue, originalType);
             //remove the original unit
-            units.remove(definitionStmt);
+            body.getUnits().remove(definitionStmt);
             //it.remove();
 
         }
@@ -536,9 +538,9 @@ public class BoxingBodyTransformer extends BodyTransformer {
         conditionCounter++;
 
         //the thenStmt must be the statement after the new inserted code
-        Unit thenStmt = units.getSuccOf(definitionStmt);
+        Unit thenStmt = body.getUnits().getSuccOf(definitionStmt);
         IfStmt ifStmt = Jimple.v().newIfStmt(cond, thenStmt);
-        units.insertAfter(ifStmt, definitionStmt);
+        body.getUnits().insertAfter(ifStmt, definitionStmt);
 
         //if target type (left local) and type of right local do not math
         // since now everything is numerable no problem... (hopefully)
@@ -551,7 +553,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
         //  List<Unit> firstAssignment = this.createAssignmentToBoxedType(leftValue, originalType, first);
         List<Unit> firstAssignment = this.assignTo(leftValue, originalType, first);
 
-        units.insertAfter(firstAssignment, ifStmt);
+        body.getUnits().insertAfter(firstAssignment, ifStmt);
 
         //create a=c
         //then the same again for second ...
@@ -561,14 +563,14 @@ public class BoxingBodyTransformer extends BodyTransformer {
         conditionCounter++;
 
         //the thenStmt must be the statement after the new inserted code
-        Unit secondThenStmt = units.getSuccOf(definitionStmt);
+        Unit secondThenStmt = body.getUnits().getSuccOf(definitionStmt);
         IfStmt secondIfStmt = Jimple.v().newIfStmt(secondCond, secondThenStmt);
-        units.insertAfter(secondIfStmt, firstAssignment.get(firstAssignment.size() - 1));
+        body.getUnits().insertAfter(secondIfStmt, firstAssignment.get(firstAssignment.size() - 1));
 
 
         //create a = b
         List<Unit> secondAssignment = this.assignTo(leftValue, originalType, second);
-        units.insertAfter(secondAssignment, secondIfStmt);
+        body.getUnits().insertAfter(secondAssignment, secondIfStmt);
 
     }
 
@@ -766,7 +768,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
                 Local newLocal = localGenerator.generateLocal(BoxingTransformerUtility.getBoxedType(methodRef.parameterType(i)));
                 List<Unit> assignments = assignTo(newLocal, BoxingTransformerUtility.getUnBoxedType(methodRef.parameterType(i)), numericConstant);
                 //add assignment to body before this invoke expression
-                units.insertBefore(assignments, unit);
+                body.getUnits().insertBefore(assignments, unit);
                 invokeExpr.setArg(i, newLocal);
             }
         }
