@@ -4,6 +4,7 @@ import soot.*;
 import soot.javaToJimple.LocalGenerator;
 import soot.jimple.*;
 import soot.util.Chain;
+import soot.util.Cons;
 
 import java.util.*;
 
@@ -18,55 +19,37 @@ import java.util.*;
 
 public class BoxingBodyTransformer extends BodyTransformer {
 
-    private static BoxingBodyTransformer instance = null;
+    public BoxingBodyTransformer(Singletons.Global g) {
+
+    }
 
     public static BoxingBodyTransformer v() {
-        if (instance == null)
-            instance = new BoxingBodyTransformer();
-        return instance;
-    }
-
-    private BoxingBodyTransformer() {
-
+        return G.v().soot_boxing_transformation_BoxingBodyTransformer();
     }
 
 
-    private HashMap<Value, Type> originalLocalTypes = null;
+    //!!!warning using a private field "body" fucks up parallel execution!!!
 
+    //!!! in generel private fields fuck up the execution
 
-    private LocalGenerator localGenerator = null;
-    private Chain<Unit> units = null;
-
-
-
-    private Value intCounter = null;
-
-    private Body body = null;
-
-    private int conditionCounter;
 
     //FIXME: use AbstractStmtSwitch
     @Override
-    protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
+    protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
 
-        body = b;
-        intCounter = null;
+        Value intCounter = null;
         SootMethod methodAlreadyExists = null;
 
-        if (BoxingTransformerUtility.isMethodIgnored(b.getMethod()))
+        if (BoxingTransformerUtility.isMethodIgnored(body.getMethod()))
             return;
 
-        originalLocalTypes = new HashMap<>();
-
-        //adapt method signature
-        methodAlreadyExists = BoxingTransformerUtility.adaptMethodSignature(b.getMethod(), body);
-        //the method already exits
+        HashMap<Value, Type> originalLocalTypes = new HashMap<>();
 
 
-        SootClass sootClass = b.getMethod().getDeclaringClass();
-        System.out.println(sootClass.getName() + ":" + b.getMethod());
+        SootClass sootClass = body.getMethod().getDeclaringClass();
+        System.out.println(sootClass.getName() + ":" + body.getMethod());
         //store the original types
-        for (Local l : b.getLocals()) {
+        for (Local l : body.getLocals()) {
             if (l.getType() instanceof ArrayType) {
                 originalLocalTypes.put(l, ((ArrayType) l.getType()).baseType);
 
@@ -75,20 +58,41 @@ public class BoxingBodyTransformer extends BodyTransformer {
             }
         }
 
+        //adapt method signature
+        methodAlreadyExists = BoxingTransformerUtility.adaptMethodSignature(body);
+        //the method already exits
 
-        localGenerator = new LocalGenerator(b);
-        conditionCounter = 0;
 
 
-        //change to boxedType
-        units = b.getUnits();
+
+
+        LocalGenerator localGenerator = new LocalGenerator(body);
+        int conditionCounter = 0;
+
 
         //units.snapshotIterator()
-        for (Iterator<Unit> it = units.snapshotIterator(); it.hasNext(); ) {
+        for (Iterator<Unit> it = body.getUnits().snapshotIterator(); it.hasNext(); ) {
             Unit unit = it.next();
 
 
-            handleUnit(unit);
+            handleUnit(unit, body, originalLocalTypes, intCounter, conditionCounter, localGenerator);
+
+
+        }
+        //adapt the parameter identity statements
+        for(Iterator<Unit> it=body.getUnits().snapshotIterator();it.hasNext();){
+            Unit unit = it.next();
+            if(! (unit instanceof IdentityStmt))
+                continue;
+            Value value = null;
+            boolean isCompatibe = BoxingTransformerUtility.isCompatible(((IdentityStmt) unit).getLeftOp().getType(),((IdentityStmt) unit).getRightOp().getType());
+            if(!isCompatibe)
+                value = ((IdentityStmt) unit).getRightOp();
+            if(value instanceof ParameterRef)
+                ((ParameterRef) value).setType(BoxingTransformerUtility.getBoxedType(value.getType()));
+            isCompatibe = BoxingTransformerUtility.isCompatible(((IdentityStmt) unit).getLeftOp().getType(),((IdentityStmt) unit).getRightOp().getType());
+            if(!isCompatibe)
+                System.out.println("hihi");
 
 
         }
@@ -97,34 +101,34 @@ public class BoxingBodyTransformer extends BodyTransformer {
     }
 
 
-    private void handleUnit(Unit unit) {
+    private void handleUnit(Unit unit, Body body, HashMap<Value, Type> originalLocalTypes, Value intCounter, int conditionCounter, LocalGenerator localGenerator) {
 
         if (unit instanceof IdentityUnit &&
                 ((IdentityUnit) unit).getLeftOp() instanceof Local) {
-            handleIdentityStmt((IdentityStmt) unit);
+            handleIdentityStmt((IdentityStmt) unit, body);
         }
 
         if (unit instanceof DefinitionStmt) {
-            handleDefinitionStmt((DefinitionStmt) unit);
+            handleDefinitionStmt((DefinitionStmt) unit, body, originalLocalTypes, intCounter, conditionCounter, localGenerator);
         }
 
         if (unit instanceof IfStmt) {
-            handleIfStmt((IfStmt) unit);
+            handleIfStmt((IfStmt) unit, body, originalLocalTypes, localGenerator);
         }
 
         if (unit instanceof SwitchStmt) {
-            handleSwitchStmt((SwitchStmt) unit);
+            handleSwitchStmt((SwitchStmt) unit, body, originalLocalTypes, localGenerator);
         }
 
         // normal invoke expression
         if (unit instanceof InvokeStmt) {
-            handleInvokeExpr(((InvokeStmt) unit).getInvokeExpr(), unit);
+            handleInvokeExpr(((InvokeStmt) unit).getInvokeExpr(), unit, body, originalLocalTypes, localGenerator);
         }
 
     }
 
 
-    private void handleDefinitionStmt(DefinitionStmt definitionStmt) {
+    private void handleDefinitionStmt(DefinitionStmt definitionStmt, Body body, HashMap<Value, Type> originalLocalTypes, Value intCounter, int conditionCounter, LocalGenerator localGenerator) {
         Type originalType = null;
         Value leftValue = definitionStmt.getLeftOp();
         Value rightValue = definitionStmt.getRightOp();
@@ -141,20 +145,20 @@ public class BoxingBodyTransformer extends BodyTransformer {
         }
         // is this possible?
         if (leftValue instanceof InvokeExpr) {
-            handleInvokeExpr((InvokeExpr) leftValue, definitionStmt);
+            handleInvokeExpr((InvokeExpr) leftValue, definitionStmt, body, originalLocalTypes, localGenerator);
         }
         if (leftValue instanceof FieldRef) {
-            originalType = handleFieldRef((FieldRef) leftValue, definitionStmt);
+            originalType = handleFieldRef((FieldRef) leftValue, definitionStmt, body, originalLocalTypes, localGenerator);
 
 
         }
         if (leftValue instanceof ArrayRef) {
-            originalType = handleArrayRef((ArrayRef) leftValue, definitionStmt);
+            originalType = handleArrayRef((ArrayRef) leftValue, definitionStmt, body, originalLocalTypes, localGenerator);
 
         }
 
         if (leftValue instanceof InvokeExpr) {
-            handleInvokeExpr((InvokeExpr) leftValue, definitionStmt);
+            handleInvokeExpr((InvokeExpr) leftValue, definitionStmt, body, originalLocalTypes, localGenerator);
         }
 
 
@@ -164,7 +168,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
         // extend to Constant for char //changed from NumericConstant
         if (rightValue instanceof NumericConstant) {
-            List<Unit> newAssignStmt = this.assignTo(leftValue, originalType, rightValue);
+            List<Unit> newAssignStmt = this.assignTo(leftValue, originalType, rightValue, originalLocalTypes, localGenerator);
             body.getUnits().insertAfter(newAssignStmt, definitionStmt);
             body.getUnits().remove(definitionStmt);
             //it.remove();
@@ -176,7 +180,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
         //NO aliasing for primitive types!!!
         // then simply assignment
         if (rightValue instanceof Local) {
-            Unit newAssignStmt = this.assignLocalTo(leftValue, (Local) rightValue);
+            Unit newAssignStmt = this.assignLocalTo(leftValue, (Local) rightValue, originalLocalTypes);
             body.getUnits().insertAfter(newAssignStmt, definitionStmt);
             body.getUnits().remove(definitionStmt);
             //it.remove();
@@ -184,65 +188,65 @@ public class BoxingBodyTransformer extends BodyTransformer {
         }
 
         if (rightValue instanceof FieldRef) {
-            handleFieldRef((FieldRef) rightValue, definitionStmt);
+            handleFieldRef((FieldRef) rightValue, definitionStmt, body, originalLocalTypes, localGenerator);
         }
 
 
         //if right value is array ref
         if (rightValue instanceof ArrayRef) {
-            handleArrayRef((ArrayRef) rightValue, definitionStmt);
+            handleArrayRef((ArrayRef) rightValue, definitionStmt, body, originalLocalTypes, localGenerator);
 
         }
 
         if (rightValue instanceof InvokeExpr) {
-            handleInvokeExpr((InvokeExpr) rightValue, definitionStmt);
+            handleInvokeExpr((InvokeExpr) rightValue, definitionStmt, body, originalLocalTypes, localGenerator);
         }
 
 
         //right value is BinaryOpr
         if (rightValue instanceof BinopExpr) {
-            handleBinOperationExpression((BinopExpr) rightValue, definitionStmt, leftValue, originalType);
+            handleBinOperationExpression((BinopExpr) rightValue, definitionStmt, leftValue, originalType, body, originalLocalTypes, intCounter, conditionCounter, localGenerator);
             //remove the original unit
             body.getUnits().remove(definitionStmt);
             //it.remove();
 
         }
         if (rightValue instanceof NewArrayExpr) {
-            handleNewArrayExpr(leftValue, (NewArrayExpr) rightValue, definitionStmt);
+            handleNewArrayExpr(leftValue, (NewArrayExpr) rightValue, definitionStmt, body, originalLocalTypes, localGenerator);
         }
 
         if (rightValue instanceof NewMultiArrayExpr) {
-            handleNewMultiArrayExpr(leftValue, (NewMultiArrayExpr) rightValue, definitionStmt);
+            handleNewMultiArrayExpr(leftValue, (NewMultiArrayExpr) rightValue, definitionStmt, body, originalLocalTypes, localGenerator);
         }
 
         if (rightValue instanceof CastExpr) {
-            handleCastExpr(leftValue, (CastExpr) rightValue, definitionStmt);
+            handleCastExpr(leftValue, (CastExpr) rightValue, definitionStmt, body, localGenerator);
         }
 
 
         if (rightValue instanceof InstanceOfExpr) {
-            handleInstanceOfExpr(leftValue, (InstanceOfExpr) rightValue, definitionStmt);
+            handleInstanceOfExpr(leftValue, (InstanceOfExpr) rightValue, definitionStmt, body, localGenerator);
         }
 
         if (rightValue instanceof UnopExpr) {
-            handleUnopExpr(leftValue, rightValue, definitionStmt);
+            handleUnopExpr(leftValue, rightValue, definitionStmt, body, localGenerator);
         }
 
 
     }
 
-    private void handleUnopExpr(Value leftValue, Value rightValue, DefinitionStmt definitionStmt) {
+    private void handleUnopExpr(Value leftValue, Value rightValue, DefinitionStmt definitionStmt, Body body, LocalGenerator localGenerator) {
         if (rightValue instanceof NegExpr) {
-            handleNegExpr(leftValue, (NegExpr) rightValue, definitionStmt);
+            handleNegExpr(leftValue, (NegExpr) rightValue, definitionStmt, body, localGenerator);
         }
         if (rightValue instanceof LengthExpr) {
-            handleLengthExpr(leftValue, (LengthExpr) rightValue, definitionStmt);
+            handleLengthExpr(leftValue, (LengthExpr) rightValue, definitionStmt, body, localGenerator);
         }
 
     }
 
     // since we do not maintain semantics for assignments, we just transform it to an assignment
-    private void handleNegExpr(Value leftValue, NegExpr negExpr, DefinitionStmt definitionStmt) {
+    private void handleNegExpr(Value leftValue, NegExpr negExpr, DefinitionStmt definitionStmt, Body body, LocalGenerator localGenerator) {
         //we have
         //Integer j
         // Integer i
@@ -251,7 +255,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
         // Integer i = j;
         Value rightValue = negExpr.getOp();
         if (rightValue instanceof Constant) {
-            List<Unit> assignment = assignConstantTo(leftValue, BoxingTransformerUtility.getUnBoxedType(leftValue.getType()), (Constant) rightValue);
+            List<Unit> assignment = assignConstantTo(leftValue, BoxingTransformerUtility.getUnBoxedType(leftValue.getType()), (Constant) rightValue, localGenerator);
             body.getUnits().insertBefore(assignment, definitionStmt);
             body.getUnits().remove(definitionStmt);
         } else {
@@ -263,7 +267,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
     }
 
-    private void handleInstanceOfExpr(Value leftValue, InstanceOfExpr instanceOfExpr, DefinitionStmt definitionStmt) {
+    private void handleInstanceOfExpr(Value leftValue, InstanceOfExpr instanceOfExpr, DefinitionStmt definitionStmt, Body body, LocalGenerator localGenerator) {
 
         //we have after lifting
         // Boolean  $z0 = (bool) r15 instanceof jdk.internal.ref.Cleaner
@@ -306,7 +310,10 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
     private List<Unit> createNewStmtForBoxedType(SootClass sootClassForConstructor, Type typeForConstructor, Value baseValue, Value arg) {
         ArrayList<Unit> newCreatedStatements = new ArrayList<>();
-        SootMethod constructorToCall = sootClassForConstructor.getMethod("void <init>(" + typeForConstructor.getEscapedName() + ")");
+        //SootMethod constructorToCall = sootClassForConstructor.getMethod("void <init>(" + typeForConstructor.getEscapedName() + ")");
+        ArrayList<Type> parameter = new ArrayList<>();
+        parameter.add(typeForConstructor);
+        SootMethod constructorToCall = getMethodOnSnapshot(sootClassForConstructor,"<init>", parameter, VoidType.v());
 
         List<Value> args = new LinkedList<>();
         if (constructorToCall.getParameterCount() > 0) {
@@ -327,7 +334,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
         return newCreatedStatements;
     }
 
-    private void handleLengthExpr(Value leftValue, LengthExpr lengthExpr, DefinitionStmt definitionStmt) {
+    private void handleLengthExpr(Value leftValue, LengthExpr lengthExpr, DefinitionStmt definitionStmt, Body body, LocalGenerator localGenerator) {
         //we have after lifting
         // Integer i0 = (int) lengthof r0
         // we have to transform it to
@@ -353,7 +360,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
     }
 
-    private void handleCastExpr(Value leftValue, CastExpr castExpr, DefinitionStmt definitionStmt) {
+    private void handleCastExpr(Value leftValue, CastExpr castExpr, DefinitionStmt definitionStmt, Body body, LocalGenerator localGenerator) {
         if ((leftValue instanceof FieldRef) && (BoxingTransformerUtility.isFieldIgnored(((FieldRef) leftValue).getField()))) {
             return;
         }
@@ -388,50 +395,68 @@ public class BoxingBodyTransformer extends BodyTransformer {
             body.getUnits().insertBefore(assignment, definitionStmt);
 
 
-            SootClass sootClassOfRightSide = ((RefType) castExpr.getOp().getType()).getSootClass();
+            //FIXME: case if right type is Constant
 
-            SootMethod methodToCall = sootClassOfRightSide.getMethod(stringType.getClassName() + " toString()");
+            List<Unit> createdStatements = null;
+            if (castExpr.getOp() instanceof Constant) {
 
-            InvokeExpr toStringInvokeExpr = Jimple.v().newVirtualInvokeExpr((Local) castExpr.getOp(), methodToCall.makeRef());
-            Stmt stringAssignment = Jimple.v().newAssignStmt(newStringLocal, toStringInvokeExpr);
-            body.getUnits().insertBefore(stringAssignment, definitionStmt);
-
-
-            // second part:
-            // l = new Long(newLocal);
-            Type typeForConstructor = stringType;
-            SootClass sootClassForConstructor = ((RefType) leftValue.getType()).getSootClass();
-            Value argForConstructor = newStringLocal;
-            //special case if casted to char
-            if (castExpr.getCastType() instanceof CharType) {
-                //e.g., Character c = (char) Integer i;
-                //we have to transform it to
-                // String newStringLocal = new String()
-                // String newStringLocal = i.toString()
-                // char c1 = i.charAt(0);
-                // Character c  = new Character(c1)
-
-                //create char c1 = i.charAt(0);
-                SootMethod methodCharAt = stringType.getSootClass().getMethod(CharType.v().getEscapedName() + " charAt(" + IntType.v().getEscapedName() + ")");
-                Local charLocal = localGenerator.generateLocal(CharType.v());
-                List<Value> args = new LinkedList<>();
-                if (methodToCall.getParameterCount() > 0) {
-                    for (Type tp : methodToCall.getParameterTypes()) {
-                        args.add(IntConstant.v(0));
-                    }
-                }
-
-                InvokeExpr invokeCharAt = Jimple.v().newVirtualInvokeExpr(newStringLocal, methodCharAt.makeRef(), args);
-                Stmt charAssignment = Jimple.v().newAssignStmt(newStringLocal, invokeCharAt);
-
-                body.getUnits().insertBefore(charAssignment, definitionStmt);
-
-                typeForConstructor = CharType.v();
-                argForConstructor = charLocal;
+                //if its a constant a new Integer expression should be sufficnent
+                createdStatements =assignConstantTo((Local) leftValue, (castExpr.getOp().getType()), (Constant) castExpr.getOp(), localGenerator);
 
 
             }
-            List<Unit> createdStatements = createNewStmtForBoxedType(sootClassForConstructor, typeForConstructor, leftValue, argForConstructor);
+            if (castExpr.getOp().getType() instanceof RefType) {
+                SootClass sootClassOfRightSide = ((RefType) castExpr.getOp().getType()).getSootClass();
+
+//            SootMethod methodToCall = sootClassOfRightSide.getMethod(stringType.getClassName() + " toString()");
+                SootMethod methodToCall = getMethodOnSnapshot(sootClassOfRightSide,"toString", new ArrayList<>(), stringType);
+                InvokeExpr toStringInvokeExpr = Jimple.v().newVirtualInvokeExpr((Local) castExpr.getOp(), methodToCall.makeRef());
+                Stmt stringAssignment = Jimple.v().newAssignStmt(newStringLocal, toStringInvokeExpr);
+                body.getUnits().insertBefore(stringAssignment, definitionStmt);
+
+
+                // second part:
+                // l = new Long(newLocal);
+                Type typeForConstructor = stringType;
+                SootClass sootClassForConstructor = ((RefType) leftValue.getType()).getSootClass();
+                Value argForConstructor = newStringLocal;
+
+                //special case if casted to char
+                if (castExpr.getCastType() instanceof CharType) {
+                    //e.g., Character c = (char) Integer i;
+                    //we have to transform it to
+                    // String newStringLocal = new String()
+                    // String newStringLocal = i.toString()
+                    // char c1 = i.charAt(0);
+                    // Character c  = new Character(c1)
+
+                    //create char c1 = i.charAt(0);
+                    ArrayList<Type> parameterTypes = new ArrayList<>();
+                    parameterTypes.add(IntType.v());
+                    SootMethod methodCharAt = getMethodOnSnapshot(stringType.getSootClass(),"charAt", parameterTypes, CharType.v());
+
+                   // SootMethod methodCharAt = stringType.getSootClass().getMethod("charAt", parameterTypes, CharType.v());
+                    //   SootMethod methodCharAt = stringType.getSootClass().getMethod(CharType.v().getEscapedName() + " charAt(" + IntType.v().getEscapedName() + ")");
+                    Local charLocal = localGenerator.generateLocal(CharType.v());
+                    List<Value> args = new LinkedList<>();
+                    if (methodToCall.getParameterCount() > 0) {
+                        for (Type tp : methodToCall.getParameterTypes()) {
+                            args.add(IntConstant.v(0));
+                        }
+                    }
+
+                    InvokeExpr invokeCharAt = Jimple.v().newVirtualInvokeExpr(newStringLocal, methodCharAt.makeRef(), args);
+                    Stmt charAssignment = Jimple.v().newAssignStmt(newStringLocal, invokeCharAt);
+
+                    body.getUnits().insertBefore(charAssignment, definitionStmt);
+
+                    typeForConstructor = CharType.v();
+                    argForConstructor = charLocal;
+
+
+                }
+                 createdStatements= createNewStmtForBoxedType(sootClassForConstructor, typeForConstructor, leftValue, argForConstructor);
+            }
 
             body.getUnits().insertBefore(createdStatements, definitionStmt);
             body.getUnits().remove(definitionStmt);
@@ -443,14 +468,21 @@ public class BoxingBodyTransformer extends BodyTransformer {
             Value rightValue = castExpr.getOp();
             //if right instance of object simply lift the cast
             Type objectType = RefType.v("java.lang.Object");
-            if (rightValue.getType() == objectType) {
+            if (rightValue.getType() == objectType || rightValue.getType() == NullType.v()) {
                 castExpr.setCastType(BoxingTransformerUtility.getBoxedType(castExpr.getCastType()));
 
             } else {
                 //cast to a primitive[]
                 //cannot cast anything to prim[] except Object in java
                 //thus this case can never occur
-                throw new RuntimeException("Found cast Stmt, I cannot deal with: " + castExpr.toString());
+                if (rightValue.getType() instanceof ArrayType && ((((ArrayType) rightValue.getType()).baseType == objectType))) {
+                    castExpr.setCastType(BoxingTransformerUtility.getBoxedType(castExpr.getCastType()));
+                } else {
+
+                    throw new RuntimeException("Found cast Stmt, I cannot deal with: " + castExpr.toString());
+                }
+
+
             }
 
         }
@@ -459,7 +491,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
     }
 
 
-    private void handleNewMultiArrayExpr(Value leftValue, NewMultiArrayExpr newMultiArrayExpr, DefinitionStmt definitionStmt) {
+    private void handleNewMultiArrayExpr(Value leftValue, NewMultiArrayExpr newMultiArrayExpr, DefinitionStmt definitionStmt, Body body, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
         if ((leftValue instanceof FieldRef) && (BoxingTransformerUtility.isFieldIgnored(((FieldRef) leftValue).getField()))) {
             return;
         }
@@ -482,7 +514,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
             // int dummyIndex = $local.intValue()
             // array[dummyIndex]
             if (size instanceof Local) {
-                Value unboxedSize = unboxValue(size, definitionStmt);
+                Value unboxedSize = unboxValue(size, definitionStmt, body, originalLocalTypes, localGenerator);
                 if (unboxedSize != null)
                     newMultiArrayExpr.setSize(i, unboxedSize);
             }
@@ -492,8 +524,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
     }
 
-    private void handleNewArrayExpr(Value leftSide, NewArrayExpr newArrayExpr, Unit unit) {
-
+    private void handleNewArrayExpr(Value leftSide, NewArrayExpr newArrayExpr, Unit unit, Body body, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
         if ((leftSide instanceof FieldRef) && (BoxingTransformerUtility.isFieldIgnored(((FieldRef) leftSide).getField()))) {
             return;
         }
@@ -515,14 +546,14 @@ public class BoxingBodyTransformer extends BodyTransformer {
         // int dummyIndex = $local.intValue()
         // array[dummyIndex]
         if (size instanceof Local) {
-            Value unboxedSize = unboxValue(size, unit);
+            Value unboxedSize = unboxValue(size, unit, body, originalLocalTypes, localGenerator);
             if (unboxedSize != null)
                 newArrayExpr.setSize(unboxedSize);
         }
 
     }
 
-    private void handleBinOperationExpression(BinopExpr binopExpr, DefinitionStmt definitionStmt, Value leftValue, Type originalType) {
+    private void handleBinOperationExpression(BinopExpr binopExpr, DefinitionStmt definitionStmt, Value leftValue, Type originalType, Body body, HashMap<Value, Type> originalLocalTypes, Value intCounter, int conditionCounter, LocalGenerator localGenerator) {
         //for our transformation, we can make if expressions
         // e.g. a = b + c ---> if(Cond1) a = b; if(cond2) a = c
         //take care of the fact, that a might be an int, whereas a, c might be byte or float
@@ -551,7 +582,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
         //create a = b
         //  List<Unit> firstAssignment = this.createAssignmentToBoxedType(leftValue, originalType, first);
-        List<Unit> firstAssignment = this.assignTo(leftValue, originalType, first);
+        List<Unit> firstAssignment = this.assignTo(leftValue, originalType, first, originalLocalTypes, localGenerator);
 
         body.getUnits().insertAfter(firstAssignment, ifStmt);
 
@@ -569,34 +600,42 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
 
         //create a = b
-        List<Unit> secondAssignment = this.assignTo(leftValue, originalType, second);
+        List<Unit> secondAssignment = this.assignTo(leftValue, originalType, second, originalLocalTypes, localGenerator);
         body.getUnits().insertAfter(secondAssignment, secondIfStmt);
 
     }
 
 
-    private Type handleFieldRef(FieldRef fieldRef, Unit unit) {
+    private Type handleFieldRef(FieldRef fieldRef, Unit unit, Body body, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
         Type originalType = fieldRef.getFieldRef().type();
-        Type currentFieldType = fieldRef.getField().getType();
+        SootField sootField = fieldRef.getField();
+
+        Type currentFieldType = sootField.getType();
+
+
+
         if (!BoxingTransformerUtility.isTypeToModify(currentFieldType))
             return originalType;
 
 
-        if (BoxingTransformerUtility.isFieldIgnored(fieldRef.getField())) {
-            handleFieldRefForIgnoredField(fieldRef, unit);
+        if (BoxingTransformerUtility.isFieldIgnored(sootField)) {
+            handleFieldRefForIgnoredField(fieldRef, unit, body, originalLocalTypes, localGenerator);
             return originalType;
         }
 
 
-        SootField sootField = fieldRef.getField();
 
         sootField.setType(BoxingTransformerUtility.getBoxedType(currentFieldType));
         ((BoxingSootFieldRefImpl) fieldRef.getFieldRef()).liftTheReference();
-        return originalType;
+
+        if(originalType!=currentFieldType)
+            System.out.println("FIELD REF Prob");
+
+            return originalType;
     }
 
 
-    private void handleFieldRefForIgnoredField(FieldRef fieldRef, Unit unit) {
+    private void handleFieldRefForIgnoredField(FieldRef fieldRef, Unit unit, Body body, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
         //definition to something on the left side ..
         if (unit instanceof DefinitionStmt) {
             DefinitionStmt definitionStmt = (DefinitionStmt) unit;
@@ -607,7 +646,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
             //handle fieldRef = something
             if (leftSide instanceof FieldRef) {
                 //getUnBoxedType the value and make the assignment, since we don't lift ignored fields
-                Local unboxedLocal = unboxValue(rightSide, unit);
+                Local unboxedLocal = unboxValue(rightSide, unit, body, originalLocalTypes, localGenerator);
 
                 //make assignment
                 Stmt assignment = Jimple.v().newAssignStmt(leftSide, unboxedLocal);
@@ -661,7 +700,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
                         Stmt assignment = Jimple.v().newAssignStmt(fieldLocal, fieldRef);
                         body.getUnits().insertBefore(assignment, definitionStmt);
 
-                        Local boxedArray = boxArray(fieldLocal, definitionStmt);
+                        Local boxedArray = boxArray(fieldLocal, definitionStmt, body, localGenerator);
                         Stmt assignBoxedArrayToOriginalLocal = Jimple.v().newAssignStmt(definitionStmt.getLeftOp(), boxedArray);
                         body.getUnits().insertBefore(assignBoxedArrayToOriginalLocal, definitionStmt);
 
@@ -674,7 +713,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
         }
     }
 
-    private Type handleArrayRef(ArrayRef arrayRef, DefinitionStmt definitionStmt) {
+    private Type handleArrayRef(ArrayRef arrayRef, DefinitionStmt definitionStmt, Body body, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
         Value array = arrayRef.getBase();
 
         Type originalType = originalLocalTypes.get(array);
@@ -709,7 +748,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
         // int dummyIndex = $local.intValue()
         // array[dummyIndex]
         if (index instanceof Local) {
-            Value unboxedIndex = unboxValue(index, definitionStmt);
+            Value unboxedIndex = unboxValue(index, definitionStmt, body, originalLocalTypes, localGenerator);
             if (unboxedIndex != null)
                 arrayRef.setIndex(unboxedIndex);
         }
@@ -717,24 +756,27 @@ public class BoxingBodyTransformer extends BodyTransformer {
         return originalType;
     }
 
-    private void handleIfStmt(IfStmt ifStmt) {
+    private void handleIfStmt(IfStmt ifStmt, Body body, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
         Value value = ifStmt.getCondition();
         if (value instanceof ConditionExpr) {
             ConditionExpr conditionExpr = (ConditionExpr) value;
-            handleUnboxingForBinaryExpression(ifStmt, conditionExpr);
+            handleUnboxingForBinaryExpression(ifStmt, conditionExpr, body, originalLocalTypes, localGenerator);
         }
     }
 
-    private void handleSwitchStmt(SwitchStmt switchStmt) {
+    private void handleSwitchStmt(SwitchStmt switchStmt, Body body, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
         Value value = switchStmt.getKey();
-        Value unboxedValue = unboxValue(value, switchStmt);
+        Value unboxedValue = unboxValue(value, switchStmt, body, originalLocalTypes, localGenerator);
         if (unboxedValue != null) {
             switchStmt.setKey(unboxedValue);
         }
     }
 
-    private void handleIdentityStmt(IdentityStmt identityStmt) {
+    private void handleIdentityStmt(IdentityStmt identityStmt, Body body) {
         Local l = (Local) identityStmt.getLeftOp();
+        if(!BoxingTransformerUtility.isCompatible(identityStmt.getLeftOp().getType(),identityStmt.getRightOp().getType())){
+            System.out.print("Types do not match");
+        }
         if (!BoxingTransformerUtility.isTypeToModify(l.getType()))
             return;
         // l.setType(((PrimType) l).boxedType());
@@ -749,11 +791,11 @@ public class BoxingBodyTransformer extends BodyTransformer {
      * @param invokeExpr the Expr to handle
      * @param unit       the unit in which the invokeExpr is used
      */
-    private void handleInvokeExpr(InvokeExpr invokeExpr, Unit unit) {
+    private void handleInvokeExpr(InvokeExpr invokeExpr, Unit unit, Body body, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
 
         SootMethodRef methodRef = invokeExpr.getMethodRef();
         if (BoxingTransformerUtility.isMethodIgnored(methodRef)) {
-            handleInvokeExprForIgnoredMethod(invokeExpr, unit);
+            handleInvokeExprForIgnoredMethod(invokeExpr, unit, body, originalLocalTypes, localGenerator);
             return;
         }
 
@@ -766,7 +808,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
             if (arg instanceof NumericConstant) {
                 NumericConstant numericConstant = (NumericConstant) arg;
                 Local newLocal = localGenerator.generateLocal(BoxingTransformerUtility.getBoxedType(methodRef.parameterType(i)));
-                List<Unit> assignments = assignTo(newLocal, BoxingTransformerUtility.getUnBoxedType(methodRef.parameterType(i)), numericConstant);
+                List<Unit> assignments = assignTo(newLocal, BoxingTransformerUtility.getUnBoxedType(methodRef.parameterType(i)), numericConstant, originalLocalTypes, localGenerator);
                 //add assignment to body before this invoke expression
                 body.getUnits().insertBefore(assignments, unit);
                 invokeExpr.setArg(i, newLocal);
@@ -780,10 +822,11 @@ public class BoxingBodyTransformer extends BodyTransformer {
      *
      * @param invokeExpr the expr to handle
      * @param unit       the unit in which the invokeExpr is defined
+     * @param body
      * @see BoxingTransformerUtility ignored Classes
      * thus we need to take care of this methods specifically
      */
-    private void handleInvokeExprForIgnoredMethod(InvokeExpr invokeExpr, Unit unit) {
+    private void handleInvokeExprForIgnoredMethod(InvokeExpr invokeExpr, Unit unit, Body body, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
         Unit insertBefore = unit;
 
         //du to auto boxing, we might result in
@@ -807,7 +850,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
             DefinitionStmt definitionStmt = (DefinitionStmt) unit;
             Type typeOfLeftSide = definitionStmt.getLeftOp().getType();
 
-            Type typeOfRightSide = invokeExpr.getMethod().getReturnType();
+            Type typeOfRightSide = invokeExpr.getMethodRef().returnType();
 
             boolean mustBeAdapted = !BoxingTransformerUtility.isCompatible(typeOfRightSide, typeOfLeftSide);
             boolean isArrayType = typeOfLeftSide instanceof ArrayType;
@@ -849,7 +892,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
                     insertBefore = stmt;
                     //do Boxing of new (Array)Local
-                    Local boxedArray = boxArray(newLocal, stmt);
+                    Local boxedArray = boxArray(newLocal, stmt, body, localGenerator);
                     AssignStmt assignBoxedArrayToOrgReferen = Jimple.v().newAssignStmt(definitionStmt.getLeftOp(), boxedArray);
 
 
@@ -879,7 +922,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
                 if (argType instanceof ArrayType || parameterType instanceof ArrayType) {
                     System.out.printf("here");
                 }
-                Local unboxedLocal = unboxValue(invokeExpr.getArg(i), insertBefore);
+                Local unboxedLocal = unboxValue(invokeExpr.getArg(i), insertBefore, body, originalLocalTypes, localGenerator);
                 invokeExpr.setArg(i, unboxedLocal);
             }
         }
@@ -888,13 +931,13 @@ public class BoxingBodyTransformer extends BodyTransformer {
     }
 
 
-    private List<Unit> assignConstantTo(Value l, Type originalTypeOfLocal, Constant constant) {
+    private List<Unit> assignConstantTo(Value l, Type originalTypeOfLocal, Constant constant, LocalGenerator localGenerator) {
         throw new RuntimeException("The more appropriate functions should have been called");
     }
 
 
-    private List<Unit> assignTo(Value leftSide, final Type originalTypeOfLeftSide, Value value) {
-        Type typeToUse = originalTypeOfLeftSide;
+    private List<Unit> assignTo(Value leftSide, final Type typeToUse1, Value value, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
+        Type typeToUse = typeToUse1;
         if (typeToUse == null || !(typeToUse instanceof PrimType)) {
             typeToUse = value.getType();
         }
@@ -902,22 +945,22 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
         if (value instanceof NumericConstant) {
             if (leftSide instanceof Local)
-                return assignConstantTo((Local) leftSide, typeToUse, (Constant) value);
+                return assignConstantTo((Local) leftSide, typeToUse, (Constant) value, localGenerator);
             if (leftSide instanceof FieldRef)
-                return assignConstantTo((FieldRef) leftSide, typeToUse, (Constant) value);
+                return assignConstantTo((FieldRef) leftSide, typeToUse, (Constant) value, localGenerator);
 
             if (leftSide instanceof ArrayRef)
-                return assignConstantTo((ArrayRef) leftSide, typeToUse, (Constant) value);
+                return assignConstantTo((ArrayRef) leftSide, typeToUse, (Constant) value, localGenerator);
         }
         if (value instanceof Local) {
             List<Unit> newAssign = new ArrayList<>();
-            newAssign.add(assignLocalTo(leftSide, (Local) value));
+            newAssign.add(assignLocalTo(leftSide, (Local) value, originalLocalTypes));
             return newAssign;
         }
         throw new RuntimeException("The more appropriate functions should have been called");
     }
 
-    private List<Unit> assignConstantTo(Local leftSide, Type originalTypeOfLocal, Constant constant) {
+    private List<Unit> assignConstantTo(Local leftSide, Type originalTypeOfLocal, Constant constant, LocalGenerator localGenerator) {
         List<Unit> newAssignmentStmt = new ArrayList<>();
 
         SootClass valuesBoxedClass = ((RefType) BoxingTransformerUtility.getBoxedType(originalTypeOfLocal)).getSootClass();
@@ -951,7 +994,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
     }
 
-    private List<Unit> assignConstantTo(FieldRef leftSide, Type originalTypeOfField, Constant constant) {
+    private List<Unit> assignConstantTo(FieldRef leftSide, Type originalTypeOfField, Constant constant, LocalGenerator localGenerator) {
         List<Unit> newAssignmentStmt = new ArrayList<>();
 
         SootClass valuesBoxedClass = ((RefType) BoxingTransformerUtility.getBoxedType(originalTypeOfField)).getSootClass();
@@ -993,7 +1036,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
     }
 
-    private List<Unit> assignConstantTo(ArrayRef leftSide, final Type originalTypeOfField, Constant constant) {
+    private List<Unit> assignConstantTo(ArrayRef leftSide, final Type originalTypeOfField, Constant constant, LocalGenerator localGenerator) {
         List<Unit> newAssignmentStmt = new ArrayList<>();
 
 
@@ -1014,12 +1057,12 @@ public class BoxingBodyTransformer extends BodyTransformer {
     }
 
 
-    private Unit assignLocalTo(Value leftSide, Local rightSide) {
+    private Unit assignLocalTo(Value leftSide, Local rightSide, HashMap<Value, Type> originalLocalTypes) {
         return Jimple.v().newAssignStmt(leftSide, rightSide);
     }
 
 
-    private void handleUnboxingForBinaryExpression(Unit unit, BinopExpr binopExpr) {
+    private void handleUnboxingForBinaryExpression(Unit unit, BinopExpr binopExpr, Body body, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
         Value leftValue = binopExpr.getOp1();
         Value righValue = binopExpr.getOp2();
 
@@ -1041,11 +1084,11 @@ public class BoxingBodyTransformer extends BodyTransformer {
             return;
         }
 
-        Local leftLocal = unboxValue(leftValue, unit);
+        Local leftLocal = unboxValue(leftValue, unit, body, originalLocalTypes, localGenerator);
         if (leftLocal != null)
             binopExpr.setOp1(leftLocal);
 
-        Local rightLocal = unboxValue(righValue, unit);
+        Local rightLocal = unboxValue(righValue, unit, body, originalLocalTypes, localGenerator);
         if (rightLocal != null)
             binopExpr.setOp2(rightLocal);
 
@@ -1053,14 +1096,14 @@ public class BoxingBodyTransformer extends BodyTransformer {
     }
 
 
-    private Local unboxValue(Value value, Unit unitToInsertBefore) {
+    private Local unboxValue(Value value, Unit unitToInsertBefore, Body body, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
 
-        return unboxValue(value, this.originalLocalTypes.get(value), unitToInsertBefore);
+        return unboxValue(value, originalLocalTypes.get(value), unitToInsertBefore, body, localGenerator);
 
     }
 
 
-    private Local unboxValue(Value value, Type targetType, Unit unitToInsertBefore) {
+    private Local unboxValue(Value value, Type targetType, Unit unitToInsertBefore, Body body, LocalGenerator localGenerator) {
         Local createdLocal;
         List<Unit> appendList = new ArrayList<>();
         if (value instanceof Constant) {
@@ -1071,9 +1114,9 @@ public class BoxingBodyTransformer extends BodyTransformer {
         }
 
         if (value.getType() instanceof ArrayType) {
-            createdLocal = unboxArray(value, appendList);
+            createdLocal = unboxArray(value, appendList, localGenerator);
         } else {
-            createdLocal = unboxSimpleLocal(value, targetType, appendList);
+            createdLocal = unboxSimpleLocal(value, targetType, appendList, localGenerator);
         }
         if (createdLocal != null) {
             body.getUnits().insertBefore(appendList, unitToInsertBefore);
@@ -1082,7 +1125,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
     }
 
 
-    private Local unboxSimpleLocal(Value value, Type targetType, List<Unit> appendToList) {
+    private Local unboxSimpleLocal(Value value, Type targetType, List<Unit> appendToList, LocalGenerator localGenerator) {
         Local createdLocal = null;
         if (value instanceof Constant) {
             return null;
@@ -1095,7 +1138,10 @@ public class BoxingBodyTransformer extends BodyTransformer {
             createdLocal = localGenerator.generateLocal(primTypeForUnboxing);
             //getUnBoxedType the value
             SootClass valuesBoxedClass = ((RefType) l.getType()).getSootClass();
-            SootMethod methodToCall = valuesBoxedClass.getMethod(primTypeForUnboxing.getEscapedName() + " " + primTypeForUnboxing.getEscapedName() + "Value()");
+
+            ArrayList<Type> parameterTypes = new ArrayList<>();
+            SootMethod methodToCall = getMethodOnSnapshot(valuesBoxedClass,primTypeForUnboxing.getEscapedName() + "Value",parameterTypes, primTypeForUnboxing);
+         //   SootMethod methodToCall = valuesBoxedClass.getMethod(primTypeForUnboxing.getEscapedName() + " " + primTypeForUnboxing.getEscapedName() + "Value()");
 
             InvokeExpr unBoxinginvokeExpr = Jimple.v().newVirtualInvokeExpr((Local) value, methodToCall.makeRef());
             Stmt unboxingAssignmentStmt = Jimple.v().newAssignStmt(createdLocal, unBoxinginvokeExpr);
@@ -1142,7 +1188,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
     }
      */
     // para is Boxed array, e.g. Integer[]
-    private Local unboxArray(Value orgArray, List<Unit> listToAppend) {
+    private Local unboxArray(Value orgArray, List<Unit> listToAppend, LocalGenerator localGenerator) {
         Local targetUnboxedArray;
         if (!(orgArray.getType() instanceof ArrayType)) {
             return null;
@@ -1188,7 +1234,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
         newCreateStmts.add(assingOrgArry);
 
         //local for getUnBoxedType arrayElement
-        Local unboxedArrayElement = unboxSimpleLocal(r3, unboxedArrayType.baseType, newCreateStmts);
+        Local unboxedArrayElement = unboxSimpleLocal(r3, unboxedArrayType.baseType, newCreateStmts, localGenerator);
 
         //assign the unboxed value to the new unboxed array
         Stmt assignUnboxedToTargetArray = Jimple.v().newAssignStmt(targetUnboxedArray, unboxedArrayElement);
@@ -1248,7 +1294,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
         return r2;
     }
      */
-    private Local boxArray(Value orgArray, Unit unitToInsertBefore) {
+    private Local boxArray(Value orgArray, Unit unitToInsertBefore, Body body, LocalGenerator localGenerator) {
 
         Local targetBoxedArray;
         if (!(orgArray.getType() instanceof ArrayType)) {
@@ -1354,6 +1400,21 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
         return liftedType;
     }*/
+
+
+
+    private SootMethod getMethodOnSnapshot(SootClass sootClass, String name, List<Type> parameterTypes, Type returnType){
+        for (SootMethod method : sootClass.getMethodsSnapshot()) {
+            if (method.getName().equals(name) && parameterTypes.equals(method.getParameterTypes())
+                    && returnType.equals(method.getReturnType())) {
+                return method;
+            }
+        }
+
+
+        throw new RuntimeException("Class " + sootClass.getName() + " doesn't have method " + name + "(" + parameterTypes + ")"
+                + " : " + returnType);
+    }
 
 
 }

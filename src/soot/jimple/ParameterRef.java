@@ -24,9 +24,6 @@
  */
 
 
-
-
-
 package soot.jimple;
 
 import soot.*;
@@ -34,82 +31,94 @@ import soot.util.*;
 
 import java.util.*;
 
-/** <code>ParameterRef</code> objects are used by <code>Body</code>
+/**
+ * <code>ParameterRef</code> objects are used by <code>Body</code>
  * objects to refer to the parameter slots on method entry. <br>
- *
+ * <p>
  * For instance, in an instance method, the first statement will
- * often be <code> this := @parameter0; </code> */
-public class ParameterRef implements IdentityRef
-{
+ * often be <code> this := @parameter0; </code>
+ */
+public class ParameterRef implements IdentityRef {
     int n;
     Type paramType;
 
-    /** Constructs a ParameterRef object of the specified type, representing the specified parameter number. */
-    public ParameterRef(Type paramType, int number)
-    {
+    /**
+     * Constructs a ParameterRef object of the specified type, representing the specified parameter number.
+     */
+    public ParameterRef(Type paramType, int number) {
         this.n = number;
         this.paramType = paramType;
     }
 
-    public boolean equivTo(Object o)
-    {
-        if (o instanceof ParameterRef)
-        {
-            return n == ((ParameterRef)o).n &&
-                paramType.equals(((ParameterRef)o).paramType);
+    public boolean equivTo(Object o) {
+        if (o instanceof ParameterRef) {
+            return n == ((ParameterRef) o).n &&
+                    paramType.equals(((ParameterRef) o).paramType);
         }
         return false;
     }
 
-    public int equivHashCode()
-    {
+    public int equivHashCode() {
         return n * 101 + paramType.hashCode() * 17;
     }
-    
-    /** Create a new ParameterRef object with the same paramType and number. */
-    public Object clone() 
-    {
+
+    /**
+     * Create a new ParameterRef object with the same paramType and number.
+     */
+    public Object clone() {
         return new ParameterRef(paramType, n);
     }
-    
-    /** Converts the given ParameterRef into a String i.e. <code>@parameter0: .int</code>. */
-    public String toString()
-    {
-        return "@parameter" + n + ": " + paramType;                                                   
+
+    /**
+     * Converts the given ParameterRef into a String i.e. <code>@parameter0: .int</code>.
+     */
+    public String toString() {
+        return "@parameter" + n + ": " + paramType;
     }
-    
-    public void toString( UnitPrinter up )
-    {
+
+    public void toString(UnitPrinter up) {
         up.identityRef(this);
     }
 
-    /** Returns the index of this ParameterRef. */
-    public int getIndex()
-    {
+    /**
+     * Returns the index of this ParameterRef.
+     */
+    public int getIndex() {
         return n;
     }
 
-    /** Sets the index of this ParameterRef. */
-    public void setIndex(int index)
-    {
+    /**
+     * Sets the index of this ParameterRef.
+     */
+    public void setIndex(int index) {
         n = index;
     }
 
     @Override
-    public final List<ValueBox> getUseBoxes()
-    {
+    public final List<ValueBox> getUseBoxes() {
         return Collections.emptyList();
     }
 
-    /** Returns the type of this ParameterRef. */
-    public Type getType()
-    {
+    /**
+     * Returns the type of this ParameterRef.
+     */
+    public Type getType() {
         return paramType;
     }
 
-    /** Used with RefSwitch. */
-    public void apply(Switch sw)
-    {
+    /**
+     * Used with RefSwitch.
+     */
+    public void apply(Switch sw) {
         ((RefSwitch) sw).caseParameterRef(this);
+    }
+
+    //FIXME: added for boxing
+
+    /**
+     * Returns the type of this ParameterRef.
+     */
+    public void setType(Type type) {
+        paramType = type;
     }
 }

@@ -315,6 +315,19 @@ public class SootMethod
         if( wasDeclared) oldDeclaringClass.addMethod(this);
     }
 
+
+    //FIXME: new method for boxing
+    public void setSignature(List<Type> parameterTypes, Type returnType){
+        boolean wasDeclared = isDeclared;
+        SootClass oldDeclaringClass = declaringClass;
+        if( wasDeclared ) oldDeclaringClass.removeMethod(this);
+        this.parameterTypes = Collections.unmodifiableList(new ArrayList<Type>(parameterTypes));
+        this.returnType = returnType;
+        subsignature =
+                Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());
+        if( wasDeclared) oldDeclaringClass.addMethod(this);
+    }
+
     /**
         Retrieves the active body for this method.
      */

@@ -2,6 +2,7 @@ package soot;
 
 import com.google.common.base.Optional;
 import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.util.Chain;
 
 import java.util.*;
 

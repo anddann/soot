@@ -17,8 +17,16 @@ public class BoxingSootMethodRefImpl extends SootMethodRefImpl {
     private BoxingSootMethodRefImpl(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType, boolean isStatic, List<Type> liftedParameter, Type liftedReturnType, NumberedString originalSubSig) {
         super(declaringClass, name, parameterTypes, returnType, isStatic);
         this.originalSubSig = originalSubSig;
-        this.liftedReturnType = liftedReturnType;
-        this.liftedParameter = liftedParameter;
+
+        if (BoxingTransformerUtility.isMethodIgnored(this)) {
+            this.liftedParameter = parameterTypes;
+            this.liftedReturnType = returnType;
+        } else {
+            this.liftedReturnType = liftedReturnType;
+            this.liftedParameter = liftedParameter;
+
+        }
+
         super.setSubsig(Scene.v().getSubSigNumberer().findOrAdd(SootMethod.getSubSignature(name, liftedParameter, liftedReturnType)));
     }
 
@@ -124,13 +132,13 @@ public class BoxingSootMethodRefImpl extends SootMethodRefImpl {
 
     @Override
     public SootMethod resolve() {
-        SootMethod methodToReturn;
+        SootMethod methodToReturn = null;
         try {
 
             //resolve with current (lifted) subSignature
             //FIXME: here use try resolve
             methodToReturn = super.tryResolve();
-            if(methodToReturn == null)
+            if (methodToReturn == null)
                 throw new RuntimeException("no method");
             //if phantom refs are allowed a method is created , we don't want it?
 
@@ -141,7 +149,9 @@ public class BoxingSootMethodRefImpl extends SootMethodRefImpl {
             NumberedString current = super.getSubSignature();
             super.setSubsig(this.originalSubSig);
 
+
             methodToReturn = super.resolve();
+
 
             //reset to the current/lifted subsignature
             super.setSubsig(current);
@@ -155,8 +165,9 @@ public class BoxingSootMethodRefImpl extends SootMethodRefImpl {
                 && Scene.v().isExcluded(declaringClass()) && !Scene.v()
                 .getBasicClasses().contains(declaringClass().getName())) || !methodToReturn.isConcrete()) {
             //lift the method' signature
-            methodToReturn.setParameterTypes(this.liftedParameter);
-            methodToReturn.setReturnType(liftedReturnType);
+            //  methodToReturn.setParameterTypes(this.liftedParameter);
+            //    methodToReturn.setReturnType(liftedReturnType);
+            methodToReturn.setSignature(this.liftedParameter, this.liftedReturnType);
             /* this causes a crash
             * when transform public sun.text.normalizer.NormalizerImpl load
             * all primitive types are inferent to java.io.Serializable ??

@@ -26,8 +26,9 @@ public class BoxingTransformerUtility {
      * @param method the method whose signature should be adaapted
      * @return returns true if method is already defined
      */
-    public static SootMethod adaptMethodSignature(SootMethod method,Body body) {
-
+    //FIXME: also adapt the locals for parameters here
+    public synchronized static SootMethod adaptMethodSignature(Body body) {
+        SootMethod method = body.getMethod();
 
         boolean methodHasBeenAdapted = false;
         //check if class is ignored
@@ -42,26 +43,28 @@ public class BoxingTransformerUtility {
         List<Type> boxedParameterTypes = new ArrayList<>();
         boxedParameterTypes.addAll(parameterTypes);
         for (int i = 0; i < boxedParameterTypes.size(); i++) {
-            Type t =getBoxedType(boxedParameterTypes.get(i));
+            Type t = getBoxedType(boxedParameterTypes.get(i));
             methodHasBeenAdapted = methodHasBeenAdapted | !(t.equals(boxedParameterTypes.get(i)));
             boxedParameterTypes.set(i, t);
         }
 
 
+
+
         //return type
         Type returnType = getBoxedType(method.getReturnType());
 
-        methodHasBeenAdapted=methodHasBeenAdapted|!(returnType.equals(method.getReturnType()));
+        methodHasBeenAdapted = methodHasBeenAdapted | !(returnType.equals(method.getReturnType()));
 
         // check if methodsignature already exists before adapting it
         try {
             SootMethod checkMethod = method.getDeclaringClass().getMethod(method.getName(), boxedParameterTypes, returnType);
             if (checkMethod != null) {
 
-                if(Options.v().allow_phantom_refs() && methodHasBeenAdapted ){
+                if (Options.v().allow_phantom_refs() && methodHasBeenAdapted) {
                     //remove the method
-                  //  checkMethod.getDeclaringClass().removeMethod(checkMethod);
-                  //  checkMethod.setActiveBody(method.getActiveBody());
+                    //  checkMethod.getDeclaringClass().removeMethod(checkMethod);
+                    //  checkMethod.setActiveBody(method.getActiveBody());
 
                     //anderes rum remove this and set this bod
                     checkMethod.releaseActiveBody();
@@ -69,7 +72,7 @@ public class BoxingTransformerUtility {
                     //method.getDeclaringClass().removeMethod(method);
                     //delete the old method
                     body.setMethod(checkMethod);
-                   // method.getDeclaringClass().removeMethod(method);
+                    // method.getDeclaringClass().removeMethod(method);
                     return checkMethod;
                 }
                 return null;
@@ -77,13 +80,13 @@ public class BoxingTransformerUtility {
         } catch (RuntimeException ex) {
             //the method is not yet definied, thus we can continue
         }
+        method.setSignature(boxedParameterTypes, returnType);
 
-
-        method.setParameterTypes(boxedParameterTypes);
+        //  method.setParameterTypes(boxedParameterTypes);
 
 
         // box return type
-        method.setReturnType(returnType);
+        // method.setReturnType(returnType);
 
 
         return method;
@@ -160,7 +163,7 @@ public class BoxingTransformerUtility {
         if (typeToCheck == ModuleRefType.v("java.lang.Short", Optional.of("java.base"))) {
             liftedType = ShortType.v();
         }
-        if (typeToCheck == ModuleRefType.v("java.lang.Integer",Optional.of("java.base"))) {
+        if (typeToCheck == ModuleRefType.v("java.lang.Integer", Optional.of("java.base"))) {
             liftedType = IntType.v();
         }
 
@@ -183,7 +186,7 @@ public class BoxingTransformerUtility {
         }
         if (type instanceof ArrayType && liftedType instanceof PrimType) {
             ArrayType newArray = ArrayType.v(liftedType, ((ArrayType) type).numDimensions);
-           //   IMHO: this is already covered by the previous constructor call
+            //   IMHO: this is already covered by the previous constructor call
             // newArray.baseType = liftedType;
             return newArray;
 
@@ -214,6 +217,9 @@ public class BoxingTransformerUtility {
 
     public static boolean isMethodIgnored(SootMethod method) {
 
+        if (method.getDeclaringClass().getName().equalsIgnoreCase("java.lang.String") && method.getName().equalsIgnoreCase("charAt"))
+            return true;
+
         if (!BoxingTransformerUtility.SootClassIsIgnored(method.getDeclaringClass())) {
             return false;
         }
@@ -237,8 +243,10 @@ public class BoxingTransformerUtility {
         if (!BoxingTransformerUtility.SootClassIsIgnored(methodRef.declaringClass())) {
             return false;
         }
+        if (methodRef.declaringClass().equals("java.lang.String") && methodRef.name().equalsIgnoreCase("charAt"))
+            return true;
 
-        return isMethodIgnored(methodRef.resolve());
+        return isMethodIgnored(methodRef.declaringClass(), methodRef.name(), methodRef.isStatic());
 
 
     }

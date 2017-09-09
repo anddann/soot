@@ -61,6 +61,8 @@ public class BoxingSootFieldRefImpl extends AbstractSootFieldRef {
         try {
             //resolve with old type
             fieldToReturn = super.resolve();
+            if (fieldToReturn == null)
+                throw new RuntimeException("no field");
         } catch (RuntimeException ex) {
             //if it fails, the method has  been transformed/lifted
             //thus resolve with new lifted type
