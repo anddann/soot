@@ -2423,4 +2423,18 @@ public class Singletons {
     	instance_soot_jimple_toolkits_reflection_ConstantInvokeMethodBaseTransformer = null;
     }
 
+    private soot.boxing.transformation.BoxingBodyTransformer instance_soot_boxing_transformation_BoxingBodyTransformer;
+    public soot.boxing.transformation.BoxingBodyTransformer soot_boxing_transformation_BoxingBodyTransformer() {
+        if( instance_soot_boxing_transformation_BoxingBodyTransformer == null ) {
+	       	synchronized (this) {
+		        if( instance_soot_boxing_transformation_BoxingBodyTransformer == null )
+	        		instance_soot_boxing_transformation_BoxingBodyTransformer = new soot.boxing.transformation.BoxingBodyTransformer( g );
+	       	}
+       	}
+        return instance_soot_boxing_transformation_BoxingBodyTransformer;
+    }
+    protected void release_soot_boxing_transformation_BoxingBodyTransformer() {
+    	instance_soot_boxing_transformation_BoxingBodyTransformer = null;
+    }
+
 }
