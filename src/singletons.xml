@@ -171,4 +171,5 @@
   <class>soot.jimple.spark.internal.PublicAndProtectedAccessibility</class>
   <class>soot.jimple.spark.internal.CompleteAccessibility</class>
   <class>soot.jimple.toolkits.reflection.ConstantInvokeMethodBaseTransformer</class>
+  <class>soot.boxing.transformation.BoxingBodyTransformer</class>
 </singletons>
