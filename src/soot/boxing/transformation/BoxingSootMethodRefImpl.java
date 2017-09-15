@@ -27,7 +27,7 @@ public class BoxingSootMethodRefImpl extends SootMethodRefImpl {
 
         }
 
-        super.setSubsig(Scene.v().getSubSigNumberer().findOrAdd(SootMethod.getSubSignature(name, liftedParameter, liftedReturnType)));
+        super.setSubsig(Scene.v().getSubSigNumberer().findOrAdd(SootMethod.getSubSignature(name, this.liftedParameter, this.liftedReturnType)));
     }
 
     private final Type liftedReturnType;
@@ -49,13 +49,15 @@ public class BoxingSootMethodRefImpl extends SootMethodRefImpl {
                 SootMethod.getSubSignature(name, parameterTypes, returnType));
         // lift the types
         Type liftedReturnType = returnType;
-        ArrayList<Type> liftedParameterTypes = new ArrayList<>(parameterTypes);
-        //   if (!BoxingTransformerUtility.SootClassIsIgnored(declaringClass)) {
+        List<Type> liftedParameterTypes;
+
+        liftedParameterTypes = new ArrayList<>(parameterTypes);
+
         liftedReturnType = BoxingTransformerUtility.getBoxedType(returnType);
         for (int i = 0; i < liftedParameterTypes.size(); i++) {
             liftedParameterTypes.set(i, BoxingTransformerUtility.getBoxedType(liftedParameterTypes.get(i)));
+
         }
-        //    }
 
 
         //call constructor with the lifted types

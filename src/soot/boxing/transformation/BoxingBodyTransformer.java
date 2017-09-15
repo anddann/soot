@@ -46,8 +46,6 @@ public class BoxingBodyTransformer extends BodyTransformer {
         HashMap<Value, Type> originalLocalTypes = new HashMap<>();
 
 
-        SootClass sootClass = body.getMethod().getDeclaringClass();
-        System.out.println(sootClass.getName() + ":" + body.getMethod());
         //store the original types
         for (Local l : body.getLocals()) {
             if (l.getType() instanceof ArrayType) {
@@ -61,9 +59,6 @@ public class BoxingBodyTransformer extends BodyTransformer {
         //adapt method signature
         methodAlreadyExists = BoxingTransformerUtility.adaptMethodSignature(body);
         //the method already exits
-
-
-
 
 
         LocalGenerator localGenerator = new LocalGenerator(body);
@@ -80,18 +75,18 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
         }
         //adapt the parameter identity statements
-        for(Iterator<Unit> it=body.getUnits().snapshotIterator();it.hasNext();){
+        for (Iterator<Unit> it = body.getUnits().snapshotIterator(); it.hasNext(); ) {
             Unit unit = it.next();
-            if(! (unit instanceof IdentityStmt))
+            if (!(unit instanceof IdentityStmt))
                 continue;
             Value value = null;
-            boolean isCompatibe = BoxingTransformerUtility.isCompatible(((IdentityStmt) unit).getLeftOp().getType(),((IdentityStmt) unit).getRightOp().getType());
-            if(!isCompatibe)
+            boolean isCompatibe = BoxingTransformerUtility.isCompatible(((IdentityStmt) unit).getLeftOp().getType(), ((IdentityStmt) unit).getRightOp().getType());
+            if (!isCompatibe)
                 value = ((IdentityStmt) unit).getRightOp();
-            if(value instanceof ParameterRef)
+            if (value instanceof ParameterRef)
                 ((ParameterRef) value).setType(BoxingTransformerUtility.getBoxedType(value.getType()));
-            isCompatibe = BoxingTransformerUtility.isCompatible(((IdentityStmt) unit).getLeftOp().getType(),((IdentityStmt) unit).getRightOp().getType());
-            if(!isCompatibe)
+            isCompatibe = BoxingTransformerUtility.isCompatible(((IdentityStmt) unit).getLeftOp().getType(), ((IdentityStmt) unit).getRightOp().getType());
+            if (!isCompatibe)
                 System.out.println("hihi");
 
 
@@ -157,9 +152,9 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
         }
 
-        if (leftValue instanceof InvokeExpr) {
+       /* if (leftValue instanceof InvokeExpr) {
             handleInvokeExpr((InvokeExpr) leftValue, definitionStmt, body, originalLocalTypes, localGenerator);
-        }
+        }*/
 
 
         /*
@@ -313,7 +308,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
         //SootMethod constructorToCall = sootClassForConstructor.getMethod("void <init>(" + typeForConstructor.getEscapedName() + ")");
         ArrayList<Type> parameter = new ArrayList<>();
         parameter.add(typeForConstructor);
-        SootMethod constructorToCall = getMethodOnSnapshot(sootClassForConstructor,"<init>", parameter, VoidType.v());
+        SootMethod constructorToCall = getMethodOnSnapshot(sootClassForConstructor, "<init>", parameter, VoidType.v());
 
         List<Value> args = new LinkedList<>();
         if (constructorToCall.getParameterCount() > 0) {
@@ -401,7 +396,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
             if (castExpr.getOp() instanceof Constant) {
 
                 //if its a constant a new Integer expression should be sufficnent
-                createdStatements =assignConstantTo((Local) leftValue, (castExpr.getOp().getType()), (Constant) castExpr.getOp(), localGenerator);
+                createdStatements = assignConstantTo((Local) leftValue, (castExpr.getOp().getType()), (Constant) castExpr.getOp(), localGenerator);
 
 
             }
@@ -409,7 +404,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
                 SootClass sootClassOfRightSide = ((RefType) castExpr.getOp().getType()).getSootClass();
 
 //            SootMethod methodToCall = sootClassOfRightSide.getMethod(stringType.getClassName() + " toString()");
-                SootMethod methodToCall = getMethodOnSnapshot(sootClassOfRightSide,"toString", new ArrayList<>(), stringType);
+                SootMethod methodToCall = getMethodOnSnapshot(sootClassOfRightSide, "toString", new ArrayList<>(), stringType);
                 InvokeExpr toStringInvokeExpr = Jimple.v().newVirtualInvokeExpr((Local) castExpr.getOp(), methodToCall.makeRef());
                 Stmt stringAssignment = Jimple.v().newAssignStmt(newStringLocal, toStringInvokeExpr);
                 body.getUnits().insertBefore(stringAssignment, definitionStmt);
@@ -433,20 +428,20 @@ public class BoxingBodyTransformer extends BodyTransformer {
                     //create char c1 = i.charAt(0);
                     ArrayList<Type> parameterTypes = new ArrayList<>();
                     parameterTypes.add(IntType.v());
-                    SootMethod methodCharAt = getMethodOnSnapshot(stringType.getSootClass(),"charAt", parameterTypes, CharType.v());
+                    SootMethod methodCharAt = getMethodOnSnapshot(stringType.getSootClass(), "charAt", parameterTypes, CharType.v());
 
-                   // SootMethod methodCharAt = stringType.getSootClass().getMethod("charAt", parameterTypes, CharType.v());
+                    // SootMethod methodCharAt = stringType.getSootClass().getMethod("charAt", parameterTypes, CharType.v());
                     //   SootMethod methodCharAt = stringType.getSootClass().getMethod(CharType.v().getEscapedName() + " charAt(" + IntType.v().getEscapedName() + ")");
                     Local charLocal = localGenerator.generateLocal(CharType.v());
                     List<Value> args = new LinkedList<>();
-                    if (methodToCall.getParameterCount() > 0) {
+                    if (methodCharAt.getParameterCount() > 0) {
                         for (Type tp : methodToCall.getParameterTypes()) {
                             args.add(IntConstant.v(0));
                         }
                     }
 
                     InvokeExpr invokeCharAt = Jimple.v().newVirtualInvokeExpr(newStringLocal, methodCharAt.makeRef(), args);
-                    Stmt charAssignment = Jimple.v().newAssignStmt(newStringLocal, invokeCharAt);
+                    Stmt charAssignment = Jimple.v().newAssignStmt(charLocal, invokeCharAt);
 
                     body.getUnits().insertBefore(charAssignment, definitionStmt);
 
@@ -455,7 +450,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
 
                 }
-                 createdStatements= createNewStmtForBoxedType(sootClassForConstructor, typeForConstructor, leftValue, argForConstructor);
+                createdStatements = createNewStmtForBoxedType(sootClassForConstructor, typeForConstructor, leftValue, argForConstructor);
             }
 
             body.getUnits().insertBefore(createdStatements, definitionStmt);
@@ -613,7 +608,6 @@ public class BoxingBodyTransformer extends BodyTransformer {
         Type currentFieldType = sootField.getType();
 
 
-
         if (!BoxingTransformerUtility.isTypeToModify(currentFieldType))
             return originalType;
 
@@ -624,14 +618,13 @@ public class BoxingBodyTransformer extends BodyTransformer {
         }
 
 
-
         sootField.setType(BoxingTransformerUtility.getBoxedType(currentFieldType));
         ((BoxingSootFieldRefImpl) fieldRef.getFieldRef()).liftTheReference();
 
-        if(originalType!=currentFieldType)
+        if (originalType != currentFieldType)
             System.out.println("FIELD REF Prob");
 
-            return originalType;
+        return originalType;
     }
 
 
@@ -774,7 +767,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
     private void handleIdentityStmt(IdentityStmt identityStmt, Body body) {
         Local l = (Local) identityStmt.getLeftOp();
-        if(!BoxingTransformerUtility.isCompatible(identityStmt.getLeftOp().getType(),identityStmt.getRightOp().getType())){
+        if (!BoxingTransformerUtility.isCompatible(identityStmt.getLeftOp().getType(), identityStmt.getRightOp().getType())) {
             System.out.print("Types do not match");
         }
         if (!BoxingTransformerUtility.isTypeToModify(l.getType()))
@@ -795,6 +788,8 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
         SootMethodRef methodRef = invokeExpr.getMethodRef();
         if (BoxingTransformerUtility.isMethodIgnored(methodRef)) {
+            if(methodRef.declaringClass().getName().equals(SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME))
+                return;
             handleInvokeExprForIgnoredMethod(invokeExpr, unit, body, originalLocalTypes, localGenerator);
             return;
         }
@@ -1140,8 +1135,8 @@ public class BoxingBodyTransformer extends BodyTransformer {
             SootClass valuesBoxedClass = ((RefType) l.getType()).getSootClass();
 
             ArrayList<Type> parameterTypes = new ArrayList<>();
-            SootMethod methodToCall = getMethodOnSnapshot(valuesBoxedClass,primTypeForUnboxing.getEscapedName() + "Value",parameterTypes, primTypeForUnboxing);
-         //   SootMethod methodToCall = valuesBoxedClass.getMethod(primTypeForUnboxing.getEscapedName() + " " + primTypeForUnboxing.getEscapedName() + "Value()");
+            SootMethod methodToCall = getMethodOnSnapshot(valuesBoxedClass, primTypeForUnboxing.getEscapedName() + "Value", parameterTypes, primTypeForUnboxing);
+            //   SootMethod methodToCall = valuesBoxedClass.getMethod(primTypeForUnboxing.getEscapedName() + " " + primTypeForUnboxing.getEscapedName() + "Value()");
 
             InvokeExpr unBoxinginvokeExpr = Jimple.v().newVirtualInvokeExpr((Local) value, methodToCall.makeRef());
             Stmt unboxingAssignmentStmt = Jimple.v().newAssignStmt(createdLocal, unBoxinginvokeExpr);
@@ -1402,8 +1397,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
     }*/
 
 
-
-    private SootMethod getMethodOnSnapshot(SootClass sootClass, String name, List<Type> parameterTypes, Type returnType){
+    private SootMethod getMethodOnSnapshot(SootClass sootClass, String name, List<Type> parameterTypes, Type returnType) {
         for (SootMethod method : sootClass.getMethodsSnapshot()) {
             if (method.getName().equals(name) && parameterTypes.equals(method.getParameterTypes())
                     && returnType.equals(method.getReturnType())) {

@@ -40,7 +40,7 @@ public class BoxingSootFieldRefImpl extends AbstractSootFieldRef {
         Type originalType = type;
         // lift the types
         Type liftedType = type;
-        if (!BoxingTransformerUtility.SootClassIsIgnored(declaringClass)) {
+        if (!BoxingTransformerUtility.isSootClassIgnored(declaringClass)) {
             liftedType = BoxingTransformerUtility.getBoxedType(type);
 
         }

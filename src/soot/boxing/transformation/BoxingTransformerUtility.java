@@ -4,6 +4,8 @@ import com.google.common.base.Optional;
 import soot.*;
 import soot.options.Options;
 
+import javax.swing.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,6 +20,10 @@ public class BoxingTransformerUtility {
 
     }
 
+    public static boolean onlyApplicationClasses = true;
+
+
+    private static final HashSet<String> ignoredClasses = new HashSet<>(Arrays.asList("java.lang.Number", "java.lang.Boolean", "java.lang.Character", "java.lang.Integer", "java.lang.Double", "java.lang.Long", "java.lang.Float", "java.lang.Byte", "java.lang.Short"));
 
     /**
      * Changes the primitive types of the method and its body to BoxedTypes
@@ -26,9 +32,7 @@ public class BoxingTransformerUtility {
      * @param method the method whose signature should be adaapted
      * @return returns true if method is already defined
      */
-    //FIXME: also adapt the locals for parameters here
-    public synchronized static SootMethod adaptMethodSignature(Body body) {
-        SootMethod method = body.getMethod();
+    public synchronized static SootMethod adaptMethodSignature(SootMethod method, Body body) {
 
         boolean methodHasBeenAdapted = false;
         //check if class is ignored
@@ -49,8 +53,6 @@ public class BoxingTransformerUtility {
         }
 
 
-
-
         //return type
         Type returnType = getBoxedType(method.getReturnType());
 
@@ -65,14 +67,15 @@ public class BoxingTransformerUtility {
                     //remove the method
                     //  checkMethod.getDeclaringClass().removeMethod(checkMethod);
                     //  checkMethod.setActiveBody(method.getActiveBody());
-
-                    //anderes rum remove this and set this bod
-                    checkMethod.releaseActiveBody();
-                    checkMethod.setActiveBody(body);
-                    //method.getDeclaringClass().removeMethod(method);
-                    //delete the old method
-                    body.setMethod(checkMethod);
-                    // method.getDeclaringClass().removeMethod(method);
+                    if (body != null) {
+                        //anderes rum remove this and set this bod
+                        checkMethod.releaseActiveBody();
+                        checkMethod.setActiveBody(body);
+                        //method.getDeclaringClass().removeMethod(method);
+                        //delete the old method
+                        body.setMethod(checkMethod);
+                        // method.getDeclaringClass().removeMethod(method);
+                    }
                     return checkMethod;
                 }
                 return null;
@@ -90,6 +93,21 @@ public class BoxingTransformerUtility {
 
 
         return method;
+
+
+    }
+
+
+    public static SootMethod adaptMethodSignature(Body body) {
+        SootMethod method = body.getMethod();
+        return BoxingTransformerUtility.adaptMethodSignature(method, body);
+
+
+    }
+
+    public static SootMethod adaptMethodSignature(SootMethod method) {
+        return BoxingTransformerUtility.adaptMethodSignature(method, null);
+
     }
 
 
@@ -197,8 +215,11 @@ public class BoxingTransformerUtility {
     }
 
 
-    public static boolean SootClassIsIgnored(SootClass declaringClass) {
+    public static boolean isSootClassIgnored(SootClass declaringClass) {
         String klassName = declaringClass.getName();
+
+        if (klassName.equals(SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME))
+            return true;
 
         if (klassName.contains("$")) {
             klassName = klassName.substring(0, klassName.indexOf('$'));
@@ -216,35 +237,29 @@ public class BoxingTransformerUtility {
 
 
     public static boolean isMethodIgnored(SootMethod method) {
-
-        if (method.getDeclaringClass().getName().equalsIgnoreCase("java.lang.String") && method.getName().equalsIgnoreCase("charAt"))
-            return true;
-
-        if (!BoxingTransformerUtility.SootClassIsIgnored(method.getDeclaringClass())) {
-            return false;
-        }
-
-        return (method.isConstructor() || !method.isStatic() || method.isStaticInitializer() || method.getName().equals("valueOf") || method.getName().contains("parse"));
-
+        return isMethodIgnored(method.getDeclaringClass(), method.getName(), method.isStatic());
 
     }
 
     public static boolean isMethodIgnored(SootClass klass, String methodName, boolean isStatic) {
+        if (!klass.isApplicationClass() && BoxingTransformerUtility.onlyApplicationClasses)
+            return true;
 
-        if (!BoxingTransformerUtility.SootClassIsIgnored(klass)) {
-            return false;
-        }
+        if (klass.getName().equals(SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME))
+            return true;
 
-        return (methodName.contains("<init>") || methodName.contains("<cinit>") || !isStatic || methodName.equals("valueOf") || methodName.contains("parse"));
+        if (klass.getName().equalsIgnoreCase("java.lang.String") && methodName.equalsIgnoreCase("charAt"))
+            return true;
+
+
+        boolean classIgnored = BoxingTransformerUtility.isSootClassIgnored(klass);
+        boolean methodIgnored = (methodName.equals(SootMethod.constructorName) || methodName.equals(SootMethod.staticInitializerName) || !isStatic || methodName.equals("valueOf") || methodName.contains("parse"));
+
+        return classIgnored && methodIgnored;
 
     }
 
     public static boolean isMethodIgnored(SootMethodRef methodRef) {
-        if (!BoxingTransformerUtility.SootClassIsIgnored(methodRef.declaringClass())) {
-            return false;
-        }
-        if (methodRef.declaringClass().equals("java.lang.String") && methodRef.name().equalsIgnoreCase("charAt"))
-            return true;
 
         return isMethodIgnored(methodRef.declaringClass(), methodRef.name(), methodRef.isStatic());
 
@@ -253,7 +268,10 @@ public class BoxingTransformerUtility {
 
 
     public static boolean isFieldIgnored(SootField field) {
-        return BoxingTransformerUtility.SootClassIsIgnored(field.getDeclaringClass());
+        if (!field.getDeclaringClass().isApplicationClass() && BoxingTransformerUtility.onlyApplicationClasses)
+            return true;
+
+        return BoxingTransformerUtility.isSootClassIgnored(field.getDeclaringClass());
     }
 
 
@@ -279,7 +297,7 @@ public class BoxingTransformerUtility {
         }
     }
 
-    public static boolean isCompatible(Type actual, Type expected) {
+    public static boolean isCompatible(final Type actual, final Type expected) {
 
         if (actual == expected)
             return true;
@@ -295,10 +313,23 @@ public class BoxingTransformerUtility {
             //boolean comp = AugHierarchy.ancestor_(expected, actual) || AugHierarchy.ancestor_(actual, expected);
             //return comp;
         }
-        if ((actual instanceof RefType) && (expected instanceof RefType))
-            return BoxingTransformerUtility.isCompatible(((RefType) actual).getSootClass(), ((RefType) expected).getSootClass());
 
-        return false;
+        Type actualBasicType = actual;
+        Type expectedBasicType = expected;
+        if (actual instanceof ArrayType) {
+            actualBasicType = ((RefLikeType) actual).getArrayElementType();
+        }
+        if (expectedBasicType instanceof ArrayType) {
+            expectedBasicType = ((RefLikeType) expected).getArrayElementType();
+        }
+
+        if (actualBasicType instanceof RefType && expectedBasicType instanceof RefType) {
+            return BoxingTransformerUtility.isCompatible(((RefType) actualBasicType).getSootClass(), ((RefType) expectedBasicType).getSootClass());
+        } else {
+            return false;
+            //return BoxingTransformerUtility.isCompatible(actualBasicType, expectedBasicType);
+        }
+
     }
 
     public static boolean isTypeToModify(final Type type) {
@@ -310,9 +341,4 @@ public class BoxingTransformerUtility {
     }
 
 
-    private static final HashSet<String> ignoredClasses = new HashSet<>(Arrays.asList("java.lang.Number", "java.lang.Boolean", "java.lang.Character", "java.lang.Integer", "java.lang.Double", "java.lang.Long", "java.lang.Float", "java.lang.Byte", "java.lang.Short"));
-
-    public enum SootPrimitivesEnum {
-        CharType, BooleanType, ShortType, IntType, FloatType, LongType, DoubleType, ByteType
-    }
 }
