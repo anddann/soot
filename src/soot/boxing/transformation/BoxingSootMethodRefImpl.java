@@ -166,6 +166,14 @@ public class BoxingSootMethodRefImpl extends SootMethodRefImpl {
                 || (Options.v().no_bodies_for_excluded()
                 && Scene.v().isExcluded(declaringClass()) && !Scene.v()
                 .getBasicClasses().contains(declaringClass().getName())) || !methodToReturn.isConcrete()) {
+
+            //FIXME: do we have to check, if the method is overridden by an application class??
+            //check if method is within an ignored class
+            if(BoxingTransformerUtility.isMethodIgnored(this)){
+                return methodToReturn;
+            }
+
+
             //lift the method' signature
             //  methodToReturn.setParameterTypes(this.liftedParameter);
             //    methodToReturn.setReturnType(liftedReturnType);
