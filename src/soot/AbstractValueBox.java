@@ -37,7 +37,8 @@ public abstract class AbstractValueBox extends AbstractHost implements ValueBox
 
     public void setValue(Value value)
     {
-    	if(value==null) throw new IllegalArgumentException("value may not be null");
+    	if(value==null)
+    	    throw new IllegalArgumentException("value may not be null");
         if(canContainValue(value))
             this.value = value;
         else

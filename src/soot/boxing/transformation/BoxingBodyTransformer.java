@@ -68,6 +68,8 @@ public class BoxingBodyTransformer extends BodyTransformer {
         //units.snapshotIterator()
         for (Iterator<Unit> it = body.getUnits().snapshotIterator(); it.hasNext(); ) {
             Unit unit = it.next();
+            if (!body.getUnits().contains(unit))
+                System.out.println("We have a serious problem");
 
 
             handleUnit(unit, body, originalLocalTypes, intCounter, conditionCounter, localGenerator);
@@ -128,6 +130,9 @@ public class BoxingBodyTransformer extends BodyTransformer {
         Value leftValue = definitionStmt.getLeftOp();
         Value rightValue = definitionStmt.getRightOp();
 
+        if (!body.getUnits().contains(definitionStmt))
+            System.out.println("Serious probl");
+
         //process the leftSide first
         if (leftValue instanceof Local) {
             originalType = originalLocalTypes.get(leftValue);
@@ -138,15 +143,21 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
 
         }
+        if (!body.getUnits().contains(definitionStmt))
+            System.out.println("strange");
         // is this possible?
         if (leftValue instanceof InvokeExpr) {
             handleInvokeExpr((InvokeExpr) leftValue, definitionStmt, body, originalLocalTypes, localGenerator);
         }
+        if (!body.getUnits().contains(definitionStmt))
+            System.out.println("strange");
         if (leftValue instanceof FieldRef) {
             originalType = handleFieldRef((FieldRef) leftValue, definitionStmt, body, originalLocalTypes, localGenerator);
-
-
+            //the field has been unboxed correctly
+            if (!body.getUnits().contains(definitionStmt))
+                return;
         }
+
         if (leftValue instanceof ArrayRef) {
             originalType = handleArrayRef((ArrayRef) leftValue, definitionStmt, body, originalLocalTypes, localGenerator);
 
@@ -176,6 +187,10 @@ public class BoxingBodyTransformer extends BodyTransformer {
         // then simply assignment
         if (rightValue instanceof Local) {
             Unit newAssignStmt = this.assignLocalTo(leftValue, (Local) rightValue, originalLocalTypes);
+            if (!body.getUnits().contains(definitionStmt))
+                System.out.println("strange");
+
+
             body.getUnits().insertAfter(newAssignStmt, definitionStmt);
             body.getUnits().remove(definitionStmt);
             //it.remove();
@@ -635,6 +650,9 @@ public class BoxingBodyTransformer extends BodyTransformer {
             Value leftSide = definitionStmt.getLeftOp();
             Value rightSide = definitionStmt.getRightOp();
 
+            if (BoxingTransformerUtility.isCompatible(rightSide.getType(), leftSide.getType())) {
+                return;
+            }
 
             //handle fieldRef = something
             if (leftSide instanceof FieldRef) {
@@ -788,7 +806,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
         SootMethodRef methodRef = invokeExpr.getMethodRef();
         if (BoxingTransformerUtility.isMethodIgnored(methodRef)) {
-            if(methodRef.declaringClass().getName().equals(SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME))
+            if (methodRef.declaringClass().getName().equals(SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME))
                 return;
             handleInvokeExprForIgnoredMethod(invokeExpr, unit, body, originalLocalTypes, localGenerator);
             return;
@@ -1189,6 +1207,10 @@ public class BoxingBodyTransformer extends BodyTransformer {
             return null;
         }
 
+        if (((ArrayType) orgArray.getType()).numDimensions > 1) {
+            return unBoxMultiDimensionalArray(orgArray, listToAppend, localGenerator);
+        }
+
         List<Unit> newCreateStmts = new ArrayList<>();
         //new primitve array local
         ArrayType orgArrayType = (ArrayType) orgArray.getType();
@@ -1201,6 +1223,7 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
         newCreateStmts.add(assignLength);
 
+        //FIXME: check array type for new (ihmo base type shoud be used)
         //create Local for primitive array
         targetUnboxedArray = localGenerator.generateLocal(unboxedArrayType);
         Expr newArrayExpr = Jimple.v().newNewArrayExpr(unboxedArrayType, lengthLocal);
@@ -1232,7 +1255,9 @@ public class BoxingBodyTransformer extends BodyTransformer {
         Local unboxedArrayElement = unboxSimpleLocal(r3, unboxedArrayType.baseType, newCreateStmts, localGenerator);
 
         //assign the unboxed value to the new unboxed array
-        Stmt assignUnboxedToTargetArray = Jimple.v().newAssignStmt(targetUnboxedArray, unboxedArrayElement);
+        ArrayRef refTargetArray = Jimple.v().newArrayRef(targetUnboxedArray, counter);
+
+        Stmt assignUnboxedToTargetArray = Jimple.v().newAssignStmt(refTargetArray, unboxedArrayElement);
         newCreateStmts.add(assignUnboxedToTargetArray);
 
         //increase counter
@@ -1248,6 +1273,123 @@ public class BoxingBodyTransformer extends BodyTransformer {
         listToAppend.addAll(newCreateStmts);
 
         return targetUnboxedArray;
+
+    }
+
+    //FIXME
+    private Local unBoxMultiDimensionalArray(Value orgArray, List<Unit> listToAppend, LocalGenerator localGenerator) {
+
+        if (((ArrayType) orgArray.getType()).numDimensions == 1) {
+            return unboxArray(orgArray, listToAppend, localGenerator);
+        }
+
+        Local targetUnboxedArray;
+
+        List<Unit> newCreateStmts = new ArrayList<>();
+        //new primitve array local
+        ArrayType orgArrayType = (ArrayType) orgArray.getType();
+        int numDimensions = orgArrayType.numDimensions;
+
+        ArrayType unboxedArrayType = ArrayType.v(orgArrayType.baseType, numDimensions - 1);
+
+
+        //create local for length
+        Local lengthLocal = localGenerator.generateLocal(IntType.v());
+        Expr length = Jimple.v().newLengthExpr(orgArray);
+        Stmt assignLength = Jimple.v().newAssignStmt(lengthLocal, length);
+
+        newCreateStmts.add(assignLength);
+
+        //FIXME: check array type for new (ihmo base type shoud be used)
+        //create Local for primitive array
+        targetUnboxedArray = localGenerator.generateLocal(unboxedArrayType);
+       /* Expr newArrayExpr = Jimple.v().newNewArrayExpr(unboxedArrayType, lengthLocal);
+        Stmt arrayAssign = Jimple.v().newAssignStmt(targetUnboxedArray, newArrayExpr);
+        newCreateStmts.add(arrayAssign);*/
+
+        //create the loop counter
+        Local counter = localGenerator.generateLocal(IntType.v());
+        Constant zero = IntConstant.v(0);
+        Stmt initCounter = Jimple.v().newAssignStmt(counter, zero);
+        newCreateStmts.add(initCounter);
+
+        //create the loop
+
+        //loop end
+        Stmt endStmt = Jimple.v().newNopStmt();
+
+        Expr condition = Jimple.v().newGeExpr(counter, lengthLocal);
+        Stmt ifStmt = Jimple.v().newIfStmt(condition, endStmt);
+        newCreateStmts.add(ifStmt);
+
+        //array assignment
+        Local r3 = localGenerator.generateLocal(unboxedArrayType);
+        ArrayRef refOrgArray = Jimple.v().newArrayRef(orgArray, counter);
+        Stmt assingOrgArry = Jimple.v().newAssignStmt(r3, refOrgArray);
+       newCreateStmts.add(assingOrgArry);
+
+        //local for getUnBoxedType arrayElement
+     //   Local unboxedArrayElement = unboxSimpleLocal(r3, unboxedArrayType.baseType, newCreateStmts, localGenerator);
+
+        //assign the unboxed value to the new unboxed array
+        //ArrayRef refTargetArray = Jimple.v().newArrayRef(targetUnboxedArray, counter);
+
+        Stmt assignUnboxedToTargetArray = Jimple.v().newAssignStmt(targetUnboxedArray, r3);
+        newCreateStmts.add(assignUnboxedToTargetArray);
+
+        //increase counter
+        Expr incCounterExpr = Jimple.v().newAddExpr(counter, IntConstant.v(1));
+        Stmt incCounter = Jimple.v().newAssignStmt(counter, incCounterExpr);
+        newCreateStmts.add(incCounter);
+        //goto start of loop
+        Stmt gotoStmt = Jimple.v().newGotoStmt(ifStmt);
+        newCreateStmts.add(gotoStmt);
+
+        newCreateStmts.add(endStmt);
+
+        listToAppend.addAll(newCreateStmts);
+
+        return unBoxMultiDimensionalArray(targetUnboxedArray, listToAppend, localGenerator);
+
+
+      /*  List<Unit> newCreateStmts = new ArrayList<>();
+        //new primitve array local
+        ArrayType orgArrayType = (ArrayType) orgArray.getType();
+        ArrayType unboxedArrayType = (ArrayType) BoxingTransformerUtility.getUnBoxedType(orgArrayType);
+
+
+        for (int i = 0; i < orgArrayType.numDimensions; i++) {
+
+
+            Constant firstIndex = IntConstant.v(i);
+
+            Local baseArray = localGenerator.generateLocal(ArrayType.v(orgArrayType.baseType, orgArrayType.numDimensions - 1));
+            ArrayRef refOrgArray = Jimple.v().newArrayRef(orgArray, firstIndex);
+            Stmt assingbaseArray = Jimple.v().newAssignStmt(baseArray, refOrgArray);
+            listToAppend.add(assingbaseArray);
+
+
+            Local arrayToUse = baseArray;
+            ArrayType arrayTypeToUse = (ArrayType) arrayToUse.getType();
+            int numDimensions = arrayTypeToUse.numDimensions;
+            while (numDimensions > 0) {
+                numDimensions--;
+                Constant baseArrayIndex = IntConstant.v(0);
+
+                Local array = localGenerator.generateLocal(ArrayType.v(arrayTypeToUse.baseType, numDimensions));
+                ArrayRef refBaseArray = Jimple.v().newArrayRef(arrayToUse, baseArrayIndex);
+                Stmt assingArraybaseArray = Jimple.v().newAssignStmt(array, refBaseArray);
+                listToAppend.add(assingArraybaseArray);
+
+                arrayToUse = array;
+                arrayTypeToUse = (ArrayType) array.getType();
+            }
+
+            //now array To use is the simple case
+
+
+        }
+*/
 
     }
 

@@ -95,7 +95,6 @@ public class JimpleBodyPack extends BodyPack
         	PackManager.v().getTransform( "jb.lns" ).apply( b );
         }
 
-        //FIXME: moved to top since this changes method references
         if (Options.v().use_boxing())
             PackManager.v().getTransform("jb.boxing").apply(b);
         

@@ -486,6 +486,8 @@ public class ModulePathSourceLocator extends SourceLocator {
 
 
         FoundFile ret = null;
+        if(foundModulePath==null)
+            return null;
         //transform the path to a String to reuse the
         String dir = foundModulePath.toAbsolutePath().toString();
         if (foundModulePath.toUri().toString().startsWith("jrt:/")) {

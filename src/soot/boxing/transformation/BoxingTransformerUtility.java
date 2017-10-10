@@ -6,10 +6,7 @@ import soot.options.Options;
 
 import javax.swing.*;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by adann on 18.05.17.
@@ -275,26 +272,85 @@ public class BoxingTransformerUtility {
     }
 
 
+    // Scene.v().getActiveHierarchy().getImplementersOf(classToType)
+    // Scene.v().getActiveHierarchy().getSubclassesOf(classToType)
+
     public static boolean isCompatible(SootClass actual, SootClass expected) {
         SootClass act = actual;
 
-        while (true) {
-            // Do we have a direct match?
-            if (act.getName().equals(expected.getName()))
-                return true;
 
+        boolean result = true;
+        outerloop:
+        while (result) {
+            // Do we have a direct match?
+            if (act.getName().equals(expected.getName())) {
+                result = true;
+                break outerloop;
+            }
             // If we expect an interface, the current class might implement it
             if (expected.isInterface())
                 for (SootClass intf : act.getInterfaces())
                     if (intf.getName().equals(expected.getName())) {
-                        return true;
+                        result = true;
+                        break outerloop;
                     }
             // If we cannot continue our search further up the hierarchy, the
             // two types are incompatible
-            if (!act.hasSuperclass())
-                return false;
+            if (!act.hasSuperclass()) {
+                result = false;
+                break outerloop;
+            }
             act = act.getSuperclass();
         }
+        if (result)
+            return result;
+
+        //go the long way;
+        //get all types/interfaces in hierachy of the expected
+        HashSet<SootClass> expectedHierachy = new HashSet<>();
+        Queue<SootClass> worklist = new LinkedList<>();
+        worklist.add(expected);
+        while (!worklist.isEmpty()) {
+
+            SootClass sootClass = worklist.poll();
+
+            //add to the hierachy
+            expectedHierachy.add(sootClass);
+
+            if (sootClass.hasSuperclass()) {
+                SootClass superClass = sootClass.getSuperclass();
+                if (!superClass.getName().contains("java.lang.Object"))
+                    worklist.add(sootClass.getSuperclass());
+            }
+            for (SootClass interfaceSoot : sootClass.getInterfaces()) {
+                worklist.add(interfaceSoot);
+            }
+
+
+        }
+
+
+        //go through the actual type
+        worklist.add(actual);
+        while (!worklist.isEmpty()) {
+
+            SootClass sootClass = worklist.poll();
+
+            //add to the hierachy
+            if (expectedHierachy.contains(sootClass))
+                return true;
+            if (sootClass.hasSuperclass()) {
+                worklist.add(sootClass.getSuperclass());
+            }
+            for (SootClass interfaceSoot : sootClass.getInterfaces()) {
+                worklist.add(interfaceSoot);
+            }
+
+
+        }
+        return false;
+
+
     }
 
     public static boolean isCompatible(final Type actual, final Type expected) {
