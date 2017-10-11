@@ -1441,6 +1441,7 @@ public class Scene // extends AbstractHost
         addBasicClass("java.lang.AssertionError", SootClass.SIGNATURES);
         addBasicClass("java.lang.Throwable", SootClass.SIGNATURES);
         addBasicClass("java.lang.NoClassDefFoundError", SootClass.SIGNATURES);
+        addBasicClass("java.lang.Exception", SootClass.SIGNATURES);
         addBasicClass("java.lang.ExceptionInInitializerError");
         addBasicClass("java.lang.RuntimeException");
         addBasicClass("java.lang.ClassNotFoundException");
