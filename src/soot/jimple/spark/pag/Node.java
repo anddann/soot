@@ -117,11 +117,17 @@ public class Node implements ReferenceVariable, Numberable {
     /* End of public methods. */
 
     /** Creates a new node of pointer assignment graph pag, with type type. */
-    //FIXME: adann; dirty workaround to inherit
-   public Node( PAG pag, Type type ) {
+   protected Node( PAG pag, Type type ) {
         if( TypeManager.isUnresolved(type) ) throw new RuntimeException("Unresolved type "+type );
         this.type = type;
         this.pag = pag;
+        replacement = this;
+    }
+
+    //FIXME: adann; dirty workaround to inherit
+    protected Node( Type type ) {
+        this.type = type;
+        this.pag = null;
         replacement = this;
     }
 

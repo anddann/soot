@@ -21,6 +21,10 @@ public class SootModuleInfo extends SootClass {
         return isAutomaticModule;
     }
 
+    public void setAutomaticModule(boolean automaticModule) {
+        isAutomaticModule = automaticModule;
+    }
+
     private boolean isAutomaticModule;
 
     private Map<SootModuleInfo, Integer> requiredModules = new HashMap<SootModuleInfo, Integer>();

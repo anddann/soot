@@ -380,7 +380,19 @@ public class BoxingBodyTransformer extends BodyTransformer {
             return;
         }
 
+
+
+
         if (castExpr.getCastType() instanceof PrimType) {
+
+
+            if(definitionStmt.getLeftOp().getType() == castExpr.getOp().getType()){
+                //remove the cast
+                Stmt assignment = Jimple.v().newAssignStmt(definitionStmt.getLeftOp(), castExpr.getOp());
+                body.getUnits().insertBefore(assignment, definitionStmt);
+                body.getUnits().remove(definitionStmt);
+                return;
+            }
 
             // we have to convert the value properly,
             //e.g., Long l = (long) Integer i;
@@ -417,6 +429,8 @@ public class BoxingBodyTransformer extends BodyTransformer {
             }
             if (castExpr.getOp().getType() instanceof RefType) {
                 SootClass sootClassOfRightSide = ((RefType) castExpr.getOp().getType()).getSootClass();
+
+
 
 //            SootMethod methodToCall = sootClassOfRightSide.getMethod(stringType.getClassName() + " toString()");
                 SootMethod methodToCall = getMethodOnSnapshot(sootClassOfRightSide, "toString", new ArrayList<>(), stringType);
@@ -842,6 +856,9 @@ public class BoxingBodyTransformer extends BodyTransformer {
     private void handleInvokeExprForIgnoredMethod(InvokeExpr invokeExpr, Unit unit, Body body, HashMap<Value, Type> originalLocalTypes, LocalGenerator localGenerator) {
         Unit insertBefore = unit;
 
+
+
+
         //du to auto boxing, we might result in
         // Integer $r2 = staticinvoke <java.lang.Integer: java.lang.Integer valueOf(int)>( Integer $i0);
         //after lifting this does not make any sense
@@ -919,6 +936,9 @@ public class BoxingBodyTransformer extends BodyTransformer {
 
         //unit has been removed (probably here)
 
+
+
+
         /* now check the arguments of the invoke expression, they may need to be unboxed ..
          * since we don't lift the ignored methods
          * they never need to be boxed
@@ -928,6 +948,17 @@ public class BoxingBodyTransformer extends BodyTransformer {
             Type argType = invokeExpr.getArg(i).getType();
             Type parameterType = methodParameterTypes.get(i);
             boolean mustBeUnboxed = !BoxingTransformerUtility.isCompatible(argType, parameterType);
+            //if they parameter type is not primtive no unboxing required
+            if(parameterType instanceof ArrayType){
+                if(!(((ArrayType) parameterType).baseType instanceof PrimType))
+                    continue;
+            }
+            else if(!(parameterType instanceof PrimType)){
+                continue;
+            }
+
+
+
 
             if ((mustBeUnboxed) && !(invokeExpr.getArg(i) instanceof Constant)) {
                 //we have to getUnBoxedType the argument
