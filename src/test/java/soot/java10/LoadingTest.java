@@ -43,55 +43,59 @@ import soot.options.Options;
  * @author Andreas Dann
  */
 public class LoadingTest {
-  /**
-   * load a JDK9to11 class by naming its module
-   */
-  @Test
-  public void testLoadingJava9to11Class() {
-    G.reset();
-    Options.v().set_soot_modulepath("VIRTUAL_FS_FOR_JDK9");
-    Scene.v().loadBasicClasses();
-    Scene.v().loadNecessaryClasses();
+	/**
+	 * load a JDK9to11 class by naming its module
+	 */
+	@Test
+	public void testLoadingJava9to11Class() {
+		G.reset();
+		Options.v().set_soot_modulepath("VIRTUAL_FS_FOR_JDK9");
+		Scene.v().loadBasicClasses();
 
-    SootClass klass
-        = SootModuleResolver.v().resolveClass("java.lang.invoke.ConstantBootstraps", SootClass.BODIES, Optional.of("java.base"));
-    
-    assertTrue(klass.getName().equals("java.lang.invoke.ConstantBootstraps"));
-    assertTrue(klass.moduleName.equals("java.base"));
+		SootClass klass1
+		= SootModuleResolver.v().resolveClass("java.lang.invoke.VarHandle", SootClass.BODIES, Optional.of("java.base"));
+		
 
-  }
+		assertTrue(klass1.getName().equals("java.lang.invoke.VarHandle"));
+		assertTrue(klass1.moduleName.equals("java.base"));
 
-  /**
-   * load a JDK9 class using the CI
-   */
-  @Test
-  public void testLoadingJava9ClassFromCI() {
-    G.reset();
-    File tempDir = Files.createTempDir();
 
-    Main.main(new String[] { "-soot-modulepath", tempDir.getAbsolutePath(), "-pp", "-src-prec", "only-class",
-        "-allow-phantom-refs", "java.lang.invoke.VarHandle" });
+		SootClass klass2
+		= SootModuleResolver.v().resolveClass("java.lang.invoke.ConstantBootstraps", SootClass.BODIES, Optional.of("java.base"));
 
-    SootClass klass = Scene.v().getSootClass("java.lang.invoke.VarHandle");
-    assertTrue(klass.getName().equals("java.lang.invoke.VarHandle"));
-    assertTrue(klass.moduleName.equals("java.base"));
+		assertTrue(klass2.getName().equals("java.lang.invoke.ConstantBootstraps"));
+		assertTrue(klass2.moduleName.equals("java.base"));
+		
+		Scene.v().loadNecessaryClasses();
+	}
 
-  }
-  
-  /**
-   * load a JDK11 class using the CI
-   */
-  @Test
-  public void testLoadingJava11ClassFromCI() {
-    G.reset();
-    File tempDir = Files.createTempDir();
+	/**
+	 * load a JDK9 class using the CI
+	 */
+	@Test
+	public void testLoadingJava9ClassFromCI() {
 
-    Main.main(new String[] { "-soot-modulepath", tempDir.getAbsolutePath(), "-pp", "-src-prec", "only-class",
-        "-allow-phantom-refs", "java.lang.invoke.ConstantBootstraps" });
+		Main.main(new String[] { "-soot-modulepath", "VIRTUAL_FS_FOR_JDK9", "-pp", "-src-prec", "only-class",
+				"-allow-phantom-refs", "java.lang.invoke.VarHandle" });
 
-    SootClass klass = Scene.v().getSootClass("java.lang.invoke.ConstantBootstraps");
-    assertTrue(klass.getName().equals("ConstantBootstraps"));
-    assertTrue(klass.moduleName.equals("java.base"));
+		SootClass klass = Scene.v().getSootClass("java.lang.invoke.VarHandle");
+		assertTrue(klass.getName().equals("java.lang.invoke.VarHandle"));
+		assertTrue(klass.moduleName.equals("java.base"));
 
-  }
+	}
+
+	/**
+	 * load a JDK11 class using the CI
+	 */
+	@Test
+	public void testLoadingJava11ClassFromCI() {
+
+		Main.main(new String[] { "-soot-modulepath", "VIRTUAL_FS_FOR_JDK9", "-pp", "-src-prec", "only-class",
+				"-allow-phantom-refs", "java.lang.invoke.ConstantBootstraps" });
+
+		SootClass klass = Scene.v().getSootClass("java.lang.invoke.ConstantBootstraps");
+		assertTrue(klass.getName().equals("ConstantBootstraps"));
+		assertTrue(klass.moduleName.equals("java.base"));
+
+	}
 }
