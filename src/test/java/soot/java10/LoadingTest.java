@@ -52,9 +52,11 @@ public class LoadingTest {
     Options.v().set_soot_modulepath("VIRTUAL_FS_FOR_JDK9");
     Scene.v().loadBasicClasses();
     Scene.v().loadNecessaryClasses();
+
     SootClass klass
-        = SootModuleResolver.v().resolveClass("java.lang.invoke.VarHandle", SootClass.BODIES, Optional.of("java.base"));
-    assertTrue(klass.getName().equals("java.lang.invoke.VarHandle"));
+        = SootModuleResolver.v().resolveClass("java.lang.invoke.ConstantBootstraps", SootClass.BODIES, Optional.of("java.base"));
+    
+    assertTrue(klass.getName().equals("java.lang.invoke.ConstantBootstraps"));
     assertTrue(klass.moduleName.equals("java.base"));
 
   }
@@ -85,10 +87,10 @@ public class LoadingTest {
     File tempDir = Files.createTempDir();
 
     Main.main(new String[] { "-soot-modulepath", tempDir.getAbsolutePath(), "-pp", "-src-prec", "only-class",
-        "-allow-phantom-refs", "java.lang.invoke.VarHandle" });
+        "-allow-phantom-refs", "java.lang.invoke.ConstantBootstraps" });
 
-    SootClass klass = Scene.v().getSootClass("java.lang.invoke.VarHandle");
-    assertTrue(klass.getName().equals("java.lang.invoke.VarHandle"));
+    SootClass klass = Scene.v().getSootClass("java.lang.invoke.ConstantBootstraps");
+    assertTrue(klass.getName().equals("ConstantBootstraps"));
     assertTrue(klass.moduleName.equals("java.base"));
 
   }
