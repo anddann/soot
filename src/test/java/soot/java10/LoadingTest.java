@@ -74,7 +74,7 @@ public class LoadingTest {
 	 */
 	@Test
 	public void testLoadingJava9ClassFromCI() {
-
+		G.reset();
 		Main.main(new String[] { "-soot-modulepath", "VIRTUAL_FS_FOR_JDK9", "-pp", "-src-prec", "only-class",
 				"-allow-phantom-refs", "java.lang.invoke.VarHandle" });
 
@@ -89,12 +89,12 @@ public class LoadingTest {
 	 */
 	@Test
 	public void testLoadingJava11ClassFromCI() {
-
+		G.reset();
 		Main.main(new String[] { "-soot-modulepath", "VIRTUAL_FS_FOR_JDK9", "-pp", "-src-prec", "only-class",
 				"-allow-phantom-refs", "java.lang.invoke.ConstantBootstraps" });
 
 		SootClass klass = Scene.v().getSootClass("java.lang.invoke.ConstantBootstraps");
-		assertTrue(klass.getName().equals("ConstantBootstraps"));
+		assertTrue(klass.getName().equals("java.lang.invoke.ConstantBootstraps"));
 		assertTrue(klass.moduleName.equals("java.base"));
 
 	}
