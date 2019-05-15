@@ -49,7 +49,8 @@ public class LoadingTest {
 	@Test
 	public void testLoadingJava9to11Class() {
 		G.reset();
-		Options.v().set_soot_modulepath("VIRTUAL_FS_FOR_JDK9");
+		
+		Options.v().set_soot_modulepath("VIRTUAL_FS_FOR_JDK");
 		Scene.v().loadBasicClasses();
 
 		SootClass klass1
@@ -75,8 +76,8 @@ public class LoadingTest {
 	@Test
 	public void testLoadingJava9ClassFromCI() {
 		G.reset();
-		Main.main(new String[] { "-soot-modulepath", "VIRTUAL_FS_FOR_JDK9", "-pp", "-src-prec", "only-class",
-				"-allow-phantom-refs", "java.lang.invoke.VarHandle" });
+
+		Main.main(new String[] { "-soot-modulepath", "VIRTUAL_FS_FOR_JDK", "-pp", "-src-prec", "only-class", "java.lang.invoke.VarHandle" });
 
 		SootClass klass = Scene.v().getSootClass("java.lang.invoke.VarHandle");
 		assertTrue(klass.getName().equals("java.lang.invoke.VarHandle"));
@@ -90,8 +91,8 @@ public class LoadingTest {
 	@Test
 	public void testLoadingJava11ClassFromCI() {
 		G.reset();
-		Main.main(new String[] { "-soot-modulepath", "VIRTUAL_FS_FOR_JDK9", "-pp", "-src-prec", "only-class",
-				"-allow-phantom-refs", "java.lang.invoke.ConstantBootstraps" });
+
+		Main.main(new String[] { "-soot-modulepath", "VIRTUAL_FS_FOR_JDK", "-pp", "-src-prec", "only-class", "java.lang.invoke.ConstantBootstraps" });
 
 		SootClass klass = Scene.v().getSootClass("java.lang.invoke.ConstantBootstraps");
 		assertTrue(klass.getName().equals("java.lang.invoke.ConstantBootstraps"));
