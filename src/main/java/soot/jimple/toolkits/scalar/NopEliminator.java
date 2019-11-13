@@ -22,6 +22,8 @@ package soot.jimple.toolkits.scalar;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Iterator;
 import java.util.Map;
 
@@ -30,22 +32,19 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
-import soot.Singletons;
+import soot.JastAddJ.Options;
 import soot.Trap;
 import soot.Unit;
 import soot.jimple.NopStmt;
-import soot.options.Options;
 import soot.util.Chain;
 
 public class NopEliminator extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(NopEliminator.class);
+  private Options myOptions;
 
-  public NopEliminator(Singletons.Global g) {
-  }
-
-  public static NopEliminator v() {
-    return G.v().soot_jimple_toolkits_scalar_NopEliminator();
+  @Inject
+  public NopEliminator(Options myOptions) {
+    this.myOptions = myOptions;
   }
 
   /**

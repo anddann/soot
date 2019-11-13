@@ -22,6 +22,8 @@ package soot.jimple.toolkits.invoke;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,16 +34,15 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.G;
 import soot.Hierarchy;
 import soot.PackManager;
 import soot.PhaseOptions;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
+import soot.JastAddJ.Options;
 import soot.jimple.JimpleBody;
 import soot.jimple.Stmt;
 import soot.jimple.toolkits.callgraph.CallGraph;
@@ -49,18 +50,20 @@ import soot.jimple.toolkits.callgraph.ExplicitEdgesPred;
 import soot.jimple.toolkits.callgraph.Filter;
 import soot.jimple.toolkits.callgraph.Targets;
 import soot.jimple.toolkits.callgraph.TopologicalOrderer;
-import soot.options.Options;
 import soot.tagkit.Host;
 
 /** Uses the Scene's currently-active InvokeGraph to inline monomorphic call sites. */
 public class StaticInliner extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(StaticInliner.class);
+  private Options myOptions;
+  private Scene myScene;
+  private PackManager myPackManager;
 
-  public StaticInliner(Singletons.Global g) {
-  }
-
-  public static StaticInliner v() {
-    return G.v().soot_jimple_toolkits_invoke_StaticInliner();
+  @Inject
+  public StaticInliner(Options myOptions, Scene myScene, PackManager myPackManager) {
+    this.myOptions = myOptions;
+    this.myScene = myScene;
+    this.myPackManager = myPackManager;
   }
 
   protected void internalTransform(String phaseName, Map options) {
@@ -177,7 +180,7 @@ public class StaticInliner extends SceneTransformer {
 
           SiteInliner.inlineSite(inlinee, invokeStmt, container, options);
           if (rerunJb) {
-            PackmyManager.getPack("jb").apply(container.getActiveBody());
+            myPackManager.getPack("jb").apply(container.getActiveBody());
           }
         }
       }

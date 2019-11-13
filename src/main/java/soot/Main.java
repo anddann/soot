@@ -60,9 +60,6 @@ public class Main {
     this.myScene = myScene;
   }
 
-  public static Main v() {
-    return G.v().soot_Main();
-  }
 
   // TODO: the following string should be updated by the source control
   // No it shouldn't. Prcs is horribly broken in this respect, and causes
@@ -154,7 +151,7 @@ public class Main {
   public static void main(String[] args) {
     try {
       //FIXME call the injectopr
-      Injector injector = Guice.createInjector(new BaseModule());
+      Injector injector = Guice.createInjector(new Singletons());
       Main main = injector.getInstance(Main.class);
 
       main.run(args);

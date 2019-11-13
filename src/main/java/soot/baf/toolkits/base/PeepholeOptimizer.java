@@ -31,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,12 +52,10 @@ import soot.Singletons;
 public class PeepholeOptimizer extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(PeepholeOptimizer.class);
 
-  public PeepholeOptimizer(Singletons.Global g) {
+  @Inject
+  public PeepholeOptimizer() {
   }
 
-  public static PeepholeOptimizer v() {
-    return G.v().soot_baf_toolkits_base_PeepholeOptimizer();
-  }
 
   private final String packageName = "soot.baf.toolkits.base";
   private static boolean peepholesLoaded = false;

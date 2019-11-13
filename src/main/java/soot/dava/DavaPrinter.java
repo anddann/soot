@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BooleanType;
 import soot.ByteType;
@@ -36,12 +37,12 @@ import soot.DoubleType;
 import soot.FloatType;
 import soot.G;
 import soot.IntType;
+import soot.JastAddJ.Options;
 import soot.LongType;
 import soot.Modifier;
 import soot.RefType;
 import soot.Scene;
 import soot.ShortType;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -50,7 +51,6 @@ import soot.Unit;
 import soot.UnitPrinter;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.toolkits.base.renamer.RemoveFullyQualifiedName;
-import soot.options.Options;
 import soot.tagkit.DoubleConstantValueTag;
 import soot.tagkit.FloatConstantValueTag;
 import soot.tagkit.IntegerConstantValueTag;
@@ -61,12 +61,17 @@ import soot.util.Chain;
 import soot.util.IterableSet;
 
 public class DavaPrinter {
-  public DavaPrinter(Singletons.Global g) {
+  private Options myOptions;
+  private Dava myDava;
+  private Scene myScene;
+
+  @Inject
+  public DavaPrinter(Options myOptions, Dava myDava, Scene myScene) {
+    this.myOptions = myOptions;
+    this.myDava = myDava;
+    this.myScene = myScene;
   }
 
-  public static DavaPrinter v() {
-    return G.v().soot_dava_DavaPrinter();
-  }
 
   private void printStatementsInBody(Body body, java.io.PrintWriter out) {
 

@@ -28,14 +28,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
+import soot.JastAddJ.Options;
 import soot.Local;
-import soot.Singletons;
 import soot.Unit;
 import soot.Value;
 import soot.grimp.Grimp;
@@ -45,20 +45,21 @@ import soot.jimple.InvokeStmt;
 import soot.jimple.NewExpr;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
-import soot.options.Options;
 import soot.toolkits.scalar.LocalUses;
 import soot.toolkits.scalar.UnitValueBoxPair;
 import soot.util.Chain;
 
 public class ConstructorFolder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ConstructorFolder.class);
+  private Options myOptions;
+  private Grimp myGrimp;
 
-  public ConstructorFolder(Singletons.Global g) {
+  @Inject
+  public ConstructorFolder(Options myOptions, Grimp myGrimp) {
+    this.myOptions = myOptions;
+    this.myGrimp = myGrimp;
   }
 
-  public static ConstructorFolder v() {
-    return G.v().soot_grimp_toolkits_base_ConstructorFolder();
-  }
 
   /** This method change all new Obj/<init>(args) pairs to new Obj(args) idioms. */
   protected void internalTransform(Body b, String phaseName, Map options) {

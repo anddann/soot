@@ -22,6 +22,8 @@ package soot.jimple.toolkits.pointer;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -37,19 +39,18 @@ import soot.BodyTransformer;
 import soot.G;
 import soot.PhaseOptions;
 import soot.Scene;
-import soot.Singletons;
 import soot.jimple.Stmt;
 import soot.jimple.toolkits.callgraph.CallGraph;
 
 public class SideEffectTagger extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(SideEffectTagger.class);
+  private Scene myScene;
 
-  public SideEffectTagger(Singletons.Global g) {
+  @Inject
+  public SideEffectTagger(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public static SideEffectTagger v() {
-    return G.v().soot_jimple_toolkits_pointer_SideEffectTagger();
-  }
 
   public int numRWs = 0;
   public int numWRs = 0;

@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.G;
@@ -39,12 +40,11 @@ import soot.toolkits.graph.MHGDominatorsFinder;
  * A body transformer that records avail expression information in tags. - both pessimistic and optimistic options
  */
 public class DominatorsTagger extends BodyTransformer {
-  public DominatorsTagger(Singletons.Global g) {
+
+  @Inject
+  public DominatorsTagger() {
   }
 
-  public static DominatorsTagger v() {
-    return G.v().soot_jimple_toolkits_annotation_DominatorsTagger();
-  }
 
   protected void internalTransform(Body b, String phaseName, Map opts) {
 

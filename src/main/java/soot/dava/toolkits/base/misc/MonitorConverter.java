@@ -22,6 +22,8 @@ package soot.dava.toolkits.base.misc;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -29,7 +31,7 @@ import java.util.LinkedList;
 import soot.G;
 import soot.Modifier;
 import soot.RefType;
-import soot.Singletons;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.VoidType;
@@ -40,28 +42,36 @@ import soot.dava.internal.javaRep.DVirtualInvokeExpr;
 import soot.grimp.internal.GInvokeStmt;
 import soot.jimple.EnterMonitorStmt;
 import soot.jimple.MonitorStmt;
+import soot.options.Options;
 
 public class MonitorConverter {
-  public MonitorConverter(Singletons.Global g) {
-    SootClass davaMonitor = new SootClass("soot.dava.toolkits.base.DavaMonitor.DavaMonitor", myOptions, Modifier.PUBLIC, myScene, myPackageNamer);
-    davaMonitor.setSuperclass(myScene.loadClassAndSupport("java.lang.Object"));
+
+  private final Scene myScene;
+  private final PackageNamer myPackageNamer;
+  private final Options myOptions;
+
+  @Inject
+  public MonitorConverter(Scene myScene, PackageNamer myPackageNamer, Options myOptions) {
+    this.myScene = myScene;
+    this.myPackageNamer = myPackageNamer;
+    this.myOptions = myOptions;
+    SootClass davaMonitor = new SootClass("soot.dava.toolkits.base.DavaMonitor.DavaMonitor", this.myOptions, Modifier.PUBLIC,
+        this.myScene, this.myPackageNamer);
+    davaMonitor.setSuperclass(this.myScene.loadClassAndSupport("java.lang.Object"));
 
     LinkedList objectSingleton = new LinkedList();
-    objectSingleton.add(RefType.v("java.lang.Object"));
-    v = myScene.makeSootMethod("v", new LinkedList(), RefType.v("soot.dava.toolkits.base.DavaMonitor.DavaMonitor"),
-        Modifier.PUBLIC | Modifier.STATIC);
-    enter = myScene.makeSootMethod("enter", objectSingleton, VoidType.v(), Modifier.PUBLIC | Modifier.SYNCHRONIZED);
-    exit = myScene.makeSootMethod("exit", objectSingleton, VoidType.v(), Modifier.PUBLIC | Modifier.SYNCHRONIZED);
+    objectSingleton.add(RefType.v("java.lang.Object", myScene));
+    v = this.myScene.makeSootMethod("v", new LinkedList(),
+        RefType.v("soot.dava.toolkits.base.DavaMonitor.DavaMonitor", myScene), Modifier.PUBLIC | Modifier.STATIC);
+    enter = this.myScene.makeSootMethod("enter", objectSingleton, VoidType.v(), Modifier.PUBLIC | Modifier.SYNCHRONIZED);
+    exit = this.myScene.makeSootMethod("exit", objectSingleton, VoidType.v(), Modifier.PUBLIC | Modifier.SYNCHRONIZED);
     davaMonitor.addMethod(v);
     davaMonitor.addMethod(enter);
     davaMonitor.addMethod(exit);
 
-    myScene.addClass(davaMonitor);
+    this.myScene.addClass(davaMonitor);
   }
 
-  public static MonitorConverter v() {
-    return G.v().soot_dava_toolkits_base_misc_MonitorConverter();
-  }
 
   private final SootMethod v, enter, exit;
 

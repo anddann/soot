@@ -29,15 +29,20 @@ import soot.Type;
 import soot.util.Switch;
 
 public class NullConstant extends Constant {
-  public NullConstant(Singletons.Global g) {
+  private NullConstant() {
   }
 
+  private static  NullConstant instance;
+
   public static NullConstant v() {
-    return G.v().soot_jimple_NullConstant();
+    if(instance==null){
+      instance=new NullConstant();
+    }
+    return instance;
   }
 
   public boolean equals(Object c) {
-    return c == G.v().soot_jimple_NullConstant();
+    return c == instance;
   }
 
   public int hashCode() {

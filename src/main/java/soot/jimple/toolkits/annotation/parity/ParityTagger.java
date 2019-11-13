@@ -26,13 +26,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
-import soot.Singletons;
 import soot.Value;
 import soot.ValueBox;
 import soot.jimple.IntConstant;
@@ -51,13 +50,13 @@ import soot.toolkits.scalar.SimpleLiveLocals;
  */
 public class ParityTagger extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ParityTagger.class);
+  private Options myOptions;
 
-  public ParityTagger(Singletons.Global g) {
+  @Inject
+  public ParityTagger(Options myOptions) {
+    this.myOptions = myOptions;
   }
 
-  public static ParityTagger v() {
-    return G.v().soot_jimple_toolkits_annotation_parity_ParityTagger();
-  }
 
   protected void internalTransform(Body b, String phaseName, Map options) {
 

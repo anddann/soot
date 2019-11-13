@@ -25,15 +25,14 @@ package soot.jimple.toolkits.reflection;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.G;
 import soot.Local;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
@@ -54,13 +53,16 @@ public class ConstantInvokeMethodBaseTransformer extends SceneTransformer {
 
   private final static String INVOKE_SIG
       = "<java.lang.reflect.Method: java.lang.Object invoke(java.lang.Object,java.lang.Object[])>";
+  private Scene myScene;
+  private Jimple myJimple;
 
-  public ConstantInvokeMethodBaseTransformer(Singletons.Global g) {
+  @Inject
+  public ConstantInvokeMethodBaseTransformer(Scene myScene, Jimple myJimple) {
+    this.myScene = myScene;
+    this.myJimple = myJimple;
   }
 
-  public static ConstantInvokeMethodBaseTransformer v() {
-    return G.v().soot_jimple_toolkits_reflection_ConstantInvokeMethodBaseTransformer();
-  }
+
 
   @Override
   protected void internalTransform(String phaseName, Map<String, String> options) {

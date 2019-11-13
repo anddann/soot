@@ -24,22 +24,25 @@ package soot.jimple.toolkits.typing.fast;
  * #L%
  */
 
-import soot.G;
 import soot.IntegerType;
 import soot.PrimType;
 import soot.RefType;
-import soot.Singletons;
+import soot.Scene;
 
 /**
  * @author Ben Bellamy
  */
 public class Integer1Type extends PrimType implements IntegerType {
+  private static Integer1Type instance;
 
-  public static Integer1Type v() {
-    return G.v().soot_jimple_toolkits_typing_fast_Integer1Type();
+  private Integer1Type() {
   }
 
-  public Integer1Type(Singletons.Global g) {
+  public static Integer1Type v() {
+    if (instance == null) {
+      instance = new Integer1Type();
+    }
+    return instance;
   }
 
   public String toString() {
@@ -51,8 +54,8 @@ public class Integer1Type extends PrimType implements IntegerType {
   }
 
   @Override
-  public RefType boxedType() {
-    return RefType.v("java.lang.Integer");
+  public RefType boxedType(Scene myScene) {
+    return RefType.v("java.lang.Integer", myScene);
   }
 
   @Override

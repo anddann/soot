@@ -27,11 +27,14 @@ import soot.util.Switch;
 /** Represents the Java void type. */
 @SuppressWarnings("serial")
 public class VoidType extends Type {
-  public VoidType(Singletons.Global g) {
+  private VoidType() {
   }
-
+  private static VoidType instance;
   public static VoidType v() {
-    return G.v().soot_VoidType();
+    if(instance==null){
+      instance=new VoidType();
+    }
+    return instance;
   }
 
   public int hashCode() {

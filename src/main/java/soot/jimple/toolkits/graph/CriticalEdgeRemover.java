@@ -22,6 +22,8 @@ package soot.jimple.toolkits.graph;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,12 +35,10 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
-import soot.Singletons;
 import soot.Unit;
 import soot.UnitBox;
+import soot.JastAddJ.Options;
 import soot.jimple.Jimple;
-import soot.options.Options;
 import soot.util.Chain;
 
 /**
@@ -52,12 +52,13 @@ import soot.util.Chain;
  */
 public class CriticalEdgeRemover extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(CriticalEdgeRemover.class);
+  private Options myOptions;
+  private Jimple myJimple;
 
-  public CriticalEdgeRemover(Singletons.Global g) {
-  }
-
-  public static CriticalEdgeRemover v() {
-    return G.v().soot_jimple_toolkits_graph_CriticalEdgeRemover();
+  @Inject
+  public CriticalEdgeRemover(Options myOptions, Jimple myJimple) {
+    this.myOptions = myOptions;
+    this.myJimple = myJimple;
   }
 
   /**
@@ -87,7 +88,7 @@ public class CriticalEdgeRemover extends BodyTransformer {
    *          is the Unit the <code>goto</code> will jump to.
    * @return the newly inserted <code>Goto</code>
    */
-  private static Unit insertGotoAfter(Chain<Unit> unitChain, Unit node, Unit target) {
+  private static Unit insertGotoAfter(Chain<Unit> unitChain, Unit node, Unit target, Jimple myJimple) {
     Unit newGoto = myJimple.newGotoStmt(target);
     unitChain.insertAfter(newGoto, node);
     return newGoto;
@@ -107,7 +108,7 @@ public class CriticalEdgeRemover extends BodyTransformer {
    * @return the newly inserted <code>Goto</code>
    */
   /* note, that this method has slightly more overhead than the insertGotoAfter */
-  private static Unit insertGotoBefore(Chain<Unit> unitChain, Unit node, Unit target) {
+  private static Unit insertGotoBefore(Chain<Unit> unitChain, Unit node, Unit target, Jimple myJimple) {
     Unit newGoto = myJimple.newGotoStmt(target);
     unitChain.insertBefore(newGoto, node);
     newGoto.redirectJumpsToThisTo(node);
@@ -201,7 +202,7 @@ public class CriticalEdgeRemover extends BodyTransformer {
            * redirection might not be necessary, but is pleasant anyways (see the Javadoc for this method)
            */
           if (directPredecessor != null && directPredecessor.fallsThrough()) {
-            directPredecessor = insertGotoAfter(unitChain, directPredecessor, currentUnit);
+            directPredecessor = insertGotoAfter(unitChain, directPredecessor, currentUnit, myJimple);
           }
 
           /*
@@ -221,9 +222,9 @@ public class CriticalEdgeRemover extends BodyTransformer {
                * insert synthetic node (insertGotoAfter should be slightly faster)
                */
               if (directPredecessor == null) {
-                directPredecessor = insertGotoBefore(unitChain, currentUnit, currentUnit);
+                directPredecessor = insertGotoBefore(unitChain, currentUnit, currentUnit, myJimple);
               } else {
-                directPredecessor = insertGotoAfter(unitChain, directPredecessor, currentUnit);
+                directPredecessor = insertGotoAfter(unitChain, directPredecessor, currentUnit, myJimple);
               }
               /* update the branch */
               redirectBranch(predecessor, currentUnit, directPredecessor);

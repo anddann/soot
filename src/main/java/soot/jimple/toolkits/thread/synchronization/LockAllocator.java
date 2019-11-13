@@ -22,6 +22,8 @@ package soot.jimple.toolkits.thread.synchronization;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,14 +40,12 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.EquivalentValue;
-import soot.G;
 import soot.Local;
 import soot.PhaseOptions;
 import soot.PointsToAnalysis;
 import soot.RefType;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -78,12 +78,11 @@ import soot.util.Chain;
 
 public class LockAllocator extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(LockAllocator.class);
+  private Scene myScene;
 
-  public LockAllocator(Singletons.Global g) {
-  }
-
-  public static LockAllocator v() {
-    return G.v().soot_jimple_toolkits_thread_synchronization_LockAllocator();
+  @Inject
+  public LockAllocator(Scene myScene) {
+    this.myScene = myScene;
   }
 
   List<CriticalSection> criticalSections = null;

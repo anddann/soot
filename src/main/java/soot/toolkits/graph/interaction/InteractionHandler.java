@@ -24,13 +24,12 @@ package soot.toolkits.graph.interaction;
 
 import java.util.ArrayList;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.G;
 import soot.PhaseOptions;
-import soot.Singletons;
 import soot.SootMethod;
 import soot.Transform;
 import soot.jimple.toolkits.annotation.callgraph.CallGraphGrapher;
@@ -39,13 +38,15 @@ import soot.toolkits.graph.DirectedGraph;
 
 public class InteractionHandler {
   private static final Logger logger = LoggerFactory.getLogger(InteractionHandler.class);
+  private PhaseOptions myPhaseOptions;
+  private Options myOptions;
 
-  public InteractionHandler(Singletons.Global g) {
+  @Inject
+  public InteractionHandler(PhaseOptions myPhaseOptions, Options myOptions) {
+    this.myPhaseOptions = myPhaseOptions;
+    this.myOptions = myOptions;
   }
 
-  public static InteractionHandler v() {
-    return G.v().soot_toolkits_graph_interaction_InteractionHandler();
-  }
 
   private ArrayList<Object> stopUnitList;
 
@@ -68,7 +69,7 @@ public class InteractionHandler {
 
   public void handleNewAnalysis(Transform t, Body b) {
     // here save current phase name and only send if actual data flow analysis exists
-    if (PhaseOptions.getBoolean(myPhaseOptions().getPhaseOptions(t.getPhaseName()), "enabled")) {
+    if (PhaseOptions.getBoolean(myPhaseOptions.getPhaseOptions(t.getPhaseName()), "enabled")) {
       String name = t.getPhaseName() + " for method: " + b.getMethod().getName();
       currentPhaseName(name);
       currentPhaseEnabled(true);

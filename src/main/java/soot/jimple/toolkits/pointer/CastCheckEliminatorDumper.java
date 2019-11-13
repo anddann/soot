@@ -24,6 +24,7 @@ package soot.jimple.toolkits.pointer;
 
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.G;
@@ -32,12 +33,10 @@ import soot.toolkits.graph.BriefUnitGraph;
 
 /** A body transformer that simply calls the CastCheckEliminator analysis. */
 public class CastCheckEliminatorDumper extends BodyTransformer {
-  public CastCheckEliminatorDumper(Singletons.Global g) {
+  @Inject
+  public CastCheckEliminatorDumper() {
   }
 
-  public static CastCheckEliminatorDumper v() {
-    return G.v().soot_jimple_toolkits_pointer_CastCheckEliminatorDumper();
-  }
 
   public String getDefaultOptions() {
     return "";

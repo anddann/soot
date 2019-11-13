@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.G;
 import soot.Singletons;
 
@@ -40,15 +41,11 @@ import soot.Singletons;
  */
 public class SlowPseudoTopologicalOrderer<N> implements Orderer<N> {
 
-  public SlowPseudoTopologicalOrderer(Singletons.Global g) {
-  }
 
-  public static SlowPseudoTopologicalOrderer v() {
-    return G.v().soot_toolkits_graph_SlowPseudoTopologicalOrderer();
-  }
-
+  @Inject
   public SlowPseudoTopologicalOrderer() {
   }
+
 
   public SlowPseudoTopologicalOrderer(boolean isReversed) {
     mIsReversed = isReversed;

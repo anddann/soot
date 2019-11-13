@@ -22,14 +22,14 @@ package soot.jimple.toolkits.scalar;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Map;
 
 import soot.Body;
 import soot.BodyTransformer;
 import soot.DoubleType;
 import soot.FloatType;
-import soot.G;
-import soot.Singletons;
 import soot.Unit;
 import soot.jimple.AssignStmt;
 import soot.jimple.CastExpr;
@@ -47,12 +47,10 @@ import soot.jimple.IntConstant;
  */
 public class ConstantCastEliminator extends BodyTransformer {
 
-  public ConstantCastEliminator(Singletons.Global g) {
+  @Inject
+  public ConstantCastEliminator() {
   }
 
-  public static ConstantCastEliminator v() {
-    return G.v().soot_jimple_toolkits_scalar_ConstantCastEliminator();
-  }
 
   @Override
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {

@@ -29,12 +29,19 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class ErroneousType extends Type {
-  public ErroneousType(Singletons.Global g) {
+  private static ErroneousType instance;
+
+  private ErroneousType() {
+  }
+  public static ErroneousType v() {
+    if (instance == null) {
+      instance = new ErroneousType();
+    }
+    return instance;
+
   }
 
-  public static ErroneousType v() {
-    return G.v().soot_ErroneousType();
-  }
+
 
   public int hashCode() {
     return 0x92473FFF;

@@ -31,16 +31,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.G;
+import soot.JastAddJ.Options;
 import soot.PhaseOptions;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
-import soot.options.Options;
 import soot.util.Chain;
 
 /**
@@ -61,13 +60,15 @@ import soot.util.Chain;
  */
 public class RenameDuplicatedClasses extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(RenameDuplicatedClasses.class);
+  private Options myOptions;
+  private Scene myScene;
 
-  public RenameDuplicatedClasses(Singletons.Global g) {
+  @Inject
+  public RenameDuplicatedClasses(Options myOptions, Scene myScene) {
+    this.myOptions = myOptions;
+    this.myScene = myScene;
   }
 
-  public static RenameDuplicatedClasses v() {
-    return G.v().soot_jimple_toolkits_base_RenameDuplicatedClasses();
-  }
 
   private static final String FIXED_CLASS_NAME_SPERATOR = "-";
 

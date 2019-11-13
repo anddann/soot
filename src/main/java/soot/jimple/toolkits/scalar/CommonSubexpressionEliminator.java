@@ -28,18 +28,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
 import soot.EquivalentValue;
-import soot.G;
+import soot.JastAddJ.Options;
 import soot.Local;
 import soot.PhaseOptions;
 import soot.Scene;
 import soot.SideEffectTester;
-import soot.Singletons;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
@@ -48,7 +48,6 @@ import soot.jimple.Jimple;
 import soot.jimple.NaiveSideEffectTester;
 import soot.jimple.Stmt;
 import soot.jimple.toolkits.pointer.PASideEffectTester;
-import soot.options.Options;
 import soot.tagkit.StringTag;
 import soot.toolkits.scalar.UnitValueBoxPair;
 import soot.util.Chain;
@@ -65,13 +64,18 @@ import soot.util.Chain;
 
 public class CommonSubexpressionEliminator extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(CommonSubexpressionEliminator.class);
+  private Scene myScene;
+  private Options myOptions;
+  private Jimple myJimple;
 
-  public CommonSubexpressionEliminator(Singletons.Global g) {
+  @Inject
+  public CommonSubexpressionEliminator(Scene myScene, Options myOptions, Jimple myJimple) {
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myJimple = myJimple;
   }
 
-  public static CommonSubexpressionEliminator v() {
-    return G.v().soot_jimple_toolkits_scalar_CommonSubexpressionEliminator();
-  }
+
 
   /** Common subexpression eliminator. */
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {

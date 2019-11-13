@@ -28,15 +28,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.Local;
 import soot.PhaseOptions;
-import soot.Singletons;
 import soot.Timers;
 import soot.Unit;
 import soot.Value;
@@ -59,13 +58,15 @@ import soot.util.Chain;
 
 public class Aggregator extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(Aggregator.class);
+  private Options myOptions;
+  private Timers myTimers;
 
-  public Aggregator(Singletons.Global g) {
+  @Inject
+  public Aggregator(Options myOptions, Timers myTimers) {
+    this.myOptions = myOptions;
+    this.myTimers = myTimers;
   }
 
-  public static Aggregator v() {
-    return G.v().soot_jimple_toolkits_base_Aggregator();
-  }
 
   /**
    * Traverse the statements in the given body, looking for aggregation possibilities; that is, given a def d and a use u, d

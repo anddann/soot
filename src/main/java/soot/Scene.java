@@ -2045,7 +2045,7 @@ public class Scene // extends AbstractHost
   }
 
   public RefType getOrAddRefType(String refTypeName) {
-    return nameToClass.computeIfAbsent(refTypeName, k -> new RefType(k));
+    return nameToClass.computeIfAbsent(refTypeName, k -> new RefType(mySootResolver, k));
   }
 
   /**

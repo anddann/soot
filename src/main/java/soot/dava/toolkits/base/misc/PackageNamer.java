@@ -22,6 +22,8 @@ package soot.dava.toolkits.base.misc;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,22 +35,23 @@ import java.util.jar.JarFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.G;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootClass;
 import soot.dava.Dava;
 import soot.util.IterableSet;
 
 public class PackageNamer {
   private static final Logger logger = LoggerFactory.getLogger(PackageNamer.class);
+  private Dava myDava;
+  private Scene myScene;
 
-  public PackageNamer(Singletons.Global g) {
+
+  @Inject
+  public PackageNamer(Dava myDava, Scene myScene) {
+    this.myDava = myDava;
+    this.myScene = myScene;
   }
 
-  public static PackageNamer v() {
-    return G.v().soot_dava_toolkits_base_misc_PackageNamer();
-  }
 
   public boolean has_FixedNames() {
     return fixed;

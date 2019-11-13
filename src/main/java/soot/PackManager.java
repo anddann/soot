@@ -444,7 +444,7 @@ public class PackManager {
       p.add(new Transform("jop.cpf", myConstantPropagatorAndFolder));
       p.add(new Transform("jop.cbf", myConditionalBranchFolder));
       p.add(new Transform("jop.dae", myDeadAssignmentEliminator));
-      p.add(new Transform("jop.nce", new NullCheckEliminator()));
+      p.add(new Transform("jop.nce", new NullCheckEliminator(myJimple)));
       p.add(new Transform("jop.uce1", myUnreachableCodeEliminator));
       p.add(new Transform("jop.ubf1", myUnconditionalBranchFolder));
       p.add(new Transform("jop.uce2", myUnreachableCodeEliminator));

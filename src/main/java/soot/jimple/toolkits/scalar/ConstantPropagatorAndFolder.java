@@ -25,15 +25,15 @@ package soot.jimple.toolkits.scalar;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
+import soot.JastAddJ.Options;
 import soot.Local;
 import soot.RefType;
-import soot.Singletons;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
@@ -43,7 +43,6 @@ import soot.jimple.DefinitionStmt;
 import soot.jimple.NullConstant;
 import soot.jimple.NumericConstant;
 import soot.jimple.StringConstant;
-import soot.options.Options;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.Orderer;
 import soot.toolkits.graph.PseudoTopologicalOrderer;
@@ -56,13 +55,14 @@ import soot.toolkits.scalar.LocalDefs;
  */
 public class ConstantPropagatorAndFolder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ConstantPropagatorAndFolder.class);
+  private Options myOptions;
 
-  public ConstantPropagatorAndFolder(Singletons.Global g) {
+  @Inject
+  public ConstantPropagatorAndFolder(Options myOptions) {
+    this.myOptions = myOptions;
   }
 
-  public static ConstantPropagatorAndFolder v() {
-    return G.v().soot_jimple_toolkits_scalar_ConstantPropagatorAndFolder();
-  }
+
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
     int numFolded = 0;
@@ -98,7 +98,7 @@ public class ConstantPropagatorAndFolder extends BodyTransformer {
             } else if (rhs instanceof CastExpr) {
               CastExpr ce = (CastExpr) rhs;
               if (ce.getCastType() instanceof RefType && ce.getOp() instanceof NullConstant) {
-                defStmt.getRightOpBox().setValue(myNullConstant);
+                defStmt.getRightOpBox().setValue(NullConstant.v());
                 numPropagated++;
               }
             }

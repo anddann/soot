@@ -63,11 +63,8 @@ import soot.Local;
 import soot.LongType;
 import soot.Modifier;
 import soot.NullType;
-import soot.PackManager;
-import soot.PhaseOptions;
 import soot.PrimType;
 import soot.RefType;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Trap;
@@ -99,26 +96,13 @@ import soot.jimple.NeExpr;
 import soot.jimple.NullConstant;
 import soot.jimple.NumericConstant;
 import soot.jimple.internal.JIdentityStmt;
-import soot.jimple.toolkits.base.Aggregator;
-import soot.jimple.toolkits.scalar.ConditionalBranchFolder;
-import soot.jimple.toolkits.scalar.ConstantCastEliminator;
 import soot.jimple.toolkits.scalar.CopyPropagator;
-import soot.jimple.toolkits.scalar.DeadAssignmentEliminator;
-import soot.jimple.toolkits.scalar.FieldStaticnessCorrector;
-import soot.jimple.toolkits.scalar.IdentityCastEliminator;
-import soot.jimple.toolkits.scalar.IdentityOperationEliminator;
-import soot.jimple.toolkits.scalar.MethodStaticnessCorrector;
-import soot.jimple.toolkits.scalar.NopEliminator;
 import soot.jimple.toolkits.scalar.UnreachableCodeEliminator;
-import soot.jimple.toolkits.typing.TypeAssigner;
 import soot.options.JBOptions;
 import soot.options.Options;
 import soot.tagkit.LineNumberTag;
 import soot.tagkit.SourceLineNumberTag;
-import soot.toolkits.exceptions.TrapTightener;
-import soot.toolkits.scalar.LocalPacker;
 import soot.toolkits.scalar.LocalSplitter;
-import soot.toolkits.scalar.UnusedLocalEliminator;
 
 /**
  * A DexBody contains the code of a DexMethod and is used as a wrapper around JimpleBody in the jimplification process.
@@ -889,7 +873,7 @@ public class DexBody {
 
   protected LocalSplitter getLocalSplitter() {
     if (this.localSplitter == null) {
-      this.localSplitter = new LocalSplitter(myDalvikThrowAnalysis);
+      this.localSplitter = new LocalSplitter(myOptions, myDalvikThrowAnalysis, myScene);
     }
     return this.localSplitter;
   }
@@ -898,7 +882,7 @@ public class DexBody {
 
   protected UnreachableCodeEliminator getUnreachableCodeEliminator() {
     if (this.unreachableCodeEliminator == null) {
-      this.unreachableCodeEliminator = new UnreachableCodeEliminator(myDalvikThrowAnalysis);
+      this.unreachableCodeEliminator = new UnreachableCodeEliminator(myDalvikThrowAnalysis, myPedanticThrowAnalysis);
     }
     return this.unreachableCodeEliminator;
   }

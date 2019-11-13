@@ -33,12 +33,23 @@ import soot.util.Switch;
 
 @SuppressWarnings("serial")
 public class RefType extends RefLikeType implements Comparable<RefType> {
-  public RefType(Singletons.Global g) {
+
+  private SootResolver mySootResolver;
+  private Scene myScene;
+
+
+  public RefType() {
     className = "";
   }
 
+  // FIXME:???
+  private static RefType instance;
+
   public static RefType v() {
-    return G.v().soot_RefType();
+    if (instance == null) {
+      instance = new RefType();
+    }
+    return instance;
   }
 
   /** the class name that parameterizes this RefType */
@@ -51,7 +62,9 @@ public class RefType extends RefLikeType implements Comparable<RefType> {
   private volatile SootClass sootClass;
   private AnySubType anySubType;
 
-  protected RefType(String className) {
+  protected RefType(SootResolver mySootResolver, String className, Scene myScene) {
+    this.mySootResolver = mySootResolver;
+    this.myScene = myScene;
     if (className.startsWith("[")) {
       throw new RuntimeException("Attempt to create RefType whose name starts with [ --> " + className);
     }
@@ -71,7 +84,7 @@ public class RefType extends RefLikeType implements Comparable<RefType> {
    *          The name of the class used to parametrize the created RefType.
    * @return a RefType for the given class name.
    */
-  public static RefType v(String className) {
+  public static RefType v(String className, Scene myScene) {
     return myScene.getOrAddRefType(className);
   }
 
@@ -86,8 +99,8 @@ public class RefType extends RefLikeType implements Comparable<RefType> {
    *          A SootClass for which to create a RefType.
    * @return a RefType for the given SootClass..
    */
-  public static RefType v(SootClass c) {
-    return v(c.getName());
+  public static RefType v(SootClass c, Scene myScene) {
+    return v(c.getName(), myScene);
   }
 
   /**
@@ -232,7 +245,7 @@ public class RefType extends RefLikeType implements Comparable<RefType> {
   public Type getArrayElementType() {
     if (className.equals("java.lang.Object") || className.equals("java.io.Serializable")
         || className.equals("java.lang.Cloneable")) {
-      return RefType.v("java.lang.Object");
+      return RefType.v("java.lang.Object",this.myScene);
     }
     throw new RuntimeException("Attempt to get array base type of a non-array");
   }

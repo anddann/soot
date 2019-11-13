@@ -29,16 +29,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.IdentityUnit;
 import soot.Local;
 import soot.PhaseOptions;
-import soot.Singletons;
 import soot.Type;
 import soot.Unit;
 import soot.ValueBox;
@@ -64,13 +63,13 @@ import soot.util.DeterministicHashMap;
  */
 public class LocalPacker extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(LocalPacker.class);
+  private Options myOptions;
 
-  public LocalPacker(Singletons.Global g) {
+  @Inject
+  public LocalPacker(Options myOptions) {
+    this.myOptions = myOptions;
   }
 
-  public static LocalPacker v() {
-    return G.v().soot_toolkits_scalar_LocalPacker();
-  }
 
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
     boolean isUnsplit = PhaseOptions.getBoolean(options, "unsplit-original-locals");

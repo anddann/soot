@@ -26,15 +26,15 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
+import soot.JastAddJ.Options;
 import soot.PhaseOptions;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
@@ -50,7 +50,6 @@ import soot.jimple.MonitorStmt;
 import soot.jimple.Stmt;
 import soot.jimple.ThrowStmt;
 import soot.jimple.toolkits.annotation.tags.NullCheckTag;
-import soot.options.Options;
 import soot.tagkit.Tag;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.scalar.FlowSet;
@@ -71,13 +70,18 @@ ArrayLength
 
 public class NullPointerChecker extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(NullPointerChecker.class);
+  private Options myOptions;
+  private Scene myScene;
+  private Jimple myJimple;
 
-  public NullPointerChecker(Singletons.Global g) {
+
+  @Inject
+  public NullPointerChecker(Options myOptions, Scene myScene, Jimple myJimple) {
+    this.myOptions = myOptions;
+    this.myScene = myScene;
+    this.myJimple = myJimple;
   }
 
-  public static NullPointerChecker v() {
-    return G.v().soot_jimple_toolkits_annotation_nullcheck_NullPointerChecker();
-  }
 
   private boolean isProfiling = false;
 

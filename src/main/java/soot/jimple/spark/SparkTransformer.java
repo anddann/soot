@@ -22,18 +22,18 @@ package soot.jimple.spark;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Date;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.G;
 import soot.Local;
 import soot.PointsToAnalysis;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.SourceLocator;
@@ -76,13 +76,15 @@ import soot.tagkit.Tag;
  */
 public class SparkTransformer extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(SparkTransformer.class);
+  private SourceLocator mySourceLocator;
+  private Scene myScene;
 
-  public SparkTransformer(Singletons.Global g) {
+  @Inject
+  public SparkTransformer(SourceLocator mySourceLocator, Scene myScene) {
+    this.mySourceLocator = mySourceLocator;
+    this.myScene = myScene;
   }
 
-  public static SparkTransformer v() {
-    return G.v().soot_jimple_spark_SparkTransformer();
-  }
 
   protected void internalTransform(String phaseName, Map<String, String> options) {
     SparkOptions opts = new SparkOptions(options);

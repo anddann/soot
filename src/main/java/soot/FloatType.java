@@ -29,11 +29,16 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class FloatType extends PrimType {
-  public FloatType(Singletons.Global g) {
+  private FloatType() {
   }
+  private static FloatType instance;
 
   public static FloatType v() {
-    return G.v().soot_FloatType();
+    if (instance == null) {
+      instance = new FloatType();
+    }
+    return instance;
+
   }
 
   public boolean equals(Object t) {
@@ -53,7 +58,7 @@ public class FloatType extends PrimType {
   }
 
   @Override
-  public RefType boxedType() {
-    return RefType.v("java.lang.Float");
+  public RefType boxedType(Scene myScene) {
+    return RefType.v("java.lang.Float",myScene);
   }
 }

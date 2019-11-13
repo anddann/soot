@@ -22,6 +22,8 @@ package soot.jimple.toolkits.annotation.arraycheck;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,10 +39,9 @@ import org.slf4j.LoggerFactory;
 
 import soot.ArrayType;
 import soot.Body;
-import soot.G;
+import soot.JastAddJ.Options;
 import soot.Local;
 import soot.Modifier;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -54,18 +55,17 @@ import soot.jimple.IntConstant;
 import soot.jimple.NewArrayExpr;
 import soot.jimple.NewMultiArrayExpr;
 import soot.jimple.Stmt;
-import soot.options.Options;
 import soot.toolkits.scalar.LocalDefs;
 
 public class ClassFieldAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(ClassFieldAnalysis.class);
+  private Options myOptions;
 
-  public ClassFieldAnalysis(Singletons.Global g) {
+  @Inject
+  public ClassFieldAnalysis(Options myOptions) {
+    this.myOptions = myOptions;
   }
 
-  public static ClassFieldAnalysis v() {
-    return G.v().soot_jimple_toolkits_annotation_arraycheck_ClassFieldAnalysis();
-  }
 
   private final boolean final_in = true;
   private final boolean private_in = true;

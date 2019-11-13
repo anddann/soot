@@ -29,15 +29,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.Local;
 import soot.Scene;
-import soot.Singletons;
 import soot.Timers;
 import soot.Unit;
 import soot.Value;
@@ -69,22 +68,26 @@ public class LocalSplitter extends BodyTransformer {
 
   protected ThrowAnalysis throwAnalysis;
   protected boolean omitExceptingUnitEdges;
+  private Options myOptions;
+  private Timers myTimers;
+  private Scene myScene;
 
-  public LocalSplitter(Singletons.Global g) {
+  @Inject
+  public LocalSplitter(Options myOptions, Timers myTimers, Scene myScene) {
+    this.myOptions = myOptions;
+    this.myTimers = myTimers;
+    this.myScene = myScene;
   }
 
-  public LocalSplitter(ThrowAnalysis ta) {
+  private LocalSplitter(ThrowAnalysis ta) {
     this(ta, false);
   }
 
-  public LocalSplitter(ThrowAnalysis ta, boolean omitExceptingUnitEdges) {
+  private LocalSplitter(ThrowAnalysis ta, boolean omitExceptingUnitEdges) {
     this.throwAnalysis = ta;
     this.omitExceptingUnitEdges = omitExceptingUnitEdges;
   }
 
-  public static LocalSplitter v() {
-    return G.v().soot_toolkits_scalar_LocalSplitter();
-  }
 
   @Override
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {

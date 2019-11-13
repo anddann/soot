@@ -22,27 +22,28 @@ package soot.jimple.toolkits.callgraph;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.G;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.jimple.toolkits.pointer.DumbPointerAnalysis;
 import soot.options.CHAOptions;
 
 /** Builds an invoke graph using Class Hierarchy Analysis. */
 public class CHATransformer extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(CHATransformer.class);
+  private DumbPointerAnalysis myDumbPointerAnalysis;
+  private Scene myScene;
 
-  public CHATransformer(Singletons.Global g) {
-  }
-
-  public static CHATransformer v() {
-    return G.v().soot_jimple_toolkits_callgraph_CHATransformer();
+  @Inject
+  public CHATransformer(DumbPointerAnalysis myDumbPointerAnalysis, Scene myScene) {
+    this.myDumbPointerAnalysis = myDumbPointerAnalysis;
+    this.myScene = myScene;
   }
 
   protected void internalTransform(String phaseName, Map<String, String> opts) {

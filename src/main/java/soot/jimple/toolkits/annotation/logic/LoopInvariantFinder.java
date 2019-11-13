@@ -26,14 +26,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.Local;
-import soot.Singletons;
 import soot.Value;
 import soot.ValueBox;
 import soot.jimple.Constant;
@@ -55,13 +55,13 @@ public class LoopInvariantFinder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(LoopInvariantFinder.class);
 
   private ArrayList constants;
+  private SmartLocalDefsPool mySmartLocalDefsPool;
 
-  public LoopInvariantFinder(Singletons.Global g) {
+  @Inject
+  public LoopInvariantFinder(SmartLocalDefsPool mySmartLocalDefsPool) {
+    this.mySmartLocalDefsPool = mySmartLocalDefsPool;
   }
 
-  public static LoopInvariantFinder v() {
-    return G.v().soot_jimple_toolkits_annotation_logic_LoopInvariantFinder();
-  }
 
   /**
    * this one uses the side effect tester

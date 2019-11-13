@@ -29,11 +29,17 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class ShortType extends PrimType implements IntegerType {
-  public ShortType(Singletons.Global g) {
+  private ShortType() {
   }
 
+
+  public static ShortType instance;
+
   public static ShortType v() {
-    return G.v().soot_ShortType();
+    if(instance==null){
+      instance=new ShortType();
+    }
+    return instance;
   }
 
   public int hashCode() {
@@ -53,7 +59,7 @@ public class ShortType extends PrimType implements IntegerType {
   }
 
   @Override
-  public RefType boxedType() {
-    return RefType.v("java.lang.Short");
+  public RefType boxedType(Scene myScene) {
+    return RefType.v("java.lang.Short",myScene);
   }
 }

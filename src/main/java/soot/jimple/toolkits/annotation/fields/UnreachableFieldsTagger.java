@@ -26,11 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
-import soot.G;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -42,12 +41,14 @@ import soot.tagkit.StringTag;
 
 /** A scene transformer that adds tags to unused fields. */
 public class UnreachableFieldsTagger extends SceneTransformer {
-  public UnreachableFieldsTagger(Singletons.Global g) {
+  private Scene myScene;
+
+  @Inject
+  public UnreachableFieldsTagger(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public static UnreachableFieldsTagger v() {
-    return G.v().soot_jimple_toolkits_annotation_fields_UnreachableFieldsTagger();
-  }
+
 
   protected void internalTransform(String phaseName, Map options) {
 

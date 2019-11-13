@@ -26,13 +26,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
 import soot.Scene;
-import soot.Singletons;
 import soot.Trap;
 import soot.Unit;
 import soot.jimple.toolkits.scalar.UnreachableCodeEliminator;
@@ -56,16 +56,18 @@ public final class TrapTightener extends TrapTransformer {
   private static final Logger logger = LoggerFactory.getLogger(TrapTightener.class);
 
   protected ThrowAnalysis throwAnalysis = null;
+  private Scene myScene;
+  private Options myOptions;
 
-  public TrapTightener(Singletons.Global g) {
+  @Inject
+  public TrapTightener(Options myOptions) {
+    this.myOptions = myOptions;
   }
 
-  public static TrapTightener v() {
-    return soot.G.v().soot_toolkits_exceptions_TrapTightener();
-  }
 
-  public TrapTightener(ThrowAnalysis ta) {
+  public TrapTightener(ThrowAnalysis ta, Options myOptions) {
     this.throwAnalysis = ta;
+    this.myOptions = myOptions;
   }
 
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {

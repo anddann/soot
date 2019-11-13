@@ -29,11 +29,17 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class CharType extends PrimType implements IntegerType {
-  public CharType(Singletons.Global g) {
+  private CharType() {
   }
 
+  private static CharType instance;
+
   public static CharType v() {
-    return G.v().soot_CharType();
+    if (instance == null) {
+      instance = new CharType();
+    }
+    return instance;
+
   }
 
   public boolean equals(Object t) {
@@ -53,7 +59,7 @@ public class CharType extends PrimType implements IntegerType {
   }
 
   @Override
-  public RefType boxedType() {
-    return RefType.v("java.lang.Character");
+  public RefType boxedType(Scene myScene) {
+    return RefType.v("java.lang.Character",myScene);
   }
 }

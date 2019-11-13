@@ -22,18 +22,18 @@ package soot.jimple.toolkits.annotation.qualifiers;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import soot.Body;
-import soot.G;
 import soot.MethodOrMethodContext;
 import soot.MethodToContexts;
 import soot.Modifier;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -51,11 +51,11 @@ import soot.tagkit.StringTag;
  */
 public class TightestQualifiersTagger extends SceneTransformer {
 
-  public TightestQualifiersTagger(Singletons.Global g) {
-  }
+  private Scene myScene;
 
-  public static TightestQualifiersTagger v() {
-    return G.v().soot_jimple_toolkits_annotation_qualifiers_TightestQualifiersTagger();
+  @Inject
+  public TightestQualifiersTagger(Scene myScene) {
+    this.myScene = myScene;
   }
 
   public final static int RESULT_PUBLIC = 0;

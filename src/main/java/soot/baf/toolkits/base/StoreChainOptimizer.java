@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.G;
@@ -51,12 +52,11 @@ import soot.toolkits.scalar.Pair;
  */
 public class StoreChainOptimizer extends BodyTransformer {
 
-  public StoreChainOptimizer(Singletons.Global g) {
+  @Inject
+  public StoreChainOptimizer() {
   }
 
-  public static StoreChainOptimizer v() {
-    return G.v().soot_baf_toolkits_base_StoreChainOptimizer();
-  }
+
 
   @Override
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {

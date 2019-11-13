@@ -25,6 +25,7 @@ package soot.jimple.toolkits.annotation.liveness;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.G;
@@ -40,12 +41,10 @@ import soot.toolkits.scalar.SimpleLiveLocals;
 
 public class LiveVarsTagger extends BodyTransformer {
 
-  public LiveVarsTagger(Singletons.Global g) {
+  @Inject
+  public LiveVarsTagger() {
   }
 
-  public static LiveVarsTagger v() {
-    return G.v().soot_jimple_toolkits_annotation_liveness_LiveVarsTagger();
-  }
 
   protected void internalTransform(Body b, String phaseName, Map options) {
 

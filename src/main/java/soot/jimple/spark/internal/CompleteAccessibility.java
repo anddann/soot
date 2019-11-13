@@ -22,8 +22,8 @@ package soot.jimple.spark.internal;
  * #L%
  */
 
-import soot.G;
-import soot.Singletons;
+import com.google.inject.Inject;
+
 import soot.SootField;
 import soot.SootMethod;
 
@@ -35,11 +35,8 @@ import soot.SootMethod;
  */
 public class CompleteAccessibility implements ClientAccessibilityOracle {
 
-  public CompleteAccessibility(Singletons.Global g) {
-  }
-
-  public static CompleteAccessibility v() {
-    return G.v().soot_jimple_spark_internal_CompleteAccessibility();
+  @Inject
+  public CompleteAccessibility() {
   }
 
   @Override

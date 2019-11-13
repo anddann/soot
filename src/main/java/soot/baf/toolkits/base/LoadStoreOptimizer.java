@@ -22,6 +22,8 @@ package soot.baf.toolkits.base;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,10 +37,9 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
+import soot.JastAddJ.Options;
 import soot.Local;
 import soot.PhaseOptions;
-import soot.Singletons;
 import soot.Trap;
 import soot.Unit;
 import soot.baf.AddInst;
@@ -66,7 +67,6 @@ import soot.baf.StaticGetInst;
 import soot.baf.StaticPutInst;
 import soot.baf.StoreInst;
 import soot.baf.XorInst;
-import soot.options.Options;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.ZonedBlockGraph;
@@ -77,13 +77,15 @@ import soot.util.Chain;
 
 public class LoadStoreOptimizer extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(LoadStoreOptimizer.class);
+  private Options myOptions;
+  private Baf myBaf;
 
-  public LoadStoreOptimizer(Singletons.Global g) {
+  @Inject
+  public LoadStoreOptimizer(Options myOptions, Baf myBaf) {
+    this.myOptions = myOptions;
+    this.myBaf = myBaf;
   }
 
-  public static LoadStoreOptimizer v() {
-    return G.v().soot_baf_toolkits_base_LoadStoreOptimizer();
-  }
 
   // Constants
   boolean debug = false;

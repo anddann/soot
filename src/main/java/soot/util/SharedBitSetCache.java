@@ -22,16 +22,16 @@ package soot.util;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.G;
 import soot.Singletons;
 
 public final class SharedBitSetCache {
-  public SharedBitSetCache(Singletons.Global g) {
+
+  @Inject
+  public SharedBitSetCache() {
   }
 
-  public static SharedBitSetCache v() {
-    return G.v().soot_util_SharedBitSetCache();
-  }
 
   public static final int size = 32749; // a nice prime about 32k
 

@@ -31,18 +31,17 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.G;
 import soot.LabeledUnitPrinter;
 import soot.Local;
 import soot.Main;
 import soot.Modifier;
 import soot.NormalUnitPrinter;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -63,6 +62,8 @@ public class XMLPrinter {
 
   // xml tree
   public XMLRoot root;
+  private Scene myScene;
+  private Main myMain;
 
   // returns the buffer - this is the XML output
   public String toString() {
@@ -94,12 +95,12 @@ public class XMLPrinter {
     return root.addElement(name, value, attributes, values);
   }
 
-  public XMLPrinter(Singletons.Global g) {
+  @Inject
+  public XMLPrinter(Scene myScene, Main myMain) {
+    this.myScene = myScene;
+    this.myMain = myMain;
   }
 
-  public static XMLPrinter v() {
-    return G.v().soot_xml_XMLPrinter();
-  }
 
   private XMLNode xmlNode = null;
 

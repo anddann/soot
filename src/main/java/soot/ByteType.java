@@ -29,11 +29,16 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class ByteType extends PrimType implements IntegerType {
-  public ByteType(Singletons.Global g) {
+  private ByteType() {
   }
 
+  private static ByteType instance;
+
   public static ByteType v() {
-    return G.v().soot_ByteType();
+    if (instance == null) {
+      instance = new ByteType();
+    }
+    return instance;
   }
 
   public int hashCode() {
@@ -53,7 +58,7 @@ public class ByteType extends PrimType implements IntegerType {
   }
 
   @Override
-  public RefType boxedType() {
-    return RefType.v("java.lang.Byte");
+  public RefType boxedType(Scene myScene) {
+    return RefType.v("java.lang.Byte", myScene);
   }
 }

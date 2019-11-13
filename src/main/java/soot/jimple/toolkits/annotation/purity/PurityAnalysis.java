@@ -24,13 +24,12 @@ package soot.jimple.toolkits.annotation.purity;
 
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.G;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.options.PurityOptions;
 
@@ -42,16 +41,15 @@ import soot.options.PurityOptions;
  */
 public class PurityAnalysis extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(PurityAnalysis.class);
+  private Scene myScene;
 
-  Singletons.Global g;
 
-  public PurityAnalysis(Singletons.Global g) {
-    this.g = g;
+  @Inject
+  public PurityAnalysis(Scene myScene) {
+
+    this.myScene = myScene;
   }
 
-  public static PurityAnalysis v() {
-    return G.v().soot_jimple_toolkits_annotation_purity_PurityAnalysis();
-  }
 
   @Override
   protected void internalTransform(String phaseName, Map<String, String> options) {

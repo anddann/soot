@@ -25,6 +25,7 @@ package soot.toDex;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.Singletons;
@@ -43,12 +44,10 @@ import soot.jimple.ThisRef;
  */
 public class FastDexTrapTightener extends BodyTransformer {
 
-  public FastDexTrapTightener(Singletons.Global g) {
+  @Inject
+  public FastDexTrapTightener() {
   }
 
-  public static FastDexTrapTightener v() {
-    return soot.G.v().soot_toDex_FastDexTrapTightener();
-  }
 
   @Override
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {

@@ -22,11 +22,11 @@ package soot.dava.toolkits.base.AST.traversals;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import soot.G;
-import soot.Singletons;
 import soot.dava.internal.AST.ASTDoWhileNode;
 import soot.dava.internal.AST.ASTForLoopNode;
 import soot.dava.internal.AST.ASTLabeledNode;
@@ -52,12 +52,11 @@ import soot.jimple.Stmt;
  */
 public class ClosestAbruptTargetFinder extends DepthFirstAdapter {
 
-  public ClosestAbruptTargetFinder(Singletons.Global g) {
+  @Inject
+  public ClosestAbruptTargetFinder() {
   }
 
-  public static ClosestAbruptTargetFinder v() {
-    return G.v().soot_dava_toolkits_base_AST_traversals_ClosestAbruptTargetFinder();
-  }
+
 
   HashMap<DAbruptStmt, ASTNode> closestNode = new HashMap<DAbruptStmt, ASTNode>();// a mapping of each abrupt statement to
                                                                                   // the node they are targeting

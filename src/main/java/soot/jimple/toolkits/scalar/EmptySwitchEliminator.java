@@ -25,10 +25,9 @@ package soot.jimple.toolkits.scalar;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
-import soot.Singletons;
 import soot.Unit;
 import soot.jimple.Jimple;
 import soot.jimple.LookupSwitchStmt;
@@ -41,12 +40,14 @@ import soot.jimple.LookupSwitchStmt;
  *
  */
 public class EmptySwitchEliminator extends BodyTransformer {
-  public EmptySwitchEliminator(Singletons.Global g) {
+
+  private Jimple myJimple;
+
+  @Inject
+  public EmptySwitchEliminator(Jimple myJimple) {
+    this.myJimple = myJimple;
   }
 
-  public static EmptySwitchEliminator v() {
-    return G.v().soot_jimple_toolkits_scalar_EmptySwitchEliminator();
-  }
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
     Iterator<Unit> it = b.getUnits().snapshotIterator();

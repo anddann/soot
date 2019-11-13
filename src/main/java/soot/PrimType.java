@@ -30,7 +30,7 @@ package soot;
  */
 @SuppressWarnings("serial")
 public abstract class PrimType extends Type {
-  public abstract RefType boxedType();
+  public abstract RefType boxedType(Scene myScene);
 
   public boolean isAllowedInFinalCode() {
     return true;

@@ -29,8 +29,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
-import soot.G;
 import soot.Hierarchy;
 import soot.Local;
 import soot.Modifier;
@@ -38,7 +38,6 @@ import soot.PhaseOptions;
 import soot.RefType;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.TrapManager;
@@ -70,12 +69,20 @@ import soot.util.Chain;
  * Uses the Scene's currently-active InvokeGraph to statically bind monomorphic call sites.
  */
 public class StaticMethodBinder extends SceneTransformer {
-  public StaticMethodBinder(Singletons.Global g) {
+
+  private Scene myScene;
+  private Jimple myJimple;
+  private SynchronizerManager mySynchronizerManager;
+  private LocalNameStandardizer myLocalNameStandardizer;
+
+  @Inject
+  public StaticMethodBinder(Scene myScene, Jimple myJimple, SynchronizerManager mySynchronizerManager, LocalNameStandardizer myLocalNameStandardizer) {
+    this.myScene = myScene;
+    this.myJimple = myJimple;
+    this.mySynchronizerManager = mySynchronizerManager;
+    this.myLocalNameStandardizer = myLocalNameStandardizer;
   }
 
-  public static StaticMethodBinder v() {
-    return G.v().soot_jimple_toolkits_invoke_StaticMethodBinder();
-  }
 
   protected void internalTransform(String phaseName, Map opts) {
     Filter instanceInvokesFilter = new Filter(new InstanceInvokeEdgesPred());
@@ -150,7 +157,7 @@ public class StaticMethodBinder extends SceneTransformer {
 
           if (!instanceToStaticMap.containsKey(target)) {
             List newParameterTypes = new ArrayList();
-            newParameterTypes.add(RefType.v(target.getDeclaringClass().getName()));
+            newParameterTypes.add(RefType.v(target.getDeclaringClass().getName(),myScene));
 
             newParameterTypes.addAll(target.getParameterTypes());
 
@@ -267,7 +274,7 @@ public class StaticMethodBinder extends SceneTransformer {
                * In this case, we don't use throwPoint; instead, put the code right there.
                */
               Stmt insertee
-                  = myJimple.newIfStmt(myJimple.newNeExpr(((InstanceInvokeExpr) ie).getBase(), myNullConstant), s);
+                  = myJimple.newIfStmt(myJimple.newNeExpr(((InstanceInvokeExpr) ie).getBase(), NullConstant.v()), s);
 
               b.getUnits().insertBefore(insertee, s);
 
@@ -278,7 +285,7 @@ public class StaticMethodBinder extends SceneTransformer {
             } else {
               Stmt throwPoint = ThrowManager.getNullPointerExceptionThrower(b);
               b.getUnits().insertBefore(myJimple
-                  .newIfStmt(myJimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), myNullConstant), throwPoint), s);
+                  .newIfStmt(myJimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), NullConstant.v()), throwPoint), s);
             }
           }
 

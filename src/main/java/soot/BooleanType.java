@@ -29,13 +29,16 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class BooleanType extends PrimType implements IntegerType {
-  public BooleanType(Singletons.Global g) {
+  private BooleanType() {
   }
+  private static BooleanType instance;
 
   public static BooleanType v() {
-    return G.v().soot_BooleanType();
+    if (instance == null) {
+      instance = new BooleanType();
+    }
+    return instance;
   }
-
   public boolean equals(Object t) {
     return this == t;
   }
@@ -53,7 +56,7 @@ public class BooleanType extends PrimType implements IntegerType {
   }
 
   @Override
-  public RefType boxedType() {
-    return RefType.v("java.lang.Boolean");
+  public RefType boxedType(Scene myScene) {
+    return RefType.v("java.lang.Boolean",myScene);
   }
 }

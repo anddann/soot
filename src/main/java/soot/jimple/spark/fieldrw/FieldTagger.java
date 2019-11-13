@@ -22,17 +22,17 @@ package soot.jimple.spark.fieldrw;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.MethodOrMethodContext;
 import soot.PhaseOptions;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootMethod;
 import soot.Value;
 import soot.jimple.AssignStmt;
@@ -43,12 +43,13 @@ import soot.jimple.toolkits.callgraph.TransitiveTargets;
 import soot.util.HashMultiMap;
 
 public class FieldTagger extends BodyTransformer {
-  public FieldTagger(Singletons.Global g) {
+  private Scene myScene;
+
+  @Inject
+  public FieldTagger(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public static FieldTagger v() {
-    return G.v().soot_jimple_spark_fieldrw_FieldTagger();
-  }
 
   private final HashSet<SootMethod> processedMethods = new HashSet<SootMethod>();
   private final HashMultiMap methodToWrite = new HashMultiMap();

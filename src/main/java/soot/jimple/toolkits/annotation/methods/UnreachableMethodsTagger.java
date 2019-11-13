@@ -26,10 +26,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
-import soot.G;
+import com.google.inject.Inject;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.tagkit.ColorTag;
@@ -37,12 +36,15 @@ import soot.tagkit.StringTag;
 
 /** A scene transformer that adds tags to unused methods. */
 public class UnreachableMethodsTagger extends SceneTransformer {
-  public UnreachableMethodsTagger(Singletons.Global g) {
+
+  private Scene myScene;
+
+  @Inject
+  public UnreachableMethodsTagger(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public static UnreachableMethodsTagger v() {
-    return G.v().soot_jimple_toolkits_annotation_methods_UnreachableMethodsTagger();
-  }
+
 
   protected void internalTransform(String phaseName, Map options) {
 

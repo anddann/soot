@@ -25,13 +25,12 @@ package soot.jimple.toolkits.annotation.callgraph;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.MethodOrMethodContext;
 import soot.MethodToContexts;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootMethod;
 import soot.jimple.Stmt;
 import soot.jimple.toolkits.callgraph.CallGraph;
@@ -41,12 +40,13 @@ import soot.tagkit.LinkTag;
 
 public class CallGraphTagger extends BodyTransformer {
 
-  public CallGraphTagger(Singletons.Global g) {
+  private Scene myScene;
+
+  @Inject
+  public CallGraphTagger(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public static CallGraphTagger v() {
-    return G.v().soot_jimple_toolkits_annotation_callgraph_CallGraphTagger();
-  }
 
   private MethodToContexts methodToContexts;
 

@@ -22,8 +22,8 @@ package soot.dava.toolkits.base.AST;
  * #L%
  */
 
-import soot.G;
-import soot.Singletons;
+import com.google.inject.Inject;
+
 import soot.Value;
 import soot.jimple.ArrayRef;
 import soot.jimple.BinopExpr;
@@ -44,12 +44,11 @@ import soot.jimple.ThrowStmt;
 import soot.jimple.UnopExpr;
 
 public class ASTWalker {
-  public ASTWalker(Singletons.Global g) {
+
+  @Inject
+  public ASTWalker() {
   }
 
-  public static ASTWalker v() {
-    return G.v().soot_dava_toolkits_base_AST_ASTWalker();
-  }
 
   public void walk_stmt(ASTAnalysis a, Stmt s) {
     if (a.getAnalysisDepth() < ASTAnalysis.ANALYSE_STMTS) {

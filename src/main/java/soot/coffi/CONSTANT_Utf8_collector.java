@@ -24,6 +24,7 @@ package soot.coffi;
 
 import java.util.HashMap;
 
+import com.google.inject.Inject;
 import soot.G;
 import soot.Singletons;
 
@@ -32,12 +33,10 @@ import soot.Singletons;
  */
 
 public class CONSTANT_Utf8_collector {
-  public CONSTANT_Utf8_collector(Singletons.Global g) {
+  @Inject
+  public CONSTANT_Utf8_collector() {
   }
 
-  public static CONSTANT_Utf8_collector v() {
-    return G.v().soot_coffi_CONSTANT_Utf8_collector();
-  }
 
   HashMap<String, CONSTANT_Utf8_info> hash = null;
 

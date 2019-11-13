@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,13 +49,14 @@ import soot.javaToJimple.IInitialResolver;
  */
 public class JastAddInitialResolver implements IInitialResolver {
   private static final Logger logger = LoggerFactory.getLogger(JastAddInitialResolver.class);
+  private SootResolver mySootResolver;
 
-  public JastAddInitialResolver(soot.Singletons.Global g) {
+
+  @Inject
+  public JastAddInitialResolver(SootResolver mySootResolver) {
+    this.mySootResolver = mySootResolver;
   }
 
-  public static JastAddInitialResolver v() {
-    return soot.G.v().soot_JastAddInitialResolver();
-  }
 
   protected Map<String, CompilationUnit> classNameToCU = new HashMap<String, CompilationUnit>();
 

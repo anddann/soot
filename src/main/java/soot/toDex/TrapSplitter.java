@@ -1,8 +1,6 @@
 package soot.toDex;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 /*-
  * #%L
@@ -29,17 +27,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
-import soot.Singletons;
 import soot.Trap;
 import soot.Unit;
-import soot.jimple.AssignStmt;
 import soot.jimple.CaughtExceptionRef;
 import soot.jimple.IdentityStmt;
 import soot.jimple.Jimple;
 import soot.jimple.NullConstant;
-import soot.jimple.Stmt;
 import soot.jimple.toolkits.scalar.UnreachableCodeEliminator;
 
 /**
@@ -50,12 +46,17 @@ import soot.jimple.toolkits.scalar.UnreachableCodeEliminator;
  */
 public class TrapSplitter extends BodyTransformer {
 
-  public TrapSplitter(Singletons.Global g) {
+
+  private Jimple myJimple;
+  private UnreachableCodeEliminator myUnreachableCodeEliminator;
+
+  @Inject
+  public TrapSplitter(Jimple myJimple, UnreachableCodeEliminator myUnreachableCodeEliminator) {
+    this.myJimple = myJimple;
+    this.myUnreachableCodeEliminator = myUnreachableCodeEliminator;
   }
 
-  public static TrapSplitter v() {
-    return soot.G.v().soot_toDex_TrapSplitter();
-  }
+
 
   private class TrapOverlap {
     private Trap t1;
@@ -167,7 +168,7 @@ public class TrapSplitter extends BodyTransformer {
       }
     }
     
-    removePotentiallyUselassTraps(b, potentiallyUselessTrapHandlers);
+    removePotentiallyUselassTraps(b, potentiallyUselessTrapHandlers,myJimple,myUnreachableCodeEliminator);
   }
 
   /**
@@ -177,7 +178,7 @@ public class TrapSplitter extends BodyTransformer {
    * @param b the body
    * @param potentiallyUselessTrapHandlers potentially useless trap handlers
    */
-  public static void removePotentiallyUselassTraps(Body b, Set<Unit> potentiallyUselessTrapHandlers) {
+  public static void removePotentiallyUselassTraps(Body b, Set<Unit> potentiallyUselessTrapHandlers, Jimple myJimple, UnreachableCodeEliminator myUnreachableCodeEliminator) {
     if (potentiallyUselessTrapHandlers == null) {
       return;
     }
@@ -193,7 +194,7 @@ public class TrapSplitter extends BodyTransformer {
         if (assign.getRightOp() instanceof CaughtExceptionRef) {
           //Make sure that the useless trap handler, which is not used
           //anywhere else still gets a valid value.
-          Unit newStmt = myJimple.newAssignStmt(assign.getLeftOp(), myNullConstant);
+          Unit newStmt = myJimple.newAssignStmt(assign.getLeftOp(), NullConstant.v());
           b.getUnits().swapWith(assign, newStmt);
           removedUselessTrap = true;
         }

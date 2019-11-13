@@ -22,10 +22,10 @@ package soot.jimple.toolkits.annotation.tags;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.LinkedList;
 
-import soot.G;
-import soot.Singletons;
 import soot.Unit;
 import soot.baf.Inst;
 import soot.tagkit.Tag;
@@ -34,11 +34,9 @@ import soot.tagkit.TagAggregator;
 /** The aggregator for ArrayNullCheckAttribute. */
 
 public class ArrayNullTagAggregator extends TagAggregator {
-  public ArrayNullTagAggregator(Singletons.Global g) {
-  }
 
-  public static ArrayNullTagAggregator v() {
-    return G.v().soot_jimple_toolkits_annotation_tags_ArrayNullTagAggregator();
+  @Inject
+  public ArrayNullTagAggregator() {
   }
 
   public boolean wantTag(Tag t) {

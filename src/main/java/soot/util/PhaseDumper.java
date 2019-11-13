@@ -28,16 +28,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.G;
 import soot.Printer;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
+import soot.SourceLocator;
 import soot.options.Options;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalGraph;
@@ -53,11 +53,15 @@ import soot.util.dot.DotGraph;
 
 public class PhaseDumper {
   private static final Logger logger = LoggerFactory.getLogger(PhaseDumper.class);
+  private final Options myOptions;
   // As a minor optimization, we leave these lists null in the
   // case were no phases at all are to be dumped, which is the
   // most likely case.
   private List bodyDumpingPhases = null;
   private List cfgDumpingPhases = null;
+  private SourceLocator mySourceLocator;
+  private Printer myPrinter;
+  private Scene myScene;
 
   private class PhaseStack extends ArrayList {
     // We eschew java.util.Stack to avoid synchronization overhead.
@@ -94,12 +98,17 @@ public class PhaseDumper {
   private final PhaseStack phaseStack = new PhaseStack();
   final static String allWildcard = "ALL";
 
-  public PhaseDumper(Singletons.Global g) {
-    if (!myOptions.dump_body().isEmpty()) {
-      bodyDumpingPhases = myOptions.dump_body();
+  @Inject
+  public PhaseDumper(Options myOptions, SourceLocator mySourceLocator, Printer myPrinter, Scene myScene) {
+    this.myOptions = myOptions;
+    this.mySourceLocator = mySourceLocator;
+    this.myPrinter = myPrinter;
+    this.myScene = myScene;
+    if (!this.myOptions.dump_body().isEmpty()) {
+      bodyDumpingPhases = this.myOptions.dump_body();
     }
-    if (!myOptions.dump_cfg().isEmpty()) {
-      cfgDumpingPhases = myOptions.dump_cfg();
+    if (!this.myOptions.dump_cfg().isEmpty()) {
+      cfgDumpingPhases = this.myOptions.dump_cfg();
     }
   }
 
@@ -108,9 +117,6 @@ public class PhaseDumper {
    *
    * @return Soot's <code>PhaseDumper</code>.
    */
-  public static PhaseDumper v() {
-    return G.v().soot_util_PhaseDumper();
-  }
 
   private boolean isBodyDumpingPhase(String phaseName) {
     return ((bodyDumpingPhases != null)
@@ -141,8 +147,8 @@ public class PhaseDumper {
     }
   }
 
-  private static java.io.File makeDirectoryIfMissing(Body b) throws java.io.IOException {
-    StringBuffer buf = new StringBuffer(soot.mySourceLocator.getOutputDir());
+  private static java.io.File makeDirectoryIfMissing(Body b, SourceLocator mySourceLocator) throws java.io.IOException {
+    StringBuffer buf = new StringBuffer(mySourceLocator.getOutputDir());
     buf.append(File.separatorChar);
     String className = b.getMethod().getDeclaringClass().getName();
     buf.append(className);
@@ -161,8 +167,8 @@ public class PhaseDumper {
     return dir;
   }
 
-  private static PrintWriter openBodyFile(Body b, String baseName) throws java.io.IOException {
-    File dir = makeDirectoryIfMissing(b);
+  private static PrintWriter openBodyFile(Body b, String baseName, SourceLocator mySourceLocator) throws java.io.IOException {
+    File dir = makeDirectoryIfMissing(b,mySourceLocator);
     String filePath = dir.toString() + File.separatorChar + baseName;
     return new PrintWriter(new java.io.FileOutputStream(filePath));
   }
@@ -171,9 +177,9 @@ public class PhaseDumper {
    * Returns the next available name for a graph file.
    */
 
-  private static String nextGraphFileName(Body b, String baseName) throws java.io.IOException {
+  private static String nextGraphFileName(Body b, String baseName, SourceLocator mySourceLocator) throws java.io.IOException {
     // We number output files to allow multiple graphs per phase.
-    File dir = makeDirectoryIfMissing(b);
+    File dir = makeDirectoryIfMissing(b, mySourceLocator);
     final String prefix = dir.toString() + File.separatorChar + baseName;
     File file = null;
     int fileNumber = 0;
@@ -184,9 +190,9 @@ public class PhaseDumper {
     return file.toString();
   }
 
-  private static void deleteOldGraphFiles(final Body b, final String phaseName) {
+  private static void deleteOldGraphFiles(final Body b, final String phaseName, SourceLocator mySourceLocator) {
     try {
-      final File dir = makeDirectoryIfMissing(b);
+      final File dir = makeDirectoryIfMissing(b,mySourceLocator);
       final File[] toDelete = dir.listFiles(new java.io.FilenameFilter() {
         public boolean accept(File dir, String name) {
           return name.startsWith(phaseName) && name.endsWith(DotGraph.DOT_EXTENSION);
@@ -219,9 +225,9 @@ public class PhaseDumper {
   public void dumpBody(Body b, String baseName) {
     try {
       alreadyDumping = true;
-      java.io.PrintWriter out = openBodyFile(b, baseName);
-      soot.myPrinter.setOption(Printer.USE_ABBREVIATIONS);
-      soot.myPrinter.printTo(b, out);
+      java.io.PrintWriter out = openBodyFile(b, baseName,mySourceLocator);
+      myPrinter.setOption(Printer.USE_ABBREVIATIONS);
+      myPrinter.printTo(b, out);
       out.close();
     } catch (java.io.IOException e) {
       // Don't abort execution because of an I/O error, but let
@@ -241,7 +247,7 @@ public class PhaseDumper {
         if (method.hasActiveBody()) {
           Body body = method.getActiveBody();
           if (deleteGraphFiles) {
-            deleteOldGraphFiles(body, baseName);
+            deleteOldGraphFiles(body, baseName,mySourceLocator);
           }
           dumpBody(body, baseName);
         }
@@ -262,7 +268,7 @@ public class PhaseDumper {
   public void dumpBefore(Body b, String phaseName) {
     phaseStack.push(phaseName);
     if (isBodyDumpingPhase(phaseName)) {
-      deleteOldGraphFiles(b, phaseName);
+      deleteOldGraphFiles(b, phaseName,mySourceLocator);
       dumpBody(b, phaseName + ".in");
     }
   }
@@ -343,7 +349,7 @@ public class PhaseDumper {
       String phaseName = phaseStack.currentPhase();
       if (isCFGDumpingPhase(phaseName)) {
         try {
-          String outputFile = nextGraphFileName(b, phaseName + "-" + getClassIdent(g) + "-");
+          String outputFile = nextGraphFileName(b, phaseName + "-" + getClassIdent(g) + "-",mySourceLocator);
           DotGraph dotGraph = new CFGToDotGraph().drawCFG(g, b);
           dotGraph.plot(outputFile);
 
@@ -374,7 +380,7 @@ public class PhaseDumper {
       String phaseName = phaseStack.currentPhase();
       if (isCFGDumpingPhase(phaseName)) {
         try {
-          String outputFile = nextGraphFileName(g.getBody(), phaseName + "-" + getClassIdent(g) + "-");
+          String outputFile = nextGraphFileName(g.getBody(), phaseName + "-" + getClassIdent(g) + "-",mySourceLocator);
           CFGToDotGraph drawer = new CFGToDotGraph();
           drawer.setShowExceptions(myOptions.show_exception_dests());
           DotGraph dotGraph = drawer.drawCFG(g);

@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,15 +58,19 @@ public final class LambdaMetaFactory {
   private final Wrapper wrapper;
 
   private int uniq;
+  private Scene myScene;
+  private Jimple myJimple;
+  private LocalNameStandardizer myLocalNameStandardizer;
 
-  public LambdaMetaFactory(Singletons.Global g) {
+  @Inject
+  public LambdaMetaFactory(Scene myScene, Jimple myJimple, LocalNameStandardizer myLocalNameStandardizer) {
+    this.myJimple = myJimple;
+    this.myLocalNameStandardizer = myLocalNameStandardizer;
     uniq = 0;
     wrapper = new Wrapper();
+    this.myScene = myScene;
   }
 
-  public static LambdaMetaFactory v() {
-    return G.v().soot_LambdaMetaFactory();
-  }
 
   /**
    * 
@@ -179,7 +184,7 @@ public final class LambdaMetaFactory {
 
     // additions from altMetafactory
     if (serializable) {
-      tclass.addInterface(RefType.v("java.io.Serializable").getSootClass());
+      tclass.addInterface(RefType.v("java.io.Serializable",myScene).getSootClass());
     }
     for (int i = 0; i < markerInterfaces.size(); i++) {
       tclass.addInterface(((RefType) AsmUtil.toBaseType(markerInterfaces.get(i).getValue())).getSootClass());
@@ -260,7 +265,7 @@ public final class LambdaMetaFactory {
     return ++uniq;
   }
 
-  private static class Wrapper {
+  private class Wrapper {
 
     private Map<RefType, PrimType> wrapperTypes;
     private Map<PrimType, RefType> primitiveTypes;
@@ -277,7 +282,7 @@ public final class LambdaMetaFactory {
       valueOf = new HashMap<>();
       primitiveValue = new HashMap<>();
       for (PrimType primType : tmp) {
-        RefType wrapperType = primType.boxedType();
+        RefType wrapperType = primType.boxedType(myScene);
 
         wrapperTypes.put(wrapperType, primType);
         primitiveTypes.put(primType, wrapperType);
@@ -559,7 +564,7 @@ public final class LambdaMetaFactory {
      */
     private Local box(Local fromLocal, JimpleBody jb, PatchingChain<Unit> us, LocalGenerator lc) {
       PrimType primitiveType = (PrimType) fromLocal.getType();
-      RefType wrapperType = primitiveType.boxedType();
+      RefType wrapperType = primitiveType.boxedType(myScene);
 
       SootMethod valueOfMethod = wrapper.valueOf.get(primitiveType);
 

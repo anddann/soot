@@ -27,17 +27,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.Local;
 import soot.NullType;
 import soot.RefLikeType;
 import soot.Scene;
-import soot.Singletons;
 import soot.Timers;
 import soot.Unit;
 import soot.ValueBox;
@@ -64,22 +63,32 @@ public class CopyPropagator extends BodyTransformer {
 
   protected ThrowAnalysis throwAnalysis = null;
   protected boolean forceOmitExceptingUnitEdges = false;
+  private Options myOptions;
+  private Timers myTimers;
+  private Scene myScene;
 
-  public CopyPropagator(Singletons.Global g) {
+
+  @Inject
+  public CopyPropagator(Options myOptions, Scene myScene) {
+    this.myOptions = myOptions;
+    this.myScene = myScene;
   }
 
-  public CopyPropagator(ThrowAnalysis ta) {
+  @Inject
+  public CopyPropagator(ThrowAnalysis ta, Options myOptions, Scene myScene) {
     this.throwAnalysis = ta;
+    this.myOptions = myOptions;
+    this.myScene = myScene;
   }
+  @Inject
 
-  public CopyPropagator(ThrowAnalysis ta, boolean forceOmitExceptingUnitEdges) {
+  public CopyPropagator(ThrowAnalysis ta, boolean forceOmitExceptingUnitEdges, Options myOptions, Scene myScene) {
     this.throwAnalysis = ta;
     this.forceOmitExceptingUnitEdges = forceOmitExceptingUnitEdges;
+    this.myOptions = myOptions;
+    this.myScene = myScene;
   }
 
-  public static CopyPropagator v() {
-    return G.v().soot_jimple_toolkits_scalar_CopyPropagator();
-  }
 
   /**
    * Cascaded copy propagator.
@@ -203,8 +212,8 @@ public class CopyPropagator extends BodyTransformer {
                   boolean isConstNull = ce.getOp() instanceof IntConstant && ((IntConstant) ce.getOp()).value == 0;
                   isConstNull |= ce.getOp() instanceof LongConstant && ((LongConstant) ce.getOp()).value == 0;
                   if (isConstNull) {
-                    if (useBox.canContainValue(myNullConstant)) {
-                      useBox.setValue(myNullConstant);
+                    if (useBox.canContainValue(NullConstant.v())) {
+                      useBox.setValue(NullConstant.v());
                     }
                   }
 

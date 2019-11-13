@@ -26,11 +26,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
-import soot.G;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.jimple.IdentityStmt;
@@ -39,12 +38,14 @@ import soot.tagkit.LineNumberTag;
 
 public class LineNumberAdder extends SceneTransformer {
 
-  public LineNumberAdder(Singletons.Global g) {
+
+  private Scene myScene;
+
+  @Inject
+  public LineNumberAdder(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public static LineNumberAdder v() {
-    return G.v().soot_jimple_toolkits_annotation_LineNumberAdder();
-  }
 
   public void internalTransform(String phaseName, Map opts) {
 

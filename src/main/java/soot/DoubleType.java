@@ -29,11 +29,19 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class DoubleType extends PrimType {
-  public DoubleType(Singletons.Global g) {
+  private DoubleType() {
   }
 
+
+  private static DoubleType instance;
+
+
   public static DoubleType v() {
-    return G.v().soot_DoubleType();
+    if (instance == null) {
+      instance = new DoubleType();
+    }
+    return instance;
+
   }
 
   public boolean equals(Object t) {
@@ -53,7 +61,7 @@ public class DoubleType extends PrimType {
   }
 
   @Override
-  public RefType boxedType() {
-    return RefType.v("java.lang.Double");
+  public RefType boxedType(Scene myScene) {
+    return RefType.v("java.lang.Double", myScene);
   }
 }

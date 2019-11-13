@@ -29,11 +29,16 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class LongType extends PrimType {
-  public LongType(Singletons.Global g) {
+  private static LongType instance;
+
+  private LongType() {
   }
 
   public static LongType v() {
-    return G.v().soot_LongType();
+    if (instance == null) {
+      instance = new LongType();
+    }
+    return instance;
   }
 
   public boolean equals(Object t) {
@@ -53,7 +58,7 @@ public class LongType extends PrimType {
   }
 
   @Override
-  public RefType boxedType() {
-    return RefType.v("java.lang.Long");
+  public RefType boxedType(Scene myScene) {
+    return RefType.v("java.lang.Long",myScene);
   }
 }

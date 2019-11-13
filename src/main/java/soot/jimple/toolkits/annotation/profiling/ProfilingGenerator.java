@@ -22,14 +22,14 @@ package soot.jimple.toolkits.annotation.profiling;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Iterator;
 import java.util.Map;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.jimple.InvokeExpr;
@@ -43,12 +43,17 @@ import soot.options.ProfilingOptions;
 import soot.util.Chain;
 
 public class ProfilingGenerator extends BodyTransformer {
-  public ProfilingGenerator(Singletons.Global g) {
+
+
+  private Scene myScene;
+  private Jimple myJimple;
+
+  @Inject
+  public ProfilingGenerator(Scene myScene, Jimple myJimple) {
+    this.myScene = myScene;
+    this.myJimple = myJimple;
   }
 
-  public static ProfilingGenerator v() {
-    return G.v().soot_jimple_toolkits_annotation_profiling_ProfilingGenerator();
-  }
 
   public String mainSignature = "void main(java.lang.String[])";
 

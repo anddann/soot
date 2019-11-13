@@ -25,6 +25,7 @@ package soot.jimple.toolkits.annotation.nullcheck;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,12 +48,10 @@ import soot.toolkits.scalar.FlowSet;
 public class NullPointerColorer extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(NullPointerColorer.class);
 
-  public NullPointerColorer(Singletons.Global g) {
+  @Inject
+  public NullPointerColorer() {
   }
 
-  public static NullPointerColorer v() {
-    return G.v().soot_jimple_toolkits_annotation_nullcheck_NullPointerColorer();
-  }
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
 

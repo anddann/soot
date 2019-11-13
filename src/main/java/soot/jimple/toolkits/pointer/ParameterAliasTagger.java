@@ -28,15 +28,14 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.Local;
 import soot.PointsToAnalysis;
 import soot.PointsToSet;
 import soot.RefLikeType;
 import soot.Scene;
-import soot.Singletons;
 import soot.ValueBox;
 import soot.jimple.IdentityStmt;
 import soot.jimple.ParameterRef;
@@ -45,12 +44,13 @@ import soot.tagkit.ColorTag;
 
 /** Adds colour tags to indicate potential aliasing between method parameters. */
 public class ParameterAliasTagger extends BodyTransformer {
-  public ParameterAliasTagger(Singletons.Global g) {
+  private Scene myScene;
+
+  @Inject
+  public ParameterAliasTagger(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public static ParameterAliasTagger v() {
-    return G.v().soot_jimple_toolkits_pointer_ParameterAliasTagger();
-  }
 
   protected void internalTransform(Body b, String phaseName, Map options) {
     PointsToAnalysis pa = myScene.getPointsToAnalysis();

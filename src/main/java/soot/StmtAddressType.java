@@ -29,11 +29,16 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class StmtAddressType extends Type {
-  public StmtAddressType(Singletons.Global g) {
+  private static StmtAddressType instance;
+
+  private StmtAddressType() {
   }
 
   public static StmtAddressType v() {
-    return G.v().soot_StmtAddressType();
+    if(instance==null){
+      instance = new StmtAddressType();
+    }
+    return instance;
   }
 
   public boolean equals(Object t) {

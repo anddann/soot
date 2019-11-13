@@ -22,13 +22,13 @@ package soot.jimple.toolkits.annotation.defs;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Map;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.Local;
-import soot.Singletons;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
@@ -37,11 +37,8 @@ import soot.toolkits.scalar.LocalDefs;
 
 public class ReachingDefsTagger extends BodyTransformer {
 
-  public ReachingDefsTagger(Singletons.Global g) {
-  }
-
-  public static ReachingDefsTagger v() {
-    return G.v().soot_jimple_toolkits_annotation_defs_ReachingDefsTagger();
+  @Inject
+  public ReachingDefsTagger() {
   }
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {

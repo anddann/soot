@@ -3,6 +3,11 @@
     <xsl:strip-space elements="*"/>
     <xsl:template match="/singletons">package soot;
 
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Scope;
+import com.google.inject.Scopes;
+
 /*-
  * #%L
  * Soot - a J*va Optimization Framework
@@ -29,9 +34,6 @@
 
 /** A class to group together all the global variables in Soot. */
 @javax.annotation.Generated(value = "<xsl:copy-of select="system-property('xsl:vendor')"/> v<xsl:copy-of select="system-property('xsl:version')"/>", comments = "from <xsl:value-of select="tokenize(base-uri(), '/')[last()]"/>")
-import com.google.inject.AbstractModule;
-import com.google.inject.Scope;
-import com.google.inject.Scopes;
 public class Singletons extends AbstractModule{
 
 
@@ -42,12 +44,10 @@ public class Singletons extends AbstractModule{
             <xsl:variable name="class" select="."/>
             <xsl:variable name="undottedClass" select="translate(.,'.','_')"/>
             <xsl:variable name="instanceName">instance_<xsl:value-of select="$undottedClass"/></xsl:variable>
-            bind(<xsl:value-of select="$class"/><xsl:text>.class).in(Scopes.SINGLETON) ;
-
+            bind(<xsl:value-of select="$class"/><xsl:text>.class).in(Scopes.SINGLETON);</xsl:text>
+        </xsl:for-each>
 
             }
-  <xsl:text/>
-        </xsl:for-each>
 }<xsl:text/>
     </xsl:template>
 </xsl:stylesheet>

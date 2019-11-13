@@ -22,6 +22,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -36,22 +38,31 @@ import soot.util.NumberedString;
  * @author Ondrej Lhotak
  */
 public class EntryPoints {
-  public EntryPoints(Singletons.Global g) {
+
+  @Inject
+  public EntryPoints(Scene myScene) {
+    this.myScene = myScene;
+    sigMain = myScene.getSubSigNumberer().findOrAdd("void main(java.lang.String[])");
+    sigFinalize = myScene.getSubSigNumberer().findOrAdd("void finalize()");
+    sigExit = myScene.getSubSigNumberer().findOrAdd("void exit()");
+    sigClinit = myScene.getSubSigNumberer().findOrAdd("void <clinit>()");
+    sigInit = myScene.getSubSigNumberer().findOrAdd("void <init>()");
+    sigStart = myScene.getSubSigNumberer().findOrAdd("void start()");
+    sigRun = myScene.getSubSigNumberer().findOrAdd("void run()");
+    sigObjRun = myScene.getSubSigNumberer().findOrAdd("java.lang.Object run()");
+    sigForName = myScene.getSubSigNumberer().findOrAdd("java.lang.Class forName(java.lang.String)");
   }
 
-  public static EntryPoints v() {
-    return G.v().soot_EntryPoints();
-  }
-
-  final NumberedString sigMain = myScene.getSubSigNumberer().findOrAdd("void main(java.lang.String[])");
-  final NumberedString sigFinalize = myScene.getSubSigNumberer().findOrAdd("void finalize()");
-  final NumberedString sigExit = myScene.getSubSigNumberer().findOrAdd("void exit()");
-  final NumberedString sigClinit = myScene.getSubSigNumberer().findOrAdd("void <clinit>()");
-  final NumberedString sigInit = myScene.getSubSigNumberer().findOrAdd("void <init>()");
-  final NumberedString sigStart = myScene.getSubSigNumberer().findOrAdd("void start()");
-  final NumberedString sigRun = myScene.getSubSigNumberer().findOrAdd("void run()");
-  final NumberedString sigObjRun = myScene.getSubSigNumberer().findOrAdd("java.lang.Object run()");
-  final NumberedString sigForName = myScene.getSubSigNumberer().findOrAdd("java.lang.Class forName(java.lang.String)");
+  private Scene myScene;
+  final NumberedString sigMain;
+  final NumberedString sigFinalize;
+  final NumberedString sigExit;
+  final NumberedString sigClinit;
+  final NumberedString sigInit;
+  final NumberedString sigStart;
+  final NumberedString sigRun;
+  final NumberedString sigObjRun;
+  final NumberedString sigForName;
 
   protected void addMethod(List<SootMethod> set, SootClass cls, NumberedString methodSubSig) {
     SootMethod sm = cls.getMethodUnsafe(methodSubSig);

@@ -29,11 +29,11 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import soot.JastAddJ.Options;
 import soot.javaToJimple.IInitialResolver.Dependencies;
 import soot.jimple.JimpleMethodSource;
 import soot.jimple.parser.lexer.LexerException;
 import soot.jimple.parser.parser.ParserException;
-import soot.options.Options;
 
 /**
  * A class source for resolving from .jimple files using the Jimple parser.
@@ -42,9 +42,15 @@ public class JimpleClassSource extends ClassSource {
   private static final Logger logger = LoggerFactory.getLogger(JimpleClassSource.class);
 
   private FoundFile foundFile;
+  private Options myOptions;
+  private SootResolver mySootResolver;
+  private Scene myScene;
 
-  public JimpleClassSource(String className, FoundFile foundFile) {
+  public JimpleClassSource(String className, FoundFile foundFile, Options myOptions, SootResolver mySootResolver, Scene myScene) {
     super(className);
+    this.myOptions = myOptions;
+    this.mySootResolver = mySootResolver;
+    this.myScene = myScene;
     if (foundFile == null) {
       throw new IllegalStateException("Error: The FoundFile must not be null.");
     }
@@ -93,10 +99,10 @@ public class JimpleClassSource extends ClassSource {
       Dependencies deps = new Dependencies();
       // The method documentation states it returns RefTypes only, so this is a transformation safe
       for (String t : jimpAST.getCstPool()) {
-        deps.typesToSignature.add(RefType.v(t));
+        deps.typesToSignature.add(RefType.v(t,myScene));
       }
       if (outerClassName != null) {
-        deps.typesToSignature.add(RefType.v(outerClassName));
+        deps.typesToSignature.add(RefType.v(outerClassName,myScene));
       }
 
       return deps;

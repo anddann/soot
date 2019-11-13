@@ -22,6 +22,8 @@ package soot.jbco.jimpleTransformations;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -33,11 +35,9 @@ import org.slf4j.LoggerFactory;
 import soot.ArrayType;
 import soot.Body;
 import soot.FastHierarchy;
-import soot.G;
 import soot.RefType;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Type;
@@ -78,30 +78,23 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
   private final Object packageNamesMapLock = new Object();
 
   private final NameGenerator nameGenerator;
+  private Scene myScene;
 
   /**
    * Singleton constructor.
    *
    * @param global
    *          the singletons container. Must not be {@code null}
+   * @param myScene
    * @throws NullPointerException
    *           when {@code global} argument is {@code null}
    */
-  public ClassRenamer(Singletons.Global global) {
-    if (global == null) {
-      throw new NullPointerException("Cannot instantiate ClassRenamer with null Singletons.Global");
-    }
+
+  @Inject
+  public ClassRenamer(Scene myScene) {
+    this.myScene = myScene;
 
     this.nameGenerator = new JunkNameGenerator();
-  }
-
-  /**
-   * Singleton getter.
-   *
-   * @return returns instance of {@link ClassRenamer}
-   */
-  public static ClassRenamer v() {
-    return G.v().soot_jbco_jimpleTransformations_ClassRenamer();
   }
 
   @Override
@@ -207,7 +200,7 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
     BodyBuilder.retrieveAllBodies();
     BodyBuilder.retrieveAllNames();
 
-    final SootClass mainClass = getMainClassSafely();
+    final SootClass mainClass = getMainClassSafely(myScene);
 
     for (SootClass applicationClass : myScene.getApplicationClasses()) {
 
@@ -221,7 +214,7 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
       String newClassName = getOrAddNewName(getPackageName(fullyQualifiedName), getClassName(fullyQualifiedName));
 
       applicationClass.setName(newClassName);
-      RefType crt = RefType.v(newClassName);
+      RefType crt = RefType.v(newClassName, myScene);
       crt.setSootClass(applicationClass);
       applicationClass.setRefType(crt);
       applicationClass.setResolvingLevel(SootClass.BODIES);
@@ -415,7 +408,7 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
     return idx < fullyQualifiedClassName.length() - 1 ? fullyQualifiedClassName.substring(idx + 1) : null;
   }
 
-  private static SootClass getMainClassSafely() {
+  private static SootClass getMainClassSafely(Scene myScene) {
     if (myScene.hasMainClass()) {
       return myScene.getMainClass();
     } else {

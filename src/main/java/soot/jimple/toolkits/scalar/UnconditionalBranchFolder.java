@@ -26,30 +26,29 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
-import soot.Singletons;
+import soot.JastAddJ.Options;
 import soot.Unit;
 import soot.jimple.GotoStmt;
 import soot.jimple.IfStmt;
 import soot.jimple.Stmt;
 import soot.jimple.StmtBody;
-import soot.options.Options;
 import soot.util.Chain;
 
 public class UnconditionalBranchFolder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(UnconditionalBranchFolder.class);
+  private Options myOptions;
 
-  public UnconditionalBranchFolder(Singletons.Global g) {
+  @Inject
+  public UnconditionalBranchFolder(Options myOptions) {
+    this.myOptions = myOptions;
   }
 
-  public static UnconditionalBranchFolder v() {
-    return G.v().soot_jimple_toolkits_scalar_UnconditionalBranchFolder();
-  }
 
   static final int JUMPOPT_TYPES = 6;
   int numFound[], numFixed[];

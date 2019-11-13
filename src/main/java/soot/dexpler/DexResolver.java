@@ -31,6 +31,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.google.inject.Inject;
 import soot.G;
 import soot.Singletons;
 import soot.SootClass;
@@ -40,12 +41,11 @@ public class DexResolver {
 
   protected Map<File, DexlibWrapper> cache = new TreeMap<File, DexlibWrapper>();
 
-  public DexResolver(Singletons.Global g) {
+
+  @Inject
+  public DexResolver() {
   }
 
-  public static DexResolver v() {
-    return G.v().soot_dexpler_DexResolver();
-  }
 
   /**
    * Resolve the class contained in file into the passed soot class.

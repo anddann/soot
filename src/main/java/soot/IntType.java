@@ -29,11 +29,17 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class IntType extends PrimType implements IntegerType {
-  public IntType(Singletons.Global g) {
+  private IntType() {
   }
 
+  private static IntType instance;
+
   public static IntType v() {
-    return G.v().soot_IntType();
+    if (instance == null) {
+      instance = new IntType();
+    }
+    return instance;
+
   }
 
   /**
@@ -56,7 +62,7 @@ public class IntType extends PrimType implements IntegerType {
   }
 
   @Override
-  public RefType boxedType() {
-    return RefType.v("java.lang.Integer");
+  public RefType boxedType(Scene myScene) {
+    return RefType.v("java.lang.Integer", myScene);
   }
 }

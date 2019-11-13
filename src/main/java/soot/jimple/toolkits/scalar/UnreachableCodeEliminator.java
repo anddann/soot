@@ -30,19 +30,17 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
+import soot.JastAddJ.Options;
 import soot.PhaseOptions;
 import soot.Scene;
-import soot.Singletons;
 import soot.Trap;
 import soot.Unit;
-import soot.options.Options;
-import soot.toolkits.exceptions.PedanticThrowAnalysis;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph;
@@ -51,16 +49,22 @@ import soot.util.Chain;
 public class UnreachableCodeEliminator extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(UnreachableCodeEliminator.class);
   protected ThrowAnalysis throwAnalysis = null;
+  private Options myOptions;
+  private Scene myScene;
+  private ThrowAnalysis myPedanticThrowAnalysis;
 
-  public UnreachableCodeEliminator(Singletons.Global g) {
+  @Inject
+  public UnreachableCodeEliminator(Options myOptions, ThrowAnalysis myPedanticThrowAnalysis) {
+    this.myOptions = myOptions;
+    this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
   }
 
-  public static UnreachableCodeEliminator v() {
-    return G.v().soot_jimple_toolkits_scalar_UnreachableCodeEliminator();
-  }
 
-  public UnreachableCodeEliminator(ThrowAnalysis ta) {
+  @Inject
+  public UnreachableCodeEliminator(ThrowAnalysis ta, Options myOptions, ThrowAnalysis myPedanticThrowAnalysis) {
     this.throwAnalysis = ta;
+    this.myOptions = myOptions;
+    this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
   }
 
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {

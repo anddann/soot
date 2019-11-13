@@ -27,15 +27,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.G;
 import soot.PatchingChain;
 import soot.RefType;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Trap;
@@ -84,13 +83,13 @@ import soot.util.IterableSet;
  */
 public class ThrowFinder {
   private static final Logger logger = LoggerFactory.getLogger(ThrowFinder.class);
+  private Scene myScene;
 
-  public ThrowFinder(Singletons.Global g) {
+  @Inject
+  public ThrowFinder(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public static ThrowFinder v() {
-    return G.v().soot_dava_toolkits_base_misc_ThrowFinder();
-  }
 
   private HashSet<SootMethod> registeredMethods;
   private HashMap<Stmt, HashSet<SootClass>> protectionSet;

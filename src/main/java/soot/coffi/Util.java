@@ -41,7 +41,6 @@ import soot.ByteType;
 import soot.CharType;
 import soot.DoubleType;
 import soot.FloatType;
-import soot.G;
 import soot.IntType;
 import soot.Local;
 import soot.LongType;
@@ -102,10 +101,11 @@ public class Util {
   private Options myOptions;
   private PackManager myPackManager;
   private Timers myTimers;
-    private CONSTANT_Utf8_collector myCONSTANT_utf8_collector;
+  private CONSTANT_Utf8_collector myCONSTANT_utf8_collector;
 
-    @Inject
-  public Util(Scene myScene, SootResolver mySootResolver, Jimple myJimple, PhaseOptions myPhaseOptions, Options myOptions, PackManager myPackManager, Timers myTimers, CONSTANT_Utf8_collector myCONSTANT_utf8_collector) {
+  @Inject
+  public Util(Scene myScene, SootResolver mySootResolver, Jimple myJimple, PhaseOptions myPhaseOptions, Options myOptions,
+      PackManager myPackManager, Timers myTimers, CONSTANT_Utf8_collector myCONSTANT_utf8_collector) {
     this.myScene = myScene;
     this.mySootResolver = mySootResolver;
     this.myJimple = myJimple;
@@ -113,11 +113,7 @@ public class Util {
     this.myOptions = myOptions;
     this.myPackManager = myPackManager;
     this.myTimers = myTimers;
-        this.myCONSTANT_utf8_collector = myCONSTANT_utf8_collector;
-    }
-
-  public static Util v() {
-    return G.v().soot_coffi_Util();
+    this.myCONSTANT_utf8_collector = myCONSTANT_utf8_collector;
   }
 
   private cp_info[] activeConstantPool = null;
@@ -418,7 +414,8 @@ public class Util {
       method_info methodInfo = coffiClass.methods[i];
       // methodInfo.jmethod.setSource(coffiClass,
       // methodInfo);
-      methodInfo.jmethod.setSource(new CoffiMethodSource(coffiClass, methodInfo, myPhaseOptions, this, myOptions, myJimple, myScene, myPackManager, myTimers));
+      methodInfo.jmethod.setSource(new CoffiMethodSource(coffiClass, methodInfo, myPhaseOptions, this, myOptions, myJimple,
+          myScene, myPackManager, myTimers));
     }
 
     // Set "SourceFile" attribute tag

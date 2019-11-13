@@ -29,11 +29,17 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class NullType extends RefLikeType {
-  public NullType(Singletons.Global g) {
+  private NullType() {
   }
 
+  private static NullType instance;
+
   public static NullType v() {
-    return G.v().soot_NullType();
+    if (instance == null) {
+      instance = new NullType();
+    }
+    return instance;
+
   }
 
   public int hashCode() {

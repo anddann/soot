@@ -22,19 +22,13 @@ package soot.jimple.toolkits.typing.integer;
  * #L%
  */
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.inject.Inject;
 
 import soot.BooleanType;
 import soot.ByteType;
 import soot.CharType;
-import soot.G;
 import soot.IntType;
-import soot.PrimType;
-import soot.RefType;
 import soot.ShortType;
-import soot.Singletons;
-import soot.Singletons.Global;
 import soot.Type;
 
 /**
@@ -46,12 +40,10 @@ import soot.Type;
 public class ClassHierarchy {
 
 
-  public ClassHierarchy(Global g) {
+  @Inject
+  public ClassHierarchy() {
   }
 
-  public static ClassHierarchy v() {
-    return G.v().soot_jimple_toolkits_typing_integer_ClassHierarchy();
-  }
 
   public final TypeNode BOOLEAN = new TypeNode(0, BooleanType.v());
   public final TypeNode BYTE = new TypeNode(1, ByteType.v());

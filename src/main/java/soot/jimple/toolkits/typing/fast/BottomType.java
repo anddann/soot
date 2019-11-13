@@ -33,11 +33,17 @@ import soot.Type;
  */
 public class BottomType extends Type {
 
-  public static BottomType v() {
-    return G.v().soot_jimple_toolkits_typing_fast_BottomType();
+
+  private static BottomType instance;
+
+  private BottomType() {
   }
 
-  public BottomType(Singletons.Global g) {
+  public static BottomType v() {
+    if (instance == null) {
+      instance = new BottomType();
+    }
+    return instance;
   }
 
   public String toString() {

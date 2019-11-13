@@ -29,13 +29,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
-import soot.G;
 import soot.Local;
 import soot.Modifier;
 import soot.RefType;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -57,12 +56,16 @@ import soot.util.Chain;
 
 /** Utility methods for dealing with synchronization. */
 public class SynchronizerManager {
-  public SynchronizerManager(Singletons.Global g) {
+
+  private Scene myScene;
+  private Jimple myJimple;
+
+  @Inject
+  public SynchronizerManager(Scene myScene, Jimple myJimple) {
+    this.myScene = myScene;
+    this.myJimple = myJimple;
   }
 
-  public static SynchronizerManager v() {
-    return G.v().soot_jimple_toolkits_invoke_SynchronizerManager();
-  }
 
   /** Maps classes to class$ fields. Don't trust default. */
   public HashMap<SootClass, SootField> classToClassField = new HashMap<SootClass, SootField>();
@@ -94,7 +97,7 @@ public class SynchronizerManager {
         n = "_" + n;
       }
 
-      classCacher = myScene.makeSootField(n, RefType.v("java.lang.Class"), Modifier.STATIC);
+      classCacher = myScene.makeSootField(n, RefType.v("java.lang.Class",myScene), Modifier.STATIC);
       sc.addField(classCacher);
       classToClassField.put(sc, classCacher);
     }
@@ -117,13 +120,13 @@ public class SynchronizerManager {
       lName = "_" + lName;
     }
 
-    Local l = myJimple.newLocal(lName, RefType.v("java.lang.Class"));
+    Local l = myJimple.newLocal(lName, RefType.v("java.lang.Class",myScene));
     jb.getLocals().add(l);
     Chain units = jb.getUnits();
     units.insertBefore(myJimple.newAssignStmt(l, myJimple.newStaticFieldRef(classCacher.makeRef())), target);
 
     IfStmt ifStmt;
-    units.insertBefore(ifStmt = myJimple.newIfStmt(myJimple.newNeExpr(l, myNullConstant), target), target);
+    units.insertBefore(ifStmt = myJimple.newIfStmt(myJimple.newNeExpr(l, NullConstant.v()), target), target);
 
     units.insertBefore(myJimple.newAssignStmt(l, myJimple.newStaticInvokeExpr(getClassFetcherFor(sc).makeRef(),
         Arrays.asList(new Value[] { StringConstant.v(sc.getName()) }))), target);
@@ -256,8 +259,8 @@ public class SynchronizerManager {
    */
   public SootMethod createClassFetcherFor(SootClass c, String methodName) {
     // Create the method
-    SootMethod method = myScene.makeSootMethod(methodName, Arrays.asList(new Type[] { RefType.v("java.lang.String") }),
-        RefType.v("java.lang.Class"), Modifier.STATIC);
+    SootMethod method = myScene.makeSootMethod(methodName, Arrays.asList(new Type[] { RefType.v("java.lang.String",myScene) }),
+        RefType.v("java.lang.Class",myScene), Modifier.STATIC);
 
     c.addMethod(method);
 
@@ -270,12 +273,12 @@ public class SynchronizerManager {
       Local l_r0, l_r1, l_r2, l_r3, l_r4, l_r5;
 
       // Add some locals
-      l_r0 = myJimple.newLocal("r0", RefType.v("java.lang.String"));
-      l_r1 = myJimple.newLocal("r1", RefType.v("java.lang.ClassNotFoundException"));
-      l_r2 = myJimple.newLocal("$r2", RefType.v("java.lang.Class"));
-      l_r3 = myJimple.newLocal("$r3", RefType.v("java.lang.ClassNotFoundException"));
-      l_r4 = myJimple.newLocal("$r4", RefType.v("java.lang.NoClassDefFoundError"));
-      l_r5 = myJimple.newLocal("$r5", RefType.v("java.lang.String"));
+      l_r0 = myJimple.newLocal("r0", RefType.v("java.lang.String",myScene));
+      l_r1 = myJimple.newLocal("r1", RefType.v("java.lang.ClassNotFoundException",myScene));
+      l_r2 = myJimple.newLocal("$r2", RefType.v("java.lang.Class",myScene));
+      l_r3 = myJimple.newLocal("$r3", RefType.v("java.lang.ClassNotFoundException",myScene));
+      l_r4 = myJimple.newLocal("$r4", RefType.v("java.lang.NoClassDefFoundError",myScene));
+      l_r5 = myJimple.newLocal("$r5", RefType.v("java.lang.String",myScene));
 
       body.getLocals().add(l_r0);
       body.getLocals().add(l_r1);
@@ -285,7 +288,7 @@ public class SynchronizerManager {
       body.getLocals().add(l_r5);
 
       // add "r0 := @parameter0: java.lang.String"
-      units.add(myJimple.newIdentityStmt(l_r0, myJimple.newParameterRef(RefType.v("java.lang.String"), 0)));
+      units.add(myJimple.newIdentityStmt(l_r0, myJimple.newParameterRef(RefType.v("java.lang.String",myScene), 0)));
 
       // add "$r2 = .staticinvoke <java.lang.Class: java.lang.Class
       // forName(java.lang.String)>(r0);
@@ -306,7 +309,7 @@ public class SynchronizerManager {
       units.add(myJimple.newAssignStmt(l_r1, l_r3));
 
       // add "$r4 = .new java.lang.NoClassDefFoundError;"
-      units.add(myJimple.newAssignStmt(l_r4, myJimple.newNewExpr(RefType.v("java.lang.NoClassDefFoundError"))));
+      units.add(myJimple.newAssignStmt(l_r4, myJimple.newNewExpr(RefType.v("java.lang.NoClassDefFoundError",myScene))));
 
       // add "$r5 = virtualinvoke r1.<java.lang.Throwable:
       // java.lang.String getMessage()>();"
@@ -377,7 +380,7 @@ public class SynchronizerManager {
       units.insertAfter(newGoto, exitMon);
 
       List<Unit> l = new ArrayList<Unit>();
-      Local eRef = myJimple.newLocal("__exception", RefType.v("java.lang.Throwable"));
+      Local eRef = myJimple.newLocal("__exception", RefType.v("java.lang.Throwable",myScene));
       b.getLocals().add(eRef);
       Stmt handlerStmt = myJimple.newIdentityStmt(eRef, myJimple.newCaughtExceptionRef());
       l.add(handlerStmt);

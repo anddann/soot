@@ -25,24 +25,26 @@ package soot.jimple.spark.fieldrw;
 import java.util.LinkedList;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
-import soot.G;
-import soot.Singletons;
 import soot.Unit;
 import soot.tagkit.Tag;
 import soot.tagkit.TagAggregator;
 
 public class FieldTagAggregator extends TagAggregator {
-  public FieldTagAggregator(Singletons.Global g) {
+  private FieldWriteTagAggregator myFieldWriteTagAggregator;
+  private FieldReadTagAggregator myFieldReadTagAggregator;
+
+  @Inject
+  public FieldTagAggregator(FieldWriteTagAggregator myFieldWriteTagAggregator, FieldReadTagAggregator myFieldReadTagAggregator) {
+    this.myFieldWriteTagAggregator = myFieldWriteTagAggregator;
+    this.myFieldReadTagAggregator = myFieldReadTagAggregator;
   }
 
-  public static FieldTagAggregator v() {
-    return G.v().soot_jimple_spark_fieldrw_FieldTagAggregator();
-  }
 
   protected void internalTransform(Body b, String phaseName, Map options) {
-    FieldReadTagmyAggregator.transform(b, phaseName, options);
-    FieldWriteTagmyAggregator.transform(b, phaseName, options);
+    myFieldReadTagAggregator.transform(b, phaseName, options);
+    myFieldWriteTagAggregator.transform(b, phaseName, options);
   }
 
   /** Decide whether this tag should be aggregated by this aggregator. */

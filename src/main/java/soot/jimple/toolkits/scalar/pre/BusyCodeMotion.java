@@ -26,17 +26,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
 import soot.EquivalentValue;
-import soot.G;
+import soot.JastAddJ.Options;
 import soot.Local;
 import soot.Scene;
 import soot.SideEffectTester;
-import soot.Singletons;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.AssignStmt;
@@ -47,7 +47,6 @@ import soot.jimple.toolkits.graph.CriticalEdgeRemover;
 import soot.jimple.toolkits.pointer.PASideEffectTester;
 import soot.jimple.toolkits.scalar.LocalCreation;
 import soot.options.BCMOptions;
-import soot.options.Options;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.util.Chain;
@@ -68,13 +67,20 @@ import soot.util.UnitMap;
  */
 public class BusyCodeMotion extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(BusyCodeMotion.class);
+  private Options myOptions;
+  private CriticalEdgeRemover myCriticalEdgeRemover;
+  private Scene myScene;
+  private Jimple myJimple;
 
-  public BusyCodeMotion(Singletons.Global g) {
+
+  @Inject
+  public BusyCodeMotion(Options myOptions, CriticalEdgeRemover myCriticalEdgeRemover, Scene myScene, Jimple myJimple) {
+    this.myOptions = myOptions;
+    this.myCriticalEdgeRemover = myCriticalEdgeRemover;
+    this.myScene = myScene;
+    this.myJimple = myJimple;
   }
 
-  public static BusyCodeMotion v() {
-    return G.v().soot_jimple_toolkits_scalar_pre_BusyCodeMotion();
-  }
 
   private static final String PREFIX = "$bcm";
 

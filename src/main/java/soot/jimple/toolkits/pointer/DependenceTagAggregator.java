@@ -22,17 +22,14 @@ package soot.jimple.toolkits.pointer;
  * #L%
  */
 
-import soot.G;
-import soot.Singletons;
+import com.google.inject.Inject;
+
 import soot.tagkit.ImportantTagAggregator;
 import soot.tagkit.Tag;
 
 public class DependenceTagAggregator extends ImportantTagAggregator {
-  public DependenceTagAggregator(Singletons.Global g) {
-  }
-
-  public static DependenceTagAggregator v() {
-    return G.v().soot_jimple_toolkits_pointer_DependenceTagAggregator();
+  @Inject
+  public DependenceTagAggregator() {
   }
 
   /** Decide whether this tag should be aggregated by this aggregator. */

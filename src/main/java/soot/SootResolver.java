@@ -23,6 +23,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayDeque;
@@ -39,6 +41,7 @@ import soot.JastAddJ.CompilationUnit;
 import soot.JastAddJ.JastAddJavaParser;
 import soot.JastAddJ.JavaParser;
 import soot.JastAddJ.Program;
+import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.javaToJimple.IInitialResolver.Dependencies;
 import soot.options.Options;
 import soot.util.ConcurrentHashMultiMap;
@@ -58,8 +61,17 @@ public class SootResolver {
   private final Deque<SootClass>[] worklist = new Deque[4];
 
   private Program program = null;
+  private Options myOptions;
+  private Scene myScene;
+  private PackageNamer myPackageNamer;
+  private SourceLocator mySourceLocator;
 
-  public SootResolver(Singletons.Global g) {
+  @Inject
+  public SootResolver(Options myOptions, Scene myScene, PackageNamer myPackageNamer, SourceLocator mySourceLocator) {
+    this.myOptions = myOptions;
+    this.myScene = myScene;
+    this.myPackageNamer = myPackageNamer;
+    this.mySourceLocator = mySourceLocator;
     worklist[SootClass.HIERARCHY] = new ArrayDeque<SootClass>();
     worklist[SootClass.SIGNATURES] = new ArrayDeque<SootClass>();
     worklist[SootClass.BODIES] = new ArrayDeque<SootClass>();
@@ -92,9 +104,6 @@ public class SootResolver {
     }
   }
 
-  public static SootResolver v() {
-    return G.v().soot_SootResolver();
-  }
 
   /** Returns true if we are resolving all class refs recursively. */
   protected boolean resolveEverything() {

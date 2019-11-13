@@ -22,6 +22,8 @@ package soot.jimple.toolkits.annotation.arraycheck;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -36,11 +38,10 @@ import org.slf4j.LoggerFactory;
 
 import soot.ArrayType;
 import soot.Body;
-import soot.G;
+import soot.JastAddJ.Options;
 import soot.Local;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Type;
@@ -62,7 +63,6 @@ import soot.jimple.internal.JArrayRef;
 import soot.jimple.internal.JNewMultiArrayExpr;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Targets;
-import soot.options.Options;
 import soot.util.Chain;
 
 /**
@@ -71,13 +71,16 @@ import soot.util.Chain;
 
 public class RectangularArrayFinder extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(RectangularArrayFinder.class);
+  private Options myOptions;
+  private Scene myScene;
 
-  public RectangularArrayFinder(Singletons.Global g) {
+  @Inject
+  public RectangularArrayFinder(Options myOptions, Scene myScene) {
+    this.myOptions = myOptions;
+    this.myScene = myScene;
   }
 
-  public static RectangularArrayFinder v() {
-    return G.v().soot_jimple_toolkits_annotation_arraycheck_RectangularArrayFinder();
-  }
+
 
   private final ExtendedHashMutableDirectedGraph agraph = new ExtendedHashMutableDirectedGraph();
 

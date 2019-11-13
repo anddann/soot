@@ -22,22 +22,25 @@ package soot.dava.toolkits.base.AST;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import soot.G;
-import soot.Singletons;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.AST.ASTTryNode;
 
 public class UselessTryRemover extends ASTAnalysis {
-  public UselessTryRemover(Singletons.Global g) {
+
+  private TryContentsFinder myTryContentsFinder;
+
+  @Inject
+  public UselessTryRemover(TryContentsFinder myTryContentsFinder) {
+    this.myTryContentsFinder = myTryContentsFinder;
   }
 
-  public static UselessTryRemover v() {
-    return G.v().soot_dava_toolkits_base_AST_UselessTryRemover();
-  }
 
   public int getAnalysisDepth() {
     return ANALYSE_AST;

@@ -29,11 +29,16 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class UnknownType extends Type {
-  public UnknownType(Singletons.Global g) {
+  private UnknownType() {
   }
 
+  private static UnknownType instance;
+
   public static UnknownType v() {
-    return G.v().soot_UnknownType();
+    if(instance==null){
+      instance = new UnknownType();
+    }
+    return instance;
   }
 
   public int hashCode() {

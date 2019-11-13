@@ -22,17 +22,18 @@ package soot.tagkit;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.G;
 import soot.Singletons;
 
 /** Utility functions for tags. */
 public class TagManager {
-  public TagManager(Singletons.Global g) {
+
+  @Inject
+  public TagManager() {
   }
 
-  public static TagManager v() {
-    return G.v().soot_tagkit_TagManager();
-  }
+
 
   private TagPrinter tagPrinter = new StdTagPrinter();
 

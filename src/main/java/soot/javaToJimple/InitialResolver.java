@@ -22,6 +22,8 @@ package soot.javaToJimple;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -113,12 +115,10 @@ public class InitialResolver implements IInitialResolver {
     setAst(sootNameToAST.get(name));
   }
 
-  public InitialResolver(soot.Singletons.Global g) {
+  @Inject
+  public InitialResolver() {
   }
 
-  public static InitialResolver v() {
-    return soot.G.v().soot_javaToJimple_InitialResolver();
-  }
 
   /**
    * Invokes polyglot and gets the AST for the source given in fullPath

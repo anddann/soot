@@ -31,12 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.IntType;
 import soot.Local;
 import soot.LongType;
@@ -44,7 +44,6 @@ import soot.NullType;
 import soot.PhaseOptions;
 import soot.RefType;
 import soot.Scene;
-import soot.Singletons;
 import soot.Timers;
 import soot.Trap;
 import soot.Type;
@@ -78,13 +77,20 @@ import soot.util.Chain;
 
 public class DeadAssignmentEliminator extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(DeadAssignmentEliminator.class);
+  private Options myOptions;
+  private Timers myTimers;
+  private Jimple myJimple;
+  private Scene myScene;
 
-  public DeadAssignmentEliminator(Singletons.Global g) {
+
+  @Inject
+  public DeadAssignmentEliminator(Options myOptions, Timers myTimers, Jimple myJimple, Scene myScene) {
+    this.myOptions = myOptions;
+    this.myTimers = myTimers;
+    this.myJimple = myJimple;
+    this.myScene = myScene;
   }
 
-  public static DeadAssignmentEliminator v() {
-    return G.v().soot_jimple_toolkits_scalar_DeadAssignmentEliminator();
-  }
 
   /**
    * Eliminates dead code in a linear fashion. Complexity is linear with respect to the statements.

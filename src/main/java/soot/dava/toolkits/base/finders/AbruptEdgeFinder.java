@@ -22,10 +22,10 @@ package soot.dava.toolkits.base.finders;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Iterator;
 
-import soot.G;
-import soot.Singletons;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
 import soot.dava.RetriggerAnalysisException;
@@ -38,11 +38,12 @@ import soot.dava.internal.javaRep.DAbruptStmt;
 import soot.util.IterableSet;
 
 public class AbruptEdgeFinder implements FactFinder {
-  public AbruptEdgeFinder(Singletons.Global g) {
-  }
 
-  public static AbruptEdgeFinder v() {
-    return G.v().soot_dava_toolkits_base_finders_AbruptEdgeFinder();
+  private Dava myDava;
+
+  @Inject
+  public AbruptEdgeFinder(Dava myDava) {
+    this.myDava = myDava;
   }
 
   public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {

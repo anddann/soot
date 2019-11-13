@@ -22,6 +22,7 @@ package soot.dava;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.G;
 import soot.Modifier;
@@ -58,12 +59,11 @@ import soot.util.Chain;
 public class DavaStaticBlockCleaner {
   SootClass sootClass;
 
-  public DavaStaticBlockCleaner(Singletons.Global g) {
+
+  @Inject
+  public DavaStaticBlockCleaner() {
   }
 
-  public static DavaStaticBlockCleaner v() {
-    return G.v().soot_dava_DavaStaticBlockCleaner();
-  }
 
   // invoked by the PackManager
   public void staticBlockInlining(SootClass sootClass) {

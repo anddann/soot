@@ -68,8 +68,10 @@ public class ClassHierarchy {
 
   /** Used to create TypeNode instances **/
   private final ConstructorChooser make = new ConstructorChooser();
+  private final Options myOptions;
 
-  private ClassHierarchy(Scene scene) {
+  private ClassHierarchy(Scene scene, Options myOptions) {
+    this.myOptions = myOptions;
     if (scene == null) {
       throw new InternalTypingException();
     }
@@ -77,13 +79,13 @@ public class ClassHierarchy {
     G.v().ClassHierarchy_classHierarchyMap.put(scene, this);
 
     NULL = typeNode(NullType.v());
-    OBJECT = typeNode(RefType.v("java.lang.Object"));
+    OBJECT = typeNode(RefType.v("java.lang.Object", scene));
 
     // hack for J2ME library which does not have Cloneable and Serializable
     // reported by Stephen Chen
-    if (!myOptions.j2me()) {
-      CLONEABLE = typeNode(RefType.v("java.lang.Cloneable"));
-      SERIALIZABLE = typeNode(RefType.v("java.io.Serializable"));
+    if (!this.myOptions.j2me()) {
+      CLONEABLE = typeNode(RefType.v("java.lang.Cloneable", scene));
+      SERIALIZABLE = typeNode(RefType.v("java.io.Serializable", scene));
     } else {
       CLONEABLE = null;
       SERIALIZABLE = null;
@@ -93,7 +95,7 @@ public class ClassHierarchy {
   }
 
   /** Get the class hierarchy for the given scene. **/
-  public static ClassHierarchy classHierarchy(Scene scene) {
+  public static ClassHierarchy classHierarchy(Scene scene, Options myOptions) {
     if (scene == null) {
       throw new InternalTypingException();
     }
@@ -101,7 +103,7 @@ public class ClassHierarchy {
     ClassHierarchy classHierarchy = G.v().ClassHierarchy_classHierarchyMap.get(scene);
 
     if (classHierarchy == null) {
-      classHierarchy = new ClassHierarchy(scene);
+      classHierarchy = new ClassHierarchy(scene, myOptions);
     }
 
     return classHierarchy;

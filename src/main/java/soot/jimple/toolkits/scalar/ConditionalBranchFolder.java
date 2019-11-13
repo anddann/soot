@@ -24,13 +24,13 @@ package soot.jimple.toolkits.scalar;
 
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
-import soot.Singletons;
+import soot.JastAddJ.Options;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.IfStmt;
@@ -38,18 +38,19 @@ import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
 import soot.jimple.Stmt;
 import soot.jimple.StmtBody;
-import soot.options.Options;
 import soot.util.Chain;
 
 public class ConditionalBranchFolder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ConditionalBranchFolder.class);
+  private Options myOptions;
+  private Jimple myJimple;
 
-  public ConditionalBranchFolder(Singletons.Global g) {
+  @Inject
+  public ConditionalBranchFolder(Options myOptions, Jimple myJimple) {
+    this.myOptions = myOptions;
+    this.myJimple = myJimple;
   }
 
-  public static ConditionalBranchFolder v() {
-    return G.v().soot_jimple_toolkits_scalar_ConditionalBranchFolder();
-  }
 
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
     StmtBody stmtBody = (StmtBody) body;

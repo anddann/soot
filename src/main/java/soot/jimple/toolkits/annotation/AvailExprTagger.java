@@ -22,15 +22,15 @@ package soot.jimple.toolkits.annotation;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Map;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.PhaseOptions;
 import soot.Scene;
 import soot.SideEffectTester;
-import soot.Singletons;
 import soot.jimple.NaiveSideEffectTester;
 import soot.jimple.toolkits.pointer.PASideEffectTester;
 import soot.jimple.toolkits.scalar.PessimisticAvailableExpressionsAnalysis;
@@ -42,11 +42,12 @@ import soot.toolkits.graph.ExceptionalUnitGraph;
  * A body transformer that records avail expression information in tags. - both pessimistic and optimistic options
  */
 public class AvailExprTagger extends BodyTransformer {
-  public AvailExprTagger(Singletons.Global g) {
-  }
 
-  public static AvailExprTagger v() {
-    return G.v().soot_jimple_toolkits_annotation_AvailExprTagger();
+  private Scene myScene;
+
+  @Inject
+  public AvailExprTagger(Scene myScene) {
+    this.myScene = myScene;
   }
 
   protected void internalTransform(Body b, String phaseName, Map opts) {

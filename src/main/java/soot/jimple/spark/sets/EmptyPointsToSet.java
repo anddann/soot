@@ -25,9 +25,7 @@ package soot.jimple.spark.sets;
 import java.util.Collections;
 import java.util.Set;
 
-import soot.G;
 import soot.PointsToSet;
-import soot.Singletons;
 import soot.Type;
 import soot.jimple.ClassConstant;
 import soot.jimple.spark.pag.Node;
@@ -38,15 +36,21 @@ import soot.jimple.spark.pag.Node;
  * @author Ondrej Lhotak
  */
 public class EmptyPointsToSet extends PointsToSetInternal {
-  public EmptyPointsToSet(Singletons.Global g) {
+  public EmptyPointsToSet() {
     super(null);
   }
 
+  private static EmptyPointsToSet instance;
+
   public static EmptyPointsToSet v() {
-    return G.v().soot_jimple_spark_sets_EmptyPointsToSet();
+    if (instance == null) {
+      instance = new EmptyPointsToSet();
+
+    }
+    return instance;
   }
 
-  public EmptyPointsToSet(Singletons.Global g, Type type) {
+  public EmptyPointsToSet(Type type) {
     super(type);
   }
 

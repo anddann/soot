@@ -24,6 +24,7 @@ package soot.jimple.paddle;
 
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.G;
 import soot.SceneTransformer;
 import soot.Singletons;
@@ -34,12 +35,11 @@ import soot.Singletons;
  * @author Ondrej Lhotak
  */
 public class PaddleHook extends SceneTransformer {
-  public PaddleHook(Singletons.Global g) {
+
+  @Inject
+  public PaddleHook() {
   }
 
-  public static PaddleHook v() {
-    return G.v().soot_jimple_paddle_PaddleHook();
-  }
 
   private IPaddleTransformer paddleTransformer;
 

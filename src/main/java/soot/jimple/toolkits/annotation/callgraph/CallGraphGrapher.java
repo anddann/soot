@@ -22,6 +22,8 @@ package soot.jimple.toolkits.annotation.callgraph;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -30,12 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.G;
 import soot.MethodOrMethodContext;
 import soot.MethodToContexts;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.jimple.Stmt;
@@ -48,12 +48,15 @@ import soot.toolkits.graph.interaction.InteractionHandler;
 /** A scene transformer that creates a graphical callgraph. */
 public class CallGraphGrapher extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(CallGraphGrapher.class);
+  private Scene myScene;
+  private Options myOptions;
+  private InteractionHandler myInteractionHandler;
 
-  public CallGraphGrapher(Singletons.Global g) {
-  }
-
-  public static CallGraphGrapher v() {
-    return G.v().soot_jimple_toolkits_annotation_callgraph_CallGraphGrapher();
+  @Inject
+  public CallGraphGrapher(Scene myScene, Options myOptions, InteractionHandler myInteractionHandler) {
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
   private MethodToContexts methodToContexts;
@@ -178,7 +181,7 @@ public class CallGraphGrapher extends SceneTransformer {
 
   private SootMethod getFirstMethod(SootClass sc) {
     ArrayList paramTypes = new ArrayList();
-    paramTypes.add(soot.ArrayType.v(soot.RefType.v("java.lang.String"), 1));
+    paramTypes.add(soot.ArrayType.v(soot.RefType.v("java.lang.String",myScene), 1));
     SootMethod sm = sc.getMethodUnsafe("main", paramTypes, soot.VoidType.v());
     if (sm != null) {
       return sm;

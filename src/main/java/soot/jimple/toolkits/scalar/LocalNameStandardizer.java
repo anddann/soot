@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.BooleanType;
@@ -53,13 +54,11 @@ import soot.ValueBox;
 import soot.util.Chain;
 
 public class LocalNameStandardizer extends BodyTransformer {
-  public LocalNameStandardizer(Singletons.Global g) {
+  @Inject
+  public LocalNameStandardizer() {
   }
 
-  public static LocalNameStandardizer v() {
-    return G.v().soot_jimple_toolkits_scalar_LocalNameStandardizer();
-  }
-  
+
   private final static int digits(int n) {
     int len = String.valueOf(n).length();
     if (n < 0) {

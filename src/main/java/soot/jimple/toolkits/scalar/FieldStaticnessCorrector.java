@@ -22,13 +22,13 @@ package soot.jimple.toolkits.scalar;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Iterator;
 import java.util.Map;
 
 import soot.Body;
 import soot.ConflictingFieldRefException;
-import soot.G;
-import soot.Singletons;
 import soot.SootField;
 import soot.Unit;
 import soot.jimple.AssignStmt;
@@ -46,11 +46,11 @@ import soot.jimple.Stmt;
  */
 public class FieldStaticnessCorrector extends AbstractStaticnessCorrector {
 
-  public FieldStaticnessCorrector(Singletons.Global g) {
-  }
+  private Jimple myJimple;
 
-  public static FieldStaticnessCorrector v() {
-    return G.v().soot_jimple_toolkits_scalar_FieldStaticnessCorrector();
+  @Inject
+  public FieldStaticnessCorrector(Jimple myJimple) {
+    this.myJimple = myJimple;
   }
 
   @Override

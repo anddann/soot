@@ -22,6 +22,8 @@ package soot.shimple.toolkits.scalar;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,10 +36,8 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.Local;
 import soot.PhaseOptions;
-import soot.Singletons;
 import soot.Unit;
 import soot.UnitBox;
 import soot.UnitBoxOwner;
@@ -77,12 +77,13 @@ import soot.util.Chain;
  **/
 public class SConstantPropagatorAndFolder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(SConstantPropagatorAndFolder.class);
+  private Options myOptions;
+  private Jimple myJimple;
 
-  public SConstantPropagatorAndFolder(Singletons.Global g) {
-  }
-
-  public static SConstantPropagatorAndFolder v() {
-    return G.v().soot_shimple_toolkits_scalar_SConstantPropagatorAndFolder();
+  @Inject
+  public SConstantPropagatorAndFolder(Options myOptions, Jimple myJimple) {
+    this.myOptions = myOptions;
+    this.myJimple = myJimple;
   }
 
   protected ShimpleBody sb;
@@ -109,7 +110,7 @@ public class SConstantPropagatorAndFolder extends BodyTransformer {
     }
 
     // *** FIXME: What happens when Shimple is built with another UnitGraph?
-    SCPFAnalysis scpf = new SCPFAnalysis(new ExceptionalUnitGraph(sb));
+    SCPFAnalysis scpf = new SCPFAnalysis(new ExceptionalUnitGraph(sb), myJimple);
 
     propagateResults(scpf.getResults());
     if (pruneCFG) {
@@ -255,6 +256,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
    * A list of IfStmts that always fall through.
    **/
   protected List<IfStmt> deadStmts;
+  private Jimple myJimple;
 
   /**
    * Returns the localToConstant map.
@@ -277,8 +279,9 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
     return stmtToReplacement;
   }
 
-  public SCPFAnalysis(UnitGraph graph) {
+  public SCPFAnalysis(UnitGraph graph, Jimple myJimple) {
     super(graph);
+    this.myJimple = myJimple;
     emptySet = new ArraySparseSet();
     stmtToReplacement = new HashMap<Stmt, GotoStmt>();
     deadStmts = new ArrayList<IfStmt>();
