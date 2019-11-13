@@ -196,11 +196,11 @@ public class TryContentsFinder extends ASTAnalysis {
   }
 
   private boolean catches_RuntimeException(SootClass c) {
-    if ((c == Scene.v().getSootClass("java.lang.Throwable")) || (c == Scene.v().getSootClass("java.lang.Exception"))) {
+    if ((c == myScene.getSootClass("java.lang.Throwable")) || (c == myScene.getSootClass("java.lang.Exception"))) {
       return true;
     }
 
-    SootClass caughtException = c, runtimeException = Scene.v().getSootClass("java.lang.RuntimeException");
+    SootClass caughtException = c, runtimeException = myScene.getSootClass("java.lang.RuntimeException");
 
     while (true) {
       if (caughtException == runtimeException) {

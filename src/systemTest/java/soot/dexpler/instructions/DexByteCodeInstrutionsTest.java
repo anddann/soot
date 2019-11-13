@@ -56,12 +56,12 @@ public class DexByteCodeInstrutionsTest extends AbstractTestingFramework {
   @Override
   protected void setupSoot() {
     super.setupSoot();
-    Options.v().set_src_prec(Options.src_prec_apk);
+    myOptions.set_src_prec(Options.src_prec_apk);
     // to get the basic classes; java.lang.Object, java.lang.Throwable, ... we add the rt.jar to the classpath
     File rtJar = new File(System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar");
-    Options.v().set_process_dir(Arrays.asList(targetDexPath(), rtJar.getPath()));
-    Options.v().set_force_android_jar(androidJarPath());
-    Options.v().set_android_api_version(26);
+    myOptions.set_process_dir(Arrays.asList(targetDexPath(), rtJar.getPath()));
+    myOptions.set_force_android_jar(androidJarPath());
+    myOptions.set_android_api_version(26);
   }
 
   @Override

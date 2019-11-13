@@ -77,8 +77,8 @@ public class Aggregator extends BodyTransformer {
     StmtBody body = (StmtBody) b;
     boolean onlyStackVars = PhaseOptions.getBoolean(options, "only-stack-locals");
 
-    if (Options.v().time()) {
-      Timers.v().aggregationTimer.start();
+    if (myOptions.time()) {
+      myTimers.aggregationTimer.start();
     }
 
     int aggregateCount = 1;
@@ -105,7 +105,7 @@ public class Aggregator extends BodyTransformer {
     }
 
     do {
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         logger.debug("" + "[" + body.getMethod().getName() + "] Aggregating iteration " + aggregateCount + "...");
       }
 
@@ -116,8 +116,8 @@ public class Aggregator extends BodyTransformer {
       aggregateCount++;
     } while (changed);
 
-    if (Options.v().time()) {
-      Timers.v().aggregationTimer.end();
+    if (myOptions.time()) {
+      myTimers.aggregationTimer.end();
     }
 
   }
@@ -314,7 +314,7 @@ public class Aggregator extends BodyTransformer {
         }
       } else {
         /*
-         * if(Options.v().verbose()) { logger.debug("[debug] failed aggregation");
+         * if(myOptions.verbose()) { logger.debug("[debug] failed aggregation");
          * logger.debug("[debug] tried to put "+aggregatee+ " into "+usepair.stmt + ": in particular, "+usepair.valueBox);
          * logger.debug("[debug] aggregatee instanceof Expr: " +(aggregatee instanceof Expr)); }
          */

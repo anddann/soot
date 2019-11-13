@@ -366,7 +366,7 @@ public class DexNullTransformer extends AbstractNullTransformer {
 
     // Check for inlined zero values
     AbstractStmtSwitch inlinedZeroValues = new AbstractStmtSwitch() {
-      final NullConstant nullConstant = NullConstant.v();
+      final NullConstant nullConstant = myNullConstant;
 
       @Override
       public void caseAssignStmt(AssignStmt stmt) {
@@ -428,7 +428,7 @@ public class DexNullTransformer extends AbstractNullTransformer {
 
     };
 
-    final NullConstant nullConstant = NullConstant.v();
+    final NullConstant nullConstant = myNullConstant;
     for (Unit u : body.getUnits()) {
       u.apply(inlinedZeroValues);
       if (u instanceof Stmt) {

@@ -151,19 +151,19 @@ public class CallGraphGrapher extends SceneTransformer {
     if (opts.show_lib_meths()) {
       setShowLibMeths(true);
     }
-    cg = Scene.v().getCallGraph();
-    if (Options.v().interactive_mode()) {
+    cg = myScene.getCallGraph();
+    if (myOptions.interactive_mode()) {
       reset();
     }
   }
 
   public void reset() {
     if (methodToContexts == null) {
-      methodToContexts = new MethodToContexts(Scene.v().getReachableMethods().listener());
+      methodToContexts = new MethodToContexts(myScene.getReachableMethods().listener());
     }
 
-    if (Scene.v().hasCallGraph()) {
-      SootClass sc = Scene.v().getMainClass();
+    if (myScene.hasCallGraph()) {
+      SootClass sc = myScene.getMainClass();
       SootMethod sm = getFirstMethod(sc);
       // logger.debug("got first method");
       ArrayList<MethInfo> tgts = getTgtMethods(sm, true);
@@ -172,7 +172,7 @@ public class CallGraphGrapher extends SceneTransformer {
       // logger.debug("got src methods");
       CallGraphInfo info = new CallGraphInfo(sm, tgts, srcs);
       // logger.debug("will handle new call graph");
-      InteractionHandler.v().handleCallGraphStart(info, this);
+      myInteractionHandler.handleCallGraphStart(info, this);
     }
   }
 
@@ -197,7 +197,7 @@ public class CallGraphGrapher extends SceneTransformer {
     // System.out.println("for: "+getNextMethod().getName()+" srcs: "+srcs);
     CallGraphInfo info = new CallGraphInfo(getNextMethod(), tgts, srcs);
     // System.out.println("sending next method");
-    InteractionHandler.v().handleCallGraphPart(info);
+    myInteractionHandler.handleCallGraphPart(info);
     // handleNextMethod();
   }
 

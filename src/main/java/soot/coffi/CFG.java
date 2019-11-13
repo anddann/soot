@@ -63,6 +63,7 @@ import soot.Unit;
 import soot.UnknownType;
 import soot.Value;
 import soot.VoidType;
+import soot.grimp.Grimp;
 import soot.jimple.ArrayRef;
 import soot.jimple.ClassConstant;
 import soot.jimple.ConditionExpr;
@@ -122,16 +123,28 @@ public class CFG {
 
   private Instruction sentinel;
   private Hashtable<Instruction, BasicBlock> h2bb, t2bb;
+  private Options myOptions;
+  private Scene myScene;
+  private Util myCoffiUtil;
+  private Jimple myJimple;
 
   /**
    * Constructs a new control flow graph for the given method.
    *
    * @param m
    *          the method in question.
+   * @param myOptions
+   * @param myScene
+   * @param myCoffiUtil
+   * @param myJimple
    * @see method_info
    */
-  public CFG(method_info m) {
+  public CFG(method_info m, Options myOptions, Scene myScene, Util myCoffiUtil, Jimple myJimple) {
     this.method = m;
+    this.myOptions = myOptions;
+    this.myScene = myScene;
+    this.myCoffiUtil = myCoffiUtil;
+    this.myJimple = myJimple;
 
     this.sentinel = new Instruction_Nop();
     this.sentinel.next = m.instructions;
@@ -750,7 +763,7 @@ public class CFG {
   }
 
   private void adjustLineNumberTable() {
-    if (!Options.v().keep_line_number()) {
+    if (!myOptions.keep_line_number()) {
       return;
     }
     if (method.code_attr == null) {
@@ -789,7 +802,7 @@ public class CFG {
   }
 
   /**
-   * Main.v() entry point for converting list of Instructions to Jimple statements; performs flow analysis, constructs Jimple
+   * myMain entry point for converting list of Instructions to Jimple statements; performs flow analysis, constructs Jimple
    * statements, and fixes jumps.
    *
    * @param constant_pool
@@ -812,7 +825,7 @@ public class CFG {
     instructionToLastStmt = new HashMap<Instruction, Stmt>();
 
     jmethod = listBody.getMethod();
-    cm = Scene.v();
+    cm = myScene;
 
     // TypeArray.setClassManager(cm);
     // TypeStack.setClassManager(cm);
@@ -828,7 +841,7 @@ public class CFG {
       LocalVariableTable_attribute la = ca.findLocalVariableTable();
       LocalVariableTypeTable_attribute lt = ca.findLocalVariableTypeTable();
 
-      Util.v().bodySetup(la, lt, constant_pool);
+      myCoffiUtil.bodySetup(la, lt, constant_pool);
 
       boolean isStatic = Modifier.isStatic(jmethod.getModifiers());
 
@@ -837,10 +850,10 @@ public class CFG {
       // Initialize the 'this' variable
       {
         if (!isStatic) {
-          Local local = Util.v().getLocalForParameter(listBody, currentLocalIndex);
+          Local local = myCoffiUtil.getLocalForParameter(listBody, currentLocalIndex);
           currentLocalIndex++;
 
-          units.add(Jimple.v().newIdentityStmt(local, Jimple.v().newThisRef(jmethod.getDeclaringClass().getType())));
+          units.add(myJimple.newIdentityStmt(local, myJimple.newThisRef(jmethod.getDeclaringClass().getType())));
         }
       }
 
@@ -850,11 +863,11 @@ public class CFG {
         int argCount = 0;
 
         while (typeIt.hasNext()) {
-          Local local = Util.v().getLocalForParameter(listBody, currentLocalIndex);
+          Local local = myCoffiUtil.getLocalForParameter(listBody, currentLocalIndex);
           Type type = typeIt.next();
           initialLocals.add(local);
 
-          units.add(Jimple.v().newIdentityStmt(local, Jimple.v().newParameterRef(type, argCount)));
+          units.add(myJimple.newIdentityStmt(local, myJimple.newParameterRef(type, argCount)));
 
           if (type.equals(DoubleType.v()) || type.equals(LongType.v())) {
             currentLocalIndex += 2;
@@ -866,7 +879,7 @@ public class CFG {
         }
       }
 
-      Util.v().resetEasyNames();
+      myCoffiUtil.resetEasyNames();
     }
 
     jimplify(constant_pool, this_class);
@@ -903,7 +916,7 @@ public class CFG {
   }
 
   /**
-   * Main.v() entry point for converting list of Instructions to Jimple statements; performs flow analysis, constructs Jimple
+   * myMain entry point for converting list of Instructions to Jimple statements; performs flow analysis, constructs Jimple
    * statements, and fixes jumps.
    *
    * @param constant_pool
@@ -1122,7 +1135,7 @@ public class CFG {
             generateJimple(ins, instructionToTypeStack.get(ins), instructionToPostTypeStack.get(ins), constant_pool,
                 statementsForIns, b);
           } else {
-            statementsForIns.add(Jimple.v().newNopStmt());
+            statementsForIns.add(myJimple.newNopStmt());
           }
 
           if (!statementsForIns.isEmpty()) {
@@ -1205,9 +1218,9 @@ public class CFG {
           if (targetToHandler.containsKey(firstTargetStmt)) {
             newTarget = targetToHandler.get(firstTargetStmt);
           } else {
-            Local local = Util.v().getLocalCreatingIfNecessary(listBody, "$stack0", UnknownType.v());
+            Local local = myCoffiUtil.getLocalCreatingIfNecessary(listBody, "$stack0", UnknownType.v());
 
-            newTarget = Jimple.v().newIdentityStmt(local, Jimple.v().newCaughtExceptionRef());
+            newTarget = myJimple.newIdentityStmt(local, myJimple.newCaughtExceptionRef());
 
             // changed to account for catch blocks which are also part of normal control flow
             // units.insertBefore(newTarget, firstTargetStmt);
@@ -1217,7 +1230,7 @@ public class CFG {
             if (units.getFirst() != newTarget) {
               Unit prev = (Unit) units.getPredOf(newTarget);
               if (prev != null && prev.fallsThrough()) {
-                units.insertAfter(Jimple.v().newGotoStmt(firstTargetStmt), prev);
+                units.insertAfter(myJimple.newGotoStmt(firstTargetStmt), prev);
               }
             }
           }
@@ -1254,14 +1267,14 @@ public class CFG {
             }
           }
 
-          Trap trap = Jimple.v().newTrap(exception, firstStmt, afterEndStmt, newTarget);
+          Trap trap = myJimple.newTrap(exception, firstStmt, afterEndStmt, newTarget);
           listBody.getTraps().add(trap);
         }
       }
     }
 
     /* convert line number table to tags attached to statements */
-    if (Options.v().keep_line_number()) {
+    if (myOptions.keep_line_number()) {
       HashMap<Stmt, Tag> stmtstags = new HashMap<Stmt, Tag>();
       LinkedList<Stmt> startstmts = new LinkedList<Stmt>();
 
@@ -1524,7 +1537,7 @@ public class CFG {
 
         if (name.startsWith("[")) {
           String baseName = getClassName(constant_pool, ((Instruction_Anewarray) ins).arg_i);
-          baseType = Util.v().jimpleTypeOfFieldDescriptor(baseName);
+          baseType = myCoffiUtil.jimpleTypeOfFieldDescriptor(baseName);
         } else {
           baseType = RefType.v(name);
         }
@@ -1541,7 +1554,7 @@ public class CFG {
 
         String arrayDescriptor = ((CONSTANT_Utf8_info) (constant_pool[c.name_index])).convert();
 
-        ArrayType arrayType = (ArrayType) Util.v().jimpleTypeOfFieldDescriptor(arrayDescriptor);
+        ArrayType arrayType = (ArrayType) myCoffiUtil.jimpleTypeOfFieldDescriptor(arrayDescriptor);
 
         for (int j = 0; j < bdims; j++) {
           typeStack = popSafe(typeStack, IntType.v());
@@ -2195,7 +2208,7 @@ public class CFG {
         Type castType;
 
         if (className.startsWith("[")) {
-          castType = Util.v().jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Checkcast) ins).arg_i));
+          castType = myCoffiUtil.jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Checkcast) ins).arg_i));
         } else {
           castType = RefType.v(className);
         }
@@ -2232,7 +2245,7 @@ public class CFG {
 
     String fieldDescriptor = ((CONSTANT_Utf8_info) (constant_pool[nat.descriptor_index])).convert();
 
-    return Util.v().jimpleTypeOfFieldDescriptor(fieldDescriptor);
+    return myCoffiUtil.jimpleTypeOfFieldDescriptor(fieldDescriptor);
   }
 
   private Type jimpleReturnTypeOfNameAndType(Scene cm, cp_info[] constant_pool, int index) {
@@ -2240,7 +2253,7 @@ public class CFG {
 
     String methodDescriptor = ((CONSTANT_Utf8_info) (constant_pool[nat.descriptor_index])).convert();
 
-    return Util.v().jimpleReturnTypeOfMethodDescriptor(methodDescriptor);
+    return myCoffiUtil.jimpleReturnTypeOfMethodDescriptor(methodDescriptor);
   }
 
   private Type jimpleReturnTypeOfMethodRef(Scene cm, cp_info[] constant_pool, int index) {
@@ -2250,7 +2263,7 @@ public class CFG {
 
     String methodDescriptor = ((CONSTANT_Utf8_info) (constant_pool[nat.descriptor_index])).convert();
 
-    return Util.v().jimpleReturnTypeOfMethodDescriptor(methodDescriptor);
+    return myCoffiUtil.jimpleReturnTypeOfMethodDescriptor(methodDescriptor);
   }
 
   private Type jimpleReturnTypeOfInterfaceMethodRef(Scene cm, cp_info[] constant_pool, int index) {
@@ -2260,7 +2273,7 @@ public class CFG {
 
     String methodDescriptor = ((CONSTANT_Utf8_info) (constant_pool[nat.descriptor_index])).convert();
 
-    return Util.v().jimpleReturnTypeOfMethodDescriptor(methodDescriptor);
+    return myCoffiUtil.jimpleReturnTypeOfMethodDescriptor(methodDescriptor);
   }
 
   private OutFlow processCPEntry(cp_info constant_pool[], int i, TypeStack typeStack, SootMethod jmethod) {
@@ -2551,26 +2564,26 @@ public class CFG {
       CONSTANT_Integer_info ci = (CONSTANT_Integer_info) c;
 
       rvalue = IntConstant.v((int) ci.bytes);
-      stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+      stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else if (c instanceof CONSTANT_Float_info) {
       CONSTANT_Float_info cf = (CONSTANT_Float_info) c;
 
       rvalue = FloatConstant.v(cf.convert());
-      stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+      stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else if (c instanceof CONSTANT_Long_info) {
       CONSTANT_Long_info cl = (CONSTANT_Long_info) c;
 
       rvalue = LongConstant.v(cl.convert());
-      stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+      stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else if (c instanceof CONSTANT_Double_info) {
       CONSTANT_Double_info cd = (CONSTANT_Double_info) c;
 
       rvalue = DoubleConstant.v(cd.convert());
 
-      stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+      stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else if (c instanceof CONSTANT_String_info) {
       CONSTANT_String_info cs = (CONSTANT_String_info) c;
@@ -2582,7 +2595,7 @@ public class CFG {
       }
 
       rvalue = StringConstant.v(constant);
-      stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+      stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else if (c instanceof CONSTANT_Utf8_info) {
       CONSTANT_Utf8_info cu = (CONSTANT_Utf8_info) c;
@@ -2594,14 +2607,14 @@ public class CFG {
       }
 
       rvalue = StringConstant.v(constant);
-      stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+      stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else if (c instanceof CONSTANT_Class_info) {
 
       String className = ((CONSTANT_Utf8_info) (constant_pool[((CONSTANT_Class_info) c).name_index])).convert();
 
       rvalue = ClassConstant.v(className);
-      stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+      stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else {
       throw new RuntimeException("Attempting to push a non-constant cp entry" + c);
@@ -2631,13 +2644,13 @@ public class CFG {
     switch (x) {
       case ByteCode.BIPUSH:
         rvalue = IntConstant.v(((Instruction_Bipush) ins).arg_b);
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
 
       case ByteCode.SIPUSH:
         rvalue = IntConstant.v(((Instruction_Sipush) ins).arg_i);
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
 
@@ -2654,7 +2667,7 @@ public class CFG {
 
       case ByteCode.ACONST_NULL:
         rvalue = NullConstant.v();
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
 
@@ -2666,14 +2679,14 @@ public class CFG {
       case ByteCode.ICONST_4:
       case ByteCode.ICONST_5:
         rvalue = IntConstant.v(x - ByteCode.ICONST_0);
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
 
       case ByteCode.LCONST_0:
       case ByteCode.LCONST_1:
         rvalue = LongConstant.v(x - ByteCode.LCONST_0);
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
 
@@ -2681,53 +2694,53 @@ public class CFG {
       case ByteCode.FCONST_1:
       case ByteCode.FCONST_2:
         rvalue = FloatConstant.v((x - ByteCode.FCONST_0));
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
 
       case ByteCode.DCONST_0:
       case ByteCode.DCONST_1:
         rvalue = DoubleConstant.v((x - ByteCode.DCONST_0));
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
 
       case ByteCode.ILOAD: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             local);
         break;
       }
 
       case ByteCode.FLOAD: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             local);
         break;
       }
 
       case ByteCode.ALOAD: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             local);
         break;
       }
 
       case ByteCode.DLOAD: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             local);
         break;
       }
 
       case ByteCode.LLOAD: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             local);
         break;
       }
@@ -2736,9 +2749,9 @@ public class CFG {
       case ByteCode.ILOAD_1:
       case ByteCode.ILOAD_2:
       case ByteCode.ILOAD_3: {
-        Local local = Util.v().getLocalForIndex(listBody, (x - ByteCode.ILOAD_0), ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, (x - ByteCode.ILOAD_0), ins);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             local);
         break;
       }
@@ -2747,9 +2760,9 @@ public class CFG {
       case ByteCode.FLOAD_1:
       case ByteCode.FLOAD_2:
       case ByteCode.FLOAD_3: {
-        Local local = Util.v().getLocalForIndex(listBody, (x - ByteCode.FLOAD_0), ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, (x - ByteCode.FLOAD_0), ins);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             local);
         break;
       }
@@ -2758,9 +2771,9 @@ public class CFG {
       case ByteCode.ALOAD_1:
       case ByteCode.ALOAD_2:
       case ByteCode.ALOAD_3: {
-        Local local = Util.v().getLocalForIndex(listBody, (x - ByteCode.ALOAD_0), ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, (x - ByteCode.ALOAD_0), ins);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             local);
         break;
       }
@@ -2769,9 +2782,9 @@ public class CFG {
       case ByteCode.LLOAD_1:
       case ByteCode.LLOAD_2:
       case ByteCode.LLOAD_3: {
-        Local local = Util.v().getLocalForIndex(listBody, (x - ByteCode.LLOAD_0), ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, (x - ByteCode.LLOAD_0), ins);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             local);
         break;
       }
@@ -2780,45 +2793,45 @@ public class CFG {
       case ByteCode.DLOAD_1:
       case ByteCode.DLOAD_2:
       case ByteCode.DLOAD_3: {
-        Local local = Util.v().getLocalForIndex(listBody, (x - ByteCode.DLOAD_0), ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, (x - ByteCode.DLOAD_0), ins);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             local);
         break;
       }
 
       case ByteCode.ISTORE: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
 
-        stmt = Jimple.v().newAssignStmt(local, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(local, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
       }
 
       case ByteCode.FSTORE: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
 
-        stmt = Jimple.v().newAssignStmt(local, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(local, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
       }
 
       case ByteCode.ASTORE: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
 
-        stmt = Jimple.v().newAssignStmt(local, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(local, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
       }
 
       case ByteCode.LSTORE: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
 
-        stmt = Jimple.v().newAssignStmt(local, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(local, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
       }
 
       case ByteCode.DSTORE: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_bytevar) ins).arg_b, ins);
 
-        stmt = Jimple.v().newAssignStmt(local, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(local, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
       }
 
@@ -2826,9 +2839,9 @@ public class CFG {
       case ByteCode.ISTORE_1:
       case ByteCode.ISTORE_2:
       case ByteCode.ISTORE_3: {
-        Local local = Util.v().getLocalForIndex(listBody, (x - ByteCode.ISTORE_0), ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, (x - ByteCode.ISTORE_0), ins);
 
-        stmt = Jimple.v().newAssignStmt(local, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(local, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
       }
 
@@ -2836,9 +2849,9 @@ public class CFG {
       case ByteCode.FSTORE_1:
       case ByteCode.FSTORE_2:
       case ByteCode.FSTORE_3: {
-        Local local = Util.v().getLocalForIndex(listBody, (x - ByteCode.FSTORE_0), ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, (x - ByteCode.FSTORE_0), ins);
 
-        stmt = Jimple.v().newAssignStmt(local, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(local, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
       }
 
@@ -2846,9 +2859,9 @@ public class CFG {
       case ByteCode.ASTORE_1:
       case ByteCode.ASTORE_2:
       case ByteCode.ASTORE_3: {
-        Local local = Util.v().getLocalForIndex(listBody, (x - ByteCode.ASTORE_0), ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, (x - ByteCode.ASTORE_0), ins);
 
-        stmt = Jimple.v().newAssignStmt(local, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(local, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
       }
 
@@ -2856,9 +2869,9 @@ public class CFG {
       case ByteCode.LSTORE_1:
       case ByteCode.LSTORE_2:
       case ByteCode.LSTORE_3: {
-        Local local = Util.v().getLocalForIndex(listBody, (x - ByteCode.LSTORE_0), ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, (x - ByteCode.LSTORE_0), ins);
 
-        stmt = Jimple.v().newAssignStmt(local, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(local, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
       }
 
@@ -2866,18 +2879,18 @@ public class CFG {
       case ByteCode.DSTORE_1:
       case ByteCode.DSTORE_2:
       case ByteCode.DSTORE_3: {
-        Local local = Util.v().getLocalForIndex(listBody, (x - ByteCode.DSTORE_0), ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, (x - ByteCode.DSTORE_0), ins);
 
-        stmt = Jimple.v().newAssignStmt(local, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(local, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
       }
 
       case ByteCode.IINC: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_Iinc) ins).arg_b, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_Iinc) ins).arg_b, ins);
 
         int amt = (((Instruction_Iinc) ins).arg_c);
-        rhs = Jimple.v().newAddExpr(local, IntConstant.v(amt));
-        stmt = Jimple.v().newAssignStmt(local, rhs);
+        rhs = myJimple.newAddExpr(local, IntConstant.v(amt));
+        stmt = myJimple.newAssignStmt(local, rhs);
         break;
       }
 
@@ -2888,9 +2901,9 @@ public class CFG {
       case ByteCode.NEWARRAY: {
         Type baseType = jimpleTypeOfAtype(((Instruction_Newarray) ins).atype);
 
-        rhs = Jimple.v().newNewArrayExpr(baseType, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newNewArrayExpr(baseType, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
 
         break;
       }
@@ -2901,14 +2914,14 @@ public class CFG {
         Type baseType;
 
         if (baseName.startsWith("[")) {
-          baseType = Util.v().jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Anewarray) ins).arg_i));
+          baseType = myCoffiUtil.jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Anewarray) ins).arg_i));
         } else {
           baseType = RefType.v(baseName);
         }
 
-        rhs = Jimple.v().newNewArrayExpr(baseType, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newNewArrayExpr(baseType, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
       }
 
@@ -2917,23 +2930,23 @@ public class CFG {
         List<Value> dims = new ArrayList<Value>();
 
         for (int j = 0; j < bdims; j++) {
-          dims.add(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - bdims + j + 1));
+          dims.add(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - bdims + j + 1));
         }
 
         String mstype = constant_pool[((Instruction_Multianewarray) ins).arg_i].toString(constant_pool);
 
-        ArrayType jimpleType = (ArrayType) Util.v().jimpleTypeOfFieldDescriptor(mstype);
+        ArrayType jimpleType = (ArrayType) myCoffiUtil.jimpleTypeOfFieldDescriptor(mstype);
 
-        rhs = Jimple.v().newNewMultiArrayExpr(jimpleType, dims);
+        rhs = myJimple.newNewMultiArrayExpr(jimpleType, dims);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
       }
 
       case ByteCode.ARRAYLENGTH:
-        rhs = Jimple.v().newLengthExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newLengthExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.IALOAD:
@@ -2944,10 +2957,10 @@ public class CFG {
       case ByteCode.LALOAD:
       case ByteCode.DALOAD:
       case ByteCode.AALOAD:
-        a = Jimple.v().newArrayRef(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        a = myJimple.newArrayRef(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), a);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), a);
 
         break;
 
@@ -2957,46 +2970,46 @@ public class CFG {
       case ByteCode.BASTORE:
       case ByteCode.CASTORE:
       case ByteCode.SASTORE:
-        a = Jimple.v().newArrayRef(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+        a = myJimple.newArrayRef(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = Jimple.v().newAssignStmt(a, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(a, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
 
       case ByteCode.LASTORE:
       case ByteCode.DASTORE:
-        a = Jimple.v().newArrayRef(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2));
+        a = myJimple.newArrayRef(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2));
 
-        stmt = Jimple.v().newAssignStmt(a, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(a, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
 
       case ByteCode.NOP:
-        stmt = Jimple.v().newNopStmt();
+        stmt = myJimple.newNopStmt();
         break;
 
       case ByteCode.POP:
       case ByteCode.POP2:
-        stmt = Jimple.v().newNopStmt();
+        stmt = myJimple.newNopStmt();
         break;
 
       case ByteCode.DUP:
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
 
       case ByteCode.DUP2:
         if (typeSize(typeStack.top()) == 2) {
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
-              Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
+              myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
         } else {
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
-              Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
+              myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
-              Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+              myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
           statements.add(stmt);
 
@@ -3005,20 +3018,20 @@ public class CFG {
         break;
 
       case ByteCode.DUP_X1:
-        l1 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
-        l2 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
+        l1 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
+        l2 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), l1);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), l1);
 
         statements.add(stmt);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
             l2);
 
         statements.add(stmt);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
-            Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
+            myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()));
 
         statements.add(stmt);
 
@@ -3027,47 +3040,47 @@ public class CFG {
 
       case ByteCode.DUP_X2:
         if (typeSize(typeStack.get(typeStack.topIndex() - 2)) == 2) {
-          l3 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
-          l1 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
+          l3 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
+          l1 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
               l3);
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
               l1);
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               l1);
 
           statements.add(stmt);
 
           stmt = null;
         } else {
-          l3 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
-          l2 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
-          l1 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
+          l3 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
+          l2 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
+          l1 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               l1);
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
               l2);
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
               l3);
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
-              Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()));
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()));
 
           statements.add(stmt);
 
@@ -3077,52 +3090,52 @@ public class CFG {
 
       case ByteCode.DUP2_X1:
         if (typeSize(typeStack.get(typeStack.topIndex() - 1)) == 2) {
-          l2 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
-          l3 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
+          l2 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
+          l3 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
               l2);
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
               l3);
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 4),
-              Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1));
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 4),
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1));
 
           statements.add(stmt);
 
           stmt = null;
         } else {
-          l3 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
-          l2 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
-          l1 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
+          l3 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
+          l2 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
+          l1 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               l1);
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
               l2);
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
               l3);
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
-              Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()));
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()));
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 4),
-              Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1));
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 4),
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1));
 
           statements.add(stmt);
 
@@ -3132,22 +3145,22 @@ public class CFG {
 
       case ByteCode.DUP2_X2:
         if (typeSize(typeStack.get(typeStack.topIndex() - 1)) == 2) {
-          l2 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
+          l2 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
               l2);
 
           statements.add(stmt);
         } else {
-          l1 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
-          l2 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
+          l1 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
+          l2 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
               l2);
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               l1);
 
           statements.add(stmt);
@@ -3155,22 +3168,22 @@ public class CFG {
         }
 
         if (typeSize(typeStack.get(typeStack.topIndex() - 3)) == 2) {
-          l4 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3);
+          l4 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
               l4);
 
           statements.add(stmt);
         } else {
-          l4 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3);
-          l3 = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
+          l4 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3);
+          l3 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
               l4);
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
               l3);
 
           statements.add(stmt);
@@ -3178,18 +3191,18 @@ public class CFG {
         }
 
         if (typeSize(typeStack.get(typeStack.topIndex() - 1)) == 2) {
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 5),
-              Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1));
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 5),
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1));
 
           statements.add(stmt);
         } else {
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 5),
-              Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1));
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 5),
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1));
 
           statements.add(stmt);
 
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 4),
-              Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()));
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 4),
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()));
 
           statements.add(stmt);
         }
@@ -3200,21 +3213,21 @@ public class CFG {
         Local first;
 
         typeStack = typeStack.push(typeStack.top());
-        first = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
+        first = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
         typeStack = typeStack.pop();
         // generation of a free temporary
 
-        Local second = Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex());
+        Local second = myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex());
 
-        Local third = Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1);
+        Local third = myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1);
 
-        stmt = Jimple.v().newAssignStmt(first, second);
+        stmt = myJimple.newAssignStmt(first, second);
         statements.add(stmt);
 
-        stmt = Jimple.v().newAssignStmt(second, third);
+        stmt = myJimple.newAssignStmt(second, third);
         statements.add(stmt);
 
-        stmt = Jimple.v().newAssignStmt(third, first);
+        stmt = myJimple.newAssignStmt(third, first);
         statements.add(stmt);
 
         stmt = null;
@@ -3223,399 +3236,399 @@ public class CFG {
 
       case ByteCode.FADD:
       case ByteCode.IADD:
-        rhs = Jimple.v().newAddExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newAddExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.DADD:
       case ByteCode.LADD:
-        rhs = Jimple.v().newAddExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+        rhs = myJimple.newAddExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.FSUB:
       case ByteCode.ISUB:
-        rhs = Jimple.v().newSubExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newSubExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.DSUB:
       case ByteCode.LSUB:
-        rhs = Jimple.v().newSubExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+        rhs = myJimple.newSubExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.FMUL:
       case ByteCode.IMUL:
-        rhs = Jimple.v().newMulExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newMulExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.DMUL:
       case ByteCode.LMUL:
-        rhs = Jimple.v().newMulExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+        rhs = myJimple.newMulExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.FDIV:
       case ByteCode.IDIV:
-        rhs = Jimple.v().newDivExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newDivExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.DDIV:
       case ByteCode.LDIV:
-        rhs = Jimple.v().newDivExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+        rhs = myJimple.newDivExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.FREM:
       case ByteCode.IREM:
-        rhs = Jimple.v().newRemExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newRemExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.DREM:
       case ByteCode.LREM:
-        rhs = Jimple.v().newRemExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+        rhs = myJimple.newRemExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.INEG:
       case ByteCode.LNEG:
       case ByteCode.FNEG:
       case ByteCode.DNEG:
-        rhs = Jimple.v().newNegExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        rhs = myJimple.newNegExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.ISHL:
-        rhs = Jimple.v().newShlExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newShlExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.ISHR:
-        rhs = Jimple.v().newShrExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newShrExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.IUSHR:
-        rhs = Jimple.v().newUshrExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newUshrExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.LSHL:
-        rhs = Jimple.v().newShlExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newShlExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.LSHR:
-        rhs = Jimple.v().newShrExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newShrExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.LUSHR:
-        rhs = Jimple.v().newUshrExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newUshrExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.IAND:
-        rhs = Jimple.v().newAndExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newAndExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.LAND:
-        rhs = Jimple.v().newAndExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+        rhs = myJimple.newAndExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.IOR:
-        rhs = Jimple.v().newOrExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newOrExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.LOR:
-        rhs = Jimple.v().newOrExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+        rhs = myJimple.newOrExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.IXOR:
-        rhs = Jimple.v().newXorExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newXorExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.LXOR:
-        rhs = Jimple.v().newXorExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+        rhs = myJimple.newXorExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.D2L:
       case ByteCode.F2L:
       case ByteCode.I2L:
-        rhs = Jimple.v().newCastExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), LongType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), LongType.v());
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.D2F:
       case ByteCode.L2F:
       case ByteCode.I2F:
-        rhs = Jimple.v().newCastExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), FloatType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), FloatType.v());
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.I2D:
       case ByteCode.L2D:
       case ByteCode.F2D:
-        rhs = Jimple.v().newCastExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), DoubleType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), DoubleType.v());
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.L2I:
       case ByteCode.F2I:
       case ByteCode.D2I:
-        rhs = Jimple.v().newCastExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntType.v());
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.INT2BYTE:
-        rhs = Jimple.v().newCastExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), ByteType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), ByteType.v());
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.INT2CHAR:
-        rhs = Jimple.v().newCastExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), CharType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), CharType.v());
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.INT2SHORT:
-        rhs = Jimple.v().newCastExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), ShortType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), ShortType.v());
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.IFEQ:
-        co = Jimple.v().newEqExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
+        co = myJimple.newEqExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IFNULL:
-        co = Jimple.v().newEqExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), NullConstant.v());
+        co = myJimple.newEqExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), NullConstant.v());
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IFLT:
-        co = Jimple.v().newLtExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
+        co = myJimple.newLtExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IFLE:
-        co = Jimple.v().newLeExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
+        co = myJimple.newLeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IFNE:
-        co = Jimple.v().newNeExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
+        co = myJimple.newNeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IFNONNULL:
-        co = Jimple.v().newNeExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), NullConstant.v());
+        co = myJimple.newNeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), NullConstant.v());
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IFGT:
-        co = Jimple.v().newGtExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
+        co = myJimple.newGtExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IFGE:
-        co = Jimple.v().newGeExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
+        co = myJimple.newGeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IF_ICMPEQ:
-        co = Jimple.v().newEqExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        co = myJimple.newEqExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IF_ICMPLT:
-        co = Jimple.v().newLtExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        co = myJimple.newLtExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IF_ICMPLE:
-        co = Jimple.v().newLeExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        co = myJimple.newLeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IF_ICMPNE:
-        co = Jimple.v().newNeExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        co = myJimple.newNeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IF_ICMPGT:
-        co = Jimple.v().newGtExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        co = myJimple.newGtExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IF_ICMPGE:
-        co = Jimple.v().newGeExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        co = myJimple.newGeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.LCMP:
-        rhs = Jimple.v().newCmpExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+        rhs = myJimple.newCmpExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.FCMPL:
-        rhs = Jimple.v().newCmplExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newCmplExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.FCMPG:
-        rhs = Jimple.v().newCmpgExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        rhs = myJimple.newCmpgExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.DCMPL:
-        rhs = Jimple.v().newCmplExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+        rhs = myJimple.newCmplExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.DCMPG:
-        rhs = Jimple.v().newCmpgExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
+        rhs = myJimple.newCmpgExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
 
       case ByteCode.IF_ACMPEQ:
-        co = Jimple.v().newEqExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        co = myJimple.newEqExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IF_ACMPNE:
-        co = Jimple.v().newNeExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        co = myJimple.newNeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = Jimple.v().newIfStmt(co, new FutureStmt());
+        stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.GOTO:
-        stmt = Jimple.v().newGotoStmt(new FutureStmt());
+        stmt = myJimple.newGotoStmt(new FutureStmt());
         break;
 
       case ByteCode.GOTO_W:
-        stmt = Jimple.v().newGotoStmt(new FutureStmt());
+        stmt = myJimple.newGotoStmt(new FutureStmt());
         break;
       /*
-       * case ByteCode.JSR: case ByteCode.JSR_W: { stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody,
-       * postTypeStack, postTypeStack.topIndex()), Jimple.v().newNextNextStmtRef());
+       * case ByteCode.JSR: case ByteCode.JSR_W: { stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody,
+       * postTypeStack, postTypeStack.topIndex()), myJimple.newNextNextStmtRef());
        *
        * statements.add(stmt);
        *
-       * stmt = Jimple.v().newGotoStmt(new FutureStmt()); statements.add(stmt);
+       * stmt = myJimple.newGotoStmt(new FutureStmt()); statements.add(stmt);
        *
        * stmt = null; break; }
        */
 
       case ByteCode.RET: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_Ret) ins).arg_b, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_Ret) ins).arg_b, ins);
 
-        stmt = Jimple.v().newRetStmt(local);
+        stmt = myJimple.newRetStmt(local);
         break;
       }
 
       case ByteCode.RET_W: {
-        Local local = Util.v().getLocalForIndex(listBody, ((Instruction_Ret_w) ins).arg_i, ins);
+        Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_Ret_w) ins).arg_i, ins);
 
-        stmt = Jimple.v().newRetStmt(local);
+        stmt = myJimple.newRetStmt(local);
         break;
       }
 
       case ByteCode.RETURN:
-        stmt = Jimple.v().newReturnVoidStmt();
+        stmt = myJimple.newReturnVoidStmt();
         break;
 
       case ByteCode.LRETURN:
@@ -3623,11 +3636,11 @@ public class CFG {
       case ByteCode.IRETURN:
       case ByteCode.FRETURN:
       case ByteCode.ARETURN:
-        stmt = Jimple.v().newReturnStmt(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newReturnStmt(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
 
       case ByteCode.BREAKPOINT:
-        stmt = Jimple.v().newBreakpointStmt();
+        stmt = myJimple.newBreakpointStmt();
         break;
 
       case ByteCode.TABLESWITCH: {
@@ -3635,7 +3648,7 @@ public class CFG {
 
         int npairs = highIndex - lowIndex + 1;
 
-        stmt = Jimple.v().newTableSwitchStmt(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+        stmt = myJimple.newTableSwitchStmt(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
             lowIndex, highIndex, Arrays.asList(new FutureStmt[npairs]), new FutureStmt());
         break;
       }
@@ -3648,7 +3661,7 @@ public class CFG {
           matches.add(IntConstant.v(((Instruction_Lookupswitch) ins).match_offsets[j * 2]));
         }
 
-        stmt = Jimple.v().newLookupSwitchStmt(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+        stmt = myJimple.newLookupSwitchStmt(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
             matches, Arrays.asList(new FutureStmt[npairs]), new FutureStmt());
         break;
       }
@@ -3666,17 +3679,17 @@ public class CFG {
         String fieldName = ((CONSTANT_Utf8_info) (constant_pool[i.name_index])).convert();
         String fieldDescriptor = ((CONSTANT_Utf8_info) (constant_pool[i.descriptor_index])).convert();
 
-        Type fieldType = Util.v().jimpleTypeOfFieldDescriptor(fieldDescriptor);
+        Type fieldType = myCoffiUtil.jimpleTypeOfFieldDescriptor(fieldDescriptor);
 
         SootClass bclass = cm.getSootClass(className);
 
-        SootFieldRef fieldRef = Scene.v().makeFieldRef(bclass, fieldName, fieldType, false);
+        SootFieldRef fieldRef = myScene.makeFieldRef(bclass, fieldName, fieldType, false);
 
-        InstanceFieldRef fr = Jimple.v().newInstanceFieldRef(
-            Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - typeSize(typeStack.top())), fieldRef);
+        InstanceFieldRef fr = myJimple.newInstanceFieldRef(
+            myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - typeSize(typeStack.top())), fieldRef);
 
-        rvalue = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
-        stmt = Jimple.v().newAssignStmt(fr, rvalue);
+        rvalue = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
+        stmt = myJimple.newAssignStmt(fr, rvalue);
         break;
       }
 
@@ -3701,13 +3714,13 @@ public class CFG {
 
         SootClass bclass = cm.getSootClass(className);
 
-        Type fieldType = Util.v().jimpleTypeOfFieldDescriptor(fieldDescriptor);
-        SootFieldRef fieldRef = Scene.v().makeFieldRef(bclass, fieldName, fieldType, false);
+        Type fieldType = myCoffiUtil.jimpleTypeOfFieldDescriptor(fieldDescriptor);
+        SootFieldRef fieldRef = myScene.makeFieldRef(bclass, fieldName, fieldType, false);
 
-        fr = Jimple.v().newInstanceFieldRef(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+        fr = myJimple.newInstanceFieldRef(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
             fieldRef);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), fr);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), fr);
         break;
       }
 
@@ -3726,14 +3739,14 @@ public class CFG {
         String fieldName = ((CONSTANT_Utf8_info) (constant_pool[i.name_index])).convert();
         String fieldDescriptor = ((CONSTANT_Utf8_info) (constant_pool[i.descriptor_index])).convert();
 
-        Type fieldType = Util.v().jimpleTypeOfFieldDescriptor(fieldDescriptor);
+        Type fieldType = myCoffiUtil.jimpleTypeOfFieldDescriptor(fieldDescriptor);
 
         SootClass bclass = cm.getSootClass(className);
-        SootFieldRef fieldRef = Scene.v().makeFieldRef(bclass, fieldName, fieldType, true);
+        SootFieldRef fieldRef = myScene.makeFieldRef(bclass, fieldName, fieldType, true);
 
-        fr = Jimple.v().newStaticFieldRef(fieldRef);
+        fr = myJimple.newStaticFieldRef(fieldRef);
 
-        stmt = Jimple.v().newAssignStmt(fr, Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newAssignStmt(fr, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
       }
 
@@ -3752,14 +3765,14 @@ public class CFG {
         String fieldName = ((CONSTANT_Utf8_info) (constant_pool[i.name_index])).convert();
         String fieldDescriptor = ((CONSTANT_Utf8_info) (constant_pool[i.descriptor_index])).convert();
 
-        Type fieldType = Util.v().jimpleTypeOfFieldDescriptor(fieldDescriptor);
+        Type fieldType = myCoffiUtil.jimpleTypeOfFieldDescriptor(fieldDescriptor);
 
         SootClass bclass = cm.getSootClass(className);
-        SootFieldRef fieldRef = Scene.v().makeFieldRef(bclass, fieldName, fieldType, true);
+        SootFieldRef fieldRef = myScene.makeFieldRef(bclass, fieldName, fieldType, true);
 
-        fr = Jimple.v().newStaticFieldRef(fieldRef);
+        fr = myJimple.newStaticFieldRef(fieldRef);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), fr);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), fr);
         break;
       }
 
@@ -3804,7 +3817,7 @@ public class CFG {
 
         // Generate parameters & returnType & parameterTypes
         {
-          Type[] types = Util.v().jimpleTypesOfFieldOrMethodDescriptor(methodDescriptor);
+          Type[] types = myCoffiUtil.jimpleTypesOfFieldOrMethodDescriptor(methodDescriptor);
 
           parameterTypes = new ArrayList<Type>();
 
@@ -3816,12 +3829,12 @@ public class CFG {
         }
         // we always model invokeDynamic method refs as static method references of methods on the type
         // SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME
-        methodRef = Scene.v().makeMethodRef(bclass, methodName, parameterTypes, returnType, true);
+        methodRef = myScene.makeMethodRef(bclass, methodName, parameterTypes, returnType, true);
 
         // build Vector of parameters
         params = new Value[args];
         for (int j = args - 1; j >= 0; j--) {
-          params[j] = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
+          params[j] = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
 
           if (typeSize(typeStack.top()) == 2) {
             typeStack = typeStack.pop();
@@ -3831,13 +3844,13 @@ public class CFG {
           }
         }
 
-        rvalue = Jimple.v().newDynamicInvokeExpr(bootstrapMethodRef, bootstrapArgs, methodRef, kind, Arrays.asList(params));
+        rvalue = myJimple.newDynamicInvokeExpr(bootstrapMethodRef, bootstrapArgs, methodRef, kind, Arrays.asList(params));
 
         if (!returnType.equals(VoidType.v())) {
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               rvalue);
         } else {
-          stmt = Jimple.v().newInvokeStmt(rvalue);
+          stmt = myJimple.newInvokeStmt(rvalue);
         }
 
         break;
@@ -3855,7 +3868,7 @@ public class CFG {
         // build array of parameters
         params = new Value[args];
         for (int j = args - 1; j >= 0; j--) {
-          params[j] = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
+          params[j] = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
 
           if (typeSize(typeStack.top()) == 2) {
             typeStack = typeStack.pop();
@@ -3865,14 +3878,14 @@ public class CFG {
           }
         }
 
-        rvalue = Jimple.v().newVirtualInvokeExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+        rvalue = myJimple.newVirtualInvokeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
             methodRef, Arrays.asList(params));
 
         if (!returnType.equals(VoidType.v())) {
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               rvalue);
         } else {
-          stmt = Jimple.v().newInvokeStmt(rvalue);
+          stmt = myJimple.newInvokeStmt(rvalue);
         }
         break;
       }
@@ -3890,7 +3903,7 @@ public class CFG {
         // build array of parameters
         params = new Value[args];
         for (int j = args - 1; j >= 0; j--) {
-          params[j] = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
+          params[j] = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
 
           if (typeSize(typeStack.top()) == 2) {
             typeStack = typeStack.pop();
@@ -3900,14 +3913,14 @@ public class CFG {
           }
         }
 
-        rvalue = Jimple.v().newSpecialInvokeExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+        rvalue = myJimple.newSpecialInvokeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
             methodRef, Arrays.asList(params));
 
         if (!returnType.equals(VoidType.v())) {
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               rvalue);
         } else {
-          stmt = Jimple.v().newInvokeStmt(rvalue);
+          stmt = myJimple.newInvokeStmt(rvalue);
         }
         break;
       }
@@ -3931,7 +3944,7 @@ public class CFG {
            * logger.debug("AfterTypeStack"); postTypeStack.print(G.v().out);
            */
 
-          params[j] = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
+          params[j] = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
 
           if (typeSize(typeStack.top()) == 2) {
             typeStack = typeStack.pop();
@@ -3941,13 +3954,13 @@ public class CFG {
           }
         }
 
-        rvalue = Jimple.v().newStaticInvokeExpr(methodRef, Arrays.asList(params));
+        rvalue = myJimple.newStaticInvokeExpr(methodRef, Arrays.asList(params));
 
         if (!returnType.equals(VoidType.v())) {
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               rvalue);
         } else {
-          stmt = Jimple.v().newInvokeStmt(rvalue);
+          stmt = myJimple.newInvokeStmt(rvalue);
         }
 
         break;
@@ -3966,7 +3979,7 @@ public class CFG {
         // build Vector of parameters
         params = new Value[args];
         for (int j = args - 1; j >= 0; j--) {
-          params[j] = Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
+          params[j] = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
 
           if (typeSize(typeStack.top()) == 2) {
             typeStack = typeStack.pop();
@@ -3976,27 +3989,27 @@ public class CFG {
           }
         }
 
-        rvalue = Jimple.v().newInterfaceInvokeExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+        rvalue = myJimple.newInterfaceInvokeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
             methodRef, Arrays.asList(params));
 
         if (!returnType.equals(VoidType.v())) {
-          stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               rvalue);
         } else {
-          stmt = Jimple.v().newInvokeStmt(rvalue);
+          stmt = myJimple.newInvokeStmt(rvalue);
         }
         break;
       }
 
       case ByteCode.ATHROW:
-        stmt = Jimple.v().newThrowStmt(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newThrowStmt(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
 
       case ByteCode.NEW: {
         SootClass bclass = cm.getSootClass(getClassName(constant_pool, ((Instruction_New) ins).arg_i));
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
-            Jimple.v().newNewExpr(RefType.v(bclass.getName())));
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            myJimple.newNewExpr(RefType.v(bclass.getName())));
         break;
       }
 
@@ -4006,14 +4019,14 @@ public class CFG {
         Type castType;
 
         if (className.startsWith("[")) {
-          castType = Util.v().jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Checkcast) ins).arg_i));
+          castType = myCoffiUtil.jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Checkcast) ins).arg_i));
         } else {
           castType = RefType.v(className);
         }
 
-        rhs = Jimple.v().newCastExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), castType);
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), castType);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
       }
 
@@ -4024,23 +4037,23 @@ public class CFG {
 
         if (className.startsWith("[")) {
           checkType
-              = Util.v().jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Instanceof) ins).arg_i));
+              = myCoffiUtil.jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Instanceof) ins).arg_i));
         } else {
           checkType = RefType.v(className);
         }
 
-        rhs = Jimple.v().newInstanceOfExpr(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+        rhs = myJimple.newInstanceOfExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
             checkType);
 
-        stmt = Jimple.v().newAssignStmt(Util.v().getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
         break;
       }
 
       case ByteCode.MONITORENTER:
-        stmt = Jimple.v().newEnterMonitorStmt(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newEnterMonitorStmt(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
       case ByteCode.MONITOREXIT:
-        stmt = Jimple.v().newExitMonitorStmt(Util.v().getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
+        stmt = myJimple.newExitMonitorStmt(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
         break;
 
       default:
@@ -4048,7 +4061,7 @@ public class CFG {
     }
 
     if (stmt != null) {
-      if (Options.v().keep_offset()) {
+      if (myOptions.keep_offset()) {
         stmt.addTag(new BytecodeOffsetTag(ins.label));
       }
       statements.add(stmt);
@@ -4078,7 +4091,7 @@ public class CFG {
     Type returnType;
     // Generate parameters & returnType & parameterTypes
     {
-      Type[] types = Util.v().jimpleTypesOfFieldOrMethodDescriptor(methodDescriptor);
+      Type[] types = myCoffiUtil.jimpleTypesOfFieldOrMethodDescriptor(methodDescriptor);
 
       parameterTypes = new ArrayList<Type>();
 
@@ -4089,7 +4102,7 @@ public class CFG {
       returnType = types[types.length - 1];
     }
 
-    methodRef = Scene.v().makeMethodRef(bclass, methodName, parameterTypes, returnType, isStatic);
+    methodRef = myScene.makeMethodRef(bclass, methodName, parameterTypes, returnType, isStatic);
     return methodRef;
   }
 

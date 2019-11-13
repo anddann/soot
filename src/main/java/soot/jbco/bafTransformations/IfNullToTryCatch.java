@@ -91,15 +91,15 @@ public class IfNullToTryCatch extends BodyTransformer implements IJbcoTransform 
       if (u instanceof IfNullInst && Rand.getInt(10) <= weight) {
         Unit targ = ((IfNullInst) u).getTarget();
         Unit succ = units.getSuccOf(u);
-        Unit pop = Baf.v().newPopInst(RefType.v());
+        Unit pop = myBaf.newPopInst(RefType.v());
         Unit popClone = (Unit) pop.clone();
         units.insertBefore(pop, targ);
 
-        Unit gotoTarg = Baf.v().newGotoInst(targ);
+        Unit gotoTarg = myBaf.newGotoInst(targ);
         units.insertBefore(gotoTarg, pop);
 
         if (Rand.getInt(2) == 0) {
-          Unit methCall = Baf.v().newVirtualInvokeInst(toStrg.makeRef());
+          Unit methCall = myBaf.newVirtualInvokeInst(toStrg.makeRef());
           units.insertBefore(methCall, u);
 
           if (Rand.getInt(2) == 0) {
@@ -107,49 +107,49 @@ public class IfNullToTryCatch extends BodyTransformer implements IJbcoTransform 
             units.insertAfter(popClone, methCall);
           }
 
-          b.getTraps().add(Baf.v().newTrap(exc, methCall, succ, pop));
+          b.getTraps().add(myBaf.newTrap(exc, methCall, succ, pop));
         } else {
-          Unit throwu = Baf.v().newThrowInst();
+          Unit throwu = myBaf.newThrowInst();
           units.insertBefore(throwu, u);
           units.remove(u);
 
-          units.insertBefore(Baf.v().newPushInst(NullConstant.v()), throwu);
-          Unit ifunit = Baf.v().newIfCmpNeInst(RefType.v(), succ);
+          units.insertBefore(myBaf.newPushInst(myNullConstant), throwu);
+          Unit ifunit = myBaf.newIfCmpNeInst(RefType.v(), succ);
           units.insertBefore(ifunit, throwu);
-          units.insertBefore(Baf.v().newPushInst(NullConstant.v()), throwu);
+          units.insertBefore(myBaf.newPushInst(myNullConstant), throwu);
 
-          b.getTraps().add(Baf.v().newTrap(exc, throwu, succ, pop));
+          b.getTraps().add(myBaf.newTrap(exc, throwu, succ, pop));
         }
         count++;
         change = true;
       } else if (u instanceof IfNonNullInst && Rand.getInt(10) <= weight) {
         Unit targ = ((IfNonNullInst) u).getTarget();
 
-        Unit methCall = Baf.v().newVirtualInvokeInst(eq.makeRef());
+        Unit methCall = myBaf.newVirtualInvokeInst(eq.makeRef());
         units.insertBefore(methCall, u);
-        units.insertBefore(Baf.v().newPushInst(NullConstant.v()), methCall);
+        units.insertBefore(myBaf.newPushInst(myNullConstant), methCall);
         if (Rand.getInt(2) == 0) {
-          Unit pop = Baf.v().newPopInst(BooleanType.v());
+          Unit pop = myBaf.newPopInst(BooleanType.v());
           units.insertBefore(pop, u);
-          Unit gotoTarg = Baf.v().newGotoInst(targ);
+          Unit gotoTarg = myBaf.newGotoInst(targ);
           units.insertBefore(gotoTarg, u);
 
-          pop = Baf.v().newPopInst(RefType.v());
+          pop = myBaf.newPopInst(RefType.v());
           units.insertAfter(pop, u);
           units.remove(u);
 
           // add first, so it is always checked first in the exception table
-          b.getTraps().addFirst(Baf.v().newTrap(exc, methCall, gotoTarg, pop));
+          b.getTraps().addFirst(myBaf.newTrap(exc, methCall, gotoTarg, pop));
         } else {
-          Unit iffalse = Baf.v().newIfEqInst(targ);
+          Unit iffalse = myBaf.newIfEqInst(targ);
           units.insertBefore(iffalse, u);
-          units.insertBefore(Baf.v().newPushInst(NullConstant.v()), u);
-          Unit pop = Baf.v().newPopInst(RefType.v());
+          units.insertBefore(myBaf.newPushInst(myNullConstant), u);
+          Unit pop = myBaf.newPopInst(RefType.v());
           units.insertAfter(pop, u);
           units.remove(u);
 
           // add first, so it is always checked first in the exception table
-          b.getTraps().addFirst(Baf.v().newTrap(exc, methCall, iffalse, pop));
+          b.getTraps().addFirst(myBaf.newTrap(exc, methCall, iffalse, pop));
         }
         count++;
         change = true;

@@ -87,7 +87,7 @@ public class DexNullArrayRefTransformer extends BodyTransformer {
   }
 
   protected void internalTransform(final Body body, String phaseName, Map<String, String> options) {
-    final ExceptionalUnitGraph g = new ExceptionalUnitGraph(body, DalvikThrowAnalysis.v());
+    final ExceptionalUnitGraph g = new ExceptionalUnitGraph(body, myDalvikThrowAnalysis);
     final LocalDefs defs = LocalDefs.Factory.newLocalDefs(g);
     final LocalCreation lc = new LocalCreation(body.getLocals(), "ex");
 
@@ -115,7 +115,7 @@ public class DexNullArrayRefTransformer extends BodyTransformer {
               createThrowStmt(body, s, lc);
               changed = true;
             }
-          } else if (base == NullConstant.v() || isAlwaysNullBefore(s, (Local) base, defs)) {
+          } else if (base == myNullConstant || isAlwaysNullBefore(s, (Local) base, defs)) {
             createThrowStmt(body, s, lc);
             changed = true;
           }
@@ -124,7 +124,7 @@ public class DexNullArrayRefTransformer extends BodyTransformer {
     }
 
     if (changed) {
-      UnreachableCodeEliminator.v().transform(body);
+      myUnreachableCodeEliminator.transform(body);
     }
   }
 
@@ -150,7 +150,7 @@ public class DexNullArrayRefTransformer extends BodyTransformer {
         return false;
       }
       DefinitionStmt defStmt = (DefinitionStmt) u;
-      if (defStmt.getRightOp() != NullConstant.v()) {
+      if (defStmt.getRightOp() != myNullConstant) {
         return false;
       }
     }
@@ -172,16 +172,16 @@ public class DexNullArrayRefTransformer extends BodyTransformer {
     Local lcEx = lc.newLocal(tp);
 
     SootMethodRef constructorRef
-        = Scene.v().makeConstructorRef(tp.getSootClass(), Collections.singletonList((Type) RefType.v("java.lang.String")));
+        = myScene.makeConstructorRef(tp.getSootClass(), Collections.singletonList((Type) RefType.v("java.lang.String")));
 
     // Create the exception instance
-    Stmt newExStmt = Jimple.v().newAssignStmt(lcEx, Jimple.v().newNewExpr(tp));
+    Stmt newExStmt = myJimple.newAssignStmt(lcEx, myJimple.newNewExpr(tp));
     body.getUnits().insertBefore(newExStmt, oldStmt);
-    Stmt invConsStmt = Jimple.v().newInvokeStmt(Jimple.v().newSpecialInvokeExpr(lcEx, constructorRef,
+    Stmt invConsStmt = myJimple.newInvokeStmt(myJimple.newSpecialInvokeExpr(lcEx, constructorRef,
         Collections.singletonList(StringConstant.v("Invalid array reference replaced by Soot"))));
     body.getUnits().insertBefore(invConsStmt, oldStmt);
 
     // Throw the exception
-    body.getUnits().swapWith(oldStmt, Jimple.v().newThrowStmt(lcEx));
+    body.getUnits().swapWith(oldStmt, myJimple.newThrowStmt(lcEx));
   }
 }

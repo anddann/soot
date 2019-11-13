@@ -27,15 +27,23 @@ package soot;
  * it.
  */
 public class CoffiClassProvider implements ClassProvider {
+
+
+    private SourceLocator mySourceLocator;
+
+    public CoffiClassProvider(SourceLocator mySourceLocator){
+
+        this.mySourceLocator = mySourceLocator;
+    }
   /**
    * Look for the specified class. Return a ClassSource for it if found, or null if it was not found.
    */
   public ClassSource find(String className) {
     String fileName = className.replace('.', '/') + ".class";
-    FoundFile file = SourceLocator.v().lookupInClassPath(fileName);
+    FoundFile file = mySourceLocator.lookupInClassPath(fileName);
     if (file == null) {
       return null;
     }
-    return new CoffiClassSource(className, file);
+    return new CoffiClassSource(className, file, myCoffiUtil);
   }
 }

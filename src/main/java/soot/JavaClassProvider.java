@@ -22,6 +22,7 @@ package soot;
  * #L%
  */
 
+import soot.javaToJimple.InitialResolver;
 import soot.options.Options;
 
 /**
@@ -29,8 +30,19 @@ import soot.options.Options;
  * it.
  */
 public class JavaClassProvider implements ClassProvider {
+  private Options myOptions;
+  private InitialResolver myInitialResolver;
+  private SourceLocator mySourceLocator;
+
+  public JavaClassProvider(Options myOptions, InitialResolver myInitialResolver,SourceLocator mySourceLocator) {
+    this.myOptions = myOptions;
+    this.myInitialResolver = myInitialResolver;
+    this.mySourceLocator = mySourceLocator;
+  }
+
   public static class JarException extends RuntimeException {
     private static final long serialVersionUID = 1L;
+
 
     public JarException(String className) {
       super("Class " + className
@@ -44,8 +56,8 @@ public class JavaClassProvider implements ClassProvider {
    */
   public ClassSource find(String className) {
 
-    if (Options.v().polyglot() && soot.javaToJimple.InitialResolver.v().hasASTForSootName(className)) {
-      soot.javaToJimple.InitialResolver.v().setASTForSootName(className);
+    if (myOptions.polyglot() && myInitialResolver.hasASTForSootName(className)) {
+      myInitialResolver.setASTForSootName(className);
       return new JavaClassSource(className);
     } else { // jastAdd; or polyglot AST not yet produced
       /*
@@ -55,9 +67,9 @@ public class JavaClassProvider implements ClassProvider {
 
       FoundFile file = null;
       try {
-        String javaClassName = SourceLocator.v().getSourceForClass(className);
+        String javaClassName = mySourceLocator.getSourceForClass(className);
         String fileName = javaClassName.replace('.', '/') + ".java";
-        file = SourceLocator.v().lookupInClassPath(fileName);
+        file = mySourceLocator.lookupInClassPath(fileName);
 
         /*
          * 04.04.2006 mbatch if inner class not found, check if it's a real file
@@ -66,7 +78,7 @@ public class JavaClassProvider implements ClassProvider {
 
           if (checkAgain) {
             fileName = className.replace('.', '/') + ".java";
-            file = SourceLocator.v().lookupInClassPath(fileName);
+            file = mySourceLocator.lookupInClassPath(fileName);
           }
         }
         /* 04.04.2006 mbatch end */

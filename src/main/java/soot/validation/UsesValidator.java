@@ -73,7 +73,7 @@ public enum UsesValidator implements BodyValidator {
     // Note that unreachable traps can be removed by setting jb.uce's
     // "remove-unreachable-traps" option to true.
 
-    ThrowAnalysis throwAnalysis = PedanticThrowAnalysis.v();
+    ThrowAnalysis throwAnalysis = myPedanticThrowAnalysis;
     UnitGraph g = new ExceptionalUnitGraph(body, throwAnalysis, false);
     LocalDefs ld = LocalDefs.Factory.newLocalDefs(g, true);
 

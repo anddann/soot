@@ -39,7 +39,7 @@ public class DumpNumAppReachableMethods extends SceneTransformer {
 
   protected void internalTransform(String phaseName, Map options) {
     int numAppMethods = 0;
-    for (Iterator mIt = Scene.v().getReachableMethods().listener(); mIt.hasNext();) {
+    for (Iterator mIt = myScene.getReachableMethods().listener(); mIt.hasNext();) {
       final SootMethod m = (SootMethod) mIt.next();
 
       if (isAppMethod(m)) {
@@ -60,7 +60,7 @@ public class DumpNumAppReachableMethods extends SceneTransformer {
    * @param args
    */
   public static void main(String[] args) {
-    PackManager.v().getPack("wjtp").add(new Transform("wjtp.narm", new DumpNumAppReachableMethods()));
+    PackmyManager.getPack("wjtp").add(new Transform("wjtp.narm", new DumpNumAppReachableMethods()));
     soot.Main.main(args);
 
   }

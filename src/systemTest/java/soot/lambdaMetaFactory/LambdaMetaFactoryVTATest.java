@@ -32,7 +32,7 @@ public class LambdaMetaFactoryVTATest extends AbstractLambdaMetaFactoryCGTest {
   @Override
   protected void setupSoot() {
     super.setupSoot();
-    Options.v().setPhaseOption("cg.spark", "on");
-    Options.v().setPhaseOption("cg.spark", "vta:true");
+    myOptions.setPhaseOption("cg.spark", "on");
+    myOptions.setPhaseOption("cg.spark", "vta:true");
   }
 }

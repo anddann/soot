@@ -250,32 +250,32 @@ public class Util {
 
     Type rType = jBody.getMethod().getReturnType();
 
-    jBody.getUnits().add(Jimple.v().newNopStmt());
+    jBody.getUnits().add(myJimple.newNopStmt());
 
     if (rType instanceof VoidType) {
-      jBody.getUnits().add(Jimple.v().newReturnVoidStmt());
+      jBody.getUnits().add(myJimple.newReturnVoidStmt());
     } else {
       Type t = jBody.getMethod().getReturnType();
       Local l = lg.generateLocal(t);
 
       AssignStmt ass = null;
       if (t instanceof RefType || t instanceof ArrayType) {
-        ass = Jimple.v().newAssignStmt(l, NullConstant.v());
+        ass = myJimple.newAssignStmt(l, myNullConstant);
       } else if (t instanceof LongType) {
-        ass = Jimple.v().newAssignStmt(l, LongConstant.v(0));
+        ass = myJimple.newAssignStmt(l, LongConstant.v(0));
       } else if (t instanceof FloatType) {
-        ass = Jimple.v().newAssignStmt(l, FloatConstant.v(0.0f));
+        ass = myJimple.newAssignStmt(l, FloatConstant.v(0.0f));
       } else if (t instanceof IntType) {
-        ass = Jimple.v().newAssignStmt(l, IntConstant.v(0));
+        ass = myJimple.newAssignStmt(l, IntConstant.v(0));
       } else if (t instanceof DoubleType) {
-        ass = Jimple.v().newAssignStmt(l, DoubleConstant.v(0));
+        ass = myJimple.newAssignStmt(l, DoubleConstant.v(0));
       } else if (t instanceof BooleanType || t instanceof ByteType || t instanceof CharType || t instanceof ShortType) {
-        ass = Jimple.v().newAssignStmt(l, IntConstant.v(0));
+        ass = myJimple.newAssignStmt(l, IntConstant.v(0));
       } else {
         throw new RuntimeException("error: return type unknown: " + t + " class: " + t.getClass());
       }
       jBody.getUnits().add(ass);
-      jBody.getUnits().add(Jimple.v().newReturnStmt(l));
+      jBody.getUnits().add(myJimple.newReturnStmt(l));
     }
 
   }
@@ -289,14 +289,14 @@ public class Util {
     Local l = lc.newLocal(RefType.v(exceptionType));
 
     List<Unit> newUnits = new ArrayList<Unit>();
-    Unit u1 = Jimple.v().newAssignStmt(l, Jimple.v().newNewExpr(RefType.v(exceptionType)));
+    Unit u1 = myJimple.newAssignStmt(l, myJimple.newNewExpr(RefType.v(exceptionType)));
     Unit u2
-        = Jimple.v()
-            .newInvokeStmt(Jimple.v().newSpecialInvokeExpr(l,
-                Scene.v().makeMethodRef(Scene.v().getSootClass(exceptionType), "<init>",
+        = myJimple
+            .newInvokeStmt(myJimple.newSpecialInvokeExpr(l,
+                myScene.makeMethodRef(myScene.getSootClass(exceptionType), "<init>",
                     Collections.singletonList((Type) RefType.v("java.lang.String")), VoidType.v(), false),
                 StringConstant.v(m)));
-    Unit u3 = Jimple.v().newThrowStmt(l);
+    Unit u3 = myJimple.newThrowStmt(l);
     newUnits.add(u1);
     newUnits.add(u2);
     newUnits.add(u3);

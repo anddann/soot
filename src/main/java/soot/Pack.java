@@ -53,7 +53,7 @@ public abstract class Pack implements HasPhaseOptions, Iterable<Transform> {
       throw new RuntimeException("Transforms in pack '" + getPhaseName() + "' must have a phase name " + "that starts with '"
           + getPhaseName() + ".'.");
     }
-    PhaseOptions.v().getPM().notifyAddPack();
+    myPhaseOptions().getPM().notifyAddPack();
     if (get(t.getPhaseName()) != null) {
       throw new RuntimeException("Phase " + t.getPhaseName() + " already " + "in pack");
     }
@@ -61,7 +61,7 @@ public abstract class Pack implements HasPhaseOptions, Iterable<Transform> {
   }
 
   public void insertAfter(Transform t, String phaseName) {
-    PhaseOptions.v().getPM().notifyAddPack();
+    myPhaseOptions().getPM().notifyAddPack();
     for (Transform tr : opts) {
       if (tr.getPhaseName().equals(phaseName)) {
         opts.insertAfter(t, tr);
@@ -72,7 +72,7 @@ public abstract class Pack implements HasPhaseOptions, Iterable<Transform> {
   }
 
   public void insertBefore(Transform t, String phaseName) {
-    PhaseOptions.v().getPM().notifyAddPack();
+    myPhaseOptions().getPM().notifyAddPack();
     for (Transform tr : opts) {
       if (tr.getPhaseName().equals(phaseName)) {
         opts.insertBefore(t, tr);
@@ -110,7 +110,7 @@ public abstract class Pack implements HasPhaseOptions, Iterable<Transform> {
   }
 
   public final void apply() {
-    Map<String, String> options = PhaseOptions.v().getPhaseOptions(this);
+    Map<String, String> options = myPhaseOptions().getPhaseOptions(this);
     if (!PhaseOptions.getBoolean(options, "enabled")) {
       return;
     }
@@ -118,7 +118,7 @@ public abstract class Pack implements HasPhaseOptions, Iterable<Transform> {
   }
 
   public final void apply(Body b) {
-    Map<String, String> options = PhaseOptions.v().getPhaseOptions(this);
+    Map<String, String> options = myPhaseOptions().getPhaseOptions(this);
     if (!PhaseOptions.getBoolean(options, "enabled")) {
       return;
     }

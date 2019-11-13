@@ -49,7 +49,7 @@ public abstract class BackwardFlowAnalysis<N, A> extends FlowAnalysis<N, A> {
   protected void doAnalysis() {
     doAnalysis(GraphView.BACKWARD, InteractionFlowHandler.BACKWARD, unitToAfterFlow, unitToBeforeFlow);
 
-    // soot.Timers.v().totalFlowNodes += graph.size();
-    // soot.Timers.v().totalFlowComputations += numComputations;
+    // soot.myTimers.totalFlowNodes += graph.size();
+    // soot.myTimers.totalFlowComputations += numComputations;
   }
 }

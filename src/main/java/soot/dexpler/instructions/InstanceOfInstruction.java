@@ -58,8 +58,8 @@ public class InstanceOfInstruction extends DexlibAbstractInstruction {
 
     Type t = DexType.toSoot((TypeReference) (i.getReference()));
 
-    InstanceOfExpr e = Jimple.v().newInstanceOfExpr(body.getRegisterLocal(source), t);
-    AssignStmt assign = Jimple.v().newAssignStmt(body.getRegisterLocal(dest), e);
+    InstanceOfExpr e = myJimple.newInstanceOfExpr(body.getRegisterLocal(source), t);
+    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), e);
     setUnit(assign);
     addTags(assign);
     body.add(assign);

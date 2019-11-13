@@ -43,7 +43,7 @@ public class ThrowSet {
   }
 
   private static void initThrowables() {
-    Scene sc = Scene.v();
+    Scene sc = myScene;
 
     throwable = new SootClass[10];
     throwable[0] = sc.getRefType("java.lang.RuntimeException").getSootClass();

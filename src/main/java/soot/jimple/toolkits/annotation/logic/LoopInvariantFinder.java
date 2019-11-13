@@ -68,7 +68,7 @@ public class LoopInvariantFinder extends BodyTransformer {
    */
   protected void internalTransform(Body b, String phaseName, Map options) {
 
-    SmartLocalDefs sld = SmartLocalDefsPool.v().getSmartLocalDefsFor(b);
+    SmartLocalDefs sld = mySmartLocalDefsPool.getSmartLocalDefsFor(b);
     UnitGraph g = sld.getGraph();
     NaiveSideEffectTester nset = new NaiveSideEffectTester();
 

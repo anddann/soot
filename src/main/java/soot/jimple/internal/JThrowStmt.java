@@ -39,7 +39,7 @@ import soot.util.Switch;
 public class JThrowStmt extends AbstractOpStmt implements ThrowStmt {
 
   public JThrowStmt(Value op) {
-    this(Jimple.v().newImmediateBox(op));
+    this(myJimple.newImmediateBox(op));
   }
 
   protected JThrowStmt(ValueBox opBox) {
@@ -67,7 +67,7 @@ public class JThrowStmt extends AbstractOpStmt implements ThrowStmt {
   public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
     ((ConvertToBaf) getOp()).convertToBaf(context, out);
 
-    Unit u = Baf.v().newThrowInst();
+    Unit u = myBaf.newThrowInst();
     u.addAllTagsOf(this);
     out.add(u);
   }

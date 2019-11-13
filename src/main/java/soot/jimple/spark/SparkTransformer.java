@@ -86,7 +86,7 @@ public class SparkTransformer extends SceneTransformer {
 
   protected void internalTransform(String phaseName, Map<String, String> options) {
     SparkOptions opts = new SparkOptions(options);
-    final String output_dir = SourceLocator.v().getOutputDir();
+    final String output_dir = mySourceLocator.getOutputDir();
 
     // Build pointer assignment graph
     ContextInsensitiveBuilder b = new ContextInsensitiveBuilder();
@@ -167,7 +167,7 @@ public class SparkTransformer extends SceneTransformer {
     }
 
     if (opts.verbose()) {
-      logger.debug("[Spark] Number of reachable methods: " + Scene.v().getReachableMethods().size());
+      logger.debug("[Spark] Number of reachable methods: " + myScene.getReachableMethods().size());
     }
 
     if (opts.set_mass()) {
@@ -183,7 +183,7 @@ public class SparkTransformer extends SceneTransformer {
     if (opts.dump_html()) {
       new PAG2HTML(pag, output_dir).dump();
     }
-    Scene.v().setPointsToAnalysis(pag);
+    myScene.setPointsToAnalysis(pag);
     if (opts.add_tags()) {
       addTags(pag);
     }
@@ -206,7 +206,7 @@ public class SparkTransformer extends SceneTransformer {
       PointsToAnalysis onDemandAnalysis = DemandCSPointsTo.makeWithBudget(opts.traversal(), opts.passes(), opts.lazy_pts());
       Date endOndemand = new Date();
       reportTime("Initialized on-demand refinement-based context-sensitive analysis", startOnDemand, endOndemand);
-      Scene.v().setPointsToAnalysis(onDemandAnalysis);
+      myScene.setPointsToAnalysis(onDemandAnalysis);
     }
   }
 
@@ -242,7 +242,7 @@ public class SparkTransformer extends SceneTransformer {
   protected void addTags(PAG pag) {
     final Tag unknown = new StringTag("Untagged Spark node");
     final Map<Node, Tag> nodeToTag = pag.getNodeTags();
-    for (final SootClass c : Scene.v().getClasses()) {
+    for (final SootClass c : myScene.getClasses()) {
       for (final SootMethod m : c.getMethods()) {
         if (!m.isConcrete()) {
           continue;

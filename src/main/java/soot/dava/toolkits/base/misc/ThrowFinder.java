@@ -104,12 +104,12 @@ public class ThrowFinder {
     protectionSet = new HashMap<Stmt, HashSet<SootClass>>();
 
     CallGraph cg;
-    if (Scene.v().hasCallGraph()) {
-      cg = Scene.v().getCallGraph();
+    if (myScene.hasCallGraph()) {
+      cg = myScene.getCallGraph();
     } else {
       new CallGraphBuilder().build();
-      cg = Scene.v().getCallGraph();
-      Scene.v().releaseCallGraph();
+      cg = myScene.getCallGraph();
+      myScene.releaseCallGraph();
     }
 
     IterableSet worklist = new IterableSet();
@@ -117,7 +117,7 @@ public class ThrowFinder {
     logger.debug("\b. ");
 
     // Get all the methods, and find protection for every statement.
-    Iterator<SootClass> classIt = Scene.v().getApplicationClasses().iterator();
+    Iterator<SootClass> classIt = myScene.getApplicationClasses().iterator();
     while (classIt.hasNext()) {
       Iterator<SootMethod> methodIt = classIt.next().methodIterator();
       while (methodIt.hasNext()) {
@@ -133,9 +133,9 @@ public class ThrowFinder {
         superClassSet = new HashMap<SootClass, IterableSet>();
 
     HashSet<SootClass> applicationClasses = new HashSet<SootClass>();
-    applicationClasses.addAll(Scene.v().getApplicationClasses());
+    applicationClasses.addAll(myScene.getApplicationClasses());
 
-    classIt = Scene.v().getApplicationClasses().iterator();
+    classIt = myScene.getApplicationClasses().iterator();
     while (classIt.hasNext()) {
       SootClass c = (SootClass) classIt.next();
 
@@ -442,8 +442,8 @@ public class ThrowFinder {
   }
 
   private boolean is_HandledByRuntime(SootClass c) {
-    SootClass thrownException = c, runtimeException = Scene.v().getSootClass("java.lang.RuntimeException"),
-        error = Scene.v().getSootClass("java.lang.Error");
+    SootClass thrownException = c, runtimeException = myScene.getSootClass("java.lang.RuntimeException"),
+        error = myScene.getSootClass("java.lang.Error");
 
     while (true) {
       if ((thrownException == runtimeException) || (thrownException == error)) {

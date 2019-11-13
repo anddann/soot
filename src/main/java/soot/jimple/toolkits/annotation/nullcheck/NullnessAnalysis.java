@@ -225,12 +225,12 @@ public class NullnessAnalysis extends ForwardBranchedFlowAnalysis<NullnessAnalys
     Value right = eqExpr.getOp2();
 
     Value val = null;
-    if (left == NullConstant.v()) {
-      if (right != NullConstant.v()) {
+    if (left == myNullConstant) {
+      if (right != myNullConstant) {
         val = right;
       }
-    } else if (right == NullConstant.v()) {
-      if (left != NullConstant.v()) {
+    } else if (right == myNullConstant) {
+      if (left != myNullConstant) {
         val = left;
       }
     }
@@ -305,7 +305,7 @@ public class NullnessAnalysis extends ForwardBranchedFlowAnalysis<NullnessAnalys
         || right instanceof ClassConstant || right instanceof CaughtExceptionRef) {
       // if we assign new... or @this, the result is non-null
       out.put(left, NON_NULL);
-    } else if (right == NullConstant.v()) {
+    } else if (right == myNullConstant) {
       // if we assign null, well, it's null
       out.put(left, NULL);
     } else if (left instanceof Local && right instanceof Local) {

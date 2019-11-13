@@ -41,7 +41,7 @@ public abstract class Constant implements Value, ConvertToBaf, Immediate {
 
   /** Adds a Baf instruction pushing this constant to the stack onto <code>out</code>. */
   public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    Unit u = Baf.v().newPushInst(this);
+    Unit u = myBaf.newPushInst(this);
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);
   }

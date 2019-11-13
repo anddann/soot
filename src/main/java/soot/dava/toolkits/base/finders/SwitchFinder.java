@@ -28,8 +28,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
+import com.google.inject.Inject;
 import soot.G;
-import soot.Singletons;
 import soot.Value;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
@@ -44,10 +44,16 @@ import soot.jimple.TableSwitchStmt;
 import soot.util.IterableSet;
 
 public class SwitchFinder implements FactFinder {
-  public SwitchFinder(Singletons.Global g) {
-  }
 
-  public static SwitchFinder v() {
+
+    private Dava myDava;
+
+    @Inject
+    public SwitchFinder(Dava myDava) {
+        this.myDava = myDava;
+    }
+
+    public static SwitchFinder v() {
     return G.v().soot_dava_toolkits_base_finders_SwitchFinder();
   }
 
@@ -57,7 +63,7 @@ public class SwitchFinder implements FactFinder {
   private HashMap index2target, tSucc2indexSet, tSucc2target, tSucc2Body;
 
   public void find(DavaBody davaBody, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
-    Dava.v().log("SwitchFinder::find()");
+    myDava.log("SwitchFinder::find()");
 
     final String defaultStr = "default";
 

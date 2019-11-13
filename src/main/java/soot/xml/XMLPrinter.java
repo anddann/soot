@@ -140,13 +140,13 @@ public class XMLPrinter {
     long maxStmtCount = 0;
 
     /*
-     * // for invokes, add a list of potential targets if (!Scene.v().hasActiveInvokeGraph()) {
+     * // for invokes, add a list of potential targets if (!myScene.hasActiveInvokeGraph()) {
      * InvokeGraphBuilder.v().transform("jil.igb"); }
      *
-     * // build an invoke graph based on class hiearchy analysis InvokeGraph igCHA = Scene.v().getActiveInvokeGraph();
+     * // build an invoke graph based on class hiearchy analysis InvokeGraph igCHA = myScene.getActiveInvokeGraph();
      *
-     * // build an invoke graph based on variable type analysis InvokeGraph igVTA = Scene.v().getActiveInvokeGraph(); try {
-     * VariableTypeAnalysis vta = null; int VTApasses = 1; //Options.getInt( PackManager.v().getPhaseOptions( "jil.igb" ),
+     * // build an invoke graph based on variable type analysis InvokeGraph igVTA = myScene.getActiveInvokeGraph(); try {
+     * VariableTypeAnalysis vta = null; int VTApasses = 1; //Options.getInt( PackmyManager.getPhaseOptions( "jil.igb" ),
      * "VTA-passes" ); for (int i = 0; i < VTApasses; i++) { vta = new VariableTypeAnalysis(igVTA);
      * vta.trimActiveInvokeGraph(); igVTA.refreshReachableMethods(); } } catch (RuntimeException re) { // this will fail if
      * the --analyze-context flag is not specified // logger.debug(""+ "JIL VTA FAILED: " + re ); igVTA = null; }
@@ -500,7 +500,7 @@ public class XMLPrinter {
 
         // catch java.io.IOException from label0 to label1 with label2;
         XMLNode catchNode = exceptionsNode.addChild("exception", new String[] { "id", "method", "type" }, new String[] {
-            (statementCount++) + "", cleanMethodName, Scene.v().quotedNameOf(trap.getException().getName()) });
+            (statementCount++) + "", cleanMethodName, myScene.quotedNameOf(trap.getException().getName()) });
         catchNode.addChild("begin", new String[] { "label" },
             new String[] { stmtToName.get(trap.getBeginUnit()).toString() });
         catchNode.addChild("end", new String[] { "label" }, new String[] { stmtToName.get(trap.getEndUnit()).toString() });
@@ -511,7 +511,7 @@ public class XMLPrinter {
 
     exceptionsNode.addAttribute("count", exceptionsNode.getNumberOfChildren() + "");
 
-    // Scene.v().releaseActiveInvokeGraph();
+    // myScene.releaseActiveInvokeGraph();
 
     return;
   }
@@ -568,23 +568,23 @@ public class XMLPrinter {
       // add history node
       // TODO: grab the software version and command line
       String cmdlineStr = "";
-      for (String element : Main.v().cmdLineArgs) {
+      for (String element : myMain.cmdLineArgs) {
         cmdlineStr += element + " ";
       }
       String dateStr = new Date().toString();
       xmlHistoryNode = xmlRootNode.addChild("history");
       xmlHistoryNode.addAttribute("created", dateStr);
       xmlHistoryNode.addChild("soot", new String[] { "version", "command", "timestamp" },
-          new String[] { Main.v().versionString, cmdlineStr.trim(), dateStr });
+          new String[] { myMain.versionString, cmdlineStr.trim(), dateStr });
 
       // add class root node
       xmlClassNode = xmlRootNode.addChild("class", new String[] { "name" },
-          new String[] { Scene.v().quotedNameOf(cl.getName()).toString() });
+          new String[] { myScene.quotedNameOf(cl.getName()).toString() });
       if (cl.getPackageName().length() > 0) {
         xmlClassNode.addAttribute("package", cl.getPackageName());
       }
       if (cl.hasSuperclass()) {
-        xmlClassNode.addAttribute("extends", Scene.v().quotedNameOf(cl.getSuperclass().getName()).toString());
+        xmlClassNode.addAttribute("extends", myScene.quotedNameOf(cl.getSuperclass().getName()).toString());
       }
 
       // add modifiers subnode
@@ -605,7 +605,7 @@ public class XMLPrinter {
       if (interfaceIt.hasNext()) {
         while (interfaceIt.hasNext()) {
           xmlTempNode.addChild("implements", "", new String[] { "class" },
-              new String[] { Scene.v().quotedNameOf(interfaceIt.next().getName()).toString() });
+              new String[] { myScene.quotedNameOf(interfaceIt.next().getName()).toString() });
         }
       }
     }

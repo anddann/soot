@@ -115,7 +115,7 @@ public class IFDSReachingDefinitions
                 int paramIndex = args.indexOf(source.getO1());
                 Pair<Value, Set<DefinitionStmt>> pair = new Pair<Value, Set<DefinitionStmt>>(
                     new EquivalentValue(
-                        Jimple.v().newParameterRef(destinationMethod.getParameterType(paramIndex), paramIndex)),
+                        myJimple.newParameterRef(destinationMethod.getParameterType(paramIndex), paramIndex)),
                     source.getO2());
                 return Collections.singleton(pair);
               }
@@ -178,7 +178,7 @@ public class IFDSReachingDefinitions
   }
 
   public Map<Unit, Set<Pair<Value, Set<DefinitionStmt>>>> initialSeeds() {
-    return DefaultSeeds.make(Collections.singleton(Scene.v().getMainMethod().getActiveBody().getUnits().getFirst()),
+    return DefaultSeeds.make(Collections.singleton(myScene.getMainMethod().getActiveBody().getUnits().getFirst()),
         zeroValue());
   }
 

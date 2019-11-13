@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import soot.AnySubType;
 import soot.ArrayType;
 import soot.FastHierarchy;
@@ -58,9 +59,14 @@ import soot.util.queue.ChunkedQueue;
  * @author Ondrej Lhotak
  */
 public class VirtualCalls {
-  private CGOptions options = new CGOptions(PhaseOptions.v().getPhaseOptions("cg"));
+  private PhaseOptions myPhaseOptions;
+  private Scene myScene;
+  private CGOptions options = new CGOptions(myPhaseOptions.getPhaseOptions("cg"));
 
-  public VirtualCalls(Singletons.Global g) {
+  @Inject
+  public VirtualCalls(PhaseOptions myPhaseOptions, Scene myScene) {
+    this.myPhaseOptions = myPhaseOptions;
+    this.myScene = myScene;
   }
 
   public static VirtualCalls v() {
@@ -68,7 +74,7 @@ public class VirtualCalls {
   }
 
   private final LargeNumberedMap<Type, SmallNumberedMap<SootMethod>> typeToVtbl
-      = new LargeNumberedMap<Type, SmallNumberedMap<SootMethod>>(Scene.v().getTypeNumberer());
+      = new LargeNumberedMap<Type, SmallNumberedMap<SootMethod>>(myScene.getTypeNumberer());
 
   public SootMethod resolveSpecial(SpecialInvokeExpr iie, NumberedString subSig, SootMethod container) {
     return resolveSpecial(iie, subSig, container, false);
@@ -77,7 +83,7 @@ public class VirtualCalls {
   public SootMethod resolveSpecial(SpecialInvokeExpr iie, NumberedString subSig, SootMethod container, boolean appOnly) {
     SootMethod target = iie.getMethod();
     /* cf. JVM spec, invokespecial instruction */
-    if (Scene.v().getOrMakeFastHierarchy().canStoreType(container.getDeclaringClass().getType(),
+    if (myScene.getOrMakeFastHierarchy().canStoreType(container.getDeclaringClass().getType(),
         target.getDeclaringClass().getType())
         && container.getDeclaringClass().getType() != target.getDeclaringClass().getType()
         && !target.getName().equals("<init>") && subSig != sigClinit) {
@@ -151,7 +157,7 @@ public class VirtualCalls {
     if (t instanceof ArrayType) {
       t = RefType.v("java.lang.Object");
     }
-    FastHierarchy fastHierachy = Scene.v().getOrMakeFastHierarchy();
+    FastHierarchy fastHierachy = myScene.getOrMakeFastHierarchy();
     if (declaredType != null && !fastHierachy.canStoreType(t, declaredType)) {
       return;
     }
@@ -215,7 +221,7 @@ public class VirtualCalls {
         return;
       }
       childClass = child.getSootClass();
-      FastHierarchy fastHierachy = Scene.v().getOrMakeFastHierarchy();
+      FastHierarchy fastHierachy = myScene.getOrMakeFastHierarchy();
       if (fastHierachy.canStoreClass(childClass,parentClass)) {
         SootMethod target = resolveNonSpecial(child, subSig, appOnly);
         if (target != null) {
@@ -227,7 +233,7 @@ public class VirtualCalls {
 
   protected void resolveAnySubType(Type declaredType, Type sigType, NumberedString subSig, SootMethod container,
       ChunkedQueue<SootMethod> targets, boolean appOnly, RefType base) {
-    FastHierarchy fastHierachy = Scene.v().getOrMakeFastHierarchy();
+    FastHierarchy fastHierachy = myScene.getOrMakeFastHierarchy();
 
     {
       Set<Type> subTypes = baseToSubTypes.get(base);
@@ -278,7 +284,7 @@ public class VirtualCalls {
 
   protected void resolveLibrarySignature(Type declaredType, Type sigType, NumberedString subSig, SootMethod container,
       ChunkedQueue<SootMethod> targets, boolean appOnly, RefType base) {
-    FastHierarchy fastHierachy = Scene.v().getOrMakeFastHierarchy();
+    FastHierarchy fastHierachy = myScene.getOrMakeFastHierarchy();
 
     assert (declaredType instanceof RefType);
     Pair<Type, NumberedString> pair = new Pair<Type, NumberedString>(base, subSig);
@@ -304,18 +310,18 @@ public class VirtualCalls {
     // get return type; method name; parameter types
     String[] split = subSig.getString().replaceAll("(.*) (.*)\\((.*)\\)", "$1;$2;$3").split(";");
 
-    Type declaredReturnType = Scene.v().getType(split[0]);
+    Type declaredReturnType = myScene.getType(split[0]);
     String declaredName = split[1];
     List<Type> declaredParamTypes = new ArrayList<Type>();
 
     // separate the parameter types
     if (split.length == 3) {
       for (String type : split[2].split(",")) {
-        declaredParamTypes.add(Scene.v().getType(type));
+        declaredParamTypes.add(myScene.getType(type));
       }
     }
 
-    Chain<SootClass> classes = Scene.v().getClasses();
+    Chain<SootClass> classes = myScene.getClasses();
     for (SootClass sc : classes) {
       for (SootMethod sm : sc.getMethods()) {
         if (!sm.isAbstract()) {
@@ -366,7 +372,7 @@ public class VirtualCalls {
     baseToPossibleSubTypes.putAll(pair, types);
   }
 
-  public final NumberedString sigClinit = Scene.v().getSubSigNumberer().findOrAdd("void <clinit>()");
-  public final NumberedString sigStart = Scene.v().getSubSigNumberer().findOrAdd("void start()");
-  public final NumberedString sigRun = Scene.v().getSubSigNumberer().findOrAdd("void run()");
+  public final NumberedString sigClinit = myScene.getSubSigNumberer().findOrAdd("void <clinit>()");
+  public final NumberedString sigStart = myScene.getSubSigNumberer().findOrAdd("void start()");
+  public final NumberedString sigRun = myScene.getSubSigNumberer().findOrAdd("void run()");
 }

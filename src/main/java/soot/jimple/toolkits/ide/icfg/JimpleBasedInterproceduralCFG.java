@@ -143,12 +143,12 @@ public class JimpleBasedInterproceduralCFG extends AbstractJimpleBasedICFG {
     super(enableExceptions);
     this.includeReflectiveCalls = includeReflectiveCalls;
 
-    cg = Scene.v().getCallGraph();
+    cg = myScene.getCallGraph();
     initializeUnitToOwner();
   }
 
   protected void initializeUnitToOwner() {
-    for (Iterator<MethodOrMethodContext> iter = Scene.v().getReachableMethods().listener(); iter.hasNext();) {
+    for (Iterator<MethodOrMethodContext> iter = myScene.getReachableMethods().listener(); iter.hasNext();) {
       SootMethod m = iter.next().method();
       initializeUnitToOwner(m);
     }

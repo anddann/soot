@@ -189,7 +189,7 @@ public class SETTryNode extends SETNode {
 
             Iterator enlit = davaBody.get_ExceptionFacts().iterator();
             while (enlit.hasNext()) {
-              ((ExceptionNode) enlit.next()).refresh_CatchBody(ExceptionFinder.v());
+              ((ExceptionNode) enlit.next()).refresh_CatchBody(myExceptionFinder);
             }
 
             return false;

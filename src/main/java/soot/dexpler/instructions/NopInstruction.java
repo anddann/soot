@@ -40,7 +40,7 @@ public class NopInstruction extends DexlibAbstractInstruction {
   }
 
   public void jimplify(DexBody body) {
-    NopStmt nop = Jimple.v().newNopStmt();
+    NopStmt nop = myJimple.newNopStmt();
     setUnit(nop);
     addTags(nop);
     body.add(nop);

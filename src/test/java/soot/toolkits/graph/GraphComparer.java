@@ -274,7 +274,7 @@ public class GraphComparer {
 		    this.add((ExceptionalUnitGraph) g, false);
 		} else if (g instanceof ExceptionalUnitGraph) {
 		    this.add((ExceptionalUnitGraph) g,
-			     Options.v().omit_excepting_unit_edges());
+			     myOptions.omit_excepting_unit_edges());
 		} else if (g instanceof ClassicCompleteUnitGraph) {
 		    classicCompleteUnitGraph = (ClassicCompleteUnitGraph) g;
 		} else if (g.getClass().getName().endsWith(".CompleteUnitGraph")) {
@@ -640,14 +640,14 @@ public class GraphComparer {
 
 	public boolean onlyExpectedDiffs() {
             if (exceptional.size() != cOrT.size()) {
-		if (Options.v().verbose()) 
+		if (myOptions.verbose())
 		    logger.debug("ExceptionalToTrapUnitComparer.onlyExpectedDiffs(): sizes differ" + exceptional.size() + " " + cOrT.size());
 	        return false;
 	    }
 
 	    if (! (exceptional.getHeads().containsAll(cOrT.getHeads())
 		   && cOrT.getHeads().containsAll(exceptional.getHeads())) ) {
-		if (Options.v().verbose()) 
+		if (myOptions.verbose())
 		    logger.debug("ExceptionalToTrapUnitComparer.onlyExpectedDiffs(): heads differ");
 		return false;
 	    }
@@ -661,7 +661,7 @@ public class GraphComparer {
 		Unit tail = tailIt.next();
 		if ((! cOrT.getTails().contains(tail)) &&
 		    (! trappedReturnOrThrow(tail))) {
-		    if (Options.v().verbose()) 
+		    if (myOptions.verbose())
 			logger.debug("ExceptionalToTrapUnitComparer.onlyExpectedDiffs(): " + tail.toString() + " is not a tail in cOrT, but not a trapped Return or Throw either");
 		    return false;
 		}
@@ -681,7 +681,7 @@ public class GraphComparer {
 			Unit cOrTSucc = (Unit) it.next();
 			if ((! exceptionalSuccs.contains(cOrTSucc)) &&
 			    (! cannotReallyThrowTo(node, cOrTSucc))) {
-			    if (Options.v().verbose()) 
+			    if (myOptions.verbose())
 				logger.debug("ExceptionalToTrapUnitComparer.onlyExpectedDiffs(): " + cOrTSucc.toString() + " is not exceptional successor of " + node.toString() + " even though " + node.toString() + " can throw to it");
 			    return false;
 			}
@@ -690,7 +690,7 @@ public class GraphComparer {
 			Unit exceptionalSucc = (Unit) it.next();
 			if ((! cOrTSuccs.contains(exceptionalSucc)) &&
 			    (! predOfTrappedThrower(node, exceptionalSucc))) {
-			    if (Options.v().verbose()) 
+			    if (myOptions.verbose())
 				logger.debug("ExceptionalToTrapUnitComparer.onlyExpectedDiffs(): " + exceptionalSucc.toString() + " is not TrapUnitGraph successor of " + node.toString() + " even though " + node.toString() + " is not a predOfTrappedThrower or predOfTrapBegin");
 			    return false;
 			}
@@ -702,7 +702,7 @@ public class GraphComparer {
 			Unit cOrTPred = (Unit) it.next();
 			if ((! exceptionalPreds.contains(cOrTPred)) &&
 			    (! cannotReallyThrowTo(cOrTPred, node))) {
-			    if (Options.v().verbose())
+			    if (myOptions.verbose())
 				logger.debug("ExceptionalToTrapUnitComparer.onlyExpectedDiffs(): " + cOrTPred.toString() + " is not ExceptionalUnitGraph predecessor of " + node.toString() + " even though " + cOrTPred.toString() + " can throw to " + node.toString());
 			    return false;
 			}
@@ -711,7 +711,7 @@ public class GraphComparer {
 			Unit exceptionalPred = (Unit) it.next();
 			if ((! cOrTPreds.contains(exceptionalPred)) &&
 			    (! predOfTrappedThrower(exceptionalPred, node))) {
-			    if (Options.v().verbose()) 
+			    if (myOptions.verbose())
 				logger.debug("ExceptionalToTrapUnitComparer.onlyExpectedDiffs(): " + exceptionalPred.toString() + " is not COrTUnitGraph predecessor of " + node.toString() + " even though " + exceptionalPred.toString() + " is not a predOfTrappedThrower");
 			    return false;
 			}
@@ -721,7 +721,7 @@ public class GraphComparer {
 		    logger.error(e.getMessage(), e);
 		    if (e.getMessage() != null && 
 			e.getMessage().startsWith("Invalid unit ")) {
-			if (Options.v().verbose()) 
+			if (myOptions.verbose())
 			    logger.debug("ExceptionalToTrapUnitComparer.onlyExpectedDiffs(): " + node.toString() + " is not in ExceptionalUnitGraph at all");
 			// node is not in exceptional graph.
 			return false;
@@ -854,7 +854,7 @@ public class GraphComparer {
 	    // First, ensure that tail is a handler.
 	    List tailsTraps = returnHandlersTraps(tail);
 	    if (tailsTraps.size() == 0) {
-		if (Options.v().verbose()) 
+		if (myOptions.verbose())
 		    logger.debug("trapsReachedViaEdge(): " + tail.toString() + " is not a trap handler");
 		return false;
 	    }
@@ -948,7 +948,7 @@ public class GraphComparer {
 	}
 
 	protected boolean cannotReallyThrowTo(Unit head, Unit tail) {
-	    if (Options.v().verbose()) 
+	    if (myOptions.verbose())
 		logger.debug("ExceptionalToClassicCompleteUnitGraphComparer.cannotReallyThrowTo() called.");
 	    if (super.cannotReallyThrowTo(head, tail)) {
 		return true;

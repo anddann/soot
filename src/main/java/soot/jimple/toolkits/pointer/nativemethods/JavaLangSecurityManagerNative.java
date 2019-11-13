@@ -69,7 +69,7 @@ public class JavaLangSecurityManagerNative extends NativeMethodClass {
    */
   public void java_lang_SecurityManager_getClassContext(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getLeastArrayObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getLeastArrayObject());
   }
 
   /**
@@ -83,7 +83,7 @@ public class JavaLangSecurityManagerNative extends NativeMethodClass {
    */
   public void java_lang_SecurityManager_currentClassLoader0(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getClassLoaderObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getClassLoaderObject());
   }
 
   /**
@@ -93,7 +93,7 @@ public class JavaLangSecurityManagerNative extends NativeMethodClass {
    */
   public void java_lang_SecurityManager_currentLoadedClass0(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getClassObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getClassObject());
   }
 
   /**

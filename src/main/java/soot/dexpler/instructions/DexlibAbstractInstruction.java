@@ -160,7 +160,7 @@ public abstract class DexlibAbstractInstruction {
    *          the host to tag
    */
   protected void addTags(Host host) {
-    Options options = Options.v();
+    Options options = myOptions;
     if (options.keep_line_number() && lineNumber != -1) {
       host.addTag(new LineNumberTag(lineNumber));
       host.addTag(new SourceLineNumberTag(lineNumber));

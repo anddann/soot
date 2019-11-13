@@ -139,9 +139,9 @@ public class FastHierarchy {
 
   /** Constructs a hierarchy from the current scene. */
   public FastHierarchy() {
-    this.sc = Scene.v();
+    this.sc = myScene;
 
-    this.rtObject = Scene.v().getObjectType();
+    this.rtObject = myScene.getObjectType();
     this.rtSerializable = RefType.v("java.io.Serializable");
     this.rtCloneable = RefType.v("java.lang.Cloneable");
 

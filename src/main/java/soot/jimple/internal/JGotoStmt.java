@@ -40,7 +40,7 @@ public class JGotoStmt extends AbstractStmt implements GotoStmt {
   final List<UnitBox> targetBoxes;
 
   public JGotoStmt(Unit target) {
-    this(Jimple.v().newStmtBox(target));
+    this(myJimple.newStmtBox(target));
   }
 
   public JGotoStmt(UnitBox box) {
@@ -88,7 +88,7 @@ public class JGotoStmt extends AbstractStmt implements GotoStmt {
   }
 
   public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    Unit u = Baf.v().newGotoInst(Baf.v().newPlaceholderInst(getTarget()));
+    Unit u = myBaf.newGotoInst(myBaf.newPlaceholderInst(getTarget()));
     u.addAllTagsOf(this);
     out.add(u);
   }

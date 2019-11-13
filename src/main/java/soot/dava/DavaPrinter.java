@@ -70,7 +70,7 @@ public class DavaPrinter {
 
   private void printStatementsInBody(Body body, java.io.PrintWriter out) {
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       System.out.println("Printing " + body.getMethod().getName());
     }
 
@@ -253,9 +253,9 @@ public class DavaPrinter {
        *
        * packagesUsed.add("java.lang"); packagesUsed.add(curPackage);
        */
-      Dava.v().set_CurrentPackageContext(importList);
-      // Dava.v().set_CurrentPackageContext(packagesUsed);
-      Dava.v().set_CurrentPackage(curPackage);
+      myDava.set_CurrentPackageContext(importList);
+      // myDava.set_CurrentPackageContext(packagesUsed);
+      myDava.set_CurrentPackage(curPackage);
     }
 
     // Print class name + modifiers
@@ -331,9 +331,9 @@ public class DavaPrinter {
           qualifiers = qualifiers.trim();
 
           if (qualifiers.equals("")) {
-            declaration = Scene.v().quotedNameOf(f.getName());
+            declaration = myScene.quotedNameOf(f.getName());
           } else {
-            declaration = qualifiers + " " + Scene.v().quotedNameOf(f.getName()) + "";
+            declaration = qualifiers + " " + myScene.quotedNameOf(f.getName()) + "";
           }
 
           if (f.isFinal() && f.isStatic()) {
@@ -473,7 +473,7 @@ public class DavaPrinter {
       out.println("    " + decl);
       for (Iterator<Tag> tIt = b.getMethod().getTags().iterator(); tIt.hasNext();) {
         final Tag t = tIt.next();
-        if (Options.v().print_tags_in_output()) {
+        if (myOptions.print_tags_in_output()) {
           out.println(t);
         }
       }

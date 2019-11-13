@@ -400,7 +400,7 @@ public class ClassInstanceExpr extends Access implements Cloneable {
       b.add(b.newInvokeStmt(
         b.newVirtualInvokeExpr(
           base, 
-          Scene.v().getMethod("<java.lang.Object: java.lang.Class getClass()>").makeRef(),
+          myScene.getMethod("<java.lang.Object: java.lang.Class getClass()>").makeRef(),
           this
         ),
         this
@@ -451,7 +451,7 @@ public class ClassInstanceExpr extends Access implements Cloneable {
       list.add(asImmediate(b, getArg(i).type().emitCastTo(b, getArg(i), decl().getParameter(i).type()))); // MethodInvocationConversion
   
     if(decl().isPrivate() && type() != hostType()) {
-      list.add(asImmediate(b, soot.jimple.NullConstant.v()));
+      list.add(asImmediate(b, soot.jimple.myNullConstant));
       b.setLine(this);
       b.add(
         b.newInvokeStmt(

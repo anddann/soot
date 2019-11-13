@@ -152,7 +152,7 @@ public abstract class AbstractInterfaceInvokeExpr extends AbstractInstanceInvoke
       }
     }
 
-    Unit u = Baf.v().newInterfaceInvokeInst(methodRef, argCountOf(methodRef));
+    Unit u = myBaf.newInterfaceInvokeInst(methodRef, argCountOf(methodRef));
     out.add(u);
     u.addAllTagsOf(context.getCurrentUnit());
   }

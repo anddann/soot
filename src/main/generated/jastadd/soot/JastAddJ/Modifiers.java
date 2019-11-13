@@ -173,7 +173,7 @@ public class Modifiers extends ASTNode<ASTNode> implements Cloneable {
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddExtensions/Jimple1.5Backend/AnnotationsCodegen.jrag:83
    */
   public void addSourceOnlyAnnotations(Collection c) {
-    if(new soot.options.JBOptions(soot.PhaseOptions.v().getPhaseOptions("jb")).
+    if(new soot.options.JBOptions(soot.myPhaseOptions().getPhaseOptions("jb")).
        preserve_source_annotations()) {
 	    for(int i = 0; i < getNumModifier(); i++) {
 	      if(getModifier(i) instanceof Annotation) {

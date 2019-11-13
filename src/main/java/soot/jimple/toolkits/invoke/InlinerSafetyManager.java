@@ -237,7 +237,7 @@ public class InlinerSafetyManager {
 
     // Condition 3.
     if (inlinee.isProtected()) {
-      Hierarchy h = Scene.v().getActiveHierarchy();
+      Hierarchy h = myScene.getActiveHierarchy();
       boolean saved = false;
 
       // protected means that you can be accessed by your children.
@@ -269,7 +269,7 @@ public class InlinerSafetyManager {
       return false;
     }
 
-    Hierarchy h = Scene.v().getActiveHierarchy();
+    Hierarchy h = myScene.getActiveHierarchy();
 
     if (!h.isClassSuperclassOf(m.getDeclaringClass(), containerClass)) {
       return false;

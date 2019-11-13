@@ -141,7 +141,7 @@ public class ClassAccess extends Access implements Cloneable {
       b.setLine(this);
       b.add(
         b.newIfStmt(
-          b.newNeExpr(ref, soot.jimple.NullConstant.v(), this),
+          b.newNeExpr(ref, soot.jimple.myNullConstant, this),
           next_label,
           this
         )

@@ -353,9 +353,9 @@ public class SimpleLocalDefs implements LocalDefs {
   }
 
   SimpleLocalDefs(DirectedGraph<Unit> graph, Local[] locals, FlowAnalysisMode mode) {
-    final Options options = Options.v();
+    final Options options = myOptions;
     if (options.time()) {
-      Timers.v().defsTimer.start();
+      myTimers.defsTimer.start();
     }
 
     final int N = locals.length;
@@ -375,7 +375,7 @@ public class SimpleLocalDefs implements LocalDefs {
     }
 
     if (options.time()) {
-      Timers.v().defsTimer.end();
+      myTimers.defsTimer.end();
     }
   }
 

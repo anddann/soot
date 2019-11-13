@@ -121,7 +121,7 @@ public class CastExpr extends Expr implements Cloneable {
     if(isConstant())
       return emitConstant(constant());
     soot.Value operand = getExpr().eval(b);
-    if (operand == NullConstant.v())
+    if (operand == myNullConstant)
         return getExpr().type().emitCastTo(b, operand, type(), this);
     return getExpr().type().emitCastTo(b, asLocal(b, operand), type(), this);
   }

@@ -134,7 +134,7 @@ public class UnitPatchingChain extends PatchingChain<Unit> {
           box.setUnit(toInsert.iterator().next());
           innerChain.insertAfter(toInsert, point_src);
 
-          Unit goto_unit = Jimple.v().newGotoStmt(point_tgt);
+          Unit goto_unit = myJimple.newGotoStmt(point_tgt);
           if (toInsert instanceof List) {
             List<Unit> l = (List<Unit>) toInsert;
             innerChain.insertAfter(goto_unit, l.get(l.size() - 1));
@@ -157,7 +157,7 @@ public class UnitPatchingChain extends PatchingChain<Unit> {
           return;
         }
 
-        Unit goto_unit = Jimple.v().newGotoStmt(point_tgt);
+        Unit goto_unit = myJimple.newGotoStmt(point_tgt);
         innerChain.insertBefore(Arrays.asList(goto_unit), toInsert.iterator().next());
       }
       return;

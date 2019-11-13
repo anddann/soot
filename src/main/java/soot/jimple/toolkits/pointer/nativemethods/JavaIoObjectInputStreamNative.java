@@ -67,7 +67,7 @@ public class JavaIoObjectInputStreamNative extends NativeMethodClass {
    */
   public void java_io_ObjectInputStream_latestUserDefinedLoader(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getClassLoaderObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getClassLoaderObject());
   }
 
   /**

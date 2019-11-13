@@ -504,7 +504,7 @@ public class ConstructorAccess extends Access implements Cloneable {
          getArg(i).type().emitCastTo(b, getArg(i), c.getParameter(i).type()))); // MethodInvocationConversion
 
     if(decl().isPrivate() && decl().hostType() != hostType()) {
-      list.add(asImmediate(b, soot.jimple.NullConstant.v()));
+      list.add(asImmediate(b, soot.jimple.myNullConstant));
       b.add(
         b.newInvokeStmt(
           b.newSpecialInvokeExpr(base, decl().erasedConstructor().createAccessor().sootRef(), list, this),

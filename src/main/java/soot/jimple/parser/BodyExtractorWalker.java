@@ -141,7 +141,7 @@ public class BodyExtractorWalker extends Walker {
     type = (Type) mProductions.removeLast(); // type
     SootMethod sm = mSootClass.getMethodUnsafe(SootMethod.getSubSignature(name, parameterList, type));
     if (sm != null) {
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         logger.debug("[Jimple parser] " + SootMethod.getSubSignature(name, parameterList, type));
       }
     } else {
@@ -155,14 +155,14 @@ public class BodyExtractorWalker extends Walker {
     }
 
     if (sm.isConcrete() && methodBody != null) {
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         logger.debug("[Parsed] " + sm.getDeclaration());
       }
 
       methodBody.setMethod(sm);
       methodToParsedBodyMap.put(sm, methodBody);
     } else if (node.getMethodBody() instanceof AFullMethodBody) {
-      if (sm.isPhantom() && Options.v().verbose()) {
+      if (sm.isPhantom() && myOptions.verbose()) {
         logger.debug("[jimple parser] phantom method!");
       }
       throw new RuntimeException("Impossible: !concrete => ! instanceof " + sm.getName());

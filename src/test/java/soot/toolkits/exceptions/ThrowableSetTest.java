@@ -54,11 +54,11 @@ public class ThrowableSetTest {
 
 	static {
 		G.reset();
-		Scene.v().loadBasicClasses();
+		myScene.loadBasicClasses();
 	}
 
 	final static boolean DUMP_INTERNALS = false;
-	final ThrowableSet.Manager mgr = ThrowableSet.Manager.v();
+	final ThrowableSet.Manager mgr = ThrowableSet.myManager;
 
 
 	// A class for verifying that the sizeToSetsMap
@@ -111,44 +111,44 @@ public class ThrowableSetTest {
 
 			// All Throwables set.
 			Set<RefLikeType> temp = new ExceptionHashSet<RefLikeType>();
-			temp.add(AnySubType.v(Scene.v().getRefType("java.lang.Throwable")));
+			temp.add(AnySubType.v(myScene.getRefType("java.lang.Throwable")));
 			this.add(temp, Collections.<AnySubType>emptySet());
 
 			// VM errors set.
 			temp = new ExceptionHashSet<RefLikeType>();
-			temp.add(Scene.v().getRefType("java.lang.InternalError"));
-			temp.add(Scene.v().getRefType("java.lang.OutOfMemoryError"));
-			temp.add(Scene.v().getRefType("java.lang.StackOverflowError"));
-			temp.add(Scene.v().getRefType("java.lang.UnknownError"));
-			temp.add(Scene.v().getRefType("java.lang.ThreadDeath"));
+			temp.add(myScene.getRefType("java.lang.InternalError"));
+			temp.add(myScene.getRefType("java.lang.OutOfMemoryError"));
+			temp.add(myScene.getRefType("java.lang.StackOverflowError"));
+			temp.add(myScene.getRefType("java.lang.UnknownError"));
+			temp.add(myScene.getRefType("java.lang.ThreadDeath"));
 			this.add(temp, Collections.<AnySubType>emptySet());
 
 			// Resolve Class errors set.
 			Set<RefLikeType> classErrors = new ExceptionHashSet<RefLikeType>();
-			classErrors.add(Scene.v().getRefType("java.lang.ClassCircularityError"));
-			classErrors.add(AnySubType.v(Scene.v().getRefType("java.lang.ClassFormatError")));
-			classErrors.add(Scene.v().getRefType("java.lang.IllegalAccessError"));
-			classErrors.add(Scene.v().getRefType("java.lang.IncompatibleClassChangeError"));
-			classErrors.add(Scene.v().getRefType("java.lang.LinkageError"));
-			classErrors.add(Scene.v().getRefType("java.lang.NoClassDefFoundError"));
-			classErrors.add(Scene.v().getRefType("java.lang.VerifyError"));
+			classErrors.add(myScene.getRefType("java.lang.ClassCircularityError"));
+			classErrors.add(AnySubType.v(myScene.getRefType("java.lang.ClassFormatError")));
+			classErrors.add(myScene.getRefType("java.lang.IllegalAccessError"));
+			classErrors.add(myScene.getRefType("java.lang.IncompatibleClassChangeError"));
+			classErrors.add(myScene.getRefType("java.lang.LinkageError"));
+			classErrors.add(myScene.getRefType("java.lang.NoClassDefFoundError"));
+			classErrors.add(myScene.getRefType("java.lang.VerifyError"));
 			this.add(classErrors, Collections.<AnySubType>emptySet());
 
 			// Resolve Field errors set.
 			temp = new ExceptionHashSet<RefLikeType>(classErrors);
-			temp.add(Scene.v().getRefType("java.lang.NoSuchFieldError"));
+			temp.add(myScene.getRefType("java.lang.NoSuchFieldError"));
 			this.add(temp, Collections.<AnySubType>emptySet());
 
 			// Resolve method errors set.
 			temp = new ExceptionHashSet<RefLikeType>(classErrors);
-			temp.add(Scene.v().getRefType("java.lang.AbstractMethodError"));
-			temp.add(Scene.v().getRefType("java.lang.NoSuchMethodError"));
-			temp.add(Scene.v().getRefType("java.lang.UnsatisfiedLinkError"));
+			temp.add(myScene.getRefType("java.lang.AbstractMethodError"));
+			temp.add(myScene.getRefType("java.lang.NoSuchMethodError"));
+			temp.add(myScene.getRefType("java.lang.UnsatisfiedLinkError"));
 			this.add(temp, Collections.<AnySubType>emptySet());
 
 			// Initialization errors set.
 			temp = new ExceptionHashSet<RefLikeType>();
-			temp.add(AnySubType.v(Scene.v().getRefType("java.lang.Error")));
+			temp.add(AnySubType.v(myScene.getRefType("java.lang.Error")));
 			this.add(temp, Collections.<AnySubType>emptySet());
 		}
 
@@ -174,7 +174,7 @@ public class ThrowableSetTest {
 		}
 
 		boolean match() {
-			final Collection<ThrowableSet> toCompare = ThrowableSet.Manager.v().getThrowableSets();
+			final Collection<ThrowableSet> toCompare = ThrowableSet.myManager.getThrowableSets();
 
 			int sum = 0;
 			for (Collection<SetPair> expectedValues : expectedMap.values()) {
@@ -1557,7 +1557,7 @@ public class ThrowableSetTest {
     }
 
     public static Test suite() {
-        Scene.v().loadBasicClasses();
+        myScene.loadBasicClasses();
         return reflectionSuite();
     }
 
@@ -1565,9 +1565,9 @@ public class ThrowableSetTest {
         if (arg.length > 0) {
             jdkLocation = arg[0];
         }
-        Scene.v().loadBasicClasses();
+        myScene.loadBasicClasses();
         junit.textui.TestRunner.run(reflectionSuite());
-        System.out.println(ThrowableSet.Manager.v().reportInstrumentation());
+        System.out.println(ThrowableSet.myManager.reportInstrumentation());
     }
 	 */
 }

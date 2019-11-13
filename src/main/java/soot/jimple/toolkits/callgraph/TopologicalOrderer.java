@@ -34,7 +34,7 @@ import soot.util.NumberedSet;
 public class TopologicalOrderer {
   CallGraph cg;
   List<SootMethod> order = new ArrayList<SootMethod>();
-  NumberedSet<SootMethod> visited = new NumberedSet<SootMethod>(Scene.v().getMethodNumberer());
+  NumberedSet<SootMethod> visited = new NumberedSet<SootMethod>(myScene.getMethodNumberer());
 
   public TopologicalOrderer(CallGraph cg) {
     this.cg = cg;

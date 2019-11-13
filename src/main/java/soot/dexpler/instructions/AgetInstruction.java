@@ -61,10 +61,10 @@ public class AgetInstruction extends DexlibAbstractInstruction {
     Local arrayBase = body.getRegisterLocal(aGetInstr.getRegisterB());
     Local index = body.getRegisterLocal(aGetInstr.getRegisterC());
 
-    ArrayRef arrayRef = Jimple.v().newArrayRef(arrayBase, index);
+    ArrayRef arrayRef = myJimple.newArrayRef(arrayBase, index);
     Local l = body.getRegisterLocal(dest);
 
-    AssignStmt assign = Jimple.v().newAssignStmt(l, arrayRef);
+    AssignStmt assign = myJimple.newAssignStmt(l, arrayRef);
     if (aGetInstr.getOpcode() == Opcode.AGET_OBJECT) {
       assign.addTag(new ObjectOpTag());
     }

@@ -91,7 +91,7 @@ public class ShimpleBody extends StmtBody {
       throw new RuntimeException("Cannot construct ShimpleBody from given Body type.");
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + getMethod().getName() + "] Constructing ShimpleBody...");
     }
 
@@ -156,7 +156,7 @@ public class ShimpleBody extends StmtBody {
     ShimpleBody sBody = (ShimpleBody) this.clone();
 
     sBody.eliminateNodes();
-    JimpleBody jBody = Jimple.v().newBody(sBody.getMethod());
+    JimpleBody jBody = myJimple.newBody(sBody.getMethod());
     jBody.importBodyContentsFrom(sBody);
     return jBody;
   }
@@ -196,7 +196,7 @@ public class ShimpleBody extends StmtBody {
    * Returns a copy of the current ShimpleBody.
    **/
   public Object clone() {
-    Body b = Shimple.v().newBody(getMethod());
+    Body b = myShimple.newBody(getMethod());
     b.importBodyContentsFrom(this);
     return b;
   }

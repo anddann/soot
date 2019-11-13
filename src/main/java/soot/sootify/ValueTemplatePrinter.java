@@ -136,7 +136,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
   }
 
   private void printFactoryMethodCall(String stmtClassName, String... ops) {
-    p.printNoIndent("Jimple.v().new");
+    p.printNoIndent("myJimple.new");
     p.printNoIndent(stmtClassName);
     p.printNoIndent("(");
     int i = 1;
@@ -219,7 +219,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     Value right = v.getOp2();
     String v2 = printValueAssignment(right, "right");
 
-    p.println("Value " + oldName + " = Jimple.v().new" + className + "(" + v1 + "," + v2 + ");");
+    p.println("Value " + oldName + " = myJimple.new" + className + "(" + v1 + "," + v2 + ");");
 
     varName = oldName;
   }
@@ -329,9 +329,9 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     m.getReturnType().apply(ttp);
 
     p.print("SootMethodRef methodRef = ");
-    p.printNoIndent("Scene.v().makeMethodRef(");
+    p.printNoIndent("myScene.makeMethodRef(");
     String className = m.getDeclaringClass().getName();
-    p.printNoIndent("Scene.v().getSootClass(\"" + className + "\"),");
+    p.printNoIndent("myScene.getSootClass(\"" + className + "\"),");
     p.printNoIndent("\"" + m.getName() + "\",");
     p.printNoIndent("parameterTypes,");
     p.printNoIndent("returnType,");
@@ -370,7 +370,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
   //
   // String v2 = printValueAssignment(rhs, r);
   //
-  // p.println("Value "+oldName+" = Jimple.v().new"+className+"("+v1+","+v2+");");
+  // p.println("Value "+oldName+" = myJimple.new"+className+"("+v1+","+v2+");");
   //
   // varName = oldName;
   // }
@@ -385,7 +385,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
 
     String rhsName = printValueAssignment(v.getOp(), "op");
 
-    p.println("Value " + oldName + " = Jimple.v().newCastExpr(" + lhsName + "," + rhsName + ");");
+    p.println("Value " + oldName + " = myJimple.newCastExpr(" + lhsName + "," + rhsName + ");");
 
     varName = oldName;
   }
@@ -400,7 +400,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
 
     String rhsName = printValueAssignment(v.getOp(), "op");
 
-    p.println("Value " + oldName + " = Jimple.v().newInstanceOfExpr(" + lhsName + "," + rhsName + ");");
+    p.println("Value " + oldName + " = myJimple.newInstanceOfExpr(" + lhsName + "," + rhsName + ");");
 
     varName = oldName;
   }
@@ -418,7 +418,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     ttp.setVariableName(varName);
     v.getType().apply(ttp);
 
-    p.println("Value " + oldName + " = Jimple.v().newNewArrayExpr(" + lhsName + ", " + sizeName + ");");
+    p.println("Value " + oldName + " = myJimple.newNewArrayExpr(" + lhsName + ", " + sizeName + ");");
     varName = oldName;
   }
 
@@ -439,7 +439,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
       p.println("sizes.add(sizes" + i + ");");
     }
 
-    p.println("Value " + oldName + " = Jimple.v().newNewMultiArrayExpr(arrayType, sizes);");
+    p.println("Value " + oldName + " = myJimple.newNewMultiArrayExpr(arrayType, sizes);");
     varName = oldName;
     p.closeBlock();
   }
@@ -452,7 +452,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     ttp.setVariableName(varName);
     v.getType().apply(ttp);
 
-    p.println("Value " + oldName + " = Jimple.v().newNewExpr(" + typeName + ");");
+    p.println("Value " + oldName + " = myJimple.newNewExpr(" + typeName + ");");
     varName = oldName;
 
   }
@@ -465,7 +465,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     String opName = varName;
     op.apply(this);
 
-    p.println("Value " + oldName + " = Jimple.v().newLengthExpr(" + opName + ");");
+    p.println("Value " + oldName + " = myJimple.newLengthExpr(" + opName + ");");
     varName = oldName;
   }
 
@@ -477,7 +477,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     String opName = varName;
     op.apply(this);
 
-    p.println("Value " + oldName + " = Jimple.v().newNegExpr(" + opName + ");");
+    p.println("Value " + oldName + " = myJimple.newNegExpr(" + opName + ");");
     varName = oldName;
   }
 
@@ -494,7 +494,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     String indexName = varName;
     index.apply(this);
 
-    p.println("Value " + oldName + " = Jimple.v().newArrayRef(" + baseName + ", " + indexName + ");");
+    p.println("Value " + oldName + " = myJimple.newArrayRef(" + baseName + ", " + indexName + ");");
     varName = oldName;
   }
 
@@ -512,14 +512,14 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     ttp.setVariableName("type");
     f.getType().apply(ttp);
     p.print("SootFieldRef fieldRef = ");
-    p.printNoIndent("Scene.v().makeFieldRef(");
+    p.printNoIndent("myScene.makeFieldRef(");
     String className = f.getDeclaringClass().getName();
-    p.printNoIndent("Scene.v().getSootClass(\"" + className + "\"),");
+    p.printNoIndent("myScene.getSootClass(\"" + className + "\"),");
     p.printNoIndent("\"" + f.getName() + "\",");
     p.printNoIndent("type,");
     p.printNoIndent(f.isStatic() + ");");
 
-    p.println("Value " + oldName + " = Jimple.v().new" + refTypeName + "(fieldRef);");
+    p.println("Value " + oldName + " = myJimple.new" + refTypeName + "(fieldRef);");
     varName = oldName;
     p.closeBlock();
   }
@@ -541,12 +541,12 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     suggestVariableName("number");
     p.println("int " + varName + "=" + number + ";");
 
-    p.println("Value " + oldName + " = Jimple.v().newParameterRef(" + paramTypeName + ", " + varName + ");");
+    p.println("Value " + oldName + " = myJimple.newParameterRef(" + paramTypeName + ", " + varName + ");");
     varName = oldName;
   }
 
   public void caseCaughtExceptionRef(CaughtExceptionRef v) {
-    p.println("Value " + varName + " = Jimple.v().newCaughtExceptionRef();");
+    p.println("Value " + varName + " = myJimple.newCaughtExceptionRef();");
   }
 
   public void caseThisRef(ThisRef v) {
@@ -559,7 +559,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     ttp.setVariableName(typeName);
     paramType.apply(ttp);
 
-    p.println("Value " + oldName + " = Jimple.v().newThisRef(" + typeName + ");");
+    p.println("Value " + oldName + " = myJimple.newThisRef(" + typeName + ");");
     varName = oldName;
 
   }

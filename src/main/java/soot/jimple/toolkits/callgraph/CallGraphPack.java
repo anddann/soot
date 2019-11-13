@@ -43,23 +43,23 @@ public class CallGraphPack extends RadioScenePack {
   }
 
   protected void internalApply() {
-    CGOptions options = new CGOptions(PhaseOptions.v().getPhaseOptions(this));
-    if (!Scene.v().hasCustomEntryPoints()) {
+    CGOptions options = new CGOptions(myPhaseOptions().getPhaseOptions(this));
+    if (!myScene.hasCustomEntryPoints()) {
       if (!options.implicit_entry()) {
-        Scene.v().setEntryPoints(EntryPoints.v().application());
+        myScene.setEntryPoints(myEntryPoints.application());
       }
       if (options.all_reachable()) {
         List<SootMethod> entryPoints = new ArrayList<SootMethod>();
-        entryPoints.addAll(EntryPoints.v().all());
-        entryPoints.addAll(EntryPoints.v().methodsOfApplicationClasses());
-        Scene.v().setEntryPoints(entryPoints);
+        entryPoints.addAll(myEntryPoints.all());
+        entryPoints.addAll(myEntryPoints.methodsOfApplicationClasses());
+        myScene.setEntryPoints(entryPoints);
       }
     }
     super.internalApply();
     ClinitElimTransformer trimmer = new ClinitElimTransformer();
 
     if (options.trim_clinit()) {
-      for (SootClass cl : Scene.v().getClasses(SootClass.BODIES)) {
+      for (SootClass cl : myScene.getClasses(SootClass.BODIES)) {
         for (SootMethod m : cl.getMethods()) {
           if (m.isConcrete() && m.hasActiveBody()) {
             trimmer.transform(m.getActiveBody());

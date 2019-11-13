@@ -64,7 +64,7 @@ public class UnreachableCodeEliminator extends BodyTransformer {
   }
 
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Eliminating unreachable code...");
     }
 
@@ -75,8 +75,8 @@ public class UnreachableCodeEliminator extends BodyTransformer {
     // says that none of them can throw the caught exception.
     if (this.throwAnalysis == null) {
       this.throwAnalysis
-          = PhaseOptions.getBoolean(options, "remove-unreachable-traps", true) ? Scene.v().getDefaultThrowAnalysis()
-              : PedanticThrowAnalysis.v();
+          = PhaseOptions.getBoolean(options, "remove-unreachable-traps", true) ? myScene.getDefaultThrowAnalysis()
+              : myPedanticThrowAnalysis;
     }
     ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body, throwAnalysis, false);
 
@@ -114,7 +114,7 @@ public class UnreachableCodeEliminator extends BodyTransformer {
     }
 
     Set<Unit> notReachable = new HashSet<Unit>();
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       for (Unit u : units) {
         if (!reachable.contains(u)) {
           notReachable.add(u);
@@ -126,7 +126,7 @@ public class UnreachableCodeEliminator extends BodyTransformer {
 
     numPruned -= units.size();
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "]	 Removed " + numPruned + " statements: ");
       for (Unit u : notReachable) {
         logger.debug("[" + body.getMethod().getName() + "]	         " + u);

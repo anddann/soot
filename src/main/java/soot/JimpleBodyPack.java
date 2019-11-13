@@ -42,66 +42,66 @@ public class JimpleBodyPack extends BodyPack {
     JBOptions options = new JBOptions(opts);
 
     if (options.use_original_names()) {
-      PhaseOptions.v().setPhaseOptionIfUnset("jb.lns", "only-stack-locals");
+      myPhaseOptions().setPhaseOptionIfUnset("jb.lns", "only-stack-locals");
     }
 
-    if (Options.v().time()) {
-      Timers.v().splitTimer.start();
+    if (myOptions.time()) {
+      myTimers.splitTimer.start();
     }
 
-    PackManager.v().getTransform("jb.tt").apply(b); // TrapTigthener
-    PackManager.v().getTransform("jb.dtr").apply(b); // DuplicateCatchAllTrapRemover
+    PackmyManager.getTransform("jb.tt").apply(b); // TrapTigthener
+    PackmyManager.getTransform("jb.dtr").apply(b); // DuplicateCatchAllTrapRemover
 
     // UnreachableCodeEliminator: We need to do this before splitting
     // locals for not creating disconnected islands of useless assignments
     // that afterwards mess up type assignment.
-    PackManager.v().getTransform("jb.uce").apply(b);
+    PackmyManager.getTransform("jb.uce").apply(b);
 
-    PackManager.v().getTransform("jb.ls").apply(b);
+    PackmyManager.getTransform("jb.ls").apply(b);
 
-    if (Options.v().time()) {
-      Timers.v().splitTimer.end();
+    if (myOptions.time()) {
+      myTimers.splitTimer.end();
     }
 
-    PackManager.v().getTransform("jb.a").apply(b);
-    PackManager.v().getTransform("jb.ule").apply(b);
+    PackmyManager.getTransform("jb.a").apply(b);
+    PackmyManager.getTransform("jb.ule").apply(b);
 
-    if (Options.v().time()) {
-      Timers.v().assignTimer.start();
+    if (myOptions.time()) {
+      myTimers.assignTimer.start();
     }
 
-    PackManager.v().getTransform("jb.tr").apply(b);
+    PackmyManager.getTransform("jb.tr").apply(b);
 
-    if (Options.v().time()) {
-      Timers.v().assignTimer.end();
+    if (myOptions.time()) {
+      myTimers.assignTimer.end();
     }
 
     if (options.use_original_names()) {
-      PackManager.v().getTransform("jb.ulp").apply(b);
+      PackmyManager.getTransform("jb.ulp").apply(b);
     }
-    PackManager.v().getTransform("jb.lns").apply(b); // LocalNameStandardizer
-    PackManager.v().getTransform("jb.cp").apply(b); // CopyPropagator
-    PackManager.v().getTransform("jb.dae").apply(b); // DeadAssignmentElimintaor
-    PackManager.v().getTransform("jb.cp-ule").apply(b); // UnusedLocalEliminator
-    PackManager.v().getTransform("jb.lp").apply(b); // LocalPacker
-    PackManager.v().getTransform("jb.ne").apply(b); // NopEliminator
-    PackManager.v().getTransform("jb.uce").apply(b); // UnreachableCodeEliminator: Again, we might have new dead code
+    PackmyManager.getTransform("jb.lns").apply(b); // LocalNameStandardizer
+    PackmyManager.getTransform("jb.cp").apply(b); // CopyPropagator
+    PackmyManager.getTransform("jb.dae").apply(b); // DeadAssignmentElimintaor
+    PackmyManager.getTransform("jb.cp-ule").apply(b); // UnusedLocalEliminator
+    PackmyManager.getTransform("jb.lp").apply(b); // LocalPacker
+    PackmyManager.getTransform("jb.ne").apply(b); // NopEliminator
+    PackmyManager.getTransform("jb.uce").apply(b); // UnreachableCodeEliminator: Again, we might have new dead code
 
     // LocalNameStandardizer: After all these changes, some locals
     // may end up being eliminated. If we want a stable local iteration
     // order between soot instances, running LocalNameStandardizer
     // again after all other changes is required.
     if (options.stabilize_local_names()) {
-      PhaseOptions.v().setPhaseOption("jb.lns", "sort-locals:true");
-      PackManager.v().getTransform("jb.lns").apply(b);
+      myPhaseOptions().setPhaseOption("jb.lns", "sort-locals:true");
+      PackmyManager.getTransform("jb.lns").apply(b);
     }
 
-    if (Options.v().time()) {
-      Timers.v().stmtCount += b.getUnits().size();
+    if (myOptions.time()) {
+      myTimers.stmtCount += b.getUnits().size();
     }
   }
 
   protected void internalApply(Body b) {
-    applyPhaseOptions((JimpleBody) b, PhaseOptions.v().getPhaseOptions(getPhaseName()));
+    applyPhaseOptions((JimpleBody) b, myPhaseOptions().getPhaseOptions(getPhaseName()));
   }
 }

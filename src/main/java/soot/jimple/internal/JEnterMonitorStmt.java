@@ -38,7 +38,7 @@ import soot.util.Switch;
 
 public class JEnterMonitorStmt extends AbstractOpStmt implements EnterMonitorStmt {
   public JEnterMonitorStmt(Value op) {
-    this(Jimple.v().newImmediateBox(op));
+    this(myJimple.newImmediateBox(op));
   }
 
   protected JEnterMonitorStmt(ValueBox opBox) {
@@ -66,7 +66,7 @@ public class JEnterMonitorStmt extends AbstractOpStmt implements EnterMonitorStm
 
   public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
     ((ConvertToBaf) (getOp())).convertToBaf(context, out);
-    Unit u = Baf.v().newEnterMonitorInst();
+    Unit u = myBaf.newEnterMonitorInst();
     u.addAllTagsOf(this);
     out.add(u);
   }

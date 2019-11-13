@@ -102,7 +102,7 @@ public class OrAggregatorFour extends DepthFirstAdapter {
     /*
      * see if we can remove the label from this construct
      */
-    UselessLabelFinder.v().findAndKill(node);
+    myUselessLabelFinder.findAndKill(node);
   }
 
   public void outASTWhileNode(ASTWhileNode node) {
@@ -122,7 +122,7 @@ public class OrAggregatorFour extends DepthFirstAdapter {
     /*
      * see if we can remove the label from this construct
      */
-    UselessLabelFinder.v().findAndKill(node);
+    myUselessLabelFinder.findAndKill(node);
   }
 
   public void outASTDoWhileNode(ASTDoWhileNode node) {
@@ -141,7 +141,7 @@ public class OrAggregatorFour extends DepthFirstAdapter {
     /*
      * see if we can remove the label from this construct
      */
-    UselessLabelFinder.v().findAndKill(node);
+    myUselessLabelFinder.findAndKill(node);
   }
 
   public void outASTUnconditionalLoopNode(ASTUnconditionalLoopNode node) {
@@ -160,7 +160,7 @@ public class OrAggregatorFour extends DepthFirstAdapter {
     /*
      * see if we can remove the label from this construct
      */
-    UselessLabelFinder.v().findAndKill(node);
+    myUselessLabelFinder.findAndKill(node);
   }
 
   public List<Object> matchPattern(String whileLabel, List<Object> subBodies) {

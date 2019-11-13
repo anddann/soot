@@ -29,32 +29,24 @@
 
 /** A class to group together all the global variables in Soot. */
 @javax.annotation.Generated(value = "<xsl:copy-of select="system-property('xsl:vendor')"/> v<xsl:copy-of select="system-property('xsl:version')"/>", comments = "from <xsl:value-of select="tokenize(base-uri(), '/')[last()]"/>")
-public class Singletons {
+import com.google.inject.AbstractModule;
+import com.google.inject.Scope;
+import com.google.inject.Scopes;
+public class Singletons extends AbstractModule{
 
-    public final class Global {
-        private Global() {}
-    }
 
-    protected Global g = new Global();<xsl:text/>
+        <xsl:text/>
+        protected void configure() {
 
         <xsl:for-each select="/singletons/class">
             <xsl:variable name="class" select="."/>
             <xsl:variable name="undottedClass" select="translate(.,'.','_')"/>
             <xsl:variable name="instanceName">instance_<xsl:value-of select="$undottedClass"/></xsl:variable>
+            bind(<xsl:value-of select="$class"/><xsl:text>.class).in(Scopes.SINGLETON) ;
 
-    private <xsl:value-of select="$class"/><xsl:text> </xsl:text><xsl:value-of select="$instanceName"/>;
-    public <xsl:value-of select="$class"/><xsl:text> </xsl:text><xsl:value-of select="$undottedClass"/>() {
-        if (<xsl:value-of select="$instanceName"/> == null) {
-	       	synchronized (this) {
-		        if (<xsl:value-of select="$instanceName"/> == null)
-	        		<xsl:value-of select="$instanceName"/> = new <xsl:value-of select="$class"/>(g);
-	       	}
-       	}
-        return <xsl:value-of select="$instanceName"/>;
-    }
-    protected void release_<xsl:value-of select="$undottedClass"/>() {
-    	<xsl:value-of select="$instanceName"/> = null;
-    }<xsl:text/>
+
+            }
+  <xsl:text/>
         </xsl:for-each>
 }<xsl:text/>
     </xsl:template>

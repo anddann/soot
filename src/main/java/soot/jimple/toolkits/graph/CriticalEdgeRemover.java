@@ -64,11 +64,11 @@ public class CriticalEdgeRemover extends BodyTransformer {
    * performs critical edge-removing.
    */
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "]     Removing Critical Edges...");
     }
     removeCriticalEdges(b);
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "]     Removing Critical Edges done.");
     }
 
@@ -88,7 +88,7 @@ public class CriticalEdgeRemover extends BodyTransformer {
    * @return the newly inserted <code>Goto</code>
    */
   private static Unit insertGotoAfter(Chain<Unit> unitChain, Unit node, Unit target) {
-    Unit newGoto = Jimple.v().newGotoStmt(target);
+    Unit newGoto = myJimple.newGotoStmt(target);
     unitChain.insertAfter(newGoto, node);
     return newGoto;
   }
@@ -108,7 +108,7 @@ public class CriticalEdgeRemover extends BodyTransformer {
    */
   /* note, that this method has slightly more overhead than the insertGotoAfter */
   private static Unit insertGotoBefore(Chain<Unit> unitChain, Unit node, Unit target) {
-    Unit newGoto = Jimple.v().newGotoStmt(target);
+    Unit newGoto = myJimple.newGotoStmt(target);
     unitChain.insertBefore(newGoto, node);
     newGoto.redirectJumpsToThisTo(node);
     return newGoto;

@@ -71,7 +71,7 @@ public abstract class AbstractNullTransformer extends DexTransformer {
     if (u instanceof IfStmt) {
       ConditionExpr expr = (ConditionExpr) ((IfStmt) u).getCondition();
       if (isZeroComparison(expr)) {
-        expr.setOp2(NullConstant.v());
+        expr.setOp2(myNullConstant);
       }
     } else if (u instanceof AssignStmt) {
       AssignStmt s = (AssignStmt) u;
@@ -83,7 +83,7 @@ public abstract class AbstractNullTransformer extends DexTransformer {
         // being an int.
         if (!(s.getLeftOp() instanceof InstanceFieldRef)
             || ((InstanceFieldRef) s.getLeftOp()).getFieldRef().type() instanceof RefLikeType) {
-          s.setRightOp(NullConstant.v());
+          s.setRightOp(myNullConstant);
         }
       }
     }

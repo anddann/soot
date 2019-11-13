@@ -210,7 +210,7 @@ public final class DemandCSPointsTo implements PointsToAnalysis {
   }
 
   public static DemandCSPointsTo makeWithBudget(int maxTraversal, int maxPasses, boolean lazy) {
-    PAG pag = (PAG) Scene.v().getPointsToAnalysis();
+    PAG pag = (PAG) myScene.getPointsToAnalysis();
     ContextSensitiveInfo csInfo = new ContextSensitiveInfo(pag);
     return new DemandCSPointsTo(csInfo, pag, maxTraversal, maxPasses, lazy);
   }
@@ -358,7 +358,7 @@ public final class DemandCSPointsTo implements PointsToAnalysis {
     VarNode v = pag.findLocalVarNode(l);
     if (v == null) {
       // no reaching objects
-      return EmptyPointsToSet.v();
+      return myEmptyPointsToSet;
     }
     PointsToSet contextSensitiveResult = computeRefinedReachingObjects(v);
     if (contextSensitiveResult == null) {
@@ -1172,11 +1172,11 @@ public final class DemandCSPointsTo implements PointsToAnalysis {
       // we'll invoke the java.lang.Object method in this
       // case
       // Assert.chk(varNodeType.toString().equals("java.lang.Object"));
-      type = Scene.v().getSootClass("java.lang.Object").getType();
+      type = myScene.getSootClass("java.lang.Object").getType();
     }
     RefType refType = (RefType) type;
     SootMethod targetMethod = null;
-    targetMethod = VirtualCalls.v().resolveNonSpecial(refType, methodStr);
+    targetMethod = myVirtualCalls.resolveNonSpecial(refType, methodStr);
     return Collections.<SootMethod>singleton(targetMethod);
 
   }

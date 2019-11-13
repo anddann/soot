@@ -187,7 +187,7 @@ public class UselessAbruptStmtRemover extends DepthFirstAdapter {
         if (DEBUG) {
           System.out.println("Invoking findAndKill on the target");
         }
-        UselessLabelFinder.v().findAndKill(target);
+        myUselessLabelFinder.findAndKill(target);
       }
       // TODO what if we just emptied a stmt seq block??
       // not doing this for the moment

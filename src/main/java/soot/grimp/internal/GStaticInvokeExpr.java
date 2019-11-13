@@ -37,7 +37,7 @@ public class GStaticInvokeExpr extends AbstractStaticInvokeExpr {
     super(methodRef, new ValueBox[args.size()]);
 
     for (int i = 0; i < args.size(); i++) {
-      this.argBoxes[i] = Grimp.v().newExprBox((Value) args.get(i));
+      this.argBoxes[i] = myGrimp.newExprBox((Value) args.get(i));
     }
   }
 

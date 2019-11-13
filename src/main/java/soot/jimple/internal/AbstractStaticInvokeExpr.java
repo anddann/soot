@@ -44,7 +44,7 @@ public abstract class AbstractStaticInvokeExpr extends AbstractInvokeExpr implem
     this(methodRef, new ValueBox[args.size()]);
 
     for (int i = 0; i < args.size(); i++) {
-      this.argBoxes[i] = Jimple.v().newImmediateBox(args.get(i));
+      this.argBoxes[i] = myJimple.newImmediateBox(args.get(i));
     }
   }
 
@@ -134,7 +134,7 @@ public abstract class AbstractStaticInvokeExpr extends AbstractInvokeExpr implem
       }
     }
 
-    Unit u = Baf.v().newStaticInvokeInst(methodRef);
+    Unit u = myBaf.newStaticInvokeInst(methodRef);
     out.add(u);
     u.addAllTagsOf(context.getCurrentUnit());
   }

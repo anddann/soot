@@ -35,7 +35,7 @@ public abstract class ASTControlFlowNode extends ASTLabeledNode {
 
   public ASTControlFlowNode(SETNodeLabel label, ConditionExpr condition) {
     super(label);
-    // this.conditionBox = Jimple.v().newConditionExprBox(condition);
+    // this.conditionBox = myJimple.newConditionExprBox(condition);
     this.condition = new ASTBinaryCondition(condition);
   }
 
@@ -69,11 +69,11 @@ public abstract class ASTControlFlowNode extends ASTLabeledNode {
      */
     if (condition instanceof ASTBinaryCondition) {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
-      ASTWalker.v().walk_value(a, condExpr);
+      myASTWalker.walk_value(a, condExpr);
     }
 
     if (a instanceof TryContentsFinder) {
-      TryContentsFinder.v().add_ExceptionSet(this, TryContentsFinder.v().remove_CurExceptionSet());
+      myTryContentsFinder.add_ExceptionSet(this, myTryContentsFinder.remove_CurExceptionSet());
     }
 
     perform_AnalysisOnSubBodies(a);

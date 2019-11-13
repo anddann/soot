@@ -322,7 +322,7 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
 
       @Override
       public <A, N> void handleFlowOut(FlowAnalysis<N, A> a, N s) {
-        afterEvent(InteractionHandler.v(), a, s);
+        afterEvent(myInteractionHandler, a, s);
       }
     },
     BACKWARD {
@@ -333,7 +333,7 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
 
       @Override
       public <A, N> void handleFlowOut(FlowAnalysis<N, A> a, N s) {
-        beforeEvent(InteractionHandler.v(), a, s);
+        beforeEvent(myInteractionHandler, a, s);
       }
     };
 
@@ -356,7 +356,7 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
     }
 
     InteractionHandler stop(Object s) {
-      InteractionHandler h = InteractionHandler.v();
+      InteractionHandler h = myInteractionHandler;
       List<?> stopList = h.getStopUnitList();
       if (stopList != null && stopList.contains(s)) {
         h.handleStopAtNodeEvent(s);
@@ -535,7 +535,7 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
     assert gv != null;
     assert ifh != null;
 
-    ifh = Options.v().interactive_mode() ? ifh : InteractionFlowHandler.NONE;
+    ifh = myOptions.interactive_mode() ? ifh : InteractionFlowHandler.NONE;
 
     final List<Entry<N, A>> universe = Orderer.INSTANCE.newUniverse(graph, gv, entryInitialFlow(), isForward());
     initFlow(universe, inFlow, outFlow);

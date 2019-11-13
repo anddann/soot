@@ -32,27 +32,27 @@ public class RefTypeTest {
 	public void testMerge() {
 		G.reset();
 		
-		Scene.v().loadNecessaryClasses();
+		myScene.loadNecessaryClasses();
 		
-		SootClass sc1 = new SootClass("Class1");
-		SootClass sc2 = new SootClass("Class2");
-		SootClass sc3 = new SootClass("Class3");
-		SootClass sc4 = new SootClass("Class4");
-		SootClass sc5 = new SootClass("Class5");
+		SootClass sc1 = new SootClass("Class1", myScene, myOptions, myPackageNamer);
+		SootClass sc2 = new SootClass("Class2", myScene, myOptions, myPackageNamer);
+		SootClass sc3 = new SootClass("Class3", myScene, myOptions, myPackageNamer);
+		SootClass sc4 = new SootClass("Class4", myScene, myOptions, myPackageNamer);
+		SootClass sc5 = new SootClass("Class5", myScene, myOptions, myPackageNamer);
 		
-		Scene.v().addClass(sc1);
-		Scene.v().addClass(sc2);
-		Scene.v().addClass(sc3);
-		Scene.v().addClass(sc4);
-		Scene.v().addClass(sc5);
+		myScene.addClass(sc1);
+		myScene.addClass(sc2);
+		myScene.addClass(sc3);
+		myScene.addClass(sc4);
+		myScene.addClass(sc5);
 		
-		sc1.setSuperclass(Scene.v().getObjectType().getSootClass());
+		sc1.setSuperclass(myScene.getObjectType().getSootClass());
 		sc2.setSuperclass(sc1);
 		sc3.setSuperclass(sc2);
 		sc4.setSuperclass(sc2);
 		sc5.setSuperclass(sc4);
 		
-		Type tpMerged = sc5.getType().merge(sc3.getType(), Scene.v());
+		Type tpMerged = sc5.getType().merge(sc3.getType(), myScene);
 		Assert.assertEquals("Class2", ((RefType) tpMerged).getClassName()); 
 	}
 	

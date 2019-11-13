@@ -406,7 +406,7 @@ public class DavaFlowSet<T> extends AbstractFlowSet<T> {
 
     // okkay so its an implicit break
     // get the targetted node, use the ClosestAbruptTargetFinder
-    ASTNode node = ClosestAbruptTargetFinder.v().getTarget(ab);
+    ASTNode node = myClosestAbruptTargetFinder.getTarget(ab);
 
     // get the list of flow sets already stored for this node
     List<DavaFlowSet<T>> listSets = implicitBreaks.get(node);
@@ -429,7 +429,7 @@ public class DavaFlowSet<T> extends AbstractFlowSet<T> {
 
     // okkay so its an implicit continue
     // get the targetted node, use the ClosestAbruptTargetFinder
-    ASTNode node = ClosestAbruptTargetFinder.v().getTarget(ab);
+    ASTNode node = myClosestAbruptTargetFinder.getTarget(ab);
 
     // get the list of flow sets already stored for this node
     List<DavaFlowSet<T>> listSets = implicitContinues.get(node);

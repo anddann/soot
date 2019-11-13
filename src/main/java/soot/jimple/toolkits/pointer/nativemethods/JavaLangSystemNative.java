@@ -156,7 +156,7 @@ public class JavaLangSystemNative extends NativeMethodClass {
    */
   public void java_lang_System_mapLibraryName(SootMethod method, ReferenceVariable thisVar, ReferenceVariable returnVar,
       ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getStringObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getStringObject());
   }
 
   /**
@@ -166,7 +166,7 @@ public class JavaLangSystemNative extends NativeMethodClass {
    */
   public void java_lang_System_getCallerClass(SootMethod method, ReferenceVariable thisVar, ReferenceVariable returnVar,
       ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getClassObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getClassObject());
   }
 
   /**

@@ -65,7 +65,7 @@ public class StaticInliner extends SceneTransformer {
 
   protected void internalTransform(String phaseName, Map options) {
     Filter explicitInvokesFilter = new Filter(new ExplicitEdgesPred());
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[] Inlining methods...");
     }
 
@@ -79,8 +79,8 @@ public class StaticInliner extends SceneTransformer {
 
     HashMap instanceToStaticMap = new HashMap();
 
-    CallGraph cg = Scene.v().getCallGraph();
-    Hierarchy hierarchy = Scene.v().getActiveHierarchy();
+    CallGraph cg = myScene.getCallGraph();
+    Hierarchy hierarchy = myScene.getActiveHierarchy();
 
     ArrayList<List<Host>> sitesToInline = new ArrayList<List<Host>>();
 
@@ -177,7 +177,7 @@ public class StaticInliner extends SceneTransformer {
 
           SiteInliner.inlineSite(inlinee, invokeStmt, container, options);
           if (rerunJb) {
-            PackManager.v().getPack("jb").apply(container.getActiveBody());
+            PackmyManager.getPack("jb").apply(container.getActiveBody());
           }
         }
       }
@@ -188,7 +188,7 @@ public class StaticInliner extends SceneTransformer {
 
   private void computeAverageMethodSizeAndSaveOriginalSizes() {
     long sum = 0, count = 0;
-    Iterator classesIt = Scene.v().getApplicationClasses().iterator();
+    Iterator classesIt = myScene.getApplicationClasses().iterator();
 
     while (classesIt.hasNext()) {
       SootClass c = (SootClass) classesIt.next();

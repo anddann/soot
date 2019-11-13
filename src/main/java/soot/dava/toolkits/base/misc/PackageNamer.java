@@ -59,11 +59,11 @@ public class PackageNamer {
       return false;
     }
 
-    if (fixedPackageName.equals(Dava.v().get_CurrentPackage())) {
+    if (fixedPackageName.equals(myDava.get_CurrentPackage())) {
       return true;
     }
 
-    IterableSet packageContext = Dava.v().get_CurrentPackageContext();
+    IterableSet packageContext = myDava.get_CurrentPackageContext();
     if (packageContext == null) {
       return true;
     }
@@ -400,12 +400,12 @@ public class PackageNamer {
       keywords.add(element);
     }
 
-    Iterator classIt = Scene.v().getLibraryClasses().iterator();
+    Iterator classIt = myScene.getLibraryClasses().iterator();
     while (classIt.hasNext()) {
       add_ClassName(((SootClass) classIt.next()).getName(), otherRoots);
     }
 
-    classIt = Scene.v().getApplicationClasses().iterator();
+    classIt = myScene.getApplicationClasses().iterator();
     while (classIt.hasNext()) {
       add_ClassName(((SootClass) classIt.next()).getName(), appRoots);
     }

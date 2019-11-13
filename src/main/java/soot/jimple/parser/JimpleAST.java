@@ -64,7 +64,7 @@ public class JimpleAST {
    * Reads an entire class from jimple, creates the Soot objects & returns it.
    */
   public SootClass createSootClass() {
-    Walker w = new Walker(SootResolver.v());
+    Walker w = new Walker(mySootResolver);
     mTree.apply(w);
     return w.getSootClass();
   }
@@ -78,7 +78,7 @@ public class JimpleAST {
    *          a SootClass to fill in.
    */
   public void getSkeleton(SootClass sc) {
-    Walker w = new SkeletonExtractorWalker(SootResolver.v(), sc);
+    Walker w = new SkeletonExtractorWalker(mySootResolver, sc);
     mTree.apply(w);
   }
 
@@ -113,7 +113,7 @@ public class JimpleAST {
 
   /** Returns the SootResolver currently in use. */
   public SootResolver getResolver() {
-    return SootResolver.v();
+    return mySootResolver;
   }
 
   /*
@@ -123,13 +123,13 @@ public class JimpleAST {
   private void stashBodiesForClass(SootClass sc) {
     HashMap<SootMethod, JimpleBody> methodToBodyMap = new HashMap<SootMethod, JimpleBody>();
 
-    Walker w = new BodyExtractorWalker(sc, SootResolver.v(), methodToBodyMap);
+    Walker w = new BodyExtractorWalker(sc, mySootResolver, methodToBodyMap);
 
-    boolean oldPhantomValue = Scene.v().getPhantomRefs();
+    boolean oldPhantomValue = myScene.getPhantomRefs();
 
-    Scene.v().setPhantomRefs(true);
+    myScene.setPhantomRefs(true);
     mTree.apply(w);
-    Scene.v().setPhantomRefs(oldPhantomValue);
+    myScene.setPhantomRefs(oldPhantomValue);
 
     methodToParsedBodyMap = methodToBodyMap;
   }

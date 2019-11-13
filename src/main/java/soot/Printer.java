@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.function.Function;
 
+import com.google.inject.Inject;
 import soot.options.Options;
 import soot.tagkit.JimpleLineNumberTag;
 import soot.tagkit.Tag;
@@ -45,8 +46,13 @@ public class Printer {
   private int options = 0;
   private int jimpleLnNum = 0; // actual line number
   private Function<Body, LabeledUnitPrinter> customUnitPrinter;
+  private Scene myScene;
+  private Options myOptions;
 
-  public Printer(Singletons.Global g) {
+  @Inject
+  public Printer(Scene myScene, Options myOptions) {
+    this.myScene = myScene;
+    this.myOptions = myOptions;
   }
 
   public static Printer v() {
@@ -104,13 +110,13 @@ public class Printer {
         classPrefix = classPrefix.trim();
       }
 
-      out.print(classPrefix + " " + Scene.v().quotedNameOf(cl.getName()) + "");
+      out.print(classPrefix + " " + myScene.quotedNameOf(cl.getName()) + "");
     }
 
     // Print extension
     {
       if (cl.hasSuperclass()) {
-        out.print(" extends " + Scene.v().quotedNameOf(cl.getSuperclass().getName()) + "");
+        out.print(" extends " + myScene.quotedNameOf(cl.getSuperclass().getName()) + "");
       }
     }
 
@@ -121,11 +127,11 @@ public class Printer {
       if (interfaceIt.hasNext()) {
         out.print(" implements ");
 
-        out.print("" + Scene.v().quotedNameOf(interfaceIt.next().getName()) + "");
+        out.print("" + myScene.quotedNameOf(interfaceIt.next().getName()) + "");
 
         while (interfaceIt.hasNext()) {
           out.print(",");
-          out.print(" " + Scene.v().quotedNameOf(interfaceIt.next().getName()) + "");
+          out.print(" " + myScene.quotedNameOf(interfaceIt.next().getName()) + "");
         }
       }
     }
@@ -138,7 +144,7 @@ public class Printer {
      */
     out.println("{");
     incJimpleLnNum();
-    if (Options.v().print_tags_in_output()) {
+    if (myOptions.print_tags_in_output()) {
       Iterator<Tag> cTagIterator = cl.getTags().iterator();
       while (cTagIterator.hasNext()) {
         Tag t = cTagIterator.next();
@@ -160,7 +166,7 @@ public class Printer {
             continue;
           }
 
-          if (Options.v().print_tags_in_output()) {
+          if (myOptions.print_tags_in_output()) {
             Iterator<Tag> fTagIterator = f.getTags().iterator();
             while (fTagIterator.hasNext()) {
               Tag t = fTagIterator.next();
@@ -202,7 +208,7 @@ public class Printer {
               if (!method.hasActiveBody()) {
                 throw new RuntimeException("method " + method.getName() + " has no active body!");
               }
-            } else if (Options.v().print_tags_in_output()) {
+            } else if (myOptions.print_tags_in_output()) {
               Iterator<Tag> mTagIterator = method.getTags().iterator();
               while (mTagIterator.hasNext()) {
                 Tag t = mTagIterator.next();
@@ -219,7 +225,7 @@ public class Printer {
             }
           } else {
 
-            if (Options.v().print_tags_in_output()) {
+            if (myOptions.print_tags_in_output()) {
               Iterator<Tag> mTagIterator = method.getTags().iterator();
               while (mTagIterator.hasNext()) {
                 Tag t = mTagIterator.next();
@@ -364,7 +370,7 @@ public class Printer {
       // only print them if not generating attributes files
       // because they mess up line number
       // if (!addJimpleLn()) {
-      if (Options.v().print_tags_in_output()) {
+      if (myOptions.print_tags_in_output()) {
         Iterator<Tag> tagIterator = currentStmt.getTags().iterator();
         while (tagIterator.hasNext()) {
           Tag t = tagIterator.next();
@@ -399,7 +405,7 @@ public class Printer {
       while (trapIt.hasNext()) {
         Trap trap = trapIt.next();
 
-        out.println("        catch " + Scene.v().quotedNameOf(trap.getException().getName()) + " from "
+        out.println("        catch " + myScene.quotedNameOf(trap.getException().getName()) + " from "
             + up.labels().get(trap.getBeginUnit()) + " to " + up.labels().get(trap.getEndUnit()) + " with "
             + up.labels().get(trap.getHandlerUnit()) + ";");
 

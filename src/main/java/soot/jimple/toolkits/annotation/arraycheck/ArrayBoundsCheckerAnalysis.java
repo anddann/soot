@@ -74,10 +74,13 @@ import soot.toolkits.graph.ArrayRefBlockGraph;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph;
-import soot.toolkits.graph.SlowPseudoTopologicalOrderer;
+import soot.toolkits.graph.Orderer;
 
 class ArrayBoundsCheckerAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(ArrayBoundsCheckerAnalysis.class);
+  private final Options myOptions;
+  private final RectangularArrayFinder myRectangularArrayFinder;
+  private final ClassFieldAnalysis myClassFieldAnalysis;
   protected Map<Block, WeightedDirectedSparseGraph> blockToBeforeFlow;
   protected Map<Unit, WeightedDirectedSparseGraph> unitToBeforeFlow;
 
@@ -108,19 +111,26 @@ class ArrayBoundsCheckerAnalysis {
   private HashSet<Local> multiarraylocals;
 
   private final ArrayIndexLivenessAnalysis ailanalysis;
+  private Orderer<Block> mySlowPseudoTopologicalOrderer;
+  private Scene myScene;
 
   /* A little bit different from ForwardFlowAnalysis */
-  public ArrayBoundsCheckerAnalysis(Body body, boolean takeClassField, boolean takeFieldRef, boolean takeArrayRef,
-      boolean takeCSE, boolean takeRectArray) {
+  public ArrayBoundsCheckerAnalysis(Options myOptions, RectangularArrayFinder myRectangularArrayFinder, ClassFieldAnalysis myClassFieldAnalysis, Body body, boolean takeClassField, boolean takeFieldRef, boolean takeArrayRef,
+                                    boolean takeCSE, boolean takeRectArray, Orderer<Block> mySlowPseudoTopologicalOrderer, Scene myScene) {
+    this.myOptions = myOptions;
+    this.myRectangularArrayFinder = myRectangularArrayFinder;
+    this.myClassFieldAnalysis = myClassFieldAnalysis;
     classfieldin = takeClassField;
     fieldin = takeFieldRef;
     arrayin = takeArrayRef;
     csin = takeCSE;
     rectarray = takeRectArray;
+    this.mySlowPseudoTopologicalOrderer = mySlowPseudoTopologicalOrderer;
+    this.myScene = myScene;
 
     SootMethod thismethod = body.getMethod();
 
-    if (Options.v().debug()) {
+    if (this.myOptions.debug()) {
       logger.debug("ArrayBoundsCheckerAnalysis started on  " + thismethod.getName());
     }
 
@@ -136,7 +146,7 @@ class ArrayBoundsCheckerAnalysis {
         this.multiarraylocals = ailanalysis.getMultiArrayLocals();
         this.rectarrayset = new HashSet<Local>();
 
-        RectangularArrayFinder pgbuilder = RectangularArrayFinder.v();
+        RectangularArrayFinder pgbuilder = this.myRectangularArrayFinder;
 
         Iterator<Local> localIt = multiarraylocals.iterator();
         while (localIt.hasNext()) {
@@ -156,7 +166,7 @@ class ArrayBoundsCheckerAnalysis {
     }
 
     if (classfieldin) {
-      this.cfield = ClassFieldAnalysis.v();
+      this.cfield = this.myClassFieldAnalysis;
     }
 
     this.graph = new ArrayRefBlockGraph(body);
@@ -171,7 +181,7 @@ class ArrayBoundsCheckerAnalysis {
 
     convertToUnitEntry();
 
-    if (Options.v().debug()) {
+    if (this.myOptions.debug()) {
       logger.debug("ArrayBoundsCheckerAnalysis finished.");
     }
   }
@@ -266,18 +276,18 @@ class ArrayBoundsCheckerAnalysis {
    */
   private void doAnalysis() {
     Date start = new Date();
-    if (Options.v().debug()) {
+    if (myOptions.debug()) {
       logger.debug("Building PseudoTopological order list on " + start);
     }
 
-    LinkedList allUnits = (LinkedList) SlowPseudoTopologicalOrderer.v().newList(this.graph, false);
+    LinkedList allUnits = (LinkedList) mySlowPseudoTopologicalOrderer.newList(this.graph, false);
 
     BoundedPriorityList changedUnits = new BoundedPriorityList(allUnits);
 
     // LinkedList changedUnits = new LinkedList(allUnits);
 
     Date finish = new Date();
-    if (Options.v().debug()) {
+    if (myOptions.debug()) {
       long runtime = finish.getTime() - start.getTime();
       long mins = runtime / 60000;
       long secs = (runtime % 60000) / 1000;
@@ -449,7 +459,7 @@ class ArrayBoundsCheckerAnalysis {
     }
 
     finish = new Date();
-    if (Options.v().debug()) {
+    if (myOptions.debug()) {
       long runtime = finish.getTime() - start.getTime();
       long mins = runtime / 60000;
       long secs = (runtime / 60000) / 1000;
@@ -561,7 +571,7 @@ class ArrayBoundsCheckerAnalysis {
 
         /* kill only the locals in hierarchy. */
         if (strictness == 0) {
-          Hierarchy hierarchy = Scene.v().getActiveHierarchy();
+          Hierarchy hierarchy = myScene.getActiveHierarchy();
 
           for (int i = 0; i < parameters.size(); i++) {
             Value para = (Value) parameters.get(i);

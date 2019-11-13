@@ -77,33 +77,33 @@ public class CmpInstruction extends TaggedInstruction {
       case CMPL_DOUBLE:
         setTag(new DoubleOpTag());
         type = DoubleType.v();
-        cmpExpr = Jimple.v().newCmplExpr(first, second);
+        cmpExpr = myJimple.newCmplExpr(first, second);
         break;
       case CMPL_FLOAT:
         setTag(new FloatOpTag());
         type = FloatType.v();
-        cmpExpr = Jimple.v().newCmplExpr(first, second);
+        cmpExpr = myJimple.newCmplExpr(first, second);
         break;
       case CMPG_DOUBLE:
         setTag(new DoubleOpTag());
         type = DoubleType.v();
-        cmpExpr = Jimple.v().newCmpgExpr(first, second);
+        cmpExpr = myJimple.newCmpgExpr(first, second);
         break;
       case CMPG_FLOAT:
         setTag(new FloatOpTag());
         type = FloatType.v();
-        cmpExpr = Jimple.v().newCmpgExpr(first, second);
+        cmpExpr = myJimple.newCmpgExpr(first, second);
         break;
       case CMP_LONG:
         setTag(new LongOpTag());
         type = LongType.v();
-        cmpExpr = Jimple.v().newCmpExpr(first, second);
+        cmpExpr = myJimple.newCmpExpr(first, second);
         break;
       default:
         throw new RuntimeException("no opcode for CMP: " + opcode);
     }
 
-    AssignStmt assign = Jimple.v().newAssignStmt(body.getRegisterLocal(dest), cmpExpr);
+    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), cmpExpr);
     assign.addTag(getTag());
 
     setUnit(assign);

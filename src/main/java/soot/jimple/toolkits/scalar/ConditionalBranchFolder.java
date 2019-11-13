@@ -56,7 +56,7 @@ public class ConditionalBranchFolder extends BodyTransformer {
 
     int numTrue = 0, numFalse = 0;
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + stmtBody.getMethod().getName() + "] Folding conditional branches...");
     }
 
@@ -72,7 +72,7 @@ public class ConditionalBranchFolder extends BodyTransformer {
 
           if (((IntConstant) cond).value == 1) {
             // if condition always true, convert if to goto
-            Stmt newStmt = Jimple.v().newGotoStmt(ifs.getTarget());
+            Stmt newStmt = myJimple.newGotoStmt(ifs.getTarget());
             units.insertAfter(newStmt, stmt);
             numTrue++;
           } else {
@@ -85,7 +85,7 @@ public class ConditionalBranchFolder extends BodyTransformer {
       }
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug(
           "[" + stmtBody.getMethod().getName() + "]     Folded " + numTrue + " true, " + numFalse + " conditional branches");
     }

@@ -28,7 +28,7 @@ import soot.jimple.internal.AbstractNegExpr;
 
 public class GNegExpr extends AbstractNegExpr {
   public GNegExpr(Value op) {
-    super(Grimp.v().newExprBox(op));
+    super(myGrimp.newExprBox(op));
   }
 
   public Object clone() {

@@ -138,11 +138,11 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
 
                 Expr e;
                 if (shft_rem[1] != null) { // if there is an additive floating component
-                  Local tmp2 = null, tmp1 = Jimple.v().newLocal("__tmp_shft_lcl" + localCount++, opType);
+                  Local tmp2 = null, tmp1 = myJimple.newLocal("__tmp_shft_lcl" + localCount++, opType);
                   locals.add(tmp1);
 
                   // shift the integral portion
-                  Unit newU = Jimple.v().newAssignStmt(tmp1, Jimple.v().newShlExpr(op, IntConstant.v(shift)));
+                  Unit newU = myJimple.newAssignStmt(tmp1, myJimple.newShlExpr(op, IntConstant.v(shift)));
                   unitsBuilt.add(newU);
                   units.insertBefore(newU, u);
 
@@ -158,54 +158,54 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
                     }
 
                     if (nc instanceof DoubleConstant) {
-                      tmp2 = Jimple.v().newLocal("__tmp_shft_lcl" + localCount++, DoubleType.v());
+                      tmp2 = myJimple.newLocal("__tmp_shft_lcl" + localCount++, DoubleType.v());
                       locals.add(tmp2);
 
-                      newU = Jimple.v().newAssignStmt(tmp2, Jimple.v().newCastExpr(op, DoubleType.v()));
+                      newU = myJimple.newAssignStmt(tmp2, myJimple.newCastExpr(op, DoubleType.v()));
                       unitsBuilt.add(newU);
                       units.insertBefore(newU, u);
 
-                      newU = Jimple.v().newAssignStmt(tmp2, Jimple.v().newMulExpr(tmp2, nc));
+                      newU = myJimple.newAssignStmt(tmp2, myJimple.newMulExpr(tmp2, nc));
                     } else {
-                      tmp2 = Jimple.v().newLocal("__tmp_shft_lcl" + localCount++, nc.getType());
+                      tmp2 = myJimple.newLocal("__tmp_shft_lcl" + localCount++, nc.getType());
                       locals.add(tmp2);
-                      newU = Jimple.v().newAssignStmt(tmp2, Jimple.v().newMulExpr(op, nc));
+                      newU = myJimple.newAssignStmt(tmp2, myJimple.newMulExpr(op, nc));
                     }
                     unitsBuilt.add(newU);
                     units.insertBefore(newU, u);
                   }
                   if (tmp2 == null) {
-                    e = Jimple.v().newAddExpr(tmp1, op);
+                    e = myJimple.newAddExpr(tmp1, op);
                   } else if (tmp2.getType().getClass() != tmp1.getType().getClass()) {
-                    Local tmp3 = Jimple.v().newLocal("__tmp_shft_lcl" + localCount++, tmp2.getType());
+                    Local tmp3 = myJimple.newLocal("__tmp_shft_lcl" + localCount++, tmp2.getType());
                     locals.add(tmp3);
 
-                    newU = Jimple.v().newAssignStmt(tmp3, Jimple.v().newCastExpr(tmp1, tmp2.getType()));
+                    newU = myJimple.newAssignStmt(tmp3, myJimple.newCastExpr(tmp1, tmp2.getType()));
                     unitsBuilt.add(newU);
                     units.insertBefore(newU, u);
 
-                    e = Jimple.v().newAddExpr(tmp3, tmp2);
+                    e = myJimple.newAddExpr(tmp3, tmp2);
                   } else {
-                    e = Jimple.v().newAddExpr(tmp1, tmp2);
+                    e = myJimple.newAddExpr(tmp1, tmp2);
                   }
                 } else {
-                  e = Jimple.v().newShlExpr(op, IntConstant.v(shift));
+                  e = myJimple.newShlExpr(op, IntConstant.v(shift));
                 }
 
                 if (e.getType().getClass() != as.getLeftOp().getType().getClass()) {
-                  Local tmp = Jimple.v().newLocal("__tmp_shft_lcl" + localCount++, e.getType());
+                  Local tmp = myJimple.newLocal("__tmp_shft_lcl" + localCount++, e.getType());
                   locals.add(tmp);
-                  Unit newU = Jimple.v().newAssignStmt(tmp, e);
+                  Unit newU = myJimple.newAssignStmt(tmp, e);
                   unitsBuilt.add(newU);
                   units.insertAfter(newU, u);
 
-                  e = Jimple.v().newCastExpr(tmp, as.getLeftOp().getType());
+                  e = myJimple.newCastExpr(tmp, as.getLeftOp().getType());
                 }
 
                 as.setRightOp(e);
                 unitsBuilt.add(as);
                 if (neg) {
-                  Unit newU = Jimple.v().newAssignStmt(as.getLeftOp(), Jimple.v().newNegExpr(as.getLeftOp()));
+                  Unit newU = myJimple.newAssignStmt(as.getLeftOp(), myJimple.newNegExpr(as.getLeftOp()));
                   unitsBuilt.add(newU);
                   units.insertAfter(newU, u);
                 }
@@ -241,22 +241,22 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
                   shift -= rand * max;
                 }
 
-                Expr e = Jimple.v().newShrExpr(de.getOp1(), IntConstant.v(shift));
+                Expr e = myJimple.newShrExpr(de.getOp1(), IntConstant.v(shift));
 
                 if (e.getType().getClass() != as.getLeftOp().getType().getClass()) {
-                  Local tmp = Jimple.v().newLocal("__tmp_shft_lcl" + localCount++, e.getType());
+                  Local tmp = myJimple.newLocal("__tmp_shft_lcl" + localCount++, e.getType());
                   locals.add(tmp);
-                  Unit newU = Jimple.v().newAssignStmt(tmp, e);
+                  Unit newU = myJimple.newAssignStmt(tmp, e);
                   unitsBuilt.add(newU);
                   units.insertAfter(newU, u);
 
-                  e = Jimple.v().newCastExpr(tmp, as.getLeftOp().getType());
+                  e = myJimple.newCastExpr(tmp, as.getLeftOp().getType());
                 }
 
                 as.setRightOp(e);
                 unitsBuilt.add(as);
                 if (neg) {
-                  Unit newU = Jimple.v().newAssignStmt(as.getLeftOp(), Jimple.v().newNegExpr(as.getLeftOp()));
+                  Unit newU = myJimple.newAssignStmt(as.getLeftOp(), myJimple.newNegExpr(as.getLeftOp()));
                   unitsBuilt.add(newU);
                   units.insertAfter(newU, u);
                 }

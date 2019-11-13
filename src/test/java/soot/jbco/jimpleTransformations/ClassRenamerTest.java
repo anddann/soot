@@ -40,12 +40,12 @@ public class ClassRenamerTest {
 
   @Test
   public void getName() {
-    assertThat(ClassRenamer.v().getName(), equalTo(ClassRenamer.name));
+    assertThat(myClassRenamer.getName(), equalTo(ClassRenamer.name));
   }
 
   @Test
   public void getDependencies() {
-    assertThat(ClassRenamer.v().getDependencies(), equalTo(new String[] { ClassRenamer.name }));
+    assertThat(myClassRenamer.getDependencies(), equalTo(new String[] { ClassRenamer.name }));
   }
 
   @Test
@@ -69,71 +69,71 @@ public class ClassRenamerTest {
 
   @Test
   public void getOrAddNewName_cachingName() {
-    ClassRenamer.v().setRemovePackages(false);
-    ClassRenamer.v().setRenamePackages(false);
+    myClassRenamer.setRemovePackages(false);
+    myClassRenamer.setRenamePackages(false);
 
-    final String newName = ClassRenamer.v().getOrAddNewName(null, "ClassName");
+    final String newName = myClassRenamer.getOrAddNewName(null, "ClassName");
     assertThat(newName, not(containsString(".")));
 
-    Map<String, String> mapping = ClassRenamer.v().getClassNameMapping((pOldName, pNewName) -> pOldName.equals("ClassName"));
+    Map<String, String> mapping = myClassRenamer.getClassNameMapping((pOldName, pNewName) -> pOldName.equals("ClassName"));
     assertThat(mapping, hasEntry("ClassName", newName));
     assertThat(mapping.size(), equalTo(1));
 
-    assertThat(ClassRenamer.v().getOrAddNewName(null, "ClassName"), equalTo(newName));
+    assertThat(myClassRenamer.getOrAddNewName(null, "ClassName"), equalTo(newName));
 
-    mapping = ClassRenamer.v().getClassNameMapping((pOldName, pNewName) -> pOldName.equals("ClassName"));
+    mapping = myClassRenamer.getClassNameMapping((pOldName, pNewName) -> pOldName.equals("ClassName"));
     assertThat(mapping, hasEntry("ClassName", newName));
     assertThat(mapping.size(), equalTo(1));
   }
 
   @Test
   public void getOrAddNewName_cachingPackage() {
-    ClassRenamer.v().setRemovePackages(false);
-    ClassRenamer.v().setRenamePackages(false);
+    myClassRenamer.setRemovePackages(false);
+    myClassRenamer.setRenamePackages(false);
 
-    final String newName = ClassRenamer.v().getOrAddNewName("pac.age", "ClassName");
+    final String newName = myClassRenamer.getOrAddNewName("pac.age", "ClassName");
     assertThat(newName, allOf(startsWith("pac.age."), not(endsWith("ClassName"))));
     assertThat(newName.split("\\.").length, equalTo(3));
 
-    assertThat(ClassRenamer.v().getOrAddNewName("pac.age", "ClassName"), equalTo(newName));
+    assertThat(myClassRenamer.getOrAddNewName("pac.age", "ClassName"), equalTo(newName));
   }
 
   @Test
   public void getOrAddNewName_nullClassName() {
-    ClassRenamer.v().setRemovePackages(false);
-    ClassRenamer.v().setRenamePackages(false);
+    myClassRenamer.setRemovePackages(false);
+    myClassRenamer.setRenamePackages(false);
 
-    final String newName = ClassRenamer.v().getOrAddNewName("pac.age", null);
+    final String newName = myClassRenamer.getOrAddNewName("pac.age", null);
     assertThat(newName, startsWith("pac.age."));
     assertThat(newName.split("\\.").length, equalTo(3));
 
-    assertThat(ClassRenamer.v().getOrAddNewName("pac.age", null), not(equalTo(newName)));
+    assertThat(myClassRenamer.getOrAddNewName("pac.age", null), not(equalTo(newName)));
   }
 
   @Test
   public void getOrAddNewName_renamePackage() {
-    ClassRenamer.v().setRemovePackages(false);
-    ClassRenamer.v().setRenamePackages(true);
+    myClassRenamer.setRemovePackages(false);
+    myClassRenamer.setRenamePackages(true);
 
-    final String newName = ClassRenamer.v().getOrAddNewName("pac.age.getOrAddNewName_renamePackage", "ClassName");
+    final String newName = myClassRenamer.getOrAddNewName("pac.age.getOrAddNewName_renamePackage", "ClassName");
     assertThat(newName, allOf(not(startsWith("pac.age.getOrAddNewName_renamePackage.")), not(endsWith("ClassName"))));
     assertThat(newName.split("\\.").length, equalTo(4));
 
-    assertThat(ClassRenamer.v().getOrAddNewName("pac.age.getOrAddNewName_renamePackage", "ClassName"), equalTo(newName));
+    assertThat(myClassRenamer.getOrAddNewName("pac.age.getOrAddNewName_renamePackage", "ClassName"), equalTo(newName));
   }
 
   @Test
   public void getOrAddNewName_renamePackage_nullPackage() {
-    ClassRenamer.v().setRemovePackages(false);
-    ClassRenamer.v().setRenamePackages(true);
+    myClassRenamer.setRemovePackages(false);
+    myClassRenamer.setRenamePackages(true);
 
-    final String newName = ClassRenamer.v().getOrAddNewName(null, "ClassName");
+    final String newName = myClassRenamer.getOrAddNewName(null, "ClassName");
     assertThat(newName, allOf(not(endsWith("ClassName")), not(containsString("."))));
 
-    final String newName0 = ClassRenamer.v().getOrAddNewName(null, "ClassName");
+    final String newName0 = myClassRenamer.getOrAddNewName(null, "ClassName");
     assertThat(newName0, equalTo(newName)); // package names and class names are equal
 
-    final String newName1 = ClassRenamer.v().getOrAddNewName(null, "ClassName1");
+    final String newName1 = myClassRenamer.getOrAddNewName(null, "ClassName1");
     assertThat(newName1, not(equalTo(newName)));
     assertThat(newName1.split("\\.").length, equalTo(2));
     assertThat(newName.split("\\.")[0], equalTo(newName.split("\\.")[0])); // package names are equal
@@ -141,15 +141,15 @@ public class ClassRenamerTest {
 
   @Test
   public void getOrAddNewName_removePackage() {
-    ClassRenamer.v().setRemovePackages(true);
+    myClassRenamer.setRemovePackages(true);
 
-    String newName = ClassRenamer.v().getOrAddNewName("a.b.c", "ClassName");
+    String newName = myClassRenamer.getOrAddNewName("a.b.c", "ClassName");
     assertThat(newName, allOf(not(endsWith("ClassName")), not(containsString("."))));
 
     String packageName = "a.b.c";
     for (int i = 0; i < 100; i++) {
       packageName = packageName + ".p" + i;
-      newName = ClassRenamer.v().getOrAddNewName(packageName, "ClassName");
+      newName = myClassRenamer.getOrAddNewName(packageName, "ClassName");
       assertThat(newName, allOf(not(endsWith("ClassName")), not(containsString("."))));
     }
   }

@@ -110,7 +110,7 @@ public abstract class AbstractTestingFramework {
    */
   protected SootMethod prepareTarget(String targetMethodSignature, Collection<String> classesOrPackagesToAnalyze) {
     setupSoot(classesOrPackagesToAnalyze);
-    Scene.v().loadNecessaryClasses();
+    myScene.loadNecessaryClasses();
 
     mockStatics();
 
@@ -131,7 +131,7 @@ public abstract class AbstractTestingFramework {
   }
 
   protected void runSoot() {
-    PackManager.v().runPacks();
+    PackmyManager.runPacks();
   }
 
   /**
@@ -141,14 +141,14 @@ public abstract class AbstractTestingFramework {
    */
   private void setupSoot(Collection<String> classesOrPackagesToAnalyze) {
     G.reset();
-    Options.v().set_whole_program(true);
-    Options.v().set_output_format(Options.output_format_none);
-    Options.v().set_allow_phantom_refs(true);
-    Options.v().set_no_bodies_for_excluded(true);
-    Options.v().set_exclude(getExcludes());
-    Options.v().set_include(new ArrayList<>(classesOrPackagesToAnalyze));
-    Options.v().set_process_dir(Collections.singletonList(SYSTEMTEST_TARGET_CLASSES_DIR));
-    Options.v().set_validate(true);
+    myOptions.set_whole_program(true);
+    myOptions.set_output_format(Options.output_format_none);
+    myOptions.set_allow_phantom_refs(true);
+    myOptions.set_no_bodies_for_excluded(true);
+    myOptions.set_exclude(getExcludes());
+    myOptions.set_include(new ArrayList<>(classesOrPackagesToAnalyze));
+    myOptions.set_process_dir(Collections.singletonList(SYSTEMTEST_TARGET_CLASSES_DIR));
+    myOptions.set_validate(true);
     setupSoot();
   }
 
@@ -156,7 +156,7 @@ public abstract class AbstractTestingFramework {
    * Can be used to set Soot options as needed
    */
   protected void setupSoot() {
-    PhaseOptions.v().setPhaseOption("cg.spark", "on");
+    myPhaseOptions().setPhaseOption("cg.spark", "on");
   }
 
   /**
@@ -187,9 +187,9 @@ public abstract class AbstractTestingFramework {
       throw new RuntimeException("The method with name " + targetMethod + " was not found in the Soot Scene.");
     }
     SootClass targetClass = makeDummyClass(sootTestMethod);
-    Scene.v().addClass(targetClass);
+    myScene.addClass(targetClass);
     targetClass.setApplicationClass();
-    Scene.v().setEntryPoints(Collections.singletonList(targetClass.getMethodByName("main")));
+    myScene.setEntryPoints(Collections.singletonList(targetClass.getMethodByName("main")));
     return sootTestMethod;
   }
 
@@ -200,25 +200,25 @@ public abstract class AbstractTestingFramework {
         Modifier.PUBLIC | Modifier.STATIC);
     sootClass.addMethod(mainMethod);
 
-    JimpleBody body = Jimple.v().newBody(mainMethod);
+    JimpleBody body = myJimple.newBody(mainMethod);
     mainMethod.setActiveBody(body);
-    Local argsParameter = Jimple.v().newLocal("args", argsParamterType);
+    Local argsParameter = myJimple.newLocal("args", argsParamterType);
     body.getLocals().add(argsParameter);
-    body.getUnits().add(Jimple.v().newIdentityStmt(argsParameter, Jimple.v().newParameterRef(argsParamterType, 0)));
+    body.getUnits().add(myJimple.newIdentityStmt(argsParameter, myJimple.newParameterRef(argsParamterType, 0)));
     RefType testCaseType = RefType.v(sootTestMethod.getDeclaringClass());
-    Local allocatedTestObj = Jimple.v().newLocal("dummyObj", testCaseType);
+    Local allocatedTestObj = myJimple.newLocal("dummyObj", testCaseType);
     body.getLocals().add(allocatedTestObj);
-    body.getUnits().add(Jimple.v().newAssignStmt(allocatedTestObj, Jimple.v().newNewExpr(testCaseType)));
+    body.getUnits().add(myJimple.newAssignStmt(allocatedTestObj, myJimple.newNewExpr(testCaseType)));
 
-    body.getUnits().add(Jimple.v().newInvokeStmt(
-        Jimple.v().newSpecialInvokeExpr(allocatedTestObj, testCaseType.getSootClass().getMethodByName("<init>").makeRef())));
+    body.getUnits().add(myJimple.newInvokeStmt(
+        myJimple.newSpecialInvokeExpr(allocatedTestObj, testCaseType.getSootClass().getMethodByName("<init>").makeRef())));
     ArrayList args = new ArrayList(sootTestMethod.getParameterCount());
     for (int i = 0; i < sootTestMethod.getParameterCount(); i++) {
-      args.add(NullConstant.v());
+      args.add(myNullConstant);
     }
     body.getUnits()
-        .add(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(allocatedTestObj, sootTestMethod.makeRef(), args)));
-    body.getUnits().add(Jimple.v().newReturnVoidStmt());
+        .add(myJimple.newInvokeStmt(myJimple.newVirtualInvokeExpr(allocatedTestObj, sootTestMethod.makeRef(), args)));
+    body.getUnits().add(myJimple.newReturnVoidStmt());
     return sootClass;
   }
 
@@ -227,7 +227,7 @@ public abstract class AbstractTestingFramework {
   }
 
   private SootMethod getMethodForSig(String sig) {
-    Scene.v().forceResolve(classFromSignature(sig), SootClass.BODIES);
-    return Scene.v().getMethod(sig);
+    myScene.forceResolve(classFromSignature(sig), SootClass.BODIES);
+    return myScene.getMethod(sig);
   }
 }

@@ -130,7 +130,7 @@ public class PluginLoader {
       Transform transform = new Transform(pluginDescription.getPhaseName(), phasePlugin.getTransformer());
       transform.setDeclaredOptions(concat(appendEnabled(phasePlugin.getDeclaredOptions())));
       transform.setDefaultOptions(concat(phasePlugin.getDefaultOptions()));
-      PackManager.v().getPack(packName).add(transform);
+      PackmyManager.getPack(packName).add(transform);
 
     } catch (final ClassNotFoundException e) {
       throw new RuntimeException("Failed to load plugin class for " + pluginDescription + ".", e);

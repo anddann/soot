@@ -95,13 +95,13 @@ public class ExceptionChecker extends BodyTransformer {
     }
 
     // handles case when exception is RuntimeException or Error
-    if (throwClass.equals(Scene.v().getSootClass("java.lang.RuntimeException"))
-        || throwClass.equals(Scene.v().getSootClass("java.lang.Error"))) {
+    if (throwClass.equals(myScene.getSootClass("java.lang.RuntimeException"))
+        || throwClass.equals(myScene.getSootClass("java.lang.Error"))) {
       return true;
     }
     // handles case when exception is a subclass of RuntimeException or Error
-    if (hierarchy.isSubclass(throwClass, Scene.v().getSootClass("java.lang.RuntimeException"))
-        || hierarchy.isSubclass(throwClass, Scene.v().getSootClass("java.lang.Error"))) {
+    if (hierarchy.isSubclass(throwClass, myScene.getSootClass("java.lang.RuntimeException"))
+        || hierarchy.isSubclass(throwClass, myScene.getSootClass("java.lang.Error"))) {
       return true;
     }
 
@@ -177,7 +177,7 @@ public class ExceptionChecker extends BodyTransformer {
       return sm.getExceptions();
     }
     List<SootClass> result = null;
-    SootClass obj = Scene.v().getSootClass("java.lang.Object");
+    SootClass obj = myScene.getSootClass("java.lang.Object");
     sm = obj.getMethodUnsafe(sig);
     if (sm.getExceptionsUnsafe() == null) {
       return Collections.emptyList();

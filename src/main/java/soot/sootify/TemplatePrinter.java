@@ -82,7 +82,7 @@ public class TemplatePrinter {
     println("SootClass c = new SootClass(\"" + c.getName() + "\");");
     println("c.setApplicationClass();");
     // todo modifiers, extends etc.
-    println("Scene.v().addClass(c);");
+    println("myScene.addClass(c);");
 
     for (int i = 0; i < c.getMethodCount(); i++) {
       println("createMethod" + i + "(c);");
@@ -98,7 +98,7 @@ public class TemplatePrinter {
 
       // TODO modifiers, types
       println("SootMethod m = new SootMethod(\"" + m.getName() + "\",null,null);");
-      println("Body b = Jimple.v().newBody(m);");
+      println("Body b = myJimple.newBody(m);");
       println("m.setActiveBody(b);");
 
       if (!m.hasActiveBody()) {
@@ -111,7 +111,7 @@ public class TemplatePrinter {
       for (Local l : b.getLocals()) {
 
         // TODO properly treat primitive types
-        println("locals.add(Jimple.v().newLocal(\"" + l.getName() + "\", RefType.v(\"" + l.getType() + "\")));");
+        println("locals.add(myJimple.newLocal(\"" + l.getName() + "\", RefType.v(\"" + l.getType() + "\")));");
 
       }
 

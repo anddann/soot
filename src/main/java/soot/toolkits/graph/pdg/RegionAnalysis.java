@@ -83,12 +83,12 @@ public class RegionAnalysis {
     this.m_method = m;
     this.m_class = c;
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug(
           "[RegionAnalysis]~~~~~~~~~~~~~~~ Begin Region Analsis for method: " + m.getName() + " ~~~~~~~~~~~~~~~~~~~~");
     }
     this.findWeakRegions();
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[RegionAnalysis]~~~~~~~~~~~~~~~ End:" + m.getName() + " ~~~~~~~~~~~~~~~~~~~~");
     }
   }
@@ -116,7 +116,7 @@ public class RegionAnalysis {
 
       this.m_pdom = new MHGDominatorTree<Block>(new MHGPostDominatorsFinder<Block>(m_blockCFG));
 
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         logger.debug("[RegionAnalysis] PostDominator tree: ");
       }
 
@@ -145,7 +145,7 @@ public class RegionAnalysis {
         this.weakRegionDFS(this.m_blockCFG.getTails().get(0), this.m_regCount);
 
       } else {
-        if (Options.v().verbose()) {
+        if (myOptions.verbose()) {
           logger.warn(
               "RegionAnalysis: the CFG is multi-headed and tailed, so, the results of this analysis might not be reliable!");
         }

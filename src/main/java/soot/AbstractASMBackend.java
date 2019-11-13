@@ -169,7 +169,7 @@ public abstract class AbstractASMBackend {
     }
 
     if (activeBody instanceof JimpleBody) {
-      body = PackManager.v().convertJimpleBodyToBaf(method);
+      body = PackmyManager.convertJimpleBodyToBaf(method);
     } else {
       throw new RuntimeException("ASM-backend can only translate Baf- and JimpleBodies!");
     }
@@ -285,7 +285,7 @@ public abstract class AbstractASMBackend {
     generateClassHeader();
 
     // Retrieve information about the source of the class
-    if (sc.hasTag("SourceFileTag") && !Options.v().no_output_source_file_attribute()) {
+    if (sc.hasTag("SourceFileTag") && !myOptions.no_output_source_file_attribute()) {
       String srcName = ((SourceFileTag) sc.getTag("SourceFileTag")).getSourceFile();
       cv.visitSource(srcName, null); // TODO Correct value for the debug
       // argument
@@ -454,7 +454,7 @@ public abstract class AbstractASMBackend {
    * Emits the bytecode for all references to inner classes if present
    */
   protected void generateInnerClassReferences() {
-    if (sc.hasTag("InnerClassAttribute") && !Options.v().no_output_inner_classes_attribute()) {
+    if (sc.hasTag("InnerClassAttribute") && !myOptions.no_output_inner_classes_attribute()) {
       InnerClassAttribute ica = (InnerClassAttribute) sc.getTag("InnerClassAttribute");
       List<InnerClassTag> sortedTags = new ArrayList<InnerClassTag>(ica.getSpecs());
       Collections.sort(sortedTags, new SootInnerClassComparator());

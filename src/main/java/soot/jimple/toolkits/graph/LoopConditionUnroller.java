@@ -77,7 +77,7 @@ public class LoopConditionUnroller extends BodyTransformer {
    * this implementation still fails in finding all possible while-loops, but does a good job.
    */
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "]     Unrolling Loop Conditions...");
     }
 
@@ -91,7 +91,7 @@ public class LoopConditionUnroller extends BodyTransformer {
       unrollConditions(b);
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "]     Unrolling Loop Conditions done.");
     }
   }
@@ -108,7 +108,7 @@ public class LoopConditionUnroller extends BodyTransformer {
    * @return the newly inserted <code>Goto</code>
    */
   private Unit insertGotoAfter(Unit node, Unit target) {
-    Unit newGoto = Jimple.v().newGotoStmt(target);
+    Unit newGoto = myJimple.newGotoStmt(target);
     body.getUnits().insertAfter(newGoto, node);
     return newGoto;
   }

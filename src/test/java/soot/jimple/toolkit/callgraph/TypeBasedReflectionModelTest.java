@@ -30,7 +30,6 @@ import soot.*;
 import soot.jimple.*;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Edge;
-import soot.options.Options;
 
 import java.util.Collections;
 
@@ -71,28 +70,28 @@ public class TypeBasedReflectionModelTest {
     private void genericLocalVsStringConstantTest(boolean useConstantBase) {
         resetSoot();
 
-        Options.v().set_allow_phantom_refs(true);
-        Options.v().set_whole_program(true);
-        Options.v().set_no_bodies_for_excluded(true);
-        Scene.v().loadBasicClasses();
+        myOptions.set_allow_phantom_refs(true);
+        myOptions.set_whole_program(true);
+        myOptions.set_no_bodies_for_excluded(true);
+        myScene.loadBasicClasses();
 
         SootClass tc = setUpTestClass(useConstantBase);
-        Scene.v().addClass(tc);
+        myScene.addClass(tc);
         tc.setApplicationClass();
-        Scene.v().setMainClass(tc);
+        myScene.setMainClass(tc);
 
-        Scene.v().forceResolve(tc.getName(), BODIES);
-        Scene.v().loadNecessaryClasses();
+        myScene.forceResolve(tc.getName(), BODIES);
+        myScene.loadNecessaryClasses();
 
-        Options.v().setPhaseOption("cg.spark", "on");
-        Options.v().setPhaseOption("cg", "types-for-invoke:true");
+        myOptions.setPhaseOption("cg.spark", "on");
+        myOptions.setPhaseOption("cg", "types-for-invoke:true");
         // this option is necessary to get constant bases working
-        Options.v().setPhaseOption("wjpp.cimbt", "enabled:true");
-        Options.v().setPhaseOption("wjpp.cimbt","verbose:true");
-        PackManager.v().getPack("wjpp").apply();
-        PackManager.v().getPack("cg").apply();
+        myOptions.setPhaseOption("wjpp.cimbt", "enabled:true");
+        myOptions.setPhaseOption("wjpp.cimbt","verbose:true");
+        PackmyManager.getPack("wjpp").apply();
+        PackmyManager.getPack("cg").apply();
 
-        CallGraph callGraph = Scene.v().getCallGraph();
+        CallGraph callGraph = myScene.getCallGraph();
 
         boolean found = false;
         for (Edge edge : callGraph) {
@@ -106,46 +105,46 @@ public class TypeBasedReflectionModelTest {
 
     private void resetSoot() {
         G.reset();
-        Scene.v().releaseCallGraph();
-        Scene.v().releasePointsToAnalysis();
-        Scene.v().releaseReachableMethods();
+        myScene.releaseCallGraph();
+        myScene.releasePointsToAnalysis();
+        myScene.releaseReachableMethods();
         G.v().resetSpark();
     }
 
 
     private SootClass setUpTestClass(boolean useConstantBase) {
-        SootClass cl = new SootClass("soot.test.ReflectiveBase", Modifier.PUBLIC);
+        SootClass cl = new SootClass("soot.test.ReflectiveBase", myOptions, Modifier.PUBLIC, myScene, myPackageNamer);
 
-        SootMethod m = new SootMethod("main", Collections.singletonList((Type) ArrayType.v(Scene.v().getType("java.lang.String"), 1)),
-                VoidType.v(), Modifier.PUBLIC | Modifier.STATIC);
+        SootMethod m = new SootMethod("main", Collections.singletonList((Type) ArrayType.v(myScene.getType("java.lang.String"), 1)),
+                VoidType.v(), Modifier.PUBLIC | Modifier.STATIC, myScene);
         cl.addMethod(m);
         cl.setApplicationClass();
         cl.setResolvingLevel(HIERARCHY);
 
-        JimpleBody b = Jimple.v().newBody(m);
+        JimpleBody b = myJimple.newBody(m);
 
         // add parameter local
-        Local arg = Jimple.v().newLocal("l0", ArrayType.v(RefType.v("java.lang.String"), 1));
+        Local arg = myJimple.newLocal("l0", ArrayType.v(RefType.v("java.lang.String"), 1));
         b.getLocals().add(arg);
-        b.getUnits().add(Jimple.v().newIdentityStmt(arg,
-                Jimple.v().newParameterRef(ArrayType.v
+        b.getUnits().add(myJimple.newIdentityStmt(arg,
+                myJimple.newParameterRef(ArrayType.v
                         (RefType.v("java.lang.String"), 1), 0)));
 
         // get class
-        StaticInvokeExpr getClass = Jimple.v().newStaticInvokeExpr(
-                Scene.v().getMethod("<java.lang.Class: java.lang.Class forName(java.lang.String)>").makeRef(),
+        StaticInvokeExpr getClass = myJimple.newStaticInvokeExpr(
+                myScene.getMethod("<java.lang.Class: java.lang.Class forName(java.lang.String)>").makeRef(),
                 StringConstant.v("java.lang.String"));
-        Local clz = Jimple.v().newLocal("clz", Scene.v().getType("java.lang.Class"));
+        Local clz = myJimple.newLocal("clz", myScene.getType("java.lang.Class"));
         b.getLocals().add(clz);
-        b.getUnits().add(Jimple.v().newAssignStmt(clz, getClass));
+        b.getUnits().add(myJimple.newAssignStmt(clz, getClass));
 
         // get declared method
-        VirtualInvokeExpr concat = Jimple.v().newVirtualInvokeExpr(clz,
-                Scene.v().getMethod("<java.lang.Class: java.lang.reflect.Method getDeclaredMethod(java.lang.String,java.lang.Class[])>").makeRef(),
+        VirtualInvokeExpr concat = myJimple.newVirtualInvokeExpr(clz,
+                myScene.getMethod("<java.lang.Class: java.lang.reflect.Method getDeclaredMethod(java.lang.String,java.lang.Class[])>").makeRef(),
                 StringConstant.v("concat"), clz);
-        Local method = Jimple.v().newLocal("method", Scene.v().getType("java.lang.reflect.Method"));
+        Local method = myJimple.newLocal("method", myScene.getType("java.lang.reflect.Method"));
         b.getLocals().add(method);
-        b.getUnits().add(Jimple.v().newAssignStmt(method, concat));
+        b.getUnits().add(myJimple.newAssignStmt(method, concat));
 
         // prepare base object for reflective call
         String baseString = "Reflective call base ";
@@ -153,30 +152,30 @@ public class TypeBasedReflectionModelTest {
         if (useConstantBase)
             base = StringConstant.v(baseString);
         else {
-            Local l = Jimple.v().newLocal("base", Scene.v().getType("java.lang.String"));
+            Local l = myJimple.newLocal("base", myScene.getType("java.lang.String"));
             base = l;
             b.getLocals().add(l);
-            b.getUnits().add(Jimple.v().newAssignStmt(l,
+            b.getUnits().add(myJimple.newAssignStmt(l,
                     StringConstant.v(baseString)));
         }
 
         // prepare argument for reflective invocation of concat method
-        Local l = Jimple.v().newLocal("arg", Scene.v().getType("java.lang.String"));
+        Local l = myJimple.newLocal("arg", myScene.getType("java.lang.String"));
         b.getLocals().add(l);
-        b.getUnits().add(Jimple.v().newAssignStmt(l, StringConstant.v("concat")));
+        b.getUnits().add(myJimple.newAssignStmt(l, StringConstant.v("concat")));
 
         // prepare arg array
-        Local argArray = Jimple.v().newLocal("argArray", ArrayType.v(Scene.v().getType("java.lang.Object"), 1));
+        Local argArray = myJimple.newLocal("argArray", ArrayType.v(myScene.getType("java.lang.Object"), 1));
         b.getLocals().add(argArray);
-        b.getUnits().add(Jimple.v().newAssignStmt(argArray, Jimple.v().newNewArrayExpr(Scene.v().getType("java.lang.Object"), IntConstant.v(1))));
-        b.getUnits().add(Jimple.v().newAssignStmt(Jimple.v().newArrayRef(argArray, IntConstant.v(0)), l));
+        b.getUnits().add(myJimple.newAssignStmt(argArray, myJimple.newNewArrayExpr(myScene.getType("java.lang.Object"), IntConstant.v(1))));
+        b.getUnits().add(myJimple.newAssignStmt(myJimple.newArrayRef(argArray, IntConstant.v(0)), l));
 
         // invoke reflective method
-        b.getUnits().add(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(method,
-                Scene.v().getMethod("<java.lang.reflect.Method: java.lang.Object invoke(java.lang.Object,java.lang.Object[])>").makeRef(),
+        b.getUnits().add(myJimple.newInvokeStmt(myJimple.newVirtualInvokeExpr(method,
+                myScene.getMethod("<java.lang.reflect.Method: java.lang.Object invoke(java.lang.Object,java.lang.Object[])>").makeRef(),
                 base, argArray)));
 
-        b.getUnits().add(Jimple.v().newReturnVoidStmt());
+        b.getUnits().add(myJimple.newReturnVoidStmt());
 
         b.validate();
         m.setActiveBody(b);

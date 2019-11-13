@@ -101,10 +101,10 @@ public class SConstantPropagatorAndFolder extends BodyTransformer {
     }
 
     boolean pruneCFG = PhaseOptions.getBoolean(options, "prune-cfg");
-    debug = Options.v().debug();
+    debug = myOptions.debug();
     debug |= sb.getOptions().debug();
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + sb.getMethod().getName() + "] Propagating and folding constants (SSA)...");
     }
 
@@ -415,7 +415,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
 
         if (constant.equals(trueC)) {
           branch = true;
-          GotoStmt gotoStmt = Jimple.v().newGotoStmt(ifStmt.getTargetBox());
+          GotoStmt gotoStmt = myJimple.newGotoStmt(ifStmt.getTargetBox());
           stmtToReplacement.put(ifStmt, gotoStmt);
         }
 
@@ -464,7 +464,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
           branchBox = table.getTargetBox(index);
         }
 
-        GotoStmt gotoStmt = Jimple.v().newGotoStmt(branchBox);
+        GotoStmt gotoStmt = myJimple.newGotoStmt(branchBox);
         stmtToReplacement.put(table, gotoStmt);
 
         List unitBoxes = table.getUnitBoxes();
@@ -508,7 +508,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
           branchBox = lookup.getTargetBox(index);
         }
 
-        GotoStmt gotoStmt = Jimple.v().newGotoStmt(branchBox);
+        GotoStmt gotoStmt = myJimple.newGotoStmt(branchBox);
         stmtToReplacement.put(lookup, gotoStmt);
 
         List unitBoxes = lookup.getUnitBoxes();

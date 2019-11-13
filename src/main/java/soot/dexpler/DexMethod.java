@@ -88,7 +88,7 @@ public class DexMethod {
     // Build soot method by all available parameters
     SootMethod sm = declaringClass.getMethodUnsafe(name, parameterTypes, returnType);
     if (sm == null) {
-      sm = Scene.v().makeSootMethod(name, parameterTypes, returnType, accessFlags, thrownExceptions);
+      sm = myScene.makeSootMethod(name, parameterTypes, returnType, accessFlags, thrownExceptions);
     }
 
     // if the method is abstract or native, no code needs to be transformed
@@ -97,7 +97,7 @@ public class DexMethod {
       return sm;
     }
 
-    if (Options.v().oaat() && declaringClass.resolvingLevel() <= SootClass.SIGNATURES) {
+    if (myOptions.oaat() && declaringClass.resolvingLevel() <= SootClass.SIGNATURES) {
       return sm;
     }
 
@@ -112,7 +112,7 @@ public class DexMethod {
 
       @Override
       public Body getBody(SootMethod m, String phaseName) {
-        Body b = Jimple.v().newBody(m);
+        Body b = myJimple.newBody(m);
         try {
           // add the body of this code item
           DexBody dexBody = new DexBody(dexFile, method, declaringClass.getType());
@@ -124,7 +124,7 @@ public class DexMethod {
           Util.addExceptionAfterUnit(b, "java.lang.RuntimeException", b.getUnits().getLast(),
               "Soot has detected that this method contains invalid Dalvik bytecode,"
                   + " which would have throw an exception at runtime. [" + msg + "]");
-          TypeAssigner.v().transform(b);
+          TypemyAssigner.transform(b);
         }
         m.setActiveBody(b);
 
@@ -165,7 +165,7 @@ public class DexMethod {
               TypeEncodedValue valueType = (TypeEncodedValue) evSub;
               String exceptionName = valueType.getValue();
               String dottedName = Util.dottedClassName(exceptionName);
-              thrownExceptions.add(SootResolver.v().makeClassRef(dottedName));
+              thrownExceptions.add(mySootResolver.makeClassRef(dottedName));
             }
           }
         }

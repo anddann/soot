@@ -41,7 +41,7 @@ public class TrapManager {
      * t.endUnit
      */
 
-    Hierarchy h = Scene.v().getActiveHierarchy();
+    Hierarchy h = myScene.getActiveHierarchy();
     Chain<Unit> units = b.getUnits();
 
     for (Trap t : b.getTraps()) {

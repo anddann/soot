@@ -53,7 +53,7 @@ public class GNewInvokeExpr extends AbstractInvokeExpr implements NewInvokeExpr,
     this.type = type;
 
     for (int i = 0; i < args.size(); i++) {
-      this.argBoxes[i] = Grimp.v().newExprBox((Value) args.get(i));
+      this.argBoxes[i] = myGrimp.newExprBox((Value) args.get(i));
     }
   }
 

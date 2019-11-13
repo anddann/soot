@@ -31,7 +31,7 @@ import soot.jimple.internal.AbstractLengthExpr;
 
 public class DLengthExpr extends AbstractLengthExpr implements Precedence {
   public DLengthExpr(Value op) {
-    super(Grimp.v().newObjExprBox(op));
+    super(myGrimp.newObjExprBox(op));
   }
 
   public int getPrecedence() {

@@ -45,7 +45,7 @@ public class JNeExpr extends AbstractJimpleIntBinopExpr implements NeExpr {
   Object makeBafInst(Type opType) {
     throw new RuntimeException("unsupported conversion: " + this);
   }
-  // Object makeBafInst(Type opType) { return Baf.v().newNeInst(this.getOp1().getType()); }
+  // Object makeBafInst(Type opType) { return myBaf.newNeInst(this.getOp1().getType()); }
 
   public Object clone() {
     return new JNeExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()));

@@ -269,7 +269,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
 
         if (isValidCase && x >= Short.MIN_VALUE && x <= Short.MAX_VALUE) {
           Unit u
-              = Baf.v().newIncInst(context.getBafLocalOfJimpleLocal(l), IntConstant.v((expr instanceof AddExpr) ? x : -x));
+              = myBaf.newIncInst(context.getBafLocalOfJimpleLocal(l), IntConstant.v((expr instanceof AddExpr) ? x : -x));
 
           u.addAllTagsOf(this);
           out.add(u);
@@ -287,7 +287,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
         ((ConvertToBaf) (v.getIndex())).convertToBaf(context, out);
         ((ConvertToBaf) rvalue).convertToBaf(context, out);
 
-        Unit u = Baf.v().newArrayWriteInst(v.getType());
+        Unit u = myBaf.newArrayWriteInst(v.getType());
         u.addAllTagsOf(JAssignStmt.this);
 
         out.add(u);
@@ -297,7 +297,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
         ((ConvertToBaf) (v.getBase())).convertToBaf(context, out);
         ((ConvertToBaf) rvalue).convertToBaf(context, out);
 
-        Unit u = Baf.v().newFieldPutInst(v.getFieldRef());
+        Unit u = myBaf.newFieldPutInst(v.getFieldRef());
         u.addAllTagsOf(JAssignStmt.this);
 
         out.add(u);
@@ -315,7 +315,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
          * semantics, we should add them to every statement and let the aggregator sort them out.
          */
 
-        Unit u = Baf.v().newStoreInst(v.getType(), context.getBafLocalOfJimpleLocal(v));
+        Unit u = myBaf.newStoreInst(v.getType(), context.getBafLocalOfJimpleLocal(v));
         u.addAllTagsOf(JAssignStmt.this);
 
         out.add(u);
@@ -325,7 +325,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
       public void caseStaticFieldRef(StaticFieldRef v) {
         ((ConvertToBaf) rvalue).convertToBaf(context, out);
 
-        Unit u = Baf.v().newStaticPutInst(v.getFieldRef());
+        Unit u = myBaf.newStaticPutInst(v.getFieldRef());
         u.addAllTagsOf(JAssignStmt.this);
 
         out.add(u);

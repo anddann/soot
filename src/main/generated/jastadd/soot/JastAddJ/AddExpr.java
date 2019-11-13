@@ -126,7 +126,7 @@ public class AddExpr extends AdditiveExpr implements Cloneable {
         b.setLine(this);
         b.add(b.newInvokeStmt(
           b.newSpecialInvokeExpr(v, 
-          Scene.v().getMethod("<java.lang.StringBuffer: void <init>()>").makeRef(),
+          myScene.getMethod("<java.lang.StringBuffer: void <init>()>").makeRef(),
           this
         ), this));
         b.setLine(this);
@@ -150,7 +150,7 @@ public class AddExpr extends AdditiveExpr implements Cloneable {
       if(lastStringAddPart()) {
         return b.newTemp(
           b.newVirtualInvokeExpr(v,
-            Scene.v().getMethod("<java.lang.StringBuffer: java.lang.String toString()>").makeRef(),
+            myScene.getMethod("<java.lang.StringBuffer: java.lang.String toString()>").makeRef(),
             this
         ));
       }

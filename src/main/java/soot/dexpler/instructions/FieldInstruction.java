@@ -89,8 +89,8 @@ public abstract class FieldInstruction extends DexlibAbstractInstruction {
    */
   private SootFieldRef getSootFieldRef(FieldReference fref, boolean isStatic) {
     String className = dottedClassName(fref.getDefiningClass());
-    SootClass sc = SootResolver.v().makeClassRef(className);
-    return Scene.v().makeFieldRef(sc, fref.getName(), DexType.toSoot(fref.getType()), isStatic);
+    SootClass sc = mySootResolver.makeClassRef(className);
+    return myScene.makeFieldRef(sc, fref.getName(), DexType.toSoot(fref.getType()), isStatic);
   }
 
   /**
@@ -103,15 +103,15 @@ public abstract class FieldInstruction extends DexlibAbstractInstruction {
     AssignStmt assign;
     // Type targetType = getTargetType(body);
     // if(targetType != UnknownType.v() && targetType != sourceValue.getType() && ! (targetType instanceof RefType)) {
-    // CastExpr castExpr = Jimple.v().newCastExpr(sourceValue, targetType);
+    // CastExpr castExpr = myJimple.newCastExpr(sourceValue, targetType);
     // Local local = body.generateLocal(targetType);
-    // assign = Jimple.v().newAssignStmt(local, castExpr);
+    // assign = myJimple.newAssignStmt(local, castExpr);
     // body.add(assign);
     // beginUnit = assign;
-    // assign = Jimple.v().newAssignStmt(instanceField, local);
+    // assign = myJimple.newAssignStmt(instanceField, local);
     // }
     // else {
-    assign = Jimple.v().newAssignStmt(instanceField, sourceValue);
+    assign = myJimple.newAssignStmt(instanceField, sourceValue);
     // }
     return assign;
   }

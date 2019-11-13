@@ -38,7 +38,7 @@ import soot.util.Switch;
 
 public class JReturnStmt extends AbstractOpStmt implements ReturnStmt {
   public JReturnStmt(Value returnValue) {
-    this(Jimple.v().newImmediateBox(returnValue));
+    this(myJimple.newImmediateBox(returnValue));
   }
 
   protected JReturnStmt(ValueBox returnValueBox) {
@@ -66,7 +66,7 @@ public class JReturnStmt extends AbstractOpStmt implements ReturnStmt {
   public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
     ((ConvertToBaf) (getOp())).convertToBaf(context, out);
 
-    Unit u = Baf.v().newReturnInst(getOp().getType());
+    Unit u = myBaf.newReturnInst(getOp().getType());
     u.addAllTagsOf(this);
     out.add(u);
   }

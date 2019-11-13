@@ -60,7 +60,7 @@ public class DominatorTree<N> implements Iterable<DominatorNode<N>> {
   protected Map<N, DominatorNode<N>> godeToDode;
 
   public DominatorTree(DominatorsFinder dominators) {
-    // if(Options.v().verbose())
+    // if(myOptions.verbose())
     // logger.debug("[" + graph.getBody().getMethod().getName() +
     // "] Constructing DominatorTree...");
 

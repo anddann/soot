@@ -129,7 +129,7 @@ public abstract class AbstractSpecialInvokeExpr extends AbstractInstanceInvokeEx
       }
     }
 
-    Unit u = Baf.v().newSpecialInvokeInst(methodRef);
+    Unit u = myBaf.newSpecialInvokeInst(methodRef);
     out.add(u);
     u.addAllTagsOf(context.getCurrentUnit());
   }

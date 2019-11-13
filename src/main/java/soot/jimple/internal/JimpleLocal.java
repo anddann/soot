@@ -46,7 +46,7 @@ public class JimpleLocal implements Local, ConvertToBaf {
   public JimpleLocal(String name, Type type) {
     setName(name);
     setType(type);
-    Numberer<Local> numberer = Scene.v().getLocalNumberer();
+    Numberer<Local> numberer = myScene.getLocalNumberer();
     if (numberer != null) {
       numberer.add(this);
     }
@@ -125,7 +125,7 @@ public class JimpleLocal implements Local, ConvertToBaf {
 
   @Override
   public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    Unit u = Baf.v().newLoadInst(getType(), context.getBafLocalOfJimpleLocal(this));
+    Unit u = myBaf.newLoadInst(getType(), context.getBafLocalOfJimpleLocal(this));
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);
   }

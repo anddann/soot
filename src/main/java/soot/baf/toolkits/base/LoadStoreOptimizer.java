@@ -115,7 +115,7 @@ public class LoadStoreOptimizer extends BodyTransformer {
 
     debug = PhaseOptions.getBoolean(gOptions, "debug");
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Performing LoadStore optimizations...");
     }
 
@@ -277,7 +277,7 @@ public class LoadStoreOptimizer extends BodyTransformer {
                 switch (uses.size()) {
                   case 0: /*
                            * if(Options.getBoolean(gOptions, "s-elimination")) { // replace store by a pop and remove store
-                           * from store list replaceUnit(unit, Baf.v().newPopInst(((StoreInst)unit).getOpType()));
+                           * from store list replaceUnit(unit, myBaf.newPopInst(((StoreInst)unit).getOpType()));
                            * unitIt.remove();
                            *
                            * hasChanged = true; hasChangedFlag = false; }
@@ -340,7 +340,7 @@ public class LoadStoreOptimizer extends BodyTransformer {
                           int res = stackIndependent(unit, secondLoad, block, STORE_LOAD_LOAD_ELIMINATION);
                           if (res == MAKE_DUP) {
                             // replace store by dup, drop both loads
-                            Dup1Inst dup = Baf.v().newDup1Inst(((LoadInst) secondLoad).getOpType());
+                            Dup1Inst dup = myBaf.newDup1Inst(((LoadInst) secondLoad).getOpType());
                             dup.addAllTagsOf(unit);
                             replaceUnit(unit, dup);
                             unitIt.remove(); // remove store from store list
@@ -362,7 +362,7 @@ public class LoadStoreOptimizer extends BodyTransformer {
                              * RuntimeException("this has to be corrected (loadstoroptimiser.java)" + stackUnit); }
                              *
                              * if(debug) { logger.debug("stack unit is: " + stackUnit + " stack type is " + underType);}
-                             * replaceUnit(unit, Baf.v().newDup1_x1Inst(((LoadInst) secondLoad).getOpType(),underType));
+                             * replaceUnit(unit, myBaf.newDup1_x1Inst(((LoadInst) secondLoad).getOpType(),underType));
                              * unitIt.remove();
                              *
                              * block.remove(firstLoad); block.remove(secondLoad);
@@ -1133,7 +1133,7 @@ public class LoadStoreOptimizer extends BodyTransformer {
      *
      * Unit u; for(;;){ if(it.hasNext()) { u = (Unit) it.next(); if(mUnitToBlockMap.get(u) != block) break;
      *
-     * if(u instanceof LoadInst) { if(((LoadInst)u).getLocal() == local) { replaceUnit(u, Baf.v().newDup1Inst(((LoadInst)
+     * if(u instanceof LoadInst) { if(((LoadInst)u).getLocal() == local) { replaceUnit(u, myBaf.newDup1Inst(((LoadInst)
      * u).getOpType()));
      *
      * } else { fetchUnit =false; break; } } else { break; } } else break; } } } }
@@ -1164,7 +1164,7 @@ public class LoadStoreOptimizer extends BodyTransformer {
      *
      *
      * while(loadCount > 0) { Unit nextLoad = (Unit) mUnits.getSuccOf(currentLoad); replaceUnit(currentLoad,
-     * Baf.v().newDup1Inst(loadType));
+     * myBaf.newDup1Inst(loadType));
      *
      * currentLoad = nextLoad; loadCount--; } } else { boolean canMakeDup2 = false; if(loadCount >= 3) { canMakeDup2 = true;
      * currentLoad = (Unit) mUnits.getSuccOf(currentLoad); loadCount--; }
@@ -1172,11 +1172,11 @@ public class LoadStoreOptimizer extends BodyTransformer {
      * while(loadCount > 0) {
      *
      * if(loadCount == 1 || !canMakeDup2) { Unit nextLoad = (Unit) mUnits.getSuccOf(currentLoad); replaceUnit(currentLoad,
-     * Baf.v().newDup1Inst(loadType));
+     * myBaf.newDup1Inst(loadType));
      *
      * currentLoad = nextLoad; loadCount--; } else { if(canMakeDup2) { Unit nextLoad = (Unit)
      * mUnits.getSuccOf(mUnits.getSuccOf(currentLoad)); replaceUnit(currentLoad, (Unit) mUnits.getSuccOf(currentLoad),
-     * Baf.v().newDup2Inst(loadType, loadType)); currentLoad = nextLoad; loadCount -= 2; } } } } } currentInst = u; } } } }
+     * myBaf.newDup2Inst(loadType, loadType)); currentLoad = nextLoad; loadCount -= 2; } } } } } currentInst = u; } } } }
      *
      * void peephole() { boolean hasChanged = true;
      *

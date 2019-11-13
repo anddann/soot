@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import soot.Modifier;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.SootResolver;
@@ -69,7 +68,7 @@ public class SkeletonExtractorWalker extends Walker {
     String className = (String) mProductions.removeLast();
 
     if (mSootClass == null) {
-      mSootClass = new SootClass(className);
+      mSootClass = new SootClass(className, myScene, myOptions, myPackageNamer);
       mSootClass.setResolvingLevel(SootClass.SIGNATURES);
     } else {
       if (!className.equals(mSootClass.getName())) {
@@ -189,9 +188,9 @@ public class SkeletonExtractorWalker extends Walker {
     SootMethod method;
 
     if (throwsClause != null) {
-      method = Scene.v().makeSootMethod(name, parameterList, type, modifier, throwsClause);
+      method = myScene.makeSootMethod(name, parameterList, type, modifier, throwsClause);
     } else {
-      method = Scene.v().makeSootMethod(name, parameterList, type, modifier);
+      method = myScene.makeSootMethod(name, parameterList, type, modifier);
     }
 
     mSootClass.addMethod(method);

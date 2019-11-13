@@ -132,7 +132,7 @@ public class IFDSPossibleTypes
 
                   Local base1 = (Local) ifr1.getBase();
                   Local base2 = (Local) ifr2.getBase();
-                  PointsToAnalysis pta = Scene.v().getPointsToAnalysis();
+                  PointsToAnalysis pta = myScene.getPointsToAnalysis();
                   PointsToSet pts1 = pta.reachingObjects(base1);
                   PointsToSet pts2 = pta.reachingObjects(base2);
                   return pts1.hasNonEmptyIntersection(pts2);
@@ -142,7 +142,7 @@ public class IFDSPossibleTypes
 
                   Local base1 = (Local) ar1.getBase();
                   Local base2 = (Local) ar2.getBase();
-                  PointsToAnalysis pta = Scene.v().getPointsToAnalysis();
+                  PointsToAnalysis pta = myScene.getPointsToAnalysis();
                   PointsToSet pts1 = pta.reachingObjects(base1);
                   PointsToSet pts2 = pta.reachingObjects(base2);
                   return pts1.hasNonEmptyIntersection(pts2);
@@ -212,11 +212,11 @@ public class IFDSPossibleTypes
   }
 
   public Map<Unit, Set<Pair<Value, Type>>> initialSeeds() {
-    return DefaultSeeds.make(Collections.singleton(Scene.v().getMainMethod().getActiveBody().getUnits().getFirst()),
+    return DefaultSeeds.make(Collections.singleton(myScene.getMainMethod().getActiveBody().getUnits().getFirst()),
         zeroValue());
   }
 
   public Pair<Value, Type> createZeroValue() {
-    return new Pair<Value, Type>(Jimple.v().newLocal("<dummy>", UnknownType.v()), UnknownType.v());
+    return new Pair<Value, Type>(myJimple.newLocal("<dummy>", UnknownType.v()), UnknownType.v());
   }
 }

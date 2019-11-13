@@ -56,7 +56,7 @@ public class ConstInstruction extends DexlibAbstractInstruction {
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
 
     Constant cst = getConstant(dest, body);
-    AssignStmt assign = Jimple.v().newAssignStmt(body.getRegisterLocal(dest), cst);
+    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), cst);
     setUnit(assign);
     addTags(assign);
     body.add(assign);

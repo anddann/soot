@@ -60,10 +60,10 @@ public class ReachingTypeDumper {
   public void dump() {
     try {
       PrintWriter file = new PrintWriter(new FileOutputStream(new File(output_dir, "types")));
-      for (SootClass cls : Scene.v().getApplicationClasses()) {
+      for (SootClass cls : myScene.getApplicationClasses()) {
         handleClass(file, cls);
       }
-      for (SootClass cls : Scene.v().getLibraryClasses()) {
+      for (SootClass cls : myScene.getLibraryClasses()) {
         handleClass(file, cls);
       }
       file.close();

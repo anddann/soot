@@ -67,7 +67,7 @@ public class TrapMinimizer extends TrapTransformer {
       return;
     }
 
-    ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b, DalvikThrowAnalysis.v(), Options.v().omit_excepting_unit_edges());
+    ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b, myDalvikThrowAnalysis, myOptions.omit_excepting_unit_edges());
     Set<Unit> unitsWithMonitor = getUnitsWithMonitor(eug);
 
     Map<Trap, List<Trap>> replaceTrapBy = new HashMap<Trap, List<Trap>>(b.getTraps().size());
@@ -100,7 +100,7 @@ public class TrapMinimizer extends TrapTransformer {
         // check if the current unit has an edge to the current trap's
         // handler
         if (!goesToHandler) {
-          if (DalvikThrowAnalysis.v().mightThrow(u).catchableAs(tr.getException().getType())) {
+          if (myDalvikThrowAnalysis.mightThrow(u).catchableAs(tr.getException().getType())) {
             // We need to be careful here. The ExceptionalUnitGraph
             // will
             // always give us an edge from the predecessor of the
@@ -128,7 +128,7 @@ public class TrapMinimizer extends TrapTransformer {
             // updateTrap to true
             continue;
           }
-          Trap t = Jimple.v().newTrap(tr.getException(), firstTrapStmt, u, tr.getHandlerUnit());
+          Trap t = myJimple.newTrap(tr.getException(), firstTrapStmt, u, tr.getHandlerUnit());
           newTraps.add(t);
         } else {
           // if the current unit has an edge to the current trap's
@@ -137,7 +137,7 @@ public class TrapMinimizer extends TrapTransformer {
           // and if the
           // next unit is outside the current trap.
           if (b.getUnits().getSuccOf(u) == tr.getEndUnit() && updateTrap) {
-            Trap t = Jimple.v().newTrap(tr.getException(), firstTrapStmt, tr.getEndUnit(), tr.getHandlerUnit());
+            Trap t = myJimple.newTrap(tr.getException(), firstTrapStmt, tr.getEndUnit(), tr.getHandlerUnit());
             newTraps.add(t);
           }
         }

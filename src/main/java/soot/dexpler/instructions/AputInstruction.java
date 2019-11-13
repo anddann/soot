@@ -61,7 +61,7 @@ public class AputInstruction extends FieldInstruction {
 
     Local arrayBase = body.getRegisterLocal(aPutInstr.getRegisterB());
     Local index = body.getRegisterLocal(aPutInstr.getRegisterC());
-    ArrayRef arrayRef = Jimple.v().newArrayRef(arrayBase, index);
+    ArrayRef arrayRef = myJimple.newArrayRef(arrayBase, index);
 
     Local sourceValue = body.getRegisterLocal(source);
     AssignStmt assign = getAssignStmt(body, sourceValue, arrayRef);

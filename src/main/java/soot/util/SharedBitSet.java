@@ -43,7 +43,7 @@ public final class SharedBitSet {
   }
 
   private void canonicalize() {
-    value = SharedBitSetCache.v().canonicalize(value);
+    value = mySharedBitSetCache.canonicalize(value);
     own = false;
   }
 

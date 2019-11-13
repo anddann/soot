@@ -152,7 +152,7 @@ public class OrAggregatorOne extends DepthFirstAdapter {
      * See if the outer label can be marked as useless
      */
 
-    UselessLabelFinder.v().findAndKill(node);
+    myUselessLabelFinder.findAndKill(node);
   }
 
   private ASTLabeledBlockNode isLabelWithinLabel(ASTLabeledBlockNode node) {

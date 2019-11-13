@@ -23,6 +23,8 @@ package soot.dava.toolkits.base.finders;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,7 +36,6 @@ import java.util.Map;
 import soot.G;
 import soot.Local;
 import soot.RefType;
-import soot.Singletons;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
@@ -57,7 +58,12 @@ import soot.toolkits.graph.StronglyConnectedComponentsFast;
 import soot.util.IterableSet;
 
 public class SynchronizedBlockFinder implements FactFinder {
-  public SynchronizedBlockFinder(Singletons.Global g) {
+
+  private Dava myDava;
+
+  @Inject
+  public SynchronizedBlockFinder(Dava myDava) {
+    this.myDava = myDava;
   }
 
   public static SynchronizedBlockFinder v() {
@@ -85,7 +91,7 @@ public class SynchronizedBlockFinder implements FactFinder {
 
   public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
     davaBody = body;
-    Dava.v().log("SynchronizedBlockFinder::find()");
+    myDava.log("SynchronizedBlockFinder::find()");
 
     as2ml = new HashMap();
 

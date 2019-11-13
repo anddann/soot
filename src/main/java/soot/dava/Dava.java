@@ -23,6 +23,8 @@ package soot.dava;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -39,16 +41,66 @@ import soot.Body;
 import soot.CompilationDeathException;
 import soot.G;
 import soot.Local;
-import soot.Singletons;
+import soot.PhaseOptions;
+import soot.Printer;
 import soot.SootMethod;
 import soot.Type;
-import soot.jimple.Jimple;
+import soot.dava.toolkits.base.AST.UselessTryRemover;
+import soot.dava.toolkits.base.AST.traversals.ClosestAbruptTargetFinder;
+import soot.dava.toolkits.base.finders.AbruptEdgeFinder;
+import soot.dava.toolkits.base.finders.CycleFinder;
+import soot.dava.toolkits.base.finders.ExceptionFinder;
+import soot.dava.toolkits.base.finders.IfFinder;
+import soot.dava.toolkits.base.finders.LabeledBlockFinder;
+import soot.dava.toolkits.base.finders.SequenceFinder;
+import soot.dava.toolkits.base.finders.SwitchFinder;
+import soot.dava.toolkits.base.finders.SynchronizedBlockFinder;
+import soot.dava.toolkits.base.misc.MonitorConverter;
+import soot.dava.toolkits.base.misc.ThrowNullConverter;
+import soot.options.Options;
 import soot.util.IterableSet;
 
 public class Dava {
   private static final Logger logger = LoggerFactory.getLogger(Dava.class);
+  private Dava myJimple;
+  private final ExceptionFinder myExceptionFinder;
+  private final CycleFinder myCycleFinder;
+  private final IfFinder myIfFinder;
+  private final SwitchFinder mySwitchFinder;
+  private final SynchronizedBlockFinder mySynchronizedBlockFinder;
+  private final SequenceFinder mySequenceFinder;
+  private final LabeledBlockFinder myLabeledBlockFinder;
+  private final AbruptEdgeFinder myAbruptEdgeFinder;
+  private final MonitorConverter myMonitorConverter;
+  private final ThrowNullConverter myThrowNullConverter;
+  private final UselessTryRemover myUselessTryRemover;
+  private final PhaseOptions myPhaseOptions;
+  private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
+  private Options myOptions;
+  private Printer myPrinter;
 
-  public Dava(Singletons.Global g) {
+  @Inject
+  public Dava(Dava myJimple, ExceptionFinder myExceptionFinder, CycleFinder myCycleFinder, IfFinder myIfFinder,
+      SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder, SequenceFinder mySequenceFinder,
+      LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder, MonitorConverter myMonitorConverter,
+      ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
+      ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter) {
+    this.myJimple = myJimple;
+    this.myExceptionFinder = myExceptionFinder;
+    this.myCycleFinder = myCycleFinder;
+    this.myIfFinder = myIfFinder;
+    this.mySwitchFinder = mySwitchFinder;
+    this.mySynchronizedBlockFinder = mySynchronizedBlockFinder;
+    this.mySequenceFinder = mySequenceFinder;
+    this.myLabeledBlockFinder = myLabeledBlockFinder;
+    this.myAbruptEdgeFinder = myAbruptEdgeFinder;
+    this.myMonitorConverter = myMonitorConverter;
+    this.myThrowNullConverter = myThrowNullConverter;
+    this.myUselessTryRemover = myUselessTryRemover;
+    this.myPhaseOptions = myPhaseOptions;
+    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
+    this.myOptions = myOptions;
+    this.myPrinter = myPrinter;
   }
 
   public static Dava v() {
@@ -79,16 +131,22 @@ public class Dava {
   }
 
   public DavaBody newBody(SootMethod m) {
-    return new DavaBody(m);
+    DavaBody davaBody = new DavaBody(m, myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
+        mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, this, myClosestAbruptTargetFinder);
+    return davaBody;
   }
 
   /** Returns a DavaBody constructed from the given body b. */
   public DavaBody newBody(Body b) {
-    return new DavaBody(b);
+    return new DavaBody(b, myOptions, myPrinter, myMonitorConverter, myExceptionFinder, mySynchronizedBlockFinder,
+        myThrowNullConverter, mySequenceFinder, myLabeledBlockFinder, myCycleFinder, myIfFinder, mySwitchFinder,
+        myAbruptEdgeFinder, myUselessTryRemover, myPhaseOptions, myClosestAbruptTargetFinder, this);
+
   }
 
   public Local newLocal(String name, Type t) {
-    return Jimple.v().newLocal(name, t);
+    return myJimple.newLocal(name, t);
   }
 
   public void log(String s) {

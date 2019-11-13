@@ -28,7 +28,7 @@ import soot.jimple.internal.JInvokeStmt;
 
 public class GInvokeStmt extends JInvokeStmt {
   public GInvokeStmt(Value c) {
-    super(Grimp.v().newInvokeExprBox(c));
+    super(myGrimp.newInvokeExprBox(c));
   }
 
   public Object clone() {

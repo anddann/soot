@@ -33,7 +33,7 @@ public final class OTFMethodSCCManager {
   private DisjointSets disj;
 
   public OTFMethodSCCManager() {
-    int size = Scene.v().getMethodNumberer().size();
+    int size = myScene.getMethodNumberer().size();
     disj = new DisjointSets(size + 1);
   }
 

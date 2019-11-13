@@ -74,7 +74,7 @@ class StmtTemplatePrinter implements StmtSwitch {
     });
 
     for (int i = 0; i < jumpTargets.size(); i++) {
-      p.println("NopStmt jumpTarget" + i + "= Jimple.v().newNopStmt();");
+      p.println("NopStmt jumpTarget" + i + "= myJimple.newNopStmt();");
     }
   }
 
@@ -108,7 +108,7 @@ class StmtTemplatePrinter implements StmtSwitch {
   }
 
   private void printFactoryMethodCall(String stmtClassName, String... ops) {
-    p.printNoIndent("Jimple.v().new");
+    p.printNoIndent("myJimple.new");
     p.printNoIndent(stmtClassName);
     p.printNoIndent("(");
     int i = 1;

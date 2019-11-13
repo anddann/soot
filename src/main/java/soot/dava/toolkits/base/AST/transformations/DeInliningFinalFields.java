@@ -132,7 +132,7 @@ public class DeInliningFinalFields extends DepthFirstAdapter {
 
     ArrayList fieldChain = new ArrayList();
 
-    Chain appClasses = Scene.v().getApplicationClasses();
+    Chain appClasses = myScene.getApplicationClasses();
     Iterator it = appClasses.iterator();
     while (it.hasNext()) {
       SootClass tempClass = (SootClass) it.next();

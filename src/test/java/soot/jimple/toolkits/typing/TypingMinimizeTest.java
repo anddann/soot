@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import soot.G;
 import soot.Local;
 import soot.Modifier;
-import soot.Scene;
 import soot.SootClass;
 import soot.Type;
 import soot.jimple.internal.JimpleLocal;
@@ -154,13 +153,13 @@ public class TypingMinimizeTest {
   public void init() {
 
     G.reset();
-    Options o = Options.v();
+    Options o = myOptions;
     o.prepend_classpath();
     o.set_include_all(true);
     o.set_whole_program(true);
 
-    Scene.v().loadNecessaryClasses();
-    Scene.v().loadClassAndSupport("java.lang.Object");
+    myScene.loadNecessaryClasses();
+    myScene.loadClassAndSupport("java.lang.Object");
 
     generateClasses();
 
@@ -168,73 +167,73 @@ public class TypingMinimizeTest {
 
   private void generateClasses() {
 
-    SootClass sClass = new SootClass("Interface", Modifier.INTERFACE);
-    Scene.v().addClass(sClass);
+    SootClass sClass = new SootClass("Interface", myOptions, Modifier.INTERFACE, myScene, myPackageNamer);
+    myScene.addClass(sClass);
 
-    sClass = new SootClass("AbstractClass_Interface1", Modifier.ABSTRACT);
-    sClass.setSuperclass(Scene.v().getSootClass("java.lang.Object"));
-    sClass.addInterface(Scene.v().getSootClass("Interface"));
-    Scene.v().addClass(sClass);
+    sClass = new SootClass("AbstractClass_Interface1", myOptions, Modifier.ABSTRACT, myScene, myPackageNamer);
+    sClass.setSuperclass(myScene.getSootClass("java.lang.Object"));
+    sClass.addInterface(myScene.getSootClass("Interface"));
+    myScene.addClass(sClass);
 
-    sClass = new SootClass("AbstractClass_Interface2", Modifier.ABSTRACT);
-    sClass.setSuperclass(Scene.v().getSootClass("AbstractClass_Interface1"));
-    Scene.v().addClass(sClass);
+    sClass = new SootClass("AbstractClass_Interface2", myOptions, Modifier.ABSTRACT, myScene, myPackageNamer);
+    sClass.setSuperclass(myScene.getSootClass("AbstractClass_Interface1"));
+    myScene.addClass(sClass);
 
-    sClass = new SootClass("InterfaceInterface", Modifier.INTERFACE);
-    sClass.addInterface(Scene.v().getSootClass("Interface"));
-    Scene.v().addClass(sClass);
+    sClass = new SootClass("InterfaceInterface", myOptions, Modifier.INTERFACE, myScene, myPackageNamer);
+    sClass.addInterface(myScene.getSootClass("Interface"));
+    myScene.addClass(sClass);
 
-    sClass = new SootClass("Class_Interface", Modifier.PUBLIC);
-    sClass.addInterface(Scene.v().getSootClass("Interface"));
-    Scene.v().addClass(sClass);
+    sClass = new SootClass("Class_Interface", myOptions, Modifier.PUBLIC, myScene, myPackageNamer);
+    sClass.addInterface(myScene.getSootClass("Interface"));
+    myScene.addClass(sClass);
 
-    sClass = new SootClass("Class_AbstractInterfaceClass", Modifier.PUBLIC);
-    sClass.setSuperclass(Scene.v().getSootClass("AbstractClass_Interface2"));
-    Scene.v().addClass(sClass);
+    sClass = new SootClass("Class_AbstractInterfaceClass", myOptions, Modifier.PUBLIC, myScene, myPackageNamer);
+    sClass.setSuperclass(myScene.getSootClass("AbstractClass_Interface2"));
+    myScene.addClass(sClass);
 
-    sClass = new SootClass("Abstract", Modifier.ABSTRACT);
-    sClass.setSuperclass(Scene.v().getSootClass("java.lang.Object"));
-    Scene.v().addClass(sClass);
+    sClass = new SootClass("Abstract", myOptions, Modifier.ABSTRACT, myScene, myPackageNamer);
+    sClass.setSuperclass(myScene.getSootClass("java.lang.Object"));
+    myScene.addClass(sClass);
 
-    sClass = new SootClass("Class_Abstract", Modifier.ABSTRACT);
-    sClass.setSuperclass(Scene.v().getSootClass("Abstract"));
-    Scene.v().addClass(sClass);
+    sClass = new SootClass("Class_Abstract", myOptions, Modifier.ABSTRACT, myScene, myPackageNamer);
+    sClass.setSuperclass(myScene.getSootClass("Abstract"));
+    myScene.addClass(sClass);
 
-    sClass = new SootClass("FatherClass", Modifier.ABSTRACT);
-    sClass.setSuperclass(Scene.v().getSootClass("java.lang.Object"));
-    Scene.v().addClass(sClass);
+    sClass = new SootClass("FatherClass", myOptions, Modifier.ABSTRACT, myScene, myPackageNamer);
+    sClass.setSuperclass(myScene.getSootClass("java.lang.Object"));
+    myScene.addClass(sClass);
 
-    sClass = new SootClass("ChildClass", Modifier.ABSTRACT);
-    sClass.setSuperclass(Scene.v().getSootClass("FatherClass"));
-    Scene.v().addClass(sClass);
+    sClass = new SootClass("ChildClass", myOptions, Modifier.ABSTRACT, myScene, myPackageNamer);
+    sClass.setSuperclass(myScene.getSootClass("FatherClass"));
+    myScene.addClass(sClass);
 
-    stringType = Scene.v().getType("java.lang.String");
-    integerType = Scene.v().getType("java.lang.Integer");
+    stringType = myScene.getType("java.lang.String");
+    integerType = myScene.getType("java.lang.Integer");
 
-    serializableType = Scene.v().getType("java.io.Serializable");
-    comparableType = Scene.v().getType("java.lang.Comparable");
+    serializableType = myScene.getType("java.io.Serializable");
+    comparableType = myScene.getType("java.lang.Comparable");
 
-    numberType = Scene.v().getType("java.lang.Number");
-    cloneableType = Scene.v().getType("java.lang.Cloneable");
-    processType = Scene.v().getType("java.lang.Process");
+    numberType = myScene.getType("java.lang.Number");
+    cloneableType = myScene.getType("java.lang.Cloneable");
+    processType = myScene.getType("java.lang.Process");
 
-    randomAccessType = Scene.v().getType("java.util.RandomAccess");
-    listType = Scene.v().getType("java.util.List");
-    abstractListType = Scene.v().getType("java.util.AbstractList");
-    abstractMapType = Scene.v().getType("java.util.AbstractMap");
+    randomAccessType = myScene.getType("java.util.RandomAccess");
+    listType = myScene.getType("java.util.List");
+    abstractListType = myScene.getType("java.util.AbstractList");
+    abstractMapType = myScene.getType("java.util.AbstractMap");
 
-    objectType = Scene.v().getType("java.lang.Object");
+    objectType = myScene.getType("java.lang.Object");
 
-    interfaceType = Scene.v().getType("Interface");
-    abstractClass_Interface1Type = Scene.v().getType("AbstractClass_Interface1");
-    abstractClass_Interface2Type = Scene.v().getType("AbstractClass_Interface2");
-    class_AbstractInterfaceClassType = Scene.v().getType("Class_AbstractInterfaceClass");
-    class_InterfaceType = Scene.v().getType("Class_Interface");
-    interfaceInterfaceType = Scene.v().getType("InterfaceInterface");
-    abstractType = Scene.v().getType("Abstract");
-    class_AbstractType = Scene.v().getType("Class_Abstract");
-    fatherClassType = Scene.v().getType("FatherClass");
-    childClassType = Scene.v().getType("ChildClass");
+    interfaceType = myScene.getType("Interface");
+    abstractClass_Interface1Type = myScene.getType("AbstractClass_Interface1");
+    abstractClass_Interface2Type = myScene.getType("AbstractClass_Interface2");
+    class_AbstractInterfaceClassType = myScene.getType("Class_AbstractInterfaceClass");
+    class_InterfaceType = myScene.getType("Class_Interface");
+    interfaceInterfaceType = myScene.getType("InterfaceInterface");
+    abstractType = myScene.getType("Abstract");
+    class_AbstractType = myScene.getType("Class_Abstract");
+    fatherClassType = myScene.getType("FatherClass");
+    childClassType = myScene.getType("ChildClass");
 
   }
 

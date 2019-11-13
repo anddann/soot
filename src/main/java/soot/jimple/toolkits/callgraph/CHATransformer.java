@@ -47,10 +47,10 @@ public class CHATransformer extends SceneTransformer {
 
   protected void internalTransform(String phaseName, Map<String, String> opts) {
     CHAOptions options = new CHAOptions(opts);
-    CallGraphBuilder cg = options.apponly() ? new CallGraphBuilder() : new CallGraphBuilder(DumbPointerAnalysis.v());
+    CallGraphBuilder cg = options.apponly() ? new CallGraphBuilder() : new CallGraphBuilder(myDumbPointerAnalysis);
     cg.build();
     if (options.verbose()) {
-      logger.debug("" + "Number of reachable methods: " + Scene.v().getReachableMethods().size());
+      logger.debug("" + "Number of reachable methods: " + myScene.getReachableMethods().size());
     }
   }
 }

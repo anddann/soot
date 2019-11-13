@@ -83,7 +83,7 @@ public class Shimple {
    * Returns an empty ShimpleBody associated with method m, using default phase options.
    **/
   public ShimpleBody newBody(SootMethod m) {
-    Map<String, String> options = PhaseOptions.v().getPhaseOptions(PHASE);
+    Map<String, String> options = myPhaseOptions().getPhaseOptions(PHASE);
     return new ShimpleBody(m, options);
   }
 
@@ -98,7 +98,7 @@ public class Shimple {
    * Returns a ShimpleBody constructed from b, using default phase options.
    **/
   public ShimpleBody newBody(Body b) {
-    Map<String, String> options = PhaseOptions.v().getPhaseOptions(PHASE);
+    Map<String, String> options = myPhaseOptions().getPhaseOptions(PHASE);
     return new ShimpleBody(b, options);
   }
 
@@ -219,7 +219,7 @@ public class Shimple {
    * implementation of PatchingChain.
    **/
   public static void redirectToPreds(Body body, Unit remove) {
-    boolean debug = Options.v().debug();
+    boolean debug = myOptions.debug();
     if (body instanceof ShimpleBody) {
       debug |= ((ShimpleBody) body).getOptions().debug();
     }

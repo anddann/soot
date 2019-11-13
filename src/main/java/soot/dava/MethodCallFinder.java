@@ -124,7 +124,7 @@ public class MethodCallFinder extends DepthFirstAdapter {
           // create throw stmt to be added to inlined method
 
           // create a SootMethodRef
-          SootClass runtime = Scene.v().loadClassAndSupport("java.lang.RuntimeException");
+          SootClass runtime = myScene.loadClassAndSupport("java.lang.RuntimeException");
           if (runtime.declaresMethod("void <init>(java.lang.String)")) {
             SootMethod sootMethod = runtime.getMethod("void <init>(java.lang.String)");
             SootMethodRef methodRef = sootMethod.makeRef();

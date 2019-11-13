@@ -63,7 +63,7 @@ public class UselessTryRemover extends ASTAnalysis {
         if (child instanceof ASTTryNode) {
           ASTTryNode tryNode = (ASTTryNode) child;
 
-          tryNode.perform_Analysis(TryContentsFinder.v());
+          tryNode.perform_Analysis(myTryContentsFinder);
 
           if ((tryNode.get_CatchList().isEmpty()) || (tryNode.isEmpty())) {
             toRemove.add(tryNode);

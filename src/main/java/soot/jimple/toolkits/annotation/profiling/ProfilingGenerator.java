@@ -63,7 +63,7 @@ public class ProfilingGenerator extends BodyTransformer {
     {
       SootMethod m = body.getMethod();
 
-      SootClass counterClass = Scene.v().loadClassAndSupport("MultiCounter");
+      SootClass counterClass = myScene.loadClassAndSupport("MultiCounter");
       SootMethod reset = counterClass.getMethod("void reset()");
       SootMethod report = counterClass.getMethod("void report()");
 
@@ -72,7 +72,7 @@ public class ProfilingGenerator extends BodyTransformer {
       Chain units = body.getUnits();
 
       if (isMainMethod) {
-        units.addFirst(Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(reset.makeRef())));
+        units.addFirst(myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(reset.makeRef())));
       }
 
       Iterator stmtIt = body.getUnits().snapshotIterator();
@@ -86,12 +86,12 @@ public class ProfilingGenerator extends BodyTransformer {
             SootMethod tempm = ((StaticInvokeExpr) iexpr).getMethod();
 
             if (tempm.getSignature().equals("<java.lang.System: void exit(int)>")) {
-              units.insertBefore(Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(report.makeRef())), stmt);
+              units.insertBefore(myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(report.makeRef())), stmt);
 
             }
           }
         } else if (isMainMethod && (stmt instanceof ReturnStmt || stmt instanceof ReturnVoidStmt)) {
-          units.insertBefore(Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(report.makeRef())), stmt);
+          units.insertBefore(myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(report.makeRef())), stmt);
         }
       }
     }

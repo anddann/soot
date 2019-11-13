@@ -52,7 +52,7 @@ public class JimpleClassSource extends ClassSource {
   }
 
   public Dependencies resolve(SootClass sc) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("resolving [from .jimple]: " + className);
     }
 
@@ -86,7 +86,7 @@ public class JimpleClassSource extends ClassSource {
         } else {
           outerClassName = className.substring(0, className.lastIndexOf('$'));
         }
-        sc.setOuterClass(SootResolver.v().makeClassRef(outerClassName));
+        sc.setOuterClass(mySootResolver.makeClassRef(outerClassName));
       }
 
       // Construct the type dependencies of the class

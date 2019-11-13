@@ -38,7 +38,7 @@ import soot.util.Switch;
 
 public class JExitMonitorStmt extends AbstractOpStmt implements ExitMonitorStmt {
   public JExitMonitorStmt(Value op) {
-    this(Jimple.v().newImmediateBox(op));
+    this(myJimple.newImmediateBox(op));
   }
 
   protected JExitMonitorStmt(ValueBox opBox) {
@@ -67,7 +67,7 @@ public class JExitMonitorStmt extends AbstractOpStmt implements ExitMonitorStmt 
   public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
     ((ConvertToBaf) (getOp())).convertToBaf(context, out);
 
-    Unit u = Baf.v().newExitMonitorInst();
+    Unit u = myBaf.newExitMonitorInst();
     u.addAllTagsOf(this);
     out.add(u);
   }

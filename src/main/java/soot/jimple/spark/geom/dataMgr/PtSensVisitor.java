@@ -48,7 +48,7 @@ public abstract class PtSensVisitor<VarType extends ContextVar> {
   // Indicates if this visitor is prepared
   protected boolean readyToUse = false;
 
-  protected GeomPointsTo ptsProvider = (GeomPointsTo) Scene.v().getPointsToAnalysis();
+  protected GeomPointsTo ptsProvider = (GeomPointsTo) myScene.getPointsToAnalysis();
 
   // The list view
   public List<VarType> outList = new ArrayList<VarType>();

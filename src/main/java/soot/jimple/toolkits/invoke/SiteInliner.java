@@ -104,7 +104,7 @@ public class SiteInliner {
     boolean enableNullPointerCheckInsertion = PhaseOptions.getBoolean(options, "insert-null-checks");
     boolean enableRedundantCastInsertion = PhaseOptions.getBoolean(options, "insert-redundant-casts");
 
-    Hierarchy hierarchy = Scene.v().getActiveHierarchy();
+    Hierarchy hierarchy = myScene.getActiveHierarchy();
 
     JimpleBody containerB = (JimpleBody) container.getActiveBody();
     Chain<Unit> containerUnits = containerB.getUnits();
@@ -136,10 +136,10 @@ public class SiteInliner {
         parameterType = inlinee.getDeclaringClass();
 
         if (localType.isInterface() || hierarchy.isClassSuperclassOf(localType, parameterType)) {
-          Local castee = Jimple.v().newLocal("__castee", parameterType.getType());
+          Local castee = myJimple.newLocal("__castee", parameterType.getType());
           containerB.getLocals().add(castee);
-          containerB.getUnits().insertBefore(Jimple.v().newAssignStmt(castee,
-              Jimple.v().newCastExpr(((InstanceInvokeExpr) ie).getBase(), parameterType.getType())), toInline);
+          containerB.getUnits().insertBefore(myJimple.newAssignStmt(castee,
+              myJimple.newCastExpr(((InstanceInvokeExpr) ie).getBase(), parameterType.getType())), toInline);
           thisToAdd = castee;
         }
       }
@@ -148,7 +148,7 @@ public class SiteInliner {
     // (If enabled), add a null pointer check.
     {
       if (enableNullPointerCheckInsertion && ie instanceof InstanceInvokeExpr) {
-        boolean caught = TrapManager.isExceptionCaughtAt(Scene.v().getSootClass("java.lang.NullPointerException"), toInline,
+        boolean caught = TrapManager.isExceptionCaughtAt(myScene.getSootClass("java.lang.NullPointerException"), toInline,
             containerB);
 
         /* Ah ha. Caught again! */
@@ -157,7 +157,7 @@ public class SiteInliner {
            * In this case, we don't use throwPoint; instead, put the code right there.
            */
           Stmt insertee
-              = Jimple.v().newIfStmt(Jimple.v().newNeExpr(((InstanceInvokeExpr) ie).getBase(), NullConstant.v()), toInline);
+              = myJimple.newIfStmt(myJimple.newNeExpr(((InstanceInvokeExpr) ie).getBase(), myNullConstant), toInline);
 
           containerB.getUnits().insertBefore(insertee, toInline);
 
@@ -168,7 +168,7 @@ public class SiteInliner {
         } else {
           Stmt throwPoint = ThrowManager.getNullPointerExceptionThrower(containerB);
           containerB.getUnits().insertBefore(
-              Jimple.v().newIfStmt(Jimple.v().newEqExpr(((InstanceInvokeExpr) ie).getBase(), NullConstant.v()), throwPoint),
+              myJimple.newIfStmt(myJimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), myNullConstant), throwPoint),
               toInline);
         }
       }
@@ -179,15 +179,15 @@ public class SiteInliner {
       if (inlinee.isSynchronized()) {
         // Need to get the class object if ie is a static invoke.
         if (ie instanceof InstanceInvokeExpr) {
-          SynchronizerManager.v().synchronizeStmtOn(toInline, containerB, (Local) ((InstanceInvokeExpr) ie).getBase());
+          mySynchronizerManager.synchronizeStmtOn(toInline, containerB, (Local) ((InstanceInvokeExpr) ie).getBase());
         } else {
           // If we're in an interface, we must be in a
           // <clinit> method, which surely needs no
           // synchronization.
           if (!container.getDeclaringClass().isInterface()) {
             // Whew!
-            Local l = SynchronizerManager.v().addStmtsToFetchClassBefore(containerB, toInline);
-            SynchronizerManager.v().synchronizeStmtOn(toInline, containerB, l);
+            Local l = mySynchronizerManager.addStmtsToFetchClassBefore(containerB, toInline);
+            mySynchronizerManager.synchronizeStmtOn(toInline, containerB, l);
           }
         }
       }
@@ -269,7 +269,7 @@ public class SiteInliner {
           throw new RuntimeException("couldn't map trap!");
         }
 
-        Trap trap = Jimple.v().newTrap(t.getException(), newBegin, newEnd, newHandler);
+        Trap trap = myJimple.newTrap(t.getException(), newBegin, newEnd, newHandler);
         if (prevTrap == null) {
           containerB.getTraps().addFirst(trap);
         } else {
@@ -300,15 +300,15 @@ public class SiteInliner {
               throw new RuntimeException("thisref with no receiver!");
             }
 
-            containerUnits.swapWith(s, Jimple.v().newAssignStmt(((IdentityStmt) s).getLeftOp(), thisToAdd));
+            containerUnits.swapWith(s, myJimple.newAssignStmt(((IdentityStmt) s).getLeftOp(), thisToAdd));
           } else if (rhs instanceof ParameterRef) {
             ParameterRef pref = (ParameterRef) rhs;
-            containerUnits.swapWith(s, Jimple.v().newAssignStmt(((IdentityStmt) s).getLeftOp(), ie.getArg(pref.getIndex())));
+            containerUnits.swapWith(s, myJimple.newAssignStmt(((IdentityStmt) s).getLeftOp(), ie.getArg(pref.getIndex())));
           }
         } else if (s instanceof ReturnStmt) {
           if (toInline instanceof InvokeStmt) {
             // munch, munch.
-            containerUnits.swapWith(s, Jimple.v().newGotoStmt(exitPoint));
+            containerUnits.swapWith(s, myJimple.newGotoStmt(exitPoint));
             continue;
           }
 
@@ -317,11 +317,11 @@ public class SiteInliner {
           }
           Value ro = ((ReturnStmt) s).getOp();
           Value lhs = ((AssignStmt) toInline).getLeftOp();
-          AssignStmt as = Jimple.v().newAssignStmt(lhs, ro);
+          AssignStmt as = myJimple.newAssignStmt(lhs, ro);
           containerUnits.insertBefore(as, s);
-          containerUnits.swapWith(s, Jimple.v().newGotoStmt(exitPoint));
+          containerUnits.swapWith(s, myJimple.newGotoStmt(exitPoint));
         } else if (s instanceof ReturnVoidStmt) {
-          containerUnits.swapWith(s, Jimple.v().newGotoStmt(exitPoint));
+          containerUnits.swapWith(s, myJimple.newGotoStmt(exitPoint));
         }
       }
     }
@@ -336,7 +336,7 @@ public class SiteInliner {
     containerUnits.remove(toInline);
 
     // Resolve name collisions.
-    LocalNameStandardizer.v().transform(containerB, "ji.lns");
+    myLocalNameStandardizer.transform(containerB, "ji.lns");
 
     return newStmts;
   }

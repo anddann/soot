@@ -111,7 +111,7 @@ public class SparkLibraryHelper extends TypeSwitch {
         pag.addEdge(newArray, localArray);
 
         // tmpArray[i]
-        FieldRefNode arrayRef = pag.makeFieldRefNode(localArray, ArrayElement.v());
+        FieldRefNode arrayRef = pag.makeFieldRefNode(localArray, myArrayElement);
 
         // var tmp
         LocalVarNode local = pag.makeLocalVarNode(new Object(), at.getElementType(), method);

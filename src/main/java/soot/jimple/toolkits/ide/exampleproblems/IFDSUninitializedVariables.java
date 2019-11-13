@@ -67,7 +67,7 @@ public class IFDSUninitializedVariables
       @Override
       public FlowFunction<Local> getNormalFlowFunction(Unit curr, Unit succ) {
         final SootMethod m = interproceduralCFG().getMethodOf(curr);
-        if (Scene.v().getEntryPoints().contains(m) && interproceduralCFG().isStartPoint(curr)) {
+        if (myScene.getEntryPoints().contains(m) && interproceduralCFG().isStartPoint(curr)) {
           return new FlowFunction<Local>() {
 
             @Override
@@ -219,7 +219,7 @@ public class IFDSUninitializedVariables
   }
 
   public Map<Unit, Set<Local>> initialSeeds() {
-    return DefaultSeeds.make(Collections.singleton(Scene.v().getMainMethod().getActiveBody().getUnits().getFirst()),
+    return DefaultSeeds.make(Collections.singleton(myScene.getMainMethod().getActiveBody().getUnits().getFirst()),
         zeroValue());
   }
 

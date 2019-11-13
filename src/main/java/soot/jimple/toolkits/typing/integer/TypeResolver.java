@@ -61,15 +61,15 @@ public class TypeResolver {
 
   private final JimpleBody stmtBody;
 
-  final TypeVariable BOOLEAN = typeVariable(ClassHierarchy.v().BOOLEAN);
-  final TypeVariable BYTE = typeVariable(ClassHierarchy.v().BYTE);
-  final TypeVariable SHORT = typeVariable(ClassHierarchy.v().SHORT);
-  final TypeVariable CHAR = typeVariable(ClassHierarchy.v().CHAR);
-  final TypeVariable INT = typeVariable(ClassHierarchy.v().INT);
-  final TypeVariable TOP = typeVariable(ClassHierarchy.v().TOP);
-  final TypeVariable R0_1 = typeVariable(ClassHierarchy.v().R0_1);
-  final TypeVariable R0_127 = typeVariable(ClassHierarchy.v().R0_127);
-  final TypeVariable R0_32767 = typeVariable(ClassHierarchy.v().R0_32767);
+  final TypeVariable BOOLEAN = typeVariable(myClassHierarchy.BOOLEAN);
+  final TypeVariable BYTE = typeVariable(myClassHierarchy.BYTE);
+  final TypeVariable SHORT = typeVariable(myClassHierarchy.SHORT);
+  final TypeVariable CHAR = typeVariable(myClassHierarchy.CHAR);
+  final TypeVariable INT = typeVariable(myClassHierarchy.INT);
+  final TypeVariable TOP = typeVariable(myClassHierarchy.TOP);
+  final TypeVariable R0_1 = typeVariable(myClassHierarchy.R0_1);
+  final TypeVariable R0_127 = typeVariable(myClassHierarchy.R0_127);
+  final TypeVariable R0_32767 = typeVariable(myClassHierarchy.R0_32767);
 
   private static final boolean DEBUG = false;
   private static final boolean IMPERFORMANT_TYPE_CHECK = false;
@@ -118,7 +118,7 @@ public class TypeResolver {
 
   /** Get type variable for the given type. **/
   public TypeVariable typeVariable(Type type) {
-    return typeVariable(ClassHierarchy.v().typeNode(type));
+    return typeVariable(myClassHierarchy.typeNode(type));
   }
 
   /** Get new type variable **/
@@ -272,7 +272,7 @@ public class TypeResolver {
 
         if (lca != null) {
           if (DEBUG) {
-            if (lca == ClassHierarchy.v().TOP) {
+            if (lca == myClassHierarchy.TOP) {
               logger.debug("*** TOP *** " + var);
               for (TypeVariable typeVariable : children_to_remove) {
                 logger.debug("-- " + typeVariable);
@@ -369,7 +369,7 @@ public class TypeResolver {
 
       if (!modified) {
         for (TypeVariable var : unsolved) {
-          if (var.type() == null && var.approx() == ClassHierarchy.v().R0_32767) {
+          if (var.type() == null && var.approx() == myClassHierarchy.R0_32767) {
             if (DEBUG) {
               logger.debug("*** R->SHORT *** " + var);
             }
@@ -382,7 +382,7 @@ public class TypeResolver {
 
       if (!modified) {
         for (TypeVariable var : unsolved) {
-          if (var.type() == null && var.approx() == ClassHierarchy.v().R0_127) {
+          if (var.type() == null && var.approx() == myClassHierarchy.R0_127) {
             if (DEBUG) {
               logger.debug("*** R->BYTE *** " + var);
             }
@@ -395,7 +395,7 @@ public class TypeResolver {
 
       if (!modified) {
         for (TypeVariable var : R0_1.parents()) {
-          if (var.type() == null && var.approx() == ClassHierarchy.v().R0_1) {
+          if (var.type() == null && var.approx() == myClassHierarchy.R0_1) {
             if (DEBUG) {
               logger.debug("*** R->BOOLEAN *** " + var);
             }
@@ -441,9 +441,9 @@ public class TypeResolver {
           local.setType(var.inv_approx().type());
         } else if (var.approx().type() != null) {
           local.setType(var.approx().type());
-        } else if (var.approx() == ClassHierarchy.v().R0_1) {
+        } else if (var.approx() == myClassHierarchy.R0_1) {
           local.setType(BooleanType.v());
-        } else if (var.approx() == ClassHierarchy.v().R0_127) {
+        } else if (var.approx() == myClassHierarchy.R0_127) {
           local.setType(ByteType.v());
         } else {
           local.setType(ShortType.v());

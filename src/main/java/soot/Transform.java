@@ -40,7 +40,7 @@ public class Transform implements HasPhaseOptions {
   final Transformer t;
 
   public Transform(String phaseName, Transformer t) {
-    this.DEBUG = Options.v().dump_body().contains(phaseName);
+    this.DEBUG = myOptions.dump_body().contains(phaseName);
     this.phaseName = phaseName;
     this.t = t;
   }
@@ -89,38 +89,38 @@ public class Transform implements HasPhaseOptions {
   }
 
   public void apply() {
-    Map<String, String> options = PhaseOptions.v().getPhaseOptions(phaseName);
+    Map<String, String> options = myPhaseOptions().getPhaseOptions(phaseName);
     if (PhaseOptions.getBoolean(options, "enabled")) {
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         logger.debug("" + "Applying phase " + phaseName + " to the scene.");
       }
     }
     if (DEBUG) {
-      PhaseDumper.v().dumpBefore(getPhaseName());
+      myPhaseDumper.dumpBefore(getPhaseName());
     }
 
     ((SceneTransformer) t).transform(phaseName, options);
 
     if (DEBUG) {
-      PhaseDumper.v().dumpAfter(getPhaseName());
+      myPhaseDumper.dumpAfter(getPhaseName());
     }
   }
 
   public void apply(Body b) {
-    Map<String, String> options = PhaseOptions.v().getPhaseOptions(phaseName);
+    Map<String, String> options = myPhaseOptions().getPhaseOptions(phaseName);
     if (PhaseOptions.getBoolean(options, "enabled")) {
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         logger.debug("" + "Applying phase " + phaseName + " to " + b.getMethod() + ".");
       }
     }
     if (DEBUG) {
-      PhaseDumper.v().dumpBefore(b, getPhaseName());
+      myPhaseDumper.dumpBefore(b, getPhaseName());
     }
 
     ((BodyTransformer) t).transform(b, phaseName, options);
 
     if (DEBUG) {
-      PhaseDumper.v().dumpAfter(b, getPhaseName());
+      myPhaseDumper.dumpAfter(b, getPhaseName());
     }
   }
 

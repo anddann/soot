@@ -53,8 +53,8 @@ public abstract class AbstractFlowAnalysis<N, A> {
   public AbstractFlowAnalysis(DirectedGraph<N> graph) {
     unitToBeforeFlow = new IdentityHashMap<N, A>(graph.size() * 2 + 1);
     this.graph = graph;
-    if (Options.v().interactive_mode()) {
-      InteractionHandler.v().handleCfgEvent(graph);
+    if (myOptions.interactive_mode()) {
+      myInteractionHandler.handleCfgEvent(graph);
     }
   }
 

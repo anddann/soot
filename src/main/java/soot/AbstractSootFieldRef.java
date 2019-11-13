@@ -110,8 +110,8 @@ public class AbstractSootFieldRef implements SootFieldRef {
   }
 
   private SootField checkStatic(SootField ret) {
-    if ((Options.v().wrong_staticness() == Options.wrong_staticness_fail
-          || Options.v().wrong_staticness() == Options.wrong_staticness_fixstrict)
+    if ((myOptions.wrong_staticness() == Options.wrong_staticness_fail
+          || myOptions.wrong_staticness() == Options.wrong_staticness_fixstrict)
           && ret.isStatic() != isStatic() && !ret.isPhantom()) {
       throw new ResolutionFailedException("Resolved " + this + " to " + ret + " which has wrong static-ness");
     }
@@ -132,7 +132,7 @@ public class AbstractSootFieldRef implements SootFieldRef {
       }
       // If we have a phantom class, we directly construct a phantom field
       // in it and don't care about superclasses.
-      else if (Scene.v().allowsPhantomRefs() && cl.isPhantom()) {
+      else if (myScene.allowsPhantomRefs() && cl.isPhantom()) {
         synchronized (cl) {
           // Check that no other thread has created the field in the
           // meantime
@@ -148,7 +148,7 @@ public class AbstractSootFieldRef implements SootFieldRef {
           }
 
           // Create the phantom field
-          SootField f = Scene.v().makeSootField(name, type, isStatic() ? Modifier.STATIC : 0);
+          SootField f = myScene.makeSootField(name, type, isStatic() ? Modifier.STATIC : 0);
           f.setPhantom(true);
           cl.addField(f);
           return f;
@@ -184,8 +184,8 @@ public class AbstractSootFieldRef implements SootFieldRef {
     }
 
     // If we allow phantom refs, we construct phantom fields
-    if (Options.v().allow_phantom_refs()) {
-      SootField sf = Scene.v().makeSootField(name, type, isStatic ? Modifier.STATIC : 0);
+    if (myOptions.allow_phantom_refs()) {
+      SootField sf = myScene.makeSootField(name, type, isStatic ? Modifier.STATIC : 0);
       sf.setPhantom(true);
       synchronized (declaringClass) {
         // Be careful: Another thread may have already created this
@@ -207,7 +207,7 @@ public class AbstractSootFieldRef implements SootFieldRef {
 
     if (trace == null) {
       FieldResolutionFailedException e = new FieldResolutionFailedException();
-      if (Options.v().ignore_resolution_errors()) {
+      if (myOptions.ignore_resolution_errors()) {
         logger.debug("" + e.getMessage());
       } else {
         throw e;
@@ -217,7 +217,7 @@ public class AbstractSootFieldRef implements SootFieldRef {
   }
 
   protected SootField handleFieldTypeMismatch(SootField clField) {
-    switch (Options.v().field_type_mismatches()) {
+    switch (myOptions.field_type_mismatches()) {
       case Options.field_type_mismatches_fail:
         throw new ConflictingFieldRefException(clField, type);
       case Options.field_type_mismatches_ignore:
@@ -226,7 +226,7 @@ public class AbstractSootFieldRef implements SootFieldRef {
         return null;
     }
     throw new RuntimeException(
-        String.format("Unsupported option for handling field type mismatches: %d", Options.v().field_type_mismatches()));
+        String.format("Unsupported option for handling field type mismatches: %d", myOptions.field_type_mismatches()));
   }
 
   @Override

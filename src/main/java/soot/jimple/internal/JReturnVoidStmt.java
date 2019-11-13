@@ -54,7 +54,7 @@ public class JReturnVoidStmt extends AbstractStmt implements ReturnVoidStmt {
   }
 
   public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    Unit u = Baf.v().newReturnVoidInst();
+    Unit u = myBaf.newReturnVoidInst();
     u.addAllTagsOf(this);
     out.add(u);
   }

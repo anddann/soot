@@ -109,13 +109,13 @@ public class SootClassBuilder extends ClassVisitor {
     if (superName != null) {
       superName = AsmUtil.toQualifiedName(superName);
       addDep(RefType.v(superName));
-      klass.setSuperclass(SootResolver.v().makeClassRef(superName));
+      klass.setSuperclass(mySootResolver.makeClassRef(superName));
     }
     for (String intrf : interfaces) {
       intrf = AsmUtil.toQualifiedName(intrf);
       addDep(RefType.v(intrf));
 
-      SootClass interfaceClass = SootResolver.v().makeClassRef(intrf);
+      SootClass interfaceClass = mySootResolver.makeClassRef(intrf);
       interfaceClass.setModifiers(interfaceClass.getModifiers() | Modifier.INTERFACE);
       klass.addInterface(interfaceClass);
     }
@@ -128,7 +128,7 @@ public class SootClassBuilder extends ClassVisitor {
   public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
     soot.Type type = AsmUtil.toJimpleType(desc);
     addDep(type);
-    SootField field = Scene.v().makeSootField(name, type, access);
+    SootField field = myScene.makeSootField(name, type, access);
     Tag tag;
     if (value instanceof Integer) {
       tag = new IntegerConstantValueTag((Integer) value);
@@ -164,7 +164,7 @@ public class SootClassBuilder extends ClassVisitor {
       for (int i = 0; i != len; i++) {
         String ex = AsmUtil.toQualifiedName(exceptions[i]);
         addDep(RefType.v(ex));
-        thrownExceptions.add(SootResolver.v().makeClassRef(ex));
+        thrownExceptions.add(mySootResolver.makeClassRef(ex));
       }
     }
     List<soot.Type> sigTypes = AsmUtil.toJimpleDesc(desc);
@@ -172,7 +172,7 @@ public class SootClassBuilder extends ClassVisitor {
       addDep(type);
     }
     SootMethod method
-        = Scene.v().makeSootMethod(name, sigTypes, sigTypes.remove(sigTypes.size() - 1), access, thrownExceptions);
+        = myScene.makeSootMethod(name, sigTypes, sigTypes.remove(sigTypes.size() - 1), access, thrownExceptions);
     if (signature != null) {
       method.addTag(new SignatureTag(signature));
     }
@@ -206,7 +206,7 @@ public class SootClassBuilder extends ClassVisitor {
 
     owner = AsmUtil.toQualifiedName(owner);
     deps.add(RefType.v(owner));
-    klass.setOuterClass(SootResolver.v().makeClassRef(owner));
+    klass.setOuterClass(mySootResolver.makeClassRef(owner));
   }
 
   @Override

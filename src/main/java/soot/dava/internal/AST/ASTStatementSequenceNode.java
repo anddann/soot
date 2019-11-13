@@ -50,12 +50,12 @@ public class ASTStatementSequenceNode extends ASTNode {
     if (a.getAnalysisDepth() > ASTAnalysis.ANALYSE_AST) {
 
       for (AugmentedStmt as : statementSequence) {
-        ASTWalker.v().walk_stmt(a, as.get_Stmt());
+        myASTWalker.walk_stmt(a, as.get_Stmt());
       }
     }
 
     if (a instanceof TryContentsFinder) {
-      TryContentsFinder.v().add_ExceptionSet(this, TryContentsFinder.v().remove_CurExceptionSet());
+      myTryContentsFinder.add_ExceptionSet(this, myTryContentsFinder.remove_CurExceptionSet());
     }
   }
 

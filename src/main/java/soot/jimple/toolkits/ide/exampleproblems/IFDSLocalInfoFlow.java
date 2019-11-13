@@ -66,7 +66,7 @@ public class IFDSLocalInfoFlow extends DefaultJimpleIFDSTabulationProblem<Local,
 
       @Override
       public FlowFunction<Local> getNormalFlowFunction(Unit src, Unit dest) {
-        if (src instanceof IdentityStmt && interproceduralCFG().getMethodOf(src) == Scene.v().getMainMethod()) {
+        if (src instanceof IdentityStmt && interproceduralCFG().getMethodOf(src) == myScene.getMainMethod()) {
           IdentityStmt is = (IdentityStmt) src;
           Local leftLocal = (Local) is.getLeftOp();
           Value right = is.getRightOp();
@@ -161,7 +161,7 @@ public class IFDSLocalInfoFlow extends DefaultJimpleIFDSTabulationProblem<Local,
 
   @Override
   public Map<Unit, Set<Local>> initialSeeds() {
-    return DefaultSeeds.make(Collections.singleton(Scene.v().getMainMethod().getActiveBody().getUnits().getFirst()),
+    return DefaultSeeds.make(Collections.singleton(myScene.getMainMethod().getActiveBody().getUnits().getFirst()),
         zeroValue());
   }
 }

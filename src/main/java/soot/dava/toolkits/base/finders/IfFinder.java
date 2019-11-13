@@ -25,8 +25,8 @@ package soot.dava.toolkits.base.finders;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import com.google.inject.Inject;
 import soot.G;
-import soot.Singletons;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
 import soot.dava.RetriggerAnalysisException;
@@ -39,7 +39,13 @@ import soot.jimple.Stmt;
 import soot.util.IterableSet;
 
 public class IfFinder implements FactFinder {
-  public IfFinder(Singletons.Global g) {
+
+
+  private Dava myDava;
+
+  @Inject
+  public IfFinder(Dava myDava) {
+    this.myDava = myDava;
   }
 
   public static IfFinder v() {
@@ -47,7 +53,7 @@ public class IfFinder implements FactFinder {
   }
 
   public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
-    Dava.v().log("IfFinder::find()");
+    myDava.log("IfFinder::find()");
 
     Iterator asgit = asg.iterator();
     while (asgit.hasNext()) {

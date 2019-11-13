@@ -42,7 +42,7 @@ public class FastHierarchyTest {
   public void testGetAllSubinterfaces() {
     G.reset();
 
-    Scene s = Scene.v();
+    Scene s = myScene;
     s.loadNecessaryClasses();
 
     SootClass scA = generacteSceneClass("InterfaceA", Modifier.INTERFACE);
@@ -91,7 +91,7 @@ public class FastHierarchyTest {
 
     G.reset();
 
-    Scene s = Scene.v();
+    Scene s = myScene;
     s.loadNecessaryClasses();
 
     SootClass scA = generacteSceneClass("InterfaceA", Modifier.INTERFACE);
@@ -134,7 +134,7 @@ public class FastHierarchyTest {
   public void testGetAllImplementersOfInterface() {
     G.reset();
 
-    Scene s = Scene.v();
+    Scene s = myScene;
     s.loadNecessaryClasses();
 
     SootClass interfaceA = generacteSceneClass("InterfaceA", Modifier.INTERFACE);
@@ -189,9 +189,9 @@ public class FastHierarchyTest {
   }
 
   private static SootClass generacteSceneClass(String name, int modifier) {
-    SootClass sootClass = new SootClass(name, modifier);
-    Scene.v().addClass(sootClass);
-    SootClass objectClass = Scene.v().getObjectType().getSootClass();
+    SootClass sootClass = new SootClass(name, myOptions, modifier, myScene, myPackageNamer);
+    myScene.addClass(sootClass);
+    SootClass objectClass = myScene.getObjectType().getSootClass();
     sootClass.setSuperclass(objectClass);
     return sootClass;
   }

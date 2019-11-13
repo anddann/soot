@@ -22,6 +22,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import heros.solver.CountingThreadPoolExecutor;
 
 import java.io.File;
@@ -122,7 +124,6 @@ import soot.options.Options;
 import soot.shimple.Shimple;
 import soot.shimple.ShimpleBody;
 import soot.shimple.ShimpleTransformer;
-import soot.shimple.toolkits.scalar.SConstantPropagatorAndFolder;
 import soot.sootify.TemplatePrinter;
 import soot.tagkit.InnerClassTagAggregator;
 import soot.tagkit.LineNumberTagAggregator;
@@ -148,12 +149,169 @@ public class PackManager {
   public static boolean DEBUG = false;
   private final Map<String, Pack> packNameToPack = new HashMap<String, Pack>();
   private final List<Pack> packList = new LinkedList<Pack>();
+  private final FieldTagger myFieldTagger;
   private boolean onlyStandardPacks = false;
   private JarOutputStream jarFile = null;
   protected DexPrinter dexPrinter = null;
+  private Options myOptions;
+  private PhaseOptions myPhaseOptions;
+  private SourceLocator mySourceLocator;
 
-  public PackManager(Singletons.Global g) {
-    PhaseOptions.v().setPackManager(this);
+  //FIXME: subtypes for inject...
+  private TrapTightener myTrapTightener;
+  private DuplicateCatchAllTrapRemover myDuplicateCatchAllTrapRemover;
+  private LocalSplitter myLocalSplitter;
+  private TypeAssigner myTypeAssigner;
+  private LocalPacker myLocalPacker;
+  private EmptySwitchEliminator myEmptySwitchEliminator;
+  private Aggregator myAggregator;
+  private LocalNameStandardizer myLocalNameStandardizer;
+  private UnusedLocalEliminator myUnusedLocalEliminator;
+  private CopyPropagator myCopyPropagator;
+  private DeadAssignmentEliminator myDeadAssignmentEliminator;
+  private UnreachableCodeEliminator myUnreachableCodeEliminator;
+  private NopEliminator myNopEliminator;
+  private ConstantInvokeMethodBaseTransformer myConstantInvokeMethodBaseTransformer;
+  private CHATransformer myCHATransformer;
+  private PaddleHook myPaddleHook;
+  private MhpTransformer myMhpTransformer;
+  private SparkTransformer mySparkTransformer;
+  private LockAllocator myLockAllocator;
+  private RenameDuplicatedClasses myRenameDuplicatedClasses;
+  private StaticMethodBinder myStaticMethodBinder;
+  private StaticInliner myStaticInliner;
+  private UnreachableMethodsTagger myUnreachableMethodsTagger;
+  private UnreachableFieldsTagger myUnreachableFieldsTagger;
+  private TightestQualifiersTagger myTightestQualifiersTagger;
+  private Scene myScene;
+  private RectangularArrayFinder myRectangularArrayFinder;
+  private CallGraphGrapher myCallGraphGrapher;
+  private PurityAnalysis myPurityAnalysis;
+  private ConstantPropagatorAndFolder myConstantPropagatorAndFolder;
+  private CommonSubexpressionEliminator myCommonSubexpressionEliminator;
+  private LazyCodeMotion myLazyCodeMotion;
+  private BusyCodeMotion myBusyCodeMotion;
+  private UnconditionalBranchFolder myUnconditionalBranchFolder;
+  private ConditionalBranchFolder myConditionalBranchFolder;
+  private NullPointerChecker myNullPointerChecker;
+  private NullPointerColorer myNullPointerColorer;
+  private ArrayBoundsChecker myArrayBoundsChecker;
+  private ProfilingGenerator myProfilingGenerator;
+  private SideEffectTagger mySideEffectTagger;
+  private CallGraphTagger myCallGraphTagger;
+  private ParityTagger myParityTagger;
+  private ParameterAliasTagger myParameterAliasTagger;
+  private ReachingDefsTagger myReachingDefsTagger;
+  private LiveVarsTagger myLiveVarsTagger;
+  private CastCheckEliminatorDumper myCastCheckEliminatorDumper;
+  private LoopInvariantFinder myLoopInvariantFinder;
+  private AvailExprTagger myAvailExprTagger;
+  private DominatorsTagger myDominatorsTagger;
+  private ConstructorFolder myConstructorFolder;
+  private LoadStoreOptimizer myLoadStoreOptimizer;
+  private PeepholeOptimizer myPeepholeOptimizer;
+  private LineNumberTagAggregator myLineNumberTagAggregator;
+  private StoreChainOptimizer myStoreChainOptimizer;
+  private ArrayNullTagAggregator myArrayNullTagAggregator;
+  private DependenceTagAggregator myDependenceTagAggregator;
+  private FieldTagAggregator myFieldTagAggregator;
+  private LineNumberAdder myLineNumberAdder;
+  private InteractionHandler myInteractionHandler;
+  private PhaseDumper myPhaseDumper;
+  private ShimpleTransformer myShimpleTransformer;
+  private ThrowFinder myThrowFinder;
+  private PackageNamer myPackageNamer;
+  private InnerClassTagAggregator myInnerClassTagAggregator;
+  private DavaStaticBlockCleaner myDavaStaticBlockCleaner;
+  private DavaPrinter myDavaPrinter;
+  private Shimple myShimple;
+  private Grimp myGrimp;
+  private Dava myDava;
+  private Baf myBaf;
+  private Printer myPrinter;
+  private XMLPrinter myXMLPrinter;
+  private TemplatePrinter myTemplatePrinter;
+
+  @Inject
+  public PackManager(PhaseOptions myPhaseOptions, FieldTagger myFieldTagger, Options myOptions, SourceLocator mySourceLocator, TrapTightener myTrapTightener, DuplicateCatchAllTrapRemover myDuplicateCatchAllTrapRemover, LocalSplitter myLocalSplitter, TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, EmptySwitchEliminator myEmptySwitchEliminator, Aggregator myAggregator, LocalNameStandardizer myLocalNameStandardizer, UnusedLocalEliminator myUnusedLocalEliminator, CopyPropagator myCopyPropagator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator, ConstantInvokeMethodBaseTransformer myConstantInvokeMethodBaseTransformer, CHATransformer myCHATransformer, PaddleHook myPaddleHook, MhpTransformer myMhpTransformer, SparkTransformer mySparkTransformer, LockAllocator myLockAllocator, RenameDuplicatedClasses myRenameDuplicatedClasses, StaticMethodBinder myStaticMethodBinder, StaticInliner myStaticInliner, UnreachableMethodsTagger myUnreachableMethodsTagger, UnreachableFieldsTagger myUnreachableFieldsTagger, TightestQualifiersTagger myTightestQualifiersTagger, Scene myScene, RectangularArrayFinder myRectangularArrayFinder, CallGraphGrapher myCallGraphGrapher, PurityAnalysis myPurityAnalysis, ConstantPropagatorAndFolder myConstantPropagatorAndFolder, CommonSubexpressionEliminator myCommonSubexpressionEliminator, LazyCodeMotion myLazyCodeMotion, BusyCodeMotion myBusyCodeMotion, UnconditionalBranchFolder myUnconditionalBranchFolder, ConditionalBranchFolder myConditionalBranchFolder, NullPointerChecker myNullPointerChecker, NullPointerColorer myNullPointerColorer, ArrayBoundsChecker myArrayBoundsChecker, ProfilingGenerator myProfilingGenerator, SideEffectTagger mySideEffectTagger, CallGraphTagger myCallGraphTagger, ParityTagger myParityTagger, ParameterAliasTagger myParameterAliasTagger, ReachingDefsTagger myReachingDefsTagger, LiveVarsTagger myLiveVarsTagger, CastCheckEliminatorDumper myCastCheckEliminatorDumper, LoopInvariantFinder myLoopInvariantFinder, AvailExprTagger myAvailExprTagger, DominatorsTagger myDominatorsTagger, ConstructorFolder myConstructorFolder, LoadStoreOptimizer myLoadStoreOptimizer, PeepholeOptimizer myPeepholeOptimizer, LineNumberTagAggregator myLineNumberTagAggregator, StoreChainOptimizer myStoreChainOptimizer, ArrayNullTagAggregator myArrayNullTagAggregator, DependenceTagAggregator myDependenceTagAggregator, FieldTagAggregator myFieldTagAggregator, LineNumberAdder myLineNumberAdder, InteractionHandler myInteractionHandler, PhaseDumper myPhaseDumper, ShimpleTransformer myShimpleTransformer, ThrowFinder myThrowFinder, PackageNamer myPackageNamer, InnerClassTagAggregator myInnerClassTagAggregator, DavaStaticBlockCleaner myDavaStaticBlockCleaner, DavaPrinter myDavaPrinter, Shimple myShimple, Grimp myGrimp, Dava myDava, Baf myBaf, Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter) {
+    this.myPhaseOptions = myPhaseOptions;
+    this.myOptions = myOptions;
+   // myPhaseOptions.setPackManager(this);
+    this.myFieldTagger = myFieldTagger;
+    this.mySourceLocator = mySourceLocator;
+    this.myTrapTightener = myTrapTightener;
+    this.myDuplicateCatchAllTrapRemover = myDuplicateCatchAllTrapRemover;
+    this.myLocalSplitter = myLocalSplitter;
+    this.myTypeAssigner = myTypeAssigner;
+    this.myLocalPacker = myLocalPacker;
+    this.myEmptySwitchEliminator = myEmptySwitchEliminator;
+    this.myAggregator = myAggregator;
+    this.myLocalNameStandardizer = myLocalNameStandardizer;
+    this.myUnusedLocalEliminator = myUnusedLocalEliminator;
+    this.myCopyPropagator = myCopyPropagator;
+    this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
+    this.myUnreachableCodeEliminator = myUnreachableCodeEliminator;
+    this.myNopEliminator = myNopEliminator;
+    this.myConstantInvokeMethodBaseTransformer = myConstantInvokeMethodBaseTransformer;
+    this.myCHATransformer = myCHATransformer;
+    this.myPaddleHook = myPaddleHook;
+    this.myMhpTransformer = myMhpTransformer;
+    this.mySparkTransformer = mySparkTransformer;
+    this.myLockAllocator = myLockAllocator;
+    this.myRenameDuplicatedClasses = myRenameDuplicatedClasses;
+    this.myStaticMethodBinder = myStaticMethodBinder;
+    this.myStaticInliner = myStaticInliner;
+    this.myUnreachableMethodsTagger = myUnreachableMethodsTagger;
+    this.myUnreachableFieldsTagger = myUnreachableFieldsTagger;
+    this.myTightestQualifiersTagger = myTightestQualifiersTagger;
+    this.myScene = myScene;
+    this.myRectangularArrayFinder = myRectangularArrayFinder;
+    this.myCallGraphGrapher = myCallGraphGrapher;
+    this.myPurityAnalysis = myPurityAnalysis;
+    this.myConstantPropagatorAndFolder = myConstantPropagatorAndFolder;
+    this.myCommonSubexpressionEliminator = myCommonSubexpressionEliminator;
+    this.myLazyCodeMotion = myLazyCodeMotion;
+    this.myBusyCodeMotion = myBusyCodeMotion;
+    this.myUnconditionalBranchFolder = myUnconditionalBranchFolder;
+    this.myConditionalBranchFolder = myConditionalBranchFolder;
+    this.myNullPointerChecker = myNullPointerChecker;
+    this.myNullPointerColorer = myNullPointerColorer;
+    this.myArrayBoundsChecker = myArrayBoundsChecker;
+    this.myProfilingGenerator = myProfilingGenerator;
+    this.mySideEffectTagger = mySideEffectTagger;
+    this.myCallGraphTagger = myCallGraphTagger;
+    this.myParityTagger = myParityTagger;
+    this.myParameterAliasTagger = myParameterAliasTagger;
+    this.myReachingDefsTagger = myReachingDefsTagger;
+    this.myLiveVarsTagger = myLiveVarsTagger;
+    this.myCastCheckEliminatorDumper = myCastCheckEliminatorDumper;
+    this.myLoopInvariantFinder = myLoopInvariantFinder;
+    this.myAvailExprTagger = myAvailExprTagger;
+    this.myDominatorsTagger = myDominatorsTagger;
+    this.myConstructorFolder = myConstructorFolder;
+    this.myLoadStoreOptimizer = myLoadStoreOptimizer;
+    this.myPeepholeOptimizer = myPeepholeOptimizer;
+    this.myLineNumberTagAggregator = myLineNumberTagAggregator;
+    this.myStoreChainOptimizer = myStoreChainOptimizer;
+    this.myArrayNullTagAggregator = myArrayNullTagAggregator;
+    this.myDependenceTagAggregator = myDependenceTagAggregator;
+    this.myFieldTagAggregator = myFieldTagAggregator;
+    this.myLineNumberAdder = myLineNumberAdder;
+    this.myInteractionHandler = myInteractionHandler;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myShimpleTransformer = myShimpleTransformer;
+    this.myThrowFinder = myThrowFinder;
+    this.myPackageNamer = myPackageNamer;
+    this.myInnerClassTagAggregator = myInnerClassTagAggregator;
+    this.myDavaStaticBlockCleaner = myDavaStaticBlockCleaner;
+    this.myDavaPrinter = myDavaPrinter;
+    this.myShimple = myShimple;
+    this.myGrimp = myGrimp;
+    this.myDava = myDava;
+    this.myBaf = myBaf;
+    this.myPrinter = myPrinter;
+    this.myXMLPrinter = myXMLPrinter;
+    this.myTemplatePrinter = myTemplatePrinter;
     init();
   }
 
@@ -175,46 +333,46 @@ public class PackManager {
     // Jimple body creation
     addPack(p = new JimpleBodyPack());
     {
-      p.add(new Transform("jb.tt", TrapTightener.v()));
-      p.add(new Transform("jb.dtr", DuplicateCatchAllTrapRemover.v()));
-      p.add(new Transform("jb.ese", EmptySwitchEliminator.v()));
-      p.add(new Transform("jb.ls", LocalSplitter.v()));
-      p.add(new Transform("jb.a", Aggregator.v()));
-      p.add(new Transform("jb.ule", UnusedLocalEliminator.v()));
-      p.add(new Transform("jb.tr", TypeAssigner.v()));
-      p.add(new Transform("jb.ulp", LocalPacker.v()));
-      p.add(new Transform("jb.lns", LocalNameStandardizer.v()));
-      p.add(new Transform("jb.cp", CopyPropagator.v()));
-      p.add(new Transform("jb.dae", DeadAssignmentEliminator.v()));
-      p.add(new Transform("jb.cp-ule", UnusedLocalEliminator.v()));
-      p.add(new Transform("jb.lp", LocalPacker.v()));
-      p.add(new Transform("jb.ne", NopEliminator.v()));
-      p.add(new Transform("jb.uce", UnreachableCodeEliminator.v()));
+      p.add(new Transform("jb.tt", myTrapTightener));
+      p.add(new Transform("jb.dtr", myDuplicateCatchAllTrapRemover));
+      p.add(new Transform("jb.ese", myEmptySwitchEliminator));
+      p.add(new Transform("jb.ls", myLocalSplitter));
+      p.add(new Transform("jb.a", myAggregator));
+      p.add(new Transform("jb.ule", myUnusedLocalEliminator));
+      p.add(new Transform("jb.tr", myTypeAssigner));
+      p.add(new Transform("jb.ulp", myLocalPacker));
+      p.add(new Transform("jb.lns", myLocalNameStandardizer));
+      p.add(new Transform("jb.cp", myCopyPropagator));
+      p.add(new Transform("jb.dae", myDeadAssignmentEliminator));
+      p.add(new Transform("jb.cp-ule", myUnusedLocalEliminator));
+      p.add(new Transform("jb.lp", myLocalPacker));
+      p.add(new Transform("jb.ne", myNopEliminator));
+      p.add(new Transform("jb.uce", myUnreachableCodeEliminator));
     }
 
     // Java to Jimple - Jimple body creation
     addPack(p = new JavaToJimpleBodyPack());
     {
-      p.add(new Transform("jj.ls", LocalSplitter.v()));
-      p.add(new Transform("jj.a", Aggregator.v()));
-      p.add(new Transform("jj.ule", UnusedLocalEliminator.v()));
-      p.add(new Transform("jj.ne", NopEliminator.v()));
-      p.add(new Transform("jj.tr", TypeAssigner.v()));
-      // p.add(new Transform("jj.ct", CondTransformer.v()));
-      p.add(new Transform("jj.ulp", LocalPacker.v()));
-      p.add(new Transform("jj.lns", LocalNameStandardizer.v()));
-      p.add(new Transform("jj.cp", CopyPropagator.v()));
-      p.add(new Transform("jj.dae", DeadAssignmentEliminator.v()));
-      p.add(new Transform("jj.cp-ule", UnusedLocalEliminator.v()));
-      p.add(new Transform("jj.lp", LocalPacker.v()));
-      p.add(new Transform("jj.uce", UnreachableCodeEliminator.v()));
+      p.add(new Transform("jj.ls", myLocalSplitter));
+      p.add(new Transform("jj.a", myAggregator));
+      p.add(new Transform("jj.ule", myUnusedLocalEliminator));
+      p.add(new Transform("jj.ne", myNopEliminator));
+      p.add(new Transform("jj.tr", myTypeAssigner));
+      // p.add(new Transform("jj.ct", myCondTransformer));
+      p.add(new Transform("jj.ulp", myLocalPacker));
+      p.add(new Transform("jj.lns", myLocalNameStandardizer));
+      p.add(new Transform("jj.cp", myCopyPropagator));
+      p.add(new Transform("jj.dae", myDeadAssignmentEliminator));
+      p.add(new Transform("jj.cp-ule", myUnusedLocalEliminator));
+      p.add(new Transform("jj.lp", myLocalPacker));
+      p.add(new Transform("jj.uce", myUnreachableCodeEliminator));
 
     }
 
     // Whole-Jimple Pre-processing Pack
     addPack(p = new ScenePack("wjpp"));
     {
-      p.add(new Transform("wjpp.cimbt", ConstantInvokeMethodBaseTransformer.v()));
+      p.add(new Transform("wjpp.cimbt", myConstantInvokeMethodBaseTransformer));
     }
 
     // Whole-Shimple Pre-processing Pack
@@ -223,9 +381,9 @@ public class PackManager {
     // Call graph pack
     addPack(p = new CallGraphPack("cg"));
     {
-      p.add(new Transform("cg.cha", CHATransformer.v()));
-      p.add(new Transform("cg.spark", SparkTransformer.v()));
-      p.add(new Transform("cg.paddle", PaddleHook.v()));
+      p.add(new Transform("cg.cha", myCHATransformer));
+      p.add(new Transform("cg.spark", mySparkTransformer));
+      p.add(new Transform("cg.paddle", myPaddleHook));
     }
 
     // Whole-Shimple transformation pack
@@ -237,28 +395,28 @@ public class PackManager {
     // Whole-Jimple transformation pack
     addPack(p = new ScenePack("wjtp"));
     {
-      p.add(new Transform("wjtp.mhp", MhpTransformer.v()));
-      p.add(new Transform("wjtp.tn", LockAllocator.v()));
-      p.add(new Transform("wjtp.rdc", RenameDuplicatedClasses.v()));
+      p.add(new Transform("wjtp.mhp", myMhpTransformer));
+      p.add(new Transform("wjtp.tn", myLockAllocator));
+      p.add(new Transform("wjtp.rdc", myRenameDuplicatedClasses));
     }
 
     // Whole-Jimple Optimization pack
     addPack(p = new ScenePack("wjop"));
     {
-      p.add(new Transform("wjop.smb", StaticMethodBinder.v()));
-      p.add(new Transform("wjop.si", StaticInliner.v()));
+      p.add(new Transform("wjop.smb", myStaticMethodBinder));
+      p.add(new Transform("wjop.si", myStaticInliner));
     }
 
     // Give another chance to do Whole-Jimple transformation
     // The RectangularArrayFinder will be put into this package.
     addPack(p = new ScenePack("wjap"));
     {
-      p.add(new Transform("wjap.ra", RectangularArrayFinder.v()));
-      p.add(new Transform("wjap.umt", UnreachableMethodsTagger.v()));
-      p.add(new Transform("wjap.uft", UnreachableFieldsTagger.v()));
-      p.add(new Transform("wjap.tqt", TightestQualifiersTagger.v()));
-      p.add(new Transform("wjap.cgg", CallGraphGrapher.v()));
-      p.add(new Transform("wjap.purity", PurityAnalysis.v())); // [AM]
+      p.add(new Transform("wjap.ra", myRectangularArrayFinder));
+      p.add(new Transform("wjap.umt", myUnreachableMethodsTagger));
+      p.add(new Transform("wjap.uft", myUnreachableFieldsTagger));
+      p.add(new Transform("wjap.tqt", myTightestQualifiersTagger));
+      p.add(new Transform("wjap.cgg", myCallGraphGrapher));
+      p.add(new Transform("wjap.purity", myPurityAnalysis)); // [AM]
     }
 
     // Shimple pack
@@ -270,7 +428,7 @@ public class PackManager {
     // Shimple optimization pack
     addPack(p = new BodyPack("sop"));
     {
-      p.add(new Transform("sop.cpf", SConstantPropagatorAndFolder.v()));
+      p.add(new Transform("sop.cpf", myConstantPropagatorAndFolder));
     }
 
     // Jimple transformation pack
@@ -279,55 +437,55 @@ public class PackManager {
     // Jimple optimization pack
     addPack(p = new BodyPack("jop"));
     {
-      p.add(new Transform("jop.cse", CommonSubexpressionEliminator.v()));
-      p.add(new Transform("jop.bcm", BusyCodeMotion.v()));
-      p.add(new Transform("jop.lcm", LazyCodeMotion.v()));
-      p.add(new Transform("jop.cp", CopyPropagator.v()));
-      p.add(new Transform("jop.cpf", ConstantPropagatorAndFolder.v()));
-      p.add(new Transform("jop.cbf", ConditionalBranchFolder.v()));
-      p.add(new Transform("jop.dae", DeadAssignmentEliminator.v()));
+      p.add(new Transform("jop.cse", myCommonSubexpressionEliminator));
+      p.add(new Transform("jop.bcm", myBusyCodeMotion));
+      p.add(new Transform("jop.lcm", myLazyCodeMotion));
+      p.add(new Transform("jop.cp", myCopyPropagator));
+      p.add(new Transform("jop.cpf", myConstantPropagatorAndFolder));
+      p.add(new Transform("jop.cbf", myConditionalBranchFolder));
+      p.add(new Transform("jop.dae", myDeadAssignmentEliminator));
       p.add(new Transform("jop.nce", new NullCheckEliminator()));
-      p.add(new Transform("jop.uce1", UnreachableCodeEliminator.v()));
-      p.add(new Transform("jop.ubf1", UnconditionalBranchFolder.v()));
-      p.add(new Transform("jop.uce2", UnreachableCodeEliminator.v()));
-      p.add(new Transform("jop.ubf2", UnconditionalBranchFolder.v()));
-      p.add(new Transform("jop.ule", UnusedLocalEliminator.v()));
+      p.add(new Transform("jop.uce1", myUnreachableCodeEliminator));
+      p.add(new Transform("jop.ubf1", myUnconditionalBranchFolder));
+      p.add(new Transform("jop.uce2", myUnreachableCodeEliminator));
+      p.add(new Transform("jop.ubf2", myUnconditionalBranchFolder));
+      p.add(new Transform("jop.ule", myUnusedLocalEliminator));
     }
 
     // Jimple annotation pack
     addPack(p = new BodyPack("jap"));
     {
-      p.add(new Transform("jap.npc", NullPointerChecker.v()));
-      p.add(new Transform("jap.npcolorer", NullPointerColorer.v()));
-      p.add(new Transform("jap.abc", ArrayBoundsChecker.v()));
-      p.add(new Transform("jap.profiling", ProfilingGenerator.v()));
-      p.add(new Transform("jap.sea", SideEffectTagger.v()));
-      p.add(new Transform("jap.fieldrw", FieldTagger.v()));
-      p.add(new Transform("jap.cgtagger", CallGraphTagger.v()));
-      p.add(new Transform("jap.parity", ParityTagger.v()));
-      p.add(new Transform("jap.pat", ParameterAliasTagger.v()));
-      p.add(new Transform("jap.rdtagger", ReachingDefsTagger.v()));
-      p.add(new Transform("jap.lvtagger", LiveVarsTagger.v()));
-      p.add(new Transform("jap.che", CastCheckEliminatorDumper.v()));
+      p.add(new Transform("jap.npc", myNullPointerChecker));
+      p.add(new Transform("jap.npcolorer", myNullPointerColorer));
+      p.add(new Transform("jap.abc", myArrayBoundsChecker));
+      p.add(new Transform("jap.profiling", myProfilingGenerator));
+      p.add(new Transform("jap.sea", mySideEffectTagger));
+      p.add(new Transform("jap.fieldrw", myFieldTagger));
+      p.add(new Transform("jap.cgtagger", myCallGraphTagger));
+      p.add(new Transform("jap.parity", myParityTagger));
+      p.add(new Transform("jap.pat", myParameterAliasTagger));
+      p.add(new Transform("jap.rdtagger", myReachingDefsTagger));
+      p.add(new Transform("jap.lvtagger", myLiveVarsTagger));
+      p.add(new Transform("jap.che", myCastCheckEliminatorDumper));
       p.add(new Transform("jap.umt", new UnreachableMethodTransformer()));
-      p.add(new Transform("jap.lit", LoopInvariantFinder.v()));
-      p.add(new Transform("jap.aet", AvailExprTagger.v()));
-      p.add(new Transform("jap.dmt", DominatorsTagger.v()));
+      p.add(new Transform("jap.lit", myLoopInvariantFinder));
+      p.add(new Transform("jap.aet", myAvailExprTagger));
+      p.add(new Transform("jap.dmt", myDominatorsTagger));
 
     }
 
     // CFG Viewer
     /*
-     * addPack(p = new BodyPack("cfg")); { p.add(new Transform("cfg.output", CFGPrinter.v())); }
+     * addPack(p = new BodyPack("cfg")); { p.add(new Transform("cfg.output", CFGmyPrinter)); }
      */
 
     // Grimp body creation
     addPack(p = new BodyPack("gb"));
     {
-      p.add(new Transform("gb.a1", Aggregator.v()));
-      p.add(new Transform("gb.cf", ConstructorFolder.v()));
-      p.add(new Transform("gb.a2", Aggregator.v()));
-      p.add(new Transform("gb.ule", UnusedLocalEliminator.v()));
+      p.add(new Transform("gb.a1", myAggregator));
+      p.add(new Transform("gb.cf", myConstructorFolder));
+      p.add(new Transform("gb.a2", myAggregator));
+      p.add(new Transform("gb.ule", myUnusedLocalEliminator));
     }
 
     // Grimp optimization pack
@@ -336,11 +494,11 @@ public class PackManager {
     // Baf body creation
     addPack(p = new BodyPack("bb"));
     {
-      p.add(new Transform("bb.lso", LoadStoreOptimizer.v()));
-      p.add(new Transform("bb.pho", PeepholeOptimizer.v()));
-      p.add(new Transform("bb.ule", UnusedLocalEliminator.v()));
-      p.add(new Transform("bb.lp", LocalPacker.v()));
-      p.add(new Transform("bb.sco", StoreChainOptimizer.v()));
+      p.add(new Transform("bb.lso", myLoadStoreOptimizer));
+      p.add(new Transform("bb.pho", myPeepholeOptimizer));
+      p.add(new Transform("bb.ule", myUnusedLocalEliminator));
+      p.add(new Transform("bb.lp", myLocalPacker));
+      p.add(new Transform("bb.sco", myStoreChainOptimizer));
     }
 
     // Baf optimization pack
@@ -349,10 +507,10 @@ public class PackManager {
     // Code attribute tag aggregation pack
     addPack(p = new BodyPack("tag"));
     {
-      p.add(new Transform("tag.ln", LineNumberTagAggregator.v()));
-      p.add(new Transform("tag.an", ArrayNullTagAggregator.v()));
-      p.add(new Transform("tag.dep", DependenceTagAggregator.v()));
-      p.add(new Transform("tag.fieldrw", FieldTagAggregator.v()));
+      p.add(new Transform("tag.ln", myLineNumberTagAggregator));
+      p.add(new Transform("tag.an", myArrayNullTagAggregator));
+      p.add(new Transform("tag.dep", myDependenceTagAggregator));
+      p.add(new Transform("tag.fieldrw", myFieldTagAggregator));
     }
 
     // Dummy Dava Phase
@@ -413,7 +571,7 @@ public class PackManager {
   }
 
   public void runPacks() {
-    if (Options.v().oaat()) {
+    if (myOptions.oaat()) {
       runPacksForOneClassAtATime();
     } else {
       runPacksNormally();
@@ -421,16 +579,16 @@ public class PackManager {
   }
 
   private void runPacksForOneClassAtATime() {
-    if (Options.v().src_prec() == Options.src_prec_class && Options.v().keep_line_number()) {
-      LineNumberAdder lineNumAdder = LineNumberAdder.v();
+    if (myOptions.src_prec() == Options.src_prec_class && myOptions.keep_line_number()) {
+      LineNumberAdder lineNumAdder = myLineNumberAdder;
       lineNumAdder.internalTransform("", null);
     }
 
     setupJAR();
-    for (String path : Options.v().process_dir()) {
+    for (String path : myOptions.process_dir()) {
       // hack1: resolve to signatures only
-      for (String cl : SourceLocator.v().getClassesUnder(path)) {
-        SootClass clazz = Scene.v().forceResolve(cl, SootClass.SIGNATURES);
+      for (String cl : mySourceLocator.getClassesUnder(path)) {
+        SootClass clazz = myScene.forceResolve(cl, SootClass.SIGNATURES);
         clazz.setApplicationClass();
       }
       // hack2: for each class one after another:
@@ -438,14 +596,14 @@ public class PackManager {
       // b) run packs
       // c) write class
       // d) remove bodies
-      for (String cl : SourceLocator.v().getClassesUnder(path)) {
+      for (String cl : mySourceLocator.getClassesUnder(path)) {
         SootClass clazz = null;
-        ClassSource source = SourceLocator.v().getClassSource(cl);
+        ClassSource source = mySourceLocator.getClassSource(cl);
         try {
           if (source == null) {
             throw new RuntimeException("Could not locate class source");
           }
-          clazz = Scene.v().getSootClass(cl);
+          clazz = myScene.getSootClass(cl);
           clazz.setResolvingLevel(SootClass.BODIES);
           source.resolve(clazz);
         } finally {
@@ -456,8 +614,8 @@ public class PackManager {
 
         // Create tags from all values we only have in code assingments
         // now
-        for (SootClass sc : Scene.v().getApplicationClasses()) {
-          if (Options.v().validate()) {
+        for (SootClass sc : myScene.getApplicationClasses()) {
+          if (myOptions.validate()) {
             sc.validate();
           }
           if (!sc.isPhantom) {
@@ -469,15 +627,15 @@ public class PackManager {
         // generate output
         writeClass(clazz);
 
-        if (!Options.v().no_writeout_body_releasing()) {
+        if (!myOptions.no_writeout_body_releasing()) {
           releaseBodies(clazz);
         }
       }
 
-      // for (String cl : SourceLocator.v().getClassesUnder(path)) {
-      // SootClass clazz = Scene.v().forceResolve(cl, SootClass.BODIES);
+      // for (String cl : mySourceLocator.getClassesUnder(path)) {
+      // SootClass clazz = myScene.forceResolve(cl, SootClass.BODIES);
       // releaseBodies(clazz);
-      // Scene.v().removeClass(clazz);
+      // myScene.removeClass(clazz);
       // }
     }
     tearDownJAR();
@@ -486,19 +644,19 @@ public class PackManager {
   }
 
   private void runPacksNormally() {
-    if (Options.v().src_prec() == Options.src_prec_class && Options.v().keep_line_number()) {
-      LineNumberAdder lineNumAdder = LineNumberAdder.v();
+    if (myOptions.src_prec() == Options.src_prec_class && myOptions.keep_line_number()) {
+      LineNumberAdder lineNumAdder = myLineNumberAdder;
       lineNumAdder.internalTransform("", null);
     }
 
-    if (Options.v().whole_program() || Options.v().whole_shimple()) {
+    if (myOptions.whole_program() || myOptions.whole_shimple()) {
       runWholeProgramPacks();
     }
     retrieveAllBodies();
 
     // Create tags from all values we only have in code assignments now
-    for (SootClass sc : Scene.v().getApplicationClasses()) {
-      if (Options.v().validate()) {
+    for (SootClass sc : myScene.getApplicationClasses()) {
+      if (myOptions.validate()) {
         sc.validate();
       }
       if (!sc.isPhantom) {
@@ -513,10 +671,10 @@ public class PackManager {
     }
 
     preProcessDAVA();
-    if (Options.v().interactive_mode()) {
-      if (InteractionHandler.v().getInteractionListener() == null) {
+    if (myOptions.interactive_mode()) {
+      if (myInteractionHandler.getInteractionListener() == null) {
         logger.debug("Cannot run in interactive mode. No listeners available. Continuing in regular mode.");
-        Options.v().set_interactive_mode(false);
+        myOptions.set_interactive_mode(false);
       } else {
         logger.debug("Running in interactive mode.");
       }
@@ -556,14 +714,14 @@ public class PackManager {
 
   public void writeOutput() {
     setupJAR();
-    if (Options.v().verbose()) {
-      PhaseDumper.v().dumpBefore("output");
+    if (myOptions.verbose()) {
+      myPhaseDumper.dumpBefore("output");
     }
-    if (Options.v().output_format() == Options.output_format_dava) {
+    if (myOptions.output_format() == Options.output_format_dava) {
       postProcessDAVA();
       outputDava();
-    } else if (Options.v().output_format() == Options.output_format_dex
-        || Options.v().output_format() == Options.output_format_force_dex) {
+    } else if (myOptions.output_format() == Options.output_format_dex
+        || myOptions.output_format() == Options.output_format_force_dex) {
       writeDexOutput();
     } else {
       writeOutput(reachableClasses());
@@ -571,11 +729,11 @@ public class PackManager {
     }
     postProcessXML(reachableClasses());
 
-    if (!Options.v().no_writeout_body_releasing()) {
+    if (!myOptions.no_writeout_body_releasing()) {
       releaseBodies(reachableClasses());
     }
-    if (Options.v().verbose()) {
-      PhaseDumper.v().dumpAfter("output");
+    if (myOptions.verbose()) {
+      myPhaseDumper.dumpAfter("output");
     }
   }
 
@@ -587,8 +745,8 @@ public class PackManager {
   }
 
   private void setupJAR() {
-    if (Options.v().output_jar()) {
-      String outFileName = SourceLocator.v().getOutputJarName();
+    if (myOptions.output_jar()) {
+      String outFileName = mySourceLocator.getOutputJarName();
       try {
         jarFile = new JarOutputStream(new FileOutputStream(outFileName));
       } catch (IOException e) {
@@ -600,8 +758,8 @@ public class PackManager {
   }
 
   private void runWholeProgramPacks() {
-    if (Options.v().whole_shimple()) {
-      ShimpleTransformer.v().transform();
+    if (myOptions.whole_shimple()) {
+      myShimpleTransformer.transform();
       getPack("wspp").apply();
       getPack("cg").apply();
       getPack("wstp").apply();
@@ -613,14 +771,14 @@ public class PackManager {
       getPack("wjop").apply();
       getPack("wjap").apply();
     }
-    PaddleHook.v().finishPhases();
+    myPaddleHook.finishPhases();
   }
 
   /* preprocess classes for DAVA */
   private void preProcessDAVA() {
-    if (Options.v().output_format() == Options.output_format_dava) {
+    if (myOptions.output_format() == Options.output_format_dava) {
 
-      Map<String, String> options = PhaseOptions.v().getPhaseOptions("db");
+      Map<String, String> options = myPhaseOptions.getPhaseOptions("db");
       boolean isSourceJavac = PhaseOptions.getBoolean(options, "source-is-javac");
       if (!isSourceJavac) {
         /*
@@ -638,14 +796,14 @@ public class PackManager {
           System.out.println("Source is not Javac hence invoking ThrowFinder");
         }
 
-        ThrowFinder.v().find();
+        myThrowFinder.find();
       } else {
         if (DEBUG) {
           System.out.println("Source is javac hence we dont need to invoke ThrowFinder");
         }
       }
 
-      PackageNamer.v().fixNames();
+      myPackageNamer.fixNames();
 
     }
   }
@@ -680,7 +838,7 @@ public class PackManager {
   }
 
   private void handleInnerClasses() {
-    InnerClassTagAggregator agg = InnerClassTagAggregator.v();
+    InnerClassTagAggregator agg = myInnerClassTagAggregator;
     agg.internalTransform("", null);
   }
 
@@ -688,7 +846,7 @@ public class PackManager {
     // If we're writing individual class files, we can write them
     // concurrently. Otherwise, we need to synchronize for not destroying
     // the shared output stream.
-    int threadNum = Options.v().output_format() == Options.output_format_class && jarFile == null
+    int threadNum = myOptions.output_format() == Options.output_format_class && jarFile == null
         ? Runtime.getRuntime().availableProcessors()
         : 1;
     CountingThreadPoolExecutor executor
@@ -735,26 +893,26 @@ public class PackManager {
   }
 
   private Iterator<SootClass> reachableClasses() {
-    return Scene.v().getApplicationClasses().snapshotIterator();
+    return myScene.getApplicationClasses().snapshotIterator();
   }
 
   /* post process for DAVA */
   private void postProcessDAVA() {
 
-    Chain<SootClass> appClasses = Scene.v().getApplicationClasses();
+    Chain<SootClass> appClasses = myScene.getApplicationClasses();
 
-    Map<String, String> options = PhaseOptions.v().getPhaseOptions("db.transformations");
+    Map<String, String> options = myPhaseOptions.getPhaseOptions("db.transformations");
     boolean transformations = PhaseOptions.getBoolean(options, "enabled");
     /*
      * apply analyses etc
      */
     for (SootClass s : appClasses) {
-      String fileName = SourceLocator.v().getFileNameFor(s, Options.v().output_format());
+      String fileName = mySourceLocator.getFileNameFor(s, myOptions.output_format());
 
       /*
        * Nomair A. Naeem 5-Jun-2005 Added to remove the *final* bug in Dava (often seen in AspectJ programs)
        */
-      DavaStaticBlockCleaner.v().staticBlockInlining(s);
+      myDavaStaticBlockCleaner.staticBlockInlining(s);
 
       // remove returns from void methods
       VoidReturnRemover.cleanClass(s);
@@ -809,7 +967,7 @@ public class PackManager {
   }
 
   private void outputDava() {
-    Chain<SootClass> appClasses = Scene.v().getApplicationClasses();
+    Chain<SootClass> appClasses = myScene.getApplicationClasses();
 
     /*
      * Generate decompiled code
@@ -822,13 +980,13 @@ public class PackManager {
 
       OutputStream streamOut = null;
       PrintWriter writerOut = null;
-      String fileName = SourceLocator.v().getFileNameFor(s, Options.v().output_format());
+      String fileName = mySourceLocator.getFileNameFor(s, myOptions.output_format());
       decompiledClasses.add(fileName.substring(fileName.lastIndexOf('/') + 1));
       if (pathForBuild == null) {
         pathForBuild = fileName.substring(0, fileName.lastIndexOf('/') + 1);
         // System.out.println(pathForBuild);
       }
-      if (Options.v().gzip()) {
+      if (myOptions.gzip()) {
         fileName = fileName + ".gz";
       }
 
@@ -840,7 +998,7 @@ public class PackManager {
         } else {
           streamOut = new FileOutputStream(fileName);
         }
-        if (Options.v().gzip()) {
+        if (myOptions.gzip()) {
           streamOut = new GZIPOutputStream(streamOut);
         }
         writerOut = new PrintWriter(new OutputStreamWriter(streamOut));
@@ -852,7 +1010,7 @@ public class PackManager {
 
       G.v().out.flush();
 
-      DavaPrinter.v().printTo(s, writerOut);
+      myDavaPrinter.printTo(s, writerOut);
 
       G.v().out.flush();
 
@@ -894,7 +1052,7 @@ public class PackManager {
 
   @SuppressWarnings("fallthrough")
   private void runBodyPacks(SootClass c) {
-    final int format = Options.v().output_format();
+    final int format = myOptions.output_format();
     if (format == Options.output_format_dava) {
       logger.debug("Decompiling {}...", c.getName());
 
@@ -936,7 +1094,7 @@ public class PackManager {
       case Options.output_format_jasmin:
       case Options.output_format_class:
       case Options.output_format_asm:
-        produceGrimp = Options.v().via_grimp();
+        produceGrimp = myOptions.via_grimp();
         produceBaf = !produceGrimp;
         break;
       default:
@@ -945,8 +1103,8 @@ public class PackManager {
 
     soot.xml.TagCollector tc = new soot.xml.TagCollector();
 
-    boolean wholeShimple = Options.v().whole_shimple();
-    if (Options.v().via_shimple()) {
+    boolean wholeShimple = myOptions.whole_shimple();
+    if (myOptions.via_shimple()) {
       produceShimple = true;
     }
 
@@ -981,13 +1139,13 @@ public class PackManager {
               sBody.rebuild();
             }
           } else {
-            sBody = Shimple.v().newBody(body);
+            sBody = myShimple.newBody(body);
           }
         }
 
         m.setActiveBody(sBody);
-        PackManager.v().getPack("stp").apply(sBody);
-        PackManager.v().getPack("sop").apply(sBody);
+        getPack("stp").apply(sBody);
+        getPack("sop").apply(sBody);
 
         if (produceJimple || (wholeShimple && !produceShimple)) {
           m.setActiveBody(sBody.toJimpleBody());
@@ -997,34 +1155,34 @@ public class PackManager {
       if (produceJimple) {
         Body body = m.retrieveActiveBody();
         // Change
-        CopyPropagator.v().transform(body);
-        ConditionalBranchFolder.v().transform(body);
-        UnreachableCodeEliminator.v().transform(body);
-        DeadAssignmentEliminator.v().transform(body);
-        UnusedLocalEliminator.v().transform(body);
-        PackManager.v().getPack("jtp").apply(body);
-        if (Options.v().validate()) {
+        myCopyPropagator.transform(body);
+        myConditionalBranchFolder.transform(body);
+        myUnreachableCodeEliminator.transform(body);
+        myDeadAssignmentEliminator.transform(body);
+        myUnusedLocalEliminator.transform(body);
+        getPack("jtp").apply(body);
+        if (myOptions.validate()) {
           body.validate();
         }
-        PackManager.v().getPack("jop").apply(body);
-        PackManager.v().getPack("jap").apply(body);
-        if (Options.v().xml_attributes() && Options.v().output_format() != Options.output_format_jimple) {
+        getPack("jop").apply(body);
+        getPack("jap").apply(body);
+        if (myOptions.xml_attributes() && myOptions.output_format() != Options.output_format_jimple) {
           // System.out.println("collecting body tags");
           tc.collectBodyTags(body);
         }
       }
 
-      // PackManager.v().getPack("cfg").apply(m.retrieveActiveBody());
+      // PackmyManager.getPack("cfg").apply(m.retrieveActiveBody());
 
       if (produceGrimp) {
-        m.setActiveBody(Grimp.v().newBody(m.getActiveBody(), "gb"));
-        PackManager.v().getPack("gop").apply(m.getActiveBody());
+        m.setActiveBody(myGrimp.newBody(m.getActiveBody(), "gb"));
+        getPack("gop").apply(m.getActiveBody());
       } else if (produceBaf) {
         m.setActiveBody(convertJimpleBodyToBaf(m));
       }
     }
 
-    if (Options.v().xml_attributes() && Options.v().output_format() != Options.output_format_jimple) {
+    if (myOptions.xml_attributes() && myOptions.output_format() != Options.output_format_jimple) {
       processXMLForClass(c, tc);
       // System.out.println("processed xml for class");
     }
@@ -1036,7 +1194,7 @@ public class PackManager {
         }
         // all the work done in decompilation is done in DavaBody which
         // is invoked from within newBody
-        m.setActiveBody(Dava.v().newBody(m.getActiveBody()));
+        m.setActiveBody(myDava.newBody(m.getActiveBody()));
       }
 
       /*
@@ -1061,14 +1219,14 @@ public class PackManager {
   public BafBody convertJimpleBodyToBaf(SootMethod m) {
     JimpleBody body = (JimpleBody) m.getActiveBody().clone();
     // Change
-    // ConditionalBranchFolder.v().transform(body);
-    // UnreachableCodeEliminator.v().transform(body);
-    // DeadAssignmentEliminator.v().transform(body);
-    // UnusedLocalEliminator.v().transform(body);
-    BafBody bafBody = Baf.v().newBody(body);
-    PackManager.v().getPack("bop").apply(bafBody);
-    PackManager.v().getPack("tag").apply(bafBody);
-    if (Options.v().validate()) {
+    // myConditionalBranchFolder.transform(body);
+    // myUnreachableCodeEliminator.transform(body);
+    // myDeadAssignmentEliminator.transform(body);
+    // myUnusedLocalEliminator.transform(body);
+    BafBody bafBody = myBaf.newBody(body);
+    getPack("bop").apply(bafBody);
+    getPack("tag").apply(bafBody);
+    if (myOptions.validate()) {
       bafBody.validate();
     }
     return bafBody;
@@ -1077,13 +1235,13 @@ public class PackManager {
   protected void writeClass(SootClass c) {
     // Create code assignments for those values we only have in code
     // assignments
-    if (Options.v().output_format() == Options.output_format_jimple) {
+    if (myOptions.output_format() == Options.output_format_jimple) {
       if (!c.isPhantom) {
         ConstantValueToInitializerTransformer.v().transformClass(c);
       }
     }
 
-    final int format = Options.v().output_format();
+    final int format = myOptions.output_format();
     if (format == Options.output_format_none) {
       return;
     }
@@ -1100,8 +1258,8 @@ public class PackManager {
     OutputStream streamOut = null;
     PrintWriter writerOut = null;
 
-    String fileName = SourceLocator.v().getFileNameFor(c, format);
-    if (Options.v().gzip()) {
+    String fileName = mySourceLocator.getFileNameFor(c, format);
+    if (myOptions.gzip()) {
       fileName = fileName + ".gz";
     }
 
@@ -1117,11 +1275,11 @@ public class PackManager {
         new File(fileName).getParentFile().mkdirs();
         streamOut = new FileOutputStream(fileName);
       }
-      if (Options.v().gzip()) {
+      if (myOptions.gzip()) {
         streamOut = new GZIPOutputStream(streamOut);
       }
       if (format == Options.output_format_class) {
-        if (Options.v().jasmin_backend()) {
+        if (myOptions.jasmin_backend()) {
           streamOut = new JasminOutputStream(streamOut);
         }
       }
@@ -1131,13 +1289,13 @@ public class PackManager {
       throw new CompilationDeathException("Cannot output file " + fileName, e);
     }
 
-    if (Options.v().xml_attributes()) {
-      Printer.v().setOption(Printer.ADD_JIMPLE_LN);
+    if (myOptions.xml_attributes()) {
+      myPrinter.setOption(Printer.ADD_JIMPLE_LN);
     }
 
     switch (format) {
       case Options.output_format_class:
-        if (!Options.v().jasmin_backend()) {
+        if (!myOptions.jasmin_backend()) {
           createASMBackend(c).generateClassFile(streamOut);
           break;
         }
@@ -1148,23 +1306,23 @@ public class PackManager {
       case Options.output_format_shimp:
       case Options.output_format_b:
       case Options.output_format_grimp:
-        Printer.v().setOption(Printer.USE_ABBREVIATIONS);
-        Printer.v().printTo(c, writerOut);
+        myPrinter.setOption(Printer.USE_ABBREVIATIONS);
+        myPrinter.printTo(c, writerOut);
         break;
       case Options.output_format_baf:
       case Options.output_format_jimple:
       case Options.output_format_shimple:
       case Options.output_format_grimple:
         writerOut = new PrintWriter(new EscapedWriter(new OutputStreamWriter(streamOut)));
-        Printer.v().printTo(c, writerOut);
+        myPrinter.printTo(c, writerOut);
         break;
       case Options.output_format_xml:
         writerOut = new PrintWriter(new EscapedWriter(new OutputStreamWriter(streamOut)));
-        XMLPrinter.v().printJimpleStyleTo(c, writerOut);
+        myXMLPrinter.printJimpleStyleTo(c, writerOut);
         break;
       case Options.output_format_template:
         writerOut = new PrintWriter(new OutputStreamWriter(streamOut));
-        TemplatePrinter.v().printTo(c, writerOut);
+        myTemplatePrinter.printTo(c, writerOut);
         break;
       case Options.output_format_asm:
         createASMBackend(c).generateTextualRepresentation(writerOut);
@@ -1210,15 +1368,15 @@ public class PackManager {
    * @return The ASM backend for writing the class into bytecode
    */
   protected BafASMBackend createASMBackend(SootClass c) {
-    int java_version = Options.v().java_version();
+    int java_version = myOptions.java_version();
     return new BafASMBackend(c, java_version);
   }
 
   private void postProcessXML(Iterator<SootClass> classes) {
-    if (!Options.v().xml_attributes()) {
+    if (!myOptions.xml_attributes()) {
       return;
     }
-    if (Options.v().output_format() != Options.output_format_jimple) {
+    if (myOptions.output_format() != Options.output_format_jimple) {
       return;
     }
     while (classes.hasNext()) {
@@ -1228,20 +1386,20 @@ public class PackManager {
   }
 
   private void processXMLForClass(SootClass c, TagCollector tc) {
-    int ofmt = Options.v().output_format();
+    int ofmt = myOptions.output_format();
     final int format = ofmt != Options.output_format_none ? ofmt : Options.output_format_jimple;
-    String fileName = SourceLocator.v().getFileNameFor(c, format);
-    XMLAttributesPrinter xap = new XMLAttributesPrinter(fileName, SourceLocator.v().getOutputDir());
+    String fileName = mySourceLocator.getFileNameFor(c, format);
+    XMLAttributesPrinter xap = new XMLAttributesPrinter(fileName, mySourceLocator.getOutputDir());
     xap.printAttrs(c, tc);
   }
 
   /**
-   * assumption: only called when <code>Options.v().output_format() == Options.output_format_jimple</code>
+   * assumption: only called when <code>myOptions.output_format() == Options.output_format_jimple</code>
    */
   private void processXMLForClass(SootClass c) {
-    final int format = Options.v().output_format();
-    String fileName = SourceLocator.v().getFileNameFor(c, format);
-    XMLAttributesPrinter xap = new XMLAttributesPrinter(fileName, SourceLocator.v().getOutputDir());
+    final int format = myOptions.output_format();
+    String fileName = mySourceLocator.getFileNameFor(c, format);
+    XMLAttributesPrinter xap = new XMLAttributesPrinter(fileName, mySourceLocator.getOutputDir());
     xap.printAttrs(c);
   }
 
@@ -1258,7 +1416,7 @@ public class PackManager {
 
   private void retrieveAllBodies() {
     // The old coffi front-end is not thread-safe
-    int threadNum = Options.v().coffi() ? 1 : Runtime.getRuntime().availableProcessors();
+    int threadNum = myOptions.coffi() ? 1 : Runtime.getRuntime().availableProcessors();
     CountingThreadPoolExecutor executor
         = new CountingThreadPoolExecutor(threadNum, threadNum, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 

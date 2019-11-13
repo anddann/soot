@@ -84,6 +84,8 @@ public abstract class Body extends AbstractHost implements Serializable {
   protected UnitPatchingChain unitChain = new UnitPatchingChain(new HashChain<Unit>());
 
   private static BodyValidator[] validators;
+  private Options myOptions;
+  private Printer myPrinter;
 
   /** Creates a deep copy of this Body. */
   @Override
@@ -106,14 +108,20 @@ public abstract class Body extends AbstractHost implements Serializable {
 
   /**
    * Creates a Body associated to the given method. Used by subclasses during initialization. Creation of a Body is triggered
-   * by e.g. Jimple.v().newBody(options).
+   * by e.g. myJimple.newBody(options).
    */
-  protected Body(SootMethod m) {
+  protected Body(SootMethod m, Options myOptions, Printer myPrinter) {
     this.method = m;
+    this.myOptions = myOptions;
+    this.myPrinter = myPrinter;
   }
 
-  /** Creates an extremely empty Body. The Body is not associated to any method. */
-  protected Body() {
+  /** Creates an extremely empty Body. The Body is not associated to any method.
+   * @param myOptions
+   * @param myPrinter*/
+  protected Body(Options myOptions, Printer myPrinter) {
+    this.myOptions = myOptions;
+    this.myPrinter = myPrinter;
   }
 
   /**
@@ -245,7 +253,7 @@ public abstract class Body extends AbstractHost implements Serializable {
    *          the list of validation errors
    */
   public void validate(List<ValidationException> exceptionList) {
-    final boolean runAllValidators = Options.v().debug() || Options.v().validate();
+    final boolean runAllValidators = myOptions.debug() || myOptions.validate();
     for (BodyValidator validator : getValidators()) {
       if (!validator.isBasicValidator() && !runAllValidators) {
         continue;
@@ -560,7 +568,7 @@ public abstract class Body extends AbstractHost implements Serializable {
     ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
     PrintWriter writerOut = new PrintWriter(new EscapedWriter(new OutputStreamWriter(streamOut)));
     try {
-      Printer.v().printTo(this, writerOut);
+      myPrinter.printTo(this, writerOut);
     } catch (RuntimeException e) {
       logger.error(e.getMessage(), e);
     }

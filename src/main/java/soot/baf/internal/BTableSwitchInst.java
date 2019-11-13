@@ -41,12 +41,12 @@ public class BTableSwitchInst extends AbstractInst implements TableSwitchInst {
   List unitBoxes;
 
   public BTableSwitchInst(Unit defaultTarget, int lowIndex, int highIndex, List targets) {
-    this.defaultTargetBox = Baf.v().newInstBox(defaultTarget);
+    this.defaultTargetBox = myBaf.newInstBox(defaultTarget);
 
     this.targetBoxes = new UnitBox[targets.size()];
 
     for (int i = 0; i < targetBoxes.length; i++) {
-      this.targetBoxes[i] = Baf.v().newInstBox((Unit) targets.get(i));
+      this.targetBoxes[i] = myBaf.newInstBox((Unit) targets.get(i));
     }
 
     this.lowIndex = lowIndex;

@@ -70,10 +70,10 @@ public final class TrapTightener extends TrapTransformer {
 
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
     if (this.throwAnalysis == null) {
-      this.throwAnalysis = Scene.v().getDefaultThrowAnalysis();
+      this.throwAnalysis = myScene.getDefaultThrowAnalysis();
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Tightening trap boundaries...");
     }
 

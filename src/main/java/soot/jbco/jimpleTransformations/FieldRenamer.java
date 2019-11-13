@@ -163,12 +163,12 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
       logger.info(renameFields ? "Transforming Field Names and Adding Opaque Predicates..." : "Adding Opaques...");
     }
 
-    final RefType booleanWrapperRefType = Scene.v().getRefType(BOOLEAN_CLASS_NAME);
+    final RefType booleanWrapperRefType = myScene.getRefType(BOOLEAN_CLASS_NAME);
 
     BodyBuilder.retrieveAllBodies();
     BodyBuilder.retrieveAllNames();
 
-    for (SootClass applicationClass : Scene.v().getApplicationClasses()) {
+    for (SootClass applicationClass : myScene.getApplicationClasses()) {
       String className = applicationClass.getName();
       if (className.contains(".")) {
         className = className.substring(className.lastIndexOf(".") + 1);
@@ -198,7 +198,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
       // add one opaque predicate for true and one for false to each class
       String opaquePredicate = getOrAddNewName(null);
       Type type = Rand.getInt() % 2 == 0 ? BooleanType.v() : booleanWrapperRefType;
-      SootField opaquePredicateField = Scene.v().makeSootField(opaquePredicate, type, Modifier.PUBLIC | Modifier.STATIC);
+      SootField opaquePredicateField = myScene.makeSootField(opaquePredicate, type, Modifier.PUBLIC | Modifier.STATIC);
       renameField(applicationClass, opaquePredicateField);
       opaquePredicate1ByClass.put(applicationClass, opaquePredicateField);
       applicationClass.addField(opaquePredicateField);
@@ -207,7 +207,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
 
       opaquePredicate = getOrAddNewName(null);
       type = type == BooleanType.v() ? booleanWrapperRefType : BooleanType.v();
-      opaquePredicateField = Scene.v().makeSootField(opaquePredicate, type, Modifier.PUBLIC | Modifier.STATIC);
+      opaquePredicateField = myScene.makeSootField(opaquePredicate, type, Modifier.PUBLIC | Modifier.STATIC);
       renameField(applicationClass, opaquePredicateField);
       opaquePredicate2ByClass.put(applicationClass, opaquePredicateField);
       applicationClass.addField(opaquePredicateField);
@@ -227,7 +227,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
       logger.info("Updating field references in bytecode");
     }
 
-    for (SootClass applicationClass : Scene.v().getApplicationClasses()) {
+    for (SootClass applicationClass : myScene.getApplicationClasses()) {
       for (SootMethod method : applicationClass.getMethods()) {
         if (!method.isConcrete()) {
           continue;
@@ -265,7 +265,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
                     fullyQualifiedName);
               }
 
-              sootFieldRef = Scene.v().makeFieldRef(sootFieldRef.declaringClass(), newName, sootFieldRef.type(),
+              sootFieldRef = myScene.makeFieldRef(sootFieldRef.declaringClass(), newName, sootFieldRef.type(),
                   sootFieldRef.isStatic());
               fieldRef.setFieldRef(sootFieldRef);
               try {
@@ -288,15 +288,15 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
       return;
     }
 
-    final RefType booleanWrapperRefType = Scene.v().getRefType(BOOLEAN_CLASS_NAME);
+    final RefType booleanWrapperRefType = myScene.getRefType(BOOLEAN_CLASS_NAME);
 
     final boolean addStaticInitializer = !sootClass.declaresMethodByName(SootMethod.staticInitializerName);
     final Body body;
     if (addStaticInitializer) {
-      final SootMethod staticInitializerMethod = Scene.v().makeSootMethod(SootMethod.staticInitializerName,
+      final SootMethod staticInitializerMethod = myScene.makeSootMethod(SootMethod.staticInitializerName,
           Collections.emptyList(), VoidType.v(), Modifier.STATIC);
       sootClass.addMethod(staticInitializerMethod);
-      body = Jimple.v().newBody(staticInitializerMethod);
+      body = myJimple.newBody(staticInitializerMethod);
       staticInitializerMethod.setActiveBody(body);
     } else {
       body = sootClass.getMethodByName(SootMethod.staticInitializerName).getActiveBody();
@@ -304,19 +304,19 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
 
     final PatchingChain<Unit> units = body.getUnits();
     if (field.getType() instanceof IntegerType) {
-      units.addFirst(Jimple.v().newAssignStmt(Jimple.v().newStaticFieldRef(field.makeRef()), IntConstant.v(value ? 1 : 0)));
+      units.addFirst(myJimple.newAssignStmt(myJimple.newStaticFieldRef(field.makeRef()), IntConstant.v(value ? 1 : 0)));
     } else {
-      Local bool = Jimple.v().newLocal("boolLcl", booleanWrapperRefType);
+      Local bool = myJimple.newLocal("boolLcl", booleanWrapperRefType);
       body.getLocals().add(bool);
 
       final SootMethod booleanWrapperConstructor = booleanWrapperRefType.getSootClass().getMethod("void <init>(boolean)");
-      units.addFirst(Jimple.v().newAssignStmt(Jimple.v().newStaticFieldRef(field.makeRef()), bool));
-      units.addFirst(Jimple.v().newInvokeStmt(
-          Jimple.v().newSpecialInvokeExpr(bool, booleanWrapperConstructor.makeRef(), IntConstant.v(value ? 1 : 0))));
-      units.addFirst(Jimple.v().newAssignStmt(bool, Jimple.v().newNewExpr(booleanWrapperRefType)));
+      units.addFirst(myJimple.newAssignStmt(myJimple.newStaticFieldRef(field.makeRef()), bool));
+      units.addFirst(myJimple.newInvokeStmt(
+          myJimple.newSpecialInvokeExpr(bool, booleanWrapperConstructor.makeRef(), IntConstant.v(value ? 1 : 0))));
+      units.addFirst(myJimple.newAssignStmt(bool, myJimple.newNewExpr(booleanWrapperRefType)));
     }
     if (addStaticInitializer) {
-      units.addLast(Jimple.v().newReturnVoidStmt());
+      units.addLast(myJimple.newReturnVoidStmt());
     }
   }
 

@@ -109,7 +109,7 @@ public class AnonClassInitMethodSource extends soot.javaToJimple.PolyglotMethodS
     AnonInitBodyBuilder aibb = new AnonInitBodyBuilder();
     soot.jimple.JimpleBody body = aibb.createBody(sootMethod);
 
-    PackManager.v().getPack("jj").apply(body);
+    PackmyManager.getPack("jj").apply(body);
 
     return body;
   }

@@ -37,14 +37,14 @@ public class GTableSwitchStmt extends JTableSwitchStmt {
     UnitBox[] targetBoxes = new UnitBox[targets.size()];
 
     for (int i = 0; i < targetBoxes.length; i++) {
-      targetBoxes[i] = Grimp.v().newStmtBox((Stmt) targets.get(i));
+      targetBoxes[i] = myGrimp.newStmtBox((Stmt) targets.get(i));
     }
 
     return targetBoxes;
   }
 
   public GTableSwitchStmt(Value key, int lowIndex, int highIndex, List targets, Unit defaultTarget) {
-    super(Grimp.v().newExprBox(key), lowIndex, highIndex, getTargetBoxesArray(targets), Grimp.v().newStmtBox(defaultTarget));
+    super(myGrimp.newExprBox(key), lowIndex, highIndex, getTargetBoxesArray(targets), myGrimp.newStmtBox(defaultTarget));
   }
 
   public Object clone() {

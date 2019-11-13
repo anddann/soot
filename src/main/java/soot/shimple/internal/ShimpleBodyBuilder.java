@@ -104,7 +104,7 @@ public class ShimpleBodyBuilder {
     // therefore before the IdentityStmt. This introduces a validation
     // problem if the Phi nodes leave residual assignment statements after
     // their removal.
-    NopEliminator.v().transform(body);
+    myNopEliminator.transform(body);
     this.body = body;
     sf = new DefaultShimpleFactory(body);
     sf.clearCache();
@@ -146,18 +146,18 @@ public class ShimpleBodyBuilder {
 
     // *** FIXME: 89e9a0470601091906j26489960j65290849dbe0481f@mail.gmail.com
     // if(optElim)
-    // DeadAssignmentEliminator.v().transform(body);
+    // myDeadAssignmentEliminator.transform(body);
   }
 
   public void postElimOpt() {
     boolean optElim = options.node_elim_opt();
 
     if (optElim) {
-      DeadAssignmentEliminator.v().transform(body);
-      UnreachableCodeEliminator.v().transform(body);
-      UnconditionalBranchFolder.v().transform(body);
-      Aggregator.v().transform(body);
-      UnusedLocalEliminator.v().transform(body);
+      myDeadAssignmentEliminator.transform(body);
+      myUnreachableCodeEliminator.transform(body);
+      myUnconditionalBranchFolder.transform(body);
+      myAggregator.transform(body);
+      myUnusedLocalEliminator.transform(body);
     }
   }
 
@@ -434,7 +434,7 @@ public class ShimpleBodyBuilder {
    **/
   public void makeUniqueLocalNames() {
     if (options.standard_local_names()) {
-      LocalNameStandardizer.v().transform(body);
+      myLocalNameStandardizer.transform(body);
       return;
     }
 

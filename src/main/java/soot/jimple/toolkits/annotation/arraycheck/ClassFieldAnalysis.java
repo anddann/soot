@@ -86,7 +86,7 @@ public class ClassFieldAnalysis {
 
     /* Summerize class information here. */
     Date start = new Date();
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[] ClassFieldAnalysis started on : " + start + " for " + c.getPackageName() + c.getName());
     }
 
@@ -115,7 +115,7 @@ public class ClassFieldAnalysis {
     }
 
     if (arrayTypeFieldNum == 0) {
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         logger.debug("[] ClassFieldAnalysis finished with nothing");
       }
       return;
@@ -140,7 +140,7 @@ public class ClassFieldAnalysis {
     }
 
     Date finish = new Date();
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       long runtime = finish.getTime() - start.getTime();
       long mins = runtime / 60000;
       long secs = (runtime % 60000) / 1000;
@@ -232,7 +232,7 @@ public class ClassFieldAnalysis {
       }
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[] ScanMethod for field started.");
     }
 
@@ -263,7 +263,7 @@ public class ClassFieldAnalysis {
             if (defs.size() == 1) {
               usestmt = (DefinitionStmt) defs.get(0);
 
-              if (Options.v().debug()) {
+              if (myOptions.debug()) {
                 logger.debug("        " + usestmt);
               }
 
@@ -332,7 +332,7 @@ public class ClassFieldAnalysis {
       }
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[] ScanMethod finished.");
     }
   }

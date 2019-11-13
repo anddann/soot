@@ -112,16 +112,16 @@ public class JasminClass extends AbstractJasminClass {
     // Call the graph colorer.
     FastColorer.assignColorsToLocals(body, localToGroup, localToColor, groupToColorCount);
 
-    if (Options.v().time()) {
-      Timers.v().packTimer.end();
+    if (myOptions.time()) {
+      myTimers.packTimer.end();
     }
 
   }
 
   protected void emitMethodBody(SootMethod method)// , Map options)
   {
-    if (Options.v().time()) {
-      Timers.v().buildJasminTimer.end();
+    if (myOptions.time()) {
+      myTimers.buildJasminTimer.end();
     }
 
     Body activeBody = method.getActiveBody();
@@ -136,8 +136,8 @@ public class JasminClass extends AbstractJasminClass {
 
     // if(body == null)
 
-    if (Options.v().time()) {
-      Timers.v().buildJasminTimer.start();
+    if (myOptions.time()) {
+      myTimers.buildJasminTimer.start();
     }
 
     Chain<Unit> units = body.getUnits();
@@ -148,7 +148,7 @@ public class JasminClass extends AbstractJasminClass {
 
     // let's create a u-d web for the ++ peephole optimization.
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Performing peephole optimizations...");
     }
 

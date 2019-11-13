@@ -29,7 +29,7 @@ import soot.jimple.internal.AbstractNegExpr;
 
 public class DNegExpr extends AbstractNegExpr {
   public DNegExpr(Value op) {
-    super(Grimp.v().newExprBox(op));
+    super(myGrimp.newExprBox(op));
   }
 
   public Object clone() {

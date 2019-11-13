@@ -99,7 +99,7 @@ public final class TypeManager {
     }
     while (allocNodeListener.hasNext()) {
       AllocNode n = allocNodeListener.next();
-      for (final Type t : Scene.v().getTypeNumberer()) {
+      for (final Type t : myScene.getTypeNumberer()) {
         if (!(t instanceof RefLikeType)) {
           continue;
         }
@@ -152,14 +152,14 @@ public final class TypeManager {
 
   final public void makeTypeMask() {
     RefType.v("java.lang.Class");
-    typeMask = new LargeNumberedMap<Type, BitVector>(Scene.v().getTypeNumberer());
+    typeMask = new LargeNumberedMap<Type, BitVector>(myScene.getTypeNumberer());
     if (fh == null) {
       return;
     }
 
     // **
     initClass2allocs();
-    makeClassTypeMask(Scene.v().getSootClass("java.lang.Object"));
+    makeClassTypeMask(myScene.getSootClass("java.lang.Object"));
     BitVector visitedTypes = new BitVector();
     {
       Iterator<Type> it = typeMask.keyIterator();
@@ -170,7 +170,7 @@ public final class TypeManager {
     }
     // **
     ArrayNumberer<AllocNode> allocNodes = pag.getAllocNodeNumberer();
-    for (Type t : Scene.v().getTypeNumberer()) {
+    for (Type t : myScene.getTypeNumberer()) {
       if (!(t instanceof RefLikeType)) {
         continue;
       }

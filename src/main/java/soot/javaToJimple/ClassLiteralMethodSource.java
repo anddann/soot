@@ -28,77 +28,77 @@ public class ClassLiteralMethodSource implements soot.MethodSource {
 
   public soot.Body getBody(soot.SootMethod sootMethod, String phaseName) {
 
-    soot.Body classBody = soot.jimple.Jimple.v().newBody(sootMethod);
+    soot.Body classBody = soot.jimple.myJimple.newBody(sootMethod);
 
     // static invoke of forName
-    soot.jimple.ParameterRef paramRef = soot.jimple.Jimple.v().newParameterRef(soot.RefType.v("java.lang.String"), 0);
+    soot.jimple.ParameterRef paramRef = soot.jimple.myJimple.newParameterRef(soot.RefType.v("java.lang.String"), 0);
 
-    soot.Local paramLocal = soot.jimple.Jimple.v().newLocal("$r0", soot.RefType.v("java.lang.String"));
+    soot.Local paramLocal = soot.jimple.myJimple.newLocal("$r0", soot.RefType.v("java.lang.String"));
     classBody.getLocals().add(paramLocal);
-    soot.jimple.Stmt stmt = soot.jimple.Jimple.v().newIdentityStmt(paramLocal, paramRef);
+    soot.jimple.Stmt stmt = soot.jimple.myJimple.newIdentityStmt(paramLocal, paramRef);
     classBody.getUnits().add(stmt);
 
     ArrayList paramTypes = new ArrayList();
     paramTypes.add(soot.RefType.v("java.lang.String"));
-    soot.SootMethodRef methodToInvoke = soot.Scene.v().makeMethodRef(soot.Scene.v().getSootClass("java.lang.Class"),
+    soot.SootMethodRef methodToInvoke = soot.myScene.makeMethodRef(soot.myScene.getSootClass("java.lang.Class"),
         "forName", paramTypes, soot.RefType.v("java.lang.Class"), true);
-    soot.Local invokeLocal = soot.jimple.Jimple.v().newLocal("$r1", soot.RefType.v("java.lang.Class"));
+    soot.Local invokeLocal = soot.jimple.myJimple.newLocal("$r1", soot.RefType.v("java.lang.Class"));
     classBody.getLocals().add(invokeLocal);
     ArrayList params = new ArrayList();
     params.add(paramLocal);
-    soot.jimple.Expr invokeExpr = soot.jimple.Jimple.v().newStaticInvokeExpr(methodToInvoke, params);
-    soot.jimple.Stmt assign = soot.jimple.Jimple.v().newAssignStmt(invokeLocal, invokeExpr);
+    soot.jimple.Expr invokeExpr = soot.jimple.myJimple.newStaticInvokeExpr(methodToInvoke, params);
+    soot.jimple.Stmt assign = soot.jimple.myJimple.newAssignStmt(invokeLocal, invokeExpr);
     classBody.getUnits().add(assign);
 
     // return
-    soot.jimple.Stmt retStmt = soot.jimple.Jimple.v().newReturnStmt(invokeLocal);
+    soot.jimple.Stmt retStmt = soot.jimple.myJimple.newReturnStmt(invokeLocal);
     classBody.getUnits().add(retStmt);
 
     // catch
-    soot.Local catchRefLocal = soot.jimple.Jimple.v().newLocal("$r2", soot.RefType.v("java.lang.ClassNotFoundException"));
+    soot.Local catchRefLocal = soot.jimple.myJimple.newLocal("$r2", soot.RefType.v("java.lang.ClassNotFoundException"));
     classBody.getLocals().add(catchRefLocal);
-    soot.jimple.CaughtExceptionRef caughtRef = soot.jimple.Jimple.v().newCaughtExceptionRef();
-    soot.jimple.Stmt caughtIdentity = soot.jimple.Jimple.v().newIdentityStmt(catchRefLocal, caughtRef);
+    soot.jimple.CaughtExceptionRef caughtRef = soot.jimple.myJimple.newCaughtExceptionRef();
+    soot.jimple.Stmt caughtIdentity = soot.jimple.myJimple.newIdentityStmt(catchRefLocal, caughtRef);
     classBody.getUnits().add(caughtIdentity);
 
     // new no class def found error
-    soot.Local throwLocal = soot.jimple.Jimple.v().newLocal("$r3", soot.RefType.v("java.lang.NoClassDefFoundError"));
+    soot.Local throwLocal = soot.jimple.myJimple.newLocal("$r3", soot.RefType.v("java.lang.NoClassDefFoundError"));
     classBody.getLocals().add(throwLocal);
-    soot.jimple.Expr newExpr = soot.jimple.Jimple.v().newNewExpr(soot.RefType.v("java.lang.NoClassDefFoundError"));
-    soot.jimple.Stmt throwAssign = soot.jimple.Jimple.v().newAssignStmt(throwLocal, newExpr);
+    soot.jimple.Expr newExpr = soot.jimple.myJimple.newNewExpr(soot.RefType.v("java.lang.NoClassDefFoundError"));
+    soot.jimple.Stmt throwAssign = soot.jimple.myJimple.newAssignStmt(throwLocal, newExpr);
     classBody.getUnits().add(throwAssign);
 
     // get exception message
-    soot.Local messageLocal = soot.jimple.Jimple.v().newLocal("$r4", soot.RefType.v("java.lang.String"));
+    soot.Local messageLocal = soot.jimple.myJimple.newLocal("$r4", soot.RefType.v("java.lang.String"));
     classBody.getLocals().add(messageLocal);
     // params = new ArrayList();
     // params.add(catchRefLocal);
-    soot.SootMethodRef messageMethToInvoke = soot.Scene.v().makeMethodRef(soot.Scene.v().getSootClass("java.lang.Throwable"),
+    soot.SootMethodRef messageMethToInvoke = soot.myScene.makeMethodRef(soot.myScene.getSootClass("java.lang.Throwable"),
         "getMessage", new ArrayList(), soot.RefType.v("java.lang.String"), false);
 
     soot.jimple.Expr messageInvoke
-        = soot.jimple.Jimple.v().newVirtualInvokeExpr(catchRefLocal, messageMethToInvoke, new ArrayList());
-    soot.jimple.Stmt messageAssign = soot.jimple.Jimple.v().newAssignStmt(messageLocal, messageInvoke);
+        = soot.jimple.myJimple.newVirtualInvokeExpr(catchRefLocal, messageMethToInvoke, new ArrayList());
+    soot.jimple.Stmt messageAssign = soot.jimple.myJimple.newAssignStmt(messageLocal, messageInvoke);
     classBody.getUnits().add(messageAssign);
 
     // no class def found init
     paramTypes = new ArrayList();
     paramTypes.add(soot.RefType.v("java.lang.String"));
-    soot.SootMethodRef initMethToInvoke = soot.Scene.v().makeMethodRef(
-        soot.Scene.v().getSootClass("java.lang.NoClassDefFoundError"), "<init>", paramTypes, soot.VoidType.v(), false);
+    soot.SootMethodRef initMethToInvoke = soot.myScene.makeMethodRef(
+        soot.myScene.getSootClass("java.lang.NoClassDefFoundError"), "<init>", paramTypes, soot.VoidType.v(), false);
     params = new ArrayList();
     params.add(messageLocal);
-    soot.jimple.Expr initInvoke = soot.jimple.Jimple.v().newSpecialInvokeExpr(throwLocal, initMethToInvoke, params);
-    soot.jimple.Stmt initStmt = soot.jimple.Jimple.v().newInvokeStmt(initInvoke);
+    soot.jimple.Expr initInvoke = soot.jimple.myJimple.newSpecialInvokeExpr(throwLocal, initMethToInvoke, params);
+    soot.jimple.Stmt initStmt = soot.jimple.myJimple.newInvokeStmt(initInvoke);
     classBody.getUnits().add(initStmt);
 
     // throw
-    soot.jimple.Stmt throwStmt = soot.jimple.Jimple.v().newThrowStmt(throwLocal);
+    soot.jimple.Stmt throwStmt = soot.jimple.myJimple.newThrowStmt(throwLocal);
     throwStmt.addTag(new soot.tagkit.ThrowCreatedByCompilerTag());
     classBody.getUnits().add(throwStmt);
 
     // trap
-    soot.Trap trap = soot.jimple.Jimple.v().newTrap(soot.Scene.v().getSootClass("java.lang.ClassNotFoundException"), assign,
+    soot.Trap trap = soot.jimple.myJimple.newTrap(soot.myScene.getSootClass("java.lang.ClassNotFoundException"), assign,
         retStmt, caughtIdentity);
     classBody.getTraps().add(trap);
 

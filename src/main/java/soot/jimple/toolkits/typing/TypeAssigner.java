@@ -26,6 +26,8 @@ package soot.jimple.toolkits.typing;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -46,11 +48,11 @@ import soot.NullType;
 import soot.PhaseOptions;
 import soot.Scene;
 import soot.ShortType;
-import soot.Singletons;
 import soot.Type;
 import soot.Unit;
 import soot.UnknownType;
 import soot.ValueBox;
+import soot.JastAddJ.Options;
 import soot.jimple.ArrayRef;
 import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
@@ -58,11 +60,7 @@ import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.JimpleBody;
 import soot.jimple.Stmt;
-import soot.jimple.toolkits.scalar.ConstantPropagatorAndFolder;
-import soot.jimple.toolkits.scalar.DeadAssignmentEliminator;
 import soot.options.JBTROptions;
-import soot.options.Options;
-import soot.toolkits.scalar.UnusedLocalEliminator;
 
 /**
  * This transformer assigns types to local variables.
@@ -73,8 +71,21 @@ import soot.toolkits.scalar.UnusedLocalEliminator;
  */
 public class TypeAssigner extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(TypeAssigner.class);
+  private static PhaseOptions myPhaseOptions;
+  private Options myOptions;
+  private Scene myScene;
+  private BodyTransformer myConstantPropagatorAndFolder;
+  private BodyTransformer myDeadAssignmentEliminator;
+  private BodyTransformer myUnusedLocalEliminator;
 
-  public TypeAssigner(Singletons.Global g) {
+  @Inject
+  public TypeAssigner(Options myOptions, Scene myScene, BodyTransformer myConstantPropagatorAndFolder,
+      BodyTransformer myDeadAssignmentEliminator, BodyTransformer myUnusedLocalEliminator) {
+    this.myOptions = myOptions;
+    this.myScene = myScene;
+    this.myConstantPropagatorAndFolder = myConstantPropagatorAndFolder;
+    this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
+    this.myUnusedLocalEliminator = myUnusedLocalEliminator;
   }
 
   public static TypeAssigner v() {
@@ -90,7 +101,7 @@ public class TypeAssigner extends BodyTransformer {
 
     Date start = new Date();
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[TypeAssigner] typing system started on " + start);
     }
 
@@ -116,14 +127,14 @@ public class TypeAssigner extends BodyTransformer {
       compareTypeAssigners(b, opt.use_older_type_assigner());
     } else {
       if (opt.use_older_type_assigner()) {
-        TypeResolver.resolve((JimpleBody) b, Scene.v());
+        TypeResolver.resolve((JimpleBody) b, myScene);
       } else {
         (new soot.jimple.toolkits.typing.fast.TypeResolver((JimpleBody) b)).inferTypes();
       }
     }
 
     Date finish = new Date();
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       long runtime = finish.getTime() - start.getTime();
       long mins = runtime / 60000;
       long secs = (runtime % 60000) / 1000;
@@ -147,7 +158,7 @@ public class TypeAssigner extends BodyTransformer {
    *
    * @param b
    */
-  protected static void replaceNullType(Body b) {
+  protected void replaceNullType(Body b) {
     List<Local> localsToRemove = new ArrayList<Local>();
     boolean hasNullType = false;
 
@@ -165,12 +176,12 @@ public class TypeAssigner extends BodyTransformer {
     }
 
     // force to propagate null constants
-    Map<String, String> opts = PhaseOptions.v().getPhaseOptions("jop.cpf");
+    Map<String, String> opts = myPhaseOptions.getPhaseOptions("jop.cpf");
     if (!opts.containsKey("enabled") || !opts.get("enabled").equals("true")) {
       logger.warn("Cannot run TypeAssigner.replaceNullType(Body). Try to enable jop.cfg.");
       return;
     }
-    ConstantPropagatorAndFolder.v().transform(b);
+    myConstantPropagatorAndFolder.transform(b);
 
     List<Unit> unitToReplaceByException = new ArrayList<Unit>();
     for (Unit u : b.getUnits()) {
@@ -218,8 +229,8 @@ public class TypeAssigner extends BodyTransformer {
     }
 
     // should be done on a separate phase
-    DeadAssignmentEliminator.v().transform(b);
-    UnusedLocalEliminator.v().transform(b);
+    myDeadAssignmentEliminator.transform(b);
+    myUnusedLocalEliminator.transform(b);
 
   }
 
@@ -234,14 +245,14 @@ public class TypeAssigner extends BodyTransformer {
       (new soot.jimple.toolkits.typing.fast.TypeResolver(newJb)).inferTypes();
       newTime = System.currentTimeMillis() - newTime;
       oldTime = System.currentTimeMillis();
-      TypeResolver.resolve(jb, Scene.v());
+      TypeResolver.resolve(jb, myScene);
       oldTime = System.currentTimeMillis() - oldTime;
       oldJb = jb;
     } else {
       // Use new type assigner last
       oldJb = (JimpleBody) jb.clone();
       oldTime = System.currentTimeMillis();
-      TypeResolver.resolve(oldJb, Scene.v());
+      TypeResolver.resolve(oldJb, myScene);
       oldTime = System.currentTimeMillis() - oldTime;
       newTime = System.currentTimeMillis();
       (new soot.jimple.toolkits.typing.fast.TypeResolver(jb)).inferTypes();

@@ -48,7 +48,7 @@ public class Debug {
   public static boolean TODEX_DEBUG;
 
   public static void printDbg(String s, Object... objects) {
-    TODEX_DEBUG = Options.v().verbose();
+    TODEX_DEBUG = myOptions.verbose();
     if (TODEX_DEBUG) {
       for (Object o : objects) {
         s += o.toString();

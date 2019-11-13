@@ -83,10 +83,10 @@ public class StaticMethodBinder extends SceneTransformer {
     String modifierOptions = PhaseOptions.getString(opts, "allowed-modifier-changes");
     HashMap instanceToStaticMap = new HashMap();
 
-    CallGraph cg = Scene.v().getCallGraph();
-    Hierarchy hierarchy = Scene.v().getActiveHierarchy();
+    CallGraph cg = myScene.getCallGraph();
+    Hierarchy hierarchy = myScene.getActiveHierarchy();
 
-    Iterator classesIt = Scene.v().getApplicationClasses().iterator();
+    Iterator classesIt = myScene.getApplicationClasses().iterator();
     while (classesIt.hasNext()) {
       SootClass c = (SootClass) classesIt.next();
 
@@ -144,7 +144,7 @@ public class StaticMethodBinder extends SceneTransformer {
           }
 
           // Don't modify java.lang.Object
-          if (target.getDeclaringClass() == Scene.v().getSootClass("java.lang.Object")) {
+          if (target.getDeclaringClass() == myScene.getSootClass("java.lang.Object")) {
             continue;
           }
 
@@ -160,7 +160,7 @@ public class StaticMethodBinder extends SceneTransformer {
               newName = newName + "_static";
             }
 
-            SootMethod ct = Scene.v().makeSootMethod(newName, newParameterTypes, target.getReturnType(),
+            SootMethod ct = myScene.makeSootMethod(newName, newParameterTypes, target.getReturnType(),
                 target.getModifiers() | Modifier.STATIC, target.getExceptions());
             target.getDeclaringClass().addMethod(ct);
 
@@ -204,8 +204,8 @@ public class StaticMethodBinder extends SceneTransformer {
                 if (st instanceof IdentityStmt) {
                   IdentityStmt is = (IdentityStmt) st;
                   if (is.getRightOp() instanceof ThisRef) {
-                    units.swapWith(st, Jimple.v().newIdentityStmt(is.getLeftOp(),
-                        Jimple.v().newParameterRef(is.getRightOp().getType(), 0)));
+                    units.swapWith(st, myJimple.newIdentityStmt(is.getLeftOp(),
+                        myJimple.newParameterRef(is.getRightOp().getType(), 0)));
                   } else {
                     if (is.getRightOp() instanceof ParameterRef) {
                       ParameterRef ro = (ParameterRef) is.getRightOp();
@@ -235,10 +235,10 @@ public class StaticMethodBinder extends SceneTransformer {
             parameterType = target.getDeclaringClass();
 
             if (localType.isInterface() || hierarchy.isClassSuperclassOf(localType, parameterType)) {
-              Local castee = Jimple.v().newLocal("__castee", parameterType.getType());
+              Local castee = myJimple.newLocal("__castee", parameterType.getType());
               b.getLocals().add(castee);
-              b.getUnits().insertBefore(Jimple.v().newAssignStmt(castee,
-                  Jimple.v().newCastExpr(((InstanceInvokeExpr) ie).getBase(), parameterType.getType())), s);
+              b.getUnits().insertBefore(myJimple.newAssignStmt(castee,
+                  myJimple.newCastExpr(((InstanceInvokeExpr) ie).getBase(), parameterType.getType())), s);
               thisToAdd = castee;
             }
           }
@@ -249,7 +249,7 @@ public class StaticMethodBinder extends SceneTransformer {
             newArgs.add(thisToAdd);
             newArgs.addAll(ie.getArgs());
 
-            StaticInvokeExpr sie = Jimple.v().newStaticInvokeExpr(clonedTarget.makeRef(), newArgs);
+            StaticInvokeExpr sie = myJimple.newStaticInvokeExpr(clonedTarget.makeRef(), newArgs);
 
             ValueBox ieBox = s.getInvokeExprBox();
             ieBox.setValue(sie);
@@ -259,7 +259,7 @@ public class StaticMethodBinder extends SceneTransformer {
 
           // (If enabled), add a null pointer check.
           if (options.insert_null_checks()) {
-            boolean caught = TrapManager.isExceptionCaughtAt(Scene.v().getSootClass("java.lang.NullPointerException"), s, b);
+            boolean caught = TrapManager.isExceptionCaughtAt(myScene.getSootClass("java.lang.NullPointerException"), s, b);
 
             /* Ah ha. Caught again! */
             if (caught) {
@@ -267,7 +267,7 @@ public class StaticMethodBinder extends SceneTransformer {
                * In this case, we don't use throwPoint; instead, put the code right there.
                */
               Stmt insertee
-                  = Jimple.v().newIfStmt(Jimple.v().newNeExpr(((InstanceInvokeExpr) ie).getBase(), NullConstant.v()), s);
+                  = myJimple.newIfStmt(myJimple.newNeExpr(((InstanceInvokeExpr) ie).getBase(), myNullConstant), s);
 
               b.getUnits().insertBefore(insertee, s);
 
@@ -277,8 +277,8 @@ public class StaticMethodBinder extends SceneTransformer {
               ThrowManager.addThrowAfter(b, insertee);
             } else {
               Stmt throwPoint = ThrowManager.getNullPointerExceptionThrower(b);
-              b.getUnits().insertBefore(Jimple.v()
-                  .newIfStmt(Jimple.v().newEqExpr(((InstanceInvokeExpr) ie).getBase(), NullConstant.v()), throwPoint), s);
+              b.getUnits().insertBefore(myJimple
+                  .newIfStmt(myJimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), myNullConstant), throwPoint), s);
             }
           }
 
@@ -286,12 +286,12 @@ public class StaticMethodBinder extends SceneTransformer {
           {
             if (target.isSynchronized()) {
               clonedTarget.setModifiers(clonedTarget.getModifiers() & ~Modifier.SYNCHRONIZED);
-              SynchronizerManager.v().synchronizeStmtOn(s, b, (Local) ((InstanceInvokeExpr) ie).getBase());
+              mySynchronizerManager.synchronizeStmtOn(s, b, (Local) ((InstanceInvokeExpr) ie).getBase());
             }
           }
 
           // Resolve name collisions.
-          LocalNameStandardizer.v().transform(b, phaseName + ".lns");
+          myLocalNameStandardizer.transform(b, phaseName + ".lns");
         }
       }
     }

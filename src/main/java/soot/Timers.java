@@ -24,6 +24,7 @@ package soot;
 
 import java.text.DecimalFormat;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,10 @@ import soot.options.Options;
 public class Timers {
   private static final Logger logger = LoggerFactory.getLogger(Timers.class);
 
-  public Timers(Singletons.Global g) {
+  private Options myOptions;
+  @Inject
+  public Timers(Options myOptions) {
+    this.myOptions = myOptions;
   }
 
   public static Timers v() {
@@ -200,7 +204,7 @@ public class Timers {
 
       logger.debug("totalTime:" + toTimeString(totalTimer, totalTime));
 
-      if (Options.v().subtract_gc()) {
+      if (myOptions.subtract_gc()) {
         logger.debug("Garbage collection was subtracted from these numbers.");
         logger.debug("           forcedGC:" + toTimeString(G.v().Timer_forcedGarbageCollectionTimer, totalTime));
       }

@@ -94,7 +94,7 @@ public class SideEffectAnalysis {
     if (G.v().Union_factory == null) {
       G.v().Union_factory = new UnionFactory() {
         public Union newUnion() {
-          return FullObjectSet.v();
+          return myFullObjectSet;
         }
       };
     }

@@ -56,6 +56,9 @@ public class SootMethodRefImpl implements SootMethodRef {
   protected List<Type> parameterTypes;
   private final Type returnType;
   private final boolean isStatic;
+    private Scene myScene;
+    private Options myOptions;
+  private Jimple myJimple;
 
   /**
    * Constructor.
@@ -70,11 +73,17 @@ public class SootMethodRefImpl implements SootMethodRef {
    *          the type of return value. Must not be {@code null}
    * @param isStatic
    *          the static modifier value
+   * @param myScene
+     * @param myOptions
+     * @param myJimple
    * @throws IllegalArgumentException
    *           is thrown when {@code declaringClass}, or {@code name}, or {@code returnType} is null
    */
   public SootMethodRefImpl(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
-      boolean isStatic) {
+                           boolean isStatic, Scene myScene, Options myOptions, Jimple myJimple) {
+      this.myScene = myScene;
+      this.myOptions = myOptions;
+    this.myJimple = myJimple;
     if (declaringClass == null) {
       throw new IllegalArgumentException("Attempt to create SootMethodRef with null class");
     }
@@ -141,7 +150,7 @@ public class SootMethodRefImpl implements SootMethodRef {
 
   @Override
   public NumberedString getSubSignature() {
-    return Scene.v().getSubSigNumberer().findOrAdd(SootMethod.getSubSignature(name, parameterTypes, returnType));
+    return myScene.getSubSigNumberer().findOrAdd(SootMethod.getSubSignature(name, parameterTypes, returnType));
   }
 
   @Override
@@ -189,8 +198,8 @@ public class SootMethodRefImpl implements SootMethodRef {
   }
 
   private void checkStatic(SootMethod method) {
-    if ((Options.v().wrong_staticness() == Options.wrong_staticness_fail
-        || Options.v().wrong_staticness() == Options.wrong_staticness_fixstrict) && method.isStatic() != isStatic()
+    if ((myOptions.wrong_staticness() == Options.wrong_staticness_fail
+        || myOptions.wrong_staticness() == Options.wrong_staticness_fixstrict) && method.isStatic() != isStatic()
         && !method.isPhantom()) {
       throw new ResolutionFailedException("Resolved " + this + " to " + method + " which has wrong static-ness");
     }
@@ -213,9 +222,9 @@ public class SootMethodRefImpl implements SootMethodRef {
         return method;
       }
 
-      if (Scene.v().allowsPhantomRefs() && selectedClass.isPhantom()) {
+      if (myScene.allowsPhantomRefs() && selectedClass.isPhantom()) {
         SootMethod phantomMethod
-            = Scene.v().makeSootMethod(name, parameterTypes, returnType, isStatic() ? Modifier.STATIC : 0);
+            = myScene.makeSootMethod(name, parameterTypes, returnType, isStatic() ? Modifier.STATIC : 0);
         phantomMethod.setPhantom(true);
         phantomMethod = selectedClass.getOrAddMethod(phantomMethod);
         checkStatic(phantomMethod);
@@ -248,8 +257,8 @@ public class SootMethodRefImpl implements SootMethodRef {
     }
 
     // If we don't have a method yet, we try to fix it on the fly
-    if (Scene.v().allowsPhantomRefs() && Options.v().ignore_resolution_errors()) {
-      SootMethod method = Scene.v().makeSootMethod(name, parameterTypes, returnType, isStatic() ? Modifier.STATIC : 0);
+    if (myScene.allowsPhantomRefs() && myOptions.ignore_resolution_errors()) {
+      SootMethod method = myScene.makeSootMethod(name, parameterTypes, returnType, isStatic() ? Modifier.STATIC : 0);
       method.setPhantom(true);
       method = declaringClass.getOrAddMethod(method);
       checkStatic(method);
@@ -269,7 +278,7 @@ public class SootMethodRefImpl implements SootMethodRef {
     // non-existing methods;
     // we simply create the methods on the fly; the method body will throw
     // an appropriate error just in case the code *is* actually reached at runtime
-    boolean treatAsPhantomClass = Options.v().allow_phantom_refs();
+    boolean treatAsPhantomClass = myOptions.allow_phantom_refs();
 
     // declaring class of dynamic invocations not known at compile time, treat as
     // phantom class regardless if phantom classes are enabled
@@ -283,7 +292,7 @@ public class SootMethodRefImpl implements SootMethodRef {
 
     if (trace == null) {
       ClassResolutionFailedException e = new ClassResolutionFailedException();
-      if (Options.v().ignore_resolution_errors()) {
+      if (myOptions.ignore_resolution_errors()) {
         logger.debug(e.getMessage());
       } else {
         throw e;
@@ -301,13 +310,13 @@ public class SootMethodRefImpl implements SootMethodRef {
    * @return The created SootMethod
    */
   private SootMethod createUnresolvedErrorMethod(SootClass declaringClass) {
-    SootMethod m = Scene.v().makeSootMethod(name, parameterTypes, returnType, isStatic() ? Modifier.STATIC : 0);
+    SootMethod m = myScene.makeSootMethod(name, parameterTypes, returnType, isStatic() ? Modifier.STATIC : 0);
     int modifiers = Modifier.PUBLIC; // we don't know who will be calling us
     if (isStatic()) {
       modifiers |= Modifier.STATIC;
     }
     m.setModifiers(modifiers);
-    JimpleBody body = Jimple.v().newBody(m);
+    JimpleBody body = myJimple.newBody(m);
     m.setActiveBody(body);
 
     final LocalGenerator lg = new LocalGenerator(body);
@@ -318,21 +327,21 @@ public class SootMethodRefImpl implements SootMethodRef {
 
     // exc = new Error
     RefType runtimeExceptionType = RefType.v("java.lang.Error");
-    NewExpr newExpr = Jimple.v().newNewExpr(runtimeExceptionType);
+    NewExpr newExpr = myJimple.newNewExpr(runtimeExceptionType);
     Local exceptionLocal = lg.generateLocal(runtimeExceptionType);
-    AssignStmt assignStmt = Jimple.v().newAssignStmt(exceptionLocal, newExpr);
+    AssignStmt assignStmt = myJimple.newAssignStmt(exceptionLocal, newExpr);
     body.getUnits().add(assignStmt);
 
     // exc.<init>(message)
-    SootMethodRef cref = Scene.v().makeConstructorRef(runtimeExceptionType.getSootClass(),
+    SootMethodRef cref = myScene.makeConstructorRef(runtimeExceptionType.getSootClass(),
         Collections.<Type>singletonList(RefType.v("java.lang.String")));
-    SpecialInvokeExpr constructorInvokeExpr = Jimple.v().newSpecialInvokeExpr(exceptionLocal, cref,
+    SpecialInvokeExpr constructorInvokeExpr = myJimple.newSpecialInvokeExpr(exceptionLocal, cref,
         StringConstant.v("Unresolved compilation error: Method " + getSignature() + " does not exist!"));
-    InvokeStmt initStmt = Jimple.v().newInvokeStmt(constructorInvokeExpr);
+    InvokeStmt initStmt = myJimple.newInvokeStmt(constructorInvokeExpr);
     body.getUnits().insertAfter(initStmt, assignStmt);
 
     // throw exc
-    body.getUnits().insertAfter(Jimple.v().newThrowStmt(exceptionLocal), initStmt);
+    body.getUnits().insertAfter(myJimple.newThrowStmt(exceptionLocal), initStmt);
 
     return declaringClass.getOrAddMethod(m);
   }

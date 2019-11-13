@@ -46,7 +46,6 @@ import soot.LongType;
 import soot.Modifier;
 import soot.NullType;
 import soot.RefType;
-import soot.Scene;
 import soot.ShortType;
 import soot.SootClass;
 import soot.SootField;
@@ -67,10 +66,8 @@ import soot.jimple.DoubleConstant;
 import soot.jimple.Expr;
 import soot.jimple.FloatConstant;
 import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.LongConstant;
-import soot.jimple.NullConstant;
 import soot.jimple.Stmt;
 import soot.jimple.StringConstant;
 import soot.jimple.UnopExpr;
@@ -290,7 +287,7 @@ public class Walker extends DepthFirstAdapter {
     String className = (String) mProductions.removeLast();
 
     if (mSootClass == null) {
-      mSootClass = new SootClass(className);
+      mSootClass = new SootClass(className, myScene, myOptions, myPackageNamer);
       mSootClass.setResolvingLevel(SootClass.BODIES);
     } else {
       if (!mSootClass.getName().equals(className)) {
@@ -366,7 +363,7 @@ public class Walker extends DepthFirstAdapter {
 
     modifier = processModifiers(node.getModifier());
 
-    SootField f = Scene.v().makeSootField(name, type, modifier);
+    SootField f = myScene.makeSootField(name, type, modifier);
     mSootClass.addField(f);
   }
 
@@ -401,9 +398,9 @@ public class Walker extends DepthFirstAdapter {
     SootMethod method;
 
     if (throwsClause != null) {
-      method = Scene.v().makeSootMethod(name, parameterList, type, modifier, throwsClause);
+      method = myScene.makeSootMethod(name, parameterList, type, modifier, throwsClause);
     } else {
-      method = Scene.v().makeSootMethod(name, parameterList, type, modifier);
+      method = myScene.makeSootMethod(name, parameterList, type, modifier);
     }
 
     mSootClass.addMethod(method);
@@ -571,7 +568,7 @@ public class Walker extends DepthFirstAdapter {
   }
 
   public void outAFullMethodBody(AFullMethodBody node) {
-    JimpleBody jBody = Jimple.v().newBody();
+    JimpleBody jBody = myJimple.newBody();
 
     if (node.getCatchClause() != null) {
       int size = node.getCatchClause().size();
@@ -705,18 +702,18 @@ public class Walker extends DepthFirstAdapter {
     String exceptionName;
     UnitBox withUnit, fromUnit, toUnit;
 
-    withUnit = Jimple.v().newStmtBox(null);
+    withUnit = myJimple.newStmtBox(null);
     addBoxToPatch((String) mProductions.removeLast(), withUnit);
 
-    toUnit = Jimple.v().newStmtBox(null);
+    toUnit = myJimple.newStmtBox(null);
     addBoxToPatch((String) mProductions.removeLast(), toUnit);
 
-    fromUnit = Jimple.v().newStmtBox(null);
+    fromUnit = myJimple.newStmtBox(null);
     addBoxToPatch((String) mProductions.removeLast(), fromUnit);
 
     exceptionName = (String) mProductions.removeLast();
 
-    Trap trap = Jimple.v().newTrap(mResolver.makeClassRef(exceptionName), fromUnit, toUnit, withUnit);
+    Trap trap = myJimple.newTrap(mResolver.makeClassRef(exceptionName), fromUnit, toUnit, withUnit);
     mProductions.addLast(trap);
   }
 
@@ -731,7 +728,7 @@ public class Walker extends DepthFirstAdapter {
     List<Local> localList = new ArrayList<Local>();
 
     while (it.hasNext()) {
-      Local l = Jimple.v().newLocal((String) it.next(), type);
+      Local l = myJimple.newLocal((String) it.next(), type);
       mLocals.put(l.getName(), l);
       localList.add(l);
     }
@@ -774,21 +771,21 @@ public class Walker extends DepthFirstAdapter {
   }
 
   public void outABreakpointStatement(ABreakpointStatement node) {
-    Unit u = Jimple.v().newBreakpointStmt();
+    Unit u = myJimple.newBreakpointStmt();
     mProductions.addLast(u);
   }
 
   public void outAEntermonitorStatement(AEntermonitorStatement node) {
     Value op = (Value) mProductions.removeLast();
 
-    Unit u = Jimple.v().newEnterMonitorStmt(op);
+    Unit u = myJimple.newEnterMonitorStmt(op);
     mProductions.addLast(u);
   }
 
   public void outAExitmonitorStatement(AExitmonitorStatement node) {
     Value op = (Value) mProductions.removeLast();
 
-    Unit u = Jimple.v().newExitMonitorStmt(op);
+    Unit u = myJimple.newExitMonitorStmt(op);
     mProductions.addLast(u);
   }
 
@@ -800,7 +797,7 @@ public class Walker extends DepthFirstAdapter {
    */
   public void outACaseStmt(ACaseStmt node) {
     String labelName = (String) mProductions.removeLast();
-    UnitBox box = Jimple.v().newStmtBox(null);
+    UnitBox box = myJimple.newStmtBox(null);
 
     addBoxToPatch(labelName, box);
 
@@ -855,7 +852,7 @@ public class Walker extends DepthFirstAdapter {
     }
 
     Value key = (Value) mProductions.removeLast();
-    Unit switchStmt = Jimple.v().newTableSwitchStmt(key, lowIndex, highIndex, targets, defaultTarget);
+    Unit switchStmt = myJimple.newTableSwitchStmt(key, lowIndex, highIndex, targets, defaultTarget);
 
     mProductions.addLast(switchStmt);
   }
@@ -888,7 +885,7 @@ public class Walker extends DepthFirstAdapter {
     }
 
     Value key = (Value) mProductions.removeLast();
-    Unit switchStmt = Jimple.v().newLookupSwitchStmt(key, lookupValues, targets, defaultTarget);
+    Unit switchStmt = myJimple.newLookupSwitchStmt(key, lookupValues, targets, defaultTarget);
 
     mProductions.addLast(switchStmt);
   }
@@ -902,16 +899,16 @@ public class Walker extends DepthFirstAdapter {
 
     Value ref = null;
     if (atClause.startsWith("@this")) {
-      ref = Jimple.v().newThisRef((RefType) identityRefType);
+      ref = myJimple.newThisRef((RefType) identityRefType);
     } else if (atClause.startsWith("@parameter")) {
       int index = Integer.parseInt(atClause.substring(10, atClause.length() - 1));
 
-      ref = Jimple.v().newParameterRef(identityRefType, index);
+      ref = myJimple.newParameterRef(identityRefType, index);
     } else {
       throw new RuntimeException("shouldn't @caughtexception be handled by outAIdentityNoTypeStatement: got" + atClause);
     }
 
-    Unit u = Jimple.v().newIdentityStmt(local, ref);
+    Unit u = myJimple.newIdentityStmt(local, ref);
     mProductions.addLast(u);
   }
 
@@ -922,7 +919,7 @@ public class Walker extends DepthFirstAdapter {
     // from it's
     // identifier
 
-    Unit u = Jimple.v().newIdentityStmt(local, Jimple.v().newCaughtExceptionRef());
+    Unit u = myJimple.newIdentityStmt(local, myJimple.newCaughtExceptionRef());
     mProductions.addLast(u);
   }
 
@@ -931,7 +928,7 @@ public class Walker extends DepthFirstAdapter {
     Value rvalue = (Value) removeLast;
     Value variable = (Value) mProductions.removeLast();
 
-    Unit u = Jimple.v().newAssignStmt(variable, rvalue);
+    Unit u = myJimple.newAssignStmt(variable, rvalue);
     mProductions.addLast(u);
   }
 
@@ -939,8 +936,8 @@ public class Walker extends DepthFirstAdapter {
     String targetLabel = (String) mProductions.removeLast();
     Value condition = (Value) mProductions.removeLast();
 
-    UnitBox box = Jimple.v().newStmtBox(null);
-    Unit u = Jimple.v().newIfStmt(condition, box);
+    UnitBox box = myJimple.newStmtBox(null);
+    Unit u = myJimple.newIfStmt(condition, box);
 
     addBoxToPatch(targetLabel, box);
 
@@ -952,9 +949,9 @@ public class Walker extends DepthFirstAdapter {
     Stmt s = null;
     if (node.getImmediate() != null) {
       v = (Immediate) mProductions.removeLast();
-      s = Jimple.v().newReturnStmt(v);
+      s = myJimple.newReturnStmt(v);
     } else {
-      s = Jimple.v().newReturnVoidStmt();
+      s = myJimple.newReturnVoidStmt();
     }
 
     mProductions.addLast(s);
@@ -963,8 +960,8 @@ public class Walker extends DepthFirstAdapter {
   public void outAGotoStatement(AGotoStatement node) {
     String targetLabel = (String) mProductions.removeLast();
 
-    UnitBox box = Jimple.v().newStmtBox(null);
-    Unit branch = Jimple.v().newGotoStmt(box);
+    UnitBox box = myJimple.newStmtBox(null);
+    Unit branch = myJimple.newGotoStmt(box);
 
     addBoxToPatch(targetLabel, box);
 
@@ -972,7 +969,7 @@ public class Walker extends DepthFirstAdapter {
   }
 
   public void outANopStatement(ANopStatement node) {
-    Unit u = Jimple.v().newNopStmt();
+    Unit u = myJimple.newNopStmt();
     mProductions.addLast(u);
   }
 
@@ -983,14 +980,14 @@ public class Walker extends DepthFirstAdapter {
   public void outAThrowStatement(AThrowStatement node) {
     Value op = (Value) mProductions.removeLast();
 
-    Unit u = Jimple.v().newThrowStmt(op);
+    Unit u = myJimple.newThrowStmt(op);
     mProductions.addLast(u);
   }
 
   public void outAInvokeStatement(AInvokeStatement node) {
     Value op = (Value) mProductions.removeLast();
 
-    Unit u = Jimple.v().newInvokeStmt(op);
+    Unit u = myJimple.newInvokeStmt(op);
 
     mProductions.addLast(u);
   }
@@ -1033,7 +1030,7 @@ public class Walker extends DepthFirstAdapter {
    */
 
   public void outANullConstant(ANullConstant node) {
-    mProductions.addLast(NullConstant.v());
+    mProductions.addLast(myNullConstant);
   }
 
   public void outAIntegerConstant(AIntegerConstant node) {
@@ -1160,83 +1157,83 @@ public class Walker extends DepthFirstAdapter {
    */
 
   public void outAAndBinop(AAndBinop node) {
-    mProductions.addLast(Jimple.v().newAndExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newAndExpr(mValue, mValue));
   }
 
   public void outAOrBinop(AOrBinop node) {
-    mProductions.addLast(Jimple.v().newOrExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newOrExpr(mValue, mValue));
   }
 
   public void outAXorBinop(AXorBinop node) {
-    mProductions.addLast(Jimple.v().newXorExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newXorExpr(mValue, mValue));
   }
 
   public void outAModBinop(AModBinop node) {
-    mProductions.addLast(Jimple.v().newRemExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newRemExpr(mValue, mValue));
   }
 
   public void outACmpBinop(ACmpBinop node) {
-    mProductions.addLast(Jimple.v().newCmpExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newCmpExpr(mValue, mValue));
   }
 
   public void outACmpgBinop(ACmpgBinop node) {
-    mProductions.addLast(Jimple.v().newCmpgExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newCmpgExpr(mValue, mValue));
   }
 
   public void outACmplBinop(ACmplBinop node) {
-    mProductions.addLast(Jimple.v().newCmplExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newCmplExpr(mValue, mValue));
   }
 
   public void outACmpeqBinop(ACmpeqBinop node) {
-    mProductions.addLast(Jimple.v().newEqExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newEqExpr(mValue, mValue));
   }
 
   public void outACmpneBinop(ACmpneBinop node) {
-    mProductions.addLast(Jimple.v().newNeExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newNeExpr(mValue, mValue));
   }
 
   public void outACmpgtBinop(ACmpgtBinop node) {
-    mProductions.addLast(Jimple.v().newGtExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newGtExpr(mValue, mValue));
   }
 
   public void outACmpgeBinop(ACmpgeBinop node) {
-    mProductions.addLast(Jimple.v().newGeExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newGeExpr(mValue, mValue));
   }
 
   public void outACmpltBinop(ACmpltBinop node) {
-    mProductions.addLast(Jimple.v().newLtExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newLtExpr(mValue, mValue));
   }
 
   public void outACmpleBinop(ACmpleBinop node) {
-    mProductions.addLast(Jimple.v().newLeExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newLeExpr(mValue, mValue));
   }
 
   public void outAShlBinop(AShlBinop node) {
-    mProductions.addLast(Jimple.v().newShlExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newShlExpr(mValue, mValue));
   }
 
   public void outAShrBinop(AShrBinop node) {
-    mProductions.addLast(Jimple.v().newShrExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newShrExpr(mValue, mValue));
   }
 
   public void outAUshrBinop(AUshrBinop node) {
-    mProductions.addLast(Jimple.v().newUshrExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newUshrExpr(mValue, mValue));
   }
 
   public void outAPlusBinop(APlusBinop node) {
-    mProductions.addLast(Jimple.v().newAddExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newAddExpr(mValue, mValue));
   }
 
   public void outAMinusBinop(AMinusBinop node) {
-    mProductions.addLast(Jimple.v().newSubExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newSubExpr(mValue, mValue));
   }
 
   public void outAMultBinop(AMultBinop node) {
-    mProductions.addLast(Jimple.v().newMulExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newMulExpr(mValue, mValue));
   }
 
   public void outADivBinop(ADivBinop node) {
-    mProductions.addLast(Jimple.v().newDivExpr(mValue, mValue));
+    mProductions.addLast(myJimple.newDivExpr(mValue, mValue));
   }
 
   /*
@@ -1288,7 +1285,7 @@ public class Walker extends DepthFirstAdapter {
       throw new RuntimeException("did not find local: " + identifier);
     }
 
-    mProductions.addLast(Jimple.v().newArrayRef(l, immediate));
+    mProductions.addLast(myJimple.newArrayRef(l, immediate));
 
   }
 
@@ -1306,13 +1303,13 @@ public class Walker extends DepthFirstAdapter {
       throw new RuntimeException("did not find local: " + local);
     }
 
-    mProductions.addLast(Jimple.v().newInstanceFieldRef(l, field));
+    mProductions.addLast(myJimple.newInstanceFieldRef(l, field));
   }
 
   public void outASigFieldRef(ASigFieldRef node) {
     SootFieldRef field = (SootFieldRef) mProductions.removeLast();
-    field = Scene.v().makeFieldRef(field.declaringClass(), field.name(), field.type(), true);
-    mProductions.addLast(Jimple.v().newStaticFieldRef(field));
+    field = myScene.makeFieldRef(field.declaringClass(), field.name(), field.type(), true);
+    mProductions.addLast(myJimple.newStaticFieldRef(field));
   }
 
   /*
@@ -1328,7 +1325,7 @@ public class Walker extends DepthFirstAdapter {
     className = (String) mProductions.removeLast();
 
     SootClass cl = mResolver.makeClassRef(className);
-    SootFieldRef field = Scene.v().makeFieldRef(cl, fieldName, t, false);
+    SootFieldRef field = myScene.makeFieldRef(cl, fieldName, t, false);
 
     mProductions.addLast(field);
   }
@@ -1343,13 +1340,13 @@ public class Walker extends DepthFirstAdapter {
     Value val = (Value) mProductions.removeLast();
 
     Type type = (Type) mProductions.removeLast();
-    mProductions.addLast(Jimple.v().newCastExpr(val, type));
+    mProductions.addLast(myJimple.newCastExpr(val, type));
   }
 
   public void outAInstanceofExpression(AInstanceofExpression node) {
     Type nonvoidType = (Type) mProductions.removeLast();
     Value immediate = (Value) mProductions.removeLast();
-    mProductions.addLast(Jimple.v().newInstanceOfExpr(immediate, nonvoidType));
+    mProductions.addLast(myJimple.newInstanceOfExpr(immediate, nonvoidType));
 
   }
 
@@ -1367,11 +1364,11 @@ public class Walker extends DepthFirstAdapter {
    * unop = {lengthof} lengthof | {neg} neg;
    */
   public void outALengthofUnop(ALengthofUnop node) {
-    mProductions.addLast(Jimple.v().newLengthExpr(mValue));
+    mProductions.addLast(myJimple.newLengthExpr(mValue));
   }
 
   public void outANegUnop(ANegUnop node) {
-    mProductions.addLast(Jimple.v().newNegExpr(mValue));
+    mProductions.addLast(myJimple.newNegExpr(mValue));
   }
 
   /*
@@ -1401,16 +1398,16 @@ public class Walker extends DepthFirstAdapter {
     Expr invokeExpr;
 
     if (invokeType instanceof ASpecialNonstaticInvoke) {
-      invokeExpr = Jimple.v().newSpecialInvokeExpr(l, method, args);
+      invokeExpr = myJimple.newSpecialInvokeExpr(l, method, args);
     } else if (invokeType instanceof AVirtualNonstaticInvoke) {
-      invokeExpr = Jimple.v().newVirtualInvokeExpr(l, method, args);
+      invokeExpr = myJimple.newVirtualInvokeExpr(l, method, args);
     } else {
       if (debug) {
         if (!(invokeType instanceof AInterfaceNonstaticInvoke)) {
           throw new RuntimeException("expected interface invoke.");
         }
       }
-      invokeExpr = Jimple.v().newInterfaceInvokeExpr(l, method, args);
+      invokeExpr = myJimple.newInterfaceInvokeExpr(l, method, args);
     }
 
     mProductions.addLast(invokeExpr);
@@ -1427,10 +1424,10 @@ public class Walker extends DepthFirstAdapter {
     }
 
     SootMethodRef method = (SootMethodRef) mProductions.removeLast();
-    method = Scene.v().makeMethodRef(method.declaringClass(), method.name(), method.parameterTypes(), method.returnType(),
+    method = myScene.makeMethodRef(method.declaringClass(), method.name(), method.parameterTypes(), method.returnType(),
         true);
 
-    mProductions.addLast(Jimple.v().newStaticInvokeExpr(method, args));
+    mProductions.addLast(myJimple.newStaticInvokeExpr(method, args));
   }
 
   public void outADynamicInvokeExpr(ADynamicInvokeExpr node) {
@@ -1452,7 +1449,7 @@ public class Walker extends DepthFirstAdapter {
 
     SootMethodRef dynMethodRef = (SootMethodRef) mProductions.removeLast();
 
-    mProductions.addLast(Jimple.v().newDynamicInvokeExpr(bsmMethodRef, bsmArgs, dynMethodRef, dynArgs));
+    mProductions.addLast(myJimple.newDynamicInvokeExpr(bsmMethodRef, bsmArgs, dynMethodRef, dynArgs));
   }
 
   public void outAUnnamedMethodSignature(AUnnamedMethodSignature node) {
@@ -1466,7 +1463,7 @@ public class Walker extends DepthFirstAdapter {
     String name = (String) mProductions.removeLast();
 
     SootClass sootClass = mResolver.makeClassRef(SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME);
-    SootMethodRef sootMethod = Scene.v().makeMethodRef(sootClass, name, parameterList, type, false);
+    SootMethodRef sootMethod = myScene.makeMethodRef(sootClass, name, parameterList, type, false);
 
     mProductions.addLast(sootMethod);
   }
@@ -1487,7 +1484,7 @@ public class Walker extends DepthFirstAdapter {
     className = (String) mProductions.removeLast();
 
     SootClass sootClass = mResolver.makeClassRef(className);
-    SootMethodRef sootMethod = Scene.v().makeMethodRef(sootClass, methodName, parameterList, type, false);
+    SootMethodRef sootMethod = myScene.makeMethodRef(sootClass, methodName, parameterList, type, false);
 
     mProductions.addLast(sootMethod);
   }
@@ -1497,13 +1494,13 @@ public class Walker extends DepthFirstAdapter {
    * newmultiarray l_paren base_type r_paren array_descriptor+;
    */
   public void outASimpleNewExpr(ASimpleNewExpr node) {
-    mProductions.addLast(Jimple.v().newNewExpr((RefType) mProductions.removeLast()));
+    mProductions.addLast(myJimple.newNewExpr((RefType) mProductions.removeLast()));
   }
 
   public void outAArrayNewExpr(AArrayNewExpr node) {
     Value size = (Value) mProductions.removeLast();
     Type type = (Type) mProductions.removeLast();
-    mProductions.addLast(Jimple.v().newNewArrayExpr(type, size));
+    mProductions.addLast(myJimple.newNewArrayExpr(type, size));
   }
 
   public void outAMultiNewExpr(AMultiNewExpr node) {
@@ -1526,7 +1523,7 @@ public class Walker extends DepthFirstAdapter {
     Type type = (Type) mProductions.removeLast();
     ArrayType arrayType = ArrayType.v(type, descCnt);
 
-    mProductions.addLast(Jimple.v().newNewMultiArrayExpr(arrayType, sizes));
+    mProductions.addLast(myJimple.newNewMultiArrayExpr(arrayType, sizes));
   }
 
   public void defaultCase(Node node) {
@@ -1543,7 +1540,7 @@ public class Walker extends DepthFirstAdapter {
       if (node instanceof TStringConstant || node instanceof TQuotedName) {
         tokenString = tokenString.substring(1, tokenString.length() - 1);
       } else if (node instanceof TFullIdentifier) {
-        tokenString = Scene.v().unescapeName(tokenString);
+        tokenString = myScene.unescapeName(tokenString);
       }
 
       if (node instanceof TIdentifier || node instanceof TFullIdentifier || node instanceof TQuotedName

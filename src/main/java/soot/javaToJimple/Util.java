@@ -141,7 +141,7 @@ public class Util {
 
   public static void addLnPosTags(soot.tagkit.Host host, polyglot.util.Position pos) {
     if (pos != null) {
-      if (soot.options.Options.v().keep_line_number()) {
+      if (soot.options.myOptions.keep_line_number()) {
         if (pos.file() != null) {
           host.addTag(
               new soot.tagkit.SourceLnNamePosTag(pos.file(), pos.line(), pos.endLine(), pos.column(), pos.endColumn()));
@@ -153,7 +153,7 @@ public class Util {
   }
 
   public static void addLnPosTags(soot.tagkit.Host host, int sline, int eline, int spos, int epos) {
-    if (soot.options.Options.v().keep_line_number()) {
+    if (soot.options.myOptions.keep_line_number()) {
       host.addTag(new soot.tagkit.SourceLnPosTag(sline, eline, spos, epos));
     }
   }
@@ -181,7 +181,7 @@ public class Util {
   }
 
   public static void addMethodLineTag(soot.tagkit.Host host, int sline, int eline) {
-    if (soot.options.Options.v().keep_line_number()) {
+    if (soot.options.myOptions.keep_line_number()) {
       host.addTag(new soot.tagkit.SourceLineNumberTag(sline, eline));
     }
   }
@@ -191,7 +191,7 @@ public class Util {
    */
   public static void addLineTag(soot.tagkit.Host host, polyglot.ast.Node node) {
 
-    if (soot.options.Options.v().keep_line_number()) {
+    if (soot.options.myOptions.keep_line_number()) {
       if (node.position() != null) {
         host.addTag(new soot.tagkit.SourceLineNumberTag(node.position().line(), node.position().line()));
 
@@ -210,11 +210,11 @@ public class Util {
 
   public static soot.Local getThis(soot.Type sootType, soot.Body body, HashMap getThisMap, LocalGenerator lg) {
 
-    if (InitialResolver.v().hierarchy() == null) {
-      InitialResolver.v().hierarchy(new soot.FastHierarchy());
+    if (myInitialResolver.hierarchy() == null) {
+      myInitialResolver.hierarchy(new soot.FastHierarchy());
     }
 
-    soot.FastHierarchy fh = InitialResolver.v().hierarchy();
+    soot.FastHierarchy fh = myInitialResolver.hierarchy();
 
     // System.out.println("getting this for type: "+sootType);
     // if this for type already created return it from map
@@ -243,8 +243,8 @@ public class Util {
     soot.SootField outerThisField = classToInvoke.getFieldByName("this$0");
     soot.Local t1 = lg.generateLocal(outerThisField.getType());
 
-    soot.jimple.FieldRef fieldRef = soot.jimple.Jimple.v().newInstanceFieldRef(specialThisLocal, outerThisField.makeRef());
-    soot.jimple.AssignStmt fieldAssignStmt = soot.jimple.Jimple.v().newAssignStmt(t1, fieldRef);
+    soot.jimple.FieldRef fieldRef = soot.jimple.myJimple.newInstanceFieldRef(specialThisLocal, outerThisField.makeRef());
+    soot.jimple.AssignStmt fieldAssignStmt = soot.jimple.myJimple.newAssignStmt(t1, fieldRef);
     body.getUnits().add(fieldAssignStmt);
 
     if (fh.canStoreType(t1.getType(), sootType)) {
@@ -267,7 +267,7 @@ public class Util {
   }
 
   private static soot.Local getLocalOfType(soot.Body body, soot.Type type) {
-    soot.FastHierarchy fh = InitialResolver.v().hierarchy();
+    soot.FastHierarchy fh = myInitialResolver.hierarchy();
     Iterator stmtsIt = body.getUnits().iterator();
     soot.Local correctLocal = null;
     while (stmtsIt.hasNext()) {
@@ -287,7 +287,7 @@ public class Util {
   }
 
   private static boolean bodyHasLocal(soot.Body body, soot.Type type) {
-    soot.FastHierarchy fh = InitialResolver.v().hierarchy();
+    soot.FastHierarchy fh = myInitialResolver.hierarchy();
     Iterator stmtsIt = body.getUnits().iterator();
     while (stmtsIt.hasNext()) {
       soot.jimple.Stmt s = (soot.jimple.Stmt) stmtsIt.next();
@@ -304,7 +304,7 @@ public class Util {
     }
     return false;
     /*
-     * soot.FastHierarchy fh = InitialResolver.v().hierarchy(); Iterator it = body.getDefBoxes().iterator(); while
+     * soot.FastHierarchy fh = myInitialResolver.hierarchy(); Iterator it = body.getDefBoxes().iterator(); while
      * (it.hasNext()){ soot.ValueBox vb = (soot.ValueBox)it.next(); if ((vb.getValue() instanceof soot.Local) &&
      * (fh.canStoreType(type, vb.getValue().getType()))){//(vb.getValue().getType().equals(type))){ return true; } } return
      * false;
@@ -314,11 +314,11 @@ public class Util {
   public static soot.Local getThisGivenOuter(soot.Type sootType, HashMap getThisMap, soot.Body body, LocalGenerator lg,
       soot.Local t2) {
 
-    if (InitialResolver.v().hierarchy() == null) {
-      InitialResolver.v().hierarchy(new soot.FastHierarchy());
+    if (myInitialResolver.hierarchy() == null) {
+      myInitialResolver.hierarchy(new soot.FastHierarchy());
     }
 
-    soot.FastHierarchy fh = InitialResolver.v().hierarchy();
+    soot.FastHierarchy fh = myInitialResolver.hierarchy();
 
     while (!fh.canStoreType(t2.getType(), sootType)) {
       soot.SootClass classToInvoke = ((soot.RefType) t2.getType()).getSootClass();
@@ -331,7 +331,7 @@ public class Util {
       ArrayList methParams = new ArrayList();
       methParams.add(t2);
       soot.Local res = getPrivateAccessFieldInvoke(methToInvoke.makeRef(), methParams, body, lg);
-      soot.jimple.AssignStmt assign = soot.jimple.Jimple.v().newAssignStmt(t3, res);
+      soot.jimple.AssignStmt assign = soot.jimple.myJimple.newAssignStmt(t3, res);
       body.getUnits().add(assign);
       t2 = t3;
     }
@@ -342,12 +342,12 @@ public class Util {
   }
 
   private static soot.SootMethod makeOuterThisAccessMethod(soot.SootClass classToInvoke) {
-    String name = "access$" + soot.javaToJimple.InitialResolver.v().getNextPrivateAccessCounter() + "00";
+    String name = "access$" + soot.javaToJimple.myInitialResolver.getNextPrivateAccessCounter() + "00";
     ArrayList paramTypes = new ArrayList();
     paramTypes.add(classToInvoke.getType());
 
     soot.SootMethod meth
-        = Scene.v().makeSootMethod(name, paramTypes, classToInvoke.getFieldByName("this$0").getType(), soot.Modifier.STATIC);
+        = myScene.makeSootMethod(name, paramTypes, classToInvoke.getFieldByName("this$0").getType(), soot.Modifier.STATIC);
 
     classToInvoke.addMethod(meth);
     PrivateFieldAccMethodSource src = new PrivateFieldAccMethodSource(classToInvoke.getFieldByName("this$0").getType(),
@@ -359,11 +359,11 @@ public class Util {
 
   public static soot.Local getPrivateAccessFieldInvoke(soot.SootMethodRef toInvoke, ArrayList params, soot.Body body,
       LocalGenerator lg) {
-    soot.jimple.InvokeExpr invoke = soot.jimple.Jimple.v().newStaticInvokeExpr(toInvoke, params);
+    soot.jimple.InvokeExpr invoke = soot.jimple.myJimple.newStaticInvokeExpr(toInvoke, params);
 
     soot.Local retLocal = lg.generateLocal(toInvoke.returnType());
 
-    soot.jimple.AssignStmt stmt = soot.jimple.Jimple.v().newAssignStmt(retLocal, invoke);
+    soot.jimple.AssignStmt stmt = soot.jimple.myJimple.newAssignStmt(retLocal, invoke);
     body.getUnits().add(stmt);
 
     return retLocal;
@@ -424,14 +424,14 @@ public class Util {
       polyglot.types.ClassType classType = (polyglot.types.ClassType) type;
       String className;
       if (classType.isNested()) {
-        if (classType.isAnonymous() && (soot.javaToJimple.InitialResolver.v().getAnonTypeMap() != null)
-            && soot.javaToJimple.InitialResolver.v().getAnonTypeMap()
+        if (classType.isAnonymous() && (soot.javaToJimple.myInitialResolver.getAnonTypeMap() != null)
+            && soot.javaToJimple.myInitialResolver.getAnonTypeMap()
                 .containsKey(new polyglot.util.IdentityKey(classType))) {
-          className = soot.javaToJimple.InitialResolver.v().getAnonTypeMap().get(new polyglot.util.IdentityKey(classType));
-        } else if (classType.isLocal() && (soot.javaToJimple.InitialResolver.v().getLocalTypeMap() != null)
-            && soot.javaToJimple.InitialResolver.v().getLocalTypeMap()
+          className = soot.javaToJimple.myInitialResolver.getAnonTypeMap().get(new polyglot.util.IdentityKey(classType));
+        } else if (classType.isLocal() && (soot.javaToJimple.myInitialResolver.getLocalTypeMap() != null)
+            && soot.javaToJimple.myInitialResolver.getLocalTypeMap()
                 .containsKey(new polyglot.util.IdentityKey(classType))) {
-          className = soot.javaToJimple.InitialResolver.v().getLocalTypeMap().get(new polyglot.util.IdentityKey(classType));
+          className = soot.javaToJimple.myInitialResolver.getLocalTypeMap().get(new polyglot.util.IdentityKey(classType));
         } else {
           String pkgName = "";
           if (classType.package_() != null) {

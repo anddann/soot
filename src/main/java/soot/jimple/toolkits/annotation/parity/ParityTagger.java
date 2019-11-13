@@ -62,13 +62,13 @@ public class ParityTagger extends BodyTransformer {
   protected void internalTransform(Body b, String phaseName, Map options) {
 
     // System.out.println("parity tagger for method: "+b.getMethod().getName());
-    boolean isInteractive = Options.v().interactive_mode();
-    Options.v().set_interactive_mode(false);
+    boolean isInteractive = myOptions.interactive_mode();
+    myOptions.set_interactive_mode(false);
     ParityAnalysis a;
 
     if (isInteractive) {
       LiveLocals sll = new SimpleLiveLocals(new BriefUnitGraph(b));
-      Options.v().set_interactive_mode(isInteractive);
+      myOptions.set_interactive_mode(isInteractive);
 
       a = new ParityAnalysis(new BriefUnitGraph(b), sll);
     } else {

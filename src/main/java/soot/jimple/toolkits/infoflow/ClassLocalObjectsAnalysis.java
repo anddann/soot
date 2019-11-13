@@ -206,7 +206,7 @@ public class ClassLocalObjectsAnalysis {
 
   // Returns a list of reachable methods in class sc and its superclasses
   public static List<SootMethod> getAllReachableMethods(SootClass sc) {
-    ReachableMethods rm = Scene.v().getReachableMethods();
+    ReachableMethods rm = myScene.getReachableMethods();
 
     // Get list of reachable methods declared in this class
     List<SootMethod> allMethods = new ArrayList<SootMethod>();
@@ -538,7 +538,7 @@ public class ClassLocalObjectsAnalysis {
 
         // Calculate the context for each invoke stmt in the containingMethod
         Map<Stmt, CallLocalityContext> invokeToContext = new HashMap<Stmt, CallLocalityContext>();
-        for (Iterator edgesIt = Scene.v().getCallGraph().edgesOutOf(containingMethod); edgesIt.hasNext();) {
+        for (Iterator edgesIt = myScene.getCallGraph().edgesOutOf(containingMethod); edgesIt.hasNext();) {
           Edge e = (Edge) edgesIt.next();
           if (!e.src().getDeclaringClass().isApplicationClass() || e.srcStmt() == null) {
             continue;

@@ -68,7 +68,7 @@ public class ConstantPropagatorAndFolder extends BodyTransformer {
     int numFolded = 0;
     int numPropagated = 0;
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "] Propagating and folding constants...");
     }
 
@@ -98,7 +98,7 @@ public class ConstantPropagatorAndFolder extends BodyTransformer {
             } else if (rhs instanceof CastExpr) {
               CastExpr ce = (CastExpr) rhs;
               if (ce.getCastType() instanceof RefType && ce.getOp() instanceof NullConstant) {
-                defStmt.getRightOpBox().setValue(NullConstant.v());
+                defStmt.getRightOpBox().setValue(myNullConstant);
                 numPropagated++;
               }
             }
@@ -121,7 +121,7 @@ public class ConstantPropagatorAndFolder extends BodyTransformer {
       }
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "]     Propagated: " + numPropagated + ", Folded:  " + numFolded);
     }
 

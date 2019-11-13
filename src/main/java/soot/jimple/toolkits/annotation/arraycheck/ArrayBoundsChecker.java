@@ -22,6 +22,8 @@ package soot.jimple.toolkits.annotation.arraycheck;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,15 +34,14 @@ import org.slf4j.LoggerFactory;
 import soot.ArrayType;
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.Local;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Type;
 import soot.Value;
 import soot.ValueBox;
+import soot.grimp.Grimp;
 import soot.jimple.ArrayRef;
 import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
@@ -51,16 +52,28 @@ import soot.options.Options;
 import soot.tagkit.ColorTag;
 import soot.tagkit.KeyTag;
 import soot.tagkit.Tag;
+import soot.toolkits.graph.Block;
+import soot.toolkits.graph.Orderer;
 import soot.util.Chain;
 
 public class ArrayBoundsChecker extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ArrayBoundsChecker.class);
+  private Options myOptions;
+  private RectangularArrayFinder myRectangularArrayFinder;
+  private ClassFieldAnalysis myClassFieldAnalysis;
+  private Scene myScene;
+  private Orderer<Block> mySlowPseudoTopologicalOrderer;
+  private Jimple myJimple;
 
-  public ArrayBoundsChecker(Singletons.Global g) {
-  }
-
-  public static ArrayBoundsChecker v() {
-    return G.v().soot_jimple_toolkits_annotation_arraycheck_ArrayBoundsChecker();
+  @Inject
+  public ArrayBoundsChecker(Options myOptions, RectangularArrayFinder myRectangularArrayFinder,
+                            ClassFieldAnalysis myClassFieldAnalysis, Scene myScene, Orderer<Block> mySlowPseudoTopologicalOrderer, Jimple myJimple) {
+    this.myOptions = myOptions;
+    this.myRectangularArrayFinder = myRectangularArrayFinder;
+    this.myClassFieldAnalysis = myClassFieldAnalysis;
+    this.myScene = myScene;
+    this.mySlowPseudoTopologicalOrderer = mySlowPseudoTopologicalOrderer;
+    this.myJimple = myJimple;
   }
 
   protected boolean takeClassField = false;
@@ -93,7 +106,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
 
       Date start = new Date();
 
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         logger.debug("[abc] Analyzing array bounds information for " + m.getName());
         logger.debug("[abc] Started on " + start);
       }
@@ -101,14 +114,15 @@ public class ArrayBoundsChecker extends BodyTransformer {
       ArrayBoundsCheckerAnalysis analysis = null;
 
       if (hasArrayLocals(body)) {
-        analysis = new ArrayBoundsCheckerAnalysis(body, takeClassField, takeFieldRef, takeArrayRef, takeCSE, takeRectArray);
+        analysis = new ArrayBoundsCheckerAnalysis(myOptions, myRectangularArrayFinder, myClassFieldAnalysis, body,
+            takeClassField, takeFieldRef, takeArrayRef, takeCSE, takeRectArray, mySlowPseudoTopologicalOrderer, myScene);
       }
 
       SootClass counterClass = null;
       SootMethod increase = null;
 
       if (options.profiling()) {
-        counterClass = Scene.v().loadClassAndSupport("MultiCounter");
+        counterClass = myScene.loadClassAndSupport("MultiCounter");
         increase = counterClass.getMethod("void increase(int)");
       }
 
@@ -178,7 +192,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
             /*
              * boolean lowercheck = true; boolean uppercheck = true;
              *
-             * { if (Options.v().debug()) { if (!vgraph.makeShortestPathGraph()) { logger.debug(""+stmt+" :");
+             * { if (myOptions.debug()) { if (!vgraph.makeShortestPathGraph()) { logger.debug(""+stmt+" :");
              * logger.debug(""+vgraph); } }
              *
              * Value base = aref.getBase(); Value index = aref.getIndex();
@@ -204,7 +218,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
               }
 
               units.insertBefore(
-                  Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(increase.makeRef(), IntConstant.v(lowercounter))),
+                  myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), IntConstant.v(lowercounter))),
                   stmt);
 
               int uppercounter = 2;
@@ -213,17 +227,17 @@ public class ArrayBoundsChecker extends BodyTransformer {
               }
 
               units.insertBefore(
-                  Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(increase.makeRef(), IntConstant.v(uppercounter))),
+                  myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), IntConstant.v(uppercounter))),
                   stmt);
 
               /*
-               * if (!lowercheck && !uppercheck) { units.insertBefore(Jimple.v().newInvokeStmt(
-               * Jimple.v().newStaticInvokeExpr(increase, IntConstant.v(4))), stmt);
+               * if (!lowercheck && !uppercheck) { units.insertBefore(myJimple.newInvokeStmt(
+               * myJimple.newStaticInvokeExpr(increase, IntConstant.v(4))), stmt);
                *
                * NullCheckTag nullTag = (NullCheckTag)stmt.getTag("NullCheckTag");
                *
-               * if (nullTag != null && !nullTag.needCheck()) units.insertBefore(Jimple.v().newInvokeStmt(
-               * Jimple.v().newStaticInvokeExpr(increase, IntConstant.v(7))), stmt); }
+               * if (nullTag != null && !nullTag.needCheck()) units.insertBefore(myJimple.newInvokeStmt(
+               * myJimple.newStaticInvokeExpr(increase, IntConstant.v(7))), stmt); }
                */
             } else {
               Tag checkTag = new ArrayCheckTag(lowercheck, uppercheck);
@@ -234,7 +248,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
       }
 
       if (addColorTags && takeRectArray) {
-        RectangularArrayFinder raf = RectangularArrayFinder.v();
+        RectangularArrayFinder raf = myRectangularArrayFinder;
         for (Iterator vbIt = body.getUseAndDefBoxes().iterator(); vbIt.hasNext();) {
           final ValueBox vb = (ValueBox) vbIt.next();
           Value v = vb.getValue();
@@ -254,7 +268,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
       }
 
       Date finish = new Date();
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         long runtime = finish.getTime() - start.getTime();
         logger.debug(
             "[abc] ended on " + finish + ". It took " + (runtime / 60000) + " min. " + ((runtime % 60000) / 1000) + " sec.");
@@ -281,7 +295,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
     boolean uppercheck = true;
 
     {
-      if (Options.v().debug()) {
+      if (myOptions.debug()) {
         if (!vgraph.makeShortestPathGraph()) {
           logger.debug("" + stmt + " :");
           logger.debug("" + vgraph);

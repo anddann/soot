@@ -94,7 +94,7 @@ public class OnTheFlyJimpleBasedICFG extends AbstractJimpleBasedICFG {
         public Set<SootMethod> load(Unit u) throws Exception {
           Stmt stmt = (Stmt) u;
           InvokeExpr ie = stmt.getInvokeExpr();
-          FastHierarchy fastHierarchy = Scene.v().getFastHierarchy();
+          FastHierarchy fastHierarchy = myScene.getFastHierarchy();
           // FIXME Handle Thread.start etc.
           if (ie instanceof InstanceInvokeExpr) {
             if (ie instanceof SpecialInvokeExpr) {
@@ -116,7 +116,7 @@ public class OnTheFlyJimpleBasedICFG extends AbstractJimpleBasedICFG {
                   RefType refType = (RefType) base.getType();
                   baseTypeClass = refType.getSootClass();
                 } else if (base.getType() instanceof ArrayType) {
-                  baseTypeClass = Scene.v().getSootClass("java.lang.Object");
+                  baseTypeClass = myScene.getSootClass("java.lang.Object");
                 } else if (base.getType() instanceof NullType) {
                   // if the base is definitely null then there is no call target
                   return Collections.emptySet();
@@ -147,12 +147,12 @@ public class OnTheFlyJimpleBasedICFG extends AbstractJimpleBasedICFG {
   }
 
   protected Body initForMethod(SootMethod m) {
-    assert Scene.v().hasFastHierarchy();
+    assert myScene.hasFastHierarchy();
     Body b = null;
     if (m.isConcrete()) {
       SootClass declaringClass = m.getDeclaringClass();
       ensureClassHasBodies(declaringClass);
-      synchronized (Scene.v()) {
+      synchronized (myScene) {
         b = m.retrieveActiveBody();
       }
       if (b != null) {
@@ -165,17 +165,17 @@ public class OnTheFlyJimpleBasedICFG extends AbstractJimpleBasedICFG {
         }
       }
     }
-    assert Scene.v().hasFastHierarchy();
+    assert myScene.hasFastHierarchy();
     return b;
   }
 
   private synchronized void ensureClassHasBodies(SootClass cl) {
-    assert Scene.v().hasFastHierarchy();
+    assert myScene.hasFastHierarchy();
     if (cl.resolvingLevel() < SootClass.BODIES) {
-      Scene.v().forceResolve(cl.getName(), SootClass.BODIES);
-      Scene.v().getOrMakeFastHierarchy();
+      myScene.forceResolve(cl.getName(), SootClass.BODIES);
+      myScene.getOrMakeFastHierarchy();
     }
-    assert Scene.v().hasFastHierarchy();
+    assert myScene.hasFastHierarchy();
   }
 
   @Override
@@ -208,25 +208,25 @@ public class OnTheFlyJimpleBasedICFG extends AbstractJimpleBasedICFG {
   }
 
   public static void loadAllClassesOnClassPathToSignatures() {
-    for (String path : SourceLocator.explodeClassPath(Scene.v().getSootClassPath())) {
-      for (String cl : SourceLocator.v().getClassesUnder(path)) {
-        Scene.v().forceResolve(cl, SootClass.SIGNATURES);
+    for (String path : SourceLocator.explodeClassPath(myScene.getSootClassPath())) {
+      for (String cl : mySourceLocator.getClassesUnder(path)) {
+        myScene.forceResolve(cl, SootClass.SIGNATURES);
       }
     }
   }
 
   public static void main(String[] args) {
-    PackManager.v().getPack("wjtp").add(new Transform("wjtp.onflyicfg", new SceneTransformer() {
+    PackmyManager.getPack("wjtp").add(new Transform("wjtp.onflyicfg", new SceneTransformer() {
 
       @Override
       protected void internalTransform(String phaseName, Map<String, String> options) {
-        if (Scene.v().hasCallGraph()) {
+        if (myScene.hasCallGraph()) {
           throw new RuntimeException("call graph present!");
         }
 
         loadAllClassesOnClassPathToSignatures();
 
-        SootMethod mainMethod = Scene.v().getMainMethod();
+        SootMethod mainMethod = myScene.getMainMethod();
         OnTheFlyJimpleBasedICFG icfg = new OnTheFlyJimpleBasedICFG(mainMethod);
         Set<SootMethod> worklist = new LinkedHashSet<SootMethod>();
         Set<SootMethod> visited = new HashSet<SootMethod>();
@@ -267,7 +267,7 @@ public class OnTheFlyJimpleBasedICFG extends AbstractJimpleBasedICFG {
       }
 
     }));
-    Options.v().set_on_the_fly(true);
+    myOptions.set_on_the_fly(true);
     soot.Main.main(args);
   }
 

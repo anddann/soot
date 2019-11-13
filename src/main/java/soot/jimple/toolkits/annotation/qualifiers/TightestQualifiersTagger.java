@@ -74,14 +74,14 @@ public class TightestQualifiersTagger extends SceneTransformer {
   }
 
   private void handleMethods() {
-    Iterator classesIt = Scene.v().getApplicationClasses().iterator();
+    Iterator classesIt = myScene.getApplicationClasses().iterator();
     while (classesIt.hasNext()) {
       SootClass appClass = (SootClass) classesIt.next();
       Iterator methsIt = appClass.getMethods().iterator();
       while (methsIt.hasNext()) {
         SootMethod sm = (SootMethod) methsIt.next();
         // for now if its unreachable do nothing
-        if (!Scene.v().getReachableMethods().contains(sm)) {
+        if (!myScene.getReachableMethods().contains(sm)) {
           continue;
         }
         analyzeMethod(sm);
@@ -132,15 +132,15 @@ public class TightestQualifiersTagger extends SceneTransformer {
 
   private void analyzeMethod(SootMethod sm) {
 
-    CallGraph cg = Scene.v().getCallGraph();
+    CallGraph cg = myScene.getCallGraph();
 
-    // Iterator eIt = Scene.v().getEntryPoints().iterator();
+    // Iterator eIt = myScene.getEntryPoints().iterator();
     // while (eIt.hasNext()){
     // System.out.println(eIt.next());
     // }
 
     if (methodToContexts == null) {
-      methodToContexts = new MethodToContexts(Scene.v().getReachableMethods().listener());
+      methodToContexts = new MethodToContexts(myScene.getReachableMethods().listener());
     }
 
     for (Iterator momcIt = methodToContexts.get(sm).iterator(); momcIt.hasNext();) {
@@ -293,7 +293,7 @@ public class TightestQualifiersTagger extends SceneTransformer {
   }
 
   private void handleFields() {
-    Iterator classesIt = Scene.v().getApplicationClasses().iterator();
+    Iterator classesIt = myScene.getApplicationClasses().iterator();
     while (classesIt.hasNext()) {
       SootClass appClass = (SootClass) classesIt.next();
       Iterator fieldsIt = appClass.getFields().iterator();
@@ -344,7 +344,7 @@ public class TightestQualifiersTagger extends SceneTransformer {
   private void analyzeField(SootField sf) {
 
     // from all bodies get all use boxes and eliminate used fields
-    Iterator classesIt = Scene.v().getApplicationClasses().iterator();
+    Iterator classesIt = myScene.getApplicationClasses().iterator();
     while (classesIt.hasNext()) {
       SootClass appClass = (SootClass) classesIt.next();
       Iterator mIt = appClass.getMethods().iterator();
@@ -353,7 +353,7 @@ public class TightestQualifiersTagger extends SceneTransformer {
         if (!sm.hasActiveBody()) {
           continue;
         }
-        if (!Scene.v().getReachableMethods().contains(sm)) {
+        if (!myScene.getReachableMethods().contains(sm)) {
           continue;
         }
         Body b = sm.getActiveBody();

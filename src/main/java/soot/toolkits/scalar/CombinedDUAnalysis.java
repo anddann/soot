@@ -132,7 +132,7 @@ public class CombinedDUAnalysis extends BackwardFlowAnalysis<Unit, FlowSet<Value
 
   public CombinedDUAnalysis(UnitGraph graph) {
     super(graph);
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + graph.getBody().getMethod().getName() + "]     Constructing CombinedDUAnalysis...");
     }
 
@@ -174,7 +174,7 @@ public class CombinedDUAnalysis extends BackwardFlowAnalysis<Unit, FlowSet<Value
         getDefsOfAt(localDefed, useUnit).add(defUnit);
       }
     }
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + graph.getBody().getMethod().getName() + "]     Finished CombinedDUAnalysis...");
     }
 

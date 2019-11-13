@@ -77,7 +77,7 @@ public class TypeBasedReflectionModelAnySubTypeTest extends AbstractTestingFrame
   private void commonInvokeTest(SootMethod entryPoint) {
     Set<String> interfaceInvokeCallees = new HashSet<>();
     Set<String> classInvokeCallees = new HashSet<>();
-    Scene.v().getCallGraph().edgesOutOf(entryPoint).forEachRemaining(edge -> {
+    myScene.getCallGraph().edgesOutOf(entryPoint).forEachRemaining(edge -> {
       if(edge.kind() != Kind.REFL_INVOKE) {
         return;
       }
@@ -110,10 +110,10 @@ public class TypeBasedReflectionModelAnySubTypeTest extends AbstractTestingFrame
   @Override
   protected void setupSoot() {
     super.setupSoot();
-    Options.v().setPhaseOption("cg", "types-for-invoke:true");
-    Options.v().setPhaseOption("cg", "library:any-subtype");
-    Scene.v().addBasicClass("soot.jimple.toolkit.callgraph.EntryPoint");
-    Scene.v().addBasicClass("soot.jimple.toolkit.callgraph.C");
-    Scene.v().setClientAccessibilityOracle(CompleteAccessibility.v());
+    myOptions.setPhaseOption("cg", "types-for-invoke:true");
+    myOptions.setPhaseOption("cg", "library:any-subtype");
+    myScene.addBasicClass("soot.jimple.toolkit.callgraph.EntryPoint");
+    myScene.addBasicClass("soot.jimple.toolkit.callgraph.C");
+    myScene.setClientAccessibilityOracle(myCompleteAccessibility);
   }
 }

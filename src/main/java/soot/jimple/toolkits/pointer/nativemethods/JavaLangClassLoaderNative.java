@@ -75,7 +75,7 @@ public class JavaLangClassLoaderNative extends NativeMethodClass {
    */
   public void java_lang_ClassLoader_defineClass0(SootMethod method, ReferenceVariable thisVar, ReferenceVariable returnVar,
       ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getClassObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getClassObject());
   }
 
   /**
@@ -87,7 +87,7 @@ public class JavaLangClassLoaderNative extends NativeMethodClass {
    */
   public void java_lang_ClassLoader_findBootstrapClass(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getClassObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getClassObject());
   }
 
   /**
@@ -99,7 +99,7 @@ public class JavaLangClassLoaderNative extends NativeMethodClass {
    */
   public void java_lang_ClassLoader_findLoadedClass(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getClassObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getClassObject());
   }
 
   /**
@@ -109,7 +109,7 @@ public class JavaLangClassLoaderNative extends NativeMethodClass {
    */
   public void java_lang_ClassLoader_getCallerClassLoader(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getClassLoaderObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getClassLoaderObject());
   }
 
   /**

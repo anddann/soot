@@ -46,10 +46,12 @@ public class ExceptionNode {
   private SootClass exception;
   private HashMap<IterableSet<AugmentedStmt>, SootClass> catch2except;
   private AugmentedStmt handlerAugmentedStmt;
+    private ExceptionFinder myExceptionFinder;
 
-  public ExceptionNode(IterableSet<AugmentedStmt> tryBody, SootClass exception, AugmentedStmt handlerAugmentedStmt) {
+    public ExceptionNode(IterableSet<AugmentedStmt> tryBody, SootClass exception, AugmentedStmt handlerAugmentedStmt, ExceptionFinder myExceptionFinder) {
     this.tryBody = tryBody;
-    this.catchBody = null;
+        this.myExceptionFinder = myExceptionFinder;
+        this.catchBody = null;
     this.exception = exception;
     this.handlerAugmentedStmt = handlerAugmentedStmt;
 
@@ -204,14 +206,14 @@ public class ExceptionNode {
           clonedTryBody.add(asg.get_CloneOf(au));
         }
 
-        enlist.addLast(new ExceptionNode(clonedTryBody, en.exception, asg.get_CloneOf(en.handlerAugmentedStmt)));
+        enlist.addLast(new ExceptionNode(clonedTryBody, en.exception, asg.get_CloneOf(en.handlerAugmentedStmt), myExceptionFinder));
       }
     }
 
-    enlist.addLast(new ExceptionNode(newTryBody, exception, asg.get_CloneOf(handlerAugmentedStmt)));
+    enlist.addLast(new ExceptionNode(newTryBody, exception, asg.get_CloneOf(handlerAugmentedStmt), myExceptionFinder));
 
     for (ExceptionNode en : enlist) {
-      en.refresh_CatchBody(ExceptionFinder.v());
+      en.refresh_CatchBody(myExceptionFinder);
     }
 
     asg.find_Dominators();

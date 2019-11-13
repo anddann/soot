@@ -68,10 +68,10 @@ public class SimpleLocalUses implements LocalUses {
    */
   public SimpleLocalUses(Body body, LocalDefs localDefs) {
     this.body = body;
-    final Options options = Options.v();
+    final Options options = myOptions;
     if (options.time()) {
-      Timers.v().usesTimer.start();
-      Timers.v().usePhase1Timer.start();
+      myTimers.usesTimer.start();
+      myTimers.usePhase1Timer.start();
     }
 
     if (options.verbose()) {
@@ -83,8 +83,8 @@ public class SimpleLocalUses implements LocalUses {
     // Initialize this map to empty sets
 
     if (options.time()) {
-      Timers.v().usePhase1Timer.end();
-      Timers.v().usePhase2Timer.start();
+      myTimers.usePhase1Timer.end();
+      myTimers.usePhase2Timer.start();
     }
 
     // Traverse units and associate uses with definitions
@@ -112,8 +112,8 @@ public class SimpleLocalUses implements LocalUses {
     }
 
     if (options.time()) {
-      Timers.v().usePhase2Timer.end();
-      Timers.v().usesTimer.end();
+      myTimers.usePhase2Timer.end();
+      myTimers.usesTimer.end();
     }
 
     if (options.verbose()) {

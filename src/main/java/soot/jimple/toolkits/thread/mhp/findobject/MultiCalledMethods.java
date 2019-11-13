@@ -69,7 +69,7 @@ public class MultiCalledMethods {
     while (it.hasNext()) {
       SootMethod sm = (SootMethod) it.next();
       UnitGraph graph = new CompleteUnitGraph(sm.getActiveBody());
-      CallGraph callGraph = Scene.v().getCallGraph();
+      CallGraph callGraph = myScene.getCallGraph();
       MultiRunStatementsFinder finder = new MultiRunStatementsFinder(graph, sm, multiCalledMethods, callGraph);
       FlowSet fs = finder.getMultiRunStatements();
     }

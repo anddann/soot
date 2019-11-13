@@ -469,7 +469,7 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
 		soot.Type type = type().getSootType();
 		int modifiers = sootTypeModifiers();
 		if (!hostType().getSootClassDecl().declaresFieldByName(name)) {
-			SootField f = Scene.v().makeSootField(name, type, modifiers);
+			SootField f = myScene.makeSootField(name, type, modifiers);
 			hostType().getSootClassDecl().addField(f);
 			if (isStatic() && isFinal() && isConstant() && (type().isPrimitive() || type().isString())) {
 				if (type().isString())
@@ -1477,7 +1477,7 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
 	 * @apilevel internal
 	 */
 	private SootFieldRef sootRef_compute() {
-		return Scene.v().makeFieldRef(hostType().getSootClassDecl(), name(), type().getSootType(), isStatic());
+		return myScene.makeFieldRef(hostType().getSootClassDecl(), name(), type().getSootType(), isStatic());
 	}
 
 	/**

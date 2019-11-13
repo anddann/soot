@@ -182,7 +182,7 @@ public class BafASMBackend extends AbstractASMBackend {
     }
 
     Label startLabel = null;
-    if (Options.v().write_local_annotations()) {
+    if (myOptions.write_local_annotations()) {
       startLabel = new Label();
       mv.visitLabel(startLabel);
     }
@@ -259,7 +259,7 @@ public class BafASMBackend extends AbstractASMBackend {
     }
 
     // Generate the local annotations
-    if (Options.v().write_local_annotations()) {
+    if (myOptions.write_local_annotations()) {
       Label endLabel = new Label();
       mv.visitLabel(endLabel);
 

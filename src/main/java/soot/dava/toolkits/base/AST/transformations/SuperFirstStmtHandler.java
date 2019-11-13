@@ -40,7 +40,6 @@ import soot.Local;
 import soot.LongType;
 import soot.PrimType;
 import soot.RefType;
-import soot.Scene;
 import soot.ShortType;
 import soot.SootClass;
 import soot.SootMethod;
@@ -50,7 +49,6 @@ import soot.Unit;
 import soot.Value;
 import soot.VoidType;
 import soot.dava.CorruptASTException;
-import soot.dava.Dava;
 import soot.dava.DavaBody;
 import soot.dava.DecompilationException;
 import soot.dava.internal.AST.ASTMethodNode;
@@ -365,11 +363,11 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
   private SootMethodRef makeMethodRef(String methodName, ArrayList args) {
     // make MethodRef for methodName
 
-    SootMethod method = Scene.v().makeSootMethod(methodName, args, RefType.v("java.lang.Object"));
+    SootMethod method = myScene.makeSootMethod(methodName, args, RefType.v("java.lang.Object"));
 
     // set the declaring class of new method to be the DavaSuperHandler
     // class
-    method.setDeclaringClass(new SootClass("DavaSuperHandler"));
+    method.setDeclaringClass(new SootClass("DavaSuperHandler", myScene, myOptions, myPackageNamer));
     return method.makeRef();
   }
 
@@ -417,7 +415,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     // have to make arg as "handler.get(0)"
 
     // create new ReftType for DavaSuperHandler
-    RefType type = (new SootClass("DavaSuperHandler")).getType();
+    RefType type = (new SootClass("DavaSuperHandler", myScene, myOptions, myPackageNamer)).getType();
 
     // make JimpleLocal to be used in each arg
     Local jimpleLocal = new JimpleLocal("handler", type);// takes care of
@@ -488,8 +486,8 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Boolean"));
         // booleanValue
 
-        SootMethod tempMethod = Scene.v().makeSootMethod("booleanValue", new ArrayList(), BooleanType.v());
-        tempMethod.setDeclaringClass(new SootClass("java.lang.Boolean"));
+        SootMethod tempMethod = myScene.makeSootMethod("booleanValue", new ArrayList(), BooleanType.v());
+        tempMethod.setDeclaringClass(new SootClass("java.lang.Boolean", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
         return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
@@ -497,8 +495,8 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Byte"));
         // byteValue
 
-        SootMethod tempMethod = Scene.v().makeSootMethod("byteValue", new ArrayList(), ByteType.v());
-        tempMethod.setDeclaringClass(new SootClass("java.lang.Byte"));
+        SootMethod tempMethod = myScene.makeSootMethod("byteValue", new ArrayList(), ByteType.v());
+        tempMethod.setDeclaringClass(new SootClass("java.lang.Byte", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
         return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
@@ -506,8 +504,8 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Character"));
         // charValue
 
-        SootMethod tempMethod = Scene.v().makeSootMethod("charValue", new ArrayList(), CharType.v());
-        tempMethod.setDeclaringClass(new SootClass("java.lang.Character"));
+        SootMethod tempMethod = myScene.makeSootMethod("charValue", new ArrayList(), CharType.v());
+        tempMethod.setDeclaringClass(new SootClass("java.lang.Character", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
         return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
@@ -515,8 +513,8 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Double"));
         // doubleValue
 
-        SootMethod tempMethod = Scene.v().makeSootMethod("doubleValue", new ArrayList(), DoubleType.v());
-        tempMethod.setDeclaringClass(new SootClass("java.lang.Double"));
+        SootMethod tempMethod = myScene.makeSootMethod("doubleValue", new ArrayList(), DoubleType.v());
+        tempMethod.setDeclaringClass(new SootClass("java.lang.Double", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
         return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
@@ -524,8 +522,8 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Float"));
         // floatValue
 
-        SootMethod tempMethod = Scene.v().makeSootMethod("floatValue", new ArrayList(), FloatType.v());
-        tempMethod.setDeclaringClass(new SootClass("java.lang.Float"));
+        SootMethod tempMethod = myScene.makeSootMethod("floatValue", new ArrayList(), FloatType.v());
+        tempMethod.setDeclaringClass(new SootClass("java.lang.Float", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
         return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
@@ -533,8 +531,8 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Integer"));
         // intValue
 
-        SootMethod tempMethod = Scene.v().makeSootMethod("intValue", new ArrayList(), IntType.v());
-        tempMethod.setDeclaringClass(new SootClass("java.lang.Integer"));
+        SootMethod tempMethod = myScene.makeSootMethod("intValue", new ArrayList(), IntType.v());
+        tempMethod.setDeclaringClass(new SootClass("java.lang.Integer", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
         return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
@@ -542,8 +540,8 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Long"));
         // longValue
 
-        SootMethod tempMethod = Scene.v().makeSootMethod("longValue", new ArrayList(), LongType.v());
-        tempMethod.setDeclaringClass(new SootClass("java.lang.Long"));
+        SootMethod tempMethod = myScene.makeSootMethod("longValue", new ArrayList(), LongType.v());
+        tempMethod.setDeclaringClass(new SootClass("java.lang.Long", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
         return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
@@ -551,8 +549,8 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Short"));
         // shortValue
 
-        SootMethod tempMethod = Scene.v().makeSootMethod("shortValue", new ArrayList(), ShortType.v());
-        tempMethod.setDeclaringClass(new SootClass("java.lang.Short"));
+        SootMethod tempMethod = myScene.makeSootMethod("shortValue", new ArrayList(), ShortType.v());
+        tempMethod.setDeclaringClass(new SootClass("java.lang.Short", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
         return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
@@ -653,7 +651,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     // mustInitialize has the live variables that need to be initialized
 
     // create new ReftType for DavaSuperHandler
-    RefType type = (new SootClass("DavaSuperHandler")).getType();
+    RefType type = (new SootClass("DavaSuperHandler", myScene, myOptions, myPackageNamer)).getType();
 
     // make JimpleLocal to be used in each arg
     Local jimpleLocal = new JimpleLocal("handler", type);// takes care of
@@ -795,11 +793,11 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     args.addAll(argsOneTypes);
 
     // create new ReftType for DavaSuperHandler
-    RefType type = (new SootClass("DavaSuperHandler")).getType();
+    RefType type = (new SootClass("DavaSuperHandler", myScene, myOptions, myPackageNamer)).getType();
     args.add(type);
 
     // create SOOTMETHOD
-    newConstructor = Scene.v().makeSootMethod(uniqueName, args, IntType.v());
+    newConstructor = myScene.makeSootMethod(uniqueName, args, IntType.v());
 
     // set the declaring class of new method to be the originalSootClass
     newConstructor.setDeclaringClass(originalSootClass);
@@ -809,7 +807,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
 
     // initalize a new DavaBody, notice this causes all DavaBody vars to be
     // null
-    newConstructorDavaBody = Dava.v().newBody(newConstructor);
+    newConstructorDavaBody = myDava.newBody(newConstructor);
 
     // setting params is really important if you want the args to have
     // proper names in the new method
@@ -961,7 +959,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     String uniqueName = getUniqueName();
 
     // NOTICE WE ARE DEFINING ARGS AS SAME AS THE ORIGINAL METHOD
-    newSootPreInitMethod = Scene.v().makeSootMethod(uniqueName, argsOneTypes, (new SootClass("DavaSuperHandler")).getType());
+    newSootPreInitMethod = myScene.makeSootMethod(uniqueName, argsOneTypes, (new SootClass("DavaSuperHandler", myScene, myOptions, myPackageNamer)).getType());
 
     // set the declaring class of new method to be the originalSootClass
     newSootPreInitMethod.setDeclaringClass(originalSootClass);
@@ -971,7 +969,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
 
     // initalize a new DavaBody, notice this causes all DavaBody vars to be
     // null
-    newPreInitDavaBody = Dava.v().newBody(newSootPreInitMethod);
+    newPreInitDavaBody = myDava.newBody(newSootPreInitMethod);
 
     // setting params is really important if you want the args to have
     // proper names in the new method
@@ -1053,7 +1051,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     List<AugmentedStmt> davaHandlerStmts = new ArrayList<AugmentedStmt>();
 
     // create object of DavaSuperHandler handler
-    SootClass sootClass = new SootClass("DavaSuperHandler");
+    SootClass sootClass = new SootClass("DavaSuperHandler", myScene, myOptions, myPackageNamer);
 
     Type localType = sootClass.getType();
     Local newLocal = new JimpleLocal("handler", localType);
@@ -1094,7 +1092,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     ArrayList tempList = new ArrayList();
     tempList.add(RefType.v("java.lang.Object"));// SHOULD BE OBJECT
 
-    SootMethod method = Scene.v().makeSootMethod("store", tempList, VoidType.v());
+    SootMethod method = myScene.makeSootMethod("store", tempList, VoidType.v());
 
     // set the declaring class of new method to be the DavaSuperHandler
     // class

@@ -98,10 +98,18 @@ import soot.util.queue.QueueReader;
  */
 public class PAG implements PointsToAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(PAG.class);
+    private final PhaseOptions myPhaseOptions;
+    private final Scene myScene;
+    private SparkField myArrayElement;
 
-  public PAG(final SparkOptions opts) {
-    this.opts = opts;
-    this.cgOpts = new CGOptions(PhaseOptions.v().getPhaseOptions("cg"));
+    public PAG(PhaseOptions myPhaseOptions, Scene myScene, SparkField myArrayElement, final SparkOptions opts) {
+        this.myPhaseOptions = myPhaseOptions;
+        this.myScene = myScene;
+        this.myArrayElement = myArrayElement;
+        this.opts = opts;
+        this.accessibilityOracle = myScene.getClientAccessibilityOracle();
+        this.localToNodeMap =   new LargeNumberedMap<>(myScene.getLocalNumberer());
+    this.cgOpts = new CGOptions(this.myPhaseOptions.getPhaseOptions("cg"));
     if (opts.add_tags()) {
       nodeToTag = new HashMap<Node, Tag>();
     }
@@ -111,7 +119,7 @@ public class PAG implements PointsToAnalysis {
     }
     typeManager = new TypeManager(this);
     if (!opts.ignore_types()) {
-      typeManager.setFastHierarchy(() -> Scene.v().getOrMakeFastHierarchy());
+      typeManager.setFastHierarchy(() -> this.myScene.getOrMakeFastHierarchy());
     }
     switch (opts.set_impl()) {
       case SparkOptions.set_impl_hash:
@@ -232,7 +240,7 @@ public class PAG implements PointsToAnalysis {
    * Returns the set of objects pointed to by elements of the arrays in the PointsToSet s.
    */
   public PointsToSet reachingObjectsOfArrayElement(PointsToSet s) {
-    return reachingObjectsInternal(s, ArrayElement.v());
+    return reachingObjectsInternal(s, myArrayElement);
   }
 
   private PointsToSet reachingObjectsInternal(PointsToSet s, final SparkField f) {
@@ -726,7 +734,7 @@ public class PAG implements PointsToAnalysis {
     } else if (value instanceof Local) {
       Local val = (Local) value;
       if (val.getNumber() == 0) {
-        Scene.v().getLocalNumberer().add(val);
+        myScene.getLocalNumberer().add(val);
       }
       LocalVarNode ret = localToNodeMap.get(val);
       if (ret == null) {
@@ -1217,7 +1225,7 @@ public class PAG implements PointsToAnalysis {
         Node parm1 = srcmpag.nodeFactory().getNode(arg1);
         parm1 = srcmpag.parameterize(parm1, e.srcCtxt());
         parm1 = parm1.getReplacement();
-        FieldRefNode parm1contents = makeFieldRefNode((VarNode) parm1, ArrayElement.v());
+        FieldRefNode parm1contents = makeFieldRefNode((VarNode) parm1, myArrayElement);
 
         for (int i = 0; i < tgt.getParameterCount(); i++) {
           // if no reference type, create no edge
@@ -1300,7 +1308,7 @@ public class PAG implements PointsToAnalysis {
           Node parm0 = srcmpag.nodeFactory().getNode(arg);
           parm0 = srcmpag.parameterize(parm0, e.srcCtxt());
           parm0 = parm0.getReplacement();
-          FieldRefNode parm1contents = makeFieldRefNode((VarNode) parm0, ArrayElement.v());
+          FieldRefNode parm1contents = makeFieldRefNode((VarNode) parm0, myArrayElement);
 
           for (int i = 0; i < tgt.getParameterCount(); i++) {
             // if no reference type, create no edge
@@ -1425,7 +1433,7 @@ public class PAG implements PointsToAnalysis {
 
   protected SparkOptions opts;
   protected CGOptions cgOpts;
-  protected ClientAccessibilityOracle accessibilityOracle = Scene.v().getClientAccessibilityOracle();
+  protected ClientAccessibilityOracle accessibilityOracle;
 
   protected Map<VarNode, Object> simple = new HashMap<VarNode, Object>();
   protected Map<FieldRefNode, Object> load = new HashMap<FieldRefNode, Object>();
@@ -1467,7 +1475,7 @@ public class PAG implements PointsToAnalysis {
   private OnFlyCallGraph ofcg;
   private final ArrayList<VarNode> dereferences = new ArrayList<VarNode>();
   protected TypeManager typeManager;
-  private final LargeNumberedMap<Local, LocalVarNode> localToNodeMap = new LargeNumberedMap<>(Scene.v().getLocalNumberer());
+  private final LargeNumberedMap<Local, LocalVarNode> localToNodeMap;
   private final Map<Value, NewInstanceNode> newInstToNodeMap = new HashMap<>();
   public int maxFinishNumber = 0;
   private Map<Node, Tag> nodeToTag;

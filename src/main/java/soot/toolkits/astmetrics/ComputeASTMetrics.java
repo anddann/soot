@@ -55,7 +55,7 @@ public class ComputeASTMetrics {
   }
 
   public void apply() {
-    if (!Options.v().ast_metrics()) {
+    if (!myOptions.ast_metrics()) {
       return;
     }
 

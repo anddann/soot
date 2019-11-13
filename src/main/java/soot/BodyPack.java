@@ -43,13 +43,13 @@ public class BodyPack extends Pack {
   protected void internalApply(Body b) {
     for (Iterator<Transform> tIt = this.iterator(); tIt.hasNext();) {
       final Transform t = tIt.next();
-      if (Options.v().interactive_mode()) {
+      if (myOptions.interactive_mode()) {
         // logger.debug("sending transform: "+t.getPhaseName()+" for body: "+b+" for body pack: "+this.getPhaseName());
-        InteractionHandler.v().handleNewAnalysis(t, b);
+        myInteractionHandler.handleNewAnalysis(t, b);
       }
       t.apply(b);
-      if (Options.v().interactive_mode()) {
-        InteractionHandler.v().handleTransformDone(t, b);
+      if (myOptions.interactive_mode()) {
+        myInteractionHandler.handleTransformDone(t, b);
       }
     }
   }

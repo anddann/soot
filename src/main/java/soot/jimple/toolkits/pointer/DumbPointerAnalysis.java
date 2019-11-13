@@ -49,7 +49,7 @@ public class DumbPointerAnalysis implements PointsToAnalysis {
     if (t instanceof RefType) {
       return FullObjectSet.v((RefType) t);
     }
-    return FullObjectSet.v();
+    return myFullObjectSet;
   }
 
   /** Returns the set of objects pointed to by variable l in context c. */
@@ -63,7 +63,7 @@ public class DumbPointerAnalysis implements PointsToAnalysis {
     if (t instanceof RefType) {
       return FullObjectSet.v((RefType) t);
     }
-    return FullObjectSet.v();
+    return myFullObjectSet;
   }
 
   /**
@@ -91,6 +91,6 @@ public class DumbPointerAnalysis implements PointsToAnalysis {
    * Returns the set of objects pointed to by elements of the arrays in the PointsToSet s.
    */
   public PointsToSet reachingObjectsOfArrayElement(PointsToSet s) {
-    return FullObjectSet.v();
+    return myFullObjectSet;
   }
 }

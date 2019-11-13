@@ -33,6 +33,7 @@ import soot.util.Numberable;
  * Soot representation of a Java field. Can be declared to belong to a SootClass.
  */
 public class SootField extends AbstractHost implements ClassMember, SparkField, Numberable, PaddleField {
+  private  Scene myScene;
   protected String name;
   protected Type type;
   protected int modifiers;
@@ -41,9 +42,12 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
   protected boolean isPhantom = false;
   protected volatile String sig;
   protected volatile String subSig;
+  private Options myOptions;
 
   /** Constructs a Soot field with the given name, type and modifiers. */
-  public SootField(String name, Type type, int modifiers) {
+  public SootField(Scene myScene, String name, Type type, int modifiers, Options myOptions) {
+    this.myScene = myScene;
+    this.myOptions = myOptions;
     if (name == null || type == null) {
       throw new RuntimeException("A SootField cannot have a null name or type.");
     }
@@ -53,8 +57,8 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
   }
 
   /** Constructs a Soot field with the given name, type and no modifiers. */
-  public SootField(String name, Type type) {
-    this(name, type, 0);
+  public SootField(String name, Type type, Scene myScene, Options myOptions) {
+    this(myScene, name, type, 0, myOptions);
   }
 
   public int equivHashCode() {
@@ -65,21 +69,21 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
     if (sig == null) {
       synchronized (this) {
         if (sig == null) {
-          sig = getSignature(getDeclaringClass(), getSubSignature());
+          sig = getSignature(getDeclaringClass(), getSubSignature(), myScene);
         }
       }
     }
     return sig;
   }
   
-  public static String getSignature(SootClass cl, String name, Type type) {
-    return getSignature(cl,getSubSignature(name,type));
+  public static String getSignature(SootClass cl, String name, Type type,  Scene myScene) {
+    return getSignature(cl,getSubSignature(name,type, myScene), myScene);
   }
 
-  public static String getSignature(SootClass cl, String subSignature) {
+  public static String getSignature(SootClass cl, String subSignature, Scene myScene) {
     StringBuilder buffer = new StringBuilder();
 
-    buffer.append("<").append(Scene.v().quotedNameOf(cl.getName())).append(": ");
+    buffer.append("<").append(myScene.quotedNameOf(cl.getName())).append(": ");
     buffer.append(subSignature).append(">");
 
     return buffer.toString();
@@ -90,16 +94,16 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
     if (subSig == null) {
       synchronized (this) {
         if (subSig == null) {
-          subSig = getSubSignature(getName(), getType());
+          subSig = getSubSignature(getName(), getType(),myScene);
         }
       }
     }
     return subSig;
   }
   
-  private static String getSubSignature(String name, Type type) {
+  private static String getSubSignature(String name, Type type, Scene myScene) {
     StringBuilder buffer = new StringBuilder();
-    buffer.append(type.toQuotedString() + " " + Scene.v().quotedNameOf(name));
+    buffer.append(type.toQuotedString() + " " + myScene.quotedNameOf(name));
     return buffer.toString();
   }
 
@@ -113,7 +117,7 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
   
   public synchronized void setDeclaringClass(SootClass sc) {
     if (sc != null && type instanceof RefLikeType) {
-      Scene.v().getFieldNumberer().add(this);
+      myScene.getFieldNumberer().add(this);
     }
     this.declaringClass = sc;
     this.sig = null;
@@ -127,10 +131,10 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
   @Override
   public void setPhantom(boolean value) {
     if (value) {
-      if (!Scene.v().allowsPhantomRefs()) {
+      if (!myScene.allowsPhantomRefs()) {
         throw new RuntimeException("Phantom refs not allowed");
       }
-      if (!Options.v().allow_phantom_elms() && declaringClass != null && !declaringClass.isPhantom()) {
+      if (!myOptions.allow_phantom_elms() && declaringClass != null && !declaringClass.isPhantom()) {
         throw new RuntimeException("Declaring class would have to be phantom");
       }
     }
@@ -221,9 +225,9 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
     qualifiers = qualifiers.trim();
 
     if (qualifiers.isEmpty()) {
-      return Scene.v().quotedNameOf(name);
+      return myScene.quotedNameOf(name);
     } else {
-      return qualifiers + " " + Scene.v().quotedNameOf(name) + "";
+      return qualifiers + " " + myScene.quotedNameOf(name) + "";
     }
 
   }
@@ -243,7 +247,7 @@ public class SootField extends AbstractHost implements ClassMember, SparkField, 
   private int number = 0;
 
   public SootFieldRef makeRef() {
-    return Scene.v().makeFieldRef(declaringClass, name, type, isStatic());
+    return myScene.makeFieldRef(declaringClass, name, type, isStatic());
   }
 
 }

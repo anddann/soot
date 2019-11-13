@@ -385,10 +385,10 @@ public class DexBody {
    */
   public Body jimplify(Body b, SootMethod m) {
 
-    final Jimple jimple = Jimple.v();
+    final Jimple jimple = myJimple;
     final UnknownType unknownType = UnknownType.v();
-    final NullConstant nullConstant = NullConstant.v();
-    final Options options = Options.v();
+    final NullConstant nullConstant = myNullConstant;
+    final Options options = myOptions;
 
     /*
      * Timer t_whole_jimplification = new Timer(); Timer t_num = new Timer(); Timer t_null = new Timer();
@@ -396,16 +396,16 @@ public class DexBody {
      * t_whole_jimplification.start();
      */
 
-    JBOptions jbOptions = new JBOptions(PhaseOptions.v().getPhaseOptions("jb"));
+    JBOptions jbOptions = new JBOptions(myPhaseOptions().getPhaseOptions("jb"));
     jBody = (JimpleBody) b;
     deferredInstructions = new ArrayList<DeferableInstruction>();
     instructionsToRetype = new HashSet<RetypeableInstruction>();
     
     if (jbOptions.use_original_names()) {
-      PhaseOptions.v().setPhaseOptionIfUnset("jb.lns", "only-stack-locals");
+      myPhaseOptions().setPhaseOptionIfUnset("jb.lns", "only-stack-locals");
     }
     if (jbOptions.stabilize_local_names()) {
-      PhaseOptions.v().setPhaseOption("jb.lns", "sort-locals:true");
+      myPhaseOptions().setPhaseOption("jb.lns", "sort-locals:true");
     }
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
@@ -586,8 +586,8 @@ public class DexBody {
 
     // Remove dead code and the corresponding locals before assigning types
     getUnreachableCodeEliminator().transform(jBody);
-    DeadAssignmentEliminator.v().transform(jBody);
-    UnusedLocalEliminator.v().transform(jBody);
+    myDeadAssignmentEliminator.transform(jBody);
+    myUnusedLocalEliminator.transform(jBody);
 
     for (RetypeableInstruction i : instructionsToRetype) {
       i.retype(jBody);
@@ -613,8 +613,8 @@ public class DexBody {
       getCopyPopagator().transform(jBody);
       DexNullThrowTransformer.v().transform(jBody);
       DalvikTyper.v().typeUntypedConstrantInDiv(jBody);
-      DeadAssignmentEliminator.v().transform(jBody);
-      UnusedLocalEliminator.v().transform(jBody);
+      myDeadAssignmentEliminator.transform(jBody);
+      myUnusedLocalEliminator.transform(jBody);
 
       DalvikTyper.v().assignType(jBody);
       // jBody.validate();
@@ -641,8 +641,8 @@ public class DexBody {
 
       DexIfTransformer.v().transform(jBody);
 
-      DeadAssignmentEliminator.v().transform(jBody);
-      UnusedLocalEliminator.v().transform(jBody);
+      myDeadAssignmentEliminator.transform(jBody);
+      myUnusedLocalEliminator.transform(jBody);
 
       // DexRefsChecker.v().transform(jBody);
       DexNullArrayRefTransformer.v().transform(jBody);
@@ -657,7 +657,7 @@ public class DexBody {
     // Remove "instanceof" checks on the null constant
     DexNullInstanceofTransformer.v().transform(jBody);
 
-    TypeAssigner.v().transform(jBody);
+    TypemyAssigner.transform(jBody);
 
     final RefType objectType = RefType.v("java.lang.Object");
     if (IDalvikTyper.ENABLE_DVKTYPER) {
@@ -712,7 +712,7 @@ public class DexBody {
                 if (nc.value != 0) {
                   throw new RuntimeException("expected value 0 for int constant. Got " + expr);
                 }
-                expr.setOp2(NullConstant.v());
+                expr.setOp2(myNullConstant);
               } else if (op2 instanceof NullConstant && op1 instanceof NumericConstant) {
                 IntConstant nc = (IntConstant) op1;
                 if (nc.value != 0) {
@@ -758,57 +758,57 @@ public class DexBody {
 
     // We pack locals that are not used in overlapping regions. This may
     // again lead to unused locals which we have to remove.
-    LocalPacker.v().transform(jBody);
-    UnusedLocalEliminator.v().transform(jBody);
-    PackManager.v().getTransform("jb.lns").apply(jBody);
+    myLocalPacker.transform(jBody);
+    myUnusedLocalEliminator.transform(jBody);
+    PackmyManager.getTransform("jb.lns").apply(jBody);
 
     // Some apps reference static fields as instance fields. We fix this
     // on the fly.
-    if (Options.v().wrong_staticness() == Options.wrong_staticness_fix
-          || Options.v().wrong_staticness() == Options.wrong_staticness_fixstrict) {
-      FieldStaticnessCorrector.v().transform(jBody);
-      MethodStaticnessCorrector.v().transform(jBody);
+    if (myOptions.wrong_staticness() == Options.wrong_staticness_fix
+          || myOptions.wrong_staticness() == Options.wrong_staticness_fixstrict) {
+      myFieldStaticnessCorrector.transform(jBody);
+      myMethodStaticnessCorrector.transform(jBody);
     }
 
-    // Inline PackManager.v().getPack("jb").apply(jBody);
+    // Inline PackmyManager.getPack("jb").apply(jBody);
     // Keep only transformations that have not been done
     // at this point.
-    TrapTightener.v().transform(jBody);
-    TrapMinimizer.v().transform(jBody);
-    // LocalSplitter.v().transform(jBody);
-    Aggregator.v().transform(jBody);
-    // UnusedLocalEliminator.v().transform(jBody);
-    // TypeAssigner.v().transform(jBody);
-    // LocalPacker.v().transform(jBody);
-    // LocalNameStandardizer.v().transform(jBody);
+    myTrapTightener.transform(jBody);
+    myTrapMinimizer.transform(jBody);
+    // myLocalSplitter.transform(jBody);
+    myAggregator.transform(jBody);
+    // myUnusedLocalEliminator.transform(jBody);
+    // TypemyAssigner.transform(jBody);
+    // myLocalPacker.transform(jBody);
+    // myLocalNameStandardizer.transform(jBody);
 
     // Remove if (null == null) goto x else <madness>. We can only do this
     // after we have run the constant propagation as we might not be able
     // to statically decide the conditions earlier.
-    ConditionalBranchFolder.v().transform(jBody);
+    myConditionalBranchFolder.transform(jBody);
 
     // Remove unnecessary typecasts
-    ConstantCastEliminator.v().transform(jBody);
-    IdentityCastEliminator.v().transform(jBody);
+    myConstantCastEliminator.transform(jBody);
+    myIdentityCastEliminator.transform(jBody);
 
     // Remove unnecessary logic operations
-    IdentityOperationEliminator.v().transform(jBody);
+    myIdentityOperationEliminator.transform(jBody);
 
     // We need to run this transformer since the conditional branch folder
     // might have rendered some code unreachable (well, it was unreachable
     // before as well, but we didn't know).
-    UnreachableCodeEliminator.v().transform(jBody);
+    myUnreachableCodeEliminator.transform(jBody);
 
     // Not sure whether we need this even though we do it earlier on as
     // the earlier pass does not have type information
-    // CopyPropagator.v().transform(jBody);
+    // myCopyPropagator.transform(jBody);
 
     // we might have gotten new dead assignments and unused locals through
     // copy propagation and unreachable code elimination, so we have to do
     // this again
-    DeadAssignmentEliminator.v().transform(jBody);
-    UnusedLocalEliminator.v().transform(jBody);
-    NopEliminator.v().transform(jBody);
+    myDeadAssignmentEliminator.transform(jBody);
+    myUnusedLocalEliminator.transform(jBody);
+    myNopEliminator.transform(jBody);
 
     // Remove unnecessary chains of return statements
     DexReturnPacker.v().transform(jBody);
@@ -834,7 +834,7 @@ public class DexBody {
             RefType rt = (RefType) t;
             if (rt.getSootClass().isPhantom() && !rt.getSootClass().hasSuperclass()
                 && !rt.getSootClass().getName().equals("java.lang.Throwable")) {
-              rt.getSootClass().setSuperclass(Scene.v().getSootClass("java.lang.Throwable"));
+              rt.getSootClass().setSuperclass(myScene.getSootClass("java.lang.Throwable"));
             }
           }
         }
@@ -858,7 +858,7 @@ public class DexBody {
     }
     
     //Must be last to ensure local ordering does not change
-    PackManager.v().getTransform("jb.lns").apply(jBody);
+    PackmyManager.getTransform("jb.lns").apply(jBody);
 
     // t_whole_jimplification.end();
 
@@ -889,7 +889,7 @@ public class DexBody {
 
   protected LocalSplitter getLocalSplitter() {
     if (this.localSplitter == null) {
-      this.localSplitter = new LocalSplitter(DalvikThrowAnalysis.v());
+      this.localSplitter = new LocalSplitter(myDalvikThrowAnalysis);
     }
     return this.localSplitter;
   }
@@ -898,7 +898,7 @@ public class DexBody {
 
   protected UnreachableCodeEliminator getUnreachableCodeEliminator() {
     if (this.unreachableCodeEliminator == null) {
-      this.unreachableCodeEliminator = new UnreachableCodeEliminator(DalvikThrowAnalysis.v());
+      this.unreachableCodeEliminator = new UnreachableCodeEliminator(myDalvikThrowAnalysis);
     }
     return this.unreachableCodeEliminator;
   }
@@ -907,7 +907,7 @@ public class DexBody {
 
   protected CopyPropagator getCopyPopagator() {
     if (this.copyPropagator == null) {
-      this.copyPropagator = new CopyPropagator(DalvikThrowAnalysis.v(), false);
+      this.copyPropagator = new CopyPropagator(myDalvikThrowAnalysis, false);
     }
     return this.copyPropagator;
   }
@@ -961,7 +961,7 @@ public class DexBody {
    * Should only be called at the end jimplify.
    */
   private void addTraps() {
-    final Jimple jimple = Jimple.v();
+    final Jimple jimple = myJimple;
     for (TryBlock<? extends ExceptionHandler> tryItem : tries) {
       int startAddress = tryItem.getStartCodeAddress();
       int length = tryItem.getCodeUnitCount();// .getTryLength();

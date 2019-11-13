@@ -123,7 +123,7 @@ public class ASTTryNode extends ASTLabeledNode {
           ASTNode n = (ASTNode) it.next();
 
           n.perform_Analysis(a);
-          TryContentsFinder.v().add_ExceptionSet(subBody, TryContentsFinder.v().get_ExceptionSet(n));
+          myTryContentsFinder.add_ExceptionSet(subBody, myTryContentsFinder.get_ExceptionSet(n));
         }
       }
 

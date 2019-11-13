@@ -2,20 +2,10 @@
 package soot.JastAddJ;
 
 import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
 import soot.tagkit.SourceFileTag;
 import soot.coffi.CoffiMethodSource;
 
@@ -905,14 +895,14 @@ public class ClassDecl extends ReferenceType implements Cloneable {
 {
     boolean needAddclass = false;
     SootClass sc = null;
-    if(Scene.v().containsClass(jvmName())) {
-      SootClass cl = Scene.v().getSootClass(jvmName());
+    if(myScene.containsClass(jvmName())) {
+      SootClass cl = myScene.getSootClass(jvmName());
       //fix for test case 653: if there's a class java.lang.Object etc. on the command line
       //prefer that class over the Coffi class that may already have been loaded from bytecode
       try {
         MethodSource source = cl.getMethodByName("<clinit>").getSource();
         if(source instanceof CoffiMethodSource) {
-          Scene.v().removeClass(cl);
+          myScene.removeClass(cl);
           needAddclass = true;
         }
       } catch(RuntimeException e) {
@@ -926,9 +916,9 @@ public class ClassDecl extends ReferenceType implements Cloneable {
     if(needAddclass) {
       if(options().verbose())
         System.out.println("Creating from source " + jvmName());        
-      sc = new SootClass(jvmName());
+      sc = new SootClass(jvmName(), myScene, myOptions, myPackageNamer);
       sc.setResolvingLevel(SootClass.DANGLING);
-      Scene.v().addClass(sc);
+      myScene.addClass(sc);
     } 
     return sc;
   }
@@ -1910,20 +1900,20 @@ public class ClassDecl extends ReferenceType implements Cloneable {
    * @apilevel internal
    */
   private SootClass sootClass_compute() {
-		if(!Scene.v().isIncrementalBuild()) {
+		if(!myScene.isIncrementalBuild()) {
 			return refined_EmitJimpleRefinements_ClassDecl_sootClass();
 		}
 			
-	    if(Scene.v().containsClass(jvmName())) {
-			Scene.v().removeClass(Scene.v().getSootClass(jvmName()));
+	    if(myScene.containsClass(jvmName())) {
+			myScene.removeClass(myScene.getSootClass(jvmName()));
 		}
 	
 	    SootClass sc = null;
 	    if(options().verbose())
 	    	System.out.println("Creating from source " + jvmName());        
-	    sc = new SootClass(jvmName());
+	    sc = new SootClass(jvmName(), myScene, myOptions, myPackageNamer);
 	    sc.setResolvingLevel(SootClass.DANGLING);
-		Scene.v().addClass(sc);
+		myScene.addClass(sc);
 	    return sc;
 	}
   /**

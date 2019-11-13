@@ -54,7 +54,7 @@ public class UnreachableFieldsTagger extends SceneTransformer {
     // make list of all fields
     ArrayList<SootField> fieldList = new ArrayList<SootField>();
 
-    Iterator getClassesIt = Scene.v().getApplicationClasses().iterator();
+    Iterator getClassesIt = myScene.getApplicationClasses().iterator();
     while (getClassesIt.hasNext()) {
       SootClass appClass = (SootClass) getClassesIt.next();
       // System.out.println("class to check: "+appClass);
@@ -67,7 +67,7 @@ public class UnreachableFieldsTagger extends SceneTransformer {
     }
 
     // from all bodies get all use boxes and eliminate used fields
-    getClassesIt = Scene.v().getApplicationClasses().iterator();
+    getClassesIt = myScene.getApplicationClasses().iterator();
     while (getClassesIt.hasNext()) {
       SootClass appClass = (SootClass) getClassesIt.next();
       Iterator mIt = appClass.getMethods().iterator();
@@ -77,7 +77,7 @@ public class UnreachableFieldsTagger extends SceneTransformer {
         if (!sm.hasActiveBody()) {
           continue;
         }
-        if (!Scene.v().getReachableMethods().contains(sm)) {
+        if (!myScene.getReachableMethods().contains(sm)) {
           continue;
         }
         Body b = sm.getActiveBody();

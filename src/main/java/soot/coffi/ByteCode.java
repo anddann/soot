@@ -265,7 +265,7 @@ class ByteCode {
   }
 
   /**
-   * Main.v() entry point for disassembling bytecode into Instructions; this method converts the given single bytecode into
+   * myMain entry point for disassembling bytecode into Instructions; this method converts the given single bytecode into
    * an Instruction (with label set to index).
    *
    * @param bc

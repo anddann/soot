@@ -61,7 +61,7 @@ public class JavaLangRuntimeNative extends NativeMethodClass {
    */
   public void java_lang_Runtime_execInternal(SootMethod method, ReferenceVariable thisVar, ReferenceVariable returnVar,
       ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getProcessObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getProcessObject());
   }
 
   /**

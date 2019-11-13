@@ -86,7 +86,7 @@ public class FieldTagger extends BodyTransformer {
 
     ensureProcessed(body.getMethod());
 
-    CallGraph cg = Scene.v().getCallGraph();
+    CallGraph cg = myScene.getCallGraph();
     TransitiveTargets tt = new TransitiveTargets(cg);
     statement: for (Iterator sIt = body.getUnits().iterator(); sIt.hasNext();) {
       final Stmt s = (Stmt) sIt.next();

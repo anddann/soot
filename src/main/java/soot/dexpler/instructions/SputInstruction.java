@@ -52,7 +52,7 @@ public class SputInstruction extends FieldInstruction {
   public void jimplify(DexBody body) {
     int source = ((OneRegisterInstruction) instruction).getRegisterA();
     FieldReference f = (FieldReference) ((ReferenceInstruction) instruction).getReference();
-    StaticFieldRef instanceField = Jimple.v().newStaticFieldRef(getStaticSootFieldRef(f));
+    StaticFieldRef instanceField = myJimple.newStaticFieldRef(getStaticSootFieldRef(f));
     Local sourceValue = body.getRegisterLocal(source);
     AssignStmt assign = getAssignStmt(body, sourceValue, instanceField);
     setUnit(assign);

@@ -42,7 +42,7 @@ import soot.util.Switch;
 
 public class DNotExpr extends AbstractUnopExpr {
   public DNotExpr(Value op) {
-    super(Grimp.v().newExprBox(op));
+    super(myGrimp.newExprBox(op));
   }
 
   public Object clone() {

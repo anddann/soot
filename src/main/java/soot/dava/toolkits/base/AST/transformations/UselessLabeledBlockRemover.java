@@ -76,87 +76,87 @@ public class UselessLabeledBlockRemover extends DepthFirstAdapter {
   }
 
   public void inASTMethodNode(ASTMethodNode node) {
-    changed = UselessLabelFinder.v().findAndKill(node);
+    changed = myUselessLabelFinder.findAndKill(node);
   }
 
   /*
    * public void caseASTSynchronizedBlockNode(ASTSynchronizedBlockNode node){
-   * changed=UselessLabelFinder.v().findAndKill(node); } public void caseASTLabeledBlockNode (ASTLabeledBlockNode node){
-   * changed=UselessLabelFinder.v().findAndKill(node); } public void caseASTUnconditionalLoopNode (ASTUnconditionalLoopNode
-   * node){ changed=UselessLabelFinder.v().findAndKill(node); } public void caseASTSwitchNode(ASTSwitchNode node){
-   * changed=UselessLabelFinder.v().findAndKill(node); } public void caseASTIfNode(ASTIfNode node){
-   * changed=UselessLabelFinder.v().findAndKill(node); } public void caseASTIfElseNode(ASTIfElseNode node){
-   * changed=UselessLabelFinder.v().findAndKill(node); } public void caseASTWhileNode(ASTWhileNode node){
-   * changed=UselessLabelFinder.v().findAndKill(node); } public void caseASTForLoopNode(ASTForLoopNode node){
-   * changed=UselessLabelFinder.v().findAndKill(node); } public void caseASTDoWhileNode(ASTDoWhileNode node){
-   * changed=UselessLabelFinder.v().findAndKill(node); } public void caseASTTryNode(ASTTryNode node){
-   * changed=UselessLabelFinder.v().findAndKill(node); }
+   * changed=myUselessLabelFinder.findAndKill(node); } public void caseASTLabeledBlockNode (ASTLabeledBlockNode node){
+   * changed=myUselessLabelFinder.findAndKill(node); } public void caseASTUnconditionalLoopNode (ASTUnconditionalLoopNode
+   * node){ changed=myUselessLabelFinder.findAndKill(node); } public void caseASTSwitchNode(ASTSwitchNode node){
+   * changed=myUselessLabelFinder.findAndKill(node); } public void caseASTIfNode(ASTIfNode node){
+   * changed=myUselessLabelFinder.findAndKill(node); } public void caseASTIfElseNode(ASTIfElseNode node){
+   * changed=myUselessLabelFinder.findAndKill(node); } public void caseASTWhileNode(ASTWhileNode node){
+   * changed=myUselessLabelFinder.findAndKill(node); } public void caseASTForLoopNode(ASTForLoopNode node){
+   * changed=myUselessLabelFinder.findAndKill(node); } public void caseASTDoWhileNode(ASTDoWhileNode node){
+   * changed=myUselessLabelFinder.findAndKill(node); } public void caseASTTryNode(ASTTryNode node){
+   * changed=myUselessLabelFinder.findAndKill(node); }
    */
   public void outASTSynchronizedBlockNode(ASTSynchronizedBlockNode node) {
-    boolean modified = UselessLabelFinder.v().findAndKill(node);
+    boolean modified = myUselessLabelFinder.findAndKill(node);
     if (modified) {
       changed = true;
     }
   }
 
   public void outASTLabeledBlockNode(ASTLabeledBlockNode node) {
-    boolean modified = UselessLabelFinder.v().findAndKill(node);
+    boolean modified = myUselessLabelFinder.findAndKill(node);
     if (modified) {
       changed = true;
     }
   }
 
   public void outASTUnconditionalLoopNode(ASTUnconditionalLoopNode node) {
-    boolean modified = UselessLabelFinder.v().findAndKill(node);
+    boolean modified = myUselessLabelFinder.findAndKill(node);
     if (modified) {
       changed = true;
     }
   }
 
   public void outASTSwitchNode(ASTSwitchNode node) {
-    boolean modified = UselessLabelFinder.v().findAndKill(node);
+    boolean modified = myUselessLabelFinder.findAndKill(node);
     if (modified) {
       changed = true;
     }
   }
 
   public void outASTIfNode(ASTIfNode node) {
-    boolean modified = UselessLabelFinder.v().findAndKill(node);
+    boolean modified = myUselessLabelFinder.findAndKill(node);
     if (modified) {
       changed = true;
     }
   }
 
   public void outASTIfElseNode(ASTIfElseNode node) {
-    boolean modified = UselessLabelFinder.v().findAndKill(node);
+    boolean modified = myUselessLabelFinder.findAndKill(node);
     if (modified) {
       changed = true;
     }
   }
 
   public void outASTWhileNode(ASTWhileNode node) {
-    boolean modified = UselessLabelFinder.v().findAndKill(node);
+    boolean modified = myUselessLabelFinder.findAndKill(node);
     if (modified) {
       changed = true;
     }
   }
 
   public void outASTForLoopNode(ASTForLoopNode node) {
-    boolean modified = UselessLabelFinder.v().findAndKill(node);
+    boolean modified = myUselessLabelFinder.findAndKill(node);
     if (modified) {
       changed = true;
     }
   }
 
   public void outASTDoWhileNode(ASTDoWhileNode node) {
-    boolean modified = UselessLabelFinder.v().findAndKill(node);
+    boolean modified = myUselessLabelFinder.findAndKill(node);
     if (modified) {
       changed = true;
     }
   }
 
   public void outASTTryNode(ASTTryNode node) {
-    boolean modified = UselessLabelFinder.v().findAndKill(node);
+    boolean modified = myUselessLabelFinder.findAndKill(node);
     if (modified) {
       changed = true;
     }

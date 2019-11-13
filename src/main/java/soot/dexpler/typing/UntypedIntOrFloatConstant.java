@@ -77,7 +77,7 @@ public class UntypedIntOrFloatConstant extends UntypedConstant {
       return this.toIntConstant();
     } else {
       if (value == 0 && t instanceof RefLikeType) {
-        return NullConstant.v();
+        return myNullConstant;
       }
       if (t == null) { // if the value is only used in a if to compare against another integer, then use default type of
                        // integer

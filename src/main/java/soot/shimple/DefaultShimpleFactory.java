@@ -144,7 +144,7 @@ public class DefaultShimpleFactory implements ShimpleFactory {
       return ug;
     }
 
-    UnreachableCodeEliminator.v().transform(getBody());
+    myUnreachableCodeEliminator.transform(getBody());
 
     ug = new ExceptionalUnitGraph(getBody());
     return ug;

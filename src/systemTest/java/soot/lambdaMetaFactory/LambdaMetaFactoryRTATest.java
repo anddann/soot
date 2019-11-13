@@ -32,8 +32,8 @@ public class LambdaMetaFactoryRTATest extends AbstractLambdaMetaFactoryCGTest {
   @Override
   protected void setupSoot() {
     super.setupSoot();
-    Options.v().setPhaseOption("cg.spark", "on");
-    Options.v().setPhaseOption("cg.spark", "rta:true");
-    Options.v().setPhaseOption("cg.spark", "on-fly-cg:false");
+    myOptions.setPhaseOption("cg.spark", "on");
+    myOptions.setPhaseOption("cg.spark", "rta:true");
+    myOptions.setPhaseOption("cg.spark", "on-fly-cg:false");
   }
 }

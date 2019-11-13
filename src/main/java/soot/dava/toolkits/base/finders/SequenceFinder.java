@@ -25,8 +25,8 @@ package soot.dava.toolkits.base.finders;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import com.google.inject.Inject;
 import soot.G;
-import soot.Singletons;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
 import soot.dava.RetriggerAnalysisException;
@@ -37,15 +37,21 @@ import soot.dava.internal.asg.AugmentedStmtGraph;
 import soot.util.IterableSet;
 
 public class SequenceFinder implements FactFinder {
-  public SequenceFinder(Singletons.Global g) {
+
+  private Dava myDava;
+
+  @Inject
+  public SequenceFinder(Dava myDava) {
+    this.myDava = myDava;
   }
+
 
   public static SequenceFinder v() {
     return G.v().soot_dava_toolkits_base_finders_SequenceFinder();
   }
 
   public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
-    Dava.v().log("SequenceFinder::find()");
+    myDava.log("SequenceFinder::find()");
 
     SET.find_StatementSequences(this, body);
   }

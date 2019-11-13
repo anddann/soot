@@ -36,13 +36,28 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import soot.options.CGOptions;
 import soot.options.Options;
 import soot.toolkits.astmetrics.ClassData;
 
 /** Main class for Soot; provides Soot's command-line user interface. */
 public class Main {
-  public Main(Singletons.Global g) {
+  private Options myOptions;
+  private PackManager myPackManager;
+  private PhaseOptions myPhaseOptions;
+  private Timers myTimers;
+  private Scene myScene;
+
+  @Inject
+  public Main(Options myOptions, PackManager myPackManager, PhaseOptions myPhaseOptions, Timers myTimers, Scene myScene) {
+    this.myOptions = myOptions;
+    this.myPackManager = myPackManager;
+    this.myPhaseOptions = myPhaseOptions;
+    this.myTimers = myTimers;
+    this.myScene = myScene;
   }
 
   public static Main v() {
@@ -81,52 +96,52 @@ public class Main {
 
   private void processCmdLine(String[] args) {
 
-    if (!Options.v().parse(args)) {
+    if (!myOptions.parse(args)) {
       throw new OptionsParseException("Option parse error");
     }
 
-    if (PackManager.v().onlyStandardPacks()) {
-      for (Pack pack : PackManager.v().allPacks()) {
-        Options.v().warnForeignPhase(pack.getPhaseName());
+    if (myPackManager.onlyStandardPacks()) {
+      for (Pack pack : myPackManager.allPacks()) {
+        myOptions.warnForeignPhase(pack.getPhaseName());
         for (Transform tr : pack) {
-          Options.v().warnForeignPhase(tr.getPhaseName());
+          myOptions.warnForeignPhase(tr.getPhaseName());
         }
       }
     }
-    Options.v().warnNonexistentPhase();
+    myOptions.warnNonexistentPhase();
 
-    if (Options.v().help()) {
-      System.out.println(Options.v().getUsage());
+    if (myOptions.help()) {
+      System.out.println(myOptions.getUsage());
       throw new CompilationDeathException(CompilationDeathException.COMPILATION_SUCCEEDED);
     }
 
-    if (Options.v().phase_list()) {
-      System.out.println(Options.v().getPhaseList());
+    if (myOptions.phase_list()) {
+      System.out.println(myOptions.getPhaseList());
       throw new CompilationDeathException(CompilationDeathException.COMPILATION_SUCCEEDED);
     }
 
-    if (!Options.v().phase_help().isEmpty()) {
-      for (String phase : Options.v().phase_help()) {
-        System.out.println(Options.v().getPhaseHelp(phase));
+    if (!myOptions.phase_help().isEmpty()) {
+      for (String phase : myOptions.phase_help()) {
+        System.out.println(myOptions.getPhaseHelp(phase));
       }
       throw new CompilationDeathException(CompilationDeathException.COMPILATION_SUCCEEDED);
     }
 
-    if ((!Options.v().unfriendly_mode() && (args.length == 0)) || Options.v().version()) {
+    if ((!myOptions.unfriendly_mode() && (args.length == 0)) || myOptions.version()) {
       printVersion();
       throw new CompilationDeathException(CompilationDeathException.COMPILATION_SUCCEEDED);
     }
 
-    if (Options.v().on_the_fly()) {
-      Options.v().set_whole_program(true);
-      PhaseOptions.v().setPhaseOption("cg", "off");
+    if (myOptions.on_the_fly()) {
+      myOptions.set_whole_program(true);
+      myPhaseOptions.setPhaseOption("cg", "off");
     }
 
     postCmdLineCheck();
   }
 
   private void postCmdLineCheck() {
-    if (Options.v().classes().isEmpty() && Options.v().process_dir().isEmpty()) {
+    if (myOptions.classes().isEmpty() && myOptions.process_dir().isEmpty()) {
       throw new CompilationDeathException(CompilationDeathException.COMPILATION_ABORTED, "No input classes specified!");
     }
   }
@@ -138,7 +153,11 @@ public class Main {
    */
   public static void main(String[] args) {
     try {
-      Main.v().run(args);
+      //FIXME call the injectopr
+      Injector injector = Guice.createInjector(new BaseModule());
+      Main main = injector.getInstance(Main.class);
+
+      main.run(args);
     } catch (OptionsParseException e) {
       // error message has already been printed
     } catch (StackOverflowError e) {
@@ -230,7 +249,7 @@ public class Main {
     startNano = System.nanoTime();
 
     try {
-      Timers.v().totalTimer.start();
+      myTimers.totalTimer.start();
 
       processCmdLine(cmdLineArgs);
 
@@ -238,14 +257,14 @@ public class Main {
 
       System.out.println("Soot started on " + start);
 
-      Scene.v().loadNecessaryClasses();
+      myScene.loadNecessaryClasses();
 
       /*
        * By this all the java to jimple has occured so we just check ast-metrics flag
        *
        * If it is set......print the astMetrics.xml file and stop executing soot
        */
-      if (Options.v().ast_metrics()) {
+      if (myOptions.ast_metrics()) {
         try {
           OutputStream streamOut = new FileOutputStream("../astMetrics.xml");
           PrintWriter writerOut = new PrintWriter(new OutputStreamWriter(streamOut));
@@ -266,20 +285,20 @@ public class Main {
         return;
       }
 
-      PackManager.v().runPacks();
-      if (!Options.v().oaat()) {
-        PackManager.v().writeOutput();
+      myPackManager.runPacks();
+      if (!myOptions.oaat()) {
+        myPackManager.writeOutput();
       }
 
-      Timers.v().totalTimer.end();
+      myTimers.totalTimer.end();
 
       // Print out time stats.
-      if (Options.v().time()) {
-        Timers.v().printProfilingInformation();
+      if (myOptions.time()) {
+        myTimers.printProfilingInformation();
       }
 
     } catch (CompilationDeathException e) {
-      Timers.v().totalTimer.end();
+      myTimers.totalTimer.end();
       if (e.getStatus() != CompilationDeathException.COMPILATION_SUCCEEDED) {
         throw e;
       } else {
@@ -297,20 +316,20 @@ public class Main {
 
   public void autoSetOptions() {
     // when no-bodies-for-excluded is enabled, also enable phantom refs
-    if (Options.v().no_bodies_for_excluded()) {
-      Options.v().set_allow_phantom_refs(true);
+    if (myOptions.no_bodies_for_excluded()) {
+      myOptions.set_allow_phantom_refs(true);
     }
 
     // when reflection log is enabled, also enable phantom refs
-    CGOptions cgOptions = new CGOptions(PhaseOptions.v().getPhaseOptions("cg"));
+    CGOptions cgOptions = new CGOptions(myPhaseOptions.getPhaseOptions("cg"));
     String log = cgOptions.reflection_log();
     if ((log != null) && (log.length() > 0)) {
-      Options.v().set_allow_phantom_refs(true);
+      myOptions.set_allow_phantom_refs(true);
     }
 
     // if phantom refs enabled, ignore wrong staticness in type assigner
-    if (Options.v().allow_phantom_refs()) {
-      Options.v().set_wrong_staticness(Options.wrong_staticness_fix);
+    if (myOptions.allow_phantom_refs()) {
+      myOptions.set_wrong_staticness(Options.wrong_staticness_fix);
     }
   }
 }

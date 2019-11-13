@@ -72,7 +72,7 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
 
   @Override
   protected void internalTransform(String phaseName, Map<String, String> options) {
-    for (SootClass sc : Scene.v().getClasses()) {
+    for (SootClass sc : myScene.getClasses()) {
       transformClass(sc);
     }
   }
@@ -114,7 +114,7 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
 
         if (constant != null) {
           if (sf.isStatic()) {
-            Stmt initStmt = Jimple.v().newAssignStmt(Jimple.v().newStaticFieldRef(sf.makeRef()), constant);
+            Stmt initStmt = myJimple.newAssignStmt(myJimple.newStaticFieldRef(sf.makeRef()), constant);
             if (smInit == null) {
               smInit = getOrCreateInitializer(sc, alreadyInitialized);
             }
@@ -141,8 +141,8 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
                           // Calling another constructor in the same class
                           break;
                         }
-                        Stmt initStmt = Jimple.v()
-                            .newAssignStmt(Jimple.v().newInstanceFieldRef(body.getThisLocal(), sf.makeRef()), constant);
+                        Stmt initStmt = myJimple
+                            .newAssignStmt(myJimple.newInstanceFieldRef(body.getThisLocal(), sf.makeRef()), constant);
 
                         body.getUnits().insertAfter(initStmt, s);
                         break;
@@ -160,7 +160,7 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
     if (smInit != null) {
       Chain<Unit> units = smInit.getActiveBody().getUnits();
       if (units.isEmpty() || !(units.getLast() instanceof ReturnVoidStmt)) {
-        units.add(Jimple.v().newReturnVoidStmt());
+        units.add(myJimple.newReturnVoidStmt());
       }
     }
   }
@@ -170,8 +170,8 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
     // Create a static initializer if we don't already have one
     smInit = sc.getMethodByNameUnsafe(SootMethod.staticInitializerName);
     if (smInit == null) {
-      smInit = Scene.v().makeSootMethod(SootMethod.staticInitializerName, Collections.<Type>emptyList(), VoidType.v());
-      smInit.setActiveBody(Jimple.v().newBody(smInit));
+      smInit = myScene.makeSootMethod(SootMethod.staticInitializerName, Collections.<Type>emptyList(), VoidType.v());
+      smInit.setActiveBody(myJimple.newBody(smInit));
       sc.addMethod(smInit);
       smInit.setModifiers(Modifier.PUBLIC | Modifier.STATIC);
     } else if (smInit.isPhantom()) {

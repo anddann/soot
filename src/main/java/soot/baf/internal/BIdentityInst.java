@@ -87,7 +87,7 @@ public class BIdentityInst extends AbstractInst implements IdentityInst {
   }
 
   public BIdentityInst(Value local, Value identityValue) {
-    this(Baf.v().newLocalBox(local), Baf.v().newIdentityRefBox(identityValue));
+    this(myBaf.newLocalBox(local), myBaf.newIdentityRefBox(identityValue));
   }
 
   protected BIdentityInst(ValueBox localBox, ValueBox identityValueBox) {

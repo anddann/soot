@@ -43,15 +43,15 @@ public class EntryPoints {
     return G.v().soot_EntryPoints();
   }
 
-  final NumberedString sigMain = Scene.v().getSubSigNumberer().findOrAdd("void main(java.lang.String[])");
-  final NumberedString sigFinalize = Scene.v().getSubSigNumberer().findOrAdd("void finalize()");
-  final NumberedString sigExit = Scene.v().getSubSigNumberer().findOrAdd("void exit()");
-  final NumberedString sigClinit = Scene.v().getSubSigNumberer().findOrAdd("void <clinit>()");
-  final NumberedString sigInit = Scene.v().getSubSigNumberer().findOrAdd("void <init>()");
-  final NumberedString sigStart = Scene.v().getSubSigNumberer().findOrAdd("void start()");
-  final NumberedString sigRun = Scene.v().getSubSigNumberer().findOrAdd("void run()");
-  final NumberedString sigObjRun = Scene.v().getSubSigNumberer().findOrAdd("java.lang.Object run()");
-  final NumberedString sigForName = Scene.v().getSubSigNumberer().findOrAdd("java.lang.Class forName(java.lang.String)");
+  final NumberedString sigMain = myScene.getSubSigNumberer().findOrAdd("void main(java.lang.String[])");
+  final NumberedString sigFinalize = myScene.getSubSigNumberer().findOrAdd("void finalize()");
+  final NumberedString sigExit = myScene.getSubSigNumberer().findOrAdd("void exit()");
+  final NumberedString sigClinit = myScene.getSubSigNumberer().findOrAdd("void <clinit>()");
+  final NumberedString sigInit = myScene.getSubSigNumberer().findOrAdd("void <init>()");
+  final NumberedString sigStart = myScene.getSubSigNumberer().findOrAdd("void start()");
+  final NumberedString sigRun = myScene.getSubSigNumberer().findOrAdd("void run()");
+  final NumberedString sigObjRun = myScene.getSubSigNumberer().findOrAdd("java.lang.Object run()");
+  final NumberedString sigForName = myScene.getSubSigNumberer().findOrAdd("java.lang.Class forName(java.lang.String)");
 
   protected void addMethod(List<SootMethod> set, SootClass cls, NumberedString methodSubSig) {
     SootMethod sm = cls.getMethodUnsafe(methodSubSig);
@@ -61,8 +61,8 @@ public class EntryPoints {
   }
 
   protected void addMethod(List<SootMethod> set, String methodSig) {
-    if (Scene.v().containsMethod(methodSig)) {
-      set.add(Scene.v().getMethod(methodSig));
+    if (myScene.containsMethod(methodSig)) {
+      set.add(myScene.getMethod(methodSig));
     }
   }
 
@@ -71,9 +71,9 @@ public class EntryPoints {
    */
   public List<SootMethod> application() {
     List<SootMethod> ret = new ArrayList<SootMethod>();
-    if (Scene.v().hasMainClass()) {
-      addMethod(ret, Scene.v().getMainClass(), sigMain);
-      for (SootMethod clinit : clinitsOf(Scene.v().getMainClass())) {
+    if (myScene.hasMainClass()) {
+      addMethod(ret, myScene.getMainClass(), sigMain);
+      for (SootMethod clinit : clinitsOf(myScene.getMainClass())) {
         ret.add(clinit);
       }
     }
@@ -116,7 +116,7 @@ public class EntryPoints {
   /** Returns a list of all static initializers. */
   public List<SootMethod> clinits() {
     List<SootMethod> ret = new ArrayList<SootMethod>();
-    for (Iterator<SootClass> clIt = Scene.v().getClasses().iterator(); clIt.hasNext();) {
+    for (Iterator<SootClass> clIt = myScene.getClasses().iterator(); clIt.hasNext();) {
       final SootClass cl = clIt.next();
       addMethod(ret, cl, sigClinit);
     }
@@ -126,7 +126,7 @@ public class EntryPoints {
   /** Returns a list of all constructors taking no arguments. */
   public List<SootMethod> inits() {
     List<SootMethod> ret = new ArrayList<SootMethod>();
-    for (Iterator<SootClass> clIt = Scene.v().getClasses().iterator(); clIt.hasNext();) {
+    for (Iterator<SootClass> clIt = myScene.getClasses().iterator(); clIt.hasNext();) {
       final SootClass cl = clIt.next();
       addMethod(ret, cl, sigInit);
     }
@@ -136,7 +136,7 @@ public class EntryPoints {
   /** Returns a list of all constructors. */
   public List<SootMethod> allInits() {
     List<SootMethod> ret = new ArrayList<SootMethod>();
-    for (Iterator<SootClass> clIt = Scene.v().getClasses().iterator(); clIt.hasNext();) {
+    for (Iterator<SootClass> clIt = myScene.getClasses().iterator(); clIt.hasNext();) {
       final SootClass cl = clIt.next();
       for (SootMethod m : cl.getMethods()) {
         if (m.getName().equals("<init>")) {
@@ -150,7 +150,7 @@ public class EntryPoints {
   /** Returns a list of all concrete methods of all application classes. */
   public List<SootMethod> methodsOfApplicationClasses() {
     List<SootMethod> ret = new ArrayList<SootMethod>();
-    for (Iterator<SootClass> clIt = Scene.v().getApplicationClasses().iterator(); clIt.hasNext();) {
+    for (Iterator<SootClass> clIt = myScene.getApplicationClasses().iterator(); clIt.hasNext();) {
       final SootClass cl = clIt.next();
       for (Iterator<SootMethod> mIt = cl.getMethods().iterator(); mIt.hasNext();) {
         final SootMethod m = mIt.next();
@@ -167,7 +167,7 @@ public class EntryPoints {
    */
   public List<SootMethod> mainsOfApplicationClasses() {
     List<SootMethod> ret = new ArrayList<SootMethod>();
-    for (Iterator<SootClass> clIt = Scene.v().getApplicationClasses().iterator(); clIt.hasNext();) {
+    for (Iterator<SootClass> clIt = myScene.getApplicationClasses().iterator(); clIt.hasNext();) {
       final SootClass cl = clIt.next();
       SootMethod m = cl.getMethodUnsafe("void main(java.lang.String[])");
       if (m != null) {

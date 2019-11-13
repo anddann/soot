@@ -51,7 +51,7 @@ public class IgetInstruction extends FieldInstruction {
     int dest = i.getRegisterA();
     int object = i.getRegisterB();
     FieldReference f = (FieldReference) ((ReferenceInstruction) instruction).getReference();
-    final Jimple jimple = Jimple.v();
+    final Jimple jimple = myJimple;
     InstanceFieldRef r = jimple.newInstanceFieldRef(body.getRegisterLocal(object), getSootFieldRef(f));
     AssignStmt assign = jimple.newAssignStmt(body.getRegisterLocal(dest), r);
     setUnit(assign);

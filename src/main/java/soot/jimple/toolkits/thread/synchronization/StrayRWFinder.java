@@ -59,11 +59,11 @@ public class StrayRWFinder extends BackwardFlowAnalysis {
     if (G.v().Union_factory == null) {
       G.v().Union_factory = new UnionFactory() {
         public Union newUnion() {
-          return FullObjectSet.v();
+          return myFullObjectSet;
         }
       };
     }
-    sea = Scene.v().getSideEffectAnalysis();
+    sea = myScene.getSideEffectAnalysis();
     sea.findNTRWSets(body.getMethod());
     doAnalysis();
   }

@@ -23,6 +23,8 @@ package soot;
 
 import java.util.List;
 
+import soot.jimple.Jimple;
+import soot.options.Options;
 import soot.tagkit.AnnotationTag;
 import soot.tagkit.Tag;
 import soot.tagkit.VisibilityAnnotationTag;
@@ -75,12 +77,15 @@ public class PolymorphicMethodRef extends SootMethodRefImpl {
    *          the type of return value. Must not be {@code null}
    * @param isStatic
    *          the static modifier value
+   * @param myScene
+   * @param myOptions
+   * @param myJimple
    * @throws IllegalArgumentException
    *           is thrown when {@code declaringClass}, or {@code name}, or {@code returnType} is null
    */
   public PolymorphicMethodRef(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
-      boolean isStatic) {
-    super(declaringClass, name, parameterTypes, returnType, isStatic);
+                              boolean isStatic, Scene myScene, Options myOptions, Jimple myJimple) {
+    super(declaringClass, name, parameterTypes, returnType, isStatic, myScene, myOptions, myJimple);
   }
 
   @Override
@@ -118,7 +123,7 @@ public class PolymorphicMethodRef extends SootMethodRefImpl {
 
   private SootMethod addPolyMorphicMethod(SootMethod originalPolyMorphicMethod) {
     SootMethod newMethod
-        = new SootMethod(getName(), getParameterTypes(), getReturnType(), originalPolyMorphicMethod.modifiers);
+        = new SootMethod(getName(), getParameterTypes(), getReturnType(), originalPolyMorphicMethod.modifiers, myScene);
     getDeclaringClass().addMethod(newMethod);
     return newMethod;
   }

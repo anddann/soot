@@ -66,7 +66,7 @@ public class ConstantInvokeMethodBaseTransformer extends SceneTransformer {
   protected void internalTransform(String phaseName, Map<String, String> options) {
     boolean verbose = options.containsKey("verbose");
 
-    for (SootClass sootClass : Scene.v().getApplicationClasses()) {
+    for (SootClass sootClass : myScene.getApplicationClasses()) {
       // In some rare cases we will have application classes that are not resolved due to being located in excluded packages
       // (e.g., the
       // ServiceConnection class constructed by FlowDroid:
@@ -86,9 +86,9 @@ public class ConstantInvokeMethodBaseTransformer extends SceneTransformer {
               if (invokeExpr.getArg(0) instanceof StringConstant) {
 
                 StringConstant constant = (StringConstant) invokeExpr.getArg(0);
-                Local newLocal = Jimple.v().newLocal("sc" + body.getLocalCount(), constant.getType());
+                Local newLocal = myJimple.newLocal("sc" + body.getLocalCount(), constant.getType());
                 body.getLocals().add(newLocal);
-                body.getUnits().insertBefore(Jimple.v().newAssignStmt(newLocal, constant), u);
+                body.getUnits().insertBefore(myJimple.newAssignStmt(newLocal, constant), u);
                 invokeExpr.setArg(0, newLocal);
 
                 if (verbose) {

@@ -98,7 +98,7 @@ public class Parse {
       System.exit(0);
     }
 
-    Scene.v().setPhantomRefs(true);
+    myScene.setPhantomRefs(true);
 
     for (String arg : args) {
       if (arg.startsWith("-")) {

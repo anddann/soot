@@ -45,7 +45,7 @@ public class ThrowNullConverter {
     return G.v().soot_dava_toolkits_base_misc_ThrowNullConverter();
   }
 
-  private final RefType npeRef = RefType.v(Scene.v().loadClassAndSupport("java.lang.NullPointerException"));
+  private final RefType npeRef = RefType.v(myScene.loadClassAndSupport("java.lang.NullPointerException"));
 
   public void convert(DavaBody body) {
     Iterator it = body.getUnits().iterator();

@@ -43,7 +43,7 @@ public class JInvokeStmt extends AbstractStmt implements InvokeStmt {
   final ValueBox invokeExprBox;
 
   public JInvokeStmt(Value c) {
-    this(Jimple.v().newInvokeExprBox(c));
+    this(myJimple.newInvokeExprBox(c));
   }
 
   protected JInvokeStmt(ValueBox invokeExprBox) {
@@ -98,7 +98,7 @@ public class JInvokeStmt extends AbstractStmt implements InvokeStmt {
 
     ((ConvertToBaf) ie).convertToBaf(context, out);
     if (!ie.getMethodRef().returnType().equals(VoidType.v())) {
-      Unit u = Baf.v().newPopInst(ie.getMethodRef().returnType());
+      Unit u = myBaf.newPopInst(ie.getMethodRef().returnType());
       u.addAllTagsOf(this);
       out.add(u);
     }

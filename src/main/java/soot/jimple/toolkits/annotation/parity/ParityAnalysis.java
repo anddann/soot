@@ -265,7 +265,7 @@ public class ParityAnalysis extends ForwardFlowAnalysis<Unit, Map<Value, ParityA
     }
 
     // if (useS){
-    if (Options.v().interactive_mode()) {
+    if (myOptions.interactive_mode()) {
       buildAfterFilterMap(s);
       updateAfterFilterMap(s);
     }
@@ -350,7 +350,7 @@ public class ParityAnalysis extends ForwardFlowAnalysis<Unit, Map<Value, ParityA
       }
     }
 
-    if (Options.v().interactive_mode()) {
+    if (myOptions.interactive_mode()) {
       updateBeforeFilterMap();
     }
 

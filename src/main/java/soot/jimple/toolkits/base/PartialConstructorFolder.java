@@ -72,7 +72,7 @@ public class PartialConstructorFolder extends BodyTransformer {
   public void internalTransform(Body b, String phaseName, Map<String, String> options) {
     JimpleBody body = (JimpleBody) b;
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Folding Jimple constructors...");
     }
 
@@ -146,8 +146,8 @@ public class PartialConstructorFolder extends BodyTransformer {
 
         // make a new one here
         AssignStmt constructStmt
-            = Jimple.v().newAssignStmt(((DefinitionStmt) s).getLeftOp(), ((DefinitionStmt) s).getRightOp());
-        constructStmt.setRightOp(Jimple.v().newNewExpr(((NewExpr) rhs).getBaseType()));
+            = myJimple.newAssignStmt(((DefinitionStmt) s).getLeftOp(), ((DefinitionStmt) s).getRightOp());
+        constructStmt.setRightOp(myJimple.newNewExpr(((NewExpr) rhs).getBaseType()));
         MadeNewInvokeExpr = true;
 
         // redirect jumps

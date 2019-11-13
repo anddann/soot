@@ -48,7 +48,7 @@ public class ASTBinaryCondition extends ASTUnaryBinaryCondition {
   }
 
   public void toString(UnitPrinter up) {
-    (Jimple.v().newConditionExprBox(condition)).toString(up);
+    (myJimple.newConditionExprBox(condition)).toString(up);
   }
 
   public void flip() {

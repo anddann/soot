@@ -94,7 +94,7 @@ public class ExceptionalBlockGraph extends BlockGraph implements ExceptionalGrap
   public ExceptionalBlockGraph(ExceptionalUnitGraph unitGraph) {
     super(unitGraph);
 
-    soot.util.PhaseDumper.v().dumpGraph(this);
+    soot.util.myPhaseDumper.dumpGraph(this);
   }
 
   /**
@@ -223,7 +223,7 @@ public class ExceptionalBlockGraph extends BlockGraph implements ExceptionalGrap
     Unit blockHead = block.getHead();
     Unit blockTail = block.getTail();
     ArrayList<ExceptionDest> blocksDests = null;
-    ThrowableSet escapingThrowables = ThrowableSet.Manager.v().EMPTY;
+    ThrowableSet escapingThrowables = ThrowableSet.myManager.EMPTY;
     Map<Trap, ThrowableSet> trapToThrowables = null; // Don't allocate unless we need it.
     int caughtCount = 0;
 
@@ -239,7 +239,7 @@ public class ExceptionalBlockGraph extends BlockGraph implements ExceptionalGrap
           try {
             escapingThrowables = escapingThrowables.add(unitDest.getThrowables());
           } catch (ThrowableSet.AlreadyHasExclusionsException e) {
-            if (escapingThrowables != ThrowableSet.Manager.v().EMPTY) {
+            if (escapingThrowables != ThrowableSet.myManager.EMPTY) {
               // Return multiple escaping ExceptionDests,
               // since ThrowableSet's limitations do not permit us
               // to add all the escaping type descriptions together.
@@ -278,7 +278,7 @@ public class ExceptionalBlockGraph extends BlockGraph implements ExceptionalGrap
       blocksDests.ensureCapacity(blocksDests.size() + caughtCount);
     }
 
-    if (escapingThrowables != ThrowableSet.Manager.v().EMPTY) {
+    if (escapingThrowables != ThrowableSet.myManager.EMPTY) {
       ExceptionDest escapingDest = new ExceptionDest(null, escapingThrowables, null);
       blocksDests.add(escapingDest);
     }
@@ -344,7 +344,7 @@ public class ExceptionalBlockGraph extends BlockGraph implements ExceptionalGrap
         @Override
         public ThrowableSet getThrowables() {
           if (null == throwables) {
-            throwables = ThrowableSet.Manager.v().EMPTY;
+            throwables = ThrowableSet.myManager.EMPTY;
             for (Unit unit : b) {
               throwables = throwables.add(throwAnalysis.mightThrow(unit));
             }

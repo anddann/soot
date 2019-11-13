@@ -209,10 +209,10 @@ public class PiNodeManager {
   public void piHandleIfStmt(Local local, IfStmt u) {
     Unit target = u.getTarget();
 
-    PiExpr pit = Shimple.v().newPiExpr(local, u, Boolean.TRUE);
-    PiExpr pif = Shimple.v().newPiExpr(local, u, Boolean.FALSE);
-    Unit addt = Jimple.v().newAssignStmt(local, pit);
-    Unit addf = Jimple.v().newAssignStmt(local, pif);
+    PiExpr pit = myShimple.newPiExpr(local, u, Boolean.TRUE);
+    PiExpr pif = myShimple.newPiExpr(local, u, Boolean.FALSE);
+    Unit addt = myJimple.newAssignStmt(local, pit);
+    Unit addf = myJimple.newAssignStmt(local, pif);
 
     PatchingChain<Unit> units = body.getUnits();
 
@@ -240,7 +240,7 @@ public class PiNodeManager {
       }
 
       if (predOfTarget.fallsThrough()) {
-        GotoStmt gotoStmt = Jimple.v().newGotoStmt(target);
+        GotoStmt gotoStmt = myJimple.newGotoStmt(target);
         units.insertAfter(gotoStmt, predOfTarget);
       }
     }
@@ -284,8 +284,8 @@ public class PiNodeManager {
       Unit target = targetBox.getUnit();
       Object targetKey = targetKeys.get(count);
 
-      PiExpr pi1 = Shimple.v().newPiExpr(local, u, targetKey);
-      Unit add1 = Jimple.v().newAssignStmt(local, pi1);
+      PiExpr pi1 = myShimple.newPiExpr(local, u, targetKey);
+      Unit add1 = myJimple.newAssignStmt(local, pi1);
 
       PatchingChain<Unit> units = body.getUnits();
 
@@ -308,7 +308,7 @@ public class PiNodeManager {
         }
 
         if (predOfTarget.fallsThrough()) {
-          GotoStmt gotoStmt = Jimple.v().newGotoStmt(target);
+          GotoStmt gotoStmt = myJimple.newGotoStmt(target);
           units.insertAfter(gotoStmt, predOfTarget);
         }
       }
@@ -344,9 +344,9 @@ public class PiNodeManager {
         }
       }
 
-      DeadAssignmentEliminator.v().transform(body);
-      CopyPropagator.v().transform(body);
-      DeadAssignmentEliminator.v().transform(body);
+      myDeadAssignmentEliminator.transform(body);
+      myCopyPropagator.transform(body);
+      myDeadAssignmentEliminator.transform(body);
     } else {
       for (Unit u : body.getUnits()) {
         PiExpr pe = Shimple.getPiExpr(u);

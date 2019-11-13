@@ -222,7 +222,7 @@ public class GeomEvaluator {
 
     LinkedList<CgEdge> list = ptsProvider.getCallEdgesInto(ptsProvider.getIDFromSootMethod(caller));
 
-    FastHierarchy hierarchy = Scene.v().getOrMakeFastHierarchy();
+    FastHierarchy hierarchy = myScene.getOrMakeFastHierarchy();
 
     for (Iterator<CgEdge> it = list.iterator(); it.hasNext();) {
       CgEdge p = it.next();
@@ -265,7 +265,7 @@ public class GeomEvaluator {
     int[] limits = new int[] { 1, 2, 4, 8 };
     evalRes.total_call_edges = new Histogram(limits);
 
-    CallGraph cg = Scene.v().getCallGraph();
+    CallGraph cg = myScene.getCallGraph();
 
     for (Stmt callsite : ptsProvider.multiCallsites) {
       Iterator<Edge> edges = cg.edgesOutOf(callsite);

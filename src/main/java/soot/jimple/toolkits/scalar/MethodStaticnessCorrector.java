@@ -71,7 +71,7 @@ public class MethodStaticnessCorrector extends AbstractStaticnessCorrector {
           InvokeExpr iexpr = s.getInvokeExpr();
           if (iexpr instanceof StaticInvokeExpr) {
             if (isClassLoaded(iexpr.getMethodRef().declaringClass())) {
-              SootMethod target = Scene.v().grabMethod(iexpr.getMethodRef().getSignature());
+              SootMethod target = myScene.grabMethod(iexpr.getMethodRef().getSignature());
               if (target != null && !target.isStatic()) {
                 if (canBeMadeStatic(target)) {
                   // Remove the this-assignment to prevent

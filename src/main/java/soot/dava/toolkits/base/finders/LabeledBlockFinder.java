@@ -22,6 +22,8 @@ package soot.dava.toolkits.base.finders;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,7 +32,6 @@ import java.util.List;
 import java.util.TreeSet;
 
 import soot.G;
-import soot.Singletons;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
 import soot.dava.RetriggerAnalysisException;
@@ -45,7 +46,12 @@ import soot.dava.internal.asg.AugmentedStmtGraph;
 import soot.util.IterableSet;
 
 public class LabeledBlockFinder implements FactFinder {
-  public LabeledBlockFinder(Singletons.Global g) {
+
+  private Dava myDava;
+
+  @Inject
+  public LabeledBlockFinder(Dava myDava) {
+    this.myDava = myDava;
   }
 
   public static LabeledBlockFinder v() {
@@ -55,7 +61,7 @@ public class LabeledBlockFinder implements FactFinder {
   private final HashMap<SETNode, Integer> orderNumber = new HashMap();
 
   public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
-    Dava.v().log("LabeledBlockFinder::find()");
+    myDava.log("LabeledBlockFinder::find()");
 
     Iterator bit = SET.get_Body().iterator();
     while (bit.hasNext()) {
@@ -66,7 +72,7 @@ public class LabeledBlockFinder implements FactFinder {
   }
 
   public void perform_ChildOrder(SETNode SETParent) {
-    Dava.v().log("LabeledBlockFinder::perform_ChildOrder()");
+    myDava.log("LabeledBlockFinder::perform_ChildOrder()");
 
     if (SETParent instanceof SETStatementSequenceNode) {
       return;
@@ -193,7 +199,7 @@ public class LabeledBlockFinder implements FactFinder {
   }
 
   private List<SETBasicBlock> build_Connectivity(SETNode SETParent, IterableSet body, SETNode startSETNode) {
-    Dava.v().log("LabeledBlockFinder::build_Connectivity()");
+    myDava.log("LabeledBlockFinder::build_Connectivity()");
 
     IterableSet children = SETParent.get_Body2ChildChain().get(body);
 
@@ -241,7 +247,7 @@ public class LabeledBlockFinder implements FactFinder {
       }
     }
 
-    Dava.v().log("LabeledBlockFinder::build_Connectivity() - built connectivity");
+    myDava.log("LabeledBlockFinder::build_Connectivity() - built connectivity");
 
     /*
      * Second task: build the basic block graph between the node.
@@ -289,7 +295,7 @@ public class LabeledBlockFinder implements FactFinder {
       basicBlockList.add(basicBlock);
     }
 
-    Dava.v().log("LabeledBlockFinder::build_Connectivity() - created basic blocks");
+    myDava.log("LabeledBlockFinder::build_Connectivity() - created basic blocks");
 
     // next build the connectivity between the nodes of the basic block graph
     Iterator<SETBasicBlock> bblit = basicBlockList.iterator();
@@ -313,13 +319,13 @@ public class LabeledBlockFinder implements FactFinder {
       }
     }
 
-    Dava.v().log("LabeledBlockFinder::build_Connectivity() - done");
+    myDava.log("LabeledBlockFinder::build_Connectivity() - done");
 
     return basicBlockList;
   }
 
   public void find_LabeledBlocks(SETNode SETParent) {
-    Dava.v().log("LabeledBlockFinder::find_LabeledBlocks()");
+    myDava.log("LabeledBlockFinder::find_LabeledBlocks()");
 
     Iterator<IterableSet> sbit = SETParent.get_SubBodies().iterator();
     while (sbit.hasNext()) {

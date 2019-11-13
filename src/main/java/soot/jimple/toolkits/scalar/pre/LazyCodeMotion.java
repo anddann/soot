@@ -22,6 +22,8 @@ package soot.jimple.toolkits.scalar.pre;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -36,18 +38,16 @@ import soot.G;
 import soot.Local;
 import soot.Scene;
 import soot.SideEffectTester;
-import soot.Singletons;
 import soot.Unit;
 import soot.Value;
+import soot.JastAddJ.Options;
 import soot.jimple.AssignStmt;
 import soot.jimple.Jimple;
 import soot.jimple.NaiveSideEffectTester;
-import soot.jimple.toolkits.graph.CriticalEdgeRemover;
 import soot.jimple.toolkits.graph.LoopConditionUnroller;
 import soot.jimple.toolkits.pointer.PASideEffectTester;
 import soot.jimple.toolkits.scalar.LocalCreation;
 import soot.options.LCMOptions;
-import soot.options.Options;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.ArrayPackedSet;
@@ -75,8 +75,18 @@ import soot.util.UnitMap;
  */
 public class LazyCodeMotion extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(LazyCodeMotion.class);
+  private Options myOptions;
+  private BodyTransformer myCriticalEdgeRemover;
+  private Scene myScene;
+  private Jimple myJimple;
 
-  public LazyCodeMotion(Singletons.Global g) {
+  @Inject
+  public LazyCodeMotion(Options myOptions, BodyTransformer myCriticalEdgeRemover, Scene myScene, Jimple myJimple) {
+
+    this.myOptions = myOptions;
+    this.myCriticalEdgeRemover = myCriticalEdgeRemover;
+    this.myScene = myScene;
+    this.myJimple = myJimple;
   }
 
   public static LazyCodeMotion v() {
@@ -93,7 +103,7 @@ public class LazyCodeMotion extends BodyTransformer {
     HashMap<EquivalentValue, Local> expToHelper = new HashMap<EquivalentValue, Local>();
     Chain<Unit> unitChain = b.getUnits();
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "] Performing Lazy Code Motion...");
     }
 
@@ -101,7 +111,7 @@ public class LazyCodeMotion extends BodyTransformer {
       new LoopConditionUnroller().transform(b, phaseName + ".lcu");
     }
 
-    CriticalEdgeRemover.v().transform(b, phaseName + ".cer");
+    myCriticalEdgeRemover.transform(b, phaseName + ".cer");
 
     UnitGraph graph = new BriefUnitGraph(b);
 
@@ -131,7 +141,7 @@ public class LazyCodeMotion extends BodyTransformer {
 
     /* if a more precise sideeffect-tester comes out, please change it here! */
     SideEffectTester sideEffect;
-    if (Scene.v().hasCallGraph() && !options.naive_side_effect()) {
+    if (myScene.hasCallGraph() && !options.naive_side_effect()) {
       sideEffect = new PASideEffectTester();
     } else {
       sideEffect = new NaiveSideEffectTester();
@@ -202,7 +212,7 @@ public class LazyCodeMotion extends BodyTransformer {
 
           /* insert a new Assignment-stmt before the currentUnit */
           Value insertValue = Jimple.cloneIfNecessary(equiVal.getValue());
-          Unit firstComp = Jimple.v().newAssignStmt(helper, insertValue);
+          Unit firstComp = myJimple.newAssignStmt(helper, insertValue);
           unitChain.insertBefore(firstComp, currentUnit);
         }
       }
@@ -237,7 +247,7 @@ public class LazyCodeMotion extends BodyTransformer {
         }
       }
     }
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "]     Lazy Code Motion done.");
     }
   }

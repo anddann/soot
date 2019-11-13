@@ -634,7 +634,7 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol  implements Clonea
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddExtensions/JimpleBackend/EmitJimple.jrag:879
    */
   protected soot.jimple.Stmt newLabel() {
-    return soot.jimple.Jimple.v().newNopStmt();
+    return soot.jimple.myJimple.newNopStmt();
   }
   /**
    * @ast method 

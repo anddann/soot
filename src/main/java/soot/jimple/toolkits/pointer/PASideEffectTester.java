@@ -53,8 +53,8 @@ import soot.jimple.Stmt;
 //  StaticFieldRef
 
 public class PASideEffectTester implements SideEffectTester {
-  PointsToAnalysis pa = Scene.v().getPointsToAnalysis();
-  SideEffectAnalysis sea = Scene.v().getSideEffectAnalysis();
+  PointsToAnalysis pa = myScene.getPointsToAnalysis();
+  SideEffectAnalysis sea = myScene.getSideEffectAnalysis();
   HashMap<Unit, RWSet> unitToRead;
   HashMap<Unit, RWSet> unitToWrite;
   HashMap<Local, PointsToSet> localToReachingObjects;
@@ -64,7 +64,7 @@ public class PASideEffectTester implements SideEffectTester {
     if (G.v().Union_factory == null) {
       G.v().Union_factory = new UnionFactory() {
         public Union newUnion() {
-          return FullObjectSet.v();
+          return myFullObjectSet;
         }
       };
     }

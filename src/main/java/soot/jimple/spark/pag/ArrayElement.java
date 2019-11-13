@@ -22,10 +22,10 @@ package soot.jimple.spark.pag;
  * #L%
  */
 
-import soot.G;
+import com.google.inject.Inject;
+
 import soot.RefType;
 import soot.Scene;
-import soot.Singletons;
 import soot.Type;
 
 /**
@@ -34,15 +34,14 @@ import soot.Type;
  * @author Ondrej Lhotak
  */
 public class ArrayElement implements SparkField {
-  public ArrayElement(Singletons.Global g) {
-  }
 
-  public static ArrayElement v() {
-    return G.v().soot_jimple_spark_pag_ArrayElement();
-  }
+  private final Scene myScene;
 
-  public ArrayElement() {
-    Scene.v().getFieldNumberer().add(this);
+  @Inject
+  public ArrayElement(Scene myScene)
+  {
+    this.myScene = myScene;
+    myScene.getFieldNumberer().add(this);
   }
 
   public final int getNumber() {

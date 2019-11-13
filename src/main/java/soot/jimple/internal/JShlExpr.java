@@ -47,7 +47,7 @@ public class JShlExpr extends AbstractJimpleIntLongBinopExpr implements ShlExpr 
   }
 
   Object makeBafInst(Type opType) {
-    return Baf.v().newShlInst(this.getOp1().getType());
+    return myBaf.newShlInst(this.getOp1().getType());
   }
 
   public Type getType() {

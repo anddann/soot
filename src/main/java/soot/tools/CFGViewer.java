@@ -93,7 +93,7 @@ public class CFGViewer extends BodyTransformer {
     printTransform.setDefaultOptions(
         "enabled " + altClassPathOptionName + ": " + graphTypeOptionName + ':' + defaultGraph + ' ' + irOptionName + ':'
             + defaultIR + ' ' + multipageOptionName + ":false " + ' ' + briefLabelOptionName + ":false ");
-    PackManager.v().getPack("jtp").add(printTransform);
+    PackmyManager.getPack("jtp").add(printTransform);
     args = viewer.parse_options(args);
     if (args.length == 0) {
       usage();
@@ -204,12 +204,12 @@ public class CFGViewer extends BodyTransformer {
       drawer.setUnexceptionalControlFlowAttr("color", "black");
       drawer.setExceptionalControlFlowAttr("color", "red");
       drawer.setExceptionEdgeAttr("color", "lightgray");
-      drawer.setShowExceptions(Options.v().show_exception_dests());
+      drawer.setShowExceptions(myOptions.show_exception_dests());
       ir = CFGIntermediateRep.getIR(PhaseOptions.getString(options, irOptionName));
       graphtype = CFGGraphType.getGraphType(PhaseOptions.getString(options, graphTypeOptionName));
 
-      AltClassLoader.v().setAltClassPath(PhaseOptions.getString(options, altClassPathOptionName));
-      AltClassLoader.v()
+      myAltClassLoader.setAltClassPath(PhaseOptions.getString(options, altClassPathOptionName));
+      myAltClassLoader
           .setAltClasses(new String[] { "soot.toolkits.graph.ArrayRefBlockGraph", "soot.toolkits.graph.Block",
               "soot.toolkits.graph.Block$AllMapTo", "soot.toolkits.graph.BlockGraph", "soot.toolkits.graph.BriefBlockGraph",
               "soot.toolkits.graph.BriefUnitGraph", "soot.toolkits.graph.CompleteBlockGraph",
@@ -224,7 +224,7 @@ public class CFGViewer extends BodyTransformer {
 
     String methodname = body.getMethod().getSubSignature();
     String classname = body.getMethod().getDeclaringClass().getName().replaceAll("\\$", "\\.");
-    String filename = soot.SourceLocator.v().getOutputDir();
+    String filename = soot.mySourceLocator.getOutputDir();
     if (filename.length() > 0) {
       filename = filename + java.io.File.separator;
     }

@@ -26,12 +26,12 @@ package soot.grimp;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.ArrayType;
 import soot.Body;
 import soot.G;
 import soot.Local;
 import soot.RefType;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootFieldRef;
 import soot.SootMethod;
@@ -158,7 +158,11 @@ import soot.jimple.XorExpr;
  */
 
 public class Grimp {
-  public Grimp(Singletons.Global g) {
+  private Jimple myJimple;
+
+  @Inject
+  public Grimp(Jimple myJimple) {
+    this.myJimple = myJimple;
   }
 
   public static Grimp v() {
@@ -362,7 +366,7 @@ public class Grimp {
    */
 
   NewExpr newNewExpr(RefType type) {
-    return Jimple.v().newNewExpr(type);
+    return myJimple.newNewExpr(type);
   }
 
   /**
@@ -470,11 +474,11 @@ public class Grimp {
    */
 
   public BreakpointStmt newBreakpointStmt() {
-    return Jimple.v().newBreakpointStmt();
+    return myJimple.newBreakpointStmt();
   }
 
   public BreakpointStmt newBreakpointStmt(BreakpointStmt s) {
-    return Jimple.v().newBreakpointStmt();
+    return myJimple.newBreakpointStmt();
   }
 
   /**
@@ -482,11 +486,11 @@ public class Grimp {
    */
 
   public GotoStmt newGotoStmt(Unit target) {
-    return Jimple.v().newGotoStmt(target);
+    return myJimple.newGotoStmt(target);
   }
 
   public GotoStmt newGotoStmt(GotoStmt s) {
-    return Jimple.v().newGotoStmt(s.getTarget());
+    return myJimple.newGotoStmt(s.getTarget());
   }
 
   /**
@@ -494,11 +498,11 @@ public class Grimp {
    */
 
   public NopStmt newNopStmt() {
-    return Jimple.v().newNopStmt();
+    return myJimple.newNopStmt();
   }
 
   public NopStmt newNopStmt(NopStmt s) {
-    return Jimple.v().newNopStmt();
+    return myJimple.newNopStmt();
   }
 
   /**
@@ -506,11 +510,11 @@ public class Grimp {
    */
 
   public ReturnVoidStmt newReturnVoidStmt() {
-    return Jimple.v().newReturnVoidStmt();
+    return myJimple.newReturnVoidStmt();
   }
 
   public ReturnVoidStmt newReturnVoidStmt(ReturnVoidStmt s) {
-    return Jimple.v().newReturnVoidStmt();
+    return myJimple.newReturnVoidStmt();
   }
 
   /**
@@ -602,7 +606,7 @@ public class Grimp {
    */
 
   public Local newLocal(String name, Type t) {
-    return Jimple.v().newLocal(name, t);
+    return myJimple.newLocal(name, t);
   }
 
   /**
@@ -622,7 +626,7 @@ public class Grimp {
    */
 
   public StaticFieldRef newStaticFieldRef(SootFieldRef f) {
-    return Jimple.v().newStaticFieldRef(f);
+    return myJimple.newStaticFieldRef(f);
   }
 
   /**
@@ -630,7 +634,7 @@ public class Grimp {
    */
 
   public ThisRef newThisRef(RefType t) {
-    return Jimple.v().newThisRef(t);
+    return myJimple.newThisRef(t);
   }
 
   /**
@@ -638,7 +642,7 @@ public class Grimp {
    */
 
   public ParameterRef newParameterRef(Type paramType, int number) {
-    return Jimple.v().newParameterRef(paramType, number);
+    return myJimple.newParameterRef(paramType, number);
   }
 
   /**
@@ -654,7 +658,7 @@ public class Grimp {
    */
 
   public CaughtExceptionRef newCaughtExceptionRef() {
-    return Jimple.v().newCaughtExceptionRef();
+    return myJimple.newCaughtExceptionRef();
   }
 
   /**
@@ -666,11 +670,11 @@ public class Grimp {
   }
 
   public ValueBox newVariableBox(Value value) {
-    return Jimple.v().newVariableBox(value);
+    return myJimple.newVariableBox(value);
   }
 
   public ValueBox newLocalBox(Value value) {
-    return Jimple.v().newLocalBox(value);
+    return myJimple.newLocalBox(value);
   }
 
   public ValueBox newRValueBox(Value value) {
@@ -678,7 +682,7 @@ public class Grimp {
   }
 
   public ValueBox newImmediateBox(Value value) {
-    return Jimple.v().newImmediateBox(value);
+    return myJimple.newImmediateBox(value);
   }
 
   public ValueBox newExprBox(Value value) {
@@ -694,19 +698,19 @@ public class Grimp {
   }
 
   public ValueBox newIdentityRefBox(Value value) {
-    return Jimple.v().newIdentityRefBox(value);
+    return myJimple.newIdentityRefBox(value);
   }
 
   public ValueBox newConditionExprBox(Value value) {
-    return Jimple.v().newConditionExprBox(value);
+    return myJimple.newConditionExprBox(value);
   }
 
   public ValueBox newInvokeExprBox(Value value) {
-    return Jimple.v().newInvokeExprBox(value);
+    return myJimple.newInvokeExprBox(value);
   }
 
   public UnitBox newStmtBox(Unit unit) {
-    return Jimple.v().newStmtBox(unit);
+    return myJimple.newStmtBox(unit);
   }
 
   /** Carries out the mapping from other Value's to Grimp Value's */

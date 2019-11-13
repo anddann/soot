@@ -134,7 +134,7 @@ public class CopyPropagation extends DepthFirstAdapter {
       // need to rerun copy prop
 
       // before running a structured flow analysis have to do this one
-      AST.apply(ClosestAbruptTargetFinder.v());
+      AST.apply(myClosestAbruptTargetFinder);
 
       // System.out.println("\n\n\nCOPY PROP\n\n\n\n");
 

@@ -59,9 +59,9 @@ public class PurityAnalysis extends SceneTransformer {
 
     logger.debug("[AM] Analysing purity");
 
-    CallGraph cg = Scene.v().getCallGraph();
+    CallGraph cg = myScene.getCallGraph();
 
     // launch the analysis
-    new PurityInterproceduralAnalysis(cg, Scene.v().getEntryPoints().iterator(), opts);
+    new PurityInterproceduralAnalysis(cg, myScene.getEntryPoints().iterator(), opts);
   }
 }

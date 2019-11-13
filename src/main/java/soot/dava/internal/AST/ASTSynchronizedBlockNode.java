@@ -41,7 +41,7 @@ public class ASTSynchronizedBlockNode extends ASTLabeledNode {
   public ASTSynchronizedBlockNode(SETNodeLabel label, List<Object> body, Value local) {
     super(label);
     this.body = body;
-    this.localBox = Jimple.v().newLocalBox(local);
+    this.localBox = myJimple.newLocalBox(local);
 
     subBodies.add(body);
   }
@@ -64,7 +64,7 @@ public class ASTSynchronizedBlockNode extends ASTLabeledNode {
   }
 
   public void setLocal(Local local) {
-    this.localBox = Jimple.v().newLocalBox(local);
+    this.localBox = myJimple.newLocalBox(local);
   }
 
   public Object clone() {

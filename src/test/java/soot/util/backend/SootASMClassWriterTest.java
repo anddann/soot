@@ -64,7 +64,7 @@ public class SootASMClassWriterTest {
 		mockStatic(UnknownType.class);
 
 		scene = mock(Scene.class);
-		when(Scene.v()).thenReturn(scene);
+		when(myScene).thenReturn(scene);
 
 		UnknownType unknown = mock(UnknownType.class);
 		when(UnknownType.v()).thenReturn(unknown);
@@ -79,7 +79,7 @@ public class SootASMClassWriterTest {
 
 		objectType = mock(RefType.class);
 		when(object.getType()).thenReturn(objectType);
-		when(Scene.v().getObjectType()).thenReturn(objectType);
+		when(myScene.getObjectType()).thenReturn(objectType);
 		when(objectType.getSootClass()).thenReturn(object);
 		when(objectType.getClassName()).thenReturn("java.lang.Object");
 

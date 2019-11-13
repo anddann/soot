@@ -111,7 +111,7 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
       passedIDs = true;
 
       if (after == null) {
-        after = Baf.v().newNopInst();
+        after = myBaf.newNopInst();
         units.addFirst(after);
       }
 
@@ -146,12 +146,12 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
             throw new RuntimeException("Shouldn't get here (t is a double or word type: in FixUndefinedLocals)");
           }
         }
-        Unit store = Baf.v().newStoreInst(t, l);
+        Unit store = myBaf.newStoreInst(t, l);
         units.insertAfter(store, after);
 
         // TODO: is this necessary if I fix the other casting issues?
         if (t instanceof ArrayType) {
-          Unit tmp = Baf.v().newInstanceCastInst(t);
+          Unit tmp = myBaf.newInstanceCastInst(t);
           units.insertBefore(tmp, store);
           store = tmp;
         }
@@ -161,7 +161,7 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
         units.insertBefore(pinit, store);
         /*
          * if (t instanceof RefType) { SootClass sc = ((RefType)t).getSootClass(); if (sc != null)
-         * units.insertAfter(Baf.v().newInstanceCastInst(t), pinit); }
+         * units.insertAfter(myBaf.newInstanceCastInst(t), pinit); }
          */
 
         initialized.add(l);
@@ -176,15 +176,15 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
 
   public static PushInst getPushInitializer(Local l, Type t) {
     if (t instanceof IntegerType) {
-      return Baf.v().newPushInst(IntConstant.v(soot.jbco.util.Rand.getInt()));
+      return myBaf.newPushInst(IntConstant.v(soot.jbco.util.Rand.getInt()));
     } else if (t instanceof RefLikeType || t instanceof StmtAddressType) {
-      return Baf.v().newPushInst(NullConstant.v());
+      return myBaf.newPushInst(myNullConstant);
     } else if (t instanceof LongType) {
-      return Baf.v().newPushInst(LongConstant.v(soot.jbco.util.Rand.getLong()));
+      return myBaf.newPushInst(LongConstant.v(soot.jbco.util.Rand.getLong()));
     } else if (t instanceof FloatType) {
-      return Baf.v().newPushInst(FloatConstant.v(soot.jbco.util.Rand.getFloat()));
+      return myBaf.newPushInst(FloatConstant.v(soot.jbco.util.Rand.getFloat()));
     } else if (t instanceof DoubleType) {
-      return Baf.v().newPushInst(DoubleConstant.v(soot.jbco.util.Rand.getDouble()));
+      return myBaf.newPushInst(DoubleConstant.v(soot.jbco.util.Rand.getDouble()));
     }
 
     return null;

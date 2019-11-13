@@ -110,7 +110,7 @@ public class InvokePolymorphicInstruction extends MethodInvocationInstruction {
       PatchingChain<Unit> units = b.getUnits();
       
       //Return type for invoke and invokeExact is Object and paramater type is Object[]
-      RefType rf = Scene.v().getRefType("java.lang.Object");
+      RefType rf = myScene.getRefType("java.lang.Object");
       Local newArrL = new JimpleLocal("$u" + (b.getLocalCount() + 1), ArrayType.v(rf, 1));
       b.getLocals().add(newArrL);
       JAssignStmt newArr = new JAssignStmt(newArrL, new JNewArrayExpr(rf, IntConstant.v(parms.size())));
@@ -125,9 +125,9 @@ public class InvokePolymorphicInstruction extends MethodInvocationInstruction {
     }
     
     if (ref.declaringClass().isInterface()) {
-      invocation = Jimple.v().newInterfaceInvokeExpr(invoker, ref, parms);
+      invocation = myJimple.newInterfaceInvokeExpr(invoker, ref, parms);
     } else {
-      invocation = Jimple.v().newVirtualInvokeExpr(invoker, ref, parms);
+      invocation = myJimple.newVirtualInvokeExpr(invoker, ref, parms);
     }
     body.setDanglingInstruction(this);
   }

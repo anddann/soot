@@ -109,7 +109,7 @@ public class CondTransformer extends BodyTransformer {
       b.getUnits().remove(stmtSeq[i]);
     }
     if (!sameGoto) {
-      b.getUnits().insertAfter(Jimple.v().newGotoStmt(oldTarget), stmtSeq[1]);
+      b.getUnits().insertAfter(myJimple.newGotoStmt(oldTarget), stmtSeq[1]);
     }
   }
 

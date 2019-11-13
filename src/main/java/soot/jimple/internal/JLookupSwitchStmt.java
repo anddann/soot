@@ -51,7 +51,7 @@ public class JLookupSwitchStmt extends AbstractSwitchStmt implements LookupSwitc
   private static UnitBox[] getTargetBoxesArray(List<? extends Unit> targets) {
     UnitBox[] targetBoxes = new UnitBox[targets.size()];
     for (int i = 0; i < targetBoxes.length; i++) {
-      targetBoxes[i] = Jimple.v().newStmtBox(targets.get(i));
+      targetBoxes[i] = myJimple.newStmtBox(targets.get(i));
     }
     return targetBoxes;
   }
@@ -69,13 +69,13 @@ public class JLookupSwitchStmt extends AbstractSwitchStmt implements LookupSwitc
 
   /** Constructs a new JLookupSwitchStmt. lookupValues should be a list of IntConst s. */
   public JLookupSwitchStmt(Value key, List<IntConstant> lookupValues, List<? extends Unit> targets, Unit defaultTarget) {
-    this(Jimple.v().newImmediateBox(key), lookupValues, getTargetBoxesArray(targets), Jimple.v().newStmtBox(defaultTarget));
+    this(myJimple.newImmediateBox(key), lookupValues, getTargetBoxesArray(targets), myJimple.newStmtBox(defaultTarget));
   }
 
   /** Constructs a new JLookupSwitchStmt. lookupValues should be a list of IntConst s. */
   public JLookupSwitchStmt(Value key, List<IntConstant> lookupValues, List<? extends UnitBox> targets,
       UnitBox defaultTarget) {
-    this(Jimple.v().newImmediateBox(key), lookupValues, targets.toArray(new UnitBox[targets.size()]), defaultTarget);
+    this(myJimple.newImmediateBox(key), lookupValues, targets.toArray(new UnitBox[targets.size()]), defaultTarget);
   }
 
   protected JLookupSwitchStmt(ValueBox keyBox, List<IntConstant> lookupValues, UnitBox[] targetBoxes,
@@ -164,11 +164,11 @@ public class JLookupSwitchStmt extends AbstractSwitchStmt implements LookupSwitc
     ((ConvertToBaf) getKey()).convertToBaf(context, out);
 
     for (Unit target : getTargets()) {
-      targetPlaceholders.add(Baf.v().newPlaceholderInst(target));
+      targetPlaceholders.add(myBaf.newPlaceholderInst(target));
     }
 
     Unit u
-        = Baf.v().newLookupSwitchInst(Baf.v().newPlaceholderInst(getDefaultTarget()), getLookupValues(), targetPlaceholders);
+        = myBaf.newLookupSwitchInst(myBaf.newPlaceholderInst(getDefaultTarget()), getLookupValues(), targetPlaceholders);
     u.addAllTagsOf(this);
     out.add(u);
   }

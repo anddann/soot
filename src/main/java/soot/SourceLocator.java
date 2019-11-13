@@ -25,6 +25,7 @@ package soot;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.inject.Inject;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import soot.JavaClassProvider.JarException;
 import soot.asm.AsmClassProvider;
 import soot.dexpler.DexFileProvider;
+import soot.javaToJimple.InitialResolver;
 import soot.options.Options;
 
 /**
@@ -65,10 +67,10 @@ public class SourceLocator {
             @Override
             public ClassSourceType load(String path) throws Exception {
               File f = new File(path);
-              if (!f.exists() && !Options.v().ignore_classpath_errors()) {
+              if (!f.exists() && !myOptions.ignore_classpath_errors()) {
                 throw new Exception("Error: The path '" + path + "' does not exist.");
               }
-              if (!f.canRead() && !Options.v().ignore_classpath_errors()) {
+              if (!f.canRead() && !myOptions.ignore_classpath_errors()) {
                 throw new Exception("Error: The path '" + path + "' exists but is not readable.");
               }
               if (f.isFile()) {
@@ -118,8 +120,18 @@ public class SourceLocator {
    * classes.
    */
   private Map<String, File> dexClassIndex;
+  private Options myOptions;
+  private Scene myScene;
+  private DexFileProvider myDexFileProvider;
+  private InitialResolver myInitialResolver;
 
-  public SourceLocator(Singletons.Global g) {
+  @Inject
+  public SourceLocator(Options myOptions, Scene myScene, DexFileProvider myDexFileProvider,
+      InitialResolver myInitialResolver) {
+    this.myOptions = myOptions;
+    this.myScene = myScene;
+    this.myDexFileProvider = myDexFileProvider;
+    this.myInitialResolver = myInitialResolver;
   }
 
   public static SourceLocator v() {
@@ -165,7 +177,7 @@ public class SourceLocator {
    */
   public ClassSource getClassSource(String className) {
     if (classPath == null) {
-      classPath = explodeClassPath(Scene.v().getSootClassPath());
+      classPath = explodeClassPath(myScene.getSootClassPath());
     }
     if (classProviders == null) {
       setupClassProviders();
@@ -195,7 +207,7 @@ public class SourceLocator {
             if (stream == null) {
               return null;
             }
-            return new CoffiClassSource(className, stream, fileName);
+            return new CoffiClassSource(className, stream, fileName, myCoffiUtil);
           }
 
         }.find(className);
@@ -217,7 +229,7 @@ public class SourceLocator {
       }
       InputStream stream = cl.getResourceAsStream(fileName);
       if (stream != null) {
-        return new CoffiClassSource(className, stream, fileName);
+        return new CoffiClassSource(className, stream, fileName, myCoffiUtil);
       }
     }
     return null;
@@ -229,36 +241,36 @@ public class SourceLocator {
 
   protected void setupClassProviders() {
     classProviders = new LinkedList<ClassProvider>();
-    ClassProvider classFileClassProvider = Options.v().coffi() ? new CoffiClassProvider() : new AsmClassProvider();
-    switch (Options.v().src_prec()) {
+    ClassProvider classFileClassProvider = myOptions.coffi() ? new CoffiClassProvider(this) : new AsmClassProvider(this);
+    switch (myOptions.src_prec()) {
       case Options.src_prec_class:
         classProviders.add(classFileClassProvider);
-        classProviders.add(new JimpleClassProvider());
-        classProviders.add(new JavaClassProvider());
+        classProviders.add(new JimpleClassProvider(this, myOptions));
+        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
         break;
       case Options.src_prec_only_class:
         classProviders.add(classFileClassProvider);
         break;
       case Options.src_prec_java:
-        classProviders.add(new JavaClassProvider());
+        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
         classProviders.add(classFileClassProvider);
-        classProviders.add(new JimpleClassProvider());
+        classProviders.add(new JimpleClassProvider(this, myOptions));
         break;
       case Options.src_prec_jimple:
-        classProviders.add(new JimpleClassProvider());
+        classProviders.add(new JimpleClassProvider(this, myOptions));
         classProviders.add(classFileClassProvider);
-        classProviders.add(new JavaClassProvider());
+        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
         break;
       case Options.src_prec_apk:
-        classProviders.add(new DexClassProvider());
+        classProviders.add(new DexClassProvider(this, myOptions, myDexFileProvider));
         classProviders.add(classFileClassProvider);
-        classProviders.add(new JavaClassProvider());
-        classProviders.add(new JimpleClassProvider());
+        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
+        classProviders.add(new JimpleClassProvider(this, myOptions));
         break;
       case Options.src_prec_apk_c_j:
-        classProviders.add(new DexClassProvider());
+        classProviders.add(new DexClassProvider(this, myOptions, myDexFileProvider));
         classProviders.add(classFileClassProvider);
-        classProviders.add(new JimpleClassProvider());
+        classProviders.add(new JimpleClassProvider(this, myOptions));
         break;
       default:
         throw new RuntimeException("Other source precedences are not currently supported.");
@@ -310,7 +322,7 @@ public class SourceLocator {
     // Get the dex file from an apk
     if (cst == ClassSourceType.apk || cst == ClassSourceType.dex) {
       try {
-        for (DexFileProvider.DexContainer dex : DexFileProvider.v().getDexFromSource(new File(aPath))) {
+        for (DexFileProvider.DexContainer dex : myDexFileProvider.getDexFromSource(new File(aPath))) {
           classes.addAll(DexClassProvider.classesOfDex(dex.getBase()));
         }
       } catch (IOException e) {
@@ -346,7 +358,7 @@ public class SourceLocator {
 
       // we might have dex files inside the archive
       try {
-        for (DexFileProvider.DexContainer container : DexFileProvider.v().getDexFromSource(new File(aPath))) {
+        for (DexFileProvider.DexContainer container : myDexFileProvider.getDexFromSource(new File(aPath))) {
           classes.addAll(DexClassProvider.classesOfDex(container.getBase()));
         }
       } catch (CompilationDeathException e) { // There might be cases where there is no dex file within a JAR or ZIP file...
@@ -380,7 +392,7 @@ public class SourceLocator {
             classes.add(prefix + fileName.substring(0, index));
           } else if (fileName.endsWith(".dex")) {
             try {
-              for (DexFileProvider.DexContainer container : DexFileProvider.v().getDexFromSource(element)) {
+              for (DexFileProvider.DexContainer container : myDexFileProvider.getDexFromSource(element)) {
                 classes.addAll(DexClassProvider.classesOfDex(container.getBase()));
               }
             } catch (IOException e) {
@@ -403,7 +415,7 @@ public class SourceLocator {
 
     StringBuffer b = new StringBuffer();
 
-    if (!Options.v().output_jar()) {
+    if (!myOptions.output_jar()) {
       b.append(getOutputDir());
     }
 
@@ -420,7 +432,7 @@ public class SourceLocator {
       } else {
         // Generate tree structure for Jimple output or generation
         // fails for deep hierarchies ("file name too long").
-        if (Options.v().hierarchy_dirs() && (rep == Options.output_format_jimple || rep == Options.output_format_shimple)) {
+        if (myOptions.hierarchy_dirs() && (rep == Options.output_format_jimple || rep == Options.output_format_shimple)) {
           b.append(c.getName().replace('.', File.separatorChar));
         } else {
           b.append(c.getName());
@@ -458,7 +470,7 @@ public class SourceLocator {
   /* This is called after sootClassPath has been defined. */
   public Set<String> classesInDynamicPackage(String str) {
     HashSet<String> set = new HashSet<String>(0);
-    StringTokenizer strtok = new StringTokenizer(Scene.v().getSootClassPath(), String.valueOf(File.pathSeparatorChar));
+    StringTokenizer strtok = new StringTokenizer(myScene.getSootClassPath(), String.valueOf(File.pathSeparatorChar));
     while (strtok.hasMoreTokens()) {
       String path = strtok.nextToken();
       if (getClassSourceType(path) != ClassSourceType.directory) {
@@ -532,11 +544,11 @@ public class SourceLocator {
    */
   public String getOutputDir() {
     File dir;
-    if (Options.v().output_dir().length() == 0) {
+    if (myOptions.output_dir().length() == 0) {
       // Default if -output-dir was not set
       dir = new File("sootOutput");
     } else {
-      dir = new File(Options.v().output_dir());
+      dir = new File(myOptions.output_dir());
       // If a Jar name was given as the output dir
       // get its parent path (possibly empty)
       if (dir.getPath().endsWith(".jar")) {
@@ -559,16 +571,16 @@ public class SourceLocator {
    * @return the name of the Jar file to which outputs are written
    */
   public String getOutputJarName() {
-    if (!Options.v().output_jar()) {
+    if (!myOptions.output_jar()) {
       return "";
     }
 
     File dir;
-    if (Options.v().output_dir().length() == 0) {
+    if (myOptions.output_dir().length() == 0) {
       // Default if -output-dir was not set
       dir = new File("sootOutput/out.jar");
     } else {
-      dir = new File(Options.v().output_dir());
+      dir = new File(myOptions.output_dir());
       // If a Jar name was not given, then supply default
       if (!dir.getPath().endsWith(".jar")) {
         dir = new File(dir.getPath(), "out.jar");

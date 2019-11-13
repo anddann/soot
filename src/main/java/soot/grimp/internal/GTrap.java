@@ -29,7 +29,7 @@ import soot.grimp.Grimp;
 
 public class GTrap extends AbstractTrap {
   public GTrap(SootClass exception, Unit beginStmt, Unit endStmt, Unit handlerStmt) {
-    super(exception, Grimp.v().newStmtBox(beginStmt), Grimp.v().newStmtBox(endStmt), Grimp.v().newStmtBox(handlerStmt));
+    super(exception, myGrimp.newStmtBox(beginStmt), myGrimp.newStmtBox(endStmt), myGrimp.newStmtBox(handlerStmt));
   }
 
   public Object clone() {

@@ -181,15 +181,24 @@ public class ClassFile {
 
   /** bootstrap-methods attribute (if any) */
   public BootstrapMethods_attribute bootstrap_methods_attribute;
+  private CONSTANT_Utf8_collector myCONSTANT_Utf8_collector;
+  private Options myOptions;
+  private Timers myTimers;
 
   /**
    * Creates a new ClassFile object given the name of the file.
    *
    * @param nfn
    *          file name which this ClassFile will represent.
+   * @param myCONSTANT_utf8_collector
+   * @param myOptions
+   * @param myTimers
    */
-  public ClassFile(String nfn) {
+  public ClassFile(String nfn, CONSTANT_Utf8_collector myCONSTANT_utf8_collector, Options myOptions, Timers myTimers) {
     fn = nfn;
+    myCONSTANT_Utf8_collector = myCONSTANT_utf8_collector;
+    this.myOptions = myOptions;
+    this.myTimers = myTimers;
   }
 
   /** Returns the name of this Class. */
@@ -207,8 +216,8 @@ public class ClassFile {
 
     byte[] data;
 
-    if (Options.v().time()) {
-      Timers.v().readTimer.start();
+    if (myOptions.time()) {
+      myTimers.readTimer.start();
     }
 
     try {
@@ -221,8 +230,8 @@ public class ClassFile {
       logger.debug(e.getMessage(), e);
     }
 
-    if (Options.v().time()) {
-      Timers.v().readTimer.end();
+    if (myOptions.time()) {
+      myTimers.readTimer.end();
     }
 
     d = new DataInputStream(f);
@@ -444,29 +453,29 @@ public class ClassFile {
         }
       }
 
-      if (Options.v().time()) {
-        Timers.v().fieldTimer.start();
+      if (myOptions.time()) {
+        myTimers.fieldTimer.start();
       }
 
       fields_count = d.readUnsignedShort();
       readFields(d);
 
-      if (Options.v().time()) {
-        Timers.v().fieldTimer.end();
+      if (myOptions.time()) {
+        myTimers.fieldTimer.end();
       }
 
-      if (Options.v().time()) {
-        Timers.v().methodTimer.start();
+      if (myOptions.time()) {
+        myTimers.methodTimer.start();
       }
       methods_count = d.readUnsignedShort();
       readMethods(d);
 
-      if (Options.v().time()) {
-        Timers.v().methodTimer.end();
+      if (myOptions.time()) {
+        myTimers.methodTimer.end();
       }
 
-      if (Options.v().time()) {
-        Timers.v().attributeTimer.start();
+      if (myOptions.time()) {
+        myTimers.attributeTimer.start();
       }
 
       attributes_count = d.readUnsignedShort();
@@ -474,8 +483,8 @@ public class ClassFile {
         attributes = new attribute_info[attributes_count];
         readAttributes(d, attributes_count, attributes);
       }
-      if (Options.v().time()) {
-        Timers.v().attributeTimer.end();
+      if (myOptions.time()) {
+        myTimers.attributeTimer.end();
       }
 
     } catch (IOException e) {
@@ -599,7 +608,7 @@ public class ClassFile {
           CONSTANT_Utf8_info cputf8 = new CONSTANT_Utf8_info(d);
           // If an equivalent CONSTANT_Utf8 already exists, we return
           // the pre-existing one and allow cputf8 to be GC'd.
-          cp = (cp_info) CONSTANT_Utf8_collector.v().add(cputf8);
+          cp = (cp_info) myCONSTANT_Utf8_collector.add(cputf8);
           if (debug) {
             logger.debug("Constant pool[" + i + "]: Utf8 = \"" + cputf8.convert() + "\"");
           }

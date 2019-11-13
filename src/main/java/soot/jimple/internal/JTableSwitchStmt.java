@@ -47,7 +47,7 @@ public class JTableSwitchStmt extends AbstractSwitchStmt implements TableSwitchS
   private static UnitBox[] getTargetBoxesArray(List<? extends Unit> targets) {
     UnitBox[] targetBoxes = new UnitBox[targets.size()];
     for (int i = 0; i < targetBoxes.length; i++) {
-      targetBoxes[i] = Jimple.v().newStmtBox(targets.get(i));
+      targetBoxes[i] = myJimple.newStmtBox(targets.get(i));
     }
     return targetBoxes;
   }
@@ -57,12 +57,12 @@ public class JTableSwitchStmt extends AbstractSwitchStmt implements TableSwitchS
   }
 
   public JTableSwitchStmt(Value key, int lowIndex, int highIndex, List<? extends Unit> targets, Unit defaultTarget) {
-    this(Jimple.v().newImmediateBox(key), lowIndex, highIndex, getTargetBoxesArray(targets),
-        Jimple.v().newStmtBox(defaultTarget));
+    this(myJimple.newImmediateBox(key), lowIndex, highIndex, getTargetBoxesArray(targets),
+        myJimple.newStmtBox(defaultTarget));
   }
 
   public JTableSwitchStmt(Value key, int lowIndex, int highIndex, List<? extends UnitBox> targets, UnitBox defaultTarget) {
-    this(Jimple.v().newImmediateBox(key), lowIndex, highIndex, targets.toArray(new UnitBox[targets.size()]), defaultTarget);
+    this(myJimple.newImmediateBox(key), lowIndex, highIndex, targets.toArray(new UnitBox[targets.size()]), defaultTarget);
   }
 
   protected JTableSwitchStmt(ValueBox keyBox, int lowIndex, int highIndex, UnitBox[] targetBoxes, UnitBox defaultTargetBox) {
@@ -169,10 +169,10 @@ public class JTableSwitchStmt extends AbstractSwitchStmt implements TableSwitchS
     ((ConvertToBaf) getKey()).convertToBaf(context, out);
 
     for (Unit target : getTargets()) {
-      targetPlaceholders.add(Baf.v().newPlaceholderInst(target));
+      targetPlaceholders.add(myBaf.newPlaceholderInst(target));
     }
 
-    Unit u = Baf.v().newTableSwitchInst(Baf.v().newPlaceholderInst(getDefaultTarget()), lowIndex, highIndex,
+    Unit u = myBaf.newTableSwitchInst(myBaf.newPlaceholderInst(getDefaultTarget()), lowIndex, highIndex,
         targetPlaceholders);
     u.addAllTagsOf(this);
     out.add(u);

@@ -52,8 +52,9 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
 
   public static final String constructorName = "<init>";
   public static final String staticInitializerName = "<clinit>";
+    private final Scene myScene;
 
-  /** Name of the current method. */
+    /** Name of the current method. */
   protected String name;
 
   /**
@@ -91,29 +92,32 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
 
   protected volatile String sig;
   protected volatile String subSig;
+    private Options myOptions;
+    private VirtualCalls myVirtualCalls;
 
-  /**
+    /**
    * Constructs a {@link SootMethod} with the given name, parameter types and return type.
    */
-  public SootMethod(String name, List<Type> parameterTypes, Type returnType) {
-    this(name, parameterTypes, returnType, 0, Collections.<SootClass>emptyList());
+  public SootMethod(String name, List<Type> parameterTypes, Type returnType, Scene myScene) {
+    this(name, parameterTypes, returnType, 0, Collections.<SootClass>emptyList(), myScene);
   }
 
   /**
    * Constructs a {@link SootMethod} with the given name, parameter types, return type and modifiers.
    */
-  public SootMethod(String name, List<Type> parameterTypes, Type returnType, int modifiers) {
-    this(name, parameterTypes, returnType, modifiers, Collections.<SootClass>emptyList());
+  public SootMethod(String name, List<Type> parameterTypes, Type returnType, int modifiers, Scene myScene) {
+    this(name, parameterTypes, returnType, modifiers, Collections.<SootClass>emptyList(), myScene);
   }
 
   /**
    * Constructs a {@link SootMethod} with the given name, parameter types, return type, and list of thrown exceptions.
    */
   public SootMethod(String name, List<Type> parameterTypes, Type returnType, int modifiers,
-      List<SootClass> thrownExceptions) {
+                    List<SootClass> thrownExceptions, Scene myScene) {
     this.name = name;
+      this.myScene = myScene;
 
-    if (parameterTypes != null && !parameterTypes.isEmpty()) {
+      if (parameterTypes != null && !parameterTypes.isEmpty()) {
       this.parameterTypes = parameterTypes.toArray(new Type[parameterTypes.size()]);
     }
 
@@ -124,7 +128,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
       exceptions = new ArrayList<SootClass>();
       this.exceptions.addAll(thrownExceptions);
     }
-    subsignature = Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());
+    subsignature = this.myScene.getSubSigNumberer().findOrAdd(getSubSignature());
   }
 
   /**
@@ -149,7 +153,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
     this.name = name;
     subSig = null;
     sig = null;
-    subsignature = Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());
+    subsignature = myScene.getSubSigNumberer().findOrAdd(getSubSignature());
     if (wasDeclared) {
       oldDeclaringClass.addMethod(this);
     }
@@ -162,7 +166,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
     // the method is not declared, it should not be trying to resolve it anyways. So I see no
     // problem with having it able to be null.
     if (declClass != null) {
-      Scene.v().getMethodNumberer().add(this);
+      myScene.getMethodNumberer().add(this);
     }
     // We could call setDeclared here, however, when SootClass adds a method, it checks isDeclared
     // and throws an exception if set. So we currently cannot call setDeclared here.
@@ -207,10 +211,10 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
   @Override
   public void setPhantom(boolean value) {
     if (value) {
-      if (!Scene.v().allowsPhantomRefs()) {
+      if (!myScene.allowsPhantomRefs()) {
         throw new RuntimeException("Phantom refs not allowed");
       }
-      if (!Options.v().allow_phantom_elms() && declaringClass != null && !declaringClass.isPhantom()) {
+      if (!myOptions.allow_phantom_elms() && declaringClass != null && !declaringClass.isPhantom()) {
         throw new RuntimeException("Declaring class would have to be phantom");
       }
     }
@@ -252,7 +256,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
     returnType = t;
     subSig = null;
     sig = null;
-    subsignature = Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());
+    subsignature = myScene.getSubSigNumberer().findOrAdd(getSubSignature());
     if (wasDeclared) {
       oldDeclaringClass.addMethod(this);
     }
@@ -287,7 +291,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
     this.parameterTypes = l.toArray(new Type[l.size()]);
     subSig = null;
     sig = null;
-    subsignature = Scene.v().getSubSigNumberer().findOrAdd(getSubSignature());
+    subsignature = myScene.getSubSigNumberer().findOrAdd(getSubSignature());
     if (wasDeclared) {
       oldDeclaringClass.addMethod(this);
     }
@@ -366,7 +370,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
   /**
    * Returns the active body if present, else constructs an active body and returns that.
    *
-   * If you called Scene.v().loadClassAndSupport() for a class yourself, it will not be an application class, so you cannot
+   * If you called myScene.loadClassAndSupport() for a class yourself, it will not be an application class, so you cannot
    * get retrieve its active body. Please call {@link SootClass#setApplicationClass()} on the relevant class.
    */
   public Body retrieveActiveBody() {
@@ -403,7 +407,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
       setActiveBody(activeBody);
 
       // If configured, we drop the method source to save memory
-      if (Options.v().drop_bodies_after_load()) {
+      if (myOptions.drop_bodies_after_load()) {
         ms = null;
       }
       return activeBody;
@@ -556,7 +560,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
    */
   public boolean isMain() {
     if (isPublic() && isStatic()) {
-      NumberedString main_sig = Scene.v().getSubSigNumberer().findOrAdd("void main(java.lang.String[])");
+      NumberedString main_sig = myScene.getSubSigNumberer().findOrAdd("void main(java.lang.String[])");
       if (main_sig.equals(subsignature)) {
         return true;
       }
@@ -586,7 +590,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
    * @return yes, if this is a class initializer or main function.
    */
   public boolean isEntryMethod() {
-    if (isStatic() && subsignature.equals(VirtualCalls.v().sigClinit)) {
+    if (isStatic() && subsignature.equals(myVirtualCalls.sigClinit)) {
       return true;
     }
 
@@ -621,7 +625,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
     String name = getName();
 
     StringBuffer buffer = new StringBuffer();
-    buffer.append("<" + Scene.v().quotedNameOf(getDeclaringClass().getName()) + ": ");
+    buffer.append("<" + myScene.quotedNameOf(getDeclaringClass().getName()) + ": ");
     buffer.append(name);
     buffer.append(AbstractJasminClass.jasminDescriptorOf(makeRef()));
     buffer.append(">");
@@ -636,21 +640,21 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
     if (sig == null) {
       synchronized (this) {
         if (sig == null) {
-          sig = getSignature(getDeclaringClass(), getSubSignature());
+          sig = getSignature(getDeclaringClass(), getSubSignature(), myScene);
         }
       }
     }
     return sig;
   }
 
-  public static String getSignature(SootClass cl, String name, List<Type> params, Type returnType) {
-    return getSignature(cl, getSubSignatureImpl(name, params, returnType));
+  public static String getSignature(SootClass cl, String name, List<Type> params, Type returnType,Scene myScene) {
+    return getSignature(cl, getSubSignatureImpl(name, params, returnType, myScene),myScene);
   }
 
-  public static String getSignature(SootClass cl, String subSignature) {
+  public static String getSignature(SootClass cl, String subSignature, Scene myScene) {
     StringBuilder buffer = new StringBuilder();
     buffer.append("<");
-    buffer.append(Scene.v().quotedNameOf(cl.getName()));
+    buffer.append(myScene.quotedNameOf(cl.getName()));
     buffer.append(": ");
     buffer.append(subSignature);
     buffer.append(">");
@@ -665,24 +669,24 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
     if (subSig == null) {
       synchronized (this) {
         if (subSig == null) {
-          subSig = getSubSignatureImpl(getName(), getParameterTypes(), getReturnType());
+          subSig = getSubSignatureImpl(getName(), getParameterTypes(), getReturnType(),myScene);
         }
       }
     }
     return subSig;
   }
 
-  public static String getSubSignature(String name, List<Type> params, Type returnType) {
-    return getSubSignatureImpl(name, params, returnType);
+  public static String getSubSignature(String name, List<Type> params, Type returnType,Scene myScene) {
+    return getSubSignatureImpl(name, params, returnType,myScene);
   }
 
-  private static String getSubSignatureImpl(String name, List<Type> params, Type returnType) {
+  private static String getSubSignatureImpl(String name, List<Type> params, Type returnType,Scene myScene) {
     StringBuilder buffer = new StringBuilder();
 
     buffer.append(returnType.toQuotedString());
 
     buffer.append(" ");
-    buffer.append(Scene.v().quotedNameOf(name));
+    buffer.append(myScene.quotedNameOf(name));
     buffer.append("(");
 
     if (params != null) {
@@ -759,7 +763,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
 
       buffer.append(tempString + " ");
 
-      buffer.append(Scene.v().quotedNameOf(this.getName()));
+      buffer.append(myScene.quotedNameOf(this.getName()));
     }
 
     buffer.append("(");
@@ -867,7 +871,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
     // return type + name
 
     buffer.append(this.getReturnType().toQuotedString() + " ");
-    buffer.append(Scene.v().quotedNameOf(this.getName()));
+    buffer.append(myScene.quotedNameOf(this.getName()));
 
     buffer.append("(");
 
@@ -892,10 +896,10 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
       Iterator<SootClass> exceptionIt = this.getExceptions().iterator();
 
       if (exceptionIt.hasNext()) {
-        buffer.append(" throws " + Scene.v().quotedNameOf(exceptionIt.next().getName()));
+        buffer.append(" throws " + myScene.quotedNameOf(exceptionIt.next().getName()));
 
         while (exceptionIt.hasNext()) {
-          buffer.append(", " + Scene.v().quotedNameOf(exceptionIt.next().getName()));
+          buffer.append(", " + myScene.quotedNameOf(exceptionIt.next().getName()));
         }
       }
     }
@@ -926,7 +930,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
   }
 
   public SootMethodRef makeRef() {
-    return Scene.v().makeMethodRef(declaringClass, name, parameterTypes == null ? null : Arrays.asList(parameterTypes),
+    return myScene.makeMethodRef(declaringClass, name, parameterTypes == null ? null : Arrays.asList(parameterTypes),
         returnType, isStatic());
   }
 

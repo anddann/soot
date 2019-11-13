@@ -347,7 +347,7 @@ public class Singletons {
         if (instance_soot_baf_Baf == null) {
 	       	synchronized (this) {
 		        if (instance_soot_baf_Baf == null)
-	        		instance_soot_baf_Baf = new soot.baf.Baf(g);
+	        		instance_soot_baf_Baf = new soot.baf.Baf(g, myPackmanager, myOptions);
 	       	}
        	}
         return instance_soot_baf_Baf;
@@ -543,7 +543,7 @@ public class Singletons {
         if (instance_soot_dava_Dava == null) {
 	       	synchronized (this) {
 		        if (instance_soot_dava_Dava == null)
-	        		instance_soot_dava_Dava = new soot.dava.Dava(g);
+	        		instance_soot_dava_Dava = new soot.dava.Dava(g, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder, mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter, myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myClosestAbruptTargetFinder, myOptions, myPrinter);
 	       	}
        	}
         return instance_soot_dava_Dava;

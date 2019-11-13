@@ -76,7 +76,7 @@ public class LocalObjectsAnalysis {
   public LocalObjectsAnalysis(InfoFlowAnalysis dfa) {
     this.dfa = dfa;
     this.uf = new UseFinder();
-    this.cg = Scene.v().getCallGraph();
+    this.cg = myScene.getCallGraph();
 
     classToClassLocalObjectsAnalysis = new HashMap<SootClass, ClassLocalObjectsAnalysis>();
     mloaCache = new HashMap<SootMethod, SmartMethodLocalObjectsAnalysis>();
@@ -422,7 +422,7 @@ public class LocalObjectsAnalysis {
   // returns a list of all methods that can be invoked on an object of type sc
   public List<SootMethod> getAllMethodsForClass(SootClass sootClass) {
     // Determine which methods are reachable in this program
-    ReachableMethods rm = Scene.v().getReachableMethods();
+    ReachableMethods rm = myScene.getReachableMethods();
 
     // Get list of reachable methods declared in this class
     // Also get list of fields declared in this class

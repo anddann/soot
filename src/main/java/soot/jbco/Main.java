@@ -157,7 +157,7 @@ public class Main {
         transformsToAdd.add(arg);
         transformsToWeights.put(arg, new Integer(tweight));
         if (arg.equals("wjtp.jbco_fr")) {
-          FieldRenamer.v().setRenameFields(true);
+          myFieldRenamer.setRenameFields(true);
         }
         remove[i] = true;
         rcount++;
@@ -251,14 +251,14 @@ public class Main {
         System.exit(0);
       }
 
-      Pack wjtp = PackManager.v().getPack("wjtp");
-      Pack jtp = PackManager.v().getPack("jtp");
-      Pack bb = PackManager.v().getPack("bb");
+      Pack wjtp = PackmyManager.getPack("wjtp");
+      Pack jtp = PackmyManager.getPack("jtp");
+      Pack bb = PackmyManager.getPack("bb");
 
       if (transformsToAdd.contains("jtp.jbco_adss")) {
         wjtp.add(new Transform("wjtp.jbco_fr", newTransform((Transformer) getTransform("wjtp.jbco_fr"))));
         if (transformsToAdd.remove("wjtp.jbco_fr")) {
-          FieldRenamer.v().setRenameFields(true);
+          myFieldRenamer.setRenameFields(true);
         }
       }
 
@@ -318,7 +318,7 @@ public class Main {
       }
 
       bb.add(new Transform("bb.jbco_bln", new BafLineNumberer()));
-      bb.add(new Transform("bb.jbco_lta", soot.tagkit.LineNumberTagAggregator.v()));
+      bb.add(new Transform("bb.jbco_lta", soot.tagkit.LineNumberTagmyAggregator));
     } else {
       argv = checkWhole(argv, false);
     }
@@ -427,16 +427,16 @@ public class Main {
       return new BuildIntermediateAppClasses();
     }
     if (name.equals("wjtp.jbco_cr")) {
-      return ClassRenamer.v();
+      return myClassRenamer;
     }
     if (name.equals("bb.jbco_ful")) {
       return new FixUndefinedLocals();
     }
     if (name.equals("wjtp.jbco_fr")) {
-      return FieldRenamer.v();
+      return myFieldRenamer;
     }
     if (name.equals("wjtp.jbco_mr")) {
-      return MethodRenamer.v();
+      return myMethodRenamer;
     }
     if (name.equals("jtp.jbco_adss")) {
       return new AddSwitches();

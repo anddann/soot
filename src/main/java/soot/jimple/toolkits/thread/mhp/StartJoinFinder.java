@@ -62,7 +62,7 @@ public class StartJoinFinder {
     startToJoin = new HashMap<Stmt, Stmt>();
     startToContainingMethod = new HashMap<Stmt, SootMethod>();
 
-    Iterator runAnalysisClassesIt = Scene.v().getApplicationClasses().iterator();
+    Iterator runAnalysisClassesIt = myScene.getApplicationClasses().iterator();
     while (runAnalysisClassesIt.hasNext()) {
       SootClass appClass = (SootClass) runAnalysisClassesIt.next();
       Iterator methodsIt = appClass.getMethods().iterator();

@@ -59,7 +59,7 @@ public class UnconditionalBranchFolder extends BodyTransformer {
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
     StmtBody body = (StmtBody) b;
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Folding unconditional branches...");
     }
 
@@ -119,7 +119,7 @@ public class UnconditionalBranchFolder extends BodyTransformer {
         }
       }
     }
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "]     " + numFixed[0] + " of " + numFound[0] + " branches folded.");
     }
 

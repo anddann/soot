@@ -44,7 +44,7 @@ public class JOrExpr extends AbstractJimpleIntLongBinopExpr implements OrExpr {
   }
 
   Object makeBafInst(Type opType) {
-    return Baf.v().newOrInst(this.getOp1().getType());
+    return myBaf.newOrInst(this.getOp1().getType());
   }
 
   public Object clone() {

@@ -115,7 +115,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
 
     BodyBuilder.retrieveAllBodies();
     // iterate through application classes to find library calls
-    final Iterator<SootClass> applicationClassesIterator = Scene.v().getApplicationClasses().snapshotIterator();
+    final Iterator<SootClass> applicationClassesIterator = myScene.getApplicationClasses().snapshotIterator();
     while (applicationClassesIterator.hasNext()) {
       final SootClass applicationClass = applicationClassesIterator.next();
 
@@ -182,13 +182,13 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
 
               while (argsCount < paramCount) {
                 Type pType = parameterTypes.get(argsCount);
-                Local newLocal = Jimple.v().newLocal("newLocal" + localName++, pType);
+                Local newLocal = myJimple.newLocal("newLocal" + localName++, pType);
                 body.getLocals().add(newLocal);
-                body.getUnits().insertBeforeNoRedirect(Jimple.v().newAssignStmt(newLocal, getConstantType(pType)), first);
+                body.getUnits().insertBeforeNoRedirect(myJimple.newAssignStmt(newLocal, getConstantType(pType)), first);
                 args.add(newLocal);
                 argsCount++;
               }
-              valueBox.setValue(Jimple.v().newStaticInvokeExpr(invokedMethodRef, args));
+              valueBox.setValue(myJimple.newStaticInvokeExpr(invokedMethodRef, args));
             }
             methodcalls++;
           }
@@ -196,8 +196,8 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
       }
     }
 
-    Scene.v().releaseActiveHierarchy();
-    Scene.v().setFastHierarchy(new FastHierarchy());
+    myScene.releaseActiveHierarchy();
+    myScene.setFastHierarchy(new FastHierarchy());
   }
 
   private SootMethodRef getNewMethodRef(SootMethod method) {
@@ -255,10 +255,10 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
 
     final int mods = ((((sm.getModifiers() | Modifier.STATIC | Modifier.PUBLIC) & (Modifier.ABSTRACT ^ 0xFFFF))
         & (Modifier.NATIVE ^ 0xFFFF)) & (Modifier.SYNCHRONIZED ^ 0xFFFF));
-    SootMethod newMethod = Scene.v().makeSootMethod(methodNewName, smParamTypes, sm.getReturnType(), mods);
+    SootMethod newMethod = myScene.makeSootMethod(methodNewName, smParamTypes, sm.getReturnType(), mods);
     randomClass.addMethod(newMethod);
 
-    JimpleBody body = Jimple.v().newBody(newMethod);
+    JimpleBody body = myJimple.newBody(newMethod);
     newMethod.setActiveBody(body);
     Chain<Local> locals = body.getLocals();
     PatchingChain<Unit> units = body.getUnits();
@@ -270,23 +270,23 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
 
     InvokeExpr ie = null;
     if (sm.isStatic()) {
-      ie = Jimple.v().newStaticInvokeExpr(sm.makeRef(), args);
+      ie = myJimple.newStaticInvokeExpr(sm.makeRef(), args);
     } else {
       Local libObj = args.remove(args.size() - 1);
       if (origIE instanceof InterfaceInvokeExpr) {
-        ie = Jimple.v().newInterfaceInvokeExpr(libObj, sm.makeRef(), args);
+        ie = myJimple.newInterfaceInvokeExpr(libObj, sm.makeRef(), args);
       } else if (origIE instanceof VirtualInvokeExpr) {
-        ie = Jimple.v().newVirtualInvokeExpr(libObj, sm.makeRef(), args);
+        ie = myJimple.newVirtualInvokeExpr(libObj, sm.makeRef(), args);
       }
     }
     if (sm.getReturnType() instanceof VoidType) {
-      units.add(Jimple.v().newInvokeStmt(ie));
-      units.add(Jimple.v().newReturnVoidStmt());
+      units.add(myJimple.newInvokeStmt(ie));
+      units.add(myJimple.newReturnVoidStmt());
     } else {
-      Local assign = Jimple.v().newLocal("returnValue", sm.getReturnType());
+      Local assign = myJimple.newLocal("returnValue", sm.getReturnType());
       locals.add(assign);
-      units.add(Jimple.v().newAssignStmt(assign, ie));
-      units.add(Jimple.v().newReturnStmt(assign));
+      units.add(myJimple.newAssignStmt(assign, ie));
+      units.add(myJimple.newReturnStmt(assign));
     }
 
     if (isVerbose()) {
@@ -331,10 +331,10 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
       return IntConstant.v(Rand.getInt());
     }
     if (t instanceof CharType) {
-      return Jimple.v().newCastExpr(IntConstant.v(Rand.getInt()), CharType.v());
+      return myJimple.newCastExpr(IntConstant.v(Rand.getInt()), CharType.v());
     }
     if (t instanceof ByteType) {
-      return Jimple.v().newCastExpr(IntConstant.v(Rand.getInt()), ByteType.v());
+      return myJimple.newCastExpr(IntConstant.v(Rand.getInt()), ByteType.v());
     }
     if (t instanceof LongType) {
       return LongConstant.v(Rand.getLong());
@@ -346,7 +346,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
       return DoubleConstant.v(Rand.getDouble());
     }
 
-    return Jimple.v().newCastExpr(NullConstant.v(), t);
+    return myJimple.newCastExpr(myNullConstant, t);
   }
 
   private static Body getBodySafely(SootMethod method) {
@@ -411,12 +411,12 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
   private static List<SootClass> getVisibleApplicationClasses(SootMethod visibleBy) {
     final List<SootClass> result = new ArrayList<>();
 
-    final Iterator<SootClass> applicationClassesIterator = Scene.v().getApplicationClasses().snapshotIterator();
+    final Iterator<SootClass> applicationClassesIterator = myScene.getApplicationClasses().snapshotIterator();
     while (applicationClassesIterator.hasNext()) {
       final SootClass applicationClass = applicationClassesIterator.next();
 
       if (applicationClass.isConcrete() && !applicationClass.isInterface() && applicationClass.isPublic()
-          && Scene.v().getActiveHierarchy().isVisible(applicationClass, visibleBy)) {
+          && myScene.getActiveHierarchy().isVisible(applicationClass, visibleBy)) {
         result.add(applicationClass);
       }
     }

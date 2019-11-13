@@ -45,14 +45,14 @@ public class ReflInliner {
   private static final Logger logger = LoggerFactory.getLogger(ReflInliner.class);
 
   public static void main(String[] args) {
-    PackManager.v().getPack("wjpp").add(new Transform("wjpp.inlineReflCalls", new ReflectiveCallsInliner()));
-    Scene.v().addBasicClass(Object.class.getName());
-    Scene.v().addBasicClass(SootSig.class.getName(), SootClass.BODIES);
-    Scene.v().addBasicClass(UnexpectedReflectiveCall.class.getName(), SootClass.BODIES);
-    Scene.v().addBasicClass(IUnexpectedReflectiveCallHandler.class.getName(), SootClass.BODIES);
-    Scene.v().addBasicClass(DefaultHandler.class.getName(), SootClass.BODIES);
-    Scene.v().addBasicClass(OpaquePredicate.class.getName(), SootClass.BODIES);
-    Scene.v().addBasicClass(ReflectiveCalls.class.getName(), SootClass.BODIES);
+    PackmyManager.getPack("wjpp").add(new Transform("wjpp.inlineReflCalls", new ReflectiveCallsInliner()));
+    myScene.addBasicClass(Object.class.getName());
+    myScene.addBasicClass(SootSig.class.getName(), SootClass.BODIES);
+    myScene.addBasicClass(UnexpectedReflectiveCall.class.getName(), SootClass.BODIES);
+    myScene.addBasicClass(IUnexpectedReflectiveCallHandler.class.getName(), SootClass.BODIES);
+    myScene.addBasicClass(DefaultHandler.class.getName(), SootClass.BODIES);
+    myScene.addBasicClass(OpaquePredicate.class.getName(), SootClass.BODIES);
+    myScene.addBasicClass(ReflectiveCalls.class.getName(), SootClass.BODIES);
     ArrayList<String> argList = new ArrayList<String>(Arrays.asList(args));
     argList.add("-w");
     argList.add("-p");
@@ -60,7 +60,7 @@ public class ReflInliner {
     argList.add("enabled:false");
     argList.add("-app");
 
-    Options.v().set_keep_line_number(true);
+    myOptions.set_keep_line_number(true);
 
     logger.debug("TamiFlex Booster Version " + ReflInliner.class.getPackage().getImplementationVersion());
     try {
@@ -69,7 +69,7 @@ public class ReflInliner {
       logger.debug("\nERROR: " + e.getMessage() + "\n");
       logger.debug(
           "The command-line options are described at:\n" + "http://www.sable.mcgill.ca/soot/tutorial/usage/index.html");
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         throw e;
       } else {
         logger.debug("Use -verbose to see stack trace.");
@@ -80,7 +80,7 @@ public class ReflInliner {
   }
 
   private static void usage() {
-    logger.debug("" + Options.v().getUsage());
+    logger.debug("" + myOptions.getUsage());
   }
 
 }

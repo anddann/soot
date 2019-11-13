@@ -46,6 +46,18 @@ import soot.options.Options;
 public class DexClassProvider implements ClassProvider {
   private static final Logger logger = LoggerFactory.getLogger(DexClassProvider.class);
 
+  private SourceLocator mySourceLocator;
+  private Options myOptions;
+  private DexFileProvider myDexFileProvider;
+
+  public DexClassProvider(SourceLocator mySourceLocator, Options myOptions, DexFileProvider myDexFileProvider){
+
+    this.mySourceLocator = mySourceLocator;
+    this.myOptions = myOptions;
+    this.myDexFileProvider = myDexFileProvider;
+  }
+
+
   public static Set<String> classesOfDex(DexBackedDexFile dexFile) {
     Set<String> classes = new HashSet<String>();
     for (ClassDef c : dexFile.getClasses()) {
@@ -65,7 +77,7 @@ public class DexClassProvider implements ClassProvider {
   public ClassSource find(String className) {
     ensureDexIndex();
 
-    Map<String, File> index = SourceLocator.v().dexClassIndex();
+    Map<String, File> index = mySourceLocator.dexClassIndex();
     File file = index.get(className);
     if (file == null) {
       return null;
@@ -78,17 +90,17 @@ public class DexClassProvider implements ClassProvider {
    * Checks whether the dex class index needs to be (re)built and triggers the build if necessary
    */
   protected void ensureDexIndex() {
-    Map<String, File> index = SourceLocator.v().dexClassIndex();
+    Map<String, File> index = mySourceLocator.dexClassIndex();
     if (index == null) {
       index = new HashMap<String, File>();
-      buildDexIndex(index, SourceLocator.v().classPath());
-      SourceLocator.v().setDexClassIndex(index);
+      buildDexIndex(index, mySourceLocator.classPath());
+      mySourceLocator.setDexClassIndex(index);
     }
 
     // Process the classpath extensions
-    if (SourceLocator.v().getDexClassPathExtensions() != null) {
-      buildDexIndex(SourceLocator.v().dexClassIndex(), new ArrayList<>(SourceLocator.v().getDexClassPathExtensions()));
-      SourceLocator.v().clearDexClassPathExtensions();
+    if (mySourceLocator.getDexClassPathExtensions() != null) {
+      buildDexIndex(mySourceLocator.dexClassIndex(), new ArrayList<>(mySourceLocator.getDexClassPathExtensions()));
+      mySourceLocator.clearDexClassPathExtensions();
     }
   }
 
@@ -105,11 +117,11 @@ public class DexClassProvider implements ClassProvider {
       try {
         File dexFile = new File(path);
         if (dexFile.exists()) {
-          for (DexFileProvider.DexContainer container : DexFileProvider.v().getDexFromSource(dexFile)) {
+          for (DexFileProvider.DexContainer container : myDexFileProvider.getDexFromSource(dexFile)) {
             for (String className : classesOfDex(container.getBase())) {
               if (!index.containsKey(className)) {
                 index.put(className, container.getFilePath());
-              } else if (Options.v().verbose()) {
+              } else if (myOptions.verbose()) {
                 logger.debug("" + String.format(
                     "Warning: Duplicate of class '%s' found in dex file '%s' from source '%s'. Omitting class.", className,
                     container.getDexName(), container.getFilePath().getCanonicalPath()));

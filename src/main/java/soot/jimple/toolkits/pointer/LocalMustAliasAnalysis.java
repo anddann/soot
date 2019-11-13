@@ -160,11 +160,11 @@ public class LocalMustAliasAnalysis extends ForwardFlowAnalysis<Unit, HashMap<Va
     // prune all fields that are written to
     if (!usedFieldRefs.isEmpty()) {
 
-      if (!Scene.v().hasCallGraph()) {
+      if (!myScene.hasCallGraph()) {
         throw new IllegalStateException("No call graph found!");
       }
 
-      CallGraph cg = Scene.v().getCallGraph();
+      CallGraph cg = myScene.getCallGraph();
       ReachableMethods reachableMethods
           = new ReachableMethods(cg, Collections.<MethodOrMethodContext>singletonList(container));
       reachableMethods.update();

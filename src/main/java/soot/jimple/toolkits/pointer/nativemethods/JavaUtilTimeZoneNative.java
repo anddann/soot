@@ -61,6 +61,6 @@ public class JavaUtilTimeZoneNative extends NativeMethodClass {
    */
   public void java_util_TimeZone_getSystemTimeZoneID(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getStringObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getStringObject());
   }
 }

@@ -85,14 +85,14 @@ public class CommonSubexpressionEliminator extends BodyTransformer {
     }
 
     SideEffectTester sideEffect;
-    if (Scene.v().hasCallGraph() && !PhaseOptions.getBoolean(options, "naive-side-effect")) {
+    if (myScene.hasCallGraph() && !PhaseOptions.getBoolean(options, "naive-side-effect")) {
       sideEffect = new PASideEffectTester();
     } else {
       sideEffect = new NaiveSideEffectTester();
     }
     sideEffect.newMethod(b.getMethod());
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "]     Eliminating common subexpressions "
           + (sideEffect instanceof NaiveSideEffectTester ? "(naively)" : "") + "...");
     }
@@ -129,7 +129,7 @@ public class CommonSubexpressionEliminator extends BodyTransformer {
                 counter++;
               }
 
-              Local l = Jimple.v().newLocal(newName, Type.toMachineType(v.getType()));
+              Local l = myJimple.newLocal(newName, Type.toMachineType(v.getType()));
 
               b.getLocals().add(l);
 
@@ -139,7 +139,7 @@ public class CommonSubexpressionEliminator extends BodyTransformer {
 
               origCalc.setLeftOp(l);
 
-              Unit copier = Jimple.v().newAssignStmt(origLHS, l);
+              Unit copier = myJimple.newAssignStmt(origLHS, l);
               units.insertAfter(copier, origCalc);
 
               ((AssignStmt) s).setRightOp(l);
@@ -152,7 +152,7 @@ public class CommonSubexpressionEliminator extends BodyTransformer {
         }
       }
     }
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "]     Eliminating common subexpressions done!");
     }
   }

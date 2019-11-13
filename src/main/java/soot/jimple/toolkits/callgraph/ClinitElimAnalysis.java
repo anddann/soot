@@ -67,7 +67,7 @@ public class ClinitElimAnalysis extends ForwardFlowAnalysis {
 
     in.copy(out);
 
-    CallGraph cg = Scene.v().getCallGraph();
+    CallGraph cg = myScene.getCallGraph();
 
     Iterator edges = cg.edgesOutOf(s);
 
@@ -87,7 +87,7 @@ public class ClinitElimAnalysis extends ForwardFlowAnalysis {
 
   protected Object newInitialFlow() {
     ArraySparseSet set = new ArraySparseSet();
-    CallGraph cg = Scene.v().getCallGraph();
+    CallGraph cg = myScene.getCallGraph();
 
     Iterator mIt = cg.edgesOutOf(g.getBody().getMethod());
     while (mIt.hasNext()) {

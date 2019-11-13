@@ -1394,7 +1394,7 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
   private SootClass sootClass_compute() {
     if(options().verbose())
       System.out.println("Creating from source " + jvmName());
-    SootClass sc = SootResolver.v().makeClassRef(jvmName());
+    SootClass sc = mySootResolver.makeClassRef(jvmName());
     sc.setModifiers(sootTypeModifiers()); // turn it into an interface
     return sc;
   }

@@ -183,7 +183,7 @@ public class AugEvalFunction implements IEvalFunction {
       }
     } else if (expr instanceof CaughtExceptionRef) {
       RefType r = null;
-      RefType throwableType = Scene.v().getRefType("java.lang.Throwable");
+      RefType throwableType = myScene.getRefType("java.lang.Throwable");
 
       for (RefType t : TrapManager.getExceptionTypesOf(stmt, jb)) {
         if (r == null) {

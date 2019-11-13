@@ -267,7 +267,7 @@ public abstract class AbstractInterproceduralAnalysis<S> {
       }
     }
 
-    File f = new File(SourceLocator.v().getOutputDir(), name + DotGraph.DOT_EXTENSION);
+    File f = new File(mySourceLocator.getOutputDir(), name + DotGraph.DOT_EXTENSION);
     dot.plot(f.getPath());
   }
 
@@ -286,7 +286,7 @@ public abstract class AbstractInterproceduralAnalysis<S> {
       DotGraph dot = new DotGraph(m.toString());
       dot.setGraphLabel(m.toString());
       fillDotGraph("X", data.get(m), dot);
-      File f = new File(SourceLocator.v().getOutputDir(), prefix + m.toString() + DotGraph.DOT_EXTENSION);
+      File f = new File(mySourceLocator.getOutputDir(), prefix + m.toString() + DotGraph.DOT_EXTENSION);
       dot.plot(f.getPath());
     }
 
@@ -295,7 +295,7 @@ public abstract class AbstractInterproceduralAnalysis<S> {
         DotGraph dot = new DotGraph(m.toString());
         dot.setGraphLabel(m.toString() + " (unanalysed)");
         fillDotGraph("X", unanalysed.get(m), dot);
-        File f = new File(SourceLocator.v().getOutputDir(), prefix + m.toString() + "_u" + DotGraph.DOT_EXTENSION);
+        File f = new File(mySourceLocator.getOutputDir(), prefix + m.toString() + "_u" + DotGraph.DOT_EXTENSION);
         dot.plot(f.getPath());
       }
     }

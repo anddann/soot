@@ -38,7 +38,7 @@ public class DNewMultiArrayExpr extends AbstractNewMultiArrayExpr {
     super(type, new ValueBox[sizes.size()]);
 
     for (int i = 0; i < sizes.size(); i++) {
-      sizeBoxes[i] = Grimp.v().newExprBox((Value) sizes.get(i));
+      sizeBoxes[i] = myGrimp.newExprBox((Value) sizes.get(i));
     }
   }
 

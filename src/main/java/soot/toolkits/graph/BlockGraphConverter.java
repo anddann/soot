@@ -128,8 +128,8 @@ public class BlockGraphConverter {
   public static void main(String[] args) {
     // assumes 2 args: Class + Method
 
-    Scene.v().loadClassAndSupport(args[0]);
-    SootClass sc = Scene.v().getSootClass(args[0]);
+    myScene.loadClassAndSupport(args[0]);
+    SootClass sc = myScene.getSootClass(args[0]);
     SootMethod sm = sc.getMethod(args[1]);
     Body b = sm.retrieveActiveBody();
     CompleteBlockGraph cfg = new CompleteBlockGraph(b);

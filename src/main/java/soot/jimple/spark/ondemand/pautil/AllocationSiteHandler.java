@@ -191,11 +191,11 @@ public interface AllocationSiteHandler {
         // we'll invoke the java.lang.Object method in this
         // case
         // Assert.chk(varNodeType.toString().equals("java.lang.Object"));
-        type = Scene.v().getSootClass("java.lang.Object").getType();
+        type = myScene.getSootClass("java.lang.Object").getType();
       }
       RefType refType = (RefType) type;
       SootMethod targetMethod = null;
-      targetMethod = VirtualCalls.v().resolveNonSpecial(refType, methodStr);
+      targetMethod = myVirtualCalls.resolveNonSpecial(refType, methodStr);
       if (!possibleMethods.contains(targetMethod)) {
         possibleMethods.add(targetMethod);
         if (possibleMethods.size() > 1) {

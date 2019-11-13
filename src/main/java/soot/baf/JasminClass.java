@@ -94,27 +94,27 @@ public class JasminClass extends AbstractJasminClass {
   protected void assignColorsToLocals(Body body) {
     super.assignColorsToLocals(body);
 
-    if (Options.v().time()) {
-      Timers.v().packTimer.end();
+    if (myOptions.time()) {
+      myTimers.packTimer.end();
     }
 
   }
 
   @Override
   protected void emitMethodBody(SootMethod method) {
-    if (Options.v().time()) {
-      Timers.v().buildJasminTimer.end();
+    if (myOptions.time()) {
+      myTimers.buildJasminTimer.end();
     }
 
     Body activeBody = method.getActiveBody();
 
     if (!(activeBody instanceof BafBody)) {
       if (activeBody instanceof JimpleBody) {
-        if (Options.v().verbose()) {
+        if (myOptions.verbose()) {
           logger.debug(
               "Was expecting Baf body for " + method + " but found a Jimple body. Will convert body to Baf on the fly.");
         }
-        activeBody = PackManager.v().convertJimpleBodyToBaf(method);
+        activeBody = PackmyManager.convertJimpleBodyToBaf(method);
       } else {
         throw new RuntimeException("method: " + method.getName() + " has an invalid active body!");
       }
@@ -126,8 +126,8 @@ public class JasminClass extends AbstractJasminClass {
       throw new RuntimeException("method: " + method.getName() + " has no active body!");
     }
 
-    if (Options.v().time()) {
-      Timers.v().buildJasminTimer.start();
+    if (myOptions.time()) {
+      myTimers.buildJasminTimer.start();
     }
 
     Chain<Unit> instList = body.getUnits();

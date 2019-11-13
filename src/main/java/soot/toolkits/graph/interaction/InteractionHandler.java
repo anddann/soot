@@ -68,7 +68,7 @@ public class InteractionHandler {
 
   public void handleNewAnalysis(Transform t, Body b) {
     // here save current phase name and only send if actual data flow analysis exists
-    if (PhaseOptions.getBoolean(PhaseOptions.v().getPhaseOptions(t.getPhaseName()), "enabled")) {
+    if (PhaseOptions.getBoolean(myPhaseOptions().getPhaseOptions(t.getPhaseName()), "enabled")) {
       String name = t.getPhaseName() + " for method: " + b.getMethod().getName();
       currentPhaseName(name);
       currentPhaseEnabled(true);
@@ -282,7 +282,7 @@ public class InteractionHandler {
   }
 
   public void stopInteraction(boolean b) {
-    Options.v().set_interactive_mode(false);
+    myOptions.set_interactive_mode(false);
   }
 
 }

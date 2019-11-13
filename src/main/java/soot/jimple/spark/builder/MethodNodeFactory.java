@@ -295,7 +295,7 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
   }
 
   final public Node caseArray(VarNode base) {
-    return pag.makeFieldRefNode(base, ArrayElement.v());
+    return pag.makeFieldRefNode(base, myArrayElement);
   }
   /* End of public methods. */
   /* End of package methods. */
@@ -383,7 +383,7 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
       AllocNode an = pag.makeAllocNode(new Pair<Expr, Integer>(nmae, new Integer(type.numDimensions)), type, method);
       VarNode vn = pag.makeLocalVarNode(an, an.getType(), method);
       mpag.addInternalEdge(an, vn);
-      mpag.addInternalEdge(vn, pag.makeFieldRefNode(prevVn, ArrayElement.v()));
+      mpag.addInternalEdge(vn, pag.makeFieldRefNode(prevVn, myArrayElement));
       prevAn = an;
       prevVn = vn;
     }
@@ -402,7 +402,7 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
   @Override
   final public void caseStringConstant(StringConstant sc) {
     AllocNode stringConstant;
-    if (pag.getOpts().string_constants() || Scene.v().containsClass(sc.value)
+    if (pag.getOpts().string_constants() || myScene.containsClass(sc.value)
         || (sc.value.length() > 0 && sc.value.charAt(0) == '[')) {
       stringConstant = pag.makeStringConstantNode(sc.value);
     } else {
@@ -450,7 +450,7 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
   @Override
   public void caseVirtualInvokeExpr(VirtualInvokeExpr v) {
     if (isReflectionNewInstance(v)) {
-      NewInstanceNode newInstanceNode = pag.makeNewInstanceNode(v, Scene.v().getObjectType(), method);
+      NewInstanceNode newInstanceNode = pag.makeNewInstanceNode(v, myScene.getObjectType(), method);
 
       v.getBase().apply(this);
       Node srcNode = getNode();
@@ -465,5 +465,5 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
   protected final PAG pag;
   protected final MethodPAG mpag;
   protected SootMethod method;
-  protected ClientAccessibilityOracle accessibilityOracle = Scene.v().getClientAccessibilityOracle();
+  protected ClientAccessibilityOracle accessibilityOracle = myScene.getClientAccessibilityOracle();
 }

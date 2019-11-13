@@ -22,6 +22,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,34 +40,24 @@ public class PhaseOptions {
    * Needed for preventing infinite recursion in constructor. Termination is assured: each constructor is called exactly
    * once. Here is a case analysis. a. PackManager used first. Then its constructor needs PhaseOptions, which also needs a
    * PackManager; OK because we store the PackManager being initialized in a field. b. PhaseOptions used first. Then getPM()
-   * calls PackManager.v(), which calls the constr, which sets the .pm field here, uses PhaseOptions (which uses
-   * PackManager), and returns. OK.
+   * calls PackmyManager, which calls the constr, which sets the .pm field here, uses PhaseOptions (which uses PackManager),
+   * and returns. OK.
    */
-  private PackManager pm;
+  private PackManager myPackManager;
 
-  public void setPackManager(PackManager m) {
-    this.pm = m;
-  }
 
-  PackManager getPM() {
-    if (pm == null) {
-      PackManager.v();
-    }
-    return pm;
-  }
 
-  public PhaseOptions(Singletons.Global g) {
-  }
 
-  public static PhaseOptions v() {
-    return G.v().soot_PhaseOptions();
+  @Inject
+  public PhaseOptions(PackManager myPackManager) {
+    this.myPackManager = myPackManager;
   }
 
   private final Map<HasPhaseOptions, Map<String, String>> phaseToOptionMap
       = new HashMap<HasPhaseOptions, Map<String, String>>();
 
   public Map<String, String> getPhaseOptions(String phaseName) {
-    return getPhaseOptions(getPM().getPhase(phaseName));
+    return getPhaseOptions(myPackManager.getPhase(phaseName));
   }
 
   public Map<String, String> getPhaseOptions(HasPhaseOptions phase) {
@@ -138,7 +130,7 @@ public class PhaseOptions {
   }
 
   private Map<String, String> mapForPhase(String phaseName) {
-    HasPhaseOptions phase = getPM().getPhase(phaseName);
+    HasPhaseOptions phase = myPackManager.getPhase(phaseName);
     if (phase == null) {
       return null;
     }
@@ -178,7 +170,7 @@ public class PhaseOptions {
   }
 
   private void resetRadioPack(String phaseName) {
-    for (Pack p : getPM().allPacks()) {
+    for (Pack p : myPackManager.allPacks()) {
       if (!(p instanceof RadioScenePack)) {
         continue;
       }
@@ -205,7 +197,7 @@ public class PhaseOptions {
   }
 
   public boolean setPhaseOption(String phaseName, String option) {
-    HasPhaseOptions phase = getPM().getPhase(phaseName);
+    HasPhaseOptions phase = myPackManager.getPhase(phaseName);
     if (phase == null) {
       logger.debug("" + "Option " + option + " given for nonexistent" + " phase " + phaseName);
       return false;
@@ -235,7 +227,7 @@ public class PhaseOptions {
   }
 
   private boolean declaresOption(String phaseName, String option) {
-    HasPhaseOptions phase = getPM().getPhase(phaseName);
+    HasPhaseOptions phase = myPackManager.getPhase(phaseName);
     return declaresOption(phase, option);
   }
 

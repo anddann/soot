@@ -95,13 +95,13 @@ public class DeadAssignmentEliminator extends BodyTransformer {
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
     boolean eliminateOnlyStackLocals = PhaseOptions.getBoolean(options, "only-stack-locals");
 
-    final Options soptions = Options.v();
+    final Options soptions = myOptions;
     if (soptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "] Eliminating dead code...");
     }
 
     if (soptions.time()) {
-      Timers.v().deadCodeTimer.start();
+      myTimers.deadCodeTimer.start();
     }
 
     Chain<Unit> units = b.getUnits();
@@ -284,7 +284,7 @@ public class DeadAssignmentEliminator extends BodyTransformer {
           }
         }
 
-        final Jimple jimple = Jimple.v();
+        final Jimple jimple = myJimple;
         for (AssignStmt s : postProcess) {
           // Transform it into a simple invoke.
           Stmt newInvoke = jimple.newInvokeStmt(s.getInvokeExpr());
@@ -292,14 +292,14 @@ public class DeadAssignmentEliminator extends BodyTransformer {
           units.swapWith(s, newInvoke);
 
           // If we have a callgraph, we need to fix it
-          if (Scene.v().hasCallGraph()) {
-            Scene.v().getCallGraph().swapEdgesOutOf(s, newInvoke);
+          if (myScene.hasCallGraph()) {
+            myScene.getCallGraph().swapEdgesOutOf(s, newInvoke);
           }
         }
       }
     }
     if (soptions.time()) {
-      Timers.v().deadCodeTimer.end();
+      myTimers.deadCodeTimer.end();
     }
   }
 }

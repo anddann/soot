@@ -83,11 +83,11 @@ public class RenameDuplicatedClasses extends SceneTransformer {
     List<String> fixedClassNames = Arrays.asList(classNames);
     duplicatedCheck(fixedClassNames);
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("The fixed class names are: " + fixedClassNames);
     }
 
-    Chain<SootClass> sootClasses = Scene.v().getClasses();
+    Chain<SootClass> sootClasses = myScene.getClasses();
     Map<String, String> lowerCaseClassNameToReal = new HashMap<String, String>();
 
     int count = 0;
@@ -98,14 +98,14 @@ public class RenameDuplicatedClasses extends SceneTransformer {
 
       if (lowerCaseClassNameToReal.containsKey(className.toLowerCase())) {
         if (fixedClassNames.contains(className)) {
-          sootClass = Scene.v().getSootClass(lowerCaseClassNameToReal.get(className.toLowerCase()));
+          sootClass = myScene.getSootClass(lowerCaseClassNameToReal.get(className.toLowerCase()));
           className = lowerCaseClassNameToReal.get(className.toLowerCase());
         }
 
         String newClassName = className + (count++);
         sootClass.rename(newClassName);
 
-        // if(Options.v().verbose())
+        // if(myOptions.verbose())
         // {
         logger.debug("Rename duplicated class " + className + " to class " + newClassName);
         // }

@@ -45,7 +45,7 @@ public abstract class ForwardFlowAnalysis<N, A> extends FlowAnalysis<N, A> {
   protected void doAnalysis() {
     int i = doAnalysis(GraphView.FORWARD, InteractionFlowHandler.FORWARD, unitToBeforeFlow, unitToAfterFlow);
 
-    soot.Timers.v().totalFlowNodes += graph.size();
-    soot.Timers.v().totalFlowComputations += i;
+    soot.myTimers.totalFlowNodes += graph.size();
+    soot.myTimers.totalFlowComputations += i;
   }
 }

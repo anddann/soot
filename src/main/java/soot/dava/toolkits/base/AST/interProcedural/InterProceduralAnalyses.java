@@ -54,7 +54,7 @@ public class InterProceduralAnalyses {
    * All interproceduralAnalyses should be applied in here
    */
   public static void applyInterProceduralAnalyses() {
-    Chain classes = Scene.v().getApplicationClasses();
+    Chain classes = myScene.getApplicationClasses();
 
     if (DEBUG) {
       System.out.println("\n\nInvoking redundantFielduseEliminator");
@@ -91,7 +91,7 @@ public class InterProceduralAnalyses {
           continue;
         }
 
-        Map options = PhaseOptions.v().getPhaseOptions("db.deobfuscate");
+        Map options = myPhaseOptions().getPhaseOptions("db.deobfuscate");
         boolean deobfuscate = PhaseOptions.getBoolean(options, "enabled");
         // System.out.println("force is "+force);
         if (deobfuscate) {
@@ -134,7 +134,7 @@ public class InterProceduralAnalyses {
         }
 
         // renaming should be applied as the last stage
-        options = PhaseOptions.v().getPhaseOptions("db.renamer");
+        options = myPhaseOptions().getPhaseOptions("db.renamer");
         boolean renamer = PhaseOptions.getBoolean(options, "enabled");
         // System.out.println("renaming is"+renamer);
         if (renamer) {

@@ -76,9 +76,9 @@ public class CallGraphBuilder {
    */
   public CallGraphBuilder(PointsToAnalysis pa) {
     this.pa = pa;
-    cg = Scene.v().internalMakeCallGraph();
-    Scene.v().setCallGraph(cg);
-    reachables = Scene.v().getReachableMethods();
+    cg = myScene.internalMakeCallGraph();
+    myScene.setCallGraph(cg);
+    reachables = myScene.getReachableMethods();
     ContextManager cm = makeContextManager(cg);
     ofcgb = createCGBuilder(cm, reachables);
   }
@@ -94,12 +94,12 @@ public class CallGraphBuilder {
    */
   public CallGraphBuilder() {
     logger.warn("using incomplete callgraph containing " + "only application classes.");
-    pa = soot.jimple.toolkits.pointer.DumbPointerAnalysis.v();
-    cg = Scene.v().internalMakeCallGraph();
-    Scene.v().setCallGraph(cg);
+    pa = soot.jimple.toolkits.pointer.myDumbPointerAnalysis;
+    cg = myScene.internalMakeCallGraph();
+    myScene.setCallGraph(cg);
     List<MethodOrMethodContext> entryPoints = new ArrayList<MethodOrMethodContext>();
-    entryPoints.addAll(EntryPoints.v().methodsOfApplicationClasses());
-    entryPoints.addAll(EntryPoints.v().implicit());
+    entryPoints.addAll(myEntryPoints.methodsOfApplicationClasses());
+    entryPoints.addAll(myEntryPoints.implicit());
     reachables = new ReachableMethods(cg, entryPoints);
     ContextManager cm = new ContextInsensitiveContextManager(cg);
     ofcgb = new OnFlyCallGraphBuilder(cm, reachables, true);
@@ -167,7 +167,7 @@ public class CallGraphBuilder {
               assert n instanceof AllocNode;
               AllocNode an = (AllocNode) n;
               Object newExpr = an.getNewExpr();
-              ofcgb.addInvokeArgDotField(argArray, an.dot(ArrayElement.v()));
+              ofcgb.addInvokeArgDotField(argArray, an.dot(myArrayElement));
               if (newExpr instanceof NewArrayExpr) {
                 NewArrayExpr nae = (NewArrayExpr) newExpr;
                 Value size = nae.getSize();

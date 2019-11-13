@@ -95,7 +95,7 @@ public class DexlibWrapper {
 
   public DexlibWrapper(File dexSource) {
     try {
-      List<DexFileProvider.DexContainer> containers = DexFileProvider.v().getDexFromSource(dexSource);
+      List<DexFileProvider.DexContainer> containers = myDexFileProvider.getDexFromSource(dexSource);
       this.dexFiles = new ArrayList<>(containers.size());
       for (DexFileProvider.DexContainer container : containers) {
         this.dexFiles.add(container.getBase());
@@ -134,7 +134,7 @@ public class DexlibWrapper {
           st = ((ArrayType) st).baseType;
         }
         String sootTypeName = st.toString();
-        if (!Scene.v().containsClass(sootTypeName)) {
+        if (!myScene.containsClass(sootTypeName)) {
           if (st instanceof PrimType || st instanceof VoidType || systemAnnotationNames.contains(sootTypeName)) {
             // dex files contain references to the Type IDs of void
             // primitive types - we obviously do not want them
@@ -145,9 +145,9 @@ public class DexlibWrapper {
              */
             continue;
           }
-          SootResolver.v().makeClassRef(sootTypeName);
+          mySootResolver.makeClassRef(sootTypeName);
         }
-        SootResolver.v().resolveClass(sootTypeName, SootClass.SIGNATURES);
+        mySootResolver.resolveClass(sootTypeName, SootClass.SIGNATURES);
       }
     }
   }

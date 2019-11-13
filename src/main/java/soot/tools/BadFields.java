@@ -48,7 +48,7 @@ public class BadFields extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(BadFields.class);
 
   public static void main(String[] args) {
-    PackManager.v().getPack("cg").add(new Transform("cg.badfields", new BadFields()));
+    PackmyManager.getPack("cg").add(new Transform("cg.badfields", new BadFields()));
     soot.Main.main(args);
   }
 
@@ -58,7 +58,7 @@ public class BadFields extends SceneTransformer {
   protected void internalTransform(String phaseName, Map<String, String> options) {
     lastClass = null;
 
-    for (Iterator<SootClass> clIt = Scene.v().getApplicationClasses().iterator(); clIt.hasNext();) {
+    for (Iterator<SootClass> clIt = myScene.getApplicationClasses().iterator(); clIt.hasNext();) {
 
       final SootClass cl = clIt.next();
       currentClass = cl;
@@ -67,7 +67,7 @@ public class BadFields extends SceneTransformer {
         handleMethod(it.next());
       }
     }
-    Scene.v().setCallGraph(Scene.v().internalMakeCallGraph());
+    myScene.setCallGraph(myScene.internalMakeCallGraph());
   }
 
   private void handleClass(SootClass cl) {

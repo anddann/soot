@@ -221,11 +221,11 @@ public class DexPrinter {
   protected MultiDexBuilder createDexBuilder() {
     // we have to create a dex file with the minimum sdk level set. If we build with the target sdk version,
     // we break the backwards compatibility of the app.
-    Scene.AndroidVersionInfo androidSDKVersionInfo = Scene.v().getAndroidSDKVersionInfo();
+    Scene.AndroidVersionInfo androidSDKVersionInfo = myScene.getAndroidSDKVersionInfo();
 
     int apiLevel;
     if (androidSDKVersionInfo == null) {
-      apiLevel = Scene.v().getAndroidAPIVersion();
+      apiLevel = myScene.getAndroidAPIVersion();
     } else {
       apiLevel = Math.min(androidSDKVersionInfo.minSdkVersion, androidSDKVersionInfo.sdkTargetVersion);
     }
@@ -314,7 +314,7 @@ public class DexPrinter {
         }
       }
 
-      if (Options.v().output_jar()) {
+      if (myOptions.output_jar()) {
         // if we create JAR file, MANIFEST.MF is preferred
         addManifest(outputZip, files);
       }
@@ -337,9 +337,9 @@ public class DexPrinter {
   }
 
   private ZipOutputStream getZipOutputStream() throws IOException {
-    if (Options.v().output_jar()) {
-      LOGGER.info("Writing JAR to \"{}\"", Options.v().output_dir());
-      return PackManager.v().getJarFile();
+    if (myOptions.output_jar()) {
+      LOGGER.info("Writing JAR to \"{}\"", myOptions.output_dir());
+      return PackmyManager.getJarFile();
     }
 
     final String name = originalApk == null ? "out.apk" : originalApk.getName();
@@ -347,10 +347,10 @@ public class DexPrinter {
       LOGGER.warn("Setting output file name to \"{}\" as original APK has not been found.", name);
     }
 
-    final Path outputFile = Paths.get(SourceLocator.v().getOutputDir(), name);
+    final Path outputFile = Paths.get(mySourceLocator.getOutputDir(), name);
 
     if (Files.exists(outputFile, LinkOption.NOFOLLOW_LINKS)) {
-      if (!Options.v().force_overwrite()) {
+      if (!myOptions.force_overwrite()) {
         throw new CompilationDeathException("Output file \"" + outputFile + "\" exists. Not overwriting.");
       }
 
@@ -1135,14 +1135,14 @@ public class DexPrinter {
 
     // Switch statements may not be empty in dex, so we have to fix this
     // first
-    EmptySwitchEliminator.v().transform(activeBody);
+    myEmptySwitchEliminator.transform(activeBody);
 
     // Dalvik requires synchronized methods to have explicit monitor calls,
     // so we insert them here. See
     // http://milk.com/kodebase/dalvik-docs-mirror/docs/debugger.html
     // We cannot place this upon the developer since it is only required
     // for Dalvik, but not for other targets.
-    SynchronizedMethodTransformer.v().transform(activeBody);
+    mySynchronizedMethodTransformer.transform(activeBody);
 
     // Tries may not start or end at units which have no corresponding
     // Dalvik
@@ -1150,7 +1150,7 @@ public class DexPrinter {
     // the
     // first "real" instruction. We could also use a TrapTigthener, but that
     // would be too expensive for what we need here.
-    FastDexTrapTightener.v().transform(activeBody);
+    myFastDexTrapTightener.transform(activeBody);
 
     // Look for sequences of array element assignments that we can collapse
     // into bulk initializations
@@ -1160,7 +1160,7 @@ public class DexPrinter {
 
     // Split the tries since Dalvik does not supported nested try/catch
     // blocks
-    TrapSplitter.v().transform(activeBody);
+    myTrapSplitter.transform(activeBody);
 
     // word count of incoming parameters
     int inWords = SootToDexUtils.getDexWords(m.getParameterTypes());
@@ -1206,7 +1206,7 @@ public class DexPrinter {
     Map<Local, Integer> seenRegisters = new HashMap<Local, Integer>();
     Map<Instruction, LocalRegisterAssignmentInformation> instructionRegisterMap = stmtV.getInstructionRegisterMap();
 
-    if (Options.v().write_local_annotations()) {
+    if (myOptions.write_local_annotations()) {
       for (LocalRegisterAssignmentInformation assignment : stmtV.getParameterInstructionsList()) {
         // The "this" local gets added automatically, so we do not need
         // to add it explicitly
@@ -1442,7 +1442,7 @@ public class DexPrinter {
     } while (true);
 
     // Create a jump instruction from the middle to the end
-    NopStmt nop = Jimple.v().newNopStmt();
+    NopStmt nop = myJimple.newNopStmt();
     Insn30t newJump = new Insn30t(Opcode.GOTO_32);
     newJump.setTarget(stmtV.getStmtForInstruction(instructions.get(targetInsPos)));
     BuilderInstruction newJumpInstruction = newJump.getRealInsn(labelAssigner);
@@ -1474,7 +1474,7 @@ public class DexPrinter {
     jumpAround.setTarget(afterNewJump);
     BuilderInstruction jumpAroundInstruction = jumpAround.getRealInsn(labelAssigner);
     instructions.add(newJumpIdx, jumpAroundInstruction);
-    stmtV.fakeNewInsn(Jimple.v().newNopStmt(), jumpAround, jumpAroundInstruction);
+    stmtV.fakeNewInsn(myJimple.newNopStmt(), jumpAround, jumpAroundInstruction);
   }
 
   private void addRegisterAssignmentDebugInfo(LocalRegisterAssignmentInformation registerAssignment,
@@ -1656,7 +1656,7 @@ public class DexPrinter {
     addAsClassDefItem(c);
     // save original APK for this class, needed to copy all the other files
     // inside
-    Map<String, File> dexClassIndex = SourceLocator.v().dexClassIndex();
+    Map<String, File> dexClassIndex = mySourceLocator.dexClassIndex();
     if (dexClassIndex == null) {
       return; // no dex classes were loaded
     }
@@ -1673,11 +1673,11 @@ public class DexPrinter {
 
   public void print() {
     try {
-      if (Options.v().output_jar()
-          || (originalApk != null && Options.v().output_format() != Options.output_format_force_dex)) {
+      if (myOptions.output_jar()
+          || (originalApk != null && myOptions.output_format() != Options.output_format_force_dex)) {
         printZip();
       } else {
-        final String outputDir = SourceLocator.v().getOutputDir();
+        final String outputDir = mySourceLocator.getOutputDir();
         LOGGER.info("Writing dex files to \"{}\" folder.", outputDir);
         dexBuilder.writeTo(outputDir);
       }

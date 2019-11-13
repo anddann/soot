@@ -355,11 +355,11 @@ public class AltClassLoader extends ClassLoader {
    * </p>
    */
   public static void main(String[] argv) throws ClassNotFoundException {
-    AltClassLoader.v().setAltClassPath(argv[0]);
+    myAltClassLoader.setAltClassPath(argv[0]);
     for (int i = 1; i < argv.length; i++) {
-      AltClassLoader.v().setAltClasses(new String[] { argv[i] });
+      myAltClassLoader.setAltClasses(new String[] { argv[i] });
       logger.debug("main() loadClass(" + argv[i] + ")");
-      AltClassLoader.v().loadClass(argv[i]);
+      myAltClassLoader.loadClass(argv[i]);
     }
   }
 

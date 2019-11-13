@@ -71,7 +71,7 @@ public abstract class UnitGraph implements DirectedGraph<Unit> {
     this.body = body;
     unitChain = body.getUnits();
     method = body.getMethod();
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + method.getName() + "]     Constructing " + this.getClass().getName() + "...");
     }
 

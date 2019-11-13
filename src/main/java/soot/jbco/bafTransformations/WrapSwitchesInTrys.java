@@ -92,7 +92,7 @@ public class WrapSwitchesInTrys extends BodyTransformer implements IJbcoTransfor
             }
 
             if (handler == null) {
-              handler = Baf.v().newThrowInst();
+              handler = myBaf.newThrowInst();
               units.add(handler);
             }
           }
@@ -108,7 +108,7 @@ public class WrapSwitchesInTrys extends BodyTransformer implements IJbcoTransfor
             }
           }
 
-          traps.add(Baf.v().newTrap(ThrowSet.getRandomThrowable(), twi, succ, handler));
+          traps.add(myBaf.newTrap(ThrowSet.getRandomThrowable(), twi, succ, handler));
           i++;
         }
       }

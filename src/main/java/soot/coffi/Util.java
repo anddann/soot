@@ -22,6 +22,8 @@ package soot.coffi;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,19 +46,22 @@ import soot.IntType;
 import soot.Local;
 import soot.LongType;
 import soot.Modifier;
+import soot.PackManager;
+import soot.PhaseOptions;
 import soot.RefType;
 import soot.Scene;
 import soot.ShortType;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
 import soot.SootResolver;
+import soot.Timers;
 import soot.Type;
 import soot.UnknownType;
 import soot.VoidType;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
+import soot.options.Options;
 import soot.tagkit.AnnotationAnnotationElem;
 import soot.tagkit.AnnotationArrayElem;
 import soot.tagkit.AnnotationClassElem;
@@ -89,9 +94,27 @@ import soot.tagkit.VisibilityParameterAnnotationTag;
 
 public class Util {
   private static final Logger logger = LoggerFactory.getLogger(Util.class);
+  private Scene myScene;
 
-  public Util(Singletons.Global g) {
-  }
+  private SootResolver mySootResolver;
+  private Jimple myJimple;
+  private PhaseOptions myPhaseOptions;
+  private Options myOptions;
+  private PackManager myPackManager;
+  private Timers myTimers;
+    private CONSTANT_Utf8_collector myCONSTANT_utf8_collector;
+
+    @Inject
+  public Util(Scene myScene, SootResolver mySootResolver, Jimple myJimple, PhaseOptions myPhaseOptions, Options myOptions, PackManager myPackManager, Timers myTimers, CONSTANT_Utf8_collector myCONSTANT_utf8_collector) {
+    this.myScene = myScene;
+    this.mySootResolver = mySootResolver;
+    this.myJimple = myJimple;
+    this.myPhaseOptions = myPhaseOptions;
+    this.myOptions = myOptions;
+    this.myPackManager = myPackManager;
+    this.myTimers = myTimers;
+        this.myCONSTANT_utf8_collector = myCONSTANT_utf8_collector;
+    }
 
   public static Util v() {
     return G.v().soot_coffi_Util();
@@ -126,7 +149,7 @@ public class Util {
   public void resolveFromClassFile(SootClass aClass, InputStream is, String filePath, Collection<Type> references) {
     SootClass bclass = aClass;
     String className = bclass.getName();
-    ClassFile coffiClass = new ClassFile(className);
+    ClassFile coffiClass = new ClassFile(className, myCONSTANT_utf8_collector, myOptions, myTimers);
 
     // Load up class file, and retrieve
     // bclass from class manager.
@@ -134,7 +157,7 @@ public class Util {
       boolean success = coffiClass.loadClassFile(is);
 
       if (!success) {
-        if (!Scene.v().allowsPhantomRefs()) {
+        if (!myScene.allowsPhantomRefs()) {
           throw new RuntimeException("Could not load classfile: " + bclass.getName());
         } else {
           logger.warn("" + className + " is a phantom class!");
@@ -174,7 +197,7 @@ public class Util {
         superName = superName.replace('/', '.');
 
         references.add(RefType.v(superName));
-        bclass.setSuperclass(SootResolver.v().makeClassRef(superName));
+        bclass.setSuperclass(mySootResolver.makeClassRef(superName));
       }
     }
 
@@ -188,7 +211,7 @@ public class Util {
         interfaceName = interfaceName.replace('/', '.');
 
         references.add(RefType.v(interfaceName));
-        SootClass interfaceClass = SootResolver.v().makeClassRef(interfaceName);
+        SootClass interfaceClass = mySootResolver.makeClassRef(interfaceName);
         interfaceClass.setModifiers(interfaceClass.getModifiers() | Modifier.INTERFACE);
         bclass.addInterface(interfaceClass);
       }
@@ -206,7 +229,7 @@ public class Util {
       int modifiers = fieldInfo.access_flags;
       Type fieldType = jimpleTypeOfFieldDescriptor(fieldDescriptor);
 
-      SootField field = Scene.v().makeSootField(fieldName, fieldType, modifiers);
+      SootField field = myScene.makeSootField(fieldName, fieldType, modifiers);
       bclass.addField(field);
 
       references.add(fieldType);
@@ -311,7 +334,7 @@ public class Util {
 
       SootMethod method;
 
-      method = Scene.v().makeSootMethod(methodName, parameterTypes, returnType, modifiers);
+      method = myScene.makeSootMethod(methodName, parameterTypes, returnType, modifiers);
       bclass.addMethod(method);
 
       methodInfo.jmethod = method;
@@ -330,7 +353,7 @@ public class Util {
               exceptionName = exceptionName.replace('/', '.');
 
               references.add(RefType.v(exceptionName));
-              method.addExceptionIfAbsent(SootResolver.v().makeClassRef(exceptionName));
+              method.addExceptionIfAbsent(mySootResolver.makeClassRef(exceptionName));
             }
           } else if (methodInfo.attributes[j] instanceof Synthetic_attribute) {
             method.addTag(new SyntheticTag());
@@ -395,7 +418,7 @@ public class Util {
       method_info methodInfo = coffiClass.methods[i];
       // methodInfo.jmethod.setSource(coffiClass,
       // methodInfo);
-      methodInfo.jmethod.setSource(new CoffiMethodSource(coffiClass, methodInfo));
+      methodInfo.jmethod.setSource(new CoffiMethodSource(coffiClass, methodInfo, myPhaseOptions, this, myOptions, myJimple, myScene, myPackManager, myTimers));
     }
 
     // Set "SourceFile" attribute tag
@@ -770,7 +793,7 @@ public class Util {
         throw new RuntimeException("The body already declares this local name with a different type.");
       }
     } else {
-      l = Jimple.v().newLocal(name, type);
+      l = myJimple.newLocal(name, type);
       listBody.getLocals().add(l);
     }
     return l;
@@ -885,7 +908,7 @@ public class Util {
     if (indexToLocal.containsKey(index)) {
       local = indexToLocal.get(index);
     } else {
-      local = Jimple.v().newLocal(name, UnknownType.v());
+      local = myJimple.newLocal(name, UnknownType.v());
       listBody.getLocals().add(local);
       indexToLocal.put(index, local);
     }

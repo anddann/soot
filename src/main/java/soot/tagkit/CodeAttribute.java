@@ -121,7 +121,7 @@ public class CodeAttribute extends JasminAttribute {
     Iterator<Unit> it = mUnits.iterator();
 
     while (it.hasNext()) {
-      unitBoxes.add(Baf.v().newInstBox(it.next()));
+      unitBoxes.add(myBaf.newInstBox(it.next()));
     }
 
     return unitBoxes;
@@ -129,7 +129,7 @@ public class CodeAttribute extends JasminAttribute {
 
   @Override
   public byte[] decode(String attr, Hashtable<String, Integer> labelToPc) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[] JasminAttribute decode...");
     }
 
@@ -198,7 +198,7 @@ public class CodeAttribute extends JasminAttribute {
       throw new RuntimeException("Index does not euqal to attrubute size :" + index + " -- " + attributeSize);
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[] Jasmin.decode finished...");
     }
 

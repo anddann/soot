@@ -88,24 +88,24 @@ public class LocalSplitter extends BodyTransformer {
 
   @Override
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Splitting locals...");
     }
 
-    if (Options.v().time()) {
-      Timers.v().splitTimer.start();
+    if (myOptions.time()) {
+      myTimers.splitTimer.start();
     }
 
-    if (Options.v().time()) {
-      Timers.v().splitPhase1Timer.start();
+    if (myOptions.time()) {
+      myTimers.splitPhase1Timer.start();
     }
 
     if (throwAnalysis == null) {
-      throwAnalysis = Scene.v().getDefaultThrowAnalysis();
+      throwAnalysis = myScene.getDefaultThrowAnalysis();
     }
 
     if (omitExceptingUnitEdges == false) {
-      omitExceptingUnitEdges = Options.v().omit_excepting_unit_edges();
+      omitExceptingUnitEdges = myOptions.omit_excepting_unit_edges();
     }
 
     // Pack the locals for efficiency
@@ -120,11 +120,11 @@ public class LocalSplitter extends BodyTransformer {
     final LocalDefs defs = LocalDefs.Factory.newLocalDefs(graph, true);
     final LocalUses uses = LocalUses.Factory.newLocalUses(graph, defs);
 
-    if (Options.v().time()) {
-      Timers.v().splitPhase1Timer.end();
+    if (myOptions.time()) {
+      myTimers.splitPhase1Timer.end();
     }
-    if (Options.v().time()) {
-      Timers.v().splitPhase2Timer.start();
+    if (myOptions.time()) {
+      myTimers.splitPhase2Timer.start();
     }
 
     Set<Unit> visited = new HashSet<Unit>();
@@ -218,12 +218,12 @@ public class LocalSplitter extends BodyTransformer {
     // Restore the original local numbering
     localPacker.unpack();
 
-    if (Options.v().time()) {
-      Timers.v().splitPhase2Timer.end();
+    if (myOptions.time()) {
+      myTimers.splitPhase2Timer.end();
     }
 
-    if (Options.v().time()) {
-      Timers.v().splitTimer.end();
+    if (myOptions.time()) {
+      myTimers.splitTimer.end();
     }
   }
 }

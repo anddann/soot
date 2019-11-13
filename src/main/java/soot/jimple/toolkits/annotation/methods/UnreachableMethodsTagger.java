@@ -49,7 +49,7 @@ public class UnreachableMethodsTagger extends SceneTransformer {
     // make list of all unreachable methods
     ArrayList<SootMethod> methodList = new ArrayList<SootMethod>();
 
-    Iterator getClassesIt = Scene.v().getApplicationClasses().iterator();
+    Iterator getClassesIt = myScene.getApplicationClasses().iterator();
     while (getClassesIt.hasNext()) {
       SootClass appClass = (SootClass) getClassesIt.next();
 
@@ -57,7 +57,7 @@ public class UnreachableMethodsTagger extends SceneTransformer {
       while (getMethodsIt.hasNext()) {
         SootMethod method = (SootMethod) getMethodsIt.next();
         // System.out.println("adding method: "+method);
-        if (!Scene.v().getReachableMethods().contains(method)) {
+        if (!myScene.getReachableMethods().contains(method)) {
           methodList.add(method);
         }
       }

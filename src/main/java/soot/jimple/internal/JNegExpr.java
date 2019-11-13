@@ -33,12 +33,12 @@ import soot.jimple.JimpleToBafContext;
 
 public class JNegExpr extends AbstractNegExpr implements ConvertToBaf {
   public JNegExpr(Value op) {
-    super(Jimple.v().newImmediateBox(op));
+    super(myJimple.newImmediateBox(op));
   }
 
   public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
     ((ConvertToBaf) (getOp())).convertToBaf(context, out);
-    Unit u = Baf.v().newNegInst(getType());
+    Unit u = myBaf.newNegInst(getType());
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);
   }

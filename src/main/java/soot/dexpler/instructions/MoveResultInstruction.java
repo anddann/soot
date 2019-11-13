@@ -53,12 +53,12 @@ public class MoveResultInstruction extends DexlibAbstractInstruction {
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
 
     // if (local != null)
-    // assign = Jimple.v().newAssignStmt(body.getRegisterLocal(dest), local);
+    // assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), local);
     // else if (expr != null)
-    // assign = Jimple.v().newAssignStmt(body.getRegisterLocal(dest), expr);
+    // assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), expr);
     // else
     // throw new RuntimeException("Neither local and expr are set to move.");
-    AssignStmt assign = Jimple.v().newAssignStmt(body.getRegisterLocal(dest), body.getStoreResultLocal());
+    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), body.getStoreResultLocal());
     setUnit(assign);
     addTags(assign);
     body.add(assign);

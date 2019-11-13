@@ -38,7 +38,7 @@ import soot.jimple.toolkits.callgraph.Edge;
 public class SootInfo {
 
   public static int countCallEdgesForCallsite(Stmt callsite, boolean stopForMutiple) {
-    CallGraph cg = Scene.v().getCallGraph();
+    CallGraph cg = myScene.getCallGraph();
     int count = 0;
 
     for (Iterator<Edge> it = cg.edgesOutOf(callsite); it.hasNext();) {

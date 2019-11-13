@@ -310,7 +310,7 @@ public class DalvikThrowAnalysis extends UnitThrowAnalysis {
         if (toType instanceof RefLikeType) {
           // fromType might still be unknown when we are called,
           // but toType will have a value.
-          FastHierarchy h = Scene.v().getOrMakeFastHierarchy();
+          FastHierarchy h = myScene.getOrMakeFastHierarchy();
           if (fromType == null || fromType instanceof UnknownType
               || ((!(fromType instanceof NullType)) && (!h.canStoreType(fromType, toType)))) {
             result = result.add(mgr.CLASS_CAST_EXCEPTION);

@@ -58,25 +58,25 @@ public abstract class CFGIntermediateRep extends CFGOptionMatcher.CFGOption {
 
   public static final CFGIntermediateRep BAF_IR = new CFGIntermediateRep("baf") {
     public Body getBody(JimpleBody b) {
-      return Baf.v().newBody(b);
+      return myBaf.newBody(b);
     }
   };
 
   public static final CFGIntermediateRep GRIMP_IR = new CFGIntermediateRep("grimp") {
     public Body getBody(JimpleBody b) {
-      return Grimp.v().newBody(b, "gb");
+      return myGrimp.newBody(b, "gb");
     }
   };
 
   public static final CFGIntermediateRep SHIMPLE_IR = new CFGIntermediateRep("shimple") {
     public Body getBody(JimpleBody b) {
-      return Shimple.v().newBody(b);
+      return myShimple.newBody(b);
     }
   };
 
   public static final CFGIntermediateRep VIA_SHIMPLE_JIMPLE_IR = new CFGIntermediateRep("viaShimpleJimple") {
     public Body getBody(JimpleBody b) {
-      return Shimple.v().newJimpleBody(Shimple.v().newBody(b));
+      return myShimple.newJimpleBody(myShimple.newBody(b));
     }
   };
 

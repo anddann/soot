@@ -106,7 +106,7 @@ public class ReflectionTraceInfo {
               }
               receiverNames.add(target);
             } else if (kind.equals("Method.invoke")) {
-              if (!Scene.v().containsMethod(target)) {
+              if (!myScene.containsMethod(target)) {
                 throw new RuntimeException("Unknown method for signature: " + target);
               }
 
@@ -116,7 +116,7 @@ public class ReflectionTraceInfo {
               }
               receiverNames.add(target);
             } else if (kind.equals("Constructor.newInstance")) {
-              if (!Scene.v().containsMethod(target)) {
+              if (!myScene.containsMethod(target)) {
                 throw new RuntimeException("Unknown method for signature: " + target);
               }
 
@@ -126,7 +126,7 @@ public class ReflectionTraceInfo {
               }
               receiverNames.add(target);
             } else if (kind.equals("Field.set*")) {
-              if (!Scene.v().containsField(target)) {
+              if (!myScene.containsField(target)) {
                 throw new RuntimeException("Unknown method for signature: " + target);
               }
 
@@ -136,7 +136,7 @@ public class ReflectionTraceInfo {
               }
               receiverNames.add(target);
             } else if (kind.equals("Field.get*")) {
-              if (!Scene.v().containsField(target)) {
+              if (!myScene.containsField(target)) {
                 throw new RuntimeException("Unknown method for signature: " + target);
               }
 
@@ -169,15 +169,15 @@ public class ReflectionTraceInfo {
   private Set<SootMethod> inferSource(String source, int lineNumber) {
     String className = source.substring(0, source.lastIndexOf("."));
     String methodName = source.substring(source.lastIndexOf(".") + 1);
-    if (!Scene.v().containsClass(className)) {
-      Scene.v().addBasicClass(className, SootClass.BODIES);
-      Scene.v().loadBasicClasses();
-      if (!Scene.v().containsClass(className)) {
+    if (!myScene.containsClass(className)) {
+      myScene.addBasicClass(className, SootClass.BODIES);
+      myScene.loadBasicClasses();
+      if (!myScene.containsClass(className)) {
         throw new RuntimeException("Trace file refers to unknown class: " + className);
       }
     }
 
-    SootClass sootClass = Scene.v().getSootClass(className);
+    SootClass sootClass = myScene.getSootClass(className);
     Set<SootMethod> methodsWithRightName = new LinkedHashSet<SootMethod>();
     for (SootMethod m : sootClass.getMethods()) {
       if (m.isConcrete() && m.getName().equals(methodName)) {
@@ -247,7 +247,7 @@ public class ReflectionTraceInfo {
   public Set<SootClass> classForNameClasses(SootMethod container) {
     Set<SootClass> result = new LinkedHashSet<SootClass>();
     for (String className : classForNameClassNames(container)) {
-      result.add(Scene.v().getSootClass(className));
+      result.add(myScene.getSootClass(className));
     }
     return result;
   }
@@ -262,7 +262,7 @@ public class ReflectionTraceInfo {
   public Set<SootClass> classNewInstanceClasses(SootMethod container) {
     Set<SootClass> result = new LinkedHashSet<SootClass>();
     for (String className : classNewInstanceClassNames(container)) {
-      result.add(Scene.v().getSootClass(className));
+      result.add(myScene.getSootClass(className));
     }
     return result;
   }
@@ -277,7 +277,7 @@ public class ReflectionTraceInfo {
   public Set<SootMethod> constructorNewInstanceConstructors(SootMethod container) {
     Set<SootMethod> result = new LinkedHashSet<SootMethod>();
     for (String signature : constructorNewInstanceSignatures(container)) {
-      result.add(Scene.v().getMethod(signature));
+      result.add(myScene.getMethod(signature));
     }
     return result;
   }
@@ -292,7 +292,7 @@ public class ReflectionTraceInfo {
   public Set<SootMethod> methodInvokeMethods(SootMethod container) {
     Set<SootMethod> result = new LinkedHashSet<SootMethod>();
     for (String signature : methodInvokeSignatures(container)) {
-      result.add(Scene.v().getMethod(signature));
+      result.add(myScene.getMethod(signature));
     }
     return result;
   }

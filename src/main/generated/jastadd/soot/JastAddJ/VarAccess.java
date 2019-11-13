@@ -594,7 +594,7 @@ public class VarAccess extends Access implements Cloneable {
    */
     private SootFieldRef sootRef() {
     FieldDeclaration decl = ((FieldDeclaration)decl()).erasedField();
-    SootFieldRef ref = Scene.v().makeFieldRef(
+    SootFieldRef ref = myScene.makeFieldRef(
       fieldQualifierType().getSootClassDecl(),
       decl.name(),
       decl.type().getSootType(),

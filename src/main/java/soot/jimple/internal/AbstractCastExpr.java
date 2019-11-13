@@ -47,7 +47,7 @@ abstract public class AbstractCastExpr implements CastExpr, ConvertToBaf {
   Type type;
 
   AbstractCastExpr(Value op, Type type) {
-    this(Jimple.v().newImmediateBox(op), type);
+    this(myJimple.newImmediateBox(op), type);
   }
 
   public abstract Object clone();
@@ -136,12 +136,12 @@ abstract public class AbstractCastExpr implements CastExpr, ConvertToBaf {
 
     Unit u;
     if (toType instanceof ArrayType || toType instanceof RefType) {
-      u = Baf.v().newInstanceCastInst(toType);
+      u = myBaf.newInstanceCastInst(toType);
     } else {
       if (!fromType.equals(toType)) {
-        u = Baf.v().newPrimitiveCastInst(fromType, toType);
+        u = myBaf.newPrimitiveCastInst(fromType, toType);
       } else {
-        u = Baf.v().newNopInst();
+        u = myBaf.newNopInst();
       }
     }
 

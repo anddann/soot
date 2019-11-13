@@ -53,7 +53,7 @@ public class CriticalSectionInterferenceGraph {
       boolean optionLeaveOriginalLocks, boolean optionIncludeEmptyPossibleEdges) {
     this.criticalSections = criticalSections;
     this.mhp = mhp;
-    this.pta = Scene.v().getPointsToAnalysis();
+    this.pta = myScene.getPointsToAnalysis();
     this.optionOneGlobalLock = optionOneGlobalLock;
     this.optionLeaveOriginalLocks = optionLeaveOriginalLocks;
     this.optionIncludeEmptyPossibleEdges = optionIncludeEmptyPossibleEdges;
@@ -146,7 +146,7 @@ public class CriticalSectionInterferenceGraph {
               classOne = (typeOne instanceof RefType) ? ((RefType) typeOne).getSootClass() : null;
               classTwo = (typeTwo instanceof RefType) ? ((RefType) typeTwo).getSootClass() : null;
               if (classOne != null && classTwo != null) {
-                Hierarchy h = Scene.v().getActiveHierarchy();
+                Hierarchy h = myScene.getActiveHierarchy();
                 if (classOne.isInterface()) {
                   if (classTwo.isInterface()) {
                     typeCompatible = h.getSubinterfacesOfIncluding(classOne).contains(classTwo)
@@ -159,9 +159,9 @@ public class CriticalSectionInterferenceGraph {
                     typeCompatible = h.getImplementersOf(classTwo).contains(classOne);
                   } else {
                     typeCompatible = (classOne != null
-                        && Scene.v().getActiveHierarchy().getSubclassesOfIncluding(classOne).contains(classTwo)
+                        && myScene.getActiveHierarchy().getSubclassesOfIncluding(classOne).contains(classTwo)
                         || classTwo != null
-                            && Scene.v().getActiveHierarchy().getSubclassesOfIncluding(classTwo).contains(classOne));
+                            && myScene.getActiveHierarchy().getSubclassesOfIncluding(classTwo).contains(classOne));
                   }
                 }
               }
@@ -233,7 +233,7 @@ public class CriticalSectionInterferenceGraph {
       if (optionLeaveOriginalLocks) {
         return true;
       }
-      ReachableMethods rm = Scene.v().getReachableMethods();
+      ReachableMethods rm = myScene.getReachableMethods();
       if (!rm.contains(tn1.method) || !rm.contains(tn2.method)) {
         return false;
       }

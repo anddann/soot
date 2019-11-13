@@ -28,7 +28,6 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.jimple.spark.geom.geomPA.GeomPointsTo;
@@ -39,7 +38,6 @@ import soot.jimple.spark.solver.OnFlyCallGraph;
 import soot.jimple.toolkits.callgraph.CallGraphBuilder;
 import soot.jimple.toolkits.callgraph.Edge;
 import soot.jimple.toolkits.callgraph.ReachableMethods;
-import soot.jimple.toolkits.pointer.DumbPointerAnalysis;
 import soot.jimple.toolkits.pointer.util.NativeMethodDriver;
 import soot.options.SparkOptions;
 import soot.util.queue.QueueReader;
@@ -56,7 +54,7 @@ public class ContextInsensitiveBuilder {
     boolean change = true;
     while (change) {
       change = false;
-      for (Iterator<SootClass> cIt = new ArrayList<>(Scene.v().getClasses()).iterator(); cIt.hasNext();) {
+      for (Iterator<SootClass> cIt = new ArrayList<>(myScene.getClasses()).iterator(); cIt.hasNext();) {
         final SootClass c = cIt.next();
         for (final SootMethod m : c.getMethods()) {
           if (!m.isConcrete()) {
@@ -79,7 +77,7 @@ public class ContextInsensitiveBuilder {
 
   /** Creates an empty pointer assignment graph. */
   public PAG setup(SparkOptions opts) {
-    pag = opts.geom_pta() ? new GeomPointsTo(opts) : new PAG(opts);
+    pag = opts.geom_pta() ? new GeomPointsTo(opts) : new PAG(myPhaseOptions, myScene, myArrayElement, opts);
     if (opts.simulate_natives()) {
       pag.nativeMethodDriver = new NativeMethodDriver(new SparkNativeHelper(pag));
     }
@@ -87,7 +85,7 @@ public class ContextInsensitiveBuilder {
       ofcg = new OnFlyCallGraph(pag, opts.apponly());
       pag.setOnFlyCallGraph(ofcg);
     } else {
-      cgb = new CallGraphBuilder(DumbPointerAnalysis.v());
+      cgb = new CallGraphBuilder(myDumbPointerAnalysis);
     }
     return pag;
   }
@@ -105,7 +103,7 @@ public class ContextInsensitiveBuilder {
       cgb.build();
       reachables = cgb.reachables();
     }
-    for (final SootClass c : Scene.v().getClasses()) {
+    for (final SootClass c : myScene.getClasses()) {
       handleClass(c);
     }
     while (callEdges.hasNext()) {

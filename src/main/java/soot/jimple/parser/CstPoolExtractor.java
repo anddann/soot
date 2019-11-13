@@ -85,7 +85,7 @@ class CstPoolExtractor {
 
     public void outAFullIdentClassName(AFullIdentClassName node) {
       String tokenString = node.getFullIdentifier().getText();
-      tokenString = Scene.v().unescapeName(tokenString);
+      tokenString = myScene.unescapeName(tokenString);
       tokenString = StringTools.getUnEscapedStringOf(tokenString);
 
       mRefTypes.add(tokenString);
@@ -101,7 +101,7 @@ class CstPoolExtractor {
 
     public void outAFullIdentNonvoidType(AFullIdentNonvoidType node) {
       String tokenString = node.getFullIdentifier().getText();
-      tokenString = Scene.v().unescapeName(tokenString);
+      tokenString = myScene.unescapeName(tokenString);
       tokenString = StringTools.getUnEscapedStringOf(tokenString);
 
       mRefTypes.add(tokenString);

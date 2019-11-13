@@ -130,7 +130,7 @@ public class IdentifiersMetric extends ASTMetric {
 
     if ((dictionarySize = dictionary.size()) == 0) {
       logger.debug("Error reading in dictionary file(s)");
-    } else if (Options.v().verbose()) {
+    } else if (myOptions.verbose()) {
       logger.debug("Read " + dictionarySize + " words in from dictionary file(s)");
     }
 

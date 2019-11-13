@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BIfNeInst extends AbstractBranchInst implements IfNeInst {
   public BIfNeInst(Unit target) {
-    super(Baf.v().newInstBox(target));
+    super(myBaf.newInstBox(target));
   }
 
   public int getInCount() {

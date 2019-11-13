@@ -78,7 +78,7 @@ public class MinimalJavaVersionTest {
 		String rtJar = System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar";
 
 		// Run Soot and print output to .asm-files.
-		Main.v().run(new String[] { "-cp", getClassPathFolder() + File.pathSeparator + rtJar, "-src-prec", "only-class",
+		myMain.run(new String[] { "-cp", getClassPathFolder() + File.pathSeparator + rtJar, "-src-prec", "only-class",
 				"-output-format", "asm", "-allow-phantom-refs", "-java-version", version, className });
 	}
 

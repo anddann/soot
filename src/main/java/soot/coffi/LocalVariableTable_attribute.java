@@ -80,7 +80,7 @@ class LocalVariableTable_attribute extends attribute_info {
 
         if (constant_pool[e.name_index] instanceof CONSTANT_Utf8_info) {
           String n = ((CONSTANT_Utf8_info) (constant_pool[e.name_index])).convert();
-          if (Util.v().isValidJimpleName(n)) {
+          if (myCoffiUtil.isValidJimpleName(n)) {
             return n;
           } else {
             return null;
@@ -116,7 +116,7 @@ class LocalVariableTable_attribute extends attribute_info {
       local_variable_table_entry e = local_variable_table[entryIndex];
       if (constant_pool[e.name_index] instanceof CONSTANT_Utf8_info) {
         String n = ((CONSTANT_Utf8_info) (constant_pool[e.name_index])).convert();
-        if (Util.v().isValidJimpleName(n)) {
+        if (myCoffiUtil.isValidJimpleName(n)) {
           return n;
         } else {
           return null;

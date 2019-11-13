@@ -288,7 +288,7 @@ public class FinalFieldDefinition {
     GAssignStmt assignStmt = null;
 
     if (fieldType instanceof RefType) {
-      assignStmt = new GAssignStmt(ref, NullConstant.v());
+      assignStmt = new GAssignStmt(ref, myNullConstant);
     } else if (fieldType instanceof DoubleType) {
       assignStmt = new GAssignStmt(ref, DoubleConstant.v(0));
     } else if (fieldType instanceof FloatType) {

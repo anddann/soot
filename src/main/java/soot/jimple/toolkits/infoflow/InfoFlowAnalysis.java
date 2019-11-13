@@ -94,7 +94,7 @@ public class InfoFlowAnalysis {
   }
 
   /*
-   * public void doApplicationClassesAnalysis() { Iterator appClassesIt = Scene.v().getApplicationClasses().iterator(); while
+   * public void doApplicationClassesAnalysis() { Iterator appClassesIt = myScene.getApplicationClasses().iterator(); while
    * (appClassesIt.hasNext()) { SootClass appClass = (SootClass) appClassesIt.next();
    *
    * // Create the needed flow analysis object ClassInfoFlowAnalysis cdfa = new ClassInfoFlowAnalysis(appClass, this);
@@ -103,7 +103,7 @@ public class InfoFlowAnalysis {
    * method will be // reentrant if any method we are analyzing is reentrant, so we // must do this to prevent an infinite
    * recursive loop. classToClassInfoFlowAnalysis.put(appClass, cdfa); }
    *
-   * Iterator appClassesIt2 = Scene.v().getApplicationClasses().iterator(); while (appClassesIt2.hasNext()) { SootClass
+   * Iterator appClassesIt2 = myScene.getApplicationClasses().iterator(); while (appClassesIt2.hasNext()) { SootClass
    * appClass = (SootClass) appClassesIt2.next(); // Now calculate the flow-sensitive version. If this classes methods // are
    * reentrant, it will call this method and receive the flow // insensitive version that is already cached.
    * ClassInfoFlowAnalysis cdfa = (ClassInfoFlowAnalysis) classToClassInfoFlowAnalysis.get(appClass);
@@ -160,20 +160,20 @@ public class InfoFlowAnalysis {
 
   public static EquivalentValue getNodeForFieldRef(SootMethod sm, SootField sf, Local realLocal) {
     if (sf.isStatic()) {
-      return new CachedEquivalentValue(Jimple.v().newStaticFieldRef(sf.makeRef()));
+      return new CachedEquivalentValue(myJimple.newStaticFieldRef(sf.makeRef()));
     } else {
-      // Jimple.v().newThisRef(sf.getDeclaringClass().getType())
+      // myJimple.newThisRef(sf.getDeclaringClass().getType())
       if (sm.isConcrete() && !sm.isStatic() && sm.getDeclaringClass() == sf.getDeclaringClass() && realLocal == null) {
         JimpleLocal fakethis
             = new FakeJimpleLocal("fakethis", sf.getDeclaringClass().getType(), sm.retrieveActiveBody().getThisLocal());
 
-        return new CachedEquivalentValue(Jimple.v().newInstanceFieldRef(fakethis, sf.makeRef())); // fake thisLocal
+        return new CachedEquivalentValue(myJimple.newInstanceFieldRef(fakethis, sf.makeRef())); // fake thisLocal
       } else {
         // Pretends to be a this.<somefield> ref for a method without a body,
         // for a static method, or for an inner field
         JimpleLocal fakethis = new FakeJimpleLocal("fakethis", sf.getDeclaringClass().getType(), realLocal);
 
-        return new CachedEquivalentValue(Jimple.v().newInstanceFieldRef(fakethis, sf.makeRef())); // fake thisLocal
+        return new CachedEquivalentValue(myJimple.newInstanceFieldRef(fakethis, sf.makeRef())); // fake thisLocal
       }
     }
   }
@@ -203,7 +203,7 @@ public class InfoFlowAnalysis {
 
     SootMethodRef methodRef = ie.getMethodRef();
     String subSig = methodRef.resolve().getSubSignature();
-    CallGraph cg = Scene.v().getCallGraph();
+    CallGraph cg = myScene.getCallGraph();
     for (Iterator<Edge> edges = cg.edgesOutOf(is); edges.hasNext();) {
       Edge e = edges.next();
       SootMethod target = e.getTgt().method();

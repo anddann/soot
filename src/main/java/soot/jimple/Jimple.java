@@ -27,13 +27,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.ArrayType;
 import soot.ErroneousType;
 import soot.G;
 import soot.Immediate;
 import soot.Local;
 import soot.RefType;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootFieldRef;
 import soot.SootMethod;
@@ -117,7 +117,8 @@ import soot.jimple.internal.VariableBox;
  */
 
 public class Jimple {
-  public Jimple(Singletons.Global g) {
+  @Inject
+  public Jimple() {
   }
 
   public static Jimple v() {
@@ -734,12 +735,12 @@ public class Jimple {
 
   /** Returns an empty JimpleBody associated with method m. */
   public JimpleBody newBody(SootMethod m) {
-    return new JimpleBody(m);
+    return new JimpleBody(m, myOptions, myJimple);
   }
 
   /** Returns an empty JimpleBody with no associated method. */
   public JimpleBody newBody() {
-    return new JimpleBody();
+    return new JimpleBody(myOptions, myJimple);
   }
 
   /*

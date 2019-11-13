@@ -37,7 +37,7 @@ public class ClinitElimTransformer extends BodyTransformer {
   protected void internalTransform(Body b, String phaseName, Map options) {
     ClinitElimAnalysis a = new ClinitElimAnalysis(new BriefUnitGraph(b));
 
-    CallGraph cg = Scene.v().getCallGraph();
+    CallGraph cg = myScene.getCallGraph();
 
     SootMethod m = b.getMethod();
 

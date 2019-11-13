@@ -57,9 +57,9 @@ public class ArrayLengthInstruction extends DexlibAbstractInstruction {
 
     Local arrayReference = body.getRegisterLocal(lengthOfArrayInstruction.getRegisterB());
 
-    LengthExpr lengthExpr = Jimple.v().newLengthExpr(arrayReference);
+    LengthExpr lengthExpr = myJimple.newLengthExpr(arrayReference);
 
-    AssignStmt assign = Jimple.v().newAssignStmt(body.getRegisterLocal(dest), lengthExpr);
+    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), lengthExpr);
 
     setUnit(assign);
     addTags(assign);

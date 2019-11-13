@@ -99,7 +99,7 @@ public abstract class Access extends Expr implements Cloneable {
     else {
       return b.newInstanceFieldRef(
         b.emitThis(hostType()),
-        Scene.v().makeFieldRef(hostType().getSootClassDecl(), "val$" + v.name(), v.type().getSootType(), false),
+        myScene.makeFieldRef(hostType().getSootClassDecl(), "val$" + v.name(), v.type().getSootType(), false),
         this
         //hostType().getSootClassDecl().getField("val$" + v.name(), v.type().getSootType()).makeRef()
       );

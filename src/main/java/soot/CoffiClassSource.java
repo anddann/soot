@@ -31,6 +31,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import soot.coffi.Util;
 import soot.javaToJimple.IInitialResolver;
 import soot.javaToJimple.IInitialResolver.Dependencies;
 import soot.options.Options;
@@ -45,9 +46,12 @@ public class CoffiClassSource extends ClassSource {
   private InputStream classFile;
   private final String fileName;
   private final String zipFileName;
+  private Util myCoffiUtil;
+  private Options myOptions;
 
-  public CoffiClassSource(String className, FoundFile foundFile) {
+  public CoffiClassSource(String className, FoundFile foundFile, Util myCoffiUtil) {
     super(className);
+    this.myCoffiUtil = myCoffiUtil;
     if (foundFile == null) {
       throw new IllegalStateException("Error: The FoundFile must not be null.");
     }
@@ -57,8 +61,9 @@ public class CoffiClassSource extends ClassSource {
     this.zipFileName = !foundFile.isZipFile() ? null : foundFile.getFilePath();
   }
 
-  public CoffiClassSource(String className, InputStream classFile, String fileName) {
+  public CoffiClassSource(String className, InputStream classFile, String fileName, Util myCoffiUtil) {
     super(className);
+    this.myCoffiUtil = myCoffiUtil;
     if (classFile == null || fileName == null) {
       throw new IllegalStateException("Error: The class file input strean and file name must not be null.");
     }
@@ -69,13 +74,13 @@ public class CoffiClassSource extends ClassSource {
   }
 
   public Dependencies resolve(SootClass sc) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("resolving [from .class]: " + className);
     }
     List<Type> references = new ArrayList<Type>();
 
     try {
-      soot.coffi.Util.v().resolveFromClassFile(sc, classFile, fileName, references);
+      myCoffiUtil.resolveFromClassFile(sc, classFile, fileName, references);
     } finally {
       close();
     }

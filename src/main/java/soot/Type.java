@@ -32,7 +32,7 @@ import soot.util.Switchable;
 @SuppressWarnings("serial")
 public abstract class Type implements Switchable, Serializable, Numberable {
   public Type() {
-    Scene.v().getTypeNumberer().add(this);
+    myScene.getTypeNumberer().add(this);
   }
 
   /** Returns a textual representation of this type. */

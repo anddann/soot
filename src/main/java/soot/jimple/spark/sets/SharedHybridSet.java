@@ -145,9 +145,9 @@ public class SharedHybridSet extends PointsToSetInternal {
         }
         // with <OVERFLOW_THRESHOLD ones (in fact, there might be bitvectors with 0
         // ones). This results from merging bitvectors and masking out certain values.
-        if (bitVectorCardinality < AllSharedHybridNodes.v().lookupMap.map.length
-            && AllSharedHybridNodes.v().lookupMap.map[bitVectorCardinality] != null) {
-          List<PointsToBitVector> lst = AllSharedHybridNodes.v().lookupMap.map[bitVectorCardinality];
+        if (bitVectorCardinality < myAllSharedHybridNodes.lookupMap.map.length
+            && myAllSharedHybridNodes.lookupMap.map[bitVectorCardinality] != null) {
+          List<PointsToBitVector> lst = myAllSharedHybridNodes.lookupMap.map[bitVectorCardinality];
           for (PointsToBitVector candidate : lst) {
             // for each existing bit vector with bitVectorCardinality
             // ones
@@ -164,7 +164,7 @@ public class SharedHybridSet extends PointsToSetInternal {
       // bit vector
       setNewBitVector(szBitvector, newBitVector);
       overflow.removeAll();
-      AllSharedHybridNodes.v().lookupMap.add(numElements, newBitVector);
+      myAllSharedHybridNodes.lookupMap.add(numElements, newBitVector);
     }
   }
 
@@ -177,7 +177,7 @@ public class SharedHybridSet extends PointsToSetInternal {
 
       if (bitVector.unused()) {
         // delete bitVector from lookupMap
-        AllSharedHybridNodes.v().lookupMap.remove(size, bitVector);
+        myAllSharedHybridNodes.lookupMap.remove(size, bitVector);
       }
     }
     bitVector = newBitVector;

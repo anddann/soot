@@ -23,6 +23,8 @@ package soot.baf;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -33,15 +35,14 @@ import soot.ByteType;
 import soot.CharType;
 import soot.DoubleType;
 import soot.FloatType;
-import soot.G;
 import soot.IntType;
 import soot.Local;
 import soot.LongType;
 import soot.NullType;
+import soot.PackManager;
 import soot.PhaseOptions;
 import soot.RefType;
 import soot.ShortType;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootFieldRef;
 import soot.SootMethod;
@@ -132,13 +133,18 @@ import soot.jimple.JimpleBody;
 import soot.jimple.ParameterRef;
 import soot.jimple.ThisRef;
 import soot.jimple.internal.IdentityRefBox;
+import soot.options.Options;
 
 public class Baf {
-  public Baf(Singletons.Global g) {
-  }
+  private PhaseOptions myPhaseOptions;
+  private PackManager myPackmanager;
+  private Options myOptions;
 
-  public static Baf v() {
-    return G.v().soot_baf_Baf();
+  @Inject
+  public Baf(PhaseOptions myPhaseOptions, PackManager myPackmanager, Options myOptions) {
+    this.myPhaseOptions = myPhaseOptions;
+    this.myPackmanager = myPackmanager;
+    this.myOptions = myOptions;
   }
 
   public static Type getDescriptorTypeOf(Type opType) {
@@ -546,12 +552,12 @@ public class Baf {
 
   /** Returns a BafBody constructed from b. */
   public BafBody newBody(JimpleBody b) {
-    return new BafBody(b, Collections.<String, String>emptyMap());
+    return new BafBody(b, Collections.<String, String>emptyMap(), myOptions, this, myPackmanager);
   }
 
   /** Returns a BafBody constructed from b. */
   public BafBody newBody(JimpleBody b, String phase) {
-    Map<String, String> options = PhaseOptions.v().getPhaseOptions(phase);
-    return new BafBody(b, options);
+    Map<String, String> options = myPhaseOptions.getPhaseOptions(phase);
+    return new BafBody(b, options, myOptions, this, myPackmanager);
   }
 }

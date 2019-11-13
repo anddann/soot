@@ -59,6 +59,6 @@ public class JavaIoFileSystemNative extends NativeMethodClass {
    */
   public void java_io_FileSystem_getFileSystem(SootMethod method, ReferenceVariable thisVar, ReferenceVariable returnVar,
       ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getFileSystemObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getFileSystemObject());
   }
 }

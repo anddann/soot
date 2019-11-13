@@ -90,7 +90,7 @@ public class ThisInliner extends BodyTransformer {
           IdentityStmt idStmt = (IdentityStmt) inlineeStmt;
 
           if (idStmt.getRightOp() instanceof ThisRef) {
-            Stmt newThis = Jimple.v().newAssignStmt((Local) oldLocalsToNew.get(idStmt.getLeftOp()), origIdStmt.getLeftOp());
+            Stmt newThis = myJimple.newAssignStmt((Local) oldLocalsToNew.get(idStmt.getLeftOp()), origIdStmt.getLeftOp());
             containerUnits.insertBefore(newThis, invokeStmt);
             oldStmtsToNew.put(inlineeStmt, newThis);
           }
@@ -106,7 +106,7 @@ public class ThisInliner extends BodyTransformer {
             containerUnits.insertBefore(newInlinee, invokeStmt);
             oldStmtsToNew.put(inlineeStmt, newInlinee);
           } else if (idStmt.getRightOp() instanceof ParameterRef) {
-            Stmt newParam = Jimple.v().newAssignStmt((Local) oldLocalsToNew.get(idStmt.getLeftOp()),
+            Stmt newParam = myJimple.newAssignStmt((Local) oldLocalsToNew.get(idStmt.getLeftOp()),
                 specInvokeExpr.getArg(((ParameterRef) idStmt.getRightOp()).getIndex()));
             containerUnits.insertBefore(newParam, invokeStmt);
             oldStmtsToNew.put(inlineeStmt, newParam);
@@ -116,7 +116,7 @@ public class ThisInliner extends BodyTransformer {
         // handle return void stmts (cannot return anything else
         // from a constructor)
         else if (inlineeStmt instanceof ReturnVoidStmt) {
-          Stmt newRet = Jimple.v().newGotoStmt((Stmt) containerUnits.getSuccOf(invokeStmt));
+          Stmt newRet = myJimple.newGotoStmt((Stmt) containerUnits.getSuccOf(invokeStmt));
           containerUnits.insertBefore(newRet, invokeStmt);
           System.out.println("adding to stmt map: " + inlineeStmt + " and " + newRet);
           oldStmtsToNew.put(inlineeStmt, newRet);
@@ -149,7 +149,7 @@ public class ThisInliner extends BodyTransformer {
           throw new RuntimeException("couldn't map trap!");
         }
 
-        b.getTraps().add(Jimple.v().newTrap(t.getException(), newBegin, newEnd, newHandler));
+        b.getTraps().add(myJimple.newTrap(t.getException(), newBegin, newEnd, newHandler));
       }
 
       // patch gotos
@@ -166,7 +166,7 @@ public class ThisInliner extends BodyTransformer {
       containerUnits.remove(invokeStmt);
 
       // resolve name collisions
-      LocalNameStandardizer.v().transform(b, "ji.lns");
+      myLocalNameStandardizer.transform(b, "ji.lns");
 
     }
     // System.out.println("locals: "+b.getLocals());

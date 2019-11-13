@@ -35,7 +35,7 @@ import soot.jimple.internal.AbstractIntBinopExpr;
 
 abstract public class AbstractGrimpIntBinopExpr extends AbstractIntBinopExpr implements Precedence {
   public AbstractGrimpIntBinopExpr(Value op1, Value op2) {
-    this(Grimp.v().newArgBox(op1), Grimp.v().newArgBox(op2));
+    this(myGrimp.newArgBox(op1), myGrimp.newArgBox(op2));
   }
 
   protected AbstractGrimpIntBinopExpr(ValueBox op1Box, ValueBox op2Box) {

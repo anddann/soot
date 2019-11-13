@@ -22,15 +22,18 @@ package soot.jimple.toolkits.pointer.representations;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import soot.AnySubType;
 import soot.G;
 import soot.PhaseOptions;
 import soot.RefType;
-import soot.Singletons;
 import soot.Type;
 import soot.options.CGOptions;
 
 public class TypeConstants {
+  private final PhaseOptions myPhaseOptions;
+
   public static TypeConstants v() {
     return G.v().soot_jimple_toolkits_pointer_representations_TypeConstants();
   }
@@ -48,8 +51,10 @@ public class TypeConstants {
   public Type FILESYSTEMCLASS;
   public Type PRIVILEGEDACTIONEXCEPTION;
 
-  public TypeConstants(Singletons.Global g) {
-    int jdkver = new CGOptions(PhaseOptions.v().getPhaseOptions("cg")).jdkver();
+  @Inject
+  public TypeConstants(PhaseOptions myPhaseOptions) {
+    this.myPhaseOptions = myPhaseOptions;
+    int jdkver = new CGOptions(myPhaseOptions.getPhaseOptions("cg")).jdkver();
 
     OBJECTCLASS = RefType.v("java.lang.Object");
 

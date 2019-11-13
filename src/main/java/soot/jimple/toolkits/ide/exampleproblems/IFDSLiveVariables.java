@@ -185,7 +185,7 @@ public class IFDSLiveVariables extends DefaultJimpleIFDSTabulationProblem<Value,
   }
 
   public Map<Unit, Set<Value>> initialSeeds() {
-    return DefaultSeeds.make(interproceduralCFG().getStartPointsOf(Scene.v().getMainMethod()), zeroValue());
+    return DefaultSeeds.make(interproceduralCFG().getStartPointsOf(myScene.getMainMethod()), zeroValue());
   }
 
   public Value createZeroValue() {

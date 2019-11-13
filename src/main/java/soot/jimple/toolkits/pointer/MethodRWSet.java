@@ -126,7 +126,7 @@ public class MethodRWSet extends RWSet {
   /** Returns a set of base objects whose field f is read/written. */
   public PointsToSet getBaseForField(Object f) {
     if (isFull) {
-      return FullObjectSet.v();
+      return myFullObjectSet;
     }
     if (fields == null) {
       return null;

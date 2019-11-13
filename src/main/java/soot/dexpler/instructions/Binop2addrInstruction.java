@@ -62,7 +62,7 @@ public class Binop2addrInstruction extends TaggedInstruction {
 
     Value expr = getExpression(source1, source2);
 
-    AssignStmt assign = Jimple.v().newAssignStmt(body.getRegisterLocal(dest), expr);
+    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), expr);
     assign.addTag(getTag());
 
     setUnit(assign);
@@ -81,110 +81,110 @@ public class Binop2addrInstruction extends TaggedInstruction {
     switch (opcode) {
       case ADD_LONG_2ADDR:
         setTag(new LongOpTag());
-        return Jimple.v().newAddExpr(source1, source2);
+        return myJimple.newAddExpr(source1, source2);
       case ADD_FLOAT_2ADDR:
         setTag(new FloatOpTag());
-        return Jimple.v().newAddExpr(source1, source2);
+        return myJimple.newAddExpr(source1, source2);
       case ADD_DOUBLE_2ADDR:
         setTag(new DoubleOpTag());
-        return Jimple.v().newAddExpr(source1, source2);
+        return myJimple.newAddExpr(source1, source2);
       case ADD_INT_2ADDR:
         setTag(new IntOpTag());
-        return Jimple.v().newAddExpr(source1, source2);
+        return myJimple.newAddExpr(source1, source2);
 
       case SUB_LONG_2ADDR:
         setTag(new LongOpTag());
-        return Jimple.v().newSubExpr(source1, source2);
+        return myJimple.newSubExpr(source1, source2);
       case SUB_FLOAT_2ADDR:
         setTag(new FloatOpTag());
-        return Jimple.v().newSubExpr(source1, source2);
+        return myJimple.newSubExpr(source1, source2);
       case SUB_DOUBLE_2ADDR:
         setTag(new DoubleOpTag());
-        return Jimple.v().newSubExpr(source1, source2);
+        return myJimple.newSubExpr(source1, source2);
       case SUB_INT_2ADDR:
         setTag(new IntOpTag());
-        return Jimple.v().newSubExpr(source1, source2);
+        return myJimple.newSubExpr(source1, source2);
 
       case MUL_LONG_2ADDR:
         setTag(new LongOpTag());
-        return Jimple.v().newMulExpr(source1, source2);
+        return myJimple.newMulExpr(source1, source2);
       case MUL_FLOAT_2ADDR:
         setTag(new FloatOpTag());
-        return Jimple.v().newMulExpr(source1, source2);
+        return myJimple.newMulExpr(source1, source2);
       case MUL_DOUBLE_2ADDR:
         setTag(new DoubleOpTag());
-        return Jimple.v().newMulExpr(source1, source2);
+        return myJimple.newMulExpr(source1, source2);
       case MUL_INT_2ADDR:
         setTag(new IntOpTag());
-        return Jimple.v().newMulExpr(source1, source2);
+        return myJimple.newMulExpr(source1, source2);
 
       case DIV_LONG_2ADDR:
         setTag(new LongOpTag());
-        return Jimple.v().newDivExpr(source1, source2);
+        return myJimple.newDivExpr(source1, source2);
       case DIV_FLOAT_2ADDR:
         setTag(new FloatOpTag());
-        return Jimple.v().newDivExpr(source1, source2);
+        return myJimple.newDivExpr(source1, source2);
       case DIV_DOUBLE_2ADDR:
         setTag(new DoubleOpTag());
-        return Jimple.v().newDivExpr(source1, source2);
+        return myJimple.newDivExpr(source1, source2);
       case DIV_INT_2ADDR:
         setTag(new IntOpTag());
-        return Jimple.v().newDivExpr(source1, source2);
+        return myJimple.newDivExpr(source1, source2);
 
       case REM_LONG_2ADDR:
         setTag(new LongOpTag());
-        return Jimple.v().newRemExpr(source1, source2);
+        return myJimple.newRemExpr(source1, source2);
       case REM_FLOAT_2ADDR:
         setTag(new FloatOpTag());
-        return Jimple.v().newRemExpr(source1, source2);
+        return myJimple.newRemExpr(source1, source2);
       case REM_DOUBLE_2ADDR:
         setTag(new DoubleOpTag());
-        return Jimple.v().newRemExpr(source1, source2);
+        return myJimple.newRemExpr(source1, source2);
       case REM_INT_2ADDR:
         setTag(new IntOpTag());
-        return Jimple.v().newRemExpr(source1, source2);
+        return myJimple.newRemExpr(source1, source2);
 
       case AND_LONG_2ADDR:
         setTag(new LongOpTag());
-        return Jimple.v().newAndExpr(source1, source2);
+        return myJimple.newAndExpr(source1, source2);
       case AND_INT_2ADDR:
         setTag(new IntOpTag());
-        return Jimple.v().newAndExpr(source1, source2);
+        return myJimple.newAndExpr(source1, source2);
 
       case OR_LONG_2ADDR:
         setTag(new LongOpTag());
-        return Jimple.v().newOrExpr(source1, source2);
+        return myJimple.newOrExpr(source1, source2);
       case OR_INT_2ADDR:
         setTag(new IntOpTag());
-        return Jimple.v().newOrExpr(source1, source2);
+        return myJimple.newOrExpr(source1, source2);
 
       case XOR_LONG_2ADDR:
         setTag(new LongOpTag());
-        return Jimple.v().newXorExpr(source1, source2);
+        return myJimple.newXorExpr(source1, source2);
       case XOR_INT_2ADDR:
         setTag(new IntOpTag());
-        return Jimple.v().newXorExpr(source1, source2);
+        return myJimple.newXorExpr(source1, source2);
 
       case SHL_LONG_2ADDR:
         setTag(new LongOpTag());
-        return Jimple.v().newShlExpr(source1, source2);
+        return myJimple.newShlExpr(source1, source2);
       case SHL_INT_2ADDR:
         setTag(new IntOpTag());
-        return Jimple.v().newShlExpr(source1, source2);
+        return myJimple.newShlExpr(source1, source2);
 
       case SHR_LONG_2ADDR:
         setTag(new LongOpTag());
-        return Jimple.v().newShrExpr(source1, source2);
+        return myJimple.newShrExpr(source1, source2);
       case SHR_INT_2ADDR:
         setTag(new IntOpTag());
-        return Jimple.v().newShrExpr(source1, source2);
+        return myJimple.newShrExpr(source1, source2);
 
       case USHR_LONG_2ADDR:
         setTag(new LongOpTag());
-        return Jimple.v().newUshrExpr(source1, source2);
+        return myJimple.newUshrExpr(source1, source2);
       case USHR_INT_2ADDR:
         setTag(new IntOpTag());
-        return Jimple.v().newUshrExpr(source1, source2);
+        return myJimple.newUshrExpr(source1, source2);
 
       default:
         throw new RuntimeException("Invalid Opcode: " + opcode);

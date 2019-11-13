@@ -85,7 +85,7 @@ abstract class OptionsBase {
   protected String getPhaseUsage() {
     StringBuffer b = new StringBuffer();
     b.append("\nPhases and phase options:\n");
-    for (Pack p : PackManager.v().allPacks()) {
+    for (Pack p : getPackManager().allPacks()) {
       b.append(padOpt(p.getPhaseName(), p.getDeclaredOptions()));
       for (Iterator<Transform> phIt = p.iterator(); phIt.hasNext();) {
         final HasPhaseOptions ph = (HasPhaseOptions) phIt.next();
@@ -116,8 +116,12 @@ abstract class OptionsBase {
   }
 
   public boolean setPhaseOption(String phase, String option) {
-    return PhaseOptions.v().processPhaseOptions(phase, option);
+    return getPhaseOptions().processPhaseOptions(phase, option);
   }
+
+  public abstract PackManager getPackManager();
+
+  public abstract PhaseOptions getPhaseOptions();
 
   /**
    * Handles the value of a plugin parameter.

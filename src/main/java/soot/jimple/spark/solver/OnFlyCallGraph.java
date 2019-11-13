@@ -70,10 +70,10 @@ public class OnFlyCallGraph {
 
   public OnFlyCallGraph(PAG pag, boolean appOnly) {
     this.pag = pag;
-    callGraph = Scene.v().internalMakeCallGraph();
-    Scene.v().setCallGraph(callGraph);
+    callGraph = myScene.internalMakeCallGraph();
+    myScene.setCallGraph(callGraph);
     ContextManager cm = CallGraphBuilder.makeContextManager(callGraph);
-    reachableMethods = Scene.v().getReachableMethods();
+    reachableMethods = myScene.getReachableMethods();
     ofcgb = new OnFlyCallGraphBuilder(cm, reachableMethods, appOnly);
     reachablesReader = reachableMethods.listener();
     callEdges = cm.callGraph().listener();
@@ -110,7 +110,7 @@ public class OnFlyCallGraph {
   }
 
   public void updatedFieldRef(final AllocDotField df, PointsToSetInternal ptsi) {
-    if (df.getField() != ArrayElement.v()) {
+    if (df.getField() != myArrayElement) {
       return;
     }
     if (ofcgb.wantArrayField(df)) {
@@ -159,7 +159,7 @@ public class OnFlyCallGraph {
         public void visit(Node n) {
           if (n instanceof AllocNode) {
             AllocNode an = ((AllocNode) n);
-            ofcgb.addInvokeArgDotField(receiver, pag.makeAllocDotField(an, ArrayElement.v()));
+            ofcgb.addInvokeArgDotField(receiver, pag.makeAllocDotField(an, myArrayElement));
             assert an.getNewExpr() instanceof NewArrayExpr;
             NewArrayExpr nae = (NewArrayExpr) an.getNewExpr();
             if (!(nae.getSize() instanceof IntConstant)) {

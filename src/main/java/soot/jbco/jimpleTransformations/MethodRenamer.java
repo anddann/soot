@@ -210,11 +210,11 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
     BodyBuilder.retrieveAllBodies();
     BodyBuilder.retrieveAllNames();
 
-    Scene.v().releaseActiveHierarchy();
+    myScene.releaseActiveHierarchy();
 
     // iterate through application classes and create new junk names
     // but DO NOT RENAME METHODS YET as it might break searching of declaring classes
-    for (SootClass applicationClass : Scene.v().getApplicationClasses()) {
+    for (SootClass applicationClass : myScene.getApplicationClasses()) {
       final List<String> fieldNames = applicationClass.getFields().stream().map(SootField::getName)
           .collect(collectingAndThen(toList(), Collections::unmodifiableList));
       final List<String> leftFieldNames = new ArrayList<>(fieldNames);
@@ -280,7 +280,7 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
     }
 
     // rename methods AFTER creating mapping
-    for (SootClass applicationClass : Scene.v().getApplicationClasses()) {
+    for (SootClass applicationClass : myScene.getApplicationClasses()) {
       final List<SootMethod> methods = new ArrayList<>(applicationClass.getMethods());
       for (SootMethod method : methods) {
         final String newName = getNewName(Collections.singleton(applicationClass), method.getName());
@@ -295,7 +295,7 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
     }
 
     // iterate through application classes, update references of renamed methods
-    for (SootClass applicationClass : Scene.v().getApplicationClasses()) {
+    for (SootClass applicationClass : myScene.getApplicationClasses()) {
       final List<SootMethod> methods = new ArrayList<>(applicationClass.getMethods());
       for (SootMethod method : methods) {
 
@@ -338,7 +338,7 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
               continue;
             }
 
-            final SootMethodRef newMethodRef = Scene.v().makeMethodRef(methodRef.getDeclaringClass(), newName,
+            final SootMethodRef newMethodRef = myScene.makeMethodRef(methodRef.getDeclaringClass(), newName,
                 methodRef.getParameterTypes(), methodRef.getReturnType(), methodRef.isStatic());
             invokeExpr.setMethodRef(newMethodRef);
 
@@ -351,8 +351,8 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
       }
     }
 
-    Scene.v().releaseActiveHierarchy();
-    Scene.v().setFastHierarchy(new FastHierarchy());
+    myScene.releaseActiveHierarchy();
+    myScene.setFastHierarchy(new FastHierarchy());
 
     if (isVerbose()) {
       logger.info("Transforming method names is completed.");
@@ -473,8 +473,8 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
 
     // and superclasses (superinterfaces) of passed applicationClass
     result.addAll(
-        applicationClass.isInterface() ? Scene.v().getActiveHierarchy().getSuperinterfacesOfIncluding(applicationClass)
-            : Scene.v().getActiveHierarchy().getSuperclassesOfIncluding(applicationClass));
+        applicationClass.isInterface() ? myScene.getActiveHierarchy().getSuperinterfacesOfIncluding(applicationClass)
+            : myScene.getActiveHierarchy().getSuperclassesOfIncluding(applicationClass));
 
     return result;
   }
@@ -482,8 +482,8 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
   private Set<SootClass> getChildrenOfIncluding(Collection<SootClass> classes) {
     return Stream
         .concat(classes.stream().filter(c -> !c.getName().equals("java.lang.Object"))
-            .map(c -> c.isInterface() ? Scene.v().getActiveHierarchy().getImplementersOf(c)
-                : Scene.v().getActiveHierarchy().getSubclassesOf(c))
+            .map(c -> c.isInterface() ? myScene.getActiveHierarchy().getImplementersOf(c)
+                : myScene.getActiveHierarchy().getSubclassesOf(c))
             .flatMap(Collection::stream), classes.stream())
         .collect(toSet());
   }
@@ -501,8 +501,8 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
       }
 
       // and superclasses (superinterfaces) of passed applicationClass
-      parents.addAll(clazz.isInterface() ? Scene.v().getActiveHierarchy().getSuperinterfacesOfIncluding(clazz)
-          : Scene.v().getActiveHierarchy().getSuperclassesOfIncluding(clazz));
+      parents.addAll(clazz.isInterface() ? myScene.getActiveHierarchy().getSuperinterfacesOfIncluding(clazz)
+          : myScene.getActiveHierarchy().getSuperclassesOfIncluding(clazz));
     }
 
     return parents;

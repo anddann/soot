@@ -176,7 +176,7 @@ public class TypeResolver {
     typeVariable(NULL);
 
     // hack for J2ME library, reported by Stephen Cheng
-    if (!Options.v().j2me()) {
+    if (!myOptions.j2me()) {
       typeVariable(hierarchy.CLONEABLE);
       typeVariable(hierarchy.SERIALIZABLE);
     }
@@ -363,7 +363,7 @@ public class TypeResolver {
 
     // hack for J2ME library, reported by Stephen Cheng
     if (max > 1) {
-      if (!Options.v().j2me()) {
+      if (!myOptions.j2me()) {
         typeVariable(ArrayType.v(RefType.v("java.lang.Cloneable"), max - 1));
         typeVariable(ArrayType.v(RefType.v("java.io.Serializable"), max - 1));
       }
@@ -863,12 +863,12 @@ public class TypeResolver {
                 } else if (assign.getRightOp() instanceof NewExpr) {
                   // We split the local.
                   // logger.debug("split: [" + assign + "] and [" + stmt + "]");
-                  Local newlocal = Jimple.v().newLocal("tmp", null);
+                  Local newlocal = myJimple.newLocal("tmp", null);
                   stmtBody.getLocals().add(newlocal);
 
                   special.setBase(newlocal);
 
-                  units.insertAfter(Jimple.v().newAssignStmt(assign.getLeftOp(), newlocal), assign);
+                  units.insertAfter(myJimple.newAssignStmt(assign.getLeftOp(), newlocal), assign);
                   assign.setLeftOp(newlocal);
                 }
               }

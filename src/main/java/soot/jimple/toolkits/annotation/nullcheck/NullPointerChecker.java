@@ -90,7 +90,7 @@ public class NullPointerChecker extends BodyTransformer {
     {
       Date start = new Date();
 
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         logger.debug("[npc] Null pointer check for " + body.getMethod().getName() + " started on " + start);
       }
 
@@ -100,7 +100,7 @@ public class NullPointerChecker extends BodyTransformer {
       SootMethod increase = null;
 
       if (isProfiling) {
-        counterClass = Scene.v().loadClassAndSupport("MultiCounter");
+        counterClass = myScene.loadClassAndSupport("MultiCounter");
         increase = counterClass.getMethod("void increase(int)");
       }
 
@@ -183,7 +183,7 @@ public class NullPointerChecker extends BodyTransformer {
             }
 
             units.insertBefore(
-                Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(increase.makeRef(), IntConstant.v(whichCounter))),
+                myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), IntConstant.v(whichCounter))),
                 s);
           }
 
@@ -195,7 +195,7 @@ public class NullPointerChecker extends BodyTransformer {
       }
 
       Date finish = new Date();
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         long runtime = finish.getTime() - start.getTime();
         long mins = runtime / 60000;
         long secs = (runtime % 60000) / 1000;

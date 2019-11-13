@@ -46,11 +46,11 @@ public class JimpleMethodSource implements MethodSource {
       throw new RuntimeException("Could not load body for method " + m.getSignature());
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + m.getName() + "] Retrieving JimpleBody from AST...");
     }
 
-    PackManager.v().getPack("jb").apply(jb);
+    PackmyManager.getPack("jb").apply(jb);
     return jb;
   }
 }

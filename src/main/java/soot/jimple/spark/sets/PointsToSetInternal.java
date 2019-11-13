@@ -93,7 +93,7 @@ public abstract class PointsToSetInternal implements PointsToSet, EqualsSupporti
 
   /** Returns set of nodes already present before last call to flushNew. */
   public PointsToSetInternal getOldSet() {
-    return EmptyPointsToSet.v();
+    return myEmptyPointsToSet;
   }
 
   /** Sets all newly-added nodes to old nodes. */

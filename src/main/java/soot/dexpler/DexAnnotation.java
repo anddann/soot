@@ -506,7 +506,7 @@ public class DexAnnotation {
           }
 
           deps.typesToSignature.add(RefType.v(outerClass));
-          clazz.setOuterClass(SootResolver.v().makeClassRef(outerClass));
+          clazz.setOuterClass(mySootResolver.makeClassRef(outerClass));
           assert clazz.getOuterClass() != clazz;
         }
         // Do not add annotation tag
@@ -536,7 +536,7 @@ public class DexAnnotation {
         t = new EnclosingMethodTag(classString, methodString, methodSigString);
         String outerClass = classString.replace("/", ".");
         deps.typesToSignature.add(RefType.v(outerClass));
-        clazz.setOuterClass(SootResolver.v().makeClassRef(outerClass));
+        clazz.setOuterClass(mySootResolver.makeClassRef(outerClass));
         assert clazz.getOuterClass() != clazz;
         break;
       case DALVIK_ANNOTATION_INNERCLASS:
@@ -585,7 +585,7 @@ public class DexAnnotation {
         if (outerClass != null && !clazz.hasOuterClass()) {
           String sootOuterClass = Util.dottedClassName(outerClass);
           deps.typesToSignature.add(RefType.v(sootOuterClass));
-          clazz.setOuterClass(SootResolver.v().makeClassRef(sootOuterClass));
+          clazz.setOuterClass(mySootResolver.makeClassRef(sootOuterClass));
           assert clazz.getOuterClass() != clazz;
         }
         // Do not add annotation tag

@@ -84,7 +84,7 @@ public class StartJoinAnalysis extends ForwardFlowAnalysis {
     startStatements = new HashSet<Stmt>();
     joinStatements = new HashSet<Stmt>();
 
-    hierarchy = Scene.v().getActiveHierarchy();
+    hierarchy = myScene.getActiveHierarchy();
 
     startToRunMethods = new HashMap<Stmt, List<SootMethod>>();
     startToAllocNodes = new HashMap<Stmt, List<AllocNode>>();

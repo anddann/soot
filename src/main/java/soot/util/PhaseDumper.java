@@ -95,11 +95,11 @@ public class PhaseDumper {
   final static String allWildcard = "ALL";
 
   public PhaseDumper(Singletons.Global g) {
-    if (!Options.v().dump_body().isEmpty()) {
-      bodyDumpingPhases = Options.v().dump_body();
+    if (!myOptions.dump_body().isEmpty()) {
+      bodyDumpingPhases = myOptions.dump_body();
     }
-    if (!Options.v().dump_cfg().isEmpty()) {
-      cfgDumpingPhases = Options.v().dump_cfg();
+    if (!myOptions.dump_cfg().isEmpty()) {
+      cfgDumpingPhases = myOptions.dump_cfg();
     }
   }
 
@@ -142,7 +142,7 @@ public class PhaseDumper {
   }
 
   private static java.io.File makeDirectoryIfMissing(Body b) throws java.io.IOException {
-    StringBuffer buf = new StringBuffer(soot.SourceLocator.v().getOutputDir());
+    StringBuffer buf = new StringBuffer(soot.mySourceLocator.getOutputDir());
     buf.append(File.separatorChar);
     String className = b.getMethod().getDeclaringClass().getName();
     buf.append(className);
@@ -220,8 +220,8 @@ public class PhaseDumper {
     try {
       alreadyDumping = true;
       java.io.PrintWriter out = openBodyFile(b, baseName);
-      soot.Printer.v().setOption(Printer.USE_ABBREVIATIONS);
-      soot.Printer.v().printTo(b, out);
+      soot.myPrinter.setOption(Printer.USE_ABBREVIATIONS);
+      soot.myPrinter.printTo(b, out);
       out.close();
     } catch (java.io.IOException e) {
       // Don't abort execution because of an I/O error, but let
@@ -234,7 +234,7 @@ public class PhaseDumper {
   }
 
   private void dumpAllBodies(String baseName, boolean deleteGraphFiles) {
-    List<SootClass> classes = Scene.v().getClasses(SootClass.BODIES);
+    List<SootClass> classes = myScene.getClasses(SootClass.BODIES);
     for (SootClass cls : classes) {
       for (Iterator m = cls.getMethods().iterator(); m.hasNext();) {
         SootMethod method = (SootMethod) m.next();
@@ -376,7 +376,7 @@ public class PhaseDumper {
         try {
           String outputFile = nextGraphFileName(g.getBody(), phaseName + "-" + getClassIdent(g) + "-");
           CFGToDotGraph drawer = new CFGToDotGraph();
-          drawer.setShowExceptions(Options.v().show_exception_dests());
+          drawer.setShowExceptions(myOptions.show_exception_dests());
           DotGraph dotGraph = drawer.drawCFG(g);
           dotGraph.plot(outputFile);
 

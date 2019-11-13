@@ -1175,7 +1175,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	 */
 	public void jimplify1phase2() {
 		if (needsClinit() && !getSootClassDecl().declaresMethod("<clinit>", new ArrayList())) {
-			clinit = Scene.v().makeSootMethod("<clinit>", new ArrayList(), soot.VoidType.v(), soot.Modifier.STATIC,
+			clinit = myScene.makeSootMethod("<clinit>", new ArrayList(), soot.VoidType.v(), soot.Modifier.STATIC,
 					new ArrayList());
 			getSootClassDecl().addMethod(clinit);
 		}
@@ -1215,7 +1215,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	 */
 	public void jimplify2clinit() {
 		SootMethod m = clinit;
-		JimpleBody body = Jimple.v().newBody(m);
+		JimpleBody body = myJimple.newBody(m);
 		m.setActiveBody(body);
 		Body b = new Body(this, body, this);
 		for (int i = 0; i < getNumBodyDecl(); i++) {
@@ -1288,7 +1288,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 		// Box the value on the stack into this Reference type
 		ArrayList parameters = new ArrayList();
 		parameters.add(unboxed().getSootType());
-		SootMethodRef ref = Scene.v().makeMethodRef(getSootClassDecl(), "valueOf", parameters, getSootType(), true);
+		SootMethodRef ref = myScene.makeMethodRef(getSootClassDecl(), "valueOf", parameters, getSootType(), true);
 		ArrayList args = new ArrayList();
 		args.add(asLocal(b, v));
 		return b.newStaticInvokeExpr(ref, args, location);
@@ -1301,7 +1301,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	 */
 	protected soot.Value emitUnboxingOperation(Body b, soot.Value v, ASTNode location) {
 		// Unbox the value on the stack from this Reference type
-		SootMethodRef ref = Scene.v().makeMethodRef(getSootClassDecl(), unboxed().name() + "Value", new ArrayList(),
+		SootMethodRef ref = myScene.makeMethodRef(getSootClassDecl(), unboxed().name() + "Value", new ArrayList(),
 				unboxed().getSootType(), false);
 		return b.newVirtualInvokeExpr(asLocal(b, v), ref, new ArrayList(), location);
 	}
@@ -1727,7 +1727,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 		} else {
 			if (options().verbose())
 				System.out.println("Loading .class file " + jvmName());
-			SootClass sc = Scene.v().loadClass(jvmName(), SootClass.SIGNATURES);
+			SootClass sc = myScene.loadClass(jvmName(), SootClass.SIGNATURES);
 			sc.setLibraryClass();
 			return sc;
 		}
@@ -5700,19 +5700,19 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 		} else {
 			if (options().verbose())
 				System.out.println("Loading .class file " + jvmName());
-			return SootResolver.v().makeClassRef(jvmName());
+			return mySootResolver.makeClassRef(jvmName());
 			/*
 			 * 
-			 * RefType type = (RefType) Scene.v().getRefType(jvmName());
+			 * RefType type = (RefType) myScene.getRefType(jvmName());
 			 * SootClass toReturn = null; if( type != null ) toReturn =
 			 * type.getSootClass(); if(toReturn != null) { return toReturn; }
 			 * SootClass c = new SootClass(jvmName()); c.setPhantom(true);
-			 * Scene.v().addClass(c); return c;
+			 * myScene.addClass(c); return c;
 			 */
 
-			// return Scene.v().getSootClass(jvmName());
+			// return myScene.getSootClass(jvmName());
 			/*
-			 * SootClass sc = Scene.v().loadClass(jvmName(),
+			 * SootClass sc = myScene.loadClass(jvmName(),
 			 * SootClass.SIGNATURES); sc.setLibraryClass(); return sc;
 			 */
 		}
@@ -5964,7 +5964,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	 * @apilevel internal
 	 */
 	private SootField getSootField_compute(String name, TypeDecl type) {
-		SootField f = Scene.v().makeSootField(name, type.getSootType(), 0);
+		SootField f = myScene.makeSootField(name, type.getSootType(), 0);
 		getSootClassDecl().addField(f);
 		return f;
 	}

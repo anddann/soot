@@ -63,7 +63,7 @@ public class JavaLangObjectNative extends NativeMethodClass {
    */
   public void java_lang_Object_getClass(SootMethod method, ReferenceVariable thisVar, ReferenceVariable returnVar,
       ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getClassObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getClassObject());
   }
 
   /**

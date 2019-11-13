@@ -130,7 +130,7 @@ public class FullSensitiveNode extends IVarAbstraction {
       if (!func.isConstructor()) {
         // We don't process the specialinvoke call edge
         SootClass defClass = func.getDeclaringClass();
-        Hierarchy typeHierarchy = Scene.v().getActiveHierarchy();
+        Hierarchy typeHierarchy = myScene.getActiveHierarchy();
 
         for (Iterator<AllocNode> it = new_pts.keySet().iterator(); it.hasNext();) {
           AllocNode obj = it.next();
@@ -555,7 +555,7 @@ public class FullSensitiveNode extends IVarAbstraction {
    */
   @Override
   public void injectPts() {
-    final GeomPointsTo geomPTA = (GeomPointsTo) Scene.v().getPointsToAnalysis();
+    final GeomPointsTo geomPTA = (GeomPointsTo) myScene.getPointsToAnalysis();
     pt_objs = new HashMap<AllocNode, GeometricManager>();
 
     me.getP2Set().forall(new P2SetVisitor() {
@@ -600,7 +600,7 @@ public class FullSensitiveNode extends IVarAbstraction {
       return;
     }
 
-    GeomPointsTo geomPTA = (GeomPointsTo) Scene.v().getPointsToAnalysis();
+    GeomPointsTo geomPTA = (GeomPointsTo) myScene.getPointsToAnalysis();
 
     for (Map.Entry<AllocNode, GeometricManager> entry : pt_objs.entrySet()) {
       AllocNode obj = entry.getKey();

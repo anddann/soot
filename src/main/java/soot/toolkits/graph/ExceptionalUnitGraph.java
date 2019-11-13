@@ -147,7 +147,7 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
    *
    */
   public ExceptionalUnitGraph(Body body, ThrowAnalysis throwAnalysis) {
-    this(body, throwAnalysis, Options.v().omit_excepting_unit_edges());
+    this(body, throwAnalysis, myOptions.omit_excepting_unit_edges());
   }
 
   /**
@@ -160,7 +160,7 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
    *
    */
   public ExceptionalUnitGraph(Body body) {
-    this(body, Scene.v().getDefaultThrowAnalysis(), Options.v().omit_excepting_unit_edges());
+    this(body, myScene.getDefaultThrowAnalysis(), myOptions.omit_excepting_unit_edges());
   }
 
   /**
@@ -207,8 +207,8 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
     int size = unitChain.size();
     Set<Unit> trapUnitsThatAreHeads = Collections.emptySet();
 
-    if (Options.v().time()) {
-      Timers.v().graphTimer.start();
+    if (myOptions.time()) {
+      myTimers.graphTimer.start();
     }
 
     unitToUnexceptionalSuccs = new LinkedHashMap<Unit, List<Unit>>(size * 2 + 1, 0.7f);
@@ -240,11 +240,11 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
 
     buildHeadsAndTails(trapUnitsThatAreHeads);
 
-    if (Options.v().time()) {
-      Timers.v().graphTimer.end();
+    if (myOptions.time()) {
+      myTimers.graphTimer.end();
     }
 
-    soot.util.PhaseDumper.v().dumpGraph(this);
+    soot.util.myPhaseDumper.dumpGraph(this);
   }
 
   /**
@@ -288,7 +288,7 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
         }
 
         ThrowableSet.Pair catchableAs = thrownSet.whichCatchableAs(catcher);
-        if (unit.equals(trap.getBeginUnit()) || !catchableAs.getCaught().equals(ThrowableSet.Manager.v().EMPTY)) {
+        if (unit.equals(trap.getBeginUnit()) || !catchableAs.getCaught().equals(ThrowableSet.myManager.EMPTY)) {
           result = addDestToMap(result, unit, trap, catchableAs.getCaught());
           unitToUncaughtThrowables.put(unit, catchableAs.getUncaught());
         } else {
@@ -304,7 +304,7 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
     for (Map.Entry<Unit, ThrowableSet> entry : unitToUncaughtThrowables.entrySet()) {
       Unit unit = entry.getKey();
       ThrowableSet escaping = entry.getValue();
-      if (escaping != ThrowableSet.Manager.v().EMPTY) {
+      if (escaping != ThrowableSet.myManager.EMPTY) {
         result = addDestToMap(result, unit, null, escaping);
       }
     }

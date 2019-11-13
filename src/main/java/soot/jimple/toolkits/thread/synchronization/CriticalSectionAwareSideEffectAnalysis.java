@@ -328,7 +328,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
         if (pType instanceof RefType) {
           SootClass baseTypeClass = ((RefType) pType).getSootClass();
           if (!baseTypeClass.isInterface()) {
-            List<SootClass> baseClasses = Scene.v().getActiveHierarchy().getSuperclassesOfIncluding(baseTypeClass);
+            List<SootClass> baseClasses = myScene.getActiveHierarchy().getSuperclassesOfIncluding(baseTypeClass);
             if (!baseClasses.contains(RefType.v("java.lang.Exception").getSootClass())) {
               for (SootClass baseClass : baseClasses) {
                 for (Iterator baseFieldIt = baseClass.getFields().iterator(); baseFieldIt.hasNext();) {
@@ -534,7 +534,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
         if (pType instanceof RefType) {
           SootClass baseTypeClass = ((RefType) pType).getSootClass();
           if (!baseTypeClass.isInterface()) {
-            List<SootClass> baseClasses = Scene.v().getActiveHierarchy().getSuperclassesOfIncluding(baseTypeClass);
+            List<SootClass> baseClasses = myScene.getActiveHierarchy().getSuperclassesOfIncluding(baseTypeClass);
             if (!baseClasses.contains(RefType.v("java.lang.Exception").getSootClass())) {
               for (SootClass baseClass : baseClasses) {
                 for (Iterator baseFieldIt = baseClass.getFields().iterator(); baseFieldIt.hasNext();) {
@@ -788,7 +788,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
       PointsToSet base = pa.reachingObjects(baseLocal);
       if (baseLocal.getType() instanceof RefType) {
         SootClass baseClass = ((RefType) baseLocal.getType()).getSootClass();
-        if (Scene.v().getActiveHierarchy().isClassSubclassOfIncluding(baseClass,
+        if (myScene.getActiveHierarchy().isClassSubclassOfIncluding(baseClass,
             RefType.v("java.lang.Exception").getSootClass())) {
           return null;
         }

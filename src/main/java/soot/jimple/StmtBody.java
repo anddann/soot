@@ -30,10 +30,11 @@ import soot.SootMethod;
 abstract public class StmtBody extends Body {
   /** Creates a StmtBody associated with the given method. */
   protected StmtBody(SootMethod m) {
-    super(m);
+    super(m, myOptions, myPrinter);
   }
 
   /** Creates an empty StmtBody. */
   protected StmtBody() {
+      super(myOptions, myPrinter);
   }
 }

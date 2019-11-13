@@ -44,7 +44,7 @@ public class JCmpgExpr extends AbstractJimpleIntBinopExpr implements CmpgExpr {
   }
 
   Object makeBafInst(Type opType) {
-    return Baf.v().newCmpgInst(this.getOp1().getType());
+    return myBaf.newCmpgInst(this.getOp1().getType());
   }
 
   public Object clone() {

@@ -23,6 +23,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,20 +60,15 @@ import pxb.android.axml.AxmlReader;
 import pxb.android.axml.AxmlVisitor;
 import pxb.android.axml.NodeVisitor;
 
-import soot.dexpler.DalvikThrowAnalysis;
 import soot.jimple.spark.internal.ClientAccessibilityOracle;
-import soot.jimple.spark.internal.PublicAndProtectedAccessibility;
 import soot.jimple.spark.pag.SparkField;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.ContextSensitiveCallGraph;
 import soot.jimple.toolkits.callgraph.ReachableMethods;
-import soot.jimple.toolkits.pointer.DumbPointerAnalysis;
 import soot.jimple.toolkits.pointer.SideEffectAnalysis;
 import soot.options.CGOptions;
 import soot.options.Options;
-import soot.toolkits.exceptions.PedanticThrowAnalysis;
 import soot.toolkits.exceptions.ThrowAnalysis;
-import soot.toolkits.exceptions.UnitThrowAnalysis;
 import soot.util.ArrayNumberer;
 import soot.util.Chain;
 import soot.util.HashChain;
@@ -88,11 +85,32 @@ public class Scene // extends AbstractHost
 
   private final int defaultSdkVersion = 15;
   private final Map<String, Integer> maxAPIs = new HashMap<String, Integer>();
+  private final Options myOptions;
   private AndroidVersionInfo androidSDKVersionInfo;
+  private PhaseOptions myPhaseOptions;
+    private SourceLocator mySourceLocator;
+    private SootResolver mySootResolver;
+    private PointsToAnalysis myDumbPointerAnalysis;
+    private ClientAccessibilityOracle myPublicAndProtectedAccessibility;
+    private EntryPoints myEntryPoints;
+    private ThrowAnalysis myPedanticThrowAnalysis;
+    private ThrowAnalysis myUnitThrowAnalysis;
+    private ThrowAnalysis myDalvikThrowAnalysis;
 
-  public Scene(Singletons.Global g) {
-    setReservedNames();
 
+    @Inject
+  public Scene(Options myOptions, PhaseOptions myPhaseOptions, SourceLocator mySourceLocator, SootResolver mySootResolver, PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility, EntryPoints myEntryPoints, ThrowAnalysis myPedanticThrowAnalysis, ThrowAnalysis myUnitThrowAnalysis, ThrowAnalysis myDalvikThrowAnalysis) {
+    this.myOptions = myOptions;
+    this.myPhaseOptions = myPhaseOptions;
+        this.mySourceLocator = mySourceLocator;
+        this.mySootResolver = mySootResolver;
+        this.myDumbPointerAnalysis = myDumbPointerAnalysis;
+        this.myPublicAndProtectedAccessibility = myPublicAndProtectedAccessibility;
+        this.myEntryPoints = myEntryPoints;
+        this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
+        this.myUnitThrowAnalysis = myUnitThrowAnalysis;
+        this.myDalvikThrowAnalysis = myDalvikThrowAnalysis;
+        setReservedNames();
     // load soot.class.path system property, if defined
     String scp = System.getProperty("soot.class.path");
 
@@ -104,7 +122,7 @@ public class Scene // extends AbstractHost
         new Kind[] { Kind.INVALID, Kind.STATIC, Kind.VIRTUAL, Kind.INTERFACE, Kind.SPECIAL, Kind.CLINIT, Kind.THREAD,
             Kind.EXECUTOR, Kind.ASYNCTASK, Kind.FINALIZE, Kind.INVOKE_FINALIZE, Kind.PRIVILEGED, Kind.NEWINSTANCE });
 
-    if (Options.v().weak_map_structures()) {
+    if (myOptions.weak_map_structures()) {
       methodNumberer = new WeakMapNumberer<SootMethod>();
       fieldNumberer = new WeakMapNumberer<SparkField>();
       classNumberer = new WeakMapNumberer<SootClass>();
@@ -118,14 +136,14 @@ public class Scene // extends AbstractHost
 
   private void determineExcludedPackages() {
     excludedPackages = new LinkedList<String>();
-    if (Options.v().exclude() != null) {
-      excludedPackages.addAll(Options.v().exclude());
+    if (myOptions.exclude() != null) {
+      excludedPackages.addAll(myOptions.exclude());
     }
 
     // do not kill contents of the APK if we want a working new APK
     // afterwards
-    if (!Options.v().include_all() && Options.v().output_format() != Options.output_format_dex
-        && Options.v().output_format() != Options.output_format_force_dex) {
+    if (!myOptions.include_all() && myOptions.output_format() != Options.output_format_dex
+        && myOptions.output_format() != Options.output_format_force_dex) {
       excludedPackages.add("java.*");
       excludedPackages.add("sun.*");
       excludedPackages.add("javax.*");
@@ -287,17 +305,17 @@ public class Scene // extends AbstractHost
 
   public void setSootClassPath(String p) {
     sootClassPath = p;
-    SourceLocator.v().invalidateClassPath();
+    mySourceLocator.invalidateClassPath();
   }
 
   public void extendSootClassPath(String newPathElement) {
     sootClassPath += File.pathSeparator + newPathElement;
-    SourceLocator.v().extendClassPath(newPathElement);
+    mySourceLocator.extendClassPath(newPathElement);
   }
 
   public String getSootClassPath() {
     if (sootClassPath == null) {
-      String optionscp = Options.v().soot_classpath();
+      String optionscp = myOptions.soot_classpath();
       if (optionscp != null && optionscp.length() > 0) {
         sootClassPath = optionscp;
       }
@@ -307,7 +325,7 @@ public class Scene // extends AbstractHost
         sootClassPath = defaultClassPath();
       } else {
         // if one is given...
-        if (Options.v().prepend_classpath()) {
+        if (myOptions.prepend_classpath()) {
           // if the prepend flag is set, append the default classpath
           sootClassPath += File.pathSeparator + defaultClassPath();
         }
@@ -315,7 +333,7 @@ public class Scene // extends AbstractHost
       }
 
       // add process-dirs
-      List<String> process_dir = Options.v().process_dir();
+      List<String> process_dir = myOptions.process_dir();
       StringBuffer pds = new StringBuffer();
       for (String path : process_dir) {
         if (!sootClassPath.contains(path)) {
@@ -387,7 +405,7 @@ public class Scene // extends AbstractHost
 
   public int getAndroidAPIVersion() {
     return androidAPIVersion > 0 ? androidAPIVersion
-        : (Options.v().android_api_version() > 0 ? Options.v().android_api_version() : defaultSdkVersion);
+        : (myOptions.android_api_version() > 0 ? myOptions.android_api_version() : defaultSdkVersion);
   }
 
   private int getAndroidAPIVersion(String jars, String apk) {
@@ -413,8 +431,8 @@ public class Scene // extends AbstractHost
     androidAPIVersion = defaultSdkVersion;
 
     // Do we have an explicit API version?
-    if (Options.v().android_api_version() > 0) {
-      androidAPIVersion = Options.v().android_api_version();
+    if (myOptions.android_api_version() > 0) {
+      androidAPIVersion = myOptions.android_api_version();
     } else if (apk != null) {
       if (apk.toLowerCase().endsWith(".apk")) {
         androidAPIVersion = getTargetSDKVersion(apk, jars);
@@ -570,8 +588,8 @@ public class Scene // extends AbstractHost
     // If we have an apk file on the process dir and do not have a src-prec
     // option
     // that loads APK files, we give a warning
-    if (Options.v().src_prec() != Options.src_prec_apk) {
-      for (String entry : Options.v().process_dir()) {
+    if (myOptions.src_prec() != Options.src_prec_apk) {
+      for (String entry : myOptions.process_dir()) {
         if (entry.toLowerCase().endsWith(".apk")) {
           System.err.println("APK file on process dir, but chosen src-prec does not support loading APKs");
           break;
@@ -579,7 +597,7 @@ public class Scene // extends AbstractHost
       }
     }
 
-    if (Options.v().src_prec() == Options.src_prec_apk) {
+    if (myOptions.src_prec() == Options.src_prec_apk) {
       return defaultAndroidClassPath();
     } else {
       return defaultJavaClassPath();
@@ -588,8 +606,8 @@ public class Scene // extends AbstractHost
 
   private String defaultAndroidClassPath() {
     // check that android.jar is not in classpath
-    String androidJars = Options.v().android_jars();
-    String forceAndroidJar = Options.v().force_android_jar();
+    String androidJars = myOptions.android_jars();
+    String forceAndroidJar = myOptions.force_android_jar();
     if ((androidJars == null || androidJars.equals("")) && (forceAndroidJar == null || forceAndroidJar.equals(""))) {
       throw new RuntimeException("You are analyzing an Android application but did "
           + "not define android.jar. Options -android-jars or -force-android-jar should be used.");
@@ -602,8 +620,8 @@ public class Scene // extends AbstractHost
     if (forceAndroidJar != null && !forceAndroidJar.isEmpty()) {
       jarPath = forceAndroidJar;
 
-      if (Options.v().android_api_version() > 0) {
-        androidAPIVersion = Options.v().android_api_version();
+      if (myOptions.android_api_version() > 0) {
+        androidAPIVersion = myOptions.android_api_version();
       } else if (forceAndroidJar.contains("android-")) {
         Pattern pt = Pattern.compile("\\" + File.separatorChar + "android-(\\d+)" + "\\" + File.separatorChar);
         Matcher m = pt.matcher(forceAndroidJar);
@@ -615,8 +633,8 @@ public class Scene // extends AbstractHost
       }
     } else if (androidJars != null && !androidJars.isEmpty()) {
       List<String> classPathEntries
-          = new LinkedList<String>(Arrays.asList(Options.v().soot_classpath().split(File.pathSeparator)));
-      classPathEntries.addAll(Options.v().process_dir());
+          = new LinkedList<String>(Arrays.asList(myOptions.soot_classpath().split(File.pathSeparator)));
+      classPathEntries.addAll(myOptions.process_dir());
 
       String targetApk = "";
       Set<String> targetDexs = new HashSet<String>();
@@ -735,7 +753,7 @@ public class Scene // extends AbstractHost
       }
     }
 
-    if (Options.v().whole_program() || Options.v().output_format() == Options.output_format_dava) {
+    if (myOptions.whole_program() || myOptions.output_format() == Options.output_format_dava) {
       // add jce.jar, which is necessary for whole program mode
       // (java.security.Signature from rt.jar import javax.crypto.Cipher
       // from jce.jar
@@ -919,11 +937,11 @@ public class Scene // extends AbstractHost
 
   public SootClass tryLoadClass(String className, int desiredLevel) {
     /*
-     * if(Options.v().time()) Main.v().resolveTimer.start();
+     * if(myOptions.time()) myMain.resolveTimer.start();
      */
 
     setPhantomRefs(true);
-    ClassSource source = SourceLocator.v().getClassSource(className);
+    ClassSource source = mySourceLocator.getClassSource(className);
     try {
       if (!getPhantomRefs() && source == null) {
         setPhantomRefs(false);
@@ -934,14 +952,14 @@ public class Scene // extends AbstractHost
         source.close();
       }
     }
-    SootResolver resolver = SootResolver.v();
+    SootResolver resolver = mySootResolver;
     SootClass toReturn = resolver.resolveClass(className, desiredLevel);
     setPhantomRefs(false);
 
     return toReturn;
 
     /*
-     * if(Options.v().time()) Main.v().resolveTimer.end();
+     * if(myOptions.time()) myMain.resolveTimer.end();
      */
   }
 
@@ -959,19 +977,19 @@ public class Scene // extends AbstractHost
 
   public SootClass loadClass(String className, int desiredLevel) {
     /*
-     * if(Options.v().time()) Main.v().resolveTimer.start();
+     * if(myOptions.time()) myMain.resolveTimer.start();
      */
 
     setPhantomRefs(true);
     // SootResolver resolver = new SootResolver();
-    SootResolver resolver = SootResolver.v();
+    SootResolver resolver = mySootResolver;
     SootClass toReturn = resolver.resolveClass(className, desiredLevel);
     setPhantomRefs(false);
 
     return toReturn;
 
     /*
-     * if(Options.v().time()) Main.v().resolveTimer.end();
+     * if(myOptions.time()) myMain.resolveTimer.end();
      */
   }
 
@@ -1126,7 +1144,7 @@ public class Scene // extends AbstractHost
     if ((allowsPhantomRefs() && phantomNonExist) || className.equals(SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME)) {
       type = getOrAddRefType(className);
       synchronized (type) {
-        SootClass c = new SootClass(className);
+        SootClass c = new SootClass(className, myScene, myOptions, myPackageNamer);
         c.isPhantom = true;
         addClassSilent(c);
         c.setPhantomClass();
@@ -1230,7 +1248,7 @@ public class Scene // extends AbstractHost
 
   public PointsToAnalysis getPointsToAnalysis() {
     if (!hasPointsToAnalysis()) {
-      return DumbPointerAnalysis.v();
+      return myDumbPointerAnalysis;
     }
 
     return activePointsToAnalysis;
@@ -1258,7 +1276,7 @@ public class Scene // extends AbstractHost
    */
   public ClientAccessibilityOracle getClientAccessibilityOracle() {
     if (!hasClientAccessibilityOracle()) {
-      return PublicAndProtectedAccessibility.v();
+      return myPublicAndProtectedAccessibility;
     }
 
     return accessibilityOracle;
@@ -1353,7 +1371,7 @@ public class Scene // extends AbstractHost
   /** Get the set of entry points that are used to build the call graph. */
   public List<SootMethod> getEntryPoints() {
     if (entryPoints == null) {
-      entryPoints = EntryPoints.v().all();
+      entryPoints = myEntryPoints.all();
     }
     return entryPoints;
   }
@@ -1419,9 +1437,9 @@ public class Scene // extends AbstractHost
   }
 
   public boolean getPhantomRefs() {
-    // if( !Options.v().allow_phantom_refs() ) return false;
+    // if( !myOptions.allow_phantom_refs() ) return false;
     // return allowsPhantomRefs;
-    return Options.v().allow_phantom_refs();
+    return myOptions.allow_phantom_refs();
   }
 
   public void setPhantomRefs(boolean value) {
@@ -1482,19 +1500,19 @@ public class Scene // extends AbstractHost
    */
   public ThrowAnalysis getDefaultThrowAnalysis() {
     if (defaultThrowAnalysis == null) {
-      int optionsThrowAnalysis = Options.v().throw_analysis();
+      int optionsThrowAnalysis = myOptions.throw_analysis();
       switch (optionsThrowAnalysis) {
         case Options.throw_analysis_pedantic:
-          defaultThrowAnalysis = PedanticThrowAnalysis.v();
+          defaultThrowAnalysis = myPedanticThrowAnalysis;
           break;
         case Options.throw_analysis_unit:
-          defaultThrowAnalysis = UnitThrowAnalysis.v();
+          defaultThrowAnalysis = myUnitThrowAnalysis;
           break;
         case Options.throw_analysis_dalvik:
-          defaultThrowAnalysis = DalvikThrowAnalysis.v();
+          defaultThrowAnalysis = myDalvikThrowAnalysis;
           break;
         default:
-          throw new IllegalStateException("Options.v().throw_analysi() == " + Options.v().throw_analysis());
+          throw new IllegalStateException("myOptions.throw_analysi() == " + myOptions.throw_analysis());
       }
     }
     return defaultThrowAnalysis;
@@ -1688,7 +1706,7 @@ public class Scene // extends AbstractHost
   }
 
   protected void addReflectionTraceClasses() {
-    CGOptions options = new CGOptions(PhaseOptions.v().getPhaseOptions("cg"));
+    CGOptions options = new CGOptions(myPhaseOptions.getPhaseOptions("cg"));
     String log = options.reflection_log();
 
     Set<String> classNames = new HashSet<String>();
@@ -1759,19 +1777,19 @@ public class Scene // extends AbstractHost
   public void loadNecessaryClasses() {
     loadBasicClasses();
 
-    for (String name : Options.v().classes()) {
+    for (String name : myOptions.classes()) {
       loadNecessaryClass(name);
     }
 
     loadDynamicClasses();
 
-    if (Options.v().oaat()) {
-      if (Options.v().process_dir().isEmpty()) {
+    if (myOptions.oaat()) {
+      if (myOptions.process_dir().isEmpty()) {
         throw new IllegalArgumentException("If switch -oaat is used, then also -process-dir must be given.");
       }
     } else {
-      for (final String path : Options.v().process_dir()) {
-        for (String cl : SourceLocator.v().getClassesUnder(path)) {
+      for (final String path : myOptions.process_dir()) {
+        for (String cl : mySourceLocator.getClassesUnder(path)) {
           SootClass theClass = loadClassAndSupport(cl);
           if (!theClass.isPhantom) {
             theClass.setApplicationClass();
@@ -1787,18 +1805,18 @@ public class Scene // extends AbstractHost
   public void loadDynamicClasses() {
     dynamicClasses = new ArrayList<SootClass>();
     HashSet<String> dynClasses = new HashSet<String>();
-    dynClasses.addAll(Options.v().dynamic_class());
+    dynClasses.addAll(myOptions.dynamic_class());
 
-    for (Iterator<String> pathIt = Options.v().dynamic_dir().iterator(); pathIt.hasNext();) {
+    for (Iterator<String> pathIt = myOptions.dynamic_dir().iterator(); pathIt.hasNext();) {
 
       final String path = pathIt.next();
-      dynClasses.addAll(SourceLocator.v().getClassesUnder(path));
+      dynClasses.addAll(mySourceLocator.getClassesUnder(path));
     }
 
-    for (Iterator<String> pkgIt = Options.v().dynamic_package().iterator(); pkgIt.hasNext();) {
+    for (Iterator<String> pkgIt = myOptions.dynamic_package().iterator(); pkgIt.hasNext();) {
 
       final String pkg = pkgIt.next();
-      dynClasses.addAll(SourceLocator.v().classesInDynamicPackage(pkg));
+      dynClasses.addAll(mySourceLocator.classesInDynamicPackage(pkg));
     }
 
     for (String className : dynClasses) {
@@ -1810,7 +1828,7 @@ public class Scene // extends AbstractHost
     for (Iterator<SootClass> iterator = dynamicClasses.iterator(); iterator.hasNext();) {
       SootClass c = iterator.next();
       if (!c.isConcrete()) {
-        if (Options.v().verbose()) {
+        if (myOptions.verbose()) {
           logger.warn("dynamic class " + c.getName() + " is abstract or an interface, and it will not be considered.");
         }
         iterator.remove();
@@ -1835,10 +1853,10 @@ public class Scene // extends AbstractHost
         if (s.isPhantom()) {
           continue;
         }
-        if (Options.v().app()) {
+        if (myOptions.app()) {
           s.setApplicationClass();
         }
-        if (Options.v().classes().contains(s.getName())) {
+        if (myOptions.classes().contains(s.getName())) {
           s.setApplicationClass();
           continue;
         }
@@ -1869,7 +1887,7 @@ public class Scene // extends AbstractHost
 
   public boolean isIncluded(SootClass sc) {
     String name = sc.getName();
-    for (String inc : Options.v().include()) {
+    for (String inc : myOptions.include()) {
       if (name.equals(inc)
           || ((inc.endsWith(".*") || inc.endsWith("$*")) && name.startsWith(inc.substring(0, inc.length() - 1)))) {
         return true;
@@ -1892,9 +1910,9 @@ public class Scene // extends AbstractHost
   public SootMethodRef makeMethodRef(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
       boolean isStatic) {
     if (PolymorphicMethodRef.handlesClass(declaringClass)) {
-      return new PolymorphicMethodRef(declaringClass, name, parameterTypes, returnType, isStatic);
+      return new PolymorphicMethodRef(declaringClass, name, parameterTypes, returnType, isStatic, myScene, myOptions, myJimple);
     }
-    return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic);
+    return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, myJimple);
   }
 
   /** Create an unresolved reference to a constructor. */
@@ -1937,11 +1955,11 @@ public class Scene // extends AbstractHost
     if (mainClass != null) {
       return;
     }
-    if (Options.v().main_class() != null && Options.v().main_class().length() > 0) {
-      setMainClass(getSootClass(Options.v().main_class()));
+    if (myOptions.main_class() != null && myOptions.main_class().length() > 0) {
+      setMainClass(getSootClass(myOptions.main_class()));
     } else {
       // try to infer a main class from the command line if none is given
-      for (Iterator<String> classIter = Options.v().classes().iterator(); classIter.hasNext();) {
+      for (Iterator<String> classIter = myOptions.classes().iterator(); classIter.hasNext();) {
         SootClass c = getSootClass(classIter.next());
         if (c.declaresMethod("main", Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String"), 1)),
             VoidType.v())) {
@@ -1990,7 +2008,7 @@ public class Scene // extends AbstractHost
     doneResolving = false;
     SootClass c;
     try {
-      c = SootResolver.v().resolveClass(className, level);
+      c = mySootResolver.resolveClass(className, level);
     } finally {
       doneResolving = tmp;
     }
@@ -1998,32 +2016,32 @@ public class Scene // extends AbstractHost
   }
 
   public SootClass makeSootClass(String name) {
-    return new SootClass(name);
+    return new SootClass(name, myScene, myOptions, myPackageNamer);
   }
 
   public SootClass makeSootClass(String name, int modifiers) {
-    return new SootClass(name, modifiers);
+    return new SootClass(name, myOptions, modifiers, myScene, myPackageNamer);
   }
 
   public SootMethod makeSootMethod(String name, List<Type> parameterTypes, Type returnType) {
-    return new SootMethod(name, parameterTypes, returnType);
+    return new SootMethod(name, parameterTypes, returnType, myScene);
   }
 
   public SootMethod makeSootMethod(String name, List<Type> parameterTypes, Type returnType, int modifiers) {
-    return new SootMethod(name, parameterTypes, returnType, modifiers);
+    return new SootMethod(name, parameterTypes, returnType, modifiers, myScene);
   }
 
   public SootMethod makeSootMethod(String name, List<Type> parameterTypes, Type returnType, int modifiers,
       List<SootClass> thrownExceptions) {
-    return new SootMethod(name, parameterTypes, returnType, modifiers, thrownExceptions);
+    return new SootMethod(name, parameterTypes, returnType, modifiers, thrownExceptions, myScene);
   }
 
   public SootField makeSootField(String name, Type type, int modifiers) {
-    return new SootField(name, type, modifiers);
+    return new SootField(myScene, name, type, modifiers, myOptions);
   }
 
   public SootField makeSootField(String name, Type type) {
-    return new SootField(name, type);
+    return new SootField(name, type, myScene, myOptions);
   }
 
   public RefType getOrAddRefType(String refTypeName) {

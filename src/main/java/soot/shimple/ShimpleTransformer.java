@@ -55,7 +55,7 @@ public class ShimpleTransformer extends SceneTransformer {
   }
 
   protected void internalTransform(String phaseName, Map options) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("Transforming all classes in the Scene to Shimple...");
     }
 
@@ -63,7 +63,7 @@ public class ShimpleTransformer extends SceneTransformer {
     // *** FIXME: Is ShimpleTransformer the right solution? The call graph may deem
     // some classes unreachable.
 
-    Iterator classesIt = Scene.v().getClasses().iterator();
+    Iterator classesIt = myScene.getClasses().iterator();
     while (classesIt.hasNext()) {
       SootClass sClass = (SootClass) classesIt.next();
       if (sClass.isPhantom()) {
@@ -87,7 +87,7 @@ public class ShimpleTransformer extends SceneTransformer {
               sBody.rebuild();
             }
           } else {
-            sBody = Shimple.v().newBody(body);
+            sBody = myShimple.newBody(body);
           }
 
           method.setActiveBody(sBody);

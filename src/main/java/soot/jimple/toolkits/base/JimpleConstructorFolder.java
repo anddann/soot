@@ -260,9 +260,9 @@ public class JimpleConstructorFolder extends BodyTransformer {
   public void internalTransform(Body b, String phaseName, Map<String, String> options) {
     JimpleBody body = (JimpleBody) b;
 
-    // PhaseDumper.v().dumpBody(body, "constructorfolder.in");
+    // myPhaseDumper.dumpBody(body, "constructorfolder.in");
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Folding Jimple constructors...");
     }
 
@@ -324,10 +324,10 @@ public class JimpleConstructorFolder extends BodyTransformer {
           if (l.equals(base(s))) {
             continue;
           }
-          units.insertAfter(Jimple.v().newAssignStmt(l, base(s)), s);
+          units.insertAfter(myJimple.newAssignStmt(l, base(s)), s);
         }
       }
     }
-    // PhaseDumper.v().dumpBody(body, "constructorfolder.out");
+    // myPhaseDumper.dumpBody(body, "constructorfolder.out");
   }
 }

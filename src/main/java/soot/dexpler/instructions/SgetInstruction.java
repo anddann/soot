@@ -49,8 +49,8 @@ public class SgetInstruction extends FieldInstruction {
   public void jimplify(DexBody body) {
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
     FieldReference f = (FieldReference) ((ReferenceInstruction) instruction).getReference();
-    StaticFieldRef r = Jimple.v().newStaticFieldRef(getStaticSootFieldRef(f));
-    AssignStmt assign = Jimple.v().newAssignStmt(body.getRegisterLocal(dest), r);
+    StaticFieldRef r = myJimple.newStaticFieldRef(getStaticSootFieldRef(f));
+    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), r);
     setUnit(assign);
     addTags(assign);
     body.add(assign);

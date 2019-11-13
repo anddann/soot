@@ -32,7 +32,7 @@ import soot.jimple.internal.AbstractNewArrayExpr;
 
 public class DNewArrayExpr extends AbstractNewArrayExpr implements Precedence {
   public DNewArrayExpr(Type type, Value size) {
-    super(type, Grimp.v().newExprBox(size));
+    super(type, myGrimp.newExprBox(size));
   }
 
   public int getPrecedence() {

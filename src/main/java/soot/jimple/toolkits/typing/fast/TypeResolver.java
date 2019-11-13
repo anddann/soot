@@ -198,7 +198,7 @@ public class TypeResolver {
 
     @Override
     public Value visit(Value op, Type useType, Stmt stmt) {
-      final Jimple jimple = Jimple.v();
+      final Jimple jimple = myJimple;
       Type t = AugEvalFunction.eval_(this.tg, op, stmt, this.jb);
 
       if (this.h.ancestor(useType, t)) {
@@ -258,7 +258,7 @@ public class TypeResolver {
      * @return the new local
      */
     protected Local createCast(Type useType, Stmt stmt, Local old) {
-      Jimple jimple = Jimple.v();
+      Jimple jimple = myJimple;
       Local vnew = jimple.newLocal("tmp", useType);
       vnew.setName("tmp$" + System.identityHashCode(vnew));
       this.tg.set(vnew, useType);
@@ -563,7 +563,7 @@ public class TypeResolver {
     Stmt[] stmts = new Stmt[units.size()];
 
     units.toArray(stmts);
-    final Jimple jimple = Jimple.v();
+    final Jimple jimple = myJimple;
 
     for (Stmt stmt : stmts) {
       if (stmt instanceof InvokeStmt) {

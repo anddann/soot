@@ -59,7 +59,7 @@ public class JastAddInitialResolver implements IInitialResolver {
   protected Map<String, CompilationUnit> classNameToCU = new HashMap<String, CompilationUnit>();
 
   public void formAst(String fullPath, List<String> locations, String className) {
-    Program program = SootResolver.v().getProgram();
+    Program program = mySootResolver.getProgram();
     CompilationUnit u = program.getCachedOrLoadCompilationUnit(fullPath);
     if (u != null && !u.isResolved) {
       u.isResolved = true;

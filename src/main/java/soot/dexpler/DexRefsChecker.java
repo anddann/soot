@@ -82,14 +82,14 @@ public class DexRefsChecker extends DexTransformer {
         SootClass sc = null;
         String frStr = fr.toString();
         if (frStr.contains(".<")) {
-          sc = Scene.v().getSootClass(frStr.split(".<")[1].split(" ")[0].split(":")[0]);
+          sc = myScene.getSootClass(frStr.split(".<")[1].split(" ")[0].split(":")[0]);
         } else {
-          sc = Scene.v().getSootClass(frStr.split(":")[0].replaceAll("^<", ""));
+          sc = myScene.getSootClass(frStr.split(":")[0].replaceAll("^<", ""));
         }
         String fname = fr.toString().split(">")[0].split(" ")[2];
         int modifiers = soot.Modifier.PUBLIC;
         Type ftype = fr.getType();
-        sc.addField(Scene.v().makeSootField(fname, ftype, modifiers));
+        sc.addField(myScene.makeSootField(fname, ftype, modifiers));
       } else {
         // System.out.println("field "+ sf.getName() +" '"+ sf +"'
         // phantom: "+ isPhantom +" declared: "+ isDeclared);

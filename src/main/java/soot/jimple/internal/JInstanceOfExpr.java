@@ -34,12 +34,12 @@ import soot.jimple.JimpleToBafContext;
 
 public class JInstanceOfExpr extends AbstractInstanceOfExpr implements ConvertToBaf {
   public JInstanceOfExpr(Value op, Type checkType) {
-    super(Jimple.v().newImmediateBox(op), checkType);
+    super(myJimple.newImmediateBox(op), checkType);
   }
 
   public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
     ((ConvertToBaf) (getOp())).convertToBaf(context, out);
-    Unit u = Baf.v().newInstanceOfInst(getCheckType());
+    Unit u = myBaf.newInstanceOfInst(getCheckType());
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);
   }

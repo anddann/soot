@@ -34,9 +34,16 @@ import soot.SourceLocator;
  */
 public class AsmClassProvider implements ClassProvider {
 
+  private SourceLocator mySourceLocator;
+
+  public AsmClassProvider(SourceLocator mySourceLocator){
+
+    this.mySourceLocator = mySourceLocator;
+  }
+
   public ClassSource find(String cls) {
     String clsFile = cls.replace('.', '/') + ".class";
-    FoundFile file = SourceLocator.v().lookupInClassPath(clsFile);
+    FoundFile file = mySourceLocator.lookupInClassPath(clsFile);
     return file == null ? null : new AsmClassSource(cls, file);
   }
 }

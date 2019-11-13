@@ -211,11 +211,11 @@ import soot.toolkits.exceptions.ThrowableSet.Pair;
  */
 public class UnitThrowAnalysis extends AbstractThrowAnalysis {
 
-  protected final ThrowableSet.Manager mgr = ThrowableSet.Manager.v();
+  protected final ThrowableSet.Manager mgr = ThrowableSet.myManager;
 
   // Cache the response to mightThrowImplicitly():
-  private final ThrowableSet implicitThrowExceptions = ThrowableSet.Manager.v().VM_ERRORS
-      .add(ThrowableSet.Manager.v().NULL_POINTER_EXCEPTION).add(ThrowableSet.Manager.v().ILLEGAL_MONITOR_STATE_EXCEPTION);
+  private final ThrowableSet implicitThrowExceptions = ThrowableSet.myManager.VM_ERRORS
+      .add(ThrowableSet.myManager.NULL_POINTER_EXCEPTION).add(ThrowableSet.myManager.ILLEGAL_MONITOR_STATE_EXCEPTION);
 
   /**
    * Constructs a <code>UnitThrowAnalysis</code> for inclusion in Soot's global variable manager, {@link G}.
@@ -312,7 +312,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
    */
   protected ThrowableSet mightThrow(SootMethod sm) {
     if (!isInterproc) {
-      return ThrowableSet.Manager.v().ALL_THROWABLES;
+      return ThrowableSet.myManager.ALL_THROWABLES;
     }
     return methodToThrowSet.getUnchecked(sm);
   }
@@ -338,13 +338,13 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
   private ThrowableSet mightThrow(SootMethod sm, Set<SootMethod> doneSet) {
     // Do not run in loops
     if (!doneSet.add(sm)) {
-      return ThrowableSet.Manager.v().EMPTY;
+      return ThrowableSet.myManager.EMPTY;
     }
 
     // If we don't have body, we silently ignore the method. This is
     // unsound, but would otherwise always bloat our result set.
     if (!sm.hasActiveBody()) {
-      return ThrowableSet.Manager.v().EMPTY;
+      return ThrowableSet.myManager.EMPTY;
     }
 
     // We need a mapping between unit and exception
@@ -364,7 +364,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
       }
     }
 
-    ThrowableSet methodSet = ThrowableSet.Manager.v().EMPTY;
+    ThrowableSet methodSet = ThrowableSet.myManager.EMPTY;
     if (sm.hasActiveBody()) {
       Body methodBody = sm.getActiveBody();
 
@@ -565,7 +565,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
       result = result.add(mgr.NULL_POINTER_EXCEPTION);
       result = result.add(mgr.INITIALIZATION_ERRORS);
       // might throw anything
-      result = result.add(ThrowableSet.Manager.v().ALL_THROWABLES);
+      result = result.add(ThrowableSet.myManager.ALL_THROWABLES);
     }
 
     @Override
@@ -982,7 +982,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
       if (toType instanceof RefLikeType) {
         // fromType might still be unknown when we are called,
         // but toType will have a value.
-        FastHierarchy h = Scene.v().getOrMakeFastHierarchy();
+        FastHierarchy h = myScene.getOrMakeFastHierarchy();
         if (fromType == null || fromType instanceof UnknownType
             || ((!(fromType instanceof NullType)) && (!h.canStoreType(fromType, toType)))) {
           result = result.add(mgr.CLASS_CAST_EXCEPTION);

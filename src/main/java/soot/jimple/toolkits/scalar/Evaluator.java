@@ -63,7 +63,7 @@ public class Evaluator {
       return true;
     } else if ((op instanceof UnopExpr)) {
       Value innerOp = ((UnopExpr) op).getOp();
-      if (innerOp == NullConstant.v()) {
+      if (innerOp == myNullConstant) {
         // operations on null will throw an exception and the operation
         // is therefore not considered constant-valued; see posting on Soot list
         // on 18 September 2007 14:36

@@ -64,13 +64,13 @@ public class BafBody extends Body {
   }
 
   BafBody(SootMethod m) {
-    super(m);
+    super(m, myOptions, myPrinter);
   }
 
-  public BafBody(JimpleBody body, Map<String, String> options) {
-    super(body.getMethod());
+  public BafBody(JimpleBody body, Map<String, String> options, Options myOptions, Baf myBaf, PackManager myPackManager) {
+    super(body.getMethod(), myOptions, myPrinter);
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + getMethod().getName() + "] Constructing BafBody...");
     }
 
@@ -82,7 +82,7 @@ public class BafBody extends Body {
     {
       for (Local l : jimpleBody.getLocals()) {
         Type t = l.getType();
-        Local newLocal = Baf.v().newLocal(l.getName(), UnknownType.v());
+        Local newLocal = myBaf.newLocal(l.getName(), UnknownType.v());
 
         if (t.equals(DoubleType.v()) || t.equals(LongType.v())) {
           newLocal.setType(DoubleWordType.v());
@@ -129,11 +129,11 @@ public class BafBody extends Body {
     // Convert all traps
     {
       for (Trap trap : jimpleBody.getTraps()) {
-        getTraps().add(Baf.v().newTrap(trap.getException(), stmtToFirstInstruction.get(trap.getBeginUnit()),
+        getTraps().add(myBaf.newTrap(trap.getException(), stmtToFirstInstruction.get(trap.getBeginUnit()),
             stmtToFirstInstruction.get(trap.getEndUnit()), stmtToFirstInstruction.get(trap.getHandlerUnit())));
       }
     }
 
-    PackManager.v().getPack("bb").apply(this);
+    myPackManager.getPack("bb").apply(this);
   }
 }

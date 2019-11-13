@@ -81,7 +81,7 @@ public class ClassHierarchy {
 
     // hack for J2ME library which does not have Cloneable and Serializable
     // reported by Stephen Chen
-    if (!Options.v().j2me()) {
+    if (!myOptions.j2me()) {
       CLONEABLE = typeNode(RefType.v("java.lang.Cloneable"));
       SERIALIZABLE = typeNode(RefType.v("java.io.Serializable"));
     } else {

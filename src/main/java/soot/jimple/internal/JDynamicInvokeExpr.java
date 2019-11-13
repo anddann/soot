@@ -62,10 +62,10 @@ public class JDynamicInvokeExpr extends AbstractInvokeExpr implements DynamicInv
     this.tag = tag;
 
     for (int i = 0; i < bootstrapArgs.size(); i++) {
-      this.bsmArgBoxes[i] = Jimple.v().newImmediateBox(bootstrapArgs.get(i));
+      this.bsmArgBoxes[i] = myJimple.newImmediateBox(bootstrapArgs.get(i));
     }
     for (int i = 0; i < methodArgs.size(); i++) {
-      this.argBoxes[i] = Jimple.v().newImmediateBox(methodArgs.get(i));
+      this.argBoxes[i] = myJimple.newImmediateBox(methodArgs.get(i));
     }
   }
 
@@ -232,7 +232,7 @@ public class JDynamicInvokeExpr extends AbstractInvokeExpr implements DynamicInv
       bsmArgs.add(argBox.getValue());
     }
 
-    Unit u = Baf.v().newDynamicInvokeInst(bsmRef, bsmArgs, methodRef, tag);
+    Unit u = myBaf.newDynamicInvokeInst(bsmRef, bsmArgs, methodRef, tag);
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);
   }

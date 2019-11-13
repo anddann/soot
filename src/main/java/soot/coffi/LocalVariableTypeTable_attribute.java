@@ -81,7 +81,7 @@ class LocalVariableTypeTable_attribute extends attribute_info {
         if (constant_pool[e.signature_index] instanceof CONSTANT_Utf8_info) {
           String n = ((CONSTANT_Utf8_info) (constant_pool[e.signature_index])).convert();
           // logger.debug("found type: "+n);
-          // if (Util.v().isValidJimpleName(n))
+          // if (myCoffiUtil.isValidJimpleName(n))
           // return n;
           // else
           // return null;

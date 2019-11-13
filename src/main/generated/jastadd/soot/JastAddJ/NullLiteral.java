@@ -93,7 +93,7 @@ public class NullLiteral extends Literal implements Cloneable {
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddExtensions/JimpleBackend/Expressions.jrag:35
    */
   public soot.Value eval(Body b) {
-    return soot.jimple.NullConstant.v();
+    return soot.jimple.myNullConstant;
   }
   /**
    * @ast method 

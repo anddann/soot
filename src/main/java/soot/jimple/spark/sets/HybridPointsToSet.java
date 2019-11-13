@@ -191,7 +191,7 @@ public final class HybridPointsToSet extends PointsToSetInternal {
   private boolean empty = true;
 
   public static HybridPointsToSet intersection(final HybridPointsToSet set1, final HybridPointsToSet set2, PAG pag) {
-    final HybridPointsToSet ret = new HybridPointsToSet(Scene.v().getObjectType(), pag);
+    final HybridPointsToSet ret = new HybridPointsToSet(myScene.getObjectType(), pag);
     BitVector s1Bits = set1.bits;
     BitVector s2Bits = set2.bits;
     if (s1Bits == null || s2Bits == null) {

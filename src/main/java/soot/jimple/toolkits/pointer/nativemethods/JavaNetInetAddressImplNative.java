@@ -68,7 +68,7 @@ public class JavaNetInetAddressImplNative extends NativeMethodClass {
    */
   public void java_net_InetAddressImpl_getLocalHostName(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getStringObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getStringObject());
   }
 
   /**
@@ -78,7 +78,7 @@ public class JavaNetInetAddressImplNative extends NativeMethodClass {
    */
   public void java_net_InetAddressImpl_getHostByAddr(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getStringObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getStringObject());
   }
 
   /**

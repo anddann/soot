@@ -37,6 +37,7 @@ import soot.IntType;
 import soot.Local;
 import soot.PatchingChain;
 import soot.PhaseOptions;
+import soot.Printer;
 import soot.RefType;
 import soot.SootFieldRef;
 import soot.SootMethod;
@@ -148,6 +149,7 @@ import soot.jimple.UnopExpr;
 import soot.jimple.VirtualInvokeExpr;
 import soot.jimple.internal.JGotoStmt;
 import soot.jimple.internal.JimpleLocal;
+import soot.options.Options;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.TrapUnitGraph;
 import soot.util.IterableSet;
@@ -176,7 +178,7 @@ import soot.util.Switchable;
 
 /*
  * TODO:   Nomair- February 7th. Refactor the call
- *  	    AST.perform_Analysis( UselessTryRemover.v());
+ *  	    AST.perform_Analysis( myUselessTryRemover);
  *         use the new AnalysisAdapter routines to write this analysis. Then delete these
  *         obselete and rather clumsy way of writing analyses
  *
@@ -187,6 +189,18 @@ import soot.util.Switchable;
 
 public class DavaBody extends Body {
 
+  private final ExceptionFinder myExceptionFinder;
+  private final CycleFinder myCycleFinder;
+  private final IfFinder myIfFinder;
+  private final SwitchFinder mySwitchFinder;
+  private final SynchronizedBlockFinder mySynchronizedBlockFinder;
+  private final SequenceFinder mySequenceFinder;
+  private final LabeledBlockFinder myLabeledBlockFinder;
+  private final AbruptEdgeFinder myAbruptEdgeFinder;
+  private final MonitorConverter myMonitorConverter;
+  private final ThrowNullConverter myThrowNullConverter;
+  private final UselessTryRemover myUselessTryRemover;
+  private final PhaseOptions myPhaseOptions;
   public boolean DEBUG = false;
   private Map<Integer, Value> pMap;
 
@@ -205,13 +219,33 @@ public class DavaBody extends Body {
   private Unit constructorUnit; // holds a stmt (this.init<>)
 
   private List<CaughtExceptionRef> caughtrefs;
+  private Dava myDava;
+  private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
 
   /**
    * Construct an empty DavaBody
    */
 
-  DavaBody(SootMethod m) {
-    super(m);
+  DavaBody(SootMethod m, Options myOptions, Printer myPrinter, ExceptionFinder myExceptionFinder, CycleFinder myCycleFinder,
+      IfFinder myIfFinder, SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder,
+      SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder,
+      MonitorConverter myMonitorConverter, ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover,
+      PhaseOptions myPhaseOptions, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder) {
+    super(m, myOptions, myPrinter);
+    this.myExceptionFinder = myExceptionFinder;
+    this.myCycleFinder = myCycleFinder;
+    this.myIfFinder = myIfFinder;
+    this.mySwitchFinder = mySwitchFinder;
+    this.mySynchronizedBlockFinder = mySynchronizedBlockFinder;
+    this.mySequenceFinder = mySequenceFinder;
+    this.myLabeledBlockFinder = myLabeledBlockFinder;
+    this.myAbruptEdgeFinder = myAbruptEdgeFinder;
+    this.myMonitorConverter = myMonitorConverter;
+    this.myThrowNullConverter = myThrowNullConverter;
+    this.myUselessTryRemover = myUselessTryRemover;
+    this.myPhaseOptions = myPhaseOptions;
+    this.myDava = myDava;
+    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
 
     pMap = new HashMap<Integer, Value>();
     consumedConditions = new HashSet<Object>();
@@ -277,7 +311,7 @@ public class DavaBody extends Body {
   }
 
   public Object clone() {
-    Body b = Dava.v().newBody(getMethod());
+    Body b = myDava.newBody(getMethod());
     b.importBodyContentsFrom(this);
     return b;
   }
@@ -301,10 +335,17 @@ public class DavaBody extends Body {
   /**
    * Constructs a DavaBody from the given Body.
    */
-  DavaBody(Body body) {
-    this(body.getMethod());
+  DavaBody(Body body, Options myOptions, Printer myPrinter, MonitorConverter myMonitorConverter,
+           ExceptionFinder myExceptionFinder, SynchronizedBlockFinder mySynchronizedBlockFinder,
+           ThrowNullConverter myThrowNullConverter, SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder,
+           CycleFinder myCycleFinder, IfFinder myIfFinder, SwitchFinder mySwitchFinder, AbruptEdgeFinder myAbruptEdgeFinder,
+           UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
+           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava) {
+    this(body.getMethod(), myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
+        mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myDava, myClosestAbruptTargetFinder);
     debug("DavaBody", "creating DavaBody for" + body.getMethod().toString());
-    Dava.v().log("\nstart method " + body.getMethod().toString());
+    this.myDava.log("\nstart method " + body.getMethod().toString());
 
     if (DEBUG) {
       if (body.getMethod().getExceptions().size() != 0) {
@@ -321,19 +362,19 @@ public class DavaBody extends Body {
     AugmentedStmtGraph asg = new AugmentedStmtGraph(new BriefUnitGraph(this), new TrapUnitGraph(this));
     // System.out.println(asg.toString());
 
-    ExceptionFinder.v().preprocess(this, asg);
+    this.myExceptionFinder.preprocess(this, asg);
     SETNode SET = new SETTopNode(asg.get_ChainView());
 
     while (true) {
       try {
-        CycleFinder.v().find(this, asg, SET);
-        IfFinder.v().find(this, asg, SET);
-        SwitchFinder.v().find(this, asg, SET);
-        SynchronizedBlockFinder.v().find(this, asg, SET);
-        ExceptionFinder.v().find(this, asg, SET);
-        SequenceFinder.v().find(this, asg, SET);
-        LabeledBlockFinder.v().find(this, asg, SET);
-        AbruptEdgeFinder.v().find(this, asg, SET);
+        this.myCycleFinder.find(this, asg, SET);
+        this.myIfFinder.find(this, asg, SET);
+        this.mySwitchFinder.find(this, asg, SET);
+        this.mySynchronizedBlockFinder.find(this, asg, SET);
+        this.myExceptionFinder.find(this, asg, SET);
+        this.mySequenceFinder.find(this, asg, SET);
+        this.myLabeledBlockFinder.find(this, asg, SET);
+        this.myAbruptEdgeFinder.find(this, asg, SET);
       } catch (RetriggerAnalysisException rae) {
         SET = new SETTopNode(asg.get_ChainView());
         consumedConditions = new HashSet<Object>();
@@ -342,8 +383,8 @@ public class DavaBody extends Body {
       break;
     }
 
-    MonitorConverter.v().convert(this);
-    ThrowNullConverter.v().convert(this);
+    this.myMonitorConverter.convert(this);
+    this.myThrowNullConverter.convert(this);
 
     ASTNode AST = SET.emit_AST();
 
@@ -359,7 +400,7 @@ public class DavaBody extends Body {
     do {
       G.v().ASTAnalysis_modified = false;
 
-      AST.perform_Analysis(UselessTryRemover.v());
+      AST.perform_Analysis(this.myUselessTryRemover);
 
     } while (G.v().ASTAnalysis_modified);
 
@@ -375,7 +416,7 @@ public class DavaBody extends Body {
       /*
        * January 12th, 2006 Deal with the super() problem before continuing
        */
-      Map options = PhaseOptions.v().getPhaseOptions("db.force-recompile");
+      Map options = this.myPhaseOptions.getPhaseOptions("db.force-recompile");
       boolean force = PhaseOptions.getBoolean(options, "enabled");
       // System.out.println("force is "+force);
       if (force) {
@@ -385,7 +426,7 @@ public class DavaBody extends Body {
       debug("DavaBody", "PreInit booleans is" + G.v().SootMethodAddedByDava);
 
     }
-    Dava.v().log("end method " + body.getMethod().toString());
+    this.myDava.log("end method " + body.getMethod().toString());
   }
 
   public void applyBugFixes() {
@@ -572,13 +613,13 @@ public class DavaBody extends Body {
      * ClosestAbruptTargetFinder should be reinitialized everytime there is a change to the AST This is utilized internally
      * by the DavaFlowSet implementation to handle Abrupt Implicit Stmts
      */
-    AST.apply(ClosestAbruptTargetFinder.v());
+    AST.apply(myClosestAbruptTargetFinder);
     debug("applyASTAnalyses", "after ClosestAbruptTargetFinder" + G.v().ASTTransformations_modified);
 
     // 29th Jan 2006
     // make sure when recompiling there is no variable might not be initialized error
 
-    Map<String, String> options = PhaseOptions.v().getPhaseOptions("db.force-recompile");
+    Map<String, String> options = myPhaseOptions.getPhaseOptions("db.force-recompile");
     boolean force = PhaseOptions.getBoolean(options, "enabled");
     // System.out.println("Force is"+force);
 
@@ -693,7 +734,7 @@ public class DavaBody extends Body {
 
       // Clone locals.
       for (Local original : grimpBody.getLocals()) {
-        Local copy = Dava.v().newLocal(original.getName(), original.getType());
+        Local copy = myDava.newLocal(original.getName(), original.getType());
 
         getLocals().add(copy);
 

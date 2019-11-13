@@ -152,43 +152,43 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
     List<Unit> targs = new ArrayList<Unit>();
     targs.addAll(zeroheight);
 
-    SootField ops[] = FieldRenamer.v().getRandomOpaques();
+    SootField ops[] = myFieldRenamer.getRandomOpaques();
 
-    Local b1 = Jimple.v().newLocal("addswitchesbool1", BooleanType.v());
+    Local b1 = myJimple.newLocal("addswitchesbool1", BooleanType.v());
     locals.add(b1);
-    Local b2 = Jimple.v().newLocal("addswitchesbool2", BooleanType.v());
+    Local b2 = myJimple.newLocal("addswitchesbool2", BooleanType.v());
     locals.add(b2);
 
     if (ops[0].getType() instanceof PrimType) {
-      units.insertBefore(Jimple.v().newAssignStmt(b1, Jimple.v().newStaticFieldRef(ops[0].makeRef())), u);
+      units.insertBefore(myJimple.newAssignStmt(b1, myJimple.newStaticFieldRef(ops[0].makeRef())), u);
     } else {
       RefType rt = (RefType) ops[0].getType();
       SootMethod m = rt.getSootClass().getMethodByName("booleanValue");
-      Local B = Jimple.v().newLocal("addswitchesBOOL1", rt);
+      Local B = myJimple.newLocal("addswitchesBOOL1", rt);
       locals.add(B);
-      units.insertBefore(Jimple.v().newAssignStmt(B, Jimple.v().newStaticFieldRef(ops[0].makeRef())), u);
+      units.insertBefore(myJimple.newAssignStmt(B, myJimple.newStaticFieldRef(ops[0].makeRef())), u);
       units.insertBefore(
-          Jimple.v().newAssignStmt(b1, Jimple.v().newVirtualInvokeExpr(B, m.makeRef(), Collections.<Value>emptyList())), u);
+          myJimple.newAssignStmt(b1, myJimple.newVirtualInvokeExpr(B, m.makeRef(), Collections.<Value>emptyList())), u);
     }
     if (ops[1].getType() instanceof PrimType) {
-      units.insertBefore(Jimple.v().newAssignStmt(b2, Jimple.v().newStaticFieldRef(ops[1].makeRef())), u);
+      units.insertBefore(myJimple.newAssignStmt(b2, myJimple.newStaticFieldRef(ops[1].makeRef())), u);
     } else {
       RefType rt = (RefType) ops[1].getType();
       SootMethod m = rt.getSootClass().getMethodByName("booleanValue");
-      Local B = Jimple.v().newLocal("addswitchesBOOL2", rt);
+      Local B = myJimple.newLocal("addswitchesBOOL2", rt);
       locals.add(B);
-      units.insertBefore(Jimple.v().newAssignStmt(B, Jimple.v().newStaticFieldRef(ops[1].makeRef())), u);
+      units.insertBefore(myJimple.newAssignStmt(B, myJimple.newStaticFieldRef(ops[1].makeRef())), u);
       units.insertBefore(
-          Jimple.v().newAssignStmt(b2, Jimple.v().newVirtualInvokeExpr(B, m.makeRef(), Collections.<Value>emptyList())), u);
+          myJimple.newAssignStmt(b2, myJimple.newVirtualInvokeExpr(B, m.makeRef(), Collections.<Value>emptyList())), u);
     }
 
-    IfStmt ifstmt = Jimple.v().newIfStmt(Jimple.v().newNeExpr(b1, b2), u);
+    IfStmt ifstmt = myJimple.newIfStmt(myJimple.newNeExpr(b1, b2), u);
     units.insertBefore(ifstmt, u);
 
-    Local l = Jimple.v().newLocal("addswitchlocal", IntType.v());
+    Local l = myJimple.newLocal("addswitchlocal", IntType.v());
     locals.add(l);
-    units.insertBeforeNoRedirect(Jimple.v().newAssignStmt(l, IntConstant.v(0)), first);
-    units.insertAfter(Jimple.v().newTableSwitchStmt(l, 1, zeroheight.size(), targs, u), ifstmt);
+    units.insertBeforeNoRedirect(myJimple.newAssignStmt(l, IntConstant.v(0)), first);
+    units.insertAfter(myJimple.newTableSwitchStmt(l, 1, zeroheight.size(), targs, u), ifstmt);
 
     switchesadded += zeroheight.size() + 1;
 
@@ -196,7 +196,7 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
     while (tit.hasNext()) {
       Unit nxt = (Unit) tit.next();
       if (Rand.getInt(5) < 4) {
-        units.insertBefore(Jimple.v().newAssignStmt(l, Jimple.v().newAddExpr(l, IntConstant.v(Rand.getInt(3) + 1))), nxt);
+        units.insertBefore(myJimple.newAssignStmt(l, myJimple.newAddExpr(l, IntConstant.v(Rand.getInt(3) + 1))), nxt);
       }
     }
 

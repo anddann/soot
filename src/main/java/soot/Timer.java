@@ -55,7 +55,7 @@ public class Timer {
       return;
     }
 
-    if (!Options.v().subtract_gc()) {
+    if (!myOptions.subtract_gc()) {
       return;
     }
 

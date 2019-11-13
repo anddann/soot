@@ -64,7 +64,7 @@ public class ConstructorFolder extends BodyTransformer {
   protected void internalTransform(Body b, String phaseName, Map options) {
     GrimpBody body = (GrimpBody) b;
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Folding constructors...");
     }
 
@@ -123,9 +123,9 @@ public class ConstructorFolder extends BodyTransformer {
           invokeArgs.add(oldInvoke.getArg(i));
         }
 
-        AssignStmt constructStmt = Grimp.v().newAssignStmt((AssignStmt) s);
+        AssignStmt constructStmt = myGrimp.newAssignStmt((AssignStmt) s);
         constructStmt
-            .setRightOp(Grimp.v().newNewInvokeExpr(((NewExpr) rhs).getBaseType(), oldInvoke.getMethodRef(), invokeArgs));
+            .setRightOp(myGrimp.newNewInvokeExpr(((NewExpr) rhs).getBaseType(), oldInvoke.getMethodRef(), invokeArgs));
         MadeNewInvokeExpr = true;
 
         use.redirectJumpsToThisTo(constructStmt);

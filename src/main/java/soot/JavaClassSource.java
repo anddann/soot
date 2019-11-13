@@ -51,19 +51,19 @@ public class JavaClassSource extends ClassSource {
   }
 
   public Dependencies resolve(SootClass sc) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("resolving [from .java]: " + className);
     }
 
     IInitialResolver resolver;
-    if (Options.v().polyglot()) {
-      resolver = InitialResolver.v();
+    if (myOptions.polyglot()) {
+      resolver = myInitialResolver;
     } else {
-      resolver = JastAddInitialResolver.v();
+      resolver = JastAddmyInitialResolver;
     }
 
     if (fullPath != null) {
-      resolver.formAst(fullPath.getPath(), SourceLocator.v().sourcePath(), className);
+      resolver.formAst(fullPath.getPath(), mySourceLocator.sourcePath(), className);
     }
     // System.out.println("about to call initial resolver in j2j: "+sc.getName());
     Dependencies references = resolver.resolveFromJavaFile(sc);
@@ -71,9 +71,9 @@ public class JavaClassSource extends ClassSource {
     /*
      * 1st March 2006 Nomair This seems to be a good place to calculate all the AST Metrics needed from Java's AST
      */
-    if (Options.v().ast_metrics()) {
+    if (myOptions.ast_metrics()) {
       // System.out.println("CALLING COMPUTEASTMETRICS!!!!!!!");
-      Node ast = InitialResolver.v().getAst();
+      Node ast = myInitialResolver.getAst();
       if (ast == null) {
         logger.debug("No compatible AST available for AST metrics. Skipping. Try -polyglot option.");
       } else {

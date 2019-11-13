@@ -92,14 +92,14 @@ public class FieldRWTagger extends BodyTransformer {
     if (G.v().Union_factory == null) {
       G.v().Union_factory = new UnionFactory() {
         public Union newUnion() {
-          return FullObjectSet.v();
+          return myFullObjectSet;
         }
       };
     }
     if (startTime == null) {
       startTime = new Date();
     }
-    cg = Scene.v().getCallGraph();
+    cg = myScene.getCallGraph();
   }
 
   protected Object keyFor(Stmt s) {
@@ -123,7 +123,7 @@ public class FieldRWTagger extends BodyTransformer {
 
   protected void internalTransform(Body body, String phaseName, Map options) {
     initializationStuff(phaseName);
-    SideEffectAnalysis sea = new SideEffectAnalysis(DumbPointerAnalysis.v(), Scene.v().getCallGraph());
+    SideEffectAnalysis sea = new SideEffectAnalysis(myDumbPointerAnalysis, myScene.getCallGraph());
     sea.findNTRWSets(body.getMethod());
     HashMap<Object, RWSet> stmtToReadSet = new HashMap<Object, RWSet>();
     HashMap<Object, RWSet> stmtToWriteSet = new HashMap<Object, RWSet>();

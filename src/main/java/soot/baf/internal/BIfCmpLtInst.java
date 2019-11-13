@@ -32,7 +32,7 @@ import soot.util.Switch;
 
 public class BIfCmpLtInst extends AbstractOpTypeBranchInst implements IfCmpLtInst {
   public BIfCmpLtInst(Type opType, Unit target) {
-    super(opType, Baf.v().newInstBox(target));
+    super(opType, myBaf.newInstBox(target));
   }
 
   public int getInCount() {

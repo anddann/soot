@@ -75,7 +75,7 @@ public class ConstantInitializerToTagTransformer extends SceneTransformer {
 
   @Override
   protected void internalTransform(String phaseName, Map<String, String> options) {
-    for (SootClass sc : Scene.v().getClasses()) {
+    for (SootClass sc : myScene.getClasses()) {
       transformClass(sc, false);
     }
   }

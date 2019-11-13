@@ -49,7 +49,7 @@ public class JArrayRef implements ArrayRef, ConvertToBaf {
   protected ValueBox indexBox;
 
   public JArrayRef(Value base, Value index) {
-    this(Jimple.v().newLocalBox(base), Jimple.v().newImmediateBox(index));
+    this(myJimple.newLocalBox(base), myJimple.newImmediateBox(index));
   }
 
   protected JArrayRef(ValueBox baseBox, ValueBox indexBox) {
@@ -160,7 +160,7 @@ public class JArrayRef implements ArrayRef, ConvertToBaf {
 
     Unit x;
 
-    out.add(x = Baf.v().newArrayReadInst(getType()));
+    out.add(x = myBaf.newArrayReadInst(getType()));
 
     Iterator it = currentUnit.getTags().iterator();
     while (it.hasNext()) {

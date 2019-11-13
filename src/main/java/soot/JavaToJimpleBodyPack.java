@@ -42,50 +42,50 @@ public class JavaToJimpleBodyPack extends BodyPack {
     JJOptions options = new JJOptions(opts);
 
     if (options.use_original_names()) {
-      PhaseOptions.v().setPhaseOptionIfUnset("jj.lns", "only-stack-locals");
+      myPhaseOptions().setPhaseOptionIfUnset("jj.lns", "only-stack-locals");
     }
 
-    if (Options.v().time()) {
-      Timers.v().splitTimer.start();
+    if (myOptions.time()) {
+      myTimers.splitTimer.start();
     }
 
-    PackManager.v().getTransform("jj.ls").apply(b);
+    PackmyManager.getTransform("jj.ls").apply(b);
 
-    if (Options.v().time()) {
-      Timers.v().splitTimer.end();
+    if (myOptions.time()) {
+      myTimers.splitTimer.end();
     }
 
-    PackManager.v().getTransform("jj.a").apply(b);
-    PackManager.v().getTransform("jj.ule").apply(b);
-    PackManager.v().getTransform("jj.ne").apply(b);
+    PackmyManager.getTransform("jj.a").apply(b);
+    PackmyManager.getTransform("jj.ule").apply(b);
+    PackmyManager.getTransform("jj.ne").apply(b);
 
-    if (Options.v().time()) {
-      Timers.v().assignTimer.start();
+    if (myOptions.time()) {
+      myTimers.assignTimer.start();
     }
 
-    PackManager.v().getTransform("jj.tr").apply(b);
+    PackmyManager.getTransform("jj.tr").apply(b);
 
-    if (Options.v().time()) {
-      Timers.v().assignTimer.end();
+    if (myOptions.time()) {
+      myTimers.assignTimer.end();
     }
 
     if (options.use_original_names()) {
-      PackManager.v().getTransform("jj.ulp").apply(b);
+      PackmyManager.getTransform("jj.ulp").apply(b);
     }
-    PackManager.v().getTransform("jj.lns").apply(b);
-    PackManager.v().getTransform("jj.cp").apply(b);
-    PackManager.v().getTransform("jj.dae").apply(b);
-    PackManager.v().getTransform("jj.cp-ule").apply(b);
-    PackManager.v().getTransform("jj.lp").apply(b);
-    // PackManager.v().getTransform( "jj.ct" ).apply( b );
-    PackManager.v().getTransform("jj.uce").apply(b);
+    PackmyManager.getTransform("jj.lns").apply(b);
+    PackmyManager.getTransform("jj.cp").apply(b);
+    PackmyManager.getTransform("jj.dae").apply(b);
+    PackmyManager.getTransform("jj.cp-ule").apply(b);
+    PackmyManager.getTransform("jj.lp").apply(b);
+    // PackmyManager.getTransform( "jj.ct" ).apply( b );
+    PackmyManager.getTransform("jj.uce").apply(b);
 
-    if (Options.v().time()) {
-      Timers.v().stmtCount += b.getUnits().size();
+    if (myOptions.time()) {
+      myTimers.stmtCount += b.getUnits().size();
     }
   }
 
   protected void internalApply(Body b) {
-    applyPhaseOptions((JimpleBody) b, PhaseOptions.v().getPhaseOptions(getPhaseName()));
+    applyPhaseOptions((JimpleBody) b, myPhaseOptions().getPhaseOptions(getPhaseName()));
   }
 }

@@ -271,7 +271,7 @@ public class SootUtil {
   @SuppressWarnings("unused")
   private static void checkSetsEqual(final HybridPointsToSet intersection, final PointsToSetInternal set1,
       final PointsToSetInternal set2, PAG pag) {
-    final PointsToSetInternal ret = new HybridPointsToSet(Scene.v().getObjectType(), pag);
+    final PointsToSetInternal ret = new HybridPointsToSet(myScene.getObjectType(), pag);
     set1.forall(new P2SetVisitor() {
 
       @Override
@@ -337,7 +337,7 @@ public class SootUtil {
   }
 
   // private static final NumberedString sigStart =
-  // Scene.v().getSubSigNumberer().
+  // myScene.getSubSigNumberer().
   // findOrAdd( "void start()" );
 
   public static boolean isThreadStartMethod(SootMethod method) {
@@ -395,7 +395,7 @@ public class SootUtil {
   }
 
   public static SootMethod getMainMethod() {
-    return Scene.v().getMainClass().getMethod(Scene.v().getSubSigNumberer().findOrAdd("void main(java.lang.String[])"));
+    return myScene.getMainClass().getMethod(myScene.getSubSigNumberer().findOrAdd("void main(java.lang.String[])"));
   }
 
   public static boolean isResolvableCall(SootMethod invokedMethod) {
@@ -416,7 +416,7 @@ public class SootUtil {
     Type receiverType = invokedMethod.getDeclaringClass().getType();
     ChunkedQueue chunkedQueue = new ChunkedQueue();
     Iterator iter = chunkedQueue.reader();
-    VirtualCalls.v().resolve(type, receiverType, invokedMethod.getNumberedSubSignature(), null, chunkedQueue);
+    myVirtualCalls.resolve(type, receiverType, invokedMethod.getNumberedSubSignature(), null, chunkedQueue);
     Set<SootMethod> ret = new ArraySet<SootMethod>();
     for (; iter.hasNext();) {
       SootMethod target = (SootMethod) iter.next();
@@ -434,7 +434,7 @@ public class SootUtil {
 
     if (!dir.exists()) {
       try {
-        if (!Options.v().output_jar()) {
+        if (!myOptions.output_jar()) {
           dir.mkdirs();
         }
       } catch (SecurityException se) {
@@ -470,7 +470,7 @@ public class SootUtil {
   }
 
   public static SootMethod getAmbiguousMethodByName(String methodName) {
-    SootClass sc = Scene.v().tryLoadClass(getClassName(methodName), SootClass.SIGNATURES);
+    SootClass sc = myScene.tryLoadClass(getClassName(methodName), SootClass.SIGNATURES);
     SootMethod sm = sc.getMethodByName(getMethodName(methodName));
 
     return sm;

@@ -47,7 +47,7 @@ public class JUshrExpr extends AbstractJimpleIntLongBinopExpr implements UshrExp
   }
 
   Object makeBafInst(Type opType) {
-    return Baf.v().newUshrInst(this.getOp1().getType());
+    return myBaf.newUshrInst(this.getOp1().getType());
   }
 
   public Type getType() {

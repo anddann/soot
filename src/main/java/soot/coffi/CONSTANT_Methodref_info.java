@@ -123,7 +123,7 @@ class CONSTANT_Methodref_info extends cp_info implements ICONSTANT_Methodref_inf
 
     // Generate parameters & returnType & parameterTypes
     {
-      Type[] types = Util.v().jimpleTypesOfFieldOrMethodDescriptor(typeName);
+      Type[] types = myCoffiUtil.jimpleTypesOfFieldOrMethodDescriptor(typeName);
       parameterTypes = new ArrayList();
       for (int k = 0; k < types.length - 1; k++) {
         parameterTypes.add(types[k]);
@@ -131,8 +131,8 @@ class CONSTANT_Methodref_info extends cp_info implements ICONSTANT_Methodref_inf
       returnType = types[types.length - 1];
     }
 
-    return Jimple.v().newStaticInvokeExpr(
-        Scene.v().makeMethodRef(Scene.v().getSootClass(className), name, parameterTypes, returnType, true));
+    return myJimple.newStaticInvokeExpr(
+        myScene.makeMethodRef(myScene.getSootClass(className), name, parameterTypes, returnType, true));
   }
 
   public int getClassIndex() {

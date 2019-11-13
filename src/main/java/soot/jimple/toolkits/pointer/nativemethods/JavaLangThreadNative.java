@@ -61,7 +61,7 @@ public class JavaLangThreadNative extends NativeMethodClass {
    */
   public void java_lang_Thread_currentThread(SootMethod method, ReferenceVariable thisVar, ReferenceVariable returnVar,
       ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getThreadObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getThreadObject());
   }
 
   /**

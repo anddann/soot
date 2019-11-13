@@ -209,7 +209,7 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
 
     final SootClass mainClass = getMainClassSafely();
 
-    for (SootClass applicationClass : Scene.v().getApplicationClasses()) {
+    for (SootClass applicationClass : myScene.getApplicationClasses()) {
 
       final String fullyQualifiedName = applicationClass.getName();
 
@@ -226,7 +226,7 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
       applicationClass.setRefType(crt);
       applicationClass.setResolvingLevel(SootClass.BODIES);
       // will this fix dangling classes?
-      // Scene.v().addRefType(applicationClass.getType());
+      // myScene.addRefType(applicationClass.getType());
 
       // set source name
       SourceFileTag sourceFileTag = (SourceFileTag) applicationClass.getTag(SourceFileTag.NAME);
@@ -244,14 +244,14 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
       }
     }
 
-    Scene.v().releaseActiveHierarchy();
-    Scene.v().setFastHierarchy(new FastHierarchy());
+    myScene.releaseActiveHierarchy();
+    myScene.setFastHierarchy(new FastHierarchy());
 
     if (isVerbose()) {
       logger.info("Updating bytecode class references");
     }
 
-    for (SootClass sootClass : Scene.v().getApplicationClasses()) {
+    for (SootClass sootClass : myScene.getApplicationClasses()) {
       for (SootMethod sootMethod : sootClass.getMethods()) {
         if (!sootMethod.isConcrete()) {
           continue;
@@ -291,8 +291,8 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
       }
     }
 
-    Scene.v().releaseActiveHierarchy();
-    Scene.v().setFastHierarchy(new FastHierarchy());
+    myScene.releaseActiveHierarchy();
+    myScene.setFastHierarchy(new FastHierarchy());
   }
 
   private void updateType(Type type) {
@@ -416,8 +416,8 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
   }
 
   private static SootClass getMainClassSafely() {
-    if (Scene.v().hasMainClass()) {
-      return Scene.v().getMainClass();
+    if (myScene.hasMainClass()) {
+      return myScene.getMainClass();
     } else {
       return null;
     }

@@ -61,6 +61,6 @@ public class JavaUtilJarJarFileNative extends NativeMethodClass {
    */
   public void java_util_jar_JarFile_getMetaInfoEntryNames(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getStringObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getStringObject());
   }
 }

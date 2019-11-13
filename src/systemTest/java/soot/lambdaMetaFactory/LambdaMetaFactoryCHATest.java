@@ -32,6 +32,6 @@ public class LambdaMetaFactoryCHATest extends AbstractLambdaMetaFactoryCGTest {
   @Override
   protected void setupSoot() {
     super.setupSoot();
-    PhaseOptions.v().setPhaseOption("cg.cha", "on");
+    myPhaseOptions().setPhaseOption("cg.cha", "on");
   }
 }

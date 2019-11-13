@@ -86,12 +86,12 @@ public class RectangularArrayFinder extends SceneTransformer {
   private CallGraph cg;
 
   protected void internalTransform(String phaseName, Map<String, String> opts) {
-    Scene sc = Scene.v();
+    Scene sc = myScene;
 
     cg = sc.getCallGraph();
 
     Date start = new Date();
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[ra] Finding rectangular arrays, start on " + start);
     }
 
@@ -208,7 +208,7 @@ public class RectangularArrayFinder extends SceneTransformer {
 
     /* For verification, print out true set and false set. */
 
-    if (Options.v().debug()) {
+    if (myOptions.debug()) {
       logger.debug("Rectangular Array :");
       {
         Iterator<Object> nodeIt = trueSet.iterator();
@@ -231,7 +231,7 @@ public class RectangularArrayFinder extends SceneTransformer {
     }
 
     Date finish = new Date();
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       long runtime = finish.getTime() - start.getTime();
       long mins = runtime / 60000;
       long secs = (runtime % 60000) / 1000;
@@ -240,7 +240,7 @@ public class RectangularArrayFinder extends SceneTransformer {
   }
 
   private void addInfoFromMethod(SootMethod method) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[ra] Operating " + method.getSignature());
     }
 

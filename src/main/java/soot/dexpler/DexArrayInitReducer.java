@@ -144,7 +144,7 @@ public class DexArrayInitReducer extends BodyTransformer {
             // only remove constant assignment if the left value is Local
             if (u1val instanceof Local) {
               b.getUnits().remove(u1);
-              if (Options.v().verbose()) {
+              if (myOptions.verbose()) {
                 logger.debug("[" + b.getMethod().getName() + "]    remove 1 " + u1);
               }
             }
@@ -153,7 +153,7 @@ public class DexArrayInitReducer extends BodyTransformer {
             // only remove constant assignment if the left value is Local
             if (u2val instanceof Local) {
               b.getUnits().remove(u2);
-              if (Options.v().verbose()) {
+              if (myOptions.verbose()) {
                 logger.debug("[" + b.getMethod().getName() + "]    remove 2 " + u2);
               }
             }
@@ -197,7 +197,7 @@ public class DexArrayInitReducer extends BodyTransformer {
     }
 
     // Remove all locals that are no longer necessary
-    UnusedLocalEliminator.v().transform(b);
+    myUnusedLocalEliminator.transform(b);
   }
 
 }

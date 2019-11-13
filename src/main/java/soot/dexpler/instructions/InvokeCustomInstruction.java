@@ -96,7 +96,7 @@ public class InvokeCustomInstruction extends MethodInvocationInstruction {
       // The method prototype only includes the method arguments and no invoking object so treat like static
       List<Local> methodArgs = buildParameters(body, callSiteReference.getMethodProto().getParameterTypes(), true);
       
-      invocation = Jimple.v().newDynamicInvokeExpr(bootstrapMethodRef, bootstrapValues, methodRef, bootStrapKind.getValue(),
+      invocation = myJimple.newDynamicInvokeExpr(bootstrapMethodRef, bootstrapValues, methodRef, bootStrapKind.getValue(),
           methodArgs);
       body.setDanglingInstruction(this);
     } else if (bootstrapRef instanceof FieldReference) {
@@ -140,7 +140,7 @@ public class InvokeCustomInstruction extends MethodInvocationInstruction {
       } else if (ev instanceof StringEncodedValue) {
         out.add(StringConstant.v(((StringEncodedValue) ev).getValue()));
       } else if (ev instanceof NullEncodedValue) {
-        out.add(NullConstant.v());
+        out.add(myNullConstant);
       } else if (ev instanceof MethodTypeEncodedValue) {
         MethodProtoReference protRef = ((MethodTypeEncodedValue) ev).getValue();
         out.add(MethodType.v(convertParameterTypes(protRef.getParameterTypes()), DexType.toSoot(protRef.getReturnType())));
@@ -197,7 +197,7 @@ public class InvokeCustomInstruction extends MethodInvocationInstruction {
    */
   protected SootMethodRef getCustomSootMethodRef() {
     CallSiteReference callSiteReference = (CallSiteReference) ((ReferenceInstruction) instruction).getReference();
-    SootClass dummyclass = Scene.v().getSootClass(SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME);
+    SootClass dummyclass = myScene.getSootClass(SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME);
     String methodName = callSiteReference.getMethodName();
     MethodProtoReference methodRef = callSiteReference.getMethodProto();
     // No reference kind stored in invoke custom instruction for the actual 

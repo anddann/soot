@@ -221,7 +221,7 @@ public class BytecodeHierarchy implements IHierarchy {
     } else if (ancestor instanceof NullType) {
       return false;
     } else {
-      return Scene.v().getOrMakeFastHierarchy().canStoreType(child, ancestor);
+      return myScene.getOrMakeFastHierarchy().canStoreType(child, ancestor);
     }
   }
 

@@ -53,28 +53,28 @@ public class SimpleLiveLocals implements LiveLocals {
    * @see ExceptionalUnitGraph
    */
   public SimpleLiveLocals(UnitGraph graph) {
-    if (Options.v().time()) {
-      Timers.v().liveTimer.start();
+    if (myOptions.time()) {
+      myTimers.liveTimer.start();
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + graph.getBody().getMethod().getName() + "]     Constructing SimpleLiveLocals...");
     }
 
     analysis = new Analysis(graph);
 
-    if (Options.v().time()) {
-      Timers.v().liveAnalysisTimer.start();
+    if (myOptions.time()) {
+      myTimers.liveAnalysisTimer.start();
     }
 
     analysis.doAnalysis();
 
-    if (Options.v().time()) {
-      Timers.v().liveAnalysisTimer.end();
+    if (myOptions.time()) {
+      myTimers.liveAnalysisTimer.end();
     }
 
-    if (Options.v().time()) {
-      Timers.v().liveTimer.end();
+    if (myOptions.time()) {
+      myTimers.liveTimer.end();
     }
   }
 

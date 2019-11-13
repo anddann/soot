@@ -429,7 +429,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 			throwtypes.add(getException(i).type().getSootClassDecl());
 		String signature = SootMethod.getSubSignature(name, parameters, returnType);
 		if (!hostType().getSootClassDecl().declaresMethod(signature)) {
-			SootMethod m = Scene.v().makeSootMethod(name, parameters, returnType, modifiers, throwtypes);
+			SootMethod m = myScene.makeSootMethod(name, parameters, returnType, modifiers, throwtypes);
 			hostType().getSootClassDecl().addMethod(m);
 			m.addTag(new soot.tagkit.ParamNamesTag(paramnames));
 			sootMethod = m;
@@ -1156,7 +1156,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 		if (!generate() || sootMethod().hasActiveBody() || (sootMethod().getSource() != null
 				&& (sootMethod().getSource() instanceof soot.coffi.CoffiMethodSource)))
 			return;
-		JimpleBody body = Jimple.v().newBody(sootMethod());
+		JimpleBody body = myJimple.newBody(sootMethod());
 		sootMethod().setActiveBody(body);
 		Body b = new Body(hostType(), body, this);
 		b.setLine(this);
@@ -1179,16 +1179,16 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 
 		if (hostType().needsEnclosing()) {
 			TypeDecl type = hostType().enclosingType();
-			b.add(Jimple.v().newAssignStmt(
-					Jimple.v().newInstanceFieldRef(b.emitThis(hostType()),
+			b.add(myJimple.newAssignStmt(
+					myJimple.newInstanceFieldRef(b.emitThis(hostType()),
 							hostType().getSootField("this$0", type).makeRef()),
-					asLocal(b, Jimple.v().newParameterRef(type.getSootType(), 0))));
+					asLocal(b, myJimple.newParameterRef(type.getSootType(), 0))));
 		}
 
 		for (Iterator iter = hostType().enclosingVariables().iterator(); iter.hasNext();) {
 			Variable v = (Variable) iter.next();
 			ParameterDeclaration p = (ParameterDeclaration) parameterDeclaration("val$" + v.name()).iterator().next();
-			b.add(Jimple.v().newAssignStmt(Jimple.v().newInstanceFieldRef(b.emitThis(hostType()), Scene.v()
+			b.add(myJimple.newAssignStmt(myJimple.newInstanceFieldRef(b.emitThis(hostType()), myScene
 					.makeFieldRef(hostType().getSootClassDecl(), "val$" + v.name(), v.type().getSootType(), false)
 			// hostType().getSootClassDecl().getField("val$" + v.name(),
 			// v.type().getSootType()).makeRef()
@@ -1206,7 +1206,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 						Local l = asLocal(b, f.getInit().type().emitCastTo(b, f.getInit(), f.type()), // AssignConversion
 								f.type().getSootType());
 						b.setLine(f);
-						b.add(Jimple.v().newAssignStmt(Jimple.v().newInstanceFieldRef(base, f.sootRef()), l));
+						b.add(myJimple.newAssignStmt(myJimple.newInstanceFieldRef(base, f.sootRef()), l));
 					}
 				} else if (bodyDecl instanceof InstanceInitializer && bodyDecl.generate()) {
 					bodyDecl.jimplify2(b);
@@ -1214,7 +1214,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 			}
 		}
 		getBlock().jimplify2(b);
-		b.add(Jimple.v().newReturnVoidStmt());
+		b.add(myJimple.newReturnVoidStmt());
 	}
 
 	/**
@@ -2074,7 +2074,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 		}
 		for (int i = 0; i < getNumParameter(); i++)
 			parameters.add(getParameter(i).type().getSootType());
-		SootMethodRef ref = Scene.v().makeConstructorRef(hostType().getSootClassDecl(), parameters);
+		SootMethodRef ref = myScene.makeConstructorRef(hostType().getSootClassDecl(), parameters);
 		return ref;
 	}
 

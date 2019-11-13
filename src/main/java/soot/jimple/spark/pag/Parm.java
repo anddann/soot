@@ -41,7 +41,7 @@ public class Parm implements SparkField {
   private Parm(SootMethod m, int i) {
     index = i;
     method = m;
-    Scene.v().getFieldNumberer().add(this);
+    myScene.getFieldNumberer().add(this);
   }
 
   public static Parm v(SootMethod m, int index) {

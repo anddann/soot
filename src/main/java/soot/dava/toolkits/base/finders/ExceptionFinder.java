@@ -28,8 +28,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import com.google.inject.Inject;
 import soot.G;
-import soot.Singletons;
 import soot.Trap;
 import soot.Unit;
 import soot.dava.Dava;
@@ -44,15 +44,20 @@ import soot.jimple.Stmt;
 import soot.util.IterableSet;
 
 public class ExceptionFinder implements FactFinder {
-  public ExceptionFinder(Singletons.Global g) {
+  private Dava myDava;
+
+  @Inject
+  public ExceptionFinder(Dava myDava) {
+    this.myDava = myDava;
   }
+
 
   public static ExceptionFinder v() {
     return G.v().soot_dava_toolkits_base_finders_ExceptionFinder();
   }
 
   public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
-    Dava.v().log("ExceptionFinder::find()");
+    myDava.log("ExceptionFinder::find()");
 
     for (ExceptionNode en : body.get_ExceptionFacts()) {
       if (body.get_SynchronizedBlockFacts().contains(en)) {
@@ -74,7 +79,7 @@ public class ExceptionFinder implements FactFinder {
   }
 
   public void preprocess(DavaBody body, AugmentedStmtGraph asg) {
-    Dava.v().log("ExceptionFinder::preprocess()");
+    myDava.log("ExceptionFinder::preprocess()");
 
     IterableSet<ExceptionNode> enlist = new IterableSet<ExceptionNode>();
 
@@ -92,7 +97,7 @@ public class ExceptionFinder implements FactFinder {
           tryBody.add(asg.get_AugStmt((Stmt) u));
         }
 
-        enlist.add(new ExceptionNode(tryBody, trap.getException(), asg.get_AugStmt((Stmt) trap.getHandlerUnit())));
+        enlist.add(new ExceptionNode(tryBody, trap.getException(), asg.get_AugStmt((Stmt) trap.getHandlerUnit()), this));
       }
     }
 

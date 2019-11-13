@@ -61,7 +61,7 @@ public class FilledNewArrayInstruction extends FilledArrayInstruction {
     Instruction35c filledNewArrayInstr = (Instruction35c) instruction;
     int[] regs = { filledNewArrayInstr.getRegisterC(), filledNewArrayInstr.getRegisterD(),
         filledNewArrayInstr.getRegisterE(), filledNewArrayInstr.getRegisterF(), filledNewArrayInstr.getRegisterG(), };
-    // NopStmt nopStmtBeginning = Jimple.v().newNopStmt();
+    // NopStmt nopStmtBeginning = myJimple.newNopStmt();
     // body.add(nopStmtBeginning);
 
     int usedRegister = filledNewArrayInstr.getRegisterCount();
@@ -69,19 +69,19 @@ public class FilledNewArrayInstruction extends FilledArrayInstruction {
     Type t = DexType.toSoot((TypeReference) filledNewArrayInstr.getReference());
     // NewArrayExpr needs the ElementType as it increases the array dimension by 1
     Type arrayType = ((ArrayType) t).getElementType();
-    NewArrayExpr arrayExpr = Jimple.v().newNewArrayExpr(arrayType, IntConstant.v(usedRegister));
+    NewArrayExpr arrayExpr = myJimple.newNewArrayExpr(arrayType, IntConstant.v(usedRegister));
     // new local generated intentional, will be moved to real register by MoveResult
     Local arrayLocal = body.getStoreResultLocal();
-    AssignStmt assign = Jimple.v().newAssignStmt(arrayLocal, arrayExpr);
+    AssignStmt assign = myJimple.newAssignStmt(arrayLocal, arrayExpr);
     body.add(assign);
     for (int i = 0; i < usedRegister; i++) {
-      ArrayRef arrayRef = Jimple.v().newArrayRef(arrayLocal, IntConstant.v(i));
+      ArrayRef arrayRef = myJimple.newArrayRef(arrayLocal, IntConstant.v(i));
 
-      AssignStmt assign2 = Jimple.v().newAssignStmt(arrayRef, body.getRegisterLocal(regs[i]));
+      AssignStmt assign2 = myJimple.newAssignStmt(arrayRef, body.getRegisterLocal(regs[i]));
       addTags(assign2);
       body.add(assign2);
     }
-    // NopStmt nopStmtEnd = Jimple.v().newNopStmt();
+    // NopStmt nopStmtEnd = myJimple.newNopStmt();
     // body.add(nopStmtEnd);
     // defineBlock(nopStmtBeginning, nopStmtEnd);
     setUnit(assign);

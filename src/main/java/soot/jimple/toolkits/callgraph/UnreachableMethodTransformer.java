@@ -42,7 +42,7 @@ import soot.jimple.StringConstant;
 public class UnreachableMethodTransformer extends BodyTransformer {
   protected void internalTransform(Body b, String phaseName, Map options) {
     // System.out.println( "Performing UnreachableMethodTransformer" );
-    ReachableMethods reachableMethods = Scene.v().getReachableMethods();
+    ReachableMethods reachableMethods = myScene.getReachableMethods();
     SootMethod method = b.getMethod();
     // System.out.println( "Method: " + method.getName() );
     if (reachableMethods.contains(method)) {
@@ -54,30 +54,30 @@ public class UnreachableMethodTransformer extends BodyTransformer {
     PatchingChain units = body.getUnits();
     List<Unit> list = new Vector<Unit>();
 
-    Local tmpRef = Jimple.v().newLocal("tmpRef", RefType.v("java.io.PrintStream"));
+    Local tmpRef = myJimple.newLocal("tmpRef", RefType.v("java.io.PrintStream"));
     body.getLocals().add(tmpRef);
-    list.add(Jimple.v().newAssignStmt(tmpRef,
-        Jimple.v().newStaticFieldRef(Scene.v().getField("<java.lang.System: java.io.PrintStream out>").makeRef())));
+    list.add(myJimple.newAssignStmt(tmpRef,
+        myJimple.newStaticFieldRef(myScene.getField("<java.lang.System: java.io.PrintStream out>").makeRef())));
 
-    SootMethod toCall = Scene.v().getMethod("<java.lang.Thread: void dumpStack()>");
-    list.add(Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(toCall.makeRef())));
+    SootMethod toCall = myScene.getMethod("<java.lang.Thread: void dumpStack()>");
+    list.add(myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(toCall.makeRef())));
 
-    toCall = Scene.v().getMethod("<java.io.PrintStream: void println(java.lang.String)>");
-    list.add(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(tmpRef, toCall.makeRef(),
+    toCall = myScene.getMethod("<java.io.PrintStream: void println(java.lang.String)>");
+    list.add(myJimple.newInvokeStmt(myJimple.newVirtualInvokeExpr(tmpRef, toCall.makeRef(),
         StringConstant.v("Executing supposedly unreachable method:"))));
-    list.add(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(tmpRef, toCall.makeRef(),
+    list.add(myJimple.newInvokeStmt(myJimple.newVirtualInvokeExpr(tmpRef, toCall.makeRef(),
         StringConstant.v("\t" + method.getDeclaringClass().getName() + "." + method.getName()))));
 
-    toCall = Scene.v().getMethod("<java.lang.System: void exit(int)>");
-    list.add(Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(toCall.makeRef(), IntConstant.v(1))));
+    toCall = myScene.getMethod("<java.lang.System: void exit(int)>");
+    list.add(myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(toCall.makeRef(), IntConstant.v(1))));
 
     /*
-     * Stmt r; if( method.getReturnType() instanceof VoidType ) { list.add( r=Jimple.v().newReturnVoidStmt() ); } else if(
-     * method.getReturnType() instanceof RefLikeType ) { list.add( r=Jimple.v().newReturnStmt( NullConstant.v() ) ); } else
+     * Stmt r; if( method.getReturnType() instanceof VoidType ) { list.add( r=myJimple.newReturnVoidStmt() ); } else if(
+     * method.getReturnType() instanceof RefLikeType ) { list.add( r=myJimple.newReturnStmt( myNullConstant ) ); } else
      * if( method.getReturnType() instanceof PrimType ) { if( method.getReturnType() instanceof DoubleType ) { list.add(
-     * r=Jimple.v().newReturnStmt( DoubleConstant.v( 0 ) ) ); } else if( method.getReturnType() instanceof LongType ) {
-     * list.add( r=Jimple.v().newReturnStmt( LongConstant.v( 0 ) ) ); } else if( method.getReturnType() instanceof FloatType
-     * ) { list.add( r=Jimple.v().newReturnStmt( FloatConstant.v( 0 ) ) ); } else { list.add( r=Jimple.v().newReturnStmt(
+     * r=myJimple.newReturnStmt( DoubleConstant.v( 0 ) ) ); } else if( method.getReturnType() instanceof LongType ) {
+     * list.add( r=myJimple.newReturnStmt( LongConstant.v( 0 ) ) ); } else if( method.getReturnType() instanceof FloatType
+     * ) { list.add( r=myJimple.newReturnStmt( FloatConstant.v( 0 ) ) ); } else { list.add( r=myJimple.newReturnStmt(
      * IntConstant.v( 0 ) ) ); } } else { throw new RuntimeException( "Wrong return method type: " + method.getReturnType()
      * ); }
      */

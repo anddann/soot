@@ -57,7 +57,7 @@ public class FastAvailableExpressions implements AvailableExpressions {
 
   /** Wrapper for AvailableExpressionsAnalysis. */
   public FastAvailableExpressions(Body b, SideEffectTester st) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "] Finding available expressions...");
     }
 
@@ -114,7 +114,7 @@ public class FastAvailableExpressions implements AvailableExpressions {
       }
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "]     Found available expressions...");
     }
   }

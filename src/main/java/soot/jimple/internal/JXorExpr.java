@@ -44,7 +44,7 @@ public class JXorExpr extends AbstractJimpleIntLongBinopExpr implements XorExpr 
   }
 
   Object makeBafInst(Type opType) {
-    return Baf.v().newXorInst(this.getOp1().getType());
+    return myBaf.newXorInst(this.getOp1().getType());
   }
 
   public Object clone() {

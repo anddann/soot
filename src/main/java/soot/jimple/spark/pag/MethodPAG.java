@@ -281,7 +281,7 @@ public final class MethodPAG {
     if (method.getNumberedSubSignature().equals(sigCanonicalize)) {
       SootClass cl = method.getDeclaringClass();
       while (cl != null) {
-        if (cl.equals(Scene.v().getSootClass("java.io.FileSystem"))) {
+        if (cl.equals(myScene.getSootClass("java.io.FileSystem"))) {
           addInEdge(pag.nodeFactory().caseCanonicalPath(), nodeFactory.caseRet());
         }
         cl = cl.getSuperclassUnsafe();
@@ -289,7 +289,7 @@ public final class MethodPAG {
     }
 
     boolean isImplicit = false;
-    for (SootMethod implicitMethod : EntryPoints.v().implicit()) {
+    for (SootMethod implicitMethod : myEntryPoints.implicit()) {
       if (implicitMethod.getNumberedSubSignature().equals(method.getNumberedSubSignature())) {
         isImplicit = true;
         break;
@@ -314,5 +314,5 @@ public final class MethodPAG {
   }
 
   protected final NumberedString sigCanonicalize
-      = Scene.v().getSubSigNumberer().findOrAdd("java.lang.String canonicalize(java.lang.String)");
+      = myScene.getSubSigNumberer().findOrAdd("java.lang.String canonicalize(java.lang.String)");
 }

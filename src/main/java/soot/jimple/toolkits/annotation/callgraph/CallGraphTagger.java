@@ -52,9 +52,9 @@ public class CallGraphTagger extends BodyTransformer {
 
   protected void internalTransform(Body b, String phaseName, Map options) {
 
-    CallGraph cg = Scene.v().getCallGraph();
+    CallGraph cg = myScene.getCallGraph();
     if (methodToContexts == null) {
-      methodToContexts = new MethodToContexts(Scene.v().getReachableMethods().listener());
+      methodToContexts = new MethodToContexts(myScene.getReachableMethods().listener());
     }
 
     Iterator stmtIt = b.getUnits().iterator();

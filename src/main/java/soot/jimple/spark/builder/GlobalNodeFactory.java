@@ -117,7 +117,7 @@ public class GlobalNodeFactory {
     VarNode stringNodeLocal = pag.makeGlobalVarNode(PointsToAnalysis.STRING_NODE_LOCAL, rtString);
     pag.addEdge(argv, sanl);
     pag.addEdge(stringNode, stringNodeLocal);
-    pag.addEdge(stringNodeLocal, pag.makeFieldRefNode(sanl, ArrayElement.v()));
+    pag.addEdge(stringNodeLocal, pag.makeFieldRefNode(sanl, myArrayElement));
     return sanl;
   }
 
@@ -126,7 +126,7 @@ public class GlobalNodeFactory {
       cls = pag.findLocalVarNode(cls.getVariable());
     }
     VarNode local = pag.makeGlobalVarNode(cls, rtObject);
-    for (SootClass cl : Scene.v().dynamicClasses()) {
+    for (SootClass cl : myScene.dynamicClasses()) {
       AllocNode site = pag.makeAllocNode(new Pair<VarNode, SootClass>(cls, cl), cl.getType(), null);
       pag.addEdge(site, local);
     }

@@ -147,7 +147,7 @@ public enum CheckTypesValidator implements BodyValidator {
       if (leftClass.isInterface()) {
         if (rightClass.isInterface()) {
           if (!(leftClass.getName().equals(rightClass.getName())
-              || Scene.v().getActiveHierarchy().isInterfaceSubinterfaceOf(rightClass, leftClass))) {
+              || myScene.getActiveHierarchy().isInterfaceSubinterfaceOf(rightClass, leftClass))) {
             exception.add(new ValidationException(stmt,
                 "Warning: Bad use of interface type" + errorSuffix + " in " + body.getMethod()));
           }
@@ -159,7 +159,7 @@ public enum CheckTypesValidator implements BodyValidator {
           exception.add(new ValidationException(stmt, "Warning: trying to use interface type where non-Object class expected"
               + errorSuffix + " in " + body.getMethod()));
         } else {
-          if (!Scene.v().getActiveHierarchy().isClassSubclassOfIncluding(rightClass, leftClass)) {
+          if (!myScene.getActiveHierarchy().isClassSubclassOfIncluding(rightClass, leftClass)) {
             exception.add(
                 new ValidationException(stmt, "Warning: Bad use of class type" + errorSuffix + " in " + body.getMethod()));
           }

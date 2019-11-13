@@ -100,7 +100,7 @@ public class DexField {
     String name = f.getName();
     Type type = DexType.toSoot(f.getType());
     int flags = f.getAccessFlags();
-    SootField sf = Scene.v().makeSootField(name, type, flags);
+    SootField sf = myScene.makeSootField(name, type, flags);
     DexField.addConstantTag(sf, f);
     return sf;
   }

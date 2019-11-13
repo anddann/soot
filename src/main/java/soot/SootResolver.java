@@ -66,7 +66,7 @@ public class SootResolver {
   }
 
   protected void initializeProgram() {
-    if (Options.v().src_prec() != Options.src_prec_apk_c_j) {
+    if (myOptions.src_prec() != Options.src_prec_apk_c_j) {
       program = new Program();
       program.state().reset();
 
@@ -80,12 +80,12 @@ public class SootResolver {
 
       program.options().initOptions();
       program.options().addKeyValueOption("-classpath");
-      program.options().setValueForOption(Scene.v().getSootClassPath(), "-classpath");
-      if (Options.v().src_prec() == Options.src_prec_java) {
+      program.options().setValueForOption(myScene.getSootClassPath(), "-classpath");
+      if (myOptions.src_prec() == Options.src_prec_java) {
         program.setSrcPrec(Program.SRC_PREC_JAVA);
-      } else if (Options.v().src_prec() == Options.src_prec_class) {
+      } else if (myOptions.src_prec() == Options.src_prec_class) {
         program.setSrcPrec(Program.SRC_PREC_CLASS);
-      } else if (Options.v().src_prec() == Options.src_prec_only_class) {
+      } else if (myOptions.src_prec() == Options.src_prec_only_class) {
         program.setSrcPrec(Program.SRC_PREC_CLASS);
       }
       program.initPaths();
@@ -98,11 +98,11 @@ public class SootResolver {
 
   /** Returns true if we are resolving all class refs recursively. */
   protected boolean resolveEverything() {
-    if (Options.v().on_the_fly()) {
+    if (myOptions.on_the_fly()) {
       return false;
     }
-    return (Options.v().whole_program() || Options.v().whole_shimple() || Options.v().full_resolver()
-        || Options.v().output_format() == Options.output_format_dava);
+    return (myOptions.whole_program() || myOptions.whole_shimple() || myOptions.full_resolver()
+        || myOptions.output_format() == Options.output_format_dava);
   }
 
   /**
@@ -110,14 +110,14 @@ public class SootResolver {
    * will be resolved into this SootClass.
    */
   public SootClass makeClassRef(String className) {
-    if (Scene.v().containsClass(className)) {
-      return Scene.v().getSootClass(className);
+    if (myScene.containsClass(className)) {
+      return myScene.getSootClass(className);
     }
 
     SootClass newClass;
-    newClass = new SootClass(className);
+    newClass = new SootClass(className, myScene, myOptions, myPackageNamer);
     newClass.setResolvingLevel(SootClass.DANGLING);
-    Scene.v().addClass(newClass);
+    myScene.addClass(newClass);
 
     return newClass;
   }
@@ -137,7 +137,7 @@ public class SootResolver {
       // remove unresolved class and rethrow
       if (resolvedClass != null) {
         assert resolvedClass.resolvingLevel() == SootClass.DANGLING;
-        Scene.v().removeClass(resolvedClass);
+        myScene.removeClass(resolvedClass);
       }
       throw e;
     }
@@ -149,8 +149,8 @@ public class SootResolver {
       while (!worklist[i].isEmpty()) {
         SootClass sc = worklist[i].pop();
         if (resolveEverything()) { // Whole program mode
-          boolean onlySignatures = sc.isPhantom() || (Options.v().no_bodies_for_excluded() && Scene.v().isExcluded(sc)
-              && !Scene.v().getBasicClasses().contains(sc.getName()));
+          boolean onlySignatures = sc.isPhantom() || (myOptions.no_bodies_for_excluded() && myScene.isExcluded(sc)
+              && !myScene.getBasicClasses().contains(sc.getName()));
           if (onlySignatures) {
             bringToSignatures(sc);
             sc.setPhantomClass();
@@ -206,7 +206,7 @@ public class SootResolver {
     if (sc.resolvingLevel() >= SootClass.HIERARCHY) {
       return;
     }
-    if (Options.v().debug_resolver()) {
+    if (myOptions.debug_resolver()) {
       logger.debug("bringing to HIERARCHY: " + sc);
     }
     sc.setResolvingLevel(SootClass.HIERARCHY);
@@ -216,11 +216,11 @@ public class SootResolver {
 
   protected void bringToHierarchyUnchecked(SootClass sc) {
     String className = sc.getName();
-    ClassSource is = SourceLocator.v().getClassSource(className);
+    ClassSource is = mySourceLocator.getClassSource(className);
     try {
       boolean modelAsPhantomRef = is == null;
       if (modelAsPhantomRef) {
-        if (!Scene.v().allowsPhantomRefs()) {
+        if (!myScene.allowsPhantomRefs()) {
           String suffix = "";
           if (className.equals("java.lang.Object")) {
             suffix = " Try adding rt.jar to Soot's classpath, e.g.:\n" + "java -cp sootclasses.jar soot.Main -cp "
@@ -277,7 +277,7 @@ public class SootResolver {
       return;
     }
     bringToHierarchy(sc);
-    if (Options.v().debug_resolver()) {
+    if (myOptions.debug_resolver()) {
       logger.debug("bringing to SIGNATURES: " + sc);
     }
     sc.setResolvingLevel(SootClass.SIGNATURES);
@@ -317,7 +317,7 @@ public class SootResolver {
       return;
     }
     bringToSignatures(sc);
-    if (Options.v().debug_resolver()) {
+    if (myOptions.debug_resolver()) {
       logger.debug("bringing to BODIES: " + sc);
     }
     sc.setResolvingLevel(SootClass.BODIES);

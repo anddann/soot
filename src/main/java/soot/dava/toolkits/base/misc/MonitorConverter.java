@@ -29,7 +29,6 @@ import java.util.LinkedList;
 import soot.G;
 import soot.Modifier;
 import soot.RefType;
-import soot.Scene;
 import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
@@ -44,20 +43,20 @@ import soot.jimple.MonitorStmt;
 
 public class MonitorConverter {
   public MonitorConverter(Singletons.Global g) {
-    SootClass davaMonitor = new SootClass("soot.dava.toolkits.base.DavaMonitor.DavaMonitor", Modifier.PUBLIC);
-    davaMonitor.setSuperclass(Scene.v().loadClassAndSupport("java.lang.Object"));
+    SootClass davaMonitor = new SootClass("soot.dava.toolkits.base.DavaMonitor.DavaMonitor", myOptions, Modifier.PUBLIC, myScene, myPackageNamer);
+    davaMonitor.setSuperclass(myScene.loadClassAndSupport("java.lang.Object"));
 
     LinkedList objectSingleton = new LinkedList();
     objectSingleton.add(RefType.v("java.lang.Object"));
-    v = Scene.v().makeSootMethod("v", new LinkedList(), RefType.v("soot.dava.toolkits.base.DavaMonitor.DavaMonitor"),
+    v = myScene.makeSootMethod("v", new LinkedList(), RefType.v("soot.dava.toolkits.base.DavaMonitor.DavaMonitor"),
         Modifier.PUBLIC | Modifier.STATIC);
-    enter = Scene.v().makeSootMethod("enter", objectSingleton, VoidType.v(), Modifier.PUBLIC | Modifier.SYNCHRONIZED);
-    exit = Scene.v().makeSootMethod("exit", objectSingleton, VoidType.v(), Modifier.PUBLIC | Modifier.SYNCHRONIZED);
+    enter = myScene.makeSootMethod("enter", objectSingleton, VoidType.v(), Modifier.PUBLIC | Modifier.SYNCHRONIZED);
+    exit = myScene.makeSootMethod("exit", objectSingleton, VoidType.v(), Modifier.PUBLIC | Modifier.SYNCHRONIZED);
     davaMonitor.addMethod(v);
     davaMonitor.addMethod(enter);
     davaMonitor.addMethod(exit);
 
-    Scene.v().addClass(davaMonitor);
+    myScene.addClass(davaMonitor);
   }
 
   public static MonitorConverter v() {

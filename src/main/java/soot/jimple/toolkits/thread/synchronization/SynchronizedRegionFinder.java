@@ -107,12 +107,12 @@ public class SynchronizedRegionFinder extends ForwardFlowAnalysis<Unit, FlowSet<
     if (G.v().Union_factory == null) {
       G.v().Union_factory = new UnionFactory() {
         public Union newUnion() {
-          return FullObjectSet.v();
+          return myFullObjectSet;
         }
       };
     }
 
-    tasea = new CriticalSectionAwareSideEffectAnalysis(Scene.v().getPointsToAnalysis(), Scene.v().getCallGraph(), null, tlo);
+    tasea = new CriticalSectionAwareSideEffectAnalysis(myScene.getPointsToAnalysis(), myScene.getCallGraph(), null, tlo);
 
     prepUnits = new ArrayList<Object>();
 

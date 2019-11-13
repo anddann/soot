@@ -91,8 +91,8 @@ public class JavaSecurityAccessControllerNative extends NativeMethodClass {
       ReferenceVariable returnVar, ReferenceVariable params[]) {
     // No longer necessary since Spark handles it itself in a more precise
     // way.
-    // helper.assignObjectTo(returnVar, Environment.v().getLeastObject());
-    helper.throwException(Environment.v().getPrivilegedActionExceptionObject());
+    // helper.assignObjectTo(returnVar, myEnvironment.getLeastObject());
+    helper.throwException(myEnvironment.getPrivilegedActionExceptionObject());
   }
 
   /**
@@ -102,7 +102,7 @@ public class JavaSecurityAccessControllerNative extends NativeMethodClass {
    */
   public void java_security_AccessController_getStackAccessControlContext(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getLeastObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getLeastObject());
   }
 
   /**
@@ -112,6 +112,6 @@ public class JavaSecurityAccessControllerNative extends NativeMethodClass {
    */
   public void java_security_AccessController_getInheritedAccessControlContext(SootMethod method, ReferenceVariable thisVar,
       ReferenceVariable returnVar, ReferenceVariable params[]) {
-    helper.assignObjectTo(returnVar, Environment.v().getLeastObject());
+    helper.assignObjectTo(returnVar, myEnvironment.getLeastObject());
   }
 }

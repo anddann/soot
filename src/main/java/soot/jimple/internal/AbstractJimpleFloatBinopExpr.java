@@ -35,7 +35,7 @@ import soot.jimple.JimpleToBafContext;
 @SuppressWarnings("serial")
 abstract public class AbstractJimpleFloatBinopExpr extends AbstractFloatBinopExpr implements ConvertToBaf {
   AbstractJimpleFloatBinopExpr(Value op1, Value op2) {
-    this(Jimple.v().newArgBox(op1), Jimple.v().newArgBox(op2));
+    this(myJimple.newArgBox(op1), myJimple.newArgBox(op2));
   }
 
   protected AbstractJimpleFloatBinopExpr(ValueBox op1Box, ValueBox op2Box) {

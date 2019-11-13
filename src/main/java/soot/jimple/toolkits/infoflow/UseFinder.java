@@ -65,7 +65,7 @@ public class UseFinder {
     classToExtCalls = new HashMap<SootClass, List>();
     classToIntCalls = new HashMap<SootClass, ArrayList>();
 
-    rm = Scene.v().getReachableMethods();
+    rm = myScene.getReachableMethods();
 
     doAnalysis();
   }
@@ -143,7 +143,7 @@ public class UseFinder {
   }
 
   private void doAnalysis() {
-    Chain appClasses = Scene.v().getApplicationClasses();
+    Chain appClasses = myScene.getApplicationClasses();
 
     // Set up lists of internal and external accesses
     Iterator appClassesIt = appClasses.iterator();

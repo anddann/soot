@@ -39,7 +39,7 @@ public class AnonInitBodyBuilder extends JimpleBodyBuilder {
 
   public soot.jimple.JimpleBody createBody(soot.SootMethod sootMethod) {
 
-    body = soot.jimple.Jimple.v().newBody(sootMethod);
+    body = soot.jimple.myJimple.newBody(sootMethod);
 
     lg = new LocalGenerator(body);
 
@@ -59,12 +59,12 @@ public class AnonInitBodyBuilder extends JimpleBodyBuilder {
 
     // this formal needed
     soot.RefType type = sootMethod.getDeclaringClass().getType();
-    specialThisLocal = soot.jimple.Jimple.v().newLocal("this", type);
+    specialThisLocal = soot.jimple.myJimple.newLocal("this", type);
     body.getLocals().add(specialThisLocal);
 
-    soot.jimple.ThisRef thisRef = soot.jimple.Jimple.v().newThisRef(type);
+    soot.jimple.ThisRef thisRef = soot.jimple.myJimple.newThisRef(type);
 
-    soot.jimple.Stmt thisStmt = soot.jimple.Jimple.v().newIdentityStmt(specialThisLocal, thisRef);
+    soot.jimple.Stmt thisStmt = soot.jimple.myJimple.newIdentityStmt(specialThisLocal, thisRef);
     body.getUnits().add(thisStmt);
 
     ArrayList invokeList = new ArrayList();
@@ -88,11 +88,11 @@ public class AnonInitBodyBuilder extends JimpleBodyBuilder {
     int counter = 0;
     while (fIt.hasNext()) {
       soot.Type fType = (soot.Type) fIt.next();
-      soot.Local local = soot.jimple.Jimple.v().newLocal("r" + counter, fType);
+      soot.Local local = soot.jimple.myJimple.newLocal("r" + counter, fType);
       body.getLocals().add(local);
-      soot.jimple.ParameterRef paramRef = soot.jimple.Jimple.v().newParameterRef(fType, counter);
+      soot.jimple.ParameterRef paramRef = soot.jimple.myJimple.newParameterRef(fType, counter);
 
-      soot.jimple.Stmt stmt = soot.jimple.Jimple.v().newIdentityStmt(local, paramRef);
+      soot.jimple.Stmt stmt = soot.jimple.myJimple.newIdentityStmt(local, paramRef);
 
       int realArgs = 0;
       if ((hasOuterRef) && (counter == 0)) {
@@ -126,12 +126,12 @@ public class AnonInitBodyBuilder extends JimpleBodyBuilder {
     SootClass superClass = sootMethod.getDeclaringClass().getSuperclass();
 
     // ArrayList needsRef =
-    // needsOuterClassRef(polyglotOuterType);//soot.javaToJimple.InitialResolver.v().getHasOuterRefInInit();
+    // needsOuterClassRef(polyglotOuterType);//soot.javaToJimple.myInitialResolver.getHasOuterRefInInit();
     if (needsOuterClassRef(polyglotType)) {
       // if ((needsRef != null) && (needsRef.contains(superClass.getType())) ){
       invokeTypeList.add(0, superOuterType);
     }
-    SootMethodRef callMethod = Scene.v().makeMethodRef(sootMethod.getDeclaringClass().getSuperclass(), "<init>",
+    SootMethodRef callMethod = myScene.makeMethodRef(sootMethod.getDeclaringClass().getSuperclass(), "<init>",
         invokeTypeList, VoidType.v(), false);
     if ((!hasQualifier) && (needsOuterClassRef(polyglotType))) { // && (needsRef.contains(superClass.getType()))){
       if (isSubType) {
@@ -140,18 +140,18 @@ public class AnonInitBodyBuilder extends JimpleBodyBuilder {
         invokeList.add(0, Util.getThisGivenOuter(superOuterType, new HashMap(), body, new LocalGenerator(body), outerLocal));
       }
     }
-    soot.jimple.InvokeExpr invoke = soot.jimple.Jimple.v().newSpecialInvokeExpr(specialThisLocal, callMethod, invokeList);
+    soot.jimple.InvokeExpr invoke = soot.jimple.myJimple.newSpecialInvokeExpr(specialThisLocal, callMethod, invokeList);
 
-    soot.jimple.Stmt invokeStmt = soot.jimple.Jimple.v().newInvokeStmt(invoke);
+    soot.jimple.Stmt invokeStmt = soot.jimple.myJimple.newInvokeStmt(invoke);
     body.getUnits().add(invokeStmt);
 
     // System.out.println("polyglotType: "+polyglotType+" needs ref: "+needsOuterClassRef(polyglotType));
 
     // field assign
     if (!inStaticMethod && needsOuterClassRef(anonType)) {
-      soot.SootFieldRef field = Scene.v().makeFieldRef(sootMethod.getDeclaringClass(), "this$0", outerClassType, false);
-      soot.jimple.InstanceFieldRef ref = soot.jimple.Jimple.v().newInstanceFieldRef(specialThisLocal, field);
-      soot.jimple.AssignStmt assign = soot.jimple.Jimple.v().newAssignStmt(ref, outerLocal);
+      soot.SootFieldRef field = myScene.makeFieldRef(sootMethod.getDeclaringClass(), "this$0", outerClassType, false);
+      soot.jimple.InstanceFieldRef ref = soot.jimple.myJimple.newInstanceFieldRef(specialThisLocal, field);
+      soot.jimple.AssignStmt assign = soot.jimple.myJimple.newAssignStmt(ref, outerLocal);
       body.getUnits().add(assign);
     }
     if (fields != null) {
@@ -162,9 +162,9 @@ public class AnonInitBodyBuilder extends JimpleBodyBuilder {
         soot.Local pLocal = (soot.Local) finalsIt.next();
         soot.SootField pField = fieldsIt.next();
 
-        soot.jimple.FieldRef pRef = soot.jimple.Jimple.v().newInstanceFieldRef(specialThisLocal, pField.makeRef());
+        soot.jimple.FieldRef pRef = soot.jimple.myJimple.newInstanceFieldRef(specialThisLocal, pField.makeRef());
 
-        soot.jimple.AssignStmt pAssign = soot.jimple.Jimple.v().newAssignStmt(pRef, pLocal);
+        soot.jimple.AssignStmt pAssign = soot.jimple.myJimple.newAssignStmt(pRef, pLocal);
         body.getUnits().add(pAssign);
 
       }
@@ -183,7 +183,7 @@ public class AnonInitBodyBuilder extends JimpleBodyBuilder {
     }
 
     // return
-    soot.jimple.ReturnVoidStmt retStmt = soot.jimple.Jimple.v().newReturnVoidStmt();
+    soot.jimple.ReturnVoidStmt retStmt = soot.jimple.myJimple.newReturnVoidStmt();
     body.getUnits().add(retStmt);
 
     return body;

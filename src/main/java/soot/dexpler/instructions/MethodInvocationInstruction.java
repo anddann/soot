@@ -81,14 +81,14 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
       // i.setExpr(invocation);
       // if (lineNumber != -1)
       // i.setTag(new SourceLineNumberTag(lineNumber));
-      assign = Jimple.v().newAssignStmt(body.getStoreResultLocal(), invocation);
+      assign = myJimple.newAssignStmt(body.getStoreResultLocal(), invocation);
       setUnit(assign);
       addTags(assign);
       body.add(assign);
       unit = assign;
       // this is a invoke statement (the MoveResult had to be the direct successor for an expression)
     } else {
-      InvokeStmt invoke = Jimple.v().newInvokeStmt(invocation);
+      InvokeStmt invoke = myJimple.newInvokeStmt(invocation);
       setUnit(invoke);
       addTags(invoke);
       body.add(invoke);
@@ -256,7 +256,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
    */
   protected SootMethodRef getSootMethodRef(SootClass sc, String name, String returnType, 
       List<? extends CharSequence> paramTypes, Kind kind) {
-    return Scene.v().makeMethodRef(sc, name, convertParameterTypes(paramTypes), DexType.toSoot(returnType), 
+    return myScene.makeMethodRef(sc, name, convertParameterTypes(paramTypes), DexType.toSoot(returnType), 
         kind == Kind.REF_INVOKE_STATIC);
   }
   
@@ -279,7 +279,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
    * @return A SootFieldRef
    */
   protected SootFieldRef getSootFieldRef(SootClass sc, String name, String type, Kind kind) {
-    return Scene.v().makeFieldRef(sc, name, DexType.toSoot(type), kind == Kind.REF_GET_FIELD_STATIC 
+    return myScene.makeFieldRef(sc, name, DexType.toSoot(type), kind == Kind.REF_GET_FIELD_STATIC 
         || kind == Kind.REF_PUT_FIELD_STATIC);
   }
   
@@ -311,7 +311,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
       name = dottedClassName(name);
     }
     
-    SootClass sc = SootResolver.v().makeClassRef(name);
+    SootClass sc = mySootResolver.makeClassRef(name);
     if (kind == Kind.REF_INVOKE_INTERFACE && sc.isPhantom()) {
       sc.setModifiers(sc.getModifiers() | Modifier.INTERFACE);
     }
@@ -383,7 +383,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
     // This is actually a VirtualInvoke
     MethodReference item = (MethodReference) ((ReferenceInstruction) instruction).getReference();
     List<Local> parameters = buildParameters(body, item.getParameterTypes(), false);
-    invocation = Jimple.v().newVirtualInvokeExpr(parameters.get(0), ref, parameters.subList(1, parameters.size()));
+    invocation = myJimple.newVirtualInvokeExpr(parameters.get(0), ref, parameters.subList(1, parameters.size()));
     body.setDanglingInstruction(this);
   }
 
@@ -400,7 +400,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
 
     MethodReference item = (MethodReference) ((ReferenceInstruction) instruction).getReference();
     List<Local> parameters = buildParameters(body, item.getParameterTypes(), false);
-    invocation = Jimple.v().newInterfaceInvokeExpr(parameters.get(0), ref,
+    invocation = myJimple.newInterfaceInvokeExpr(parameters.get(0), ref,
         parameters.subList(1, parameters.size()));
     body.setDanglingInstruction(this);
   }
@@ -410,7 +410,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
   protected void jimplifySpecial(DexBody body) {
     MethodReference item = (MethodReference) ((ReferenceInstruction) instruction).getReference();
     List<Local> parameters = buildParameters(body, item.getParameterTypes(), false);
-    invocation = Jimple.v().newSpecialInvokeExpr(parameters.get(0), getVirtualSootMethodRef(), 
+    invocation = myJimple.newSpecialInvokeExpr(parameters.get(0), getVirtualSootMethodRef(), 
         parameters.subList(1, parameters.size()));
     body.setDanglingInstruction(this);
   }
@@ -419,7 +419,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
    */
   protected void jimplifyStatic(DexBody body) {
     MethodReference item = (MethodReference) ((ReferenceInstruction) instruction).getReference();
-    invocation = Jimple.v().newStaticInvokeExpr(getStaticSootMethodRef(), 
+    invocation = myJimple.newStaticInvokeExpr(getStaticSootMethodRef(), 
         buildParameters(body, item.getParameterTypes(), true));
     body.setDanglingInstruction(this);
   }

@@ -46,7 +46,7 @@ public class ASTSwitchNode extends ASTLabeledNode {
   public ASTSwitchNode(SETNodeLabel label, Value key, List<Object> indexList, Map<Object, List<Object>> index2BodyList) {
     super(label);
 
-    this.keyBox = Jimple.v().newRValueBox(key);
+    this.keyBox = myJimple.newRValueBox(key);
     this.indexList = indexList;
     this.index2BodyList = index2BodyList;
 
@@ -94,7 +94,7 @@ public class ASTSwitchNode extends ASTLabeledNode {
   }
 
   public void set_Key(Value key) {
-    this.keyBox = Jimple.v().newRValueBox(key);
+    this.keyBox = myJimple.newRValueBox(key);
   }
 
   public Object clone() {
@@ -102,10 +102,10 @@ public class ASTSwitchNode extends ASTLabeledNode {
   }
 
   public void perform_Analysis(ASTAnalysis a) {
-    ASTWalker.v().walk_value(a, get_Key());
+    myASTWalker.walk_value(a, get_Key());
 
     if (a instanceof TryContentsFinder) {
-      TryContentsFinder.v().add_ExceptionSet(this, TryContentsFinder.v().remove_CurExceptionSet());
+      myTryContentsFinder.add_ExceptionSet(this, myTryContentsFinder.remove_CurExceptionSet());
     }
 
     perform_AnalysisOnSubBodies(a);

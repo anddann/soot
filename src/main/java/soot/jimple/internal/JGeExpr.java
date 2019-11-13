@@ -45,7 +45,7 @@ public class JGeExpr extends AbstractJimpleIntBinopExpr implements GeExpr {
   Object makeBafInst(Type opType) {
     throw new RuntimeException("unsupported conversion: " + this);
   }
-  // Object makeBafInst(Type opType) { return Baf.v().newGeInst(this.getOp1().getType()); }
+  // Object makeBafInst(Type opType) { return myBaf.newGeInst(this.getOp1().getType()); }
 
   public Object clone() {
     return new JGeExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()));

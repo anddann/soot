@@ -403,11 +403,11 @@ public abstract class AbstractJasminClass {
   }
 
   public AbstractJasminClass(SootClass sootClass) {
-    if (Options.v().time()) {
-      Timers.v().buildJasminTimer.start();
+    if (myOptions.time()) {
+      myTimers.buildJasminTimer.start();
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + sootClass.getName() + "] Constructing baf.JasminClass...");
     }
 
@@ -417,7 +417,7 @@ public abstract class AbstractJasminClass {
     {
       int modifiers = sootClass.getModifiers();
 
-      if ((sootClass.getTag("SourceFileTag") != null) && (!Options.v().no_output_source_file_attribute())) {
+      if ((sootClass.getTag("SourceFileTag") != null) && (!myOptions.no_output_source_file_attribute())) {
         String srcName = ((SourceFileTag) sootClass.getTag("SourceFileTag")).getSourceFile();
         // Since Jasmin fails on backslashes and only Windows uses backslashes,
         // but also accepts forward slashes, we transform it.
@@ -430,7 +430,7 @@ public abstract class AbstractJasminClass {
         // 'Badly formatted number' error. When analyzing an Android
         // applications (.apk) their name is stored in srcName and
         // can start with a digit.
-        if (!Options.v().android_jars().isEmpty() && !srcName.isEmpty() && Character.isDigit(srcName.charAt(0))) {
+        if (!myOptions.android_jars().isEmpty() && !srcName.isEmpty() && Character.isDigit(srcName.charAt(0))) {
           srcName = "n_" + srcName;
         }
 
@@ -493,7 +493,7 @@ public abstract class AbstractJasminClass {
     // emit inner class attributes
     InnerClassAttribute ica = (InnerClassAttribute) sootClass.getTag("InnerClassAttribute");
     if (ica != null && ica.getSpecs().size() > 0) {
-      if (!Options.v().no_output_inner_classes_attribute()) {
+      if (!myOptions.no_output_inner_classes_attribute()) {
         emit(".inner_class_attr ");
         for (InnerClassTag ict : ((InnerClassAttribute) sootClass.getTag("InnerClassAttribute")).getSpecs()) {
           // System.out.println("inner class tag: "+ict);
@@ -613,18 +613,18 @@ public abstract class AbstractJasminClass {
       }
     }
 
-    if (Options.v().time()) {
-      Timers.v().buildJasminTimer.end();
+    if (myOptions.time()) {
+      myTimers.buildJasminTimer.end();
     }
   }
 
   protected void assignColorsToLocals(Body body) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Assigning colors to locals...");
     }
 
-    if (Options.v().time()) {
-      Timers.v().packTimer.start();
+    if (myOptions.time()) {
+      myTimers.packTimer.start();
     }
 
     localToGroup = new HashMap<Local, Object>(body.getLocalCount() * 2 + 1, 0.7f);

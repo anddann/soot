@@ -69,9 +69,9 @@ public class FieldStaticnessCorrector extends AbstractStaticnessCorrector {
               if (fld != null && fld.isStatic()) {
                 AssignStmt assignStmt = (AssignStmt) s;
                 if (assignStmt.getLeftOp() == ref) {
-                  assignStmt.setLeftOp(Jimple.v().newStaticFieldRef(ref.getField().makeRef()));
+                  assignStmt.setLeftOp(myJimple.newStaticFieldRef(ref.getField().makeRef()));
                 } else if (assignStmt.getRightOp() == ref) {
-                  assignStmt.setRightOp(Jimple.v().newStaticFieldRef(ref.getField().makeRef()));
+                  assignStmt.setRightOp(myJimple.newStaticFieldRef(ref.getField().makeRef()));
                 }
               }
             }

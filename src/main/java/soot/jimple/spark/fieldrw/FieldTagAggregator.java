@@ -41,8 +41,8 @@ public class FieldTagAggregator extends TagAggregator {
   }
 
   protected void internalTransform(Body b, String phaseName, Map options) {
-    FieldReadTagAggregator.v().transform(b, phaseName, options);
-    FieldWriteTagAggregator.v().transform(b, phaseName, options);
+    FieldReadTagmyAggregator.transform(b, phaseName, options);
+    FieldWriteTagmyAggregator.transform(b, phaseName, options);
   }
 
   /** Decide whether this tag should be aggregated by this aggregator. */

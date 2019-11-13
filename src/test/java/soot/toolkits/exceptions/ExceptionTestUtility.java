@@ -117,144 +117,144 @@ public class ExceptionTestUtility {
 	final Set<RefLikeType> ALL_ERRORS_REP;
 
 	ExceptionTestUtility() {
-		Options.v().set_prepend_classpath(true);
+		myOptions.set_prepend_classpath(true);
 
-		THROWABLE = Scene.v().getRefType("java.lang.Throwable");
+		THROWABLE = myScene.getRefType("java.lang.Throwable");
 
-		ERROR = Scene.v().getRefType("java.lang.Error");
+		ERROR = myScene.getRefType("java.lang.Error");
 
-		Scene.v().forceResolve("java.lang.Exception", SootClass.BODIES);
-		EXCEPTION = Scene.v().getRefType("java.lang.Exception");
+		myScene.forceResolve("java.lang.Exception", SootClass.BODIES);
+		EXCEPTION = myScene.getRefType("java.lang.Exception");
 
 		// runtime exceptions.
-		RUNTIME_EXCEPTION = Scene.v().getRefType("java.lang.RuntimeException");
+		RUNTIME_EXCEPTION = myScene.getRefType("java.lang.RuntimeException");
 
-		ARITHMETIC_EXCEPTION = Scene.v().getRefType(
+		ARITHMETIC_EXCEPTION = myScene.getRefType(
 				"java.lang.ArithmeticException");
 
-		ARRAY_STORE_EXCEPTION = Scene.v().getRefType(
+		ARRAY_STORE_EXCEPTION = myScene.getRefType(
 				"java.lang.ArrayStoreException");
 
-		CLASS_CAST_EXCEPTION = Scene.v().getRefType(
+		CLASS_CAST_EXCEPTION = myScene.getRefType(
 				"java.lang.ClassCastException");
 
-		ILLEGAL_MONITOR_STATE_EXCEPTION = Scene.v().getRefType(
+		ILLEGAL_MONITOR_STATE_EXCEPTION = myScene.getRefType(
 				"java.lang.IllegalMonitorStateException");
 
-		INDEX_OUT_OF_BOUNDS_EXCEPTION = Scene.v().getRefType(
+		INDEX_OUT_OF_BOUNDS_EXCEPTION = myScene.getRefType(
 				"java.lang.IndexOutOfBoundsException");
 
-		ARRAY_INDEX_OUT_OF_BOUNDS_EXCEPTION = Scene.v().getRefType(
+		ARRAY_INDEX_OUT_OF_BOUNDS_EXCEPTION = myScene.getRefType(
 				"java.lang.ArrayIndexOutOfBoundsException");
 
-		Scene.v().forceResolve("java.lang.StringIndexOutOfBoundsException",
+		myScene.forceResolve("java.lang.StringIndexOutOfBoundsException",
 				SootClass.BODIES);
-		STRING_INDEX_OUT_OF_BOUNDS_EXCEPTION = Scene.v().getRefType(
+		STRING_INDEX_OUT_OF_BOUNDS_EXCEPTION = myScene.getRefType(
 				"java.lang.StringIndexOutOfBoundsException");
 
-		NEGATIVE_ARRAY_SIZE_EXCEPTION = Scene.v().getRefType(
+		NEGATIVE_ARRAY_SIZE_EXCEPTION = myScene.getRefType(
 				"java.lang.NegativeArraySizeException");
 
-		NULL_POINTER_EXCEPTION = Scene.v().getRefType(
+		NULL_POINTER_EXCEPTION = myScene.getRefType(
 				"java.lang.NullPointerException");
 
 		// linkage errors.
-		LINKAGE_ERROR = Scene.v().getRefType("java.lang.LinkageError");
+		LINKAGE_ERROR = myScene.getRefType("java.lang.LinkageError");
 
-		CLASS_CIRCULARITY_ERROR = Scene.v().getRefType(
+		CLASS_CIRCULARITY_ERROR = myScene.getRefType(
 				"java.lang.ClassCircularityError");
 
-		CLASS_FORMAT_ERROR = Scene.v().getRefType("java.lang.ClassFormatError");
+		CLASS_FORMAT_ERROR = myScene.getRefType("java.lang.ClassFormatError");
 
-		Scene.v().forceResolve("java.lang.UnsupportedClassVersionError",
+		myScene.forceResolve("java.lang.UnsupportedClassVersionError",
 				SootClass.BODIES);
-		UNSUPPORTED_CLASS_VERSION_ERROR = Scene.v().getRefType(
+		UNSUPPORTED_CLASS_VERSION_ERROR = myScene.getRefType(
 				"java.lang.UnsupportedClassVersionError");
 
-		EXCEPTION_IN_INITIALIZER_ERROR = Scene.v().getRefType(
+		EXCEPTION_IN_INITIALIZER_ERROR = myScene.getRefType(
 				"java.lang.ExceptionInInitializerError");
 
-		INCOMPATIBLE_CLASS_CHANGE_ERROR = Scene.v().getRefType(
+		INCOMPATIBLE_CLASS_CHANGE_ERROR = myScene.getRefType(
 				"java.lang.IncompatibleClassChangeError");
 
-		ABSTRACT_METHOD_ERROR = Scene.v().getRefType(
+		ABSTRACT_METHOD_ERROR = myScene.getRefType(
 				"java.lang.AbstractMethodError");
 
-		ILLEGAL_ACCESS_ERROR = Scene.v().getRefType(
+		ILLEGAL_ACCESS_ERROR = myScene.getRefType(
 				"java.lang.IllegalAccessError");
 
-		INSTANTIATION_ERROR = Scene.v().getRefType(
+		INSTANTIATION_ERROR = myScene.getRefType(
 				"java.lang.InstantiationError");
 
-		NO_SUCH_FIELD_ERROR = Scene.v()
+		NO_SUCH_FIELD_ERROR = myScene
 				.getRefType("java.lang.NoSuchFieldError");
 
-		NO_SUCH_METHOD_ERROR = Scene.v().getRefType(
+		NO_SUCH_METHOD_ERROR = myScene.getRefType(
 				"java.lang.NoSuchMethodError");
 
-		NO_CLASS_DEF_FOUND_ERROR = Scene.v().getRefType(
+		NO_CLASS_DEF_FOUND_ERROR = myScene.getRefType(
 				"java.lang.NoClassDefFoundError");
 
-		UNSATISFIED_LINK_ERROR = Scene.v().getRefType(
+		UNSATISFIED_LINK_ERROR = myScene.getRefType(
 				"java.lang.UnsatisfiedLinkError");
 
-		VERIFY_ERROR = Scene.v().getRefType("java.lang.VerifyError");
+		VERIFY_ERROR = myScene.getRefType("java.lang.VerifyError");
 
 		// Token non-linkage Error (in the sense that it is not among
 		// Errors that the VM might throw itself during linkage---any
 		// error could be generated during linking by a static
 		// initializer).
-		Scene.v().forceResolve("java.awt.AWTError", SootClass.BODIES);
-		AWT_ERROR = Scene.v().getRefType("java.awt.AWTError");
+		myScene.forceResolve("java.awt.AWTError", SootClass.BODIES);
+		AWT_ERROR = myScene.getRefType("java.awt.AWTError");
 
 		// VM errors:
-		INTERNAL_ERROR = Scene.v().getRefType("java.lang.InternalError");
+		INTERNAL_ERROR = myScene.getRefType("java.lang.InternalError");
 
-		OUT_OF_MEMORY_ERROR = Scene.v()
+		OUT_OF_MEMORY_ERROR = myScene
 				.getRefType("java.lang.OutOfMemoryError");
 
-		STACK_OVERFLOW_ERROR = Scene.v().getRefType(
+		STACK_OVERFLOW_ERROR = myScene.getRefType(
 				"java.lang.StackOverflowError");
 
-		UNKNOWN_ERROR = Scene.v().getRefType("java.lang.UnknownError");
+		UNKNOWN_ERROR = myScene.getRefType("java.lang.UnknownError");
 
-		THREAD_DEATH = Scene.v().getRefType("java.lang.ThreadDeath");
+		THREAD_DEATH = myScene.getRefType("java.lang.ThreadDeath");
 
-		Scene.v().forceResolve("java.lang.VirtualMachineError",
+		myScene.forceResolve("java.lang.VirtualMachineError",
 				SootClass.BODIES);
-		VIRTUAL_MACHINE_ERROR = Scene.v().getRefType(
+		VIRTUAL_MACHINE_ERROR = myScene.getRefType(
 				"java.lang.VirtualMachineError");
 
 		// Two Throwables that our test statements will never throw (except
 		// for invoke statements--in the absence of interprocedural analysis,
 		// we have to assume they can throw anything).
-		Scene.v().forceResolve(
+		myScene.forceResolve(
 				"java.lang.reflect.UndeclaredThrowableException",
 				SootClass.BODIES);
-		UNDECLARED_THROWABLE_EXCEPTION = Scene.v().getRefType(
+		UNDECLARED_THROWABLE_EXCEPTION = myScene.getRefType(
 				"java.lang.reflect.UndeclaredThrowableException");
 
-		Scene.v().forceResolve("javax.swing.UnsupportedLookAndFeelException",
+		myScene.forceResolve("javax.swing.UnsupportedLookAndFeelException",
 				SootClass.BODIES);
-		UNSUPPORTED_LOOK_AND_FEEL_EXCEPTION = Scene.v().getRefType(
+		UNSUPPORTED_LOOK_AND_FEEL_EXCEPTION = myScene.getRefType(
 				"javax.swing.UnsupportedLookAndFeelException");
 
-		boolean oldPhantoms = Options.v().allow_phantom_refs();
-		Options.v().set_allow_phantom_refs(true);
+		boolean oldPhantoms = myOptions.allow_phantom_refs();
+		myOptions.set_allow_phantom_refs(true);
 
-		Scene.v().forceResolve(
+		myScene.forceResolve(
 				"de.ecspride.NonExistingExceptionToTestPhantoms1",
 				SootClass.BODIES);
-		PHANTOM_EXCEPTION1 = Scene.v().getRefType(
+		PHANTOM_EXCEPTION1 = myScene.getRefType(
 				"de.ecspride.NonExistingExceptionToTestPhantoms1");
 
-		Scene.v().forceResolve(
+		myScene.forceResolve(
 				"de.ecspride.NonExistingExceptionToTestPhantoms2",
 				SootClass.BODIES);
-		PHANTOM_EXCEPTION2 = Scene.v().getRefType(
+		PHANTOM_EXCEPTION2 = myScene.getRefType(
 				"de.ecspride.NonExistingExceptionToTestPhantoms2");
 
-		Options.v().set_allow_phantom_refs(oldPhantoms);
+		myOptions.set_allow_phantom_refs(oldPhantoms);
 
 		VM_ERRORS = Collections
 				.unmodifiableSet(new ExceptionHashSet<RefLikeType>(Arrays
@@ -328,7 +328,7 @@ public class ExceptionTestUtility {
 
 		temp = new ExceptionHashSet<RefLikeType>(
 				VM_AND_RESOLVE_METHOD_ERRORS_PLUS_SUPERTYPES);
-		temp.add(AnySubType.v(Scene.v().getRefType("java.lang.Error")));
+		temp.add(AnySubType.v(myScene.getRefType("java.lang.Error")));
 		ALL_ERRORS_REP = Collections.unmodifiableSet(temp);
 
 		temp = new ExceptionHashSet<RefLikeType>(VM_AND_RESOLVE_METHOD_ERRORS);
@@ -415,7 +415,7 @@ public class ExceptionTestUtility {
 		ALL_TEST_THROWABLES = Collections.unmodifiableSet(tempTest);
 
 		temp = new ExceptionHashSet<RefLikeType>();
-		temp.add(AnySubType.v(Scene.v().getRefType("java.lang.Throwable")));
+		temp.add(AnySubType.v(myScene.getRefType("java.lang.Throwable")));
 		ALL_THROWABLES_REP = Collections.unmodifiableSet(temp);
 	}
 

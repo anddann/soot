@@ -51,18 +51,18 @@ public class AccessFieldJBB extends AbstractJimpleBodyBuilder {
       soot.Local fieldGetLocal = handleCall(accessField.field(), accessField.getMeth(), null, baseLocal);
 
       soot.Local tmp = base().generateLocal(accessField.field().type());
-      soot.jimple.AssignStmt stmt1 = soot.jimple.Jimple.v().newAssignStmt(tmp, fieldGetLocal);
+      soot.jimple.AssignStmt stmt1 = soot.jimple.myJimple.newAssignStmt(tmp, fieldGetLocal);
       ext().body.getUnits().add(stmt1);
       Util.addLnPosTags(stmt1, unary.position());
       soot.Value incVal = base().getConstant(Util.getSootType(accessField.field().type()), 1);
       soot.jimple.BinopExpr binExpr;
       if (unary.operator() == polyglot.ast.Unary.PRE_INC || unary.operator() == polyglot.ast.Unary.POST_INC) {
-        binExpr = soot.jimple.Jimple.v().newAddExpr(tmp, incVal);
+        binExpr = soot.jimple.myJimple.newAddExpr(tmp, incVal);
       } else {
-        binExpr = soot.jimple.Jimple.v().newSubExpr(tmp, incVal);
+        binExpr = soot.jimple.myJimple.newSubExpr(tmp, incVal);
       }
       soot.Local tmp2 = generateLocal(accessField.field().type());
-      soot.jimple.AssignStmt assign = soot.jimple.Jimple.v().newAssignStmt(tmp2, binExpr);
+      soot.jimple.AssignStmt assign = soot.jimple.myJimple.newAssignStmt(tmp2, binExpr);
       ext().body.getUnits().add(assign);
       if (unary.operator() == polyglot.ast.Unary.PRE_INC || unary.operator() == polyglot.ast.Unary.PRE_DEC) {
         return base().handlePrivateFieldSet(accessField, tmp2, baseLocal);
@@ -103,7 +103,7 @@ public class AccessFieldJBB extends AbstractJimpleBodyBuilder {
   private soot.Local handleCall(polyglot.ast.Field field, polyglot.ast.Call call, soot.Value param, soot.Local base) {
 
     soot.Type sootRecType = Util.getSootType(call.target().type());
-    soot.SootClass receiverTypeClass = soot.Scene.v().getSootClass("java.lang.Object");
+    soot.SootClass receiverTypeClass = soot.myScene.getSootClass("java.lang.Object");
     if (sootRecType instanceof soot.RefType) {
       receiverTypeClass = ((soot.RefType) sootRecType).getSootClass();
     }
@@ -124,14 +124,14 @@ public class AccessFieldJBB extends AbstractJimpleBodyBuilder {
       baseLocal = (soot.Local) ext().getBaseLocal(call.target());
     }
     if (methToCall.isStatic()) {
-      invoke = soot.jimple.Jimple.v().newStaticInvokeExpr(methToCall, params);
+      invoke = soot.jimple.myJimple.newStaticInvokeExpr(methToCall, params);
     } else if (soot.Modifier.isInterface(receiverTypeClass.getModifiers()) && call.methodInstance().flags().isAbstract()) {
-      invoke = soot.jimple.Jimple.v().newInterfaceInvokeExpr(baseLocal, methToCall, params);
+      invoke = soot.jimple.myJimple.newInterfaceInvokeExpr(baseLocal, methToCall, params);
     } else {
-      invoke = soot.jimple.Jimple.v().newVirtualInvokeExpr(baseLocal, methToCall, params);
+      invoke = soot.jimple.myJimple.newVirtualInvokeExpr(baseLocal, methToCall, params);
     }
     soot.Local retLocal = base().generateLocal(field.type());
-    soot.jimple.AssignStmt assignStmt = soot.jimple.Jimple.v().newAssignStmt(retLocal, invoke);
+    soot.jimple.AssignStmt assignStmt = soot.jimple.myJimple.newAssignStmt(retLocal, invoke);
     ext().body.getUnits().add(assignStmt);
 
     return retLocal;

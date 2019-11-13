@@ -861,7 +861,7 @@ public class MethodAccess extends Access implements Cloneable {
     ArrayList parameters = new ArrayList();
     for(int i = 0; i < decl.getNumParameter(); i++)
       parameters.add(decl.getParameter(i).type().getSootType());
-    SootMethodRef ref = Scene.v().makeMethodRef(
+    SootMethodRef ref = myScene.makeMethodRef(
       methodQualifierType().getSootClassDecl(),
       decl.name(),
       parameters,

@@ -112,7 +112,7 @@ public class LoopStrengthener extends DepthFirstAdapter {
               // some pattern was matched
               // replace the temp node with the newNode
               replaceNode(node, subBodyNumber, nodeNumber, temp, newNode);
-              UselessLabelFinder.v().findAndKill(node);
+              myUselessLabelFinder.findAndKill(node);
             }
           }
         }
@@ -157,7 +157,7 @@ public class LoopStrengthener extends DepthFirstAdapter {
               G.v().ASTTransformations_modified = true;
               // System.out.println("strengthened loop within trybody");
             }
-            UselessLabelFinder.v().findAndKill(node);
+            myUselessLabelFinder.findAndKill(node);
           }
         }
       } // it was a loop node
@@ -217,7 +217,7 @@ public class LoopStrengthener extends DepthFirstAdapter {
                 G.v().ASTTransformations_modified = true;
                 // System.out.println("strengthened loop within catchbody");
               }
-              UselessLabelFinder.v().findAndKill(node);
+              myUselessLabelFinder.findAndKill(node);
             }
           }
         } // it was a loop node
@@ -273,7 +273,7 @@ public class LoopStrengthener extends DepthFirstAdapter {
                   G.v().ASTTransformations_modified = true;
                   // System.out.println("strengthened loop within switch body");
                 }
-                UselessLabelFinder.v().findAndKill(node);
+                myUselessLabelFinder.findAndKill(node);
               }
             }
           } // it was a loop node

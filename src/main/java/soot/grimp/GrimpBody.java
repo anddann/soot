@@ -71,7 +71,7 @@ public class GrimpBody extends StmtBody {
   }
 
   public Object clone() {
-    Body b = Grimp.v().newBody(getMethod());
+    Body b = myGrimp.newBody(getMethod());
     b.importBodyContentsFrom(this);
     return b;
   }
@@ -83,7 +83,7 @@ public class GrimpBody extends StmtBody {
   GrimpBody(Body body) {
     super(body.getMethod());
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + getMethod().getName() + "] Constructing GrimpBody...");
     }
 
@@ -109,70 +109,70 @@ public class GrimpBody extends StmtBody {
     /* we should Grimpify the Stmt's here... */
     while (it.hasNext()) {
       Stmt oldStmt = (Stmt) (it.next());
-      final StmtBox newStmtBox = (StmtBox) Grimp.v().newStmtBox(null);
-      final StmtBox updateStmtBox = (StmtBox) Grimp.v().newStmtBox(null);
+      final StmtBox newStmtBox = (StmtBox) myGrimp.newStmtBox(null);
+      final StmtBox updateStmtBox = (StmtBox) myGrimp.newStmtBox(null);
 
-      /* we can't have a general StmtSwapper on Grimp.v() */
+      /* we can't have a general StmtSwapper on myGrimp */
       /* because we need to collect a list of updates */
       oldStmt.apply(new AbstractStmtSwitch() {
         public void caseAssignStmt(AssignStmt s) {
-          newStmtBox.setUnit(Grimp.v().newAssignStmt(s));
+          newStmtBox.setUnit(myGrimp.newAssignStmt(s));
         }
 
         public void caseIdentityStmt(IdentityStmt s) {
-          newStmtBox.setUnit(Grimp.v().newIdentityStmt(s));
+          newStmtBox.setUnit(myGrimp.newIdentityStmt(s));
         }
 
         public void caseBreakpointStmt(BreakpointStmt s) {
-          newStmtBox.setUnit(Grimp.v().newBreakpointStmt(s));
+          newStmtBox.setUnit(myGrimp.newBreakpointStmt(s));
         }
 
         public void caseInvokeStmt(InvokeStmt s) {
-          newStmtBox.setUnit(Grimp.v().newInvokeStmt(s));
+          newStmtBox.setUnit(myGrimp.newInvokeStmt(s));
         }
 
         public void caseEnterMonitorStmt(EnterMonitorStmt s) {
-          newStmtBox.setUnit(Grimp.v().newEnterMonitorStmt(s));
+          newStmtBox.setUnit(myGrimp.newEnterMonitorStmt(s));
         }
 
         public void caseExitMonitorStmt(ExitMonitorStmt s) {
-          newStmtBox.setUnit(Grimp.v().newExitMonitorStmt(s));
+          newStmtBox.setUnit(myGrimp.newExitMonitorStmt(s));
         }
 
         public void caseGotoStmt(GotoStmt s) {
-          newStmtBox.setUnit(Grimp.v().newGotoStmt(s));
+          newStmtBox.setUnit(myGrimp.newGotoStmt(s));
           updateStmtBox.setUnit(s);
         }
 
         public void caseIfStmt(IfStmt s) {
-          newStmtBox.setUnit(Grimp.v().newIfStmt(s));
+          newStmtBox.setUnit(myGrimp.newIfStmt(s));
           updateStmtBox.setUnit(s);
         }
 
         public void caseLookupSwitchStmt(LookupSwitchStmt s) {
-          newStmtBox.setUnit(Grimp.v().newLookupSwitchStmt(s));
+          newStmtBox.setUnit(myGrimp.newLookupSwitchStmt(s));
           updateStmtBox.setUnit(s);
         }
 
         public void caseNopStmt(NopStmt s) {
-          newStmtBox.setUnit(Grimp.v().newNopStmt(s));
+          newStmtBox.setUnit(myGrimp.newNopStmt(s));
         }
 
         public void caseReturnStmt(ReturnStmt s) {
-          newStmtBox.setUnit(Grimp.v().newReturnStmt(s));
+          newStmtBox.setUnit(myGrimp.newReturnStmt(s));
         }
 
         public void caseReturnVoidStmt(ReturnVoidStmt s) {
-          newStmtBox.setUnit(Grimp.v().newReturnVoidStmt(s));
+          newStmtBox.setUnit(myGrimp.newReturnVoidStmt(s));
         }
 
         public void caseTableSwitchStmt(TableSwitchStmt s) {
-          newStmtBox.setUnit(Grimp.v().newTableSwitchStmt(s));
+          newStmtBox.setUnit(myGrimp.newTableSwitchStmt(s));
           updateStmtBox.setUnit(s);
         }
 
         public void caseThrowStmt(ThrowStmt s) {
-          newStmtBox.setUnit(Grimp.v().newThrowStmt(s));
+          newStmtBox.setUnit(myGrimp.newThrowStmt(s));
         }
       });
 
@@ -182,12 +182,12 @@ public class GrimpBody extends StmtBody {
       useBoxesIt = newStmt.getUseBoxes().iterator();
       while (useBoxesIt.hasNext()) {
         ValueBox b = (useBoxesIt.next());
-        b.setValue(Grimp.v().newExpr(b.getValue()));
+        b.setValue(myGrimp.newExpr(b.getValue()));
       }
       useBoxesIt = newStmt.getDefBoxes().iterator();
       while (useBoxesIt.hasNext()) {
         ValueBox b = (useBoxesIt.next());
-        b.setValue(Grimp.v().newExpr(b.getValue()));
+        b.setValue(myGrimp.newExpr(b.getValue()));
       }
 
       getUnits().add(newStmt);
@@ -245,10 +245,10 @@ public class GrimpBody extends StmtBody {
     Iterator<Trap> trapIt = jBody.getTraps().iterator();
     while (trapIt.hasNext()) {
       Trap oldTrap = trapIt.next();
-      getTraps().add(Grimp.v().newTrap(oldTrap.getException(), (oldToNew.get(oldTrap.getBeginUnit())),
+      getTraps().add(myGrimp.newTrap(oldTrap.getException(), (oldToNew.get(oldTrap.getBeginUnit())),
           (oldToNew.get(oldTrap.getEndUnit())), (oldToNew.get(oldTrap.getHandlerUnit()))));
     }
 
-    PackManager.v().getPack("gb").apply(this);
+    PackmyManager.getPack("gb").apply(this);
   }
 }

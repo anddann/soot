@@ -62,8 +62,8 @@ public class CastInstruction extends TaggedInstruction {
     int dest = i.getRegisterA();
     int source = i.getRegisterB();
     Type targetType = getTargetType();
-    CastExpr cast = Jimple.v().newCastExpr(body.getRegisterLocal(source), targetType);
-    AssignStmt assign = Jimple.v().newAssignStmt(body.getRegisterLocal(dest), cast);
+    CastExpr cast = myJimple.newCastExpr(body.getRegisterLocal(source), targetType);
+    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), cast);
     assign.addTag(getTag());
     setUnit(assign);
     addTags(assign);

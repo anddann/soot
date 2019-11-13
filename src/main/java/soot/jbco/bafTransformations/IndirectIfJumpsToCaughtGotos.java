@@ -94,7 +94,7 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
     Unit nonTrap = findNonTrappedUnit(units, b.getTraps());
     if (nonTrap == null) {
       Unit last = null;
-      nonTrap = Baf.v().newNopInst();
+      nonTrap = myBaf.newNopInst();
       for (Iterator<Unit> it = units.iterator(); it.hasNext();) {
         Unit u = (Unit) it.next();
         if (u instanceof IdentityInst && ((IdentityInst) u).getLeftOp() instanceof Local) {
@@ -119,7 +119,7 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
       Unit u = (Unit) it.next();
       if (isIf(u) && Rand.getInt(10) <= weight) {
         TargetArgInst ifu = (TargetArgInst) u;
-        Unit newTarg = Baf.v().newGotoInst(ifu.getTarget());
+        Unit newTarg = myBaf.newGotoInst(ifu.getTarget());
         units.add(newTarg);
         ifu.setTarget(newTarg);
         addedUnits.add(newTarg);
@@ -130,64 +130,64 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
       return;
     }
 
-    Unit nop = Baf.v().newNopInst();
+    Unit nop = myBaf.newNopInst();
     units.add(nop);
 
     ArrayList<Unit> toinsert = new ArrayList<Unit>();
     SootField field = null;
     try {
-      field = soot.jbco.jimpleTransformations.FieldRenamer.v().getRandomOpaques()[Rand.getInt(2)];
+      field = soot.jbco.jimpleTransformations.myFieldRenamer.getRandomOpaques()[Rand.getInt(2)];
     } catch (NullPointerException npe) {
       logger.debug(npe.getMessage(), npe);
     }
 
     if (field != null && Rand.getInt(3) > 0) {
-      toinsert.add(Baf.v().newStaticGetInst(field.makeRef()));
+      toinsert.add(myBaf.newStaticGetInst(field.makeRef()));
       if (field.getType() instanceof IntegerType) {
-        toinsert.add(Baf.v().newIfGeInst((Unit) units.getSuccOf(nonTrap)));
+        toinsert.add(myBaf.newIfGeInst((Unit) units.getSuccOf(nonTrap)));
       } else {
         SootMethod boolInit = ((RefType) field.getType()).getSootClass().getMethod("boolean booleanValue()");
-        toinsert.add(Baf.v().newVirtualInvokeInst(boolInit.makeRef()));
-        toinsert.add(Baf.v().newIfGeInst((Unit) units.getSuccOf(nonTrap)));
+        toinsert.add(myBaf.newVirtualInvokeInst(boolInit.makeRef()));
+        toinsert.add(myBaf.newIfGeInst((Unit) units.getSuccOf(nonTrap)));
       }
     } else {
-      toinsert.add(Baf.v().newPushInst(soot.jimple.IntConstant.v(BodyBuilder.getIntegerNine())));
-      toinsert.add(Baf.v().newPrimitiveCastInst(IntType.v(), ByteType.v()));
-      toinsert.add(Baf.v().newPushInst(soot.jimple.IntConstant.v(Rand.getInt() % 2 == 0 ? 9 : 3)));
-      toinsert.add(Baf.v().newRemInst(ByteType.v()));
+      toinsert.add(myBaf.newPushInst(soot.jimple.IntConstant.v(BodyBuilder.getIntegerNine())));
+      toinsert.add(myBaf.newPrimitiveCastInst(IntType.v(), ByteType.v()));
+      toinsert.add(myBaf.newPushInst(soot.jimple.IntConstant.v(Rand.getInt() % 2 == 0 ? 9 : 3)));
+      toinsert.add(myBaf.newRemInst(ByteType.v()));
 
       /*
-       * toinsert.add(Baf.v().newDup1Inst(ByteType.v()));
-       * toinsert.add(Baf.v().newPrimitiveCastInst(ByteType.v(),IntType.v()));
-       * toinsert.add(Baf.v().newStaticGetInst(sys.getFieldByName("out").makeRef()));
-       * toinsert.add(Baf.v().newSwapInst(IntType.v(),RefType.v())); ArrayList parms = new ArrayList();
-       * parms.add(IntType.v()); toinsert.add(Baf.v().newVirtualInvokeInst(out.getMethod("println",parms).makeRef()));
+       * toinsert.add(myBaf.newDup1Inst(ByteType.v()));
+       * toinsert.add(myBaf.newPrimitiveCastInst(ByteType.v(),IntType.v()));
+       * toinsert.add(myBaf.newStaticGetInst(sys.getFieldByName("out").makeRef()));
+       * toinsert.add(myBaf.newSwapInst(IntType.v(),RefType.v())); ArrayList parms = new ArrayList();
+       * parms.add(IntType.v()); toinsert.add(myBaf.newVirtualInvokeInst(out.getMethod("println",parms).makeRef()));
        */
-      toinsert.add(Baf.v().newIfEqInst((Unit) units.getSuccOf(nonTrap)));
+      toinsert.add(myBaf.newIfEqInst((Unit) units.getSuccOf(nonTrap)));
     }
 
     ArrayList<Unit> toinserttry = new ArrayList<Unit>();
     while (stack.size() > 0) {
-      toinserttry.add(Baf.v().newPopInst(stack.pop()));
+      toinserttry.add(myBaf.newPopInst(stack.pop()));
     }
-    toinserttry.add(Baf.v().newPushInst(soot.jimple.NullConstant.v()));
+    toinserttry.add(myBaf.newPushInst(soot.jimple.myNullConstant));
 
-    Unit handler = Baf.v().newThrowInst();
+    Unit handler = myBaf.newThrowInst();
     int rand = Rand.getInt(toinserttry.size());
     while (rand++ < toinserttry.size()) {
       toinsert.add(toinserttry.get(0));
       toinserttry.remove(0);
     }
     if (toinserttry.size() > 0) {
-      toinserttry.add(Baf.v().newGotoInst(handler));
-      toinsert.add(Baf.v().newGotoInst(toinserttry.get(0)));
+      toinserttry.add(myBaf.newGotoInst(handler));
+      toinsert.add(myBaf.newGotoInst(toinserttry.get(0)));
       units.insertBefore(toinserttry, nop);
     }
 
     toinsert.add(handler);
     units.insertAfter(toinsert, nonTrap);
 
-    b.getTraps().add(Baf.v().newTrap(ThrowSet.getRandomThrowable(), addedUnits.get(0), nop, handler));
+    b.getTraps().add(myBaf.newTrap(ThrowSet.getRandomThrowable(), addedUnits.get(0), nop, handler));
 
     count += addedUnits.size();
     if (addedUnits.size() > 0 && debug) {

@@ -58,20 +58,20 @@ public abstract class AbstractLambdaMetaFactoryCGTest extends AbstractTestingFra
     final SootMethod target = prepareTarget(methodSigFromComponents(testClass, TEST_METHOD_RET, TEST_METHOD_NAME), testClass,
         "java.util.function.Function");
 
-    final CallGraph cg = Scene.v().getCallGraph();
+    final CallGraph cg = myScene.getCallGraph();
 
     final String metaFactoryClass = getMetaFactoryNameLambda(testClass, TEST_METHOD_NAME);
 
     final SootMethod bootstrap
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.Function", "bootstrap$"));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.Function", "bootstrap$"));
     final SootMethod metaFactoryConstructor
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>"));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>"));
     final SootMethod apply
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "apply", "java.lang.Object"));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "apply", "java.lang.Object"));
     final SootMethod lambdaBody
-        = Scene.v().getMethod(methodSigFromComponents(testClass, "java.lang.String", "lambda$main$0", "java.lang.Integer"));
+        = myScene.getMethod(methodSigFromComponents(testClass, "java.lang.String", "lambda$main$0", "java.lang.Integer"));
     final SootMethod staticCallee
-        = Scene.v().getMethod(methodSigFromComponents(testClass, "void", "staticCallee", "java.lang.Integer"));
+        = myScene.getMethod(methodSigFromComponents(testClass, "void", "staticCallee", "java.lang.Integer"));
 
     final List<Edge> edgesFromTarget = newArrayList(cg.edgesOutOf(target));
 
@@ -100,18 +100,18 @@ public abstract class AbstractLambdaMetaFactoryCGTest extends AbstractTestingFra
     final SootMethod target
         = prepareTarget(methodSigFromComponents(testClass, TEST_METHOD_RET, TEST_METHOD_NAME), testClass);
 
-    final CallGraph cg = Scene.v().getCallGraph();
+    final CallGraph cg = myScene.getCallGraph();
 
     final String metaFactoryClass = getMetaFactoryNameLambda(testClass, TEST_METHOD_NAME);
 
-    final SootMethod bootstrap = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.Supplier",
+    final SootMethod bootstrap = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.Supplier",
         "bootstrap$", testClass, "java.lang.String"));
     final SootMethod metaFactoryConstructor
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>", testClass, "java.lang.String"));
-    final SootMethod get = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>", testClass, "java.lang.String"));
+    final SootMethod get = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
     final SootMethod lambdaBody
-        = Scene.v().getMethod(methodSigFromComponents(testClass, "java.lang.String", "lambda$main$0", "java.lang.String"));
-    final SootMethod getString = Scene.v().getMethod(methodSigFromComponents(testClass, "java.lang.String", "getString"));
+        = myScene.getMethod(methodSigFromComponents(testClass, "java.lang.String", "lambda$main$0", "java.lang.String"));
+    final SootMethod getString = myScene.getMethod(methodSigFromComponents(testClass, "java.lang.String", "getString"));
 
     final List<Edge> edgesFromTarget = newArrayList(cg.edgesOutOf(target));
 
@@ -140,18 +140,18 @@ public abstract class AbstractLambdaMetaFactoryCGTest extends AbstractTestingFra
     final SootMethod target
         = prepareTarget(methodSigFromComponents(testClass, TEST_METHOD_RET, TEST_METHOD_NAME), testClass);
 
-    final CallGraph cg = Scene.v().getCallGraph();
+    final CallGraph cg = myScene.getCallGraph();
 
     final String metaFactoryClass = getMetaFactoryNameLambda(testClass, TEST_METHOD_NAME);
 
-    final SootMethod bootstrap = Scene.v()
+    final SootMethod bootstrap = myScene
         .getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.Supplier", "bootstrap$", testClass));
     final SootMethod metaFactoryConstructor
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>", testClass));
-    final SootMethod get = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>", testClass));
+    final SootMethod get = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
     final SootMethod lambdaBody
-        = Scene.v().getMethod(methodSigFromComponents(testClass, "java.lang.Object", "lambda$main$0"));
-    final SootMethod getString = Scene.v().getMethod(methodSigFromComponents(testClass, "java.lang.String", "getString"));
+        = myScene.getMethod(methodSigFromComponents(testClass, "java.lang.Object", "lambda$main$0"));
+    final SootMethod getString = myScene.getMethod(methodSigFromComponents(testClass, "java.lang.String", "getString"));
 
     final List<Edge> edgesFromTarget = newArrayList(cg.edgesOutOf(target));
 
@@ -180,18 +180,18 @@ public abstract class AbstractLambdaMetaFactoryCGTest extends AbstractTestingFra
     final SootMethod target
         = prepareTarget(methodSigFromComponents(testClass, TEST_METHOD_RET, TEST_METHOD_NAME), testClass);
 
-    final CallGraph cg = Scene.v().getCallGraph();
+    final CallGraph cg = myScene.getCallGraph();
 
     final String referencedMethodName = "staticMethod";
 
     final String metaFactoryClass = getMetaFactoryNameMethodRef(testClass, referencedMethodName);
 
     final SootMethod bootstrap
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.Supplier", "bootstrap$"));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.Supplier", "bootstrap$"));
     final SootMethod metaFactoryConstructor
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>"));
-    final SootMethod get = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
-    final SootMethod referencedMethod = Scene.v().getMethod(methodSigFromComponents(testClass, "int", referencedMethodName));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>"));
+    final SootMethod get = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
+    final SootMethod referencedMethod = myScene.getMethod(methodSigFromComponents(testClass, "int", referencedMethodName));
 
     final List<Edge> edgesFromTarget = newArrayList(cg.edgesOutOf(target));
 
@@ -216,18 +216,18 @@ public abstract class AbstractLambdaMetaFactoryCGTest extends AbstractTestingFra
     final SootMethod target
         = prepareTarget(methodSigFromComponents(testClass, TEST_METHOD_RET, TEST_METHOD_NAME), testClass);
 
-    final CallGraph cg = Scene.v().getCallGraph();
+    final CallGraph cg = myScene.getCallGraph();
 
     final String referencedMethodName = "privateMethod";
 
     final String metaFactoryClass = getMetaFactoryNameMethodRef(testClass, referencedMethodName);
 
-    final SootMethod bootstrap = Scene.v()
+    final SootMethod bootstrap = myScene
         .getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.Supplier", "bootstrap$", testClass));
     final SootMethod metaFactoryConstructor
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>", testClass));
-    final SootMethod get = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
-    final SootMethod referencedMethod = Scene.v().getMethod(methodSigFromComponents(testClass, "int", referencedMethodName));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>", testClass));
+    final SootMethod get = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
+    final SootMethod referencedMethod = myScene.getMethod(methodSigFromComponents(testClass, "int", referencedMethodName));
 
     final List<Edge> edgesFromTarget = newArrayList(cg.edgesOutOf(target));
 
@@ -252,18 +252,18 @@ public abstract class AbstractLambdaMetaFactoryCGTest extends AbstractTestingFra
     final SootMethod target
         = prepareTarget(methodSigFromComponents(testClass, TEST_METHOD_RET, TEST_METHOD_NAME), testClass);
 
-    final CallGraph cg = Scene.v().getCallGraph();
+    final CallGraph cg = myScene.getCallGraph();
 
     final String referencedMethodName = "publicMethod";
 
     final String metaFactoryClass = getMetaFactoryNameMethodRef(testClass, referencedMethodName);
 
-    final SootMethod bootstrap = Scene.v()
+    final SootMethod bootstrap = myScene
         .getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.Supplier", "bootstrap$", testClass));
     final SootMethod metaFactoryConstructor
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>", testClass));
-    final SootMethod get = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
-    final SootMethod referencedMethod = Scene.v().getMethod(methodSigFromComponents(testClass, "int", referencedMethodName));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>", testClass));
+    final SootMethod get = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
+    final SootMethod referencedMethod = myScene.getMethod(methodSigFromComponents(testClass, "int", referencedMethodName));
 
     final List<Edge> edgesFromTarget = newArrayList(cg.edgesOutOf(target));
 
@@ -288,19 +288,19 @@ public abstract class AbstractLambdaMetaFactoryCGTest extends AbstractTestingFra
     final SootMethod target
         = prepareTarget(methodSigFromComponents(testClass, TEST_METHOD_RET, TEST_METHOD_NAME), testClass);
 
-    final CallGraph cg = Scene.v().getCallGraph();
+    final CallGraph cg = myScene.getCallGraph();
 
     final String referencedMethodName = "<init>";
 
     final String metaFactoryClass = getMetaFactoryNameMethodRef(testClass, referencedMethodName);
 
     final SootMethod bootstrap
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.Supplier", "bootstrap$"));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.Supplier", "bootstrap$"));
     final SootMethod metaFactoryConstructor
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>"));
-    final SootMethod get = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>"));
+    final SootMethod get = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
     final SootMethod referencedMethod
-        = Scene.v().getMethod(methodSigFromComponents(testClass, "void", referencedMethodName));
+        = myScene.getMethod(methodSigFromComponents(testClass, "void", referencedMethodName));
 
     final List<Edge> edgesFromTarget = newArrayList(cg.edgesOutOf(target));
 
@@ -325,21 +325,21 @@ public abstract class AbstractLambdaMetaFactoryCGTest extends AbstractTestingFra
     final SootMethod target
         = prepareTarget(methodSigFromComponents(testClass, TEST_METHOD_RET, TEST_METHOD_NAME), testClass);
 
-    final CallGraph cg = Scene.v().getCallGraph();
+    final CallGraph cg = myScene.getCallGraph();
 
     final String referencedMethodName = "superMethod";
 
     final String metaFactoryClass = getMetaFactoryNameLambda(testClass, TEST_METHOD_NAME);
 
-    final SootMethod bootstrap = Scene.v()
+    final SootMethod bootstrap = myScene
         .getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.Supplier", "bootstrap$", testClass));
     final SootMethod metaFactoryConstructor
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>", testClass));
-    final SootMethod get = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>", testClass));
+    final SootMethod get = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.lang.Object", "get"));
     final SootMethod referencedMethod
-        = Scene.v().getMethod(methodSigFromComponents("soot.lambdaMetaFactory.Super", "int", referencedMethodName));
+        = myScene.getMethod(methodSigFromComponents("soot.lambdaMetaFactory.Super", "int", referencedMethodName));
     final SootMethod lambdaBody
-        = Scene.v().getMethod(methodSigFromComponents(testClass, "java.lang.Integer", "lambda$main$0"));
+        = myScene.getMethod(methodSigFromComponents(testClass, "java.lang.Integer", "lambda$main$0"));
 
     final List<Edge> edgesFromTarget = newArrayList(cg.edgesOutOf(target));
 
@@ -370,20 +370,20 @@ public abstract class AbstractLambdaMetaFactoryCGTest extends AbstractTestingFra
     final SootMethod target
         = prepareTarget(methodSigFromComponents(testClass, TEST_METHOD_RET, TEST_METHOD_NAME), testClass);
 
-    final CallGraph cg = Scene.v().getCallGraph();
+    final CallGraph cg = myScene.getCallGraph();
 
     final String referencedMethodName = "staticWithCaptures";
 
     final String metaFactoryClass = getMetaFactoryNameMethodRef(testClass, referencedMethodName);
 
     final SootMethod bootstrap
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.BiFunction", "bootstrap$"));
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "java.util.function.BiFunction", "bootstrap$"));
     final SootMethod metaFactoryConstructor
-        = Scene.v().getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>"));
-    final SootMethod apply = Scene.v().getMethod(
+        = myScene.getMethod(methodSigFromComponents(metaFactoryClass, "void", "<init>"));
+    final SootMethod apply = myScene.getMethod(
         methodSigFromComponents(metaFactoryClass, "java.lang.Object", "apply", "java.lang.Object", "java.lang.Object"));
     final SootMethod referencedMethod
-        = Scene.v().getMethod(methodSigFromComponents(testClass, "int", referencedMethodName, "int", "java.lang.Integer"));
+        = myScene.getMethod(methodSigFromComponents(testClass, "int", referencedMethodName, "int", "java.lang.Integer"));
 
     final List<Edge> edgesFromTarget = newArrayList(cg.edgesOutOf(target));
 

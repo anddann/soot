@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BIfEqInst extends AbstractBranchInst implements IfEqInst {
   public BIfEqInst(Unit target) {
-    super(Baf.v().newInstBox(target));
+    super(myBaf.newInstBox(target));
   }
 
   public int getInCount() {

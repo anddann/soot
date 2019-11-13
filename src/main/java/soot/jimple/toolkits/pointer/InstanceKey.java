@@ -73,7 +73,7 @@ public class InstanceKey {
     this.stmtAfterAssignStmt = stmt;
     this.lmaa = lmaa;
     this.lnma = lmna;
-    PointsToAnalysis pta = Scene.v().getPointsToAnalysis();
+    PointsToAnalysis pta = myScene.getPointsToAnalysis();
     this.pts = new PointsToSetEqualsWrapper((EqualsSupportingPointsToSet) pta.reachingObjects(local));
     this.hashCode = computeHashCode();
   }
@@ -99,7 +99,7 @@ public class InstanceKey {
       }
     }
     // different methods or local not-may-alias was not successful: get points-to info
-    PointsToAnalysis pta = Scene.v().getPointsToAnalysis();
+    PointsToAnalysis pta = myScene.getPointsToAnalysis();
     if (pta == null) {
       return false; // no info; hence don't know for sure
     }

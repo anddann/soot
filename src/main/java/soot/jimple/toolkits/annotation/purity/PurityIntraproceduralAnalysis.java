@@ -368,7 +368,7 @@ public class PurityIntraproceduralAnalysis extends ForwardFlowAnalysis<Unit, Pur
       }
     }
 
-    File f = new File(SourceLocator.v().getOutputDir(), prefix + name + DotGraph.DOT_EXTENSION);
+    File f = new File(mySourceLocator.getOutputDir(), prefix + name + DotGraph.DOT_EXTENSION);
     dot.plot(f.getPath());
   }
 

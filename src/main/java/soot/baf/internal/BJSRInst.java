@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BJSRInst extends AbstractBranchInst implements JSRInst {
   public BJSRInst(Unit target) {
-    super(Baf.v().newInstBox(target));
+    super(myBaf.newInstBox(target));
   }
 
   public Object clone() {

@@ -58,13 +58,13 @@ public abstract class ConditionalJumpInstruction extends JumpInstruction impleme
     } else {
       // set marker unit to swap real gotostmt with otherwise
       body.addDeferredJimplification(this);
-      markerUnit = Jimple.v().newNopStmt();
+      markerUnit = myJimple.newNopStmt();
       unit = markerUnit;
       // beginUnit = markerUnit;
       // endUnit = markerUnit;
       // beginUnit = markerUnit;
       body.add(markerUnit);
-      // Unit end = Jimple.v().newNopStmt();
+      // Unit end = myJimple.newNopStmt();
       // body.add(end);
       // endUnit = end;
     }
@@ -109,22 +109,22 @@ public abstract class ConditionalJumpInstruction extends JumpInstruction impleme
     switch (opcode) {
       case IF_EQ:
       case IF_EQZ:
-        return Jimple.v().newEqExpr(one, other);
+        return myJimple.newEqExpr(one, other);
       case IF_NE:
       case IF_NEZ:
-        return Jimple.v().newNeExpr(one, other);
+        return myJimple.newNeExpr(one, other);
       case IF_LT:
       case IF_LTZ:
-        return Jimple.v().newLtExpr(one, other);
+        return myJimple.newLtExpr(one, other);
       case IF_GE:
       case IF_GEZ:
-        return Jimple.v().newGeExpr(one, other);
+        return myJimple.newGeExpr(one, other);
       case IF_GT:
       case IF_GTZ:
-        return Jimple.v().newGtExpr(one, other);
+        return myJimple.newGtExpr(one, other);
       case IF_LE:
       case IF_LEZ:
-        return Jimple.v().newLeExpr(one, other);
+        return myJimple.newLeExpr(one, other);
       default:
         throw new RuntimeException("Instruction is not an IfTest(z) instruction.");
     }

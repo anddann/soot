@@ -70,8 +70,8 @@ public class TrapUnitGraph extends UnitGraph {
     super(body);
     int size = unitChain.size();
 
-    if (Options.v().time()) {
-      Timers.v().graphTimer.start();
+    if (myOptions.time()) {
+      myTimers.graphTimer.start();
     }
 
     unitToSuccs = new HashMap<Unit, List<Unit>>(size * 2 + 1, 0.7f);
@@ -81,11 +81,11 @@ public class TrapUnitGraph extends UnitGraph {
 
     buildHeadsAndTails();
 
-    if (Options.v().time()) {
-      Timers.v().graphTimer.end();
+    if (myOptions.time()) {
+      myTimers.graphTimer.end();
     }
 
-    soot.util.PhaseDumper.v().dumpGraph(this, body);
+    soot.util.myPhaseDumper.dumpGraph(this, body);
   }
 
   /**

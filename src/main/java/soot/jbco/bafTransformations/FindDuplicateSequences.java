@@ -322,9 +322,9 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
 
         changed = true;
 
-        controlLocal = Baf.v().newLocal("controlLocalfordups" + controlLocalIndex, IntType.v());
+        controlLocal = myBaf.newLocal("controlLocalfordups" + controlLocalIndex, IntType.v());
         bLocals.add(controlLocal);
-        bafToJLocals.put(controlLocal, Jimple.v().newLocal("controlLocalfordups" + controlLocalIndex++, IntType.v()));
+        bafToJLocals.put(controlLocal, myJimple.newLocal("controlLocalfordups" + controlLocalIndex++, IntType.v()));
 
         counts[key.size()] += avalues.size();
 
@@ -333,12 +333,12 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
         Unit first = key.get(0);
         // protectedUnits.addAll(key);
 
-        Unit store = Baf.v().newStoreInst(IntType.v(), controlLocal);
+        Unit store = myBaf.newStoreInst(IntType.v(), controlLocal);
         // protectedUnits.add(store);
 
         units.insertBefore(store, first);
 
-        Unit pushUnit = Baf.v().newPushInst(IntConstant.v(0));
+        Unit pushUnit = myBaf.newPushInst(IntConstant.v(0));
         // protectedUnits.add(pushUnit);
 
         units.insertBefore(pushUnit, store);
@@ -357,12 +357,12 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
 
           units.insertBefore(storet, firstt);
 
-          pushUnit = Baf.v().newPushInst(IntConstant.v(index++));
+          pushUnit = myBaf.newPushInst(IntConstant.v(index++));
           // protectedUnits.add(pushUnit);
 
           units.insertBefore(pushUnit, storet);
 
-          Unit goUnit = Baf.v().newGotoInst(first);
+          Unit goUnit = myBaf.newGotoInst(first);
           // protectedUnits.add(goUnit);
 
           units.insertAfter(goUnit, storet);
@@ -372,12 +372,12 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
         Unit insertAfter = key.get(key.size() - 1);
         // protectedUnits.add(insertAfter);
 
-        Unit swUnit = Baf.v().newTableSwitchInst(units.getSuccOf(insertAfter), 1, jumps.size(), jumps);
+        Unit swUnit = myBaf.newTableSwitchInst(units.getSuccOf(insertAfter), 1, jumps.size(), jumps);
         // protectedUnits.add(swUnit);
 
         units.insertAfter(swUnit, insertAfter);
 
-        Unit loadUnit = Baf.v().newLoadInst(IntType.v(), controlLocal);
+        Unit loadUnit = myBaf.newLoadInst(IntType.v(), controlLocal);
         // protectedUnits.add(loadUnit);
 
         units.insertAfter(loadUnit, insertAfter);

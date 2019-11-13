@@ -206,8 +206,8 @@ public class MonitorAnalysis extends ForwardFlowAnalysis {
     // logger.debug(""+graph.getBody().getMethod().getSignature() + " numNodes: " + numNodes +
     // " numComputations: " + numComputations + " avg: " + Main.truncatedOf((double) numComputations / numNodes, 2));
 
-    Timers.v().totalFlowNodes += numNodes;
-    Timers.v().totalFlowComputations += numComputations;
+    myTimers.totalFlowNodes += numNodes;
+    myTimers.totalFlowComputations += numComputations;
   }
 
   // STEP 4: Is the merge operator union or intersection?

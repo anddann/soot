@@ -71,10 +71,10 @@ public class NewArrayInstruction extends DexlibAbstractInstruction {
     // NewArrayExpr needs the ElementType as it increases the array dimension by 1
     Type arrayType = ((ArrayType) t).getElementType();
 
-    NewArrayExpr newArrayExpr = Jimple.v().newNewArrayExpr(arrayType, size);
+    NewArrayExpr newArrayExpr = myJimple.newNewArrayExpr(arrayType, size);
 
     Local l = body.getRegisterLocal(dest);
-    AssignStmt assign = Jimple.v().newAssignStmt(l, newArrayExpr);
+    AssignStmt assign = myJimple.newAssignStmt(l, newArrayExpr);
 
     setUnit(assign);
     addTags(assign);

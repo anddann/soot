@@ -80,7 +80,7 @@ public class DexClassLoader {
     // super class for hierarchy level
     if (superClass != null) {
       String superClassName = Util.dottedClassName(superClass);
-      SootClass sootSuperClass = SootResolver.v().makeClassRef(superClassName);
+      SootClass sootSuperClass = mySootResolver.makeClassRef(superClassName);
       sc.setSuperclass(sootSuperClass);
       deps.typesToHierarchy.add(sootSuperClass.getType());
     }
@@ -97,14 +97,14 @@ public class DexClassLoader {
           continue;
         }
 
-        SootClass interfaceClass = SootResolver.v().makeClassRef(interfaceClassName);
+        SootClass interfaceClass = mySootResolver.makeClassRef(interfaceClassName);
         interfaceClass.setModifiers(interfaceClass.getModifiers() | Modifier.INTERFACE);
         sc.addInterface(interfaceClass);
         deps.typesToHierarchy.add(interfaceClass.getType());
       }
     }
 
-    if (Options.v().oaat() && sc.resolvingLevel() <= SootClass.HIERARCHY) {
+    if (myOptions.oaat() && sc.resolvingLevel() <= SootClass.HIERARCHY) {
       return deps;
     }
     DexAnnotation da = createDexAnnotation(sc, deps);
@@ -162,7 +162,7 @@ public class DexClassLoader {
             continue;
           }
 
-          SootClass osc = SootResolver.v().makeClassRef(outer);
+          SootClass osc = mySootResolver.makeClassRef(outer);
           if (osc == sc) {
             if (!sc.hasOuterClass()) {
               continue;

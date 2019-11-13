@@ -71,7 +71,7 @@ public class BodyBuilder {
     }
 
     // iterate through application classes, rename fields with junk
-    for (SootClass c : soot.Scene.v().getApplicationClasses()) {
+    for (SootClass c : soot.myScene.getApplicationClasses()) {
 
       for (SootMethod m : c.getMethods()) {
         if (!m.isConcrete()) {
@@ -94,7 +94,7 @@ public class BodyBuilder {
 
     // iterate through application classes, rename fields with junk
 
-    for (SootClass c : soot.Scene.v().getApplicationClasses()) {
+    for (SootClass c : soot.myScene.getApplicationClasses()) {
       nameList.add(c.getName());
 
       for (SootMethod m : c.getMethods()) {
@@ -109,9 +109,9 @@ public class BodyBuilder {
   }
 
   public static Local buildThisLocal(PatchingChain<Unit> units, ThisRef tr, Collection<Local> locals) {
-    Local ths = Jimple.v().newLocal("ths", tr.getType());
+    Local ths = myJimple.newLocal("ths", tr.getType());
     locals.add(ths);
-    units.add(Jimple.v().newIdentityStmt(ths, Jimple.v().newThisRef((RefType) tr.getType())));
+    units.add(myJimple.newIdentityStmt(ths, myJimple.newThisRef((RefType) tr.getType())));
     return ths;
   }
 
@@ -120,10 +120,10 @@ public class BodyBuilder {
     List<Local> args = new ArrayList<Local>();
     for (int k = 0; k < paramTypes.size(); k++) {
       Type type = paramTypes.get(k);
-      Local loc = Jimple.v().newLocal("l" + k, type);
+      Local loc = myJimple.newLocal("l" + k, type);
       locals.add(loc);
 
-      units.add(Jimple.v().newIdentityStmt(loc, Jimple.v().newParameterRef(type, k)));
+      units.add(myJimple.newIdentityStmt(loc, myJimple.newParameterRef(type, k)));
 
       args.add(loc);
     }

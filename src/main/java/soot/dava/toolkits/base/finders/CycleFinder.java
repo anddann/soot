@@ -29,12 +29,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.G;
 import soot.Local;
-import soot.Singletons;
 import soot.Unit;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
@@ -64,8 +64,12 @@ import soot.util.StationaryArrayList;
 
 public class CycleFinder implements FactFinder {
   private static final Logger logger = LoggerFactory.getLogger(CycleFinder.class);
+  private Dava myDava;
 
-  public CycleFinder(Singletons.Global g) {
+
+  @Inject
+  public CycleFinder(Dava myDava) {
+    this.myDava = myDava;
   }
 
   public static CycleFinder v() {
@@ -73,7 +77,7 @@ public class CycleFinder implements FactFinder {
   }
 
   public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
-    Dava.v().log("CycleFinder::find()");
+    myDava.log("CycleFinder::find()");
 
     AugmentedStmtGraph wasg = (AugmentedStmtGraph) asg.clone();
     List<List<AugmentedStmt>> component_list = build_component_list(wasg);

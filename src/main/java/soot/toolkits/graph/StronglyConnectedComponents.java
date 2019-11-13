@@ -103,7 +103,7 @@ public class StronglyConnectedComponents {
     }
     componentList = Collections.unmodifiableList(componentList);
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("Done computing scc components");
       logger.debug("number of nodes in underlying graph: " + g.size());
       logger.debug("number of components: " + sccGraph.size());

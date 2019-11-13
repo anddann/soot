@@ -59,18 +59,18 @@ public class MethodThrowableSetTest {
         File f = new File("./target/test-classes");
 		if (f.exists())
 			processDir.add(f.getCanonicalPath());
-		Options.v().set_process_dir(processDir);
+		myOptions.set_process_dir(processDir);
 
-		Options.v().set_src_prec(Options.src_prec_only_class);
-		Options.v().set_allow_phantom_refs(true);
-		Options.v().set_output_format(Options.output_format_none);
+		myOptions.set_src_prec(Options.src_prec_only_class);
+		myOptions.set_allow_phantom_refs(true);
+		myOptions.set_output_format(Options.output_format_none);
 
-		Scene.v().addBasicClass(TARGET_CLASS);
-		Scene.v().loadNecessaryClasses();
+		myScene.addBasicClass(TARGET_CLASS);
+		myScene.loadNecessaryClasses();
 
 		testUtility = new ExceptionTestUtility();
 
-		PackManager.v().runPacks();
+		PackmyManager.runPacks();
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class MethodThrowableSetTest {
 	 *         possibly throw
 	 */
 	private ThrowableSet getExceptionsForMethod(String methodSig) {
-		SootMethod sm = Scene.v().getMethod(methodSig);
+		SootMethod sm = myScene.getMethod(methodSig);
 		ThrowAnalysisForTest ta = new ThrowAnalysisForTest();
 		return ta.mightThrow(sm);
 	}
@@ -166,7 +166,7 @@ public class MethodThrowableSetTest {
 		expected.add(AnySubType.v(testUtility.ERROR)); // for NewExpr
 		expected.add(testUtility.ILLEGAL_MONITOR_STATE_EXCEPTION);
 		expected.add(testUtility.NULL_POINTER_EXCEPTION);
-		expected.add(AnySubType.v(Scene.v().getSootClass(EXCEPTION_CLASS).getType()));
+		expected.add(AnySubType.v(myScene.getSootClass(EXCEPTION_CLASS).getType()));
 
 		Assert.assertTrue(ExceptionTestUtility.sameMembers(expected, Collections.<AnySubType>emptySet(), ts));
 	}

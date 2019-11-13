@@ -47,7 +47,7 @@ public class ReturnInstruction extends DexlibAbstractInstruction {
   public void jimplify(DexBody body) {
     Instruction11x returnInstruction = (Instruction11x) this.instruction;
     Local l = body.getRegisterLocal(returnInstruction.getRegisterA());
-    ReturnStmt returnStmt = Jimple.v().newReturnStmt(l);
+    ReturnStmt returnStmt = myJimple.newReturnStmt(l);
     setUnit(returnStmt);
     addTags(returnStmt);
     body.add(returnStmt);

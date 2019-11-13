@@ -64,7 +64,7 @@ public class DeadlockDetector {
     this.optionRepairDeadlock = optionRepairDeadlock;
     this.optionAllowSelfEdges = optionAllowSelfEdges && !optionRepairDeadlock; // can only do this if not repairing
     this.criticalSections = criticalSections;
-    this.tt = new TransitiveTargets(Scene.v().getCallGraph(), new Filter(new CriticalSectionVisibleEdgesPred(null)));
+    this.tt = new TransitiveTargets(myScene.getCallGraph(), new Filter(new CriticalSectionVisibleEdgesPred(null)));
   }
 
   public MutableDirectedGraph<CriticalSectionGroup> detectComponentBasedDeadlock() {
@@ -307,7 +307,7 @@ public class DeadlockDetector {
                     permanentOrder.addNode(daeNum);
                     lockToLockNum.put(dae, daeNum);
                     PointsToSetInternal dummyLockPT
-                        = new HashPointsToSet(lock1.getType(), (PAG) Scene.v().getPointsToAnalysis());
+                        = new HashPointsToSet(lock1.getType(), (PAG) myScene.getPointsToAnalysis());
                     lockPTSets.add(dummyLockPT);
 
                     // Add it to the locksets of tn1 and whoever says l2 before l1

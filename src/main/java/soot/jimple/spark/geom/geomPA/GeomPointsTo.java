@@ -48,7 +48,6 @@ import soot.Local;
 import soot.MethodOrMethodContext;
 import soot.PointsToSet;
 import soot.RefType;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -67,7 +66,6 @@ import soot.jimple.spark.geom.utils.ZArrayNumberer;
 import soot.jimple.spark.internal.TypeManager;
 import soot.jimple.spark.pag.AllocDotField;
 import soot.jimple.spark.pag.AllocNode;
-import soot.jimple.spark.pag.ArrayElement;
 import soot.jimple.spark.pag.ContextVarNode;
 import soot.jimple.spark.pag.FieldRefNode;
 import soot.jimple.spark.pag.LocalVarNode;
@@ -75,12 +73,10 @@ import soot.jimple.spark.pag.Node;
 import soot.jimple.spark.pag.PAG;
 import soot.jimple.spark.pag.SparkField;
 import soot.jimple.spark.pag.VarNode;
-import soot.jimple.spark.sets.EmptyPointsToSet;
 import soot.jimple.spark.sets.P2SetVisitor;
 import soot.jimple.spark.sets.PointsToSetInternal;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Edge;
-import soot.jimple.toolkits.callgraph.VirtualCalls;
 import soot.options.SparkOptions;
 import soot.toolkits.scalar.Pair;
 import soot.util.NumberedString;
@@ -181,7 +177,7 @@ public class GeomPointsTo extends PAG {
 
   // -------------------Constructors--------------------
   public GeomPointsTo(final SparkOptions opts) {
-    super(opts);
+    super(myPhaseOptions, myScene, myArrayElement, opts);
   }
 
   public String toString() {
@@ -350,14 +346,14 @@ public class GeomPointsTo extends PAG {
     int s, t;
 
     // Build the call graph
-    n_func = Scene.v().getReachableMethods().size() + 1;
+    n_func = myScene.getReachableMethods().size() + 1;
     call_graph = new CgEdge[n_func];
 
     n_calls = 0;
     n_reach_spark_user_methods = 0;
     id = 1;
-    QueueReader<MethodOrMethodContext> smList = Scene.v().getReachableMethods().listener();
-    CallGraph soot_callgraph = Scene.v().getCallGraph();
+    QueueReader<MethodOrMethodContext> smList = myScene.getReachableMethods().listener();
+    CallGraph soot_callgraph = myScene.getCallGraph();
 
     while (smList.hasNext()) {
       final SootMethod func = smList.next().method();
@@ -383,7 +379,7 @@ public class GeomPointsTo extends PAG {
 
     // Next, we scan all the call edges and rebuild the call graph in our own
     // vocabulary
-    QueueReader<Edge> edgeList = Scene.v().getCallGraph().listener();
+    QueueReader<Edge> edgeList = myScene.getCallGraph().listener();
     while (edgeList.hasNext()) {
       Edge edge = edgeList.next();
       if (edge.isClinit()) {
@@ -907,7 +903,7 @@ public class GeomPointsTo extends PAG {
         continue;
       }
 
-      VirtualCalls.v().resolve(type, receiver.getType(), subSig, src, targetsQueue);
+      myVirtualCalls.resolve(type, receiver.getType(), subSig, src, targetsQueue);
     }
   }
 
@@ -917,7 +913,7 @@ public class GeomPointsTo extends PAG {
   private int updateCallGraph() {
     int all_virtual_edges = 0, n_obsoleted = 0;
 
-    CallGraph cg = Scene.v().getCallGraph();
+    CallGraph cg = myScene.getCallGraph();
     ChunkedQueue<SootMethod> targetsQueue = new ChunkedQueue<SootMethod>();
     QueueReader<SootMethod> targets = targetsQueue.reader();
     Set<SootMethod> resolvedMethods = new HashSet<SootMethod>();
@@ -1224,9 +1220,9 @@ public class GeomPointsTo extends PAG {
    */
   private void finalizeSootData() {
     // We remove the unreachable functions from Soot internal structures
-    Scene.v().releaseReachableMethods();
+    myScene.releaseReachableMethods();
     // The we rebuild it from the updated Soot call graph
-    Scene.v().getReachableMethods();
+    myScene.getReachableMethods();
 
     if (!opts.geom_trans()) {
       // We remove the SPARK points-to information for pointers that have geomPTA
@@ -1544,7 +1540,7 @@ public class GeomPointsTo extends PAG {
   }
 
   /**
-   * A replacement of the Scene.v().getReachableMethods.
+   * A replacement of the myScene.getReachableMethods.
    *
    * @return
    */
@@ -1706,7 +1702,7 @@ public class GeomPointsTo extends PAG {
     if (v.getType() instanceof RefType) {
       SootClass sc = ((RefType) v.getType()).getSootClass();
       if (!sc.isInterface()
-          && Scene.v().getActiveHierarchy().isClassSubclassOfIncluding(sc, Constants.exeception_type.getSootClass())) {
+          && myScene.getActiveHierarchy().isClassSubclassOfIncluding(sc, Constants.exeception_type.getSootClass())) {
         return true;
       }
     }
@@ -1761,7 +1757,7 @@ public class GeomPointsTo extends PAG {
         if (nDotF != null) {
           // nDotF.getP2Set() has been discarded in solve()
           IVarAbstraction pn = consG.get(nDotF);
-          if (pn == null || hasTransformed || nDotF.getP2Set() != EmptyPointsToSet.v()) {
+          if (pn == null || hasTransformed || nDotF.getP2Set() != myEmptyPointsToSet) {
             ret.addAll(nDotF.getP2Set(), null);
             return;
           }
@@ -1787,7 +1783,7 @@ public class GeomPointsTo extends PAG {
 
     LocalVarNode vn = findLocalVarNode(l);
     if (vn == null) {
-      return EmptyPointsToSet.v();
+      return myEmptyPointsToSet;
     }
 
     IVarAbstraction pn = consG.get(vn);
@@ -1799,7 +1795,7 @@ public class GeomPointsTo extends PAG {
     }
 
     // Return the cached result
-    if (hasTransformed || vn.getP2Set() != EmptyPointsToSet.v()) {
+    if (hasTransformed || vn.getP2Set() != myEmptyPointsToSet) {
       return vn.getP2Set();
     }
 
@@ -1829,7 +1825,7 @@ public class GeomPointsTo extends PAG {
 
     LocalVarNode vn = findLocalVarNode(l);
     if (vn == null) {
-      return EmptyPointsToSet.v();
+      return myEmptyPointsToSet;
     }
 
     // Lookup the context sensitive points-to information for this pointer
@@ -1842,7 +1838,7 @@ public class GeomPointsTo extends PAG {
 
     // Obtain the context sensitive points-to result
     SootMethod callee = vn.getMethod();
-    Edge e = Scene.v().getCallGraph().findEdge((Unit) c, callee);
+    Edge e = myScene.getCallGraph().findEdge((Unit) c, callee);
     if (e == null) {
       return vn.getP2Set();
     }
@@ -1860,7 +1856,7 @@ public class GeomPointsTo extends PAG {
     ContextVarNode cvn = vn.context(c);
     if (cvn != null) {
       PointsToSetInternal ans = cvn.getP2Set();
-      if (ans != EmptyPointsToSet.v()) {
+      if (ans != myEmptyPointsToSet) {
         return ans;
       }
     } else {
@@ -1892,7 +1888,7 @@ public class GeomPointsTo extends PAG {
 
     VarNode vn = findGlobalVarNode(f);
     if (vn == null) {
-      return EmptyPointsToSet.v();
+      return myEmptyPointsToSet;
     }
 
     IVarAbstraction pn = consG.get(vn);
@@ -1901,7 +1897,7 @@ public class GeomPointsTo extends PAG {
     }
 
     // Lookup the cache
-    if (hasTransformed || vn.getP2Set() != EmptyPointsToSet.v()) {
+    if (hasTransformed || vn.getP2Set() != myEmptyPointsToSet) {
       return vn.getP2Set();
     }
 
@@ -1944,7 +1940,7 @@ public class GeomPointsTo extends PAG {
     if (!hasExecuted) {
       return super.reachingObjectsOfArrayElement(s);
     }
-    return field_p2set(s, ArrayElement.v());
+    return field_p2set(s, myArrayElement);
   }
 
   // An extra query interfaces not provided by SPARK
@@ -1954,7 +1950,7 @@ public class GeomPointsTo extends PAG {
 
     // No such pointer seen by SPARK
     if (adf == null) {
-      return EmptyPointsToSet.v();
+      return myEmptyPointsToSet;
     }
 
     // Not seen by geomPTA
@@ -1962,7 +1958,7 @@ public class GeomPointsTo extends PAG {
       return adf.getP2Set();
     }
 
-    if (hasTransformed || adf.getP2Set() != EmptyPointsToSet.v()) {
+    if (hasTransformed || adf.getP2Set() != myEmptyPointsToSet) {
       return adf.getP2Set();
     }
 

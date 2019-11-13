@@ -49,7 +49,7 @@ class LocalTypeSet extends java.util.BitSet {
     this.types = types;
 
     // Make sure that we have a hierarchy
-    Scene.v().getOrMakeFastHierarchy();
+    myScene.getOrMakeFastHierarchy();
   }
 
   /** Returns the number of the bit corresponding to the pair (l,t). */
@@ -97,7 +97,7 @@ class LocalTypeSet extends java.util.BitSet {
 
   /** Adds to the set all pairs (l,type) where type is any supertype of t. */
   public void localMustBeSubtypeOf(Local l, RefType t) {
-    FastHierarchy fh = Scene.v().getFastHierarchy();
+    FastHierarchy fh = myScene.getFastHierarchy();
     for (Type type : types) {
       RefType supertype = (RefType) type;
       if (fh.canStoreType(t, supertype)) {

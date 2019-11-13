@@ -63,7 +63,7 @@ public class SPatchingChain extends UnitPatchingChain {
   public SPatchingChain(Body aBody, Chain<Unit> aChain) {
     super(aChain);
     this.body = aBody;
-    this.debug = Options.v().debug();
+    this.debug = myOptions.debug();
     if (aBody instanceof ShimpleBody) {
       debug |= ((ShimpleBody) aBody).getOptions().debug();
     }

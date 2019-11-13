@@ -53,7 +53,7 @@ public class ParameterAliasTagger extends BodyTransformer {
   }
 
   protected void internalTransform(Body b, String phaseName, Map options) {
-    PointsToAnalysis pa = Scene.v().getPointsToAnalysis();
+    PointsToAnalysis pa = myScene.getPointsToAnalysis();
     Set<IdentityStmt> parms = new HashSet<IdentityStmt>();
 
     for (Iterator sIt = b.getUnits().iterator(); sIt.hasNext();) {

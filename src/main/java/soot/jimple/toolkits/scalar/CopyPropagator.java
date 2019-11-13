@@ -99,12 +99,12 @@ public class CopyPropagator extends BodyTransformer {
     int fastCopyPropagationCount = 0;
     int slowCopyPropagationCount = 0;
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + stmtBody.getMethod().getName() + "] Propagating copies...");
     }
 
-    if (Options.v().time()) {
-      Timers.v().propagatorTimer.start();
+    if (myOptions.time()) {
+      myTimers.propagatorTimer.start();
     }
 
     Chain<Unit> units = stmtBody.getUnits();
@@ -126,11 +126,11 @@ public class CopyPropagator extends BodyTransformer {
     }
 
     if (throwAnalysis == null) {
-      throwAnalysis = Scene.v().getDefaultThrowAnalysis();
+      throwAnalysis = myScene.getDefaultThrowAnalysis();
     }
 
     if (forceOmitExceptingUnitEdges == false) {
-      forceOmitExceptingUnitEdges = Options.v().omit_excepting_unit_edges();
+      forceOmitExceptingUnitEdges = myOptions.omit_excepting_unit_edges();
     }
 
     // Go through the definitions, building the webs
@@ -203,8 +203,8 @@ public class CopyPropagator extends BodyTransformer {
                   boolean isConstNull = ce.getOp() instanceof IntConstant && ((IntConstant) ce.getOp()).value == 0;
                   isConstNull |= ce.getOp() instanceof LongConstant && ((LongConstant) ce.getOp()).value == 0;
                   if (isConstNull) {
-                    if (useBox.canContainValue(NullConstant.v())) {
-                      useBox.setValue(NullConstant.v());
+                    if (useBox.canContainValue(myNullConstant)) {
+                      useBox.setValue(myNullConstant);
                     }
                   }
 
@@ -275,13 +275,13 @@ public class CopyPropagator extends BodyTransformer {
       }
     }
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + stmtBody.getMethod().getName() + "]     Propagated: " + fastCopyPropagationCount + " fast copies  "
           + slowCopyPropagationCount + " slow copies");
     }
 
-    if (Options.v().time()) {
-      Timers.v().propagatorTimer.end();
+    if (myOptions.time()) {
+      myTimers.propagatorTimer.end();
     }
   }
 

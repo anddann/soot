@@ -60,7 +60,7 @@ public class Hierarchy {
 
   /** Constructs a hierarchy from the current scene. */
   public Hierarchy() {
-    this.sc = Scene.v();
+    this.sc = myScene;
     state = sc.getState();
 
     // Well, this used to be describable by 'Duh'.

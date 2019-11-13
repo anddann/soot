@@ -108,7 +108,7 @@ class ArrayIndexLivenessAnalysis extends BackwardFlowAnalysis {
     csin = takeCSE;
     rectarray = takeRectArray;
 
-    if (Options.v().debug()) {
+    if (myOptions.debug()) {
       logger.debug("Enter ArrayIndexLivenessAnalysis");
     }
 
@@ -150,7 +150,7 @@ class ArrayIndexLivenessAnalysis extends BackwardFlowAnalysis {
 
     doAnalysis();
 
-    if (Options.v().debug()) {
+    if (myOptions.debug()) {
       logger.debug("Leave ArrayIndexLivenessAnalysis");
     }
   }

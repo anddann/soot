@@ -298,7 +298,7 @@ public class SharedListSet extends PointsToSetInternal {
       {
         // Remove the list from the HashMap if it's no longer used; otherwise
         // the sharing won't really gain us memory.
-        AllSharedListNodes.v().allNodes.remove(new Pair(elem, next));
+        myAllSharedListNodes.allNodes.remove(new Pair(elem, next));
       }
     }
   }
@@ -307,7 +307,7 @@ public class SharedListSet extends PointsToSetInternal {
   // wasn't working for some reason
   private ListNode makeNode(Node elem, ListNode next) {
     Pair p = new Pair(elem, next);
-    ListNode retVal = (AllSharedListNodes.v().allNodes.get(p));
+    ListNode retVal = (myAllSharedListNodes.allNodes.get(p));
     if (retVal == null)
     // if it's not an existing node
     {
@@ -316,13 +316,13 @@ public class SharedListSet extends PointsToSetInternal {
         next.incRefCount(); // next now has an extra
       }
       // thing pointing at it (the newly created node)
-      AllSharedListNodes.v().allNodes.put(p, retVal);
+      myAllSharedListNodes.allNodes.put(p, retVal);
     }
 
     return retVal;
   }
 
-  // private final Map allNodes = AllSharedListNodes.v().allNodes;
+  // private final Map allNodes = myAllSharedListNodes.allNodes;
   // private static Map allNodes = new HashMap();
   private PAG pag; // I think this is needed to get the size of the bit
   // vector and the mask for casting

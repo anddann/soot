@@ -101,9 +101,9 @@ public class SynchObliviousMhpAnalysis implements MhpTester, Runnable {
   }
 
   public void run() {
-    SootMethod mainMethod = Scene.v().getMainClass().getMethodByName("main");
+    SootMethod mainMethod = myScene.getMainClass().getMethodByName("main");
 
-    PointsToAnalysis pta = Scene.v().getPointsToAnalysis();
+    PointsToAnalysis pta = myScene.getPointsToAnalysis();
     if (pta instanceof DemandCSPointsTo) {
       DemandCSPointsTo demandCSPointsTo = (DemandCSPointsTo) pta;
       pta = demandCSPointsTo.getPAG();
@@ -117,7 +117,7 @@ public class SynchObliviousMhpAnalysis implements MhpTester, Runnable {
       throw new RuntimeException("MHP cannot be calculated using RTA due to incomplete call graph");
     }
 
-    CallGraph callGraph = Scene.v().getCallGraph();
+    CallGraph callGraph = myScene.getCallGraph();
 
     // Get a call graph trimmed to contain only the relevant methods (non-lib, non-native)
     // logger.debug(" MHP: PegCallGraph");

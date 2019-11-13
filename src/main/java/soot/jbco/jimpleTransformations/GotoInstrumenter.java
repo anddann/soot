@@ -177,14 +177,14 @@ public class GotoInstrumenter extends BodyTransformer implements IJbcoTransform 
     // add goto as FIRST unit to point to new chunk location
     final Unit firstReorderingNotGotoStmt
         = first instanceof GotoStmt ? ((GotoStmt) first).getTargetBox().getUnit() : firstReorderingUnit;
-    final GotoStmt gotoFirstReorderingNotGotoStmt = Jimple.v().newGotoStmt(firstReorderingNotGotoStmt);
+    final GotoStmt gotoFirstReorderingNotGotoStmt = myJimple.newGotoStmt(firstReorderingNotGotoStmt);
     units.insertBeforeNoRedirect(gotoFirstReorderingNotGotoStmt, reorderingUnit);
 
     // add goto as LAST unit to point to new position of second chunk
     if (units.getLast().fallsThrough()) {
       final Stmt gotoStmt = (reorderingUnit instanceof GotoStmt)
-          ? Jimple.v().newGotoStmt(((GotoStmt) reorderingUnit).getTargetBox().getUnit())
-          : Jimple.v().newGotoStmt(reorderingUnit);
+          ? myJimple.newGotoStmt(((GotoStmt) reorderingUnit).getTargetBox().getUnit())
+          : myJimple.newGotoStmt(reorderingUnit);
 
       units.add(gotoStmt);
     }
@@ -205,13 +205,13 @@ public class GotoInstrumenter extends BodyTransformer implements IJbcoTransform 
       secondReorderedUnit = firstReorderingNotGotoStmt;
     }
 
-    final RefType throwable = Scene.v().getRefType("java.lang.Throwable");
-    final Local caughtExceptionLocal = Jimple.v().newLocal("jbco_gi_caughtExceptionLocal", throwable);
+    final RefType throwable = myScene.getRefType("java.lang.Throwable");
+    final Local caughtExceptionLocal = myJimple.newLocal("jbco_gi_caughtExceptionLocal", throwable);
     body.getLocals().add(caughtExceptionLocal);
 
-    final Unit caughtExceptionHandler = Jimple.v().newIdentityStmt(caughtExceptionLocal, Jimple.v().newCaughtExceptionRef());
+    final Unit caughtExceptionHandler = myJimple.newIdentityStmt(caughtExceptionLocal, myJimple.newCaughtExceptionRef());
     units.add(caughtExceptionHandler);
-    units.add(Jimple.v().newThrowStmt(caughtExceptionLocal));
+    units.add(myJimple.newThrowStmt(caughtExceptionLocal));
 
     final Iterator<Unit> reorderedUnitsIterator
         = units.iterator(secondReorderedUnit, units.getPredOf(caughtExceptionHandler));
@@ -221,7 +221,7 @@ public class GotoInstrumenter extends BodyTransformer implements IJbcoTransform 
     }
     trapEndUnit = units.getSuccOf(trapEndUnit);
 
-    body.getTraps().add(Jimple.v().newTrap(throwable.getSootClass(), units.getPredOf(firstReorderingNotGotoStmt),
+    body.getTraps().add(myJimple.newTrap(throwable.getSootClass(), units.getPredOf(firstReorderingNotGotoStmt),
         trapEndUnit, caughtExceptionHandler));
 
     trapsAdded++;

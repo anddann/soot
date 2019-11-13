@@ -39,7 +39,7 @@ public class Main {
    * @param args
    */
   public static void main(String[] args) {
-    PackManager.v().getPack("jtp").add(new Transform("jtp.fixedie", new BodyTransformer() {
+    PackmyManager.getPack("jtp").add(new Transform("jtp.fixedie", new BodyTransformer() {
 
       @Override
       protected void internalTransform(Body b, String phaseName, Map<String, String> options) {

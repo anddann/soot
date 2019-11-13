@@ -122,7 +122,7 @@ public class AssignPlusExpr extends AssignAdditiveExpr implements Cloneable {
       b.setLine(this);
       b.add(b.newInvokeStmt(
         b.newSpecialInvokeExpr(local, 
-          Scene.v().getMethod("<java.lang.StringBuffer: void <init>(java.lang.String)>").makeRef(),
+          myScene.getMethod("<java.lang.StringBuffer: void <init>(java.lang.String)>").makeRef(),
           v,
           this
         ), this));
@@ -138,7 +138,7 @@ public class AssignPlusExpr extends AssignAdditiveExpr implements Cloneable {
       // toString
       Local result = b.newTemp(
         b.newVirtualInvokeExpr(rightResult,
-          Scene.v().getMethod("<java.lang.StringBuffer: java.lang.String toString()>").makeRef(),
+          myScene.getMethod("<java.lang.StringBuffer: java.lang.String toString()>").makeRef(),
           this
         ));
   

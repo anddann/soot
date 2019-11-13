@@ -208,7 +208,7 @@ public class PropIter extends Propagator {
             // this now
             SootClass targetClass = ((RefType) ccnType).getSootClass();
             if (targetClass.resolvingLevel() == SootClass.DANGLING) {
-              Scene.v().forceResolve(targetClass.getName(), SootClass.SIGNATURES);
+              myScene.forceResolve(targetClass.getName(), SootClass.SIGNATURES);
             }
 
             instance.makeP2Set().add(pag.makeAllocNode(src.getValue(), ccnType, ccn.getMethod()));

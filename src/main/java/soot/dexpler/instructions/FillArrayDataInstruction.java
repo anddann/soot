@@ -88,7 +88,7 @@ public class FillArrayDataInstruction extends PseudoInstruction {
 
     ArrayPayload arrayTable = (ArrayPayload) referenceTable;
 
-    // NopStmt nopStmtBeginning = Jimple.v().newNopStmt();
+    // NopStmt nopStmtBeginning = myJimple.newNopStmt();
     // body.add(nopStmtBeginning);
 
     Local arrayReference = body.getRegisterLocal(destRegister);
@@ -97,12 +97,12 @@ public class FillArrayDataInstruction extends PseudoInstruction {
 
     Stmt firstAssign = null;
     for (int i = 0; i < numElements; i++) {
-      ArrayRef arrayRef = Jimple.v().newArrayRef(arrayReference, IntConstant.v(i));
+      ArrayRef arrayRef = myJimple.newArrayRef(arrayReference, IntConstant.v(i));
       NumericConstant element = getArrayElement(elements.get(i), body, destRegister);
       if (element == null) {
         break;
       }
-      AssignStmt assign = Jimple.v().newAssignStmt(arrayRef, element);
+      AssignStmt assign = myJimple.newAssignStmt(arrayRef, element);
       addTags(assign);
       body.add(assign);
       if (i == 0) {
@@ -110,11 +110,11 @@ public class FillArrayDataInstruction extends PseudoInstruction {
       }
     }
     if (firstAssign == null) { // if numElements == 0. Is it possible?
-      firstAssign = Jimple.v().newNopStmt();
+      firstAssign = myJimple.newNopStmt();
       body.add(firstAssign);
     }
 
-    // NopStmt nopStmtEnd = Jimple.v().newNopStmt();
+    // NopStmt nopStmtEnd = myJimple.newNopStmt();
     // body.add(nopStmtEnd);
 
     // defineBlock(nopStmtBeginning, nopStmtEnd);

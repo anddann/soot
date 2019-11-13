@@ -199,10 +199,10 @@ public class Validate {
       System.out.println("warning: incorrect array def, replacing unit " + u);
       // new object
       RefType throwableType = RefType.v("java.lang.Throwable");
-      Local ttt = Jimple.v().newLocal("ttt_" + ++i, throwableType);
+      Local ttt = myJimple.newLocal("ttt_" + ++i, throwableType);
       b.getLocals().add(ttt);
-      Value r = Jimple.v().newNewExpr(throwableType);
-      Unit initLocalUnit = Jimple.v().newAssignStmt(ttt, r);
+      Value r = myJimple.newNewExpr(throwableType);
+      Unit initLocalUnit = myJimple.newAssignStmt(ttt, r);
 
       // call <init> method with a string parameter for message
       List<String> pTypes = new ArrayList<String>();
@@ -211,11 +211,11 @@ public class Validate {
       SootMethodRef mRef = Validate.makeMethodRef("java.lang.Throwable", "<init>", "", pTypes, isStatic);
       List<Value> parameters = new ArrayList<Value>();
       parameters.add(StringConstant.v("Soot updated this instruction"));
-      InvokeExpr ie = Jimple.v().newSpecialInvokeExpr(ttt, mRef, parameters);
-      Unit initMethod = Jimple.v().newInvokeStmt(ie);
+      InvokeExpr ie = myJimple.newSpecialInvokeExpr(ttt, mRef, parameters);
+      Unit initMethod = myJimple.newInvokeStmt(ie);
 
       // throw exception
-      Unit newUnit = Jimple.v().newThrowStmt(ttt);
+      Unit newUnit = myJimple.newThrowStmt(ttt);
 
       // change instruction in body
       b.getUnits().swapWith(u, newUnit);
@@ -224,16 +224,16 @@ public class Validate {
       // Exception a = throw new Exception();
     }
 
-    DeadAssignmentEliminator.v().transform(b);
-    UnusedLocalEliminator.v().transform(b);
-    NopEliminator.v().transform(b);
-    UnreachableCodeEliminator.v().transform(b);
+    myDeadAssignmentEliminator.transform(b);
+    myUnusedLocalEliminator.transform(b);
+    myNopEliminator.transform(b);
+    myUnreachableCodeEliminator.transform(b);
 
   }
 
   public static SootMethodRef makeMethodRef(String cName, String mName, String rType, List<String> pTypes,
       boolean isStatic) {
-    SootClass sc = SootResolver.v().makeClassRef(cName);
+    SootClass sc = mySootResolver.makeClassRef(cName);
     Type returnType = null;
     if (rType == "") {
       returnType = VoidType.v();
@@ -244,6 +244,6 @@ public class Validate {
     for (String p : pTypes) {
       parameterTypes.add(RefType.v(p));
     }
-    return Scene.v().makeMethodRef(sc, mName, parameterTypes, returnType, isStatic);
+    return myScene.makeMethodRef(sc, mName, parameterTypes, returnType, isStatic);
   }
 }

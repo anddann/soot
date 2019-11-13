@@ -33,56 +33,56 @@ public class Environment {
     return G.v().soot_jimple_toolkits_pointer_representations_Environment();
   }
 
-  private final ConstantObject clsloaders = new GeneralConstObject(TypeConstants.v().CLASSLOADERCLASS, "classloader");
+  private final ConstantObject clsloaders = new GeneralConstObject(myTypeConstants.CLASSLOADERCLASS, "classloader");
 
-  private final ConstantObject processes = new GeneralConstObject(TypeConstants.v().PROCESSCLASS, "process");
+  private final ConstantObject processes = new GeneralConstObject(myTypeConstants.PROCESSCLASS, "process");
 
-  private final ConstantObject threads = new GeneralConstObject(TypeConstants.v().THREADCLASS, "thread");
+  private final ConstantObject threads = new GeneralConstObject(myTypeConstants.THREADCLASS, "thread");
 
-  private final ConstantObject filesystem = new GeneralConstObject(TypeConstants.v().FILESYSTEMCLASS, "filesystem");
+  private final ConstantObject filesystem = new GeneralConstObject(myTypeConstants.FILESYSTEMCLASS, "filesystem");
 
   /*
    * representing all possible java.lang.Class type objects, mostly used by reflection.
    */
-  private final ConstantObject classobject = new GeneralConstObject(TypeConstants.v().CLASSCLASS, "unknownclass");
+  private final ConstantObject classobject = new GeneralConstObject(myTypeConstants.CLASSCLASS, "unknownclass");
 
   /*
    * representing all possible java.lang.String objects, used by any getName() or similiar methods.
    */
-  private final ConstantObject stringobject = new GeneralConstObject(TypeConstants.v().STRINGCLASS, "unknownstring");
+  private final ConstantObject stringobject = new GeneralConstObject(myTypeConstants.STRINGCLASS, "unknownstring");
 
   /*
    * to get finer resolution, it is worth to distinguish arrays and general scalars. WARNING: making array with
    * java.lang.Object type may be a problem!
    */
-  private final ConstantObject leastarray = new GeneralConstObject(TypeConstants.v().LEASTCLASS, "leastarray");
+  private final ConstantObject leastarray = new GeneralConstObject(myTypeConstants.LEASTCLASS, "leastarray");
 
   /*
    * makes a general unknown object, WARNING: unknown object must have the least type, it won't be useful when resolve
    * virtual calls. Null type is a good candidate for this.
    */
-  private final ConstantObject leastobject = new GeneralConstObject(TypeConstants.v().LEASTCLASS, "leastobject");
+  private final ConstantObject leastobject = new GeneralConstObject(myTypeConstants.LEASTCLASS, "leastobject");
 
   /*
    * provides an abstract java.lang.reflect.Field object.
    */
-  private final ConstantObject fieldobject = new GeneralConstObject(TypeConstants.v().FIELDCLASS, "field");
+  private final ConstantObject fieldobject = new GeneralConstObject(myTypeConstants.FIELDCLASS, "field");
 
   /*
    * provides an abstract java.lang.reflect.Method object
    */
-  private final ConstantObject methodobject = new GeneralConstObject(TypeConstants.v().METHODCLASS, "method");
+  private final ConstantObject methodobject = new GeneralConstObject(myTypeConstants.METHODCLASS, "method");
 
   /*
    * provides an abstract java.lang.reflect.Constructor object
    */
-  private final ConstantObject constructorobject = new GeneralConstObject(TypeConstants.v().CONSTRUCTORCLASS, "constructor");
+  private final ConstantObject constructorobject = new GeneralConstObject(myTypeConstants.CONSTRUCTORCLASS, "constructor");
 
   /*
    * represents the PrivilegedActionException thrown by AccessController.doPrivileged
    */
   private final ConstantObject privilegedActionException
-      = new GeneralConstObject(TypeConstants.v().PRIVILEGEDACTIONEXCEPTION, "constructor");
+      = new GeneralConstObject(myTypeConstants.PRIVILEGEDACTIONEXCEPTION, "constructor");
 
   /********************* INTERFACE to NATIVE METHODS *******************/
   public ConstantObject getClassLoaderObject() {

@@ -38,7 +38,7 @@ public class JRetStmt extends AbstractStmt implements RetStmt {
   // List useBoxes;
 
   public JRetStmt(Value stmtAddress) {
-    this(Jimple.v().newLocalBox(stmtAddress));
+    this(myJimple.newLocalBox(stmtAddress));
   }
 
   protected JRetStmt(ValueBox stmtAddressBox) {

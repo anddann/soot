@@ -57,7 +57,7 @@ public class UnusedLocalEliminator extends BodyTransformer {
 
   @Override
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Eliminating unused locals...");
     }
 

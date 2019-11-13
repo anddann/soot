@@ -171,7 +171,7 @@ public class LockAllocator extends SceneTransformer {
 
     // *** Build May Happen In Parallel Info ***
     MhpTester mhp = null;
-    if (optionDoMHP && Scene.v().getPointsToAnalysis() instanceof PAG) {
+    if (optionDoMHP && myScene.getPointsToAnalysis() instanceof PAG) {
       logger.debug("[wjtp.tn] *** Build May-Happen-in-Parallel Info *** " + (new Date()));
       mhp = new SynchObliviousMhpAnalysis();
       if (optionPrintMhpSummary) {
@@ -207,7 +207,7 @@ public class LockAllocator extends SceneTransformer {
     logger.debug("[wjtp.tn] *** Find and Name Transactions *** " + start);
     Map<SootMethod, FlowSet> methodToFlowSet = new HashMap<SootMethod, FlowSet>();
     Map<SootMethod, ExceptionalUnitGraph> methodToExcUnitGraph = new HashMap<SootMethod, ExceptionalUnitGraph>();
-    Iterator<SootClass> runAnalysisClassesIt = Scene.v().getApplicationClasses().iterator();
+    Iterator<SootClass> runAnalysisClassesIt = myScene.getApplicationClasses().iterator();
     while (runAnalysisClassesIt.hasNext()) {
       SootClass appClass = runAnalysisClassesIt.next();
       Iterator<SootMethod> methodsIt = appClass.getMethods().iterator();
@@ -251,9 +251,9 @@ public class LockAllocator extends SceneTransformer {
     // Finds the transitive read/write set for each transaction using a given
     // nesting model.
     logger.debug("[wjtp.tn] *** Find Transitive Read/Write Sets *** " + (new Date()));
-    PointsToAnalysis pta = Scene.v().getPointsToAnalysis();
+    PointsToAnalysis pta = myScene.getPointsToAnalysis();
     CriticalSectionAwareSideEffectAnalysis tasea = null;
-    tasea = new CriticalSectionAwareSideEffectAnalysis(pta, Scene.v().getCallGraph(),
+    tasea = new CriticalSectionAwareSideEffectAnalysis(pta, myScene.getCallGraph(),
         (optionOpenNesting ? criticalSections : null), tlo);
     Iterator<CriticalSection> tnIt = criticalSections.iterator();
     while (tnIt.hasNext()) {
@@ -287,7 +287,7 @@ public class LockAllocator extends SceneTransformer {
     // Note that these will only be transformed if they are either added to
     // methodToFlowSet or if a loop and new body transformer are used for methodToStrayRWSet
     /*
-     * Map methodToStrayRWSet = new HashMap(); Iterator runRWFinderClassesIt = Scene.v().getApplicationClasses().iterator();
+     * Map methodToStrayRWSet = new HashMap(); Iterator runRWFinderClassesIt = myScene.getApplicationClasses().iterator();
      * while (runRWFinderClassesIt.hasNext()) { SootClass appClass = (SootClass) runRWFinderClassesIt.next(); Iterator
      * methodsIt = appClass.getMethods().iterator(); while (methodsIt.hasNext()) { SootMethod method = (SootMethod)
      * methodsIt.next(); Body b = method.retrieveActiveBody(); UnitGraph g = (UnitGraph) methodToExcUnitGraph.get(method);
@@ -396,7 +396,7 @@ public class LockAllocator extends SceneTransformer {
         insertedGlobalLock[i] = (!optionOneGlobalLock) && (tnGroup.useDynamicLock || tnGroup.useLocksets);
       }
 
-      for (SootClass appClass : Scene.v().getApplicationClasses()) {
+      for (SootClass appClass : myScene.getApplicationClasses()) {
         for (SootMethod method : appClass.getMethods()) {
           if (method.isConcrete()) {
             FlowSet fs = methodToFlowSet.get(method);
@@ -778,7 +778,7 @@ public class LockAllocator extends SceneTransformer {
             }
             printedHeading = true;
           }
-          if (Scene.v().getReachableMethods().contains(tn.method)) {
+          if (myScene.getReachableMethods().contains(tn.method)) {
             logger.debug(
                 "[transaction-graph] " + tn.name + " [name=\"" + tn.method.toString() + "\" style=\"setlinewidth(3)\"];");
           } else {
@@ -844,7 +844,7 @@ public class LockAllocator extends SceneTransformer {
             logger.debug("[transaction-graph] subgraph lone {\n[transaction-graph] rank=source;");
             printedHeading = true;
           }
-          if (Scene.v().getReachableMethods().contains(tn.method)) {
+          if (myScene.getReachableMethods().contains(tn.method)) {
             logger.debug(
                 "[transaction-graph] " + tn.name + " [name=\"" + tn.method.toString() + "\" style=\"setlinewidth(3)\"];");
           } else {
@@ -883,7 +883,7 @@ public class LockAllocator extends SceneTransformer {
       boolean reachable = false;
       boolean mhpself = false;
       {
-        ReachableMethods rm = Scene.v().getReachableMethods();
+        ReachableMethods rm = myScene.getReachableMethods();
         reachable = rm.contains(tn.method);
         if (mhp != null) {
           mhpself = mhp.mayHappenInParallel(tn.method, tn.method);

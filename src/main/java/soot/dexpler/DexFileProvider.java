@@ -22,6 +22,8 @@ package soot.dexpler;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -47,7 +49,6 @@ import org.slf4j.LoggerFactory;
 import soot.CompilationDeathException;
 import soot.G;
 import soot.Scene;
-import soot.Singletons;
 import soot.options.Options;
 
 /**
@@ -89,8 +90,13 @@ public class DexFileProvider {
    * Mapping of filesystem file (apk, dex, etc.) to mapping of dex name to dex file
    */
   private final Map<String, Map<String, DexContainer>> dexMap = new HashMap<>();
+  private Options myOptions;
+  private final Scene myScene;
 
-  public DexFileProvider(Singletons.Global g) {
+  @Inject
+  public DexFileProvider(Options myOptions, Scene myScene) {
+    this.myOptions = myOptions;
+    this.myScene = myScene;
   }
 
   public static DexFileProvider v() {
@@ -159,7 +165,7 @@ public class DexFileProvider {
   private List<File> allSourcesFromFile(File dexSource) throws IOException {
     if (dexSource.isDirectory()) {
       List<File> dexFiles = getAllDexFilesInDirectory(dexSource);
-      if (dexFiles.size() > 1 && !Options.v().process_multiple_dex()) {
+      if (dexFiles.size() > 1 && !myOptions.process_multiple_dex()) {
         File file = dexFiles.get(0);
         logger.warn("Multiple dex files detected, only processing '" + file.getCanonicalPath()
             + "'. Use '-process-multiple-dex' option to process them all.");
@@ -169,7 +175,7 @@ public class DexFileProvider {
       }
     } else {
       String ext = com.google.common.io.Files.getFileExtension(dexSource.getName()).toLowerCase();
-      if ((ext.equals("jar") || ext.equals("zip")) && !Options.v().search_dex_in_archives()) {
+      if ((ext.equals("jar") || ext.equals("zip")) && !myOptions.search_dex_in_archives()) {
         return Collections.EMPTY_LIST;
       } else {
         return Collections.singletonList(dexSource);
@@ -199,8 +205,8 @@ public class DexFileProvider {
    * @throws IOException
    */
   private Map<String, DexContainer> mappingForFile(File dexSourceFile) throws IOException {
-    int api = Scene.v().getAndroidAPIVersion();
-    boolean multiple_dex = Options.v().process_multiple_dex();
+    int api = myScene.getAndroidAPIVersion();
+    boolean multiple_dex = myOptions.process_multiple_dex();
 
     // load dex files from apk/folder/file
     MultiDexContainer<? extends DexBackedDexFile> dexContainer
@@ -210,7 +216,7 @@ public class DexFileProvider {
     int dexFileCount = dexEntryNameList.size();
 
     if (dexFileCount < 1) {
-      if (Options.v().verbose()) {
+      if (myOptions.verbose()) {
         logger.debug("" + String.format("Warning: No dex file found in '%s'", dexSourceFile));
       }
       return Collections.emptyMap();

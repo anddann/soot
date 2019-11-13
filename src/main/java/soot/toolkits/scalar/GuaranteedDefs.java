@@ -49,7 +49,7 @@ public class GuaranteedDefs {
   protected Map<Unit, List> unitToGuaranteedDefs;
 
   public GuaranteedDefs(UnitGraph graph) {
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + graph.getBody().getMethod().getName() + "]     Constructing GuaranteedDefs...");
     }
 

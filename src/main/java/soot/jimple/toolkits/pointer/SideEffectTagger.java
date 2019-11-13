@@ -104,7 +104,7 @@ public class SideEffectTagger extends BodyTransformer {
     if (startTime == null) {
       startTime = new Date();
     }
-    cg = Scene.v().getCallGraph();
+    cg = myScene.getCallGraph();
   }
 
   protected Object keyFor(Stmt s) {
@@ -128,7 +128,7 @@ public class SideEffectTagger extends BodyTransformer {
 
   protected void internalTransform(Body body, String phaseName, Map options) {
     initializationStuff(phaseName);
-    SideEffectAnalysis sea = Scene.v().getSideEffectAnalysis();
+    SideEffectAnalysis sea = myScene.getSideEffectAnalysis();
     optionNaive = PhaseOptions.getBoolean(options, "naive");
     if (!optionNaive) {
       sea.findNTRWSets(body.getMethod());

@@ -51,6 +51,8 @@ import soot.validation.ValidationException;
 /** Implementation of the Body class for the Jimple IR. */
 public class JimpleBody extends StmtBody {
   private static BodyValidator[] validators;
+  private Options myOptions;
+  private Jimple myJimple;
 
   /**
    * Returns an array containing some validators in order to validate the JimpleBody
@@ -71,20 +73,26 @@ public class JimpleBody extends StmtBody {
   /**
    * Construct an empty JimpleBody
    */
-  public JimpleBody(SootMethod m) {
+  public JimpleBody(SootMethod m, Options myOptions, Jimple myJimple) {
     super(m);
+    this.myOptions = myOptions;
+    this.myJimple = myJimple;
   }
 
   /**
    * Construct an extremely empty JimpleBody, for parsing into.
+   * @param myOptions
+   * @param myJimple
    */
-  public JimpleBody() {
+  public JimpleBody(Options myOptions, Jimple myJimple) {
+    this.myOptions = myOptions;
+    this.myJimple = myJimple;
   }
 
   /** Clones the current body, making deep copies of the contents. */
   @Override
   public Object clone() {
-    Body b = new JimpleBody(getMethod());
+    Body b = new JimpleBody(getMethod(), myOptions, myJimple);
     b.importBodyContentsFrom(this);
     return b;
   }
@@ -110,7 +118,7 @@ public class JimpleBody extends StmtBody {
   @Override
   public void validate(List<ValidationException> exceptionList) {
     super.validate(exceptionList);
-    final boolean runAllValidators = Options.v().debug() || Options.v().validate();
+    final boolean runAllValidators = myOptions.debug() || myOptions.validate();
     for (BodyValidator validator : getValidators()) {
       if (!validator.isBasicValidator() && !runAllValidators) {
         continue;
@@ -135,7 +143,7 @@ public class JimpleBody extends StmtBody {
    *          the class, which should be used for this references. Can be null for static methods
    */
   public void insertIdentityStmts(SootClass declaringClass) {
-    final Jimple jimple = Jimple.v();
+    final Jimple jimple = myJimple;
     final PatchingChain<Unit> unitChain = getUnits();
     final Chain<Local> localChain = getLocals();
     Unit lastUnit = null;

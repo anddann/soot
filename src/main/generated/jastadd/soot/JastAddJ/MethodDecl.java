@@ -421,7 +421,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 			throwtypes.add(getException(i).type().getSootClassDecl());
 		String signature = SootMethod.getSubSignature(name, parameters, returnType);
 		if (!hostType().getSootClassDecl().declaresMethod(signature)) {
-			SootMethod m = Scene.v().makeSootMethod(name, parameters, returnType, modifiers, throwtypes);
+			SootMethod m = myScene.makeSootMethod(name, parameters, returnType, modifiers, throwtypes);
 			hostType().getSootClassDecl().addMethod(m);
 			m.addTag(new soot.tagkit.ParamNamesTag(paramnames));
 			sootMethod = m;
@@ -1263,7 +1263,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 			return;
 		try {
 			if (hasBlock() && !(hostType().isInterfaceDecl())) {
-				JimpleBody body = Jimple.v().newBody(sootMethod());
+				JimpleBody body = myJimple.newBody(sootMethod());
 				sootMethod().setActiveBody(body);
 				Body b = new Body(hostType(), body, this);
 				b.setLine(this);
@@ -1271,7 +1271,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 					getParameter(i).jimplify2(b);
 				getBlock().jimplify2(b);
 				if (type() instanceof VoidType)
-					b.add(Jimple.v().newReturnVoidStmt());
+					b.add(myJimple.newReturnVoidStmt());
 			}
 		} catch (RuntimeException e) {
 			System.err.println("Error generating " + hostType().typeName() + ": " + this);
@@ -2129,7 +2129,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 		ArrayList parameters = new ArrayList();
 		for (int i = 0; i < getNumParameter(); i++)
 			parameters.add(getParameter(i).type().getSootType());
-		SootMethodRef ref = Scene.v().makeMethodRef(hostType().getSootClassDecl(), name(), parameters,
+		SootMethodRef ref = myScene.makeMethodRef(hostType().getSootClassDecl(), name(), parameters,
 				type().getSootType(), isStatic());
 		return ref;
 	}

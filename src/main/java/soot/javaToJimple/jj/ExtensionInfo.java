@@ -92,7 +92,7 @@ public class ExtensionInfo extends polyglot.ext.jl.ExtensionInfo {
        */
       public String constructFullClasspath() {
         String cp = super.constructFullClasspath();
-        cp += File.pathSeparator + soot.options.Options.v().soot_classpath();
+        cp += File.pathSeparator + soot.options.myOptions.soot_classpath();
         return cp;
       }
 

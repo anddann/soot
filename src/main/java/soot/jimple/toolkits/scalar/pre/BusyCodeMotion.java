@@ -86,11 +86,11 @@ public class BusyCodeMotion extends BodyTransformer {
     HashMap<EquivalentValue, Local> expToHelper = new HashMap<EquivalentValue, Local>();
     Chain<Unit> unitChain = b.getUnits();
 
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "]     performing Busy Code Motion...");
     }
 
-    CriticalEdgeRemover.v().transform(b, phaseName + ".cer");
+    myCriticalEdgeRemover.transform(b, phaseName + ".cer");
 
     UnitGraph graph = new BriefUnitGraph(b);
 
@@ -117,7 +117,7 @@ public class BusyCodeMotion extends BodyTransformer {
 
     /* if a more precise sideeffect-tester comes out, please change it here! */
     SideEffectTester sideEffect;
-    if (Scene.v().hasCallGraph() && !options.naive_side_effect()) {
+    if (myScene.hasCallGraph() && !options.naive_side_effect()) {
       sideEffect = new PASideEffectTester();
     } else {
       sideEffect = new NaiveSideEffectTester();
@@ -152,7 +152,7 @@ public class BusyCodeMotion extends BodyTransformer {
 
           /* insert a new Assignment-stmt before the currentUnit */
           Value insertValue = Jimple.cloneIfNecessary(equiVal.getValue());
-          Unit firstComp = Jimple.v().newAssignStmt(helper, insertValue);
+          Unit firstComp = myJimple.newAssignStmt(helper, insertValue);
           unitChain.insertBefore(firstComp, currentUnit);
         }
       }
@@ -171,7 +171,7 @@ public class BusyCodeMotion extends BodyTransformer {
         }
       }
     }
-    if (Options.v().verbose()) {
+    if (myOptions.verbose()) {
       logger.debug("[" + b.getMethod().getName() + "]     Busy Code Motion done!");
     }
   }
