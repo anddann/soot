@@ -718,7 +718,7 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
    * TODO: Nomair A. Naeem .... 8th Feb 2006 This is really messy coding So much for modularization!! Should some day look
    * into creating the DavaDeclaration from within DavaBody
    */
-  public String getDavaDeclaration() {
+  public String getDavaDeclaration(PrimTypeCollector primTypeCollector) {
     if (getName().equals(staticInitializerName)) {
       return "static";
     }
@@ -796,27 +796,27 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
       if (hasActiveBody()) {
         buffer.append(((DavaBody) getActiveBody()).get_ParamMap().get(new Integer(count++)));
       } else {
-        if (t == BooleanType.v()) {
+        if (t == primTypeCollector.getBooleanType()) {
           buffer.append("z" + count++);
-        } else if (t == ByteType.v()) {
+        } else if (t == primTypeCollector.getByteType()) {
           buffer.append("b" + count++);
-        } else if (t == ShortType.v()) {
+        } else if (t == primTypeCollector.getShortType()) {
           buffer.append("s" + count++);
-        } else if (t == CharType.v()) {
+        } else if (t == primTypeCollector.getCharType()) {
           buffer.append("c" + count++);
-        } else if (t == IntType.v()) {
+        } else if (t == primTypeCollector.getIntType()) {
           buffer.append("i" + count++);
-        } else if (t == LongType.v()) {
+        } else if (t == primTypeCollector.getLongType()) {
           buffer.append("l" + count++);
-        } else if (t == DoubleType.v()) {
+        } else if (t == primTypeCollector.getDoubleType()) {
           buffer.append("d" + count++);
-        } else if (t == FloatType.v()) {
+        } else if (t == primTypeCollector.getFloatType()) {
           buffer.append("f" + count++);
-        } else if (t == StmtAddressType.v()) {
+        } else if (t == primTypeCollector.getStmtAddressType()) {
           buffer.append("a" + count++);
-        } else if (t == ErroneousType.v()) {
+        } else if (t == primTypeCollector.getErrornousType()) {
           buffer.append("e" + count++);
-        } else if (t == NullType.v()) {
+        } else if (t == primTypeCollector.getNullType()) {
           buffer.append("n" + count++);
         } else {
           buffer.append("r" + count++);

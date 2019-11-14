@@ -55,9 +55,7 @@ public class Printer {
     this.myOptions = myOptions;
   }
 
-  public static Printer v() {
-    return G.v().soot_Printer();
-  }
+
 
   public boolean useAbbreviations() {
     return (options & USE_ABBREVIATIONS) != 0;

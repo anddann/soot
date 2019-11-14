@@ -38,8 +38,13 @@ public class Transform implements HasPhaseOptions {
   final private boolean DEBUG;
   final String phaseName;
   final Transformer t;
+  private PhaseOptions myPhaseOptions;
+  private Options myOptions;
+  private PhaseDumper myPhaseDumper;
 
-  public Transform(String phaseName, Transformer t) {
+  public Transform(String phaseName, Transformer t, Options myOptions, PhaseOptions myPhaseOptions, PhaseDumper myPhaseDumper) {
+    this.myPhaseOptions = myPhaseOptions;
+    this.myPhaseDumper = myPhaseDumper;
     this.DEBUG = myOptions.dump_body().contains(phaseName);
     this.phaseName = phaseName;
     this.t = t;
@@ -89,7 +94,7 @@ public class Transform implements HasPhaseOptions {
   }
 
   public void apply() {
-    Map<String, String> options = myPhaseOptions().getPhaseOptions(phaseName);
+    Map<String, String> options = myPhaseOptions.getPhaseOptions(phaseName);
     if (PhaseOptions.getBoolean(options, "enabled")) {
       if (myOptions.verbose()) {
         logger.debug("" + "Applying phase " + phaseName + " to the scene.");
@@ -107,7 +112,7 @@ public class Transform implements HasPhaseOptions {
   }
 
   public void apply(Body b) {
-    Map<String, String> options = myPhaseOptions().getPhaseOptions(phaseName);
+    Map<String, String> options = myPhaseOptions.getPhaseOptions(phaseName);
     if (PhaseOptions.getBoolean(options, "enabled")) {
       if (myOptions.verbose()) {
         logger.debug("" + "Applying phase " + phaseName + " to " + b.getMethod() + ".");

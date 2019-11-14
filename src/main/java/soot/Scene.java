@@ -100,10 +100,11 @@ public class Scene // extends AbstractHost
     private ThrowAnalysis myDalvikThrowAnalysis;
   private PackageNamer myPackageNamer;
   private Jimple myJimple;
+  private PrimTypeCollector primTypeCollector;
 
 
   @Inject
-  public Scene(Options myOptions, PhaseOptions myPhaseOptions, SourceLocator mySourceLocator, SootResolver mySootResolver, PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility, EntryPoints myEntryPoints, ThrowAnalysis myPedanticThrowAnalysis, ThrowAnalysis myUnitThrowAnalysis, ThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer, Jimple myJimple) {
+  public Scene(Options myOptions, PhaseOptions myPhaseOptions, SourceLocator mySourceLocator, SootResolver mySootResolver, PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility, EntryPoints myEntryPoints, ThrowAnalysis myPedanticThrowAnalysis, ThrowAnalysis myUnitThrowAnalysis, ThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
     this.myOptions = myOptions;
     this.myPhaseOptions = myPhaseOptions;
         this.mySourceLocator = mySourceLocator;
@@ -116,6 +117,7 @@ public class Scene // extends AbstractHost
         this.myDalvikThrowAnalysis = myDalvikThrowAnalysis;
     this.myPackageNamer = myPackageNamer;
     this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
     setReservedNames();
     // load soot.class.path system property, if defined
     String scp = System.getProperty("soot.class.path");
@@ -300,7 +302,7 @@ public class Scene // extends AbstractHost
     }
 
     SootMethod mainMethod = mainClass.getMethodUnsafe("main",
-        Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String",this), 1,this)), VoidType.v());
+        Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String",this), 1,this)), primTypeCollector.getVoidType());
     if (mainMethod == null) {
       throw new RuntimeException("Main class declares no main method!");
     }
@@ -462,7 +464,11 @@ public class Scene // extends AbstractHost
     return androidAPIVersion;
   }
 
-  public static class AndroidVersionInfo {
+    public PrimTypeCollector getPrimTypeCollector() {
+    return  this.primTypeCollector;
+    }
+
+    public static class AndroidVersionInfo {
 
     public int sdkTargetVersion = -1;
     public int minSdkVersion = -1;
@@ -1052,23 +1058,23 @@ public class Scene // extends AbstractHost
 
     if (result == null) {
       if (type.equals("long")) {
-        result = LongType.v();
+        result = primTypeCollector.getLongType();
       } else if (type.equals("short")) {
-        result = ShortType.v();
+        result = primTypeCollector.getShortType();
       } else if (type.equals("double")) {
-        result = DoubleType.v();
+        result = primTypeCollector.getDoubleType();
       } else if (type.equals("int")) {
-        result = IntType.v();
+        result = primTypeCollector.getIntType();
       } else if (type.equals("float")) {
-        result = FloatType.v();
+        result =primTypeCollector.getFloatType();
       } else if (type.equals("byte")) {
-        result = ByteType.v();
+        result = primTypeCollector.getByteType();
       } else if (type.equals("char")) {
-        result = CharType.v();
+        result = primTypeCollector.getCharType();
       } else if (type.equals("void")) {
-        result = VoidType.v();
+        result = primTypeCollector.getVoidType();
       } else if (type.equals("boolean")) {
-        result = BooleanType.v();
+        result = primTypeCollector.getBooleanType();
       } else if (allowsPhantomRefs() && phantomNonExist) {
         getSootClassUnsafe(type, phantomNonExist);
         result = getRefTypeUnsafe(type);
@@ -1921,7 +1927,7 @@ public class Scene // extends AbstractHost
 
   /** Create an unresolved reference to a constructor. */
   public SootMethodRef makeConstructorRef(SootClass declaringClass, List<Type> parameterTypes) {
-    return makeMethodRef(declaringClass, SootMethod.constructorName, parameterTypes, VoidType.v(), false);
+    return makeMethodRef(declaringClass, SootMethod.constructorName, parameterTypes, primTypeCollector.getVoidType(), false);
   }
 
   /** Create an unresolved reference to a field. */
@@ -1966,7 +1972,7 @@ public class Scene // extends AbstractHost
       for (Iterator<String> classIter = myOptions.classes().iterator(); classIter.hasNext();) {
         SootClass c = getSootClass(classIter.next());
         if (c.declaresMethod("main", Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String",this), 1,this)),
-            VoidType.v())) {
+            primTypeCollector.getVoidType())) {
           logger.debug("No main class given. Inferred '" + c.getName() + "' as main class.");
           setMainClass(c);
           return;
@@ -1978,7 +1984,7 @@ public class Scene // extends AbstractHost
       for (Iterator<SootClass> classIter = getApplicationClasses().iterator(); classIter.hasNext();) {
         SootClass c = classIter.next();
         if (c.declaresMethod("main", Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String",this), 1,this)),
-            VoidType.v())) {
+            primTypeCollector.getVoidType())) {
           logger.debug("No main class given. Inferred '" + c.getName() + "' as main class.");
           setMainClass(c);
           return;

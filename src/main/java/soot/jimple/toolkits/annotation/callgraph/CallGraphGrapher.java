@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import soot.Body;
 import soot.MethodOrMethodContext;
 import soot.MethodToContexts;
+import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SceneTransformer;
 import soot.SootClass;
@@ -51,12 +52,14 @@ public class CallGraphGrapher extends SceneTransformer {
   private Scene myScene;
   private Options myOptions;
   private InteractionHandler myInteractionHandler;
+  private PrimTypeCollector primTypeCollector;
 
   @Inject
-  public CallGraphGrapher(Scene myScene, Options myOptions, InteractionHandler myInteractionHandler) {
+  public CallGraphGrapher(Scene myScene, Options myOptions, InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollector) {
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myInteractionHandler = myInteractionHandler;
+    this.primTypeCollector = primTypeCollector;
   }
 
   private MethodToContexts methodToContexts;
@@ -181,8 +184,8 @@ public class CallGraphGrapher extends SceneTransformer {
 
   private SootMethod getFirstMethod(SootClass sc) {
     ArrayList paramTypes = new ArrayList();
-    paramTypes.add(soot.ArrayType.v(soot.RefType.v("java.lang.String",myScene), 1));
-    SootMethod sm = sc.getMethodUnsafe("main", paramTypes, soot.VoidType.v());
+    paramTypes.add(soot.ArrayType.v(soot.RefType.v("java.lang.String",myScene), 1,myScene));
+    SootMethod sm = sc.getMethodUnsafe("main", paramTypes, primTypeCollector.getVoidType());
     if (sm != null) {
       return sm;
     } else {

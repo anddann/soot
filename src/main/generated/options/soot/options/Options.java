@@ -35,6 +35,7 @@ import java.util.*;
  */
 @javax.annotation.Generated(value = "Saxonica v3.0", comments = "from soot_options.xml")
 public class Options extends OptionsBase {
+
         private final PackManager myPackManager;
         @Inject
         public Options(PackManager myPackManager){
@@ -44,8 +45,6 @@ public class Options extends OptionsBase {
         public  PackManager getPackManager(){
         return myPackManager;
         }
-
-
 
     public static final int src_prec_c = 1;
     public static final int src_prec_class = 1;

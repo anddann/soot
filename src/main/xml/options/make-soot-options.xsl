@@ -65,6 +65,7 @@ import java.util.*;
  */
 @javax.annotation.Generated(value = "<xsl:copy-of select="system-property('xsl:vendor')"/> v<xsl:copy-of select="system-property('xsl:version')"/>", comments = "from <xsl:value-of select="tokenize(base-uri(), '/')[last()]"/>")
 public class Options extends OptionsBase {
+
         private final PackManager myPackManager;
         @Inject
         public Options(PackManager myPackManager){
@@ -73,9 +74,7 @@ public class Options extends OptionsBase {
 
         public  PackManager getPackManager(){
         return myPackManager;
-        }
-
-<xsl:text>
+        }<xsl:text>
 </xsl:text>
         <xsl:apply-templates mode="constants" select="/options/section"/>
 

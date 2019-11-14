@@ -50,6 +50,7 @@ import soot.LongType;
 import soot.NullType;
 import soot.PolymorphicMethodRef;
 import soot.RefType;
+import soot.Scene;
 import soot.ShortType;
 import soot.SootClass;
 import soot.SootFieldRef;
@@ -92,6 +93,7 @@ public class BafASMBackend extends AbstractASMBackend {
 
   // Contains one Label for every Unit that is the target of a branch or jump
   protected final Map<Unit, Label> branchTargetLabels = new HashMap<Unit, Label>();
+  private final Scene myScene;
 
   /**
    * Returns the ASM Label for a given Unit that is the target of a branch or jump
@@ -117,8 +119,9 @@ public class BafASMBackend extends AbstractASMBackend {
    *          A particular Java version enforced by the user, may be 0 for automatic detection, must not be lower than
    *          necessary for all features used
    */
-  public BafASMBackend(SootClass sc, int javaVersion) {
+  public BafASMBackend(SootClass sc, int javaVersion, Scene myScene) {
     super(sc, javaVersion);
+    this.myScene = myScene;
   }
 
   /*

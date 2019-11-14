@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.EquivalentValue;
-import soot.G;
 import soot.Local;
 import soot.Scene;
 import soot.SideEffectTester;
@@ -87,10 +86,6 @@ public class LazyCodeMotion extends BodyTransformer {
     this.myCriticalEdgeRemover = myCriticalEdgeRemover;
     this.myScene = myScene;
     this.myJimple = myJimple;
-  }
-
-  public static LazyCodeMotion v() {
-    return G.v().soot_jimple_toolkits_scalar_pre_LazyCodeMotion();
   }
 
   private static final String PREFIX = "$lcm";

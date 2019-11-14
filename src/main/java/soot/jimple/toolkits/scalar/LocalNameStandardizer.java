@@ -38,14 +38,13 @@ import soot.CharType;
 import soot.DoubleType;
 import soot.ErroneousType;
 import soot.FloatType;
-import soot.G;
 import soot.IntType;
 import soot.Local;
 import soot.LongType;
 import soot.NullType;
 import soot.PhaseOptions;
+import soot.PrimTypeCollector;
 import soot.ShortType;
-import soot.Singletons;
 import soot.StmtAddressType;
 import soot.Type;
 import soot.UnknownType;
@@ -54,8 +53,12 @@ import soot.ValueBox;
 import soot.util.Chain;
 
 public class LocalNameStandardizer extends BodyTransformer {
+
+  private PrimTypeCollector primTypeCollector;
+
   @Inject
-  public LocalNameStandardizer() {
+  public LocalNameStandardizer(PrimTypeCollector primTypeCollector) {
+    this.primTypeCollector = primTypeCollector;
   }
 
 
@@ -76,18 +79,18 @@ public class LocalNameStandardizer extends BodyTransformer {
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
     boolean onlyStackName = PhaseOptions.getBoolean(options, "only-stack-locals");
     boolean sortLocals = PhaseOptions.getBoolean(options, "sort-locals");
-    final BooleanType booleanType = BooleanType.v();
-    final ByteType byteType = ByteType.v();
-    final ShortType shortType = ShortType.v();
-    final CharType charType = CharType.v();
-    final IntType intType = IntType.v();
-    final LongType longType = LongType.v();
-    final DoubleType doubleType = DoubleType.v();
-    final FloatType floatType = FloatType.v();
-    final ErroneousType erroneousType = ErroneousType.v();
-    final UnknownType unknownType = UnknownType.v();
-    final StmtAddressType stmtAddressType = StmtAddressType.v();
-    final NullType nullType = NullType.v();
+    final BooleanType booleanType = primTypeCollector.getBooleanType();
+    final ByteType byteType =  primTypeCollector.getByteType();
+    final ShortType shortType = primTypeCollector.getShortType();
+    final CharType charType = primTypeCollector.getCharType();
+    final IntType intType = primTypeCollector.getIntType();
+    final LongType longType = primTypeCollector.getLongType();
+    final DoubleType doubleType = primTypeCollector.getDoubleType();
+    final FloatType floatType = primTypeCollector.getFloatType();
+    final ErroneousType erroneousType = primTypeCollector.getErrornousType();
+    final UnknownType unknownType = primTypeCollector.getUnknownType();
+    final StmtAddressType stmtAddressType = primTypeCollector.getStmtAddressType();
+    final NullType nullType = primTypeCollector.getNullType();
     int objectCount = 0;
     int intCount = 0;
     int longCount = 0;

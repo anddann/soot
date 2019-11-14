@@ -39,10 +39,13 @@ public class RefType extends RefLikeType implements Comparable<RefType> {
   private SootResolver mySootResolver;
   private Scene myScene;
 
-  @Inject
-  public RefType(Scene myScene) {
-    super(myScene);
+  private PrimTypeCollector primTypeCollector;
 
+  @Inject
+  public RefType(Scene myScene, PrimTypeCollector primTypeCollector, SootResolver mySootResolver) {
+    super(myScene);
+    this.primTypeCollector = primTypeCollector;
+    this.mySootResolver = mySootResolver;
     className = "";
   }
 
@@ -63,6 +66,7 @@ public class RefType extends RefLikeType implements Comparable<RefType> {
     super(myScene);
     this.mySootResolver = mySootResolver;
     this.myScene = myScene;
+    this.primTypeCollector = myScene.getPrimTypeCollector();
     if (className.startsWith("[")) {
       throw new RuntimeException("Attempt to create RefType whose name starts with [ --> " + className);
     }
@@ -164,7 +168,7 @@ public class RefType extends RefLikeType implements Comparable<RefType> {
 
   /** Returns the least common superclass of this type and other. */
   public Type merge(Type other, Scene cm) {
-    if (other.equals(UnknownType.v()) || this.equals(other)) {
+    if (other.equals(primTypeCollector.getUnknownType()) || this.equals(other)) {
       return this;
     }
 

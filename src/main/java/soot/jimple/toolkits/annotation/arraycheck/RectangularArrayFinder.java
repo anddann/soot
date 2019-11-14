@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import soot.ArrayType;
 import soot.Body;
-import soot.JastAddJ.Options;
 import soot.Local;
 import soot.Scene;
 import soot.SceneTransformer;
@@ -63,6 +62,7 @@ import soot.jimple.internal.JArrayRef;
 import soot.jimple.internal.JNewMultiArrayExpr;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Targets;
+import soot.options.Options;
 import soot.util.Chain;
 
 /**
