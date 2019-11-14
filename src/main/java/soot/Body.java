@@ -84,6 +84,15 @@ public abstract class Body extends AbstractHost implements Serializable {
   protected UnitPatchingChain unitChain = new UnitPatchingChain(new HashChain<Unit>());
 
   private static BodyValidator[] validators;
+
+  public Options getMyOptions() {
+    return myOptions;
+  }
+
+  public Printer getMyPrinter() {
+    return myPrinter;
+  }
+
   private Options myOptions;
   private Printer myPrinter;
 

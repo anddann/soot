@@ -22,14 +22,14 @@ package soot.jimple.toolkits.scalar;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Iterator;
 import java.util.Map;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.Local;
-import soot.Singletons;
 import soot.Type;
 import soot.Unit;
 import soot.jimple.AssignStmt;
@@ -47,12 +47,11 @@ import soot.jimple.CastExpr;
  */
 public class IdentityCastEliminator extends BodyTransformer {
 
-  public IdentityCastEliminator(Singletons.Global g) {
+
+  @Inject
+  public IdentityCastEliminator() {
   }
 
-  public static IdentityCastEliminator v() {
-    return G.v().soot_jimple_toolkits_scalar_IdentityCastEliminator();
-  }
 
   @Override
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {

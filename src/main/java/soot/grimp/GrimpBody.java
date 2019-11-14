@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import soot.Body;
 import soot.Local;
 import soot.PackManager;
+import soot.Printer;
 import soot.SootMethod;
 import soot.Trap;
 import soot.Unit;
@@ -61,17 +62,19 @@ import soot.options.Options;
 /** Implementation of the Body class for the Grimp IR. */
 public class GrimpBody extends StmtBody {
   private static final Logger logger = LoggerFactory.getLogger(GrimpBody.class);
+    private Grimp myGrimp;
 
-  /**
+    /**
    * Construct an empty GrimpBody
    **/
 
-  GrimpBody(SootMethod m) {
-    super(m);
+  GrimpBody(SootMethod m, Options myOptions, Printer myPrinter, Grimp myGrimp) {
+    super(m, myOptions, myPrinter);
+      this.myGrimp = myGrimp;
   }
 
   public Object clone() {
-    Body b = myGrimp.newBody(getMethod());
+    Body b = myGrimp.newBody(getMethod(),getMyOptions(), getMyPrinter());
     b.importBodyContentsFrom(this);
     return b;
   }
@@ -80,10 +83,11 @@ public class GrimpBody extends StmtBody {
    * Constructs a GrimpBody from the given Body.
    */
 
-  GrimpBody(Body body) {
-    super(body.getMethod());
+  GrimpBody(Body body, Options myOptions, Printer myPrinter, Grimp myGrimp, PackManager myPackManager) {
+    super(body.getMethod(), myOptions, myPrinter);
+      this.myGrimp = myGrimp;
 
-    if (myOptions.verbose()) {
+      if (myOptions.verbose()) {
       logger.debug("[" + getMethod().getName() + "] Constructing GrimpBody...");
     }
 
@@ -249,6 +253,6 @@ public class GrimpBody extends StmtBody {
           (oldToNew.get(oldTrap.getEndUnit())), (oldToNew.get(oldTrap.getHandlerUnit()))));
     }
 
-    PackmyManager.getPack("gb").apply(this);
+    myPackManager.getPack("gb").apply(this);
   }
 }

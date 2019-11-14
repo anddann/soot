@@ -24,16 +24,17 @@ package soot.validation;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.PatchingChain;
 import soot.Trap;
 import soot.Unit;
 
-public enum TrapsValidator implements BodyValidator {
-  INSTANCE;
+public class TrapsValidator implements BodyValidator {
 
-  public static TrapsValidator v() {
-    return INSTANCE;
+  @Inject
+  public TrapsValidator(){
+
   }
 
   @Override

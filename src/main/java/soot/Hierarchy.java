@@ -59,7 +59,7 @@ public class Hierarchy {
   Scene sc;
 
   /** Constructs a hierarchy from the current scene. */
-  public Hierarchy() {
+  public Hierarchy(Scene myScene) {
     this.sc = myScene;
     state = sc.getState();
 
@@ -641,7 +641,7 @@ public class Hierarchy {
       if (cls instanceof RefType) {
         s.add(resolveConcreteDispatch(((RefType) cls).getSootClass(), m));
       } else if (cls instanceof ArrayType) {
-        s.add(resolveConcreteDispatch((RefType.v("java.lang.Object")).getSootClass(), m));
+        s.add(resolveConcreteDispatch((RefType.v("java.lang.Object",sc)).getSootClass(), m));
       } else {
         throw new RuntimeException("Unable to resolve concrete dispatch of type " + cls);
       }

@@ -27,11 +27,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import soot.G;
+import com.google.inject.Inject;
 import soot.Local;
 import soot.RefType;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootClass;
 import soot.Type;
 import soot.Value;
@@ -44,12 +43,13 @@ import soot.jimple.ThrowStmt;
 import soot.util.IterableSet;
 
 public class TryContentsFinder extends ASTAnalysis {
-  public TryContentsFinder(Singletons.Global g) {
+  private Scene myScene;
+
+  @Inject
+  public TryContentsFinder(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public static TryContentsFinder v() {
-    return G.v().soot_dava_toolkits_base_AST_TryContentsFinder();
-  }
 
   private IterableSet curExceptionSet = new IterableSet();
   private final HashMap<Object, IterableSet> node2ExceptionSet = new HashMap<Object, IterableSet>();

@@ -22,6 +22,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import soot.util.Switch;
 
 /**
@@ -29,16 +31,10 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class UnknownType extends Type {
-  private UnknownType() {
-  }
 
-  private static UnknownType instance;
-
-  public static UnknownType v() {
-    if(instance==null){
-      instance = new UnknownType();
-    }
-    return instance;
+  @Inject
+  public UnknownType(Scene myScene) {
+    super(myScene);
   }
 
   public int hashCode() {

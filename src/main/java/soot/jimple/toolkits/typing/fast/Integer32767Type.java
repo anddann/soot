@@ -24,6 +24,7 @@ package soot.jimple.toolkits.typing.fast;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.G;
 import soot.IntegerType;
 import soot.PrimType;
@@ -36,18 +37,10 @@ import soot.Singletons;
  */
 public class Integer32767Type extends PrimType implements IntegerType {
 
-  private static Integer32767Type instance;
-
-  private Integer32767Type() {
+  @Inject
+  public Integer32767Type(Scene myScene) {
+    super(myScene);
   }
-
-  public static Integer32767Type v() {
-    if (instance == null) {
-      instance = new Integer32767Type();
-    }
-    return instance;
-  }
-
   public String toString() {
     return "[0..32767]";
   }
@@ -57,8 +50,8 @@ public class Integer32767Type extends PrimType implements IntegerType {
   }
 
   @Override
-  public RefType boxedType(Scene myScene) {
-    return RefType.v("java.lang.Integer",myScene);
+  public RefType boxedType() {
+    return RefType.v("java.lang.Integer",getMyScene());
   }
 
   @Override

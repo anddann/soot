@@ -27,14 +27,15 @@ import java.util.Map;
 import soot.jimple.JimpleBody;
 import soot.options.JJOptions;
 import soot.options.Options;
+import soot.toolkits.graph.interaction.InteractionHandler;
 
 /**
  * A wrapper object for a pack of optimizations. Provides chain-like operations, except that the key is the phase name. This
  * is a specific one for the very messy jb phase.
  */
 public class JavaToJimpleBodyPack extends BodyPack {
-  public JavaToJimpleBodyPack() {
-    super("jj");
+  public JavaToJimpleBodyPack(PhaseOptions myPhaseOptions, Options myOptions, InteractionHandler interactionHandler) {
+    super("jj",myPhaseOptions,myOptions,interactionHandler);
   }
 
   /** Applies the transformations corresponding to the given options. */
@@ -42,50 +43,50 @@ public class JavaToJimpleBodyPack extends BodyPack {
     JJOptions options = new JJOptions(opts);
 
     if (options.use_original_names()) {
-      myPhaseOptions().setPhaseOptionIfUnset("jj.lns", "only-stack-locals");
+      getMyPhaseOptions().setPhaseOptionIfUnset("jj.lns", "only-stack-locals");
     }
 
-    if (myOptions.time()) {
-      myTimers.splitTimer.start();
-    }
+//    if (getMyOptions().time()) {
+//      myTimers.splitTimer.start();
+//    }
 
-    PackmyManager.getTransform("jj.ls").apply(b);
+    getMyPhaseOptions().getPM().getTransform("jj.ls").apply(b);
 
-    if (myOptions.time()) {
-      myTimers.splitTimer.end();
-    }
+//    if (getMyOptions().time()) {
+//      myTimers.splitTimer.end();
+//    }
 
-    PackmyManager.getTransform("jj.a").apply(b);
-    PackmyManager.getTransform("jj.ule").apply(b);
-    PackmyManager.getTransform("jj.ne").apply(b);
+    getMyPhaseOptions().getPM().getTransform("jj.a").apply(b);
+    getMyPhaseOptions().getPM().getTransform("jj.ule").apply(b);
+    getMyPhaseOptions().getPM().getTransform("jj.ne").apply(b);
 
-    if (myOptions.time()) {
-      myTimers.assignTimer.start();
-    }
+//    if (getMyOptions().time()) {
+//      myTimers.assignTimer.start();
+//    }
 
-    PackmyManager.getTransform("jj.tr").apply(b);
+    getMyPhaseOptions().getPM().getTransform("jj.tr").apply(b);
 
-    if (myOptions.time()) {
-      myTimers.assignTimer.end();
-    }
+//    if (getMyOptions().time()) {
+//      myTimers.assignTimer.end();
+//    }
 
     if (options.use_original_names()) {
-      PackmyManager.getTransform("jj.ulp").apply(b);
+      getMyPhaseOptions().getPM().getTransform("jj.ulp").apply(b);
     }
-    PackmyManager.getTransform("jj.lns").apply(b);
-    PackmyManager.getTransform("jj.cp").apply(b);
-    PackmyManager.getTransform("jj.dae").apply(b);
-    PackmyManager.getTransform("jj.cp-ule").apply(b);
-    PackmyManager.getTransform("jj.lp").apply(b);
-    // PackmyManager.getTransform( "jj.ct" ).apply( b );
-    PackmyManager.getTransform("jj.uce").apply(b);
+    getMyPhaseOptions().getPM().getTransform("jj.lns").apply(b);
+    getMyPhaseOptions().getPM().getTransform("jj.cp").apply(b);
+    getMyPhaseOptions().getPM().getTransform("jj.dae").apply(b);
+    getMyPhaseOptions().getPM().getTransform("jj.cp-ule").apply(b);
+    getMyPhaseOptions().getPM().getTransform("jj.lp").apply(b);
+    // getMyPhaseOptions().getPM().getTransform( "jj.ct" ).apply( b );
+    getMyPhaseOptions().getPM().getTransform("jj.uce").apply(b);
 
-    if (myOptions.time()) {
-      myTimers.stmtCount += b.getUnits().size();
-    }
+//    if (getMyOptions().time()) {
+//      myTimers.stmtCount += b.getUnits().size();
+//    }
   }
 
   protected void internalApply(Body b) {
-    applyPhaseOptions((JimpleBody) b, myPhaseOptions().getPhaseOptions(getPhaseName()));
+    applyPhaseOptions((JimpleBody) b, getMyPhaseOptions().getPhaseOptions(getPhaseName()));
   }
 }

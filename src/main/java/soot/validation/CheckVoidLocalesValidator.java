@@ -24,15 +24,17 @@ package soot.validation;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.Local;
 import soot.VoidType;
 
-public enum CheckVoidLocalesValidator implements BodyValidator {
-  INSTANCE;
+public class CheckVoidLocalesValidator implements BodyValidator {
 
-  public static CheckVoidLocalesValidator v() {
-    return INSTANCE;
+
+  @Inject
+  public CheckVoidLocalesValidator(){
+
   }
 
   @Override

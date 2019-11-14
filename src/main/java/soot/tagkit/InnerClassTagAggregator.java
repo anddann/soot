@@ -26,21 +26,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
-import soot.G;
+import com.google.inject.Inject;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 
 /** The aggregator for LineNumberTable attribute. */
 public class InnerClassTagAggregator extends SceneTransformer {
 
-  public InnerClassTagAggregator(Singletons.Global g) {
+  private Scene myScene;
+
+  @Inject
+  public InnerClassTagAggregator(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public static InnerClassTagAggregator v() {
-    return G.v().soot_tagkit_InnerClassTagAggregator();
-  }
 
   public String aggregatedName() {
     return "InnerClasses";

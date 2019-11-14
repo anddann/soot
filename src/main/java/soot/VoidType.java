@@ -22,19 +22,17 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import soot.util.Switch;
 
 /** Represents the Java void type. */
 @SuppressWarnings("serial")
 public class VoidType extends Type {
-  private VoidType() {
-  }
-  private static VoidType instance;
-  public static VoidType v() {
-    if(instance==null){
-      instance=new VoidType();
-    }
-    return instance;
+
+  @Inject
+  public VoidType(Scene myScene) {
+    super(myScene);
   }
 
   public int hashCode() {

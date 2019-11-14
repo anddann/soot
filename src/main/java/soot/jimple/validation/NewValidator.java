@@ -28,6 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.Local;
 import soot.RefType;
@@ -52,16 +53,16 @@ import soot.validation.ValidationException;
  * @author Marc Miltenberger
  * @author Steven Arzt
  */
-public enum NewValidator implements BodyValidator {
-  INSTANCE;
+public class NewValidator implements BodyValidator {
 
   private static final String errorMsg
       = "There is a path from '%s' to the usage '%s' where <init> does not get called in between.";
 
   public static boolean MUST_CALL_CONSTRUCTOR_BEFORE_RETURN = false;
 
-  public static NewValidator v() {
-    return INSTANCE;
+  @Inject
+  public NewValidator(){
+
   }
 
   /**

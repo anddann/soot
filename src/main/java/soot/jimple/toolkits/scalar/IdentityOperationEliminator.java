@@ -25,6 +25,7 @@ package soot.jimple.toolkits.scalar;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.DoubleType;
@@ -61,12 +62,12 @@ import soot.jimple.SubExpr;
  */
 public class IdentityOperationEliminator extends BodyTransformer {
 
-  public IdentityOperationEliminator(Singletons.Global g) {
+
+  @Inject
+  public IdentityOperationEliminator() {
   }
 
-  public static IdentityOperationEliminator v() {
-    return G.v().soot_jimple_toolkits_scalar_IdentityOperationEliminator();
-  }
+
 
   @Override
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {

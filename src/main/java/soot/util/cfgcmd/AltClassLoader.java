@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,18 +75,10 @@ public class AltClassLoader extends ClassLoader {
    * @param g
    *          guarantees that the constructor may only be called from {@link Singletons}.
    */
-  public AltClassLoader(Singletons.Global g) {
+  @Inject
+  public AltClassLoader() {
   }
 
-  /**
-   * Returns the single instance of <code>AltClassLoader</code>, which loads classes from the classpath set by the most
-   * recent call to its {@link #setAltClassPath}.
-   *
-   * @return Soot's <code>AltClassLoader</code>.
-   */
-  public static AltClassLoader v() {
-    return G.v().soot_util_cfgcmd_AltClassLoader();
-  }
 
   /**
    * Sets the list of locations in the alternate classpath.
@@ -345,22 +338,6 @@ public class AltClassLoader extends ClassLoader {
     }
   }
 
-  /**
-   * <p>
-   * A main() entry for basic unit testing.
-   * </p>
-   *
-   * <p>
-   * Usage: path class ...
-   * </p>
-   */
-  public static void main(String[] argv) throws ClassNotFoundException {
-    myAltClassLoader.setAltClassPath(argv[0]);
-    for (int i = 1; i < argv.length; i++) {
-      myAltClassLoader.setAltClasses(new String[] { argv[i] });
-      logger.debug("main() loadClass(" + argv[i] + ")");
-      myAltClassLoader.loadClass(argv[i]);
-    }
-  }
+
 
 }

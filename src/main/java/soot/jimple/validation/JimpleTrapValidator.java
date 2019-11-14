@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.Trap;
 import soot.Unit;
@@ -41,11 +42,12 @@ import soot.validation.ValidationException;
  * @see JimpleTrapValidator#validate(Body, List)
  * @author Marc Miltenberger
  */
-public enum JimpleTrapValidator implements BodyValidator {
-  INSTANCE;
+public class JimpleTrapValidator implements BodyValidator {
 
-  public static JimpleTrapValidator v() {
-    return INSTANCE;
+
+  @Inject
+  public JimpleTrapValidator(){
+
   }
 
   /**

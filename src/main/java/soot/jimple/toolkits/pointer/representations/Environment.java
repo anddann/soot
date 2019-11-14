@@ -22,16 +22,17 @@ package soot.jimple.toolkits.pointer.representations;
  * #L%
  */
 
-import soot.G;
-import soot.Singletons;
+import com.google.inject.Inject;
 
 public class Environment {
-  public Environment(Singletons.Global g) {
+
+  private TypeConstants myTypeConstants;
+
+  @Inject
+  public Environment(TypeConstants myTypeConstants) {
+    this.myTypeConstants = myTypeConstants;
   }
 
-  public static Environment v() {
-    return G.v().soot_jimple_toolkits_pointer_representations_Environment();
-  }
 
   private final ConstantObject clsloaders = new GeneralConstObject(myTypeConstants.CLASSLOADERCLASS, "classloader");
 

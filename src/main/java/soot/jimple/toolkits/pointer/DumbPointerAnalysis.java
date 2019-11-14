@@ -22,13 +22,12 @@ package soot.jimple.toolkits.pointer;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.Context;
-import soot.G;
 import soot.Local;
 import soot.PointsToAnalysis;
 import soot.PointsToSet;
 import soot.RefType;
-import soot.Singletons;
 import soot.SootField;
 import soot.Type;
 
@@ -36,12 +35,14 @@ import soot.Type;
  * A very naive pointer analysis that just reports that any points can point to any object.
  */
 public class DumbPointerAnalysis implements PointsToAnalysis {
-  public DumbPointerAnalysis(Singletons.Global g) {
+
+  private FullObjectSet myFullObjectSet;
+
+  @Inject
+  public DumbPointerAnalysis(FullObjectSet myFullObjectSet) {
+    this.myFullObjectSet = myFullObjectSet;
   }
 
-  public static DumbPointerAnalysis v() {
-    return G.v().soot_jimple_toolkits_pointer_DumbPointerAnalysis();
-  }
 
   /** Returns the set of objects pointed to by variable l. */
   public PointsToSet reachingObjects(Local l) {

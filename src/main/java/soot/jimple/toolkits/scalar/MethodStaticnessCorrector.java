@@ -25,14 +25,13 @@ package soot.jimple.toolkits.scalar;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.G;
 import soot.Modifier;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
@@ -53,13 +52,13 @@ import soot.jimple.Stmt;
  */
 public class MethodStaticnessCorrector extends AbstractStaticnessCorrector {
   private static final Logger logger = LoggerFactory.getLogger(MethodStaticnessCorrector.class);
+  private Scene myScene;
 
-  public MethodStaticnessCorrector(Singletons.Global g) {
+  @Inject
+  public MethodStaticnessCorrector(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public static MethodStaticnessCorrector v() {
-    return G.v().soot_jimple_toolkits_scalar_MethodStaticnessCorrector();
-  }
 
   @Override
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {

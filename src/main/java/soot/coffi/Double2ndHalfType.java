@@ -22,16 +22,16 @@ package soot.coffi;
  * #L%
  */
 
-import soot.G;
-import soot.Singletons;
+import com.google.inject.Inject;
+
+import soot.Scene;
 import soot.Type;
 
 public class Double2ndHalfType extends Type {
-  public Double2ndHalfType(Singletons.Global g) {
-  }
 
-  public static Double2ndHalfType v() {
-    return G.v().soot_coffi_Double2ndHalfType();
+  @Inject
+  public Double2ndHalfType(Scene myScene) {
+    super(myScene);
   }
 
   public boolean equals(Type otherType) {

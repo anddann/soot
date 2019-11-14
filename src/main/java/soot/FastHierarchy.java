@@ -138,12 +138,12 @@ public class FastHierarchy {
   }
 
   /** Constructs a hierarchy from the current scene. */
-  public FastHierarchy() {
+  public FastHierarchy(Scene myScene) {
     this.sc = myScene;
 
     this.rtObject = myScene.getObjectType();
-    this.rtSerializable = RefType.v("java.io.Serializable");
-    this.rtCloneable = RefType.v("java.lang.Cloneable");
+    this.rtSerializable = RefType.v("java.io.Serializable",sc);
+    this.rtCloneable = RefType.v("java.lang.Cloneable",sc);
 
     /* First build the inverse maps. */
     buildInverseMaps();
@@ -477,7 +477,7 @@ public class FastHierarchy {
       } else if (t instanceof ArrayType) {
         SootMethod concreteM = null;
         try {
-          concreteM = resolveConcreteDispatch(RefType.v("java.lang.Object").getSootClass(), m);
+          concreteM = resolveConcreteDispatch(RefType.v("java.lang.Object",sc).getSootClass(), m);
         } catch (Exception e) {
           concreteM = null;
         }

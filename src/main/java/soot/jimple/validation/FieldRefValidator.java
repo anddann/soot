@@ -24,6 +24,7 @@ package soot.jimple.validation;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.ResolutionFailedException;
 import soot.SootField;
@@ -38,11 +39,11 @@ import soot.validation.BodyValidator;
 import soot.validation.UnitValidationException;
 import soot.validation.ValidationException;
 
-public enum FieldRefValidator implements BodyValidator {
-  INSTANCE;
+public class FieldRefValidator implements BodyValidator {
 
-  public static FieldRefValidator v() {
-    return INSTANCE;
+
+  @Inject public FieldRefValidator(){
+
   }
 
   /**

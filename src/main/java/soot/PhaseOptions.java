@@ -46,7 +46,12 @@ public class PhaseOptions {
   private PackManager myPackManager;
 
 
-
+  public PackManager getMyPackManager() {
+    return myPackManager;
+  }
+  public PackManager getPM() {
+    return myPackManager;
+  }
 
   @Inject
   public PhaseOptions(PackManager myPackManager) {
@@ -255,4 +260,7 @@ public class PhaseOptions {
     optionMap.put(getKey(option), getValue(option));
   }
 
+//  public void setPackManager(PackManager packManager) {
+//    this.myPackManager = packManager;
+//  }
 }

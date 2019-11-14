@@ -207,8 +207,26 @@ public class DexPrinter {
 
   protected MultiDexBuilder dexBuilder;
   protected File originalApk;
+  private Scene myScene;
+  private Options myOptions;
+  private SourceLocator mySourceLocator;
+  private PackManager myPackManager;
+  private EmptySwitchEliminator myEmptySwitchEliminator;
+  private SynchronizedMethodTransformer mySynchronizedMethodTransformer;
+  private FastDexTrapTightener myFastDexTrapTightener;
+  private TrapSplitter myTrapSplitter;
+  private Jimple myJimple;
 
-  public DexPrinter() {
+  public DexPrinter(Scene myScene, Options myOptions, SourceLocator mySourceLocator, PackManager myPackManager, EmptySwitchEliminator myEmptySwitchEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter, Jimple myJimple) {
+    this.myScene = myScene;
+    this.myOptions=myOptions;
+    this.mySourceLocator = mySourceLocator;
+    this.myPackManager = myPackManager;
+    this.myEmptySwitchEliminator = myEmptySwitchEliminator;
+    this.mySynchronizedMethodTransformer = mySynchronizedMethodTransformer;
+    this.myFastDexTrapTightener = myFastDexTrapTightener;
+    this.myTrapSplitter = myTrapSplitter;
+    this.myJimple = myJimple;
     dexBuilder = createDexBuilder();
   }
 
@@ -339,7 +357,7 @@ public class DexPrinter {
   private ZipOutputStream getZipOutputStream() throws IOException {
     if (myOptions.output_jar()) {
       LOGGER.info("Writing JAR to \"{}\"", myOptions.output_dir());
-      return PackmyManager.getJarFile();
+      return myPackManager.getJarFile();
     }
 
     final String name = originalApk == null ? "out.apk" : originalApk.getName();
@@ -596,7 +614,7 @@ public class DexPrinter {
       return new ImmutableFloatEncodedValue(f.getFloatValue());
     } else if (t instanceof StringConstantValueTag) {
       StringConstantValueTag s = (StringConstantValueTag) t;
-      if (sf.getType().equals(RefType.v("java.lang.String"))) {
+      if (sf.getType().equals(RefType.v("java.lang.String",myScene))) {
         return new ImmutableStringEncodedValue(s.getStringValue());
       } else {
         // Not supported in Dalvik

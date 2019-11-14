@@ -25,6 +25,7 @@ package soot.dava.toolkits.base.AST.transformations;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.G;
 import soot.Singletons;
 import soot.dava.internal.AST.ASTLabeledNode;
@@ -39,12 +40,12 @@ import soot.jimple.Stmt;
 public class UselessLabelFinder {
   public static boolean DEBUG = false;
 
-  public UselessLabelFinder(Singletons.Global g) {
+
+  @Inject
+  public UselessLabelFinder() {
   }
 
-  public static UselessLabelFinder v() {
-    return G.v().soot_dava_toolkits_base_AST_transformations_UselessLabelFinder();
-  }
+
 
   // check whether label on a node is useless
   public boolean findAndKill(ASTNode node) {

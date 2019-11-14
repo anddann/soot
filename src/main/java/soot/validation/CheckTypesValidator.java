@@ -22,6 +22,8 @@ package soot.validation;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.List;
 
 import soot.ArrayType;
@@ -44,11 +46,14 @@ import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.Stmt;
 
-public enum CheckTypesValidator implements BodyValidator {
-  INSTANCE;
+public class CheckTypesValidator implements BodyValidator {
 
-  public static CheckTypesValidator v() {
-    return INSTANCE;
+  private Scene myScene;
+
+  @Inject
+  public CheckTypesValidator(Scene myScene) {
+
+    this.myScene = myScene;
   }
 
   @Override
@@ -59,10 +64,10 @@ public enum CheckTypesValidator implements BodyValidator {
       if (u instanceof DefinitionStmt) {
         DefinitionStmt astmt = (DefinitionStmt) u;
         if (!(astmt.getRightOp() instanceof CaughtExceptionRef)) {
-          Type leftType = Type.toMachineType(astmt.getLeftOp().getType());
-          Type rightType = Type.toMachineType(astmt.getRightOp().getType());
+          Type leftType = astmt.getLeftOp().getType().toMachineType();
+          Type rightType = astmt.getRightOp().getType().toMachineType();
 
-          checkCopy(astmt, body, exception, leftType, rightType, errorSuffix);
+          checkCopy(astmt, body, exception, leftType, rightType, errorSuffix, myScene);
         }
       }
 
@@ -75,7 +80,7 @@ public enum CheckTypesValidator implements BodyValidator {
           if (iexpr instanceof InstanceInvokeExpr) {
             InstanceInvokeExpr iiexpr = (InstanceInvokeExpr) iexpr;
             checkCopy(stmt, body, exception, called.declaringClass().getType(), iiexpr.getBase().getType(),
-                " in receiver of call" + errorSuffix);
+                " in receiver of call" + errorSuffix, myScene);
           }
 
           if (called.parameterTypes().size() != iexpr.getArgCount()) {
@@ -84,9 +89,9 @@ public enum CheckTypesValidator implements BodyValidator {
                     + body.getMethod()));
           } else {
             for (int i = 0; i < iexpr.getArgCount(); i++) {
-              checkCopy(stmt, body, exception, Type.toMachineType(called.parameterType(i)),
-                  Type.toMachineType(iexpr.getArg(i).getType()),
-                  " in argument " + i + " of call" + errorSuffix + " (Note: Parameters are zero-indexed)");
+              checkCopy(stmt, body, exception, called.parameterType(i).toMachineType(),
+                  iexpr.getArg(i).getType().toMachineType(),
+                  " in argument " + i + " of call" + errorSuffix + " (Note: Parameters are zero-indexed)", myScene);
             }
           }
         }
@@ -95,7 +100,7 @@ public enum CheckTypesValidator implements BodyValidator {
   }
 
   private void checkCopy(Unit stmt, Body body, List<ValidationException> exception, Type leftType, Type rightType,
-      String errorSuffix) {
+      String errorSuffix, Scene myScene) {
     if (leftType instanceof PrimType || rightType instanceof PrimType) {
       if (leftType instanceof IntType && rightType instanceof IntType) {
         return;
@@ -127,8 +132,9 @@ public enum CheckTypesValidator implements BodyValidator {
       // it is legal to assign arrays to variables of type Serializable,
       // Cloneable or Object
       if (rightType instanceof ArrayType) {
-        if (leftType.equals(RefType.v("java.io.Serializable")) || leftType.equals(RefType.v("java.lang.Cloneable"))
-            || leftType.equals(RefType.v("java.lang.Object"))) {
+        if (leftType.equals(RefType.v("java.io.Serializable", myScene))
+            || leftType.equals(RefType.v("java.lang.Cloneable", myScene))
+            || leftType.equals(RefType.v("java.lang.Object", myScene))) {
           return;
         }
       }

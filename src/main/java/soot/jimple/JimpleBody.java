@@ -29,7 +29,9 @@ import java.util.List;
 import soot.Body;
 import soot.Local;
 import soot.PatchingChain;
+import soot.Printer;
 import soot.RefType;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Type;
@@ -51,8 +53,9 @@ import soot.validation.ValidationException;
 /** Implementation of the Body class for the Jimple IR. */
 public class JimpleBody extends StmtBody {
   private static BodyValidator[] validators;
-  private Options myOptions;
   private Jimple myJimple;
+
+
 
   /**
    * Returns an array containing some validators in order to validate the JimpleBody
@@ -73,9 +76,12 @@ public class JimpleBody extends StmtBody {
   /**
    * Construct an empty JimpleBody
    */
-  public JimpleBody(SootMethod m, Options myOptions, Jimple myJimple) {
-    super(m);
-    this.myOptions = myOptions;
+  public JimpleBody(SootMethod m, Printer myPrinter, Options myOptions, Jimple myJimple) {
+    super(m, myOptions, myPrinter);
+    this.myJimple = myJimple;
+  }
+  public JimpleBody(Printer myPrinter, Options myOptions, Jimple myJimple) {
+    super( myOptions, myPrinter);
     this.myJimple = myJimple;
   }
 
@@ -84,15 +90,15 @@ public class JimpleBody extends StmtBody {
    * @param myOptions
    * @param myJimple
    */
-  public JimpleBody(Options myOptions, Jimple myJimple) {
-    this.myOptions = myOptions;
+  public JimpleBody(Body body, Options myOptions, Printer myPrinter, Jimple myJimple) {
+    super(body.getMethod(),myOptions,myPrinter);
     this.myJimple = myJimple;
   }
 
   /** Clones the current body, making deep copies of the contents. */
   @Override
   public Object clone() {
-    Body b = new JimpleBody(getMethod(), myOptions, myJimple);
+    Body b = new JimpleBody(getMethod(), super.getMyPrinter(), super.getMyOptions(), myJimple);
     b.importBodyContentsFrom(this);
     return b;
   }
@@ -118,7 +124,7 @@ public class JimpleBody extends StmtBody {
   @Override
   public void validate(List<ValidationException> exceptionList) {
     super.validate(exceptionList);
-    final boolean runAllValidators = myOptions.debug() || myOptions.validate();
+    final boolean runAllValidators = getMyOptions().debug() || getMyOptions().validate();
     for (BodyValidator validator : getValidators()) {
       if (!validator.isBasicValidator() && !runAllValidators) {
         continue;
@@ -132,8 +138,8 @@ public class JimpleBody extends StmtBody {
   }
 
   /** Inserts usual statements for handling this & parameters into body. */
-  public void insertIdentityStmts() {
-    insertIdentityStmts(getMethod().getDeclaringClass());
+  public void insertIdentityStmts(Scene myScene) {
+    insertIdentityStmts(getMethod().getDeclaringClass(),myScene);
   }
 
   /**
@@ -142,7 +148,7 @@ public class JimpleBody extends StmtBody {
    * @param declaringClass
    *          the class, which should be used for this references. Can be null for static methods
    */
-  public void insertIdentityStmts(SootClass declaringClass) {
+  public void insertIdentityStmts(SootClass declaringClass,Scene myScene) {
     final Jimple jimple = myJimple;
     final PatchingChain<Unit> unitChain = getUnits();
     final Chain<Local> localChain = getLocals();
@@ -154,7 +160,7 @@ public class JimpleBody extends StmtBody {
         throw new IllegalArgumentException(
             String.format("No declaring class given for method %s", method.getSubSignature()));
       }
-      Local l = jimple.newLocal("this", RefType.v(declaringClass));
+      Local l = jimple.newLocal("this", RefType.v(declaringClass,myScene));
       Stmt s = jimple.newIdentityStmt(l, jimple.newThisRef((RefType) l.getType()));
 
       localChain.add(l);

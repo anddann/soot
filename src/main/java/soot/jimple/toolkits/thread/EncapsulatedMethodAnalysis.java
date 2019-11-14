@@ -50,7 +50,7 @@ public class EncapsulatedMethodAnalysis // extends ForwardFlowAnalysis
       if (s.containsFieldRef()) {
         FieldRef ref = s.getFieldRef();
         if ((ref instanceof StaticFieldRef)
-            && (Type.toMachineType(((StaticFieldRef) ref).getType()) instanceof RefLikeType)) {
+            && (((StaticFieldRef) ref).getType().toMachineType() instanceof RefLikeType)) {
           isMethodPure = false; // kills purity
           isMethodConditionallyPure = false; // kills conditional purity
           return;
@@ -62,7 +62,7 @@ public class EncapsulatedMethodAnalysis // extends ForwardFlowAnalysis
     Iterator paramTypesIt = g.getBody().getMethod().getParameterTypes().iterator();
     while (paramTypesIt.hasNext()) {
       Type paramType = (Type) paramTypesIt.next();
-      if (Type.toMachineType(paramType) != IntType.v()) {
+      if (paramType.toMachineType() != IntType.v()) {
         isMethodPure = false; // kills purity
         return;
       }

@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import soot.JavaClassProvider.JarException;
 import soot.asm.AsmClassProvider;
+import soot.coffi.Util;
 import soot.dexpler.DexFileProvider;
 import soot.javaToJimple.InitialResolver;
 import soot.options.Options;
@@ -124,19 +125,19 @@ public class SourceLocator {
   private Scene myScene;
   private DexFileProvider myDexFileProvider;
   private InitialResolver myInitialResolver;
+  private Util myCoffiUtil;
 
   @Inject
   public SourceLocator(Options myOptions, Scene myScene, DexFileProvider myDexFileProvider,
-      InitialResolver myInitialResolver) {
+                       InitialResolver myInitialResolver, Util myCoffiUtil) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myDexFileProvider = myDexFileProvider;
     this.myInitialResolver = myInitialResolver;
+    this.myCoffiUtil = myCoffiUtil;
   }
 
-  public static SourceLocator v() {
-    return G.v().soot_SourceLocator();
-  }
+
 
   /**
    * Create the given directory and all parent directories if {@code dir} is non-null.

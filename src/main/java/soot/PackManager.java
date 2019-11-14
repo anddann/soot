@@ -68,6 +68,7 @@ import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.dava.toolkits.base.misc.ThrowFinder;
 import soot.grimp.Grimp;
 import soot.grimp.toolkits.base.ConstructorFolder;
+import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.paddle.PaddleHook;
 import soot.jimple.spark.SparkTransformer;
@@ -128,6 +129,9 @@ import soot.sootify.TemplatePrinter;
 import soot.tagkit.InnerClassTagAggregator;
 import soot.tagkit.LineNumberTagAggregator;
 import soot.toDex.DexPrinter;
+import soot.toDex.FastDexTrapTightener;
+import soot.toDex.SynchronizedMethodTransformer;
+import soot.toDex.TrapSplitter;
 import soot.toolkits.exceptions.DuplicateCatchAllTrapRemover;
 import soot.toolkits.exceptions.TrapTightener;
 import soot.toolkits.graph.interaction.InteractionHandler;
@@ -231,12 +235,19 @@ public class PackManager {
   private Printer myPrinter;
   private XMLPrinter myXMLPrinter;
   private TemplatePrinter myTemplatePrinter;
+  private NullCheckEliminator myNullCheckEliminator;
+    private SynchronizedMethodTransformer mySynchronizedMethodTransformer;
+    private EntryPoints myEntryPoints;
+    private FastDexTrapTightener myFastDexTrapTightener;
+    private TrapSplitter myTrapSplitter;
+    private Jimple myJimple;
+    private ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer;
 
-  @Inject
-  public PackManager(PhaseOptions myPhaseOptions, FieldTagger myFieldTagger, Options myOptions, SourceLocator mySourceLocator, TrapTightener myTrapTightener, DuplicateCatchAllTrapRemover myDuplicateCatchAllTrapRemover, LocalSplitter myLocalSplitter, TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, EmptySwitchEliminator myEmptySwitchEliminator, Aggregator myAggregator, LocalNameStandardizer myLocalNameStandardizer, UnusedLocalEliminator myUnusedLocalEliminator, CopyPropagator myCopyPropagator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator, ConstantInvokeMethodBaseTransformer myConstantInvokeMethodBaseTransformer, CHATransformer myCHATransformer, PaddleHook myPaddleHook, MhpTransformer myMhpTransformer, SparkTransformer mySparkTransformer, LockAllocator myLockAllocator, RenameDuplicatedClasses myRenameDuplicatedClasses, StaticMethodBinder myStaticMethodBinder, StaticInliner myStaticInliner, UnreachableMethodsTagger myUnreachableMethodsTagger, UnreachableFieldsTagger myUnreachableFieldsTagger, TightestQualifiersTagger myTightestQualifiersTagger, Scene myScene, RectangularArrayFinder myRectangularArrayFinder, CallGraphGrapher myCallGraphGrapher, PurityAnalysis myPurityAnalysis, ConstantPropagatorAndFolder myConstantPropagatorAndFolder, CommonSubexpressionEliminator myCommonSubexpressionEliminator, LazyCodeMotion myLazyCodeMotion, BusyCodeMotion myBusyCodeMotion, UnconditionalBranchFolder myUnconditionalBranchFolder, ConditionalBranchFolder myConditionalBranchFolder, NullPointerChecker myNullPointerChecker, NullPointerColorer myNullPointerColorer, ArrayBoundsChecker myArrayBoundsChecker, ProfilingGenerator myProfilingGenerator, SideEffectTagger mySideEffectTagger, CallGraphTagger myCallGraphTagger, ParityTagger myParityTagger, ParameterAliasTagger myParameterAliasTagger, ReachingDefsTagger myReachingDefsTagger, LiveVarsTagger myLiveVarsTagger, CastCheckEliminatorDumper myCastCheckEliminatorDumper, LoopInvariantFinder myLoopInvariantFinder, AvailExprTagger myAvailExprTagger, DominatorsTagger myDominatorsTagger, ConstructorFolder myConstructorFolder, LoadStoreOptimizer myLoadStoreOptimizer, PeepholeOptimizer myPeepholeOptimizer, LineNumberTagAggregator myLineNumberTagAggregator, StoreChainOptimizer myStoreChainOptimizer, ArrayNullTagAggregator myArrayNullTagAggregator, DependenceTagAggregator myDependenceTagAggregator, FieldTagAggregator myFieldTagAggregator, LineNumberAdder myLineNumberAdder, InteractionHandler myInteractionHandler, PhaseDumper myPhaseDumper, ShimpleTransformer myShimpleTransformer, ThrowFinder myThrowFinder, PackageNamer myPackageNamer, InnerClassTagAggregator myInnerClassTagAggregator, DavaStaticBlockCleaner myDavaStaticBlockCleaner, DavaPrinter myDavaPrinter, Shimple myShimple, Grimp myGrimp, Dava myDava, Baf myBaf, Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter) {
+    @Inject
+  public PackManager(PhaseOptions myPhaseOptions, FieldTagger myFieldTagger, Options myOptions, SourceLocator mySourceLocator, TrapTightener myTrapTightener, DuplicateCatchAllTrapRemover myDuplicateCatchAllTrapRemover, LocalSplitter myLocalSplitter, TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, EmptySwitchEliminator myEmptySwitchEliminator, Aggregator myAggregator, LocalNameStandardizer myLocalNameStandardizer, UnusedLocalEliminator myUnusedLocalEliminator, CopyPropagator myCopyPropagator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator, ConstantInvokeMethodBaseTransformer myConstantInvokeMethodBaseTransformer, CHATransformer myCHATransformer, PaddleHook myPaddleHook, MhpTransformer myMhpTransformer, SparkTransformer mySparkTransformer, LockAllocator myLockAllocator, RenameDuplicatedClasses myRenameDuplicatedClasses, StaticMethodBinder myStaticMethodBinder, StaticInliner myStaticInliner, UnreachableMethodsTagger myUnreachableMethodsTagger, UnreachableFieldsTagger myUnreachableFieldsTagger, TightestQualifiersTagger myTightestQualifiersTagger, Scene myScene, RectangularArrayFinder myRectangularArrayFinder, CallGraphGrapher myCallGraphGrapher, PurityAnalysis myPurityAnalysis, ConstantPropagatorAndFolder myConstantPropagatorAndFolder, CommonSubexpressionEliminator myCommonSubexpressionEliminator, LazyCodeMotion myLazyCodeMotion, BusyCodeMotion myBusyCodeMotion, UnconditionalBranchFolder myUnconditionalBranchFolder, ConditionalBranchFolder myConditionalBranchFolder, NullPointerChecker myNullPointerChecker, NullPointerColorer myNullPointerColorer, ArrayBoundsChecker myArrayBoundsChecker, ProfilingGenerator myProfilingGenerator, SideEffectTagger mySideEffectTagger, CallGraphTagger myCallGraphTagger, ParityTagger myParityTagger, ParameterAliasTagger myParameterAliasTagger, ReachingDefsTagger myReachingDefsTagger, LiveVarsTagger myLiveVarsTagger, CastCheckEliminatorDumper myCastCheckEliminatorDumper, LoopInvariantFinder myLoopInvariantFinder, AvailExprTagger myAvailExprTagger, DominatorsTagger myDominatorsTagger, ConstructorFolder myConstructorFolder, LoadStoreOptimizer myLoadStoreOptimizer, PeepholeOptimizer myPeepholeOptimizer, LineNumberTagAggregator myLineNumberTagAggregator, StoreChainOptimizer myStoreChainOptimizer, ArrayNullTagAggregator myArrayNullTagAggregator, DependenceTagAggregator myDependenceTagAggregator, FieldTagAggregator myFieldTagAggregator, LineNumberAdder myLineNumberAdder, InteractionHandler myInteractionHandler, PhaseDumper myPhaseDumper, ShimpleTransformer myShimpleTransformer, ThrowFinder myThrowFinder, PackageNamer myPackageNamer, InnerClassTagAggregator myInnerClassTagAggregator, DavaStaticBlockCleaner myDavaStaticBlockCleaner, DavaPrinter myDavaPrinter, Shimple myShimple, Grimp myGrimp, Dava myDava, Baf myBaf, Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter, NullCheckEliminator myNullCheckEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer, EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter, Jimple myJimple, ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer) {
     this.myPhaseOptions = myPhaseOptions;
     this.myOptions = myOptions;
-   // myPhaseOptions.setPackManager(this);
+   //myPhaseOptions.setPackManager(this);
     this.myFieldTagger = myFieldTagger;
     this.mySourceLocator = mySourceLocator;
     this.myTrapTightener = myTrapTightener;
@@ -312,12 +323,16 @@ public class PackManager {
     this.myPrinter = myPrinter;
     this.myXMLPrinter = myXMLPrinter;
     this.myTemplatePrinter = myTemplatePrinter;
-    init();
+    this.myNullCheckEliminator = myNullCheckEliminator;
+        this.mySynchronizedMethodTransformer = mySynchronizedMethodTransformer;
+        this.myEntryPoints = myEntryPoints;
+        this.myFastDexTrapTightener = myFastDexTrapTightener;
+        this.myTrapSplitter = myTrapSplitter;
+        this.myJimple = myJimple;
+        this.myConstantInitializerToTagTransformer = myConstantInitializerToTagTransformer;
+        init();
   }
 
-  public static PackManager v() {
-    return G.v().soot_PackManager();
-  }
 
   public boolean onlyStandardPacks() {
     return onlyStandardPacks;
@@ -331,7 +346,7 @@ public class PackManager {
     Pack p;
 
     // Jimple body creation
-    addPack(p = new JimpleBodyPack());
+    addPack(p = new JimpleBodyPack(myPhaseOptions,myOptions,myInteractionHandler));
     {
       p.add(new Transform("jb.tt", myTrapTightener));
       p.add(new Transform("jb.dtr", myDuplicateCatchAllTrapRemover));
@@ -351,7 +366,7 @@ public class PackManager {
     }
 
     // Java to Jimple - Jimple body creation
-    addPack(p = new JavaToJimpleBodyPack());
+    addPack(p = new JavaToJimpleBodyPack(myPhaseOptions,myOptions,myInteractionHandler));
     {
       p.add(new Transform("jj.ls", myLocalSplitter));
       p.add(new Transform("jj.a", myAggregator));
@@ -370,16 +385,16 @@ public class PackManager {
     }
 
     // Whole-Jimple Pre-processing Pack
-    addPack(p = new ScenePack("wjpp"));
+    addPack(p = new ScenePack("wjpp",myPhaseOptions));
     {
       p.add(new Transform("wjpp.cimbt", myConstantInvokeMethodBaseTransformer));
     }
 
     // Whole-Shimple Pre-processing Pack
-    addPack(p = new ScenePack("wspp"));
+    addPack(p = new ScenePack("wspp",myPhaseOptions));
 
     // Call graph pack
-    addPack(p = new CallGraphPack("cg"));
+    addPack(p = new CallGraphPack("cg",myPhaseOptions,myScene,myEntryPoints));
     {
       p.add(new Transform("cg.cha", myCHATransformer));
       p.add(new Transform("cg.spark", mySparkTransformer));
@@ -387,13 +402,13 @@ public class PackManager {
     }
 
     // Whole-Shimple transformation pack
-    addPack(p = new ScenePack("wstp"));
+    addPack(p = new ScenePack("wstp",myPhaseOptions));
 
     // Whole-Shimple Optimization pack
-    addPack(p = new ScenePack("wsop"));
+    addPack(p = new ScenePack("wsop",myPhaseOptions));
 
     // Whole-Jimple transformation pack
-    addPack(p = new ScenePack("wjtp"));
+    addPack(p = new ScenePack("wjtp",myPhaseOptions));
     {
       p.add(new Transform("wjtp.mhp", myMhpTransformer));
       p.add(new Transform("wjtp.tn", myLockAllocator));
@@ -401,7 +416,7 @@ public class PackManager {
     }
 
     // Whole-Jimple Optimization pack
-    addPack(p = new ScenePack("wjop"));
+    addPack(p = new ScenePack("wjop",myPhaseOptions));
     {
       p.add(new Transform("wjop.smb", myStaticMethodBinder));
       p.add(new Transform("wjop.si", myStaticInliner));
@@ -409,7 +424,7 @@ public class PackManager {
 
     // Give another chance to do Whole-Jimple transformation
     // The RectangularArrayFinder will be put into this package.
-    addPack(p = new ScenePack("wjap"));
+    addPack(p = new ScenePack("wjap",myPhaseOptions));
     {
       p.add(new Transform("wjap.ra", myRectangularArrayFinder));
       p.add(new Transform("wjap.umt", myUnreachableMethodsTagger));
@@ -420,22 +435,22 @@ public class PackManager {
     }
 
     // Shimple pack
-    addPack(p = new BodyPack(Shimple.PHASE));
+    addPack(p = new BodyPack(Shimple.PHASE,myPhaseOptions,myOptions,myInteractionHandler));
 
     // Shimple transformation pack
-    addPack(p = new BodyPack("stp"));
+    addPack(p = new BodyPack("stp",myPhaseOptions,myOptions,myInteractionHandler));
 
     // Shimple optimization pack
-    addPack(p = new BodyPack("sop"));
+    addPack(p = new BodyPack("sop",myPhaseOptions,myOptions,myInteractionHandler));
     {
       p.add(new Transform("sop.cpf", myConstantPropagatorAndFolder));
     }
 
     // Jimple transformation pack
-    addPack(p = new BodyPack("jtp"));
+    addPack(p = new BodyPack("jtp",myPhaseOptions,myOptions,myInteractionHandler));
 
     // Jimple optimization pack
-    addPack(p = new BodyPack("jop"));
+    addPack(p = new BodyPack("jop",myPhaseOptions,myOptions,myInteractionHandler));
     {
       p.add(new Transform("jop.cse", myCommonSubexpressionEliminator));
       p.add(new Transform("jop.bcm", myBusyCodeMotion));
@@ -444,7 +459,7 @@ public class PackManager {
       p.add(new Transform("jop.cpf", myConstantPropagatorAndFolder));
       p.add(new Transform("jop.cbf", myConditionalBranchFolder));
       p.add(new Transform("jop.dae", myDeadAssignmentEliminator));
-      p.add(new Transform("jop.nce", new NullCheckEliminator(myJimple)));
+      p.add(new Transform("jop.nce",  myNullCheckEliminator));
       p.add(new Transform("jop.uce1", myUnreachableCodeEliminator));
       p.add(new Transform("jop.ubf1", myUnconditionalBranchFolder));
       p.add(new Transform("jop.uce2", myUnreachableCodeEliminator));
@@ -453,7 +468,7 @@ public class PackManager {
     }
 
     // Jimple annotation pack
-    addPack(p = new BodyPack("jap"));
+    addPack(p = new BodyPack("jap",myPhaseOptions,myOptions,myInteractionHandler));
     {
       p.add(new Transform("jap.npc", myNullPointerChecker));
       p.add(new Transform("jap.npcolorer", myNullPointerColorer));
@@ -480,7 +495,7 @@ public class PackManager {
      */
 
     // Grimp body creation
-    addPack(p = new BodyPack("gb"));
+    addPack(p = new BodyPack("gb",myPhaseOptions,myOptions,myInteractionHandler));
     {
       p.add(new Transform("gb.a1", myAggregator));
       p.add(new Transform("gb.cf", myConstructorFolder));
@@ -489,10 +504,10 @@ public class PackManager {
     }
 
     // Grimp optimization pack
-    addPack(p = new BodyPack("gop"));
+    addPack(p = new BodyPack("gop",myPhaseOptions,myOptions,myInteractionHandler));
 
     // Baf body creation
-    addPack(p = new BodyPack("bb"));
+    addPack(p = new BodyPack("bb",myPhaseOptions,myOptions,myInteractionHandler));
     {
       p.add(new Transform("bb.lso", myLoadStoreOptimizer));
       p.add(new Transform("bb.pho", myPeepholeOptimizer));
@@ -502,10 +517,10 @@ public class PackManager {
     }
 
     // Baf optimization pack
-    addPack(p = new BodyPack("bop"));
+    addPack(p = new BodyPack("bop",myPhaseOptions,myOptions,myInteractionHandler));
 
     // Code attribute tag aggregation pack
-    addPack(p = new BodyPack("tag"));
+    addPack(p = new BodyPack("tag",myPhaseOptions,myOptions,myInteractionHandler));
     {
       p.add(new Transform("tag.ln", myLineNumberTagAggregator));
       p.add(new Transform("tag.an", myArrayNullTagAggregator));
@@ -518,7 +533,7 @@ public class PackManager {
      * Nomair A. Naeem 13th Feb 2006 Added so that Dava Options can be added as phase options rather than main soot options
      * since they only make sense when decompiling The db phase options are added in soot_options.xml
      */
-    addPack(p = new BodyPack("db"));
+    addPack(p = new BodyPack("db",myPhaseOptions,myOptions,myInteractionHandler));
     {
       p.add(new Transform("db.transformations", null));
       p.add(new Transform("db.renamer", null));
@@ -619,7 +634,7 @@ public class PackManager {
             sc.validate();
           }
           if (!sc.isPhantom) {
-            ConstantInitializerToTagTransformer.v().transformClass(sc, true);
+            myConstantInitializerToTagTransformer.transformClass(sc, true);
           }
         }
 
@@ -660,7 +675,7 @@ public class PackManager {
         sc.validate();
       }
       if (!sc.isPhantom) {
-        ConstantInitializerToTagTransformer.v().transformClass(sc, true);
+        myConstantInitializerToTagTransformer.transformClass(sc, true);
       }
     }
 
@@ -738,7 +753,7 @@ public class PackManager {
   }
 
   protected void writeDexOutput() {
-    dexPrinter = new DexPrinter();
+    dexPrinter = new DexPrinter(myScene,myOptions, mySourceLocator, this, myEmptySwitchEliminator, mySynchronizedMethodTransformer, myFastDexTrapTightener, myTrapSplitter, myJimple);
     writeOutput(reachableClasses());
     dexPrinter.print();
     dexPrinter = null;

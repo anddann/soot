@@ -24,18 +24,18 @@ package soot.jimple.spark.sets;
 
 import java.util.LinkedList;
 
+import com.google.inject.Inject;
 import soot.G;
 import soot.Singletons;
 
 /** A singleton to hold the hash table for SharedHybridSet */
 
 public class AllSharedHybridNodes {
-  public AllSharedHybridNodes(Singletons.Global g) {
+
+  @Inject
+  public AllSharedHybridNodes() {
   }
 
-  public static AllSharedHybridNodes v() {
-    return G.v().soot_jimple_spark_sets_AllSharedHybridNodes();
-  }
 
   public class BitVectorLookupMap {
     // Each element i is a list of BitVectors which have i 1s

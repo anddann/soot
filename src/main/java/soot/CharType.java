@@ -22,6 +22,7 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.util.Switch;
 
 /**
@@ -29,17 +30,12 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class CharType extends PrimType implements IntegerType {
-  private CharType() {
-  }
+  private IntType intType;
 
-  private static CharType instance;
-
-  public static CharType v() {
-    if (instance == null) {
-      instance = new CharType();
-    }
-    return instance;
-
+  @Inject
+  public CharType(Scene myScene, IntType intType) {
+    super(myScene);
+    this.intType = intType;
   }
 
   public boolean equals(Object t) {
@@ -59,7 +55,13 @@ public class CharType extends PrimType implements IntegerType {
   }
 
   @Override
-  public RefType boxedType(Scene myScene) {
-    return RefType.v("java.lang.Character",myScene);
+  public RefType boxedType() {
+    return RefType.v("java.lang.Character",getMyScene());
+  }
+
+  @Override
+  public Type toMachineType() {
+    return intType;
+
   }
 }

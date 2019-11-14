@@ -22,6 +22,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 /**
  * Abstract class for Soot classes that model subtypes of java.lang.Object (ie. object references and arrays)
  *
@@ -30,6 +32,12 @@ package soot;
 
 @SuppressWarnings("serial")
 public abstract class RefLikeType extends Type {
+
+  @Inject
+  protected RefLikeType(Scene myScene) {
+    super(myScene);
+  }
+
   /**
    * If I have a variable x of declared type t, what is a good declared type for the expression ((Object[]) x)[i]? The
    * getArrayElementType() method in RefLikeType was introduced even later to answer this question for all classes

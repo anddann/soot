@@ -22,17 +22,19 @@ package soot.coffi;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.G;
+import soot.Scene;
 import soot.Singletons;
 import soot.Type;
 
 public class UnusuableType extends Type {
-  public UnusuableType(Singletons.Global g) {
+
+  @Inject
+  public UnusuableType(Scene myScene) {
+    super(myScene);
   }
 
-  public static UnusuableType v() {
-    return G.v().soot_coffi_UnusuableType();
-  }
 
   public boolean equals(Type otherType) {
     return otherType instanceof UnusuableType;

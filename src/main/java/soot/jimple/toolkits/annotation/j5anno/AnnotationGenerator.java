@@ -22,6 +22,8 @@ package soot.jimple.toolkits.annotation.j5anno;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -31,8 +33,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import soot.G;
-import soot.Singletons.Global;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -60,15 +60,12 @@ import soot.tagkit.VisibilityAnnotationTag;
  */
 public class AnnotationGenerator {
 
-  public AnnotationGenerator(Global g) {
+
+  @Inject
+  public AnnotationGenerator() {
   }
 
-  /**
-   * Returns the unique instance of AnnotationGenerator.
-   */
-  public static AnnotationGenerator v() {
-    return G.v().soot_jimple_toolkits_annotation_j5anno_AnnotationGenerator();
-  }
+
 
   /**
    * Applies a Java 1.5-style annotation to a given Host. The Host must be of type {@link SootClass}, {@link SootMethod} or

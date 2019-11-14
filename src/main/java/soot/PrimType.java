@@ -22,6 +22,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 /**
  * Abstract class for Soot classes that that model Java primitive types (ie all types except void, null, reference types, and
  * array types)
@@ -30,7 +32,13 @@ package soot;
  */
 @SuppressWarnings("serial")
 public abstract class PrimType extends Type {
-  public abstract RefType boxedType(Scene myScene);
+
+  @Inject
+  public PrimType(Scene myScene) {
+    super(myScene);
+  }
+
+  public abstract RefType boxedType();
 
   public boolean isAllowedInFinalCode() {
     return true;

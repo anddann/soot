@@ -100,7 +100,7 @@ public class SootClass extends AbstractHost implements Numberable {
     }
     setName(name);
     this.modifiers = modifiers;
-    initializeRefType(name);
+    initializeRefType(name,myScene);
     if (this.myOptions.debug_resolver()) {
       logger.debug("created " + name + " with modifiers " + modifiers);
     }
@@ -114,8 +114,8 @@ public class SootClass extends AbstractHost implements Numberable {
    * @param name
    *          The name of the new class
    */
-  protected void initializeRefType(String name) {
-    refType = RefType.v(name);
+  protected void initializeRefType(String name, Scene myScene) {
+    refType = RefType.v(name,myScene);
     refType.setSootClass(this);
   }
 

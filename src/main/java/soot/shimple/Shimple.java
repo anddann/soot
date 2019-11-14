@@ -28,21 +28,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.G;
 import soot.Local;
 import soot.PhaseOptions;
-import soot.Singletons;
 import soot.SootMethod;
 import soot.Unit;
 import soot.UnitBox;
 import soot.Value;
 import soot.jimple.AssignStmt;
 import soot.jimple.JimpleBody;
-import soot.options.Options;
 import soot.shimple.internal.SPhiExpr;
 import soot.shimple.internal.SPiExpr;
 import soot.toolkits.graph.Block;
@@ -71,19 +69,20 @@ public class Shimple {
   public static final String PHI = "Phi";
   public static final String PI = "Pi";
   public static final String PHASE = "shimple";
+  private PhaseOptions myPhaseOptions;
 
-  public Shimple(Singletons.Global g) {
+
+  @Inject
+  public Shimple(PhaseOptions myPhaseOptions) {
+    this.myPhaseOptions = myPhaseOptions;
   }
 
-  public static Shimple v() {
-    return G.v().soot_shimple_Shimple();
-  }
 
   /**
    * Returns an empty ShimpleBody associated with method m, using default phase options.
    **/
   public ShimpleBody newBody(SootMethod m) {
-    Map<String, String> options = myPhaseOptions().getPhaseOptions(PHASE);
+    Map<String, String> options = myPhaseOptions.getPhaseOptions(PHASE);
     return new ShimpleBody(m, options);
   }
 
@@ -98,7 +97,7 @@ public class Shimple {
    * Returns a ShimpleBody constructed from b, using default phase options.
    **/
   public ShimpleBody newBody(Body b) {
-    Map<String, String> options = myPhaseOptions().getPhaseOptions(PHASE);
+    Map<String, String> options = myPhaseOptions.getPhaseOptions(PHASE);
     return new ShimpleBody(b, options);
   }
 
@@ -219,10 +218,10 @@ public class Shimple {
    * implementation of PatchingChain.
    **/
   public static void redirectToPreds(Body body, Unit remove) {
-    boolean debug = myOptions.debug();
-    if (body instanceof ShimpleBody) {
-      debug |= ((ShimpleBody) body).getOptions().debug();
-    }
+//    boolean debug = myOptions.debug();
+//    if (body instanceof ShimpleBody) {
+//      debug |= ((ShimpleBody) body).getOptions().debug();
+//    }
 
     Chain<Unit> units = body.getUnits();
 
@@ -273,29 +272,28 @@ public class Shimple {
     /* sanity check */
 
     if (phis.size() == 0) {
-      if (debug) {
-        logger.warn("Orphaned UnitBoxes to " + remove + "? Shimple.redirectToPreds is giving up.");
-      }
+        logger.debug("Orphaned UnitBoxes to " + remove + "? Shimple.redirectToPreds is giving up.");
+
       return;
     }
 
     if (preds.size() == 0) {
-      if (debug) {
+
         logger
-            .warn("Shimple.redirectToPreds couldn't find any predecessors for " + remove + " in " + body.getMethod() + ".");
-      }
+            .debug("Shimple.redirectToPreds couldn't find any predecessors for " + remove + " in " + body.getMethod() + ".");
+
 
       if (!remove.equals(units.getFirst())) {
         Unit pred = (Unit) units.getPredOf(remove);
-        if (debug) {
-          logger.warn("Falling back to immediate chain predecessor: " + pred + ".");
-        }
+
+          logger.debug("Falling back to immediate chain predecessor: " + pred + ".");
+
         preds.add(pred);
       } else if (!remove.equals(units.getLast())) {
         Unit succ = (Unit) units.getSuccOf(remove);
-        if (debug) {
-          logger.warn("Falling back to immediate chain successor: " + succ + ".");
-        }
+
+          logger.debug("Falling back to immediate chain successor: " + succ + ".");
+
         preds.add(succ);
       } else {
         throw new RuntimeException("Assertion failed.");

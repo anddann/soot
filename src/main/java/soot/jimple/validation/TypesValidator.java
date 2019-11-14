@@ -24,6 +24,7 @@ package soot.jimple.validation;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.Local;
 import soot.SootMethod;
@@ -35,12 +36,14 @@ import soot.validation.ValidationException;
  * Checks whether the types used for locals, method parameters, and method return values are allowed in final Jimple code.
  * This reports an error if a method uses e.g., null_type.
  */
-public enum TypesValidator implements BodyValidator {
-  INSTANCE;
+public class TypesValidator implements BodyValidator {
 
-  public static TypesValidator v() {
-    return INSTANCE;
+
+  @Inject
+  public TypesValidator(){
+
   }
+
 
   @Override
   public void validate(Body body, List<ValidationException> exceptions) {

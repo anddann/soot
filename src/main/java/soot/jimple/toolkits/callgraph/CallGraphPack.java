@@ -38,12 +38,17 @@ import soot.options.CGOptions;
  * has been built.
  */
 public class CallGraphPack extends RadioScenePack {
-  public CallGraphPack(String name) {
-    super(name);
+  private final Scene myScene;
+  private final EntryPoints myEntryPoints;
+
+  public CallGraphPack(String name, PhaseOptions myPhaseOptions, Scene myScene, EntryPoints myEntryPoints) {
+    super(name, myPhaseOptions);
+    this.myScene = myScene;
+    this.myEntryPoints = myEntryPoints;
   }
 
   protected void internalApply() {
-    CGOptions options = new CGOptions(myPhaseOptions().getPhaseOptions(this));
+    CGOptions options = new CGOptions(getMyPhaseOptions().getPhaseOptions(this));
     if (!myScene.hasCustomEntryPoints()) {
       if (!options.implicit_entry()) {
         myScene.setEntryPoints(myEntryPoints.application());

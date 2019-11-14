@@ -22,17 +22,15 @@ package soot.jimple.spark.fieldrw;
  * #L%
  */
 
-import soot.G;
-import soot.Singletons;
+import com.google.inject.Inject;
+
 import soot.tagkit.ImportantTagAggregator;
 import soot.tagkit.Tag;
 
 public class FieldReadTagAggregator extends ImportantTagAggregator {
-  public FieldReadTagAggregator(Singletons.Global g) {
-  }
 
-  public static FieldReadTagAggregator v() {
-    return G.v().soot_jimple_spark_fieldrw_FieldReadTagAggregator();
+  @Inject
+  public FieldReadTagAggregator() {
   }
 
   /** Decide whether this tag should be aggregated by this aggregator. */

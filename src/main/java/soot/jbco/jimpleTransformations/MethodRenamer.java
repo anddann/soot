@@ -40,17 +40,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.ArrayType;
 import soot.Body;
 import soot.FastHierarchy;
-import soot.G;
 import soot.RefType;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -137,39 +136,35 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
 
   public static final String name = "wjtp.jbco_mr";
 
-  private static final String MAIN_METHOD_SUB_SIGNATURE
-      = SootMethod.getSubSignature("main", singletonList(ArrayType.v(RefType.v("java.lang.String"), 1)), VoidType.v());
+  private  final String MAIN_METHOD_SUB_SIGNATURE;
 
   private static final Function<SootClass, Map<String, String>> RENAMING_MAP_CREATOR = key -> new HashMap<>();
 
   private final Map<SootClass, Map<String, String>> classToRenamingMap = new HashMap<>();
 
   private final NameGenerator nameGenerator;
+  private Scene myScene;
 
   /**
    * Singleton constructor.
    *
    * @param global
    *          the singletons container. Must not be {@code null}
+   * @param myScene
    * @throws NullPointerException
    *           when {@code global} argument is {@code null}
    */
-  public MethodRenamer(Singletons.Global global) {
-    if (global == null) {
-      throw new NullPointerException("Cannot instantiate MethodRenamer with null Singletons.Global");
-    }
+
+  @Inject
+  public MethodRenamer(Scene myScene) {
+    this.myScene = myScene;
+    MAIN_METHOD_SUB_SIGNATURE
+            = SootMethod.getSubSignature("main", singletonList(ArrayType.v(RefType.v("java.lang.String",myScene), 1,myScene)), VoidType.v(),myScene);
 
     nameGenerator = new JunkNameGenerator();
   }
 
-  /**
-   * Singleton getter.
-   *
-   * @return returns instance of {@link MethodRenamer}
-   */
-  public static MethodRenamer v() {
-    return G.v().soot_jbco_jimpleTransformations_MethodRenamer();
-  }
+
 
   @Override
   public String getName() {

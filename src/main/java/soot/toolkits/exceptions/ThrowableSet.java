@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import soot.AnySubType;
 import soot.FastHierarchy;
 import soot.G;
@@ -91,7 +92,6 @@ import soot.options.Options;
 public class ThrowableSet {
 
   private static final boolean INSTRUMENTING = false;
-  private final SootClass JAVA_LANG_OBJECT_CLASS = myScene.getObjectType().getSootClass();
 
   /**
    * Set of exception types included within the set.
@@ -110,8 +110,9 @@ public class ThrowableSet {
    * the set that results from adding k to <code>this</code>.
    */
   protected Map<Object, ThrowableSet> memoizedAdds;
+    private Manager myManager;
 
-  /**
+    /**
    * Constructs a <code>ThrowableSet</code> which contains the exception types represented in <code>include</code>, except
    * for those which are also in <code>exclude</code>. The constructor is private to ensure that the only way to get a new
    * <code>ThrowableSet</code> is by adding elements to or removing them from an existing set.
@@ -275,7 +276,7 @@ public class ThrowableSet {
 
   private boolean hasNoHierarchy(RefType type) {
     final SootClass sootClass = type.getSootClass();
-    return !(sootClass.hasSuperclass() || JAVA_LANG_OBJECT_CLASS == sootClass);
+    return !(sootClass.hasSuperclass() ||  myScene.getObjectType().getSootClass() == sootClass);
   }
 
   /**
@@ -1036,7 +1037,9 @@ public class ThrowableSet {
         = CacheBuilder.newBuilder().weakValues().<ThrowableSet, ThrowableSet>build().asMap();
     private final int removesFromMap = 0;
     private final int removesFromMemo = 0;
-    // counts for instrumenting:
+      private final Scene myScene;
+      private final Options myOptions;
+      // counts for instrumenting:
     private int addsOfRefType = 0;
     private int addsOfAnySubType = 0;
     private int addsOfSet = 0;
@@ -1055,71 +1058,76 @@ public class ThrowableSet {
 
     /**
      * Constructs a <code>ThrowableSet.Manager</code> for inclusion in Soot's global variable manager, {@link G}.
-     *
-     * @param g
+     *  @param g
      *          guarantees that the constructor may only be called from {@link Singletons}.
+     * @param myScene
+     * @param myOptions
      */
-    public Manager(Singletons.Global g) {
-      // First ensure the Exception classes are represented in Soot.
+
+    @Inject
+    public Manager(Scene myScene, Options myOptions) {
+        this.myScene = myScene;
+        this.myOptions = myOptions;
+        // First ensure the Exception classes are represented in Soot.
 
       // Runtime errors:
-      RUNTIME_EXCEPTION = myScene.getRefType("java.lang.RuntimeException");
-      ARITHMETIC_EXCEPTION = myScene.getRefType("java.lang.ArithmeticException");
-      ARRAY_STORE_EXCEPTION = myScene.getRefType("java.lang.ArrayStoreException");
-      CLASS_CAST_EXCEPTION = myScene.getRefType("java.lang.ClassCastException");
-      ILLEGAL_MONITOR_STATE_EXCEPTION = myScene.getRefType("java.lang.IllegalMonitorStateException");
-      INDEX_OUT_OF_BOUNDS_EXCEPTION = myScene.getRefType("java.lang.IndexOutOfBoundsException");
-      ARRAY_INDEX_OUT_OF_BOUNDS_EXCEPTION = myScene.getRefType("java.lang.ArrayIndexOutOfBoundsException");
-      NEGATIVE_ARRAY_SIZE_EXCEPTION = myScene.getRefType("java.lang.NegativeArraySizeException");
-      NULL_POINTER_EXCEPTION = myScene.getRefType("java.lang.NullPointerException");
+      RUNTIME_EXCEPTION = this.myScene.getRefType("java.lang.RuntimeException");
+      ARITHMETIC_EXCEPTION = this.myScene.getRefType("java.lang.ArithmeticException");
+      ARRAY_STORE_EXCEPTION = this.myScene.getRefType("java.lang.ArrayStoreException");
+      CLASS_CAST_EXCEPTION = this.myScene.getRefType("java.lang.ClassCastException");
+      ILLEGAL_MONITOR_STATE_EXCEPTION = this.myScene.getRefType("java.lang.IllegalMonitorStateException");
+      INDEX_OUT_OF_BOUNDS_EXCEPTION = this.myScene.getRefType("java.lang.IndexOutOfBoundsException");
+      ARRAY_INDEX_OUT_OF_BOUNDS_EXCEPTION = this.myScene.getRefType("java.lang.ArrayIndexOutOfBoundsException");
+      NEGATIVE_ARRAY_SIZE_EXCEPTION = this.myScene.getRefType("java.lang.NegativeArraySizeException");
+      NULL_POINTER_EXCEPTION = this.myScene.getRefType("java.lang.NullPointerException");
 
-      INSTANTIATION_ERROR = myScene.getRefType("java.lang.InstantiationError");
+      INSTANTIATION_ERROR = this.myScene.getRefType("java.lang.InstantiationError");
 
       EMPTY = registerSetIfNew(null, null);
 
       Set<RefLikeType> allThrowablesSet = new HashSet<>();
-      allThrowablesSet.add(AnySubType.v(myScene.getRefType("java.lang.Throwable")));
+      allThrowablesSet.add(AnySubType.v(this.myScene.getRefType("java.lang.Throwable")));
       ALL_THROWABLES = registerSetIfNew(allThrowablesSet, null);
 
       Set<RefLikeType> vmErrorSet = new HashSet<>();
-      vmErrorSet.add(myScene.getRefType("java.lang.InternalError"));
-      vmErrorSet.add(myScene.getRefType("java.lang.OutOfMemoryError"));
-      vmErrorSet.add(myScene.getRefType("java.lang.StackOverflowError"));
-      vmErrorSet.add(myScene.getRefType("java.lang.UnknownError"));
+      vmErrorSet.add(this.myScene.getRefType("java.lang.InternalError"));
+      vmErrorSet.add(this.myScene.getRefType("java.lang.OutOfMemoryError"));
+      vmErrorSet.add(this.myScene.getRefType("java.lang.StackOverflowError"));
+      vmErrorSet.add(this.myScene.getRefType("java.lang.UnknownError"));
 
       // The Java library's deprecated Thread.stop(Throwable) method
       // would actually allow _any_ Throwable to be delivered
       // asynchronously, not just java.lang.ThreadDeath.
-      vmErrorSet.add(myScene.getRefType("java.lang.ThreadDeath"));
+      vmErrorSet.add(this.myScene.getRefType("java.lang.ThreadDeath"));
 
       VM_ERRORS = registerSetIfNew(vmErrorSet, null);
 
       Set<RefLikeType> resolveClassErrorSet = new HashSet<>();
-      resolveClassErrorSet.add(myScene.getRefType("java.lang.ClassCircularityError"));
+      resolveClassErrorSet.add(this.myScene.getRefType("java.lang.ClassCircularityError"));
       // We add AnySubType(ClassFormatError) so that we can
       // avoid adding its subclass,
       // UnsupportedClassVersionError, explicitly. This is a
       // hack to allow Soot to analyze older class libraries
       // (UnsupportedClassVersionError was added in JDK 1.2).
-      if (!myOptions.j2me()) {
-        resolveClassErrorSet.add(AnySubType.v(myScene.getRefType("java.lang.ClassFormatError")));
+      if (!this.myOptions.j2me()) {
+        resolveClassErrorSet.add(AnySubType.v(this.myScene.getRefType("java.lang.ClassFormatError")));
       }
 
-      resolveClassErrorSet.add(myScene.getRefType("java.lang.IllegalAccessError"));
-      resolveClassErrorSet.add(myScene.getRefType("java.lang.IncompatibleClassChangeError"));
-      resolveClassErrorSet.add(myScene.getRefType("java.lang.LinkageError"));
-      resolveClassErrorSet.add(myScene.getRefType("java.lang.NoClassDefFoundError"));
-      resolveClassErrorSet.add(myScene.getRefType("java.lang.VerifyError"));
+      resolveClassErrorSet.add(this.myScene.getRefType("java.lang.IllegalAccessError"));
+      resolveClassErrorSet.add(this.myScene.getRefType("java.lang.IncompatibleClassChangeError"));
+      resolveClassErrorSet.add(this.myScene.getRefType("java.lang.LinkageError"));
+      resolveClassErrorSet.add(this.myScene.getRefType("java.lang.NoClassDefFoundError"));
+      resolveClassErrorSet.add(this.myScene.getRefType("java.lang.VerifyError"));
       RESOLVE_CLASS_ERRORS = registerSetIfNew(resolveClassErrorSet, null);
 
       Set<RefLikeType> resolveFieldErrorSet = new HashSet<>(resolveClassErrorSet);
-      resolveFieldErrorSet.add(myScene.getRefType("java.lang.NoSuchFieldError"));
+      resolveFieldErrorSet.add(this.myScene.getRefType("java.lang.NoSuchFieldError"));
       RESOLVE_FIELD_ERRORS = registerSetIfNew(resolveFieldErrorSet, null);
 
       Set<RefLikeType> resolveMethodErrorSet = new HashSet<>(resolveClassErrorSet);
-      resolveMethodErrorSet.add(myScene.getRefType("java.lang.AbstractMethodError"));
-      resolveMethodErrorSet.add(myScene.getRefType("java.lang.NoSuchMethodError"));
-      resolveMethodErrorSet.add(myScene.getRefType("java.lang.UnsatisfiedLinkError"));
+      resolveMethodErrorSet.add(this.myScene.getRefType("java.lang.AbstractMethodError"));
+      resolveMethodErrorSet.add(this.myScene.getRefType("java.lang.NoSuchMethodError"));
+      resolveMethodErrorSet.add(this.myScene.getRefType("java.lang.UnsatisfiedLinkError"));
       RESOLVE_METHOD_ERRORS = registerSetIfNew(resolveMethodErrorSet, null);
 
       // The static initializers of a newly loaded class might
@@ -1128,18 +1136,11 @@ public class ThrowableSet {
       // ExceptionInInitializerError):
       //
       Set<RefLikeType> initializationErrorSet = new HashSet<>();
-      initializationErrorSet.add(AnySubType.v(myScene.getRefType("java.lang.Error")));
+      initializationErrorSet.add(AnySubType.v(this.myScene.getRefType("java.lang.Error")));
       INITIALIZATION_ERRORS = registerSetIfNew(initializationErrorSet, null);
     }
 
-    /**
-     * Returns the single instance of <code>ThrowableSet.Manager</code>.
-     *
-     * @return Soot's <code>ThrowableSet.Manager</code>.
-     */
-    public static Manager v() {
-      return G.v().soot_toolkits_exceptions_ThrowableSet_Manager();
-    }
+
 
     /**
      * <p>

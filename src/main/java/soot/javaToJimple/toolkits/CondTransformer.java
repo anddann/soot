@@ -25,13 +25,12 @@ package soot.javaToJimple.toolkits;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
-import soot.Singletons;
 import soot.jimple.AssignStmt;
 import soot.jimple.BinopExpr;
 import soot.jimple.EqExpr;
@@ -43,13 +42,13 @@ import soot.jimple.Stmt;
 
 public class CondTransformer extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(CondTransformer.class);
+  private Jimple myJimple;
 
-  public CondTransformer(Singletons.Global g) {
+  @Inject
+  public CondTransformer(Jimple myJimple) {
+    this.myJimple = myJimple;
   }
 
-  public static CondTransformer v() {
-    return G.v().soot_javaToJimple_toolkits_CondTransformer();
-  }
 
   private static final int SEQ_LENGTH = 6;
   private Stmt[] stmtSeq = new Stmt[SEQ_LENGTH];

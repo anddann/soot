@@ -209,6 +209,27 @@ public class Singletons extends AbstractModule{
             bind(soot.jbco.jimpleTransformations.MethodRenamer.class).in(Scopes.SINGLETON);
             bind(soot.LambdaMetaFactory.class).in(Scopes.SINGLETON);
             bind(soot.jbco.jimpleTransformations.FieldRenamer.class).in(Scopes.SINGLETON);
+            bind(soot.validation.BodyValidator.class).in(Scopes.SINGLETON);
+            bind(soot.validation.LocalsValidator.class).in(Scopes.SINGLETON);
+            bind(soot.validation.ValueBoxesValidator.class).in(Scopes.SINGLETON);
+            bind(soot.validation.UsesValidator.class).in(Scopes.SINGLETON);
+            bind(soot.jimple.validation.IdentityStatementsValidator.class).in(Scopes.SINGLETON);
+            bind(soot.jimple.validation.MethodValidator.class).in(Scopes.SINGLETON);
+            bind(soot.validation.CheckVoidLocalesValidator.class).in(Scopes.SINGLETON);
+            bind(soot.jimple.validation.InvokeArgumentValidator.class).in(Scopes.SINGLETON);
+            bind(soot.jimple.validation.ReturnStatementsValidator.class).in(Scopes.SINGLETON);
+            bind(soot.validation.CheckEscapingValidator.class).in(Scopes.SINGLETON);
+            bind(soot.jimple.validation.JimpleTrapValidator.class).in(Scopes.SINGLETON);
+            bind(soot.jimple.validation.TypesValidator.class).in(Scopes.SINGLETON);
+            bind(soot.validation.TrapsValidator.class).in(Scopes.SINGLETON);
+            bind(soot.jimple.validation.IdentityValidator.class).in(Scopes.SINGLETON);
+            bind(soot.validation.UnitBoxesValidator.class).in(Scopes.SINGLETON);
+            bind(soot.jimple.validation.NewValidator.class).in(Scopes.SINGLETON);
+            bind(soot.validation.CheckInitValidator.class).in(Scopes.SINGLETON);
+            bind(soot.jimple.validation.FieldRefValidator.class).in(Scopes.SINGLETON);
+            bind(soot.validation.CheckTypesValidator.class).in(Scopes.SINGLETON);
+            bind(soot.jimple.validation.InvokeValidator.class).in(Scopes.SINGLETON);
+            bind(soot.toolkits.scalar.ConstantInitializerToTagTransformer.class).in(Scopes.SINGLETON);
 
             }
 }

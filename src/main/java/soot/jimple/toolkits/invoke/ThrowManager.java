@@ -162,13 +162,13 @@ public class ThrowManager {
   /**
    * If exception e is caught at stmt s in body b, return the handler; otherwise, return null.
    */
-  static boolean isExceptionCaughtAt(SootClass e, Stmt stmt, Body b) {
+  static boolean isExceptionCaughtAt(SootClass e, Stmt stmt, Body b, Scene myScene) {
     /*
      * Look through the traps t of b, checking to see if: - caught exception is e; - and, stmt lies between t.beginUnit and
      * t.endUnit
      */
 
-    Hierarchy h = new Hierarchy();
+    Hierarchy h = new Hierarchy(myScene);
 
     Iterator<Trap> trapsIt = b.getTraps().iterator();
 

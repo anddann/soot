@@ -24,6 +24,7 @@ package soot.validation;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.Local;
 import soot.Unit;
@@ -34,11 +35,11 @@ import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.InitAnalysis;
 
-public enum CheckInitValidator implements BodyValidator {
-  INSTANCE;
+public class CheckInitValidator implements BodyValidator {
 
-  public static CheckInitValidator v() {
-    return INSTANCE;
+  @Inject
+  public CheckInitValidator(){
+
   }
 
   @Override

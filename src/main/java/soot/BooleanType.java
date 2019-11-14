@@ -22,6 +22,7 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.util.Switch;
 
 /**
@@ -29,15 +30,12 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class BooleanType extends PrimType implements IntegerType {
-  private BooleanType() {
-  }
-  private static BooleanType instance;
+  private IntType intType;
 
-  public static BooleanType v() {
-    if (instance == null) {
-      instance = new BooleanType();
-    }
-    return instance;
+  @Inject
+  public BooleanType(Scene myScene, IntType intType) {
+    super(myScene);
+    this.intType = intType;
   }
   public boolean equals(Object t) {
     return this == t;
@@ -56,7 +54,13 @@ public class BooleanType extends PrimType implements IntegerType {
   }
 
   @Override
-  public RefType boxedType(Scene myScene) {
-    return RefType.v("java.lang.Boolean",myScene);
+  public RefType boxedType() {
+    return RefType.v("java.lang.Boolean",getMyScene());
+  }
+
+  @Override
+  public Type toMachineType() {
+    return intType;
+
   }
 }

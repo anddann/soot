@@ -24,6 +24,7 @@ package soot.validation;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.SootMethodRef;
 import soot.Type;
@@ -31,11 +32,11 @@ import soot.Unit;
 import soot.jimple.InvokeExpr;
 import soot.jimple.Stmt;
 
-public enum CheckEscapingValidator implements BodyValidator {
-  INSTANCE;
+public class CheckEscapingValidator implements BodyValidator {
 
-  public static CheckEscapingValidator v() {
-    return INSTANCE;
+  @Inject
+  public CheckEscapingValidator(){
+
   }
 
   @Override

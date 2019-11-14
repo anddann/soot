@@ -150,12 +150,12 @@ public class SootMethodRefImpl implements SootMethodRef {
 
   @Override
   public NumberedString getSubSignature() {
-    return myScene.getSubSigNumberer().findOrAdd(SootMethod.getSubSignature(name, parameterTypes, returnType));
+    return myScene.getSubSigNumberer().findOrAdd(SootMethod.getSubSignature(name, parameterTypes, returnType,myScene));
   }
 
   @Override
   public String getSignature() {
-    return SootMethod.getSignature(declaringClass, name, parameterTypes, returnType);
+    return SootMethod.getSignature(declaringClass, name, parameterTypes, returnType,myScene);
   }
 
   @Override
@@ -323,10 +323,10 @@ public class SootMethodRefImpl implements SootMethodRef {
 
     // For producing valid Jimple code, we need to access all parameters.
     // Otherwise, methods like "getThisLocal()" will fail.
-    body.insertIdentityStmts(declaringClass);
+    body.insertIdentityStmts(declaringClass,myScene);
 
     // exc = new Error
-    RefType runtimeExceptionType = RefType.v("java.lang.Error");
+    RefType runtimeExceptionType = RefType.v("java.lang.Error",myScene);
     NewExpr newExpr = myJimple.newNewExpr(runtimeExceptionType);
     Local exceptionLocal = lg.generateLocal(runtimeExceptionType);
     AssignStmt assignStmt = myJimple.newAssignStmt(exceptionLocal, newExpr);
@@ -334,7 +334,7 @@ public class SootMethodRefImpl implements SootMethodRef {
 
     // exc.<init>(message)
     SootMethodRef cref = myScene.makeConstructorRef(runtimeExceptionType.getSootClass(),
-        Collections.<Type>singletonList(RefType.v("java.lang.String")));
+        Collections.<Type>singletonList(RefType.v("java.lang.String",myScene)));
     SpecialInvokeExpr constructorInvokeExpr = myJimple.newSpecialInvokeExpr(exceptionLocal, cref,
         StringConstant.v("Unresolved compilation error: Method " + getSignature() + " does not exist!"));
     InvokeStmt initStmt = myJimple.newInvokeStmt(constructorInvokeExpr);

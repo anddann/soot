@@ -25,6 +25,7 @@ package soot.validation;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.Local;
 import soot.Unit;
@@ -36,11 +37,13 @@ import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.LocalDefs;
 
-public enum UsesValidator implements BodyValidator {
-  INSTANCE;
+public class UsesValidator implements BodyValidator {
+  private PedanticThrowAnalysis myPedanticThrowAnalysis;
 
-  public static UsesValidator v() {
-    return INSTANCE;
+  @Inject
+  public UsesValidator(PedanticThrowAnalysis myPedanticThrowAnalysis){
+
+    this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
   }
 
   @Override

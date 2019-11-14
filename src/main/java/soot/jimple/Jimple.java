@@ -30,9 +30,9 @@ import java.util.List;
 import com.google.inject.Inject;
 import soot.ArrayType;
 import soot.ErroneousType;
-import soot.G;
 import soot.Immediate;
 import soot.Local;
+import soot.Printer;
 import soot.RefType;
 import soot.SootClass;
 import soot.SootFieldRef;
@@ -106,6 +106,7 @@ import soot.jimple.internal.JimpleLocalBox;
 import soot.jimple.internal.RValueBox;
 import soot.jimple.internal.StmtBox;
 import soot.jimple.internal.VariableBox;
+import soot.options.Options;
 
 /**
  * The Jimple class contains all the constructors for the components of the Jimple grammar for the Jimple body. <br>
@@ -117,13 +118,15 @@ import soot.jimple.internal.VariableBox;
  */
 
 public class Jimple {
+  private Options myOptions;
+  private Printer myPrinter;
+
   @Inject
-  public Jimple() {
+  public Jimple(Options myOptions, Printer myPrinter) {
+    this.myOptions = myOptions;
+    this.myPrinter = myPrinter;
   }
 
-  public static Jimple v() {
-    return G.v().soot_jimple_Jimple();
-  }
 
   public final static String NEWARRAY = "newarray";
   public final static String NEWMULTIARRAY = "newmultiarray";
@@ -735,12 +738,12 @@ public class Jimple {
 
   /** Returns an empty JimpleBody associated with method m. */
   public JimpleBody newBody(SootMethod m) {
-    return new JimpleBody(m, myOptions, myJimple);
+    return new JimpleBody(m,  myPrinter,myOptions,this);
   }
 
   /** Returns an empty JimpleBody with no associated method. */
   public JimpleBody newBody() {
-    return new JimpleBody(myOptions, myJimple);
+    return new JimpleBody(myPrinter, myOptions,this);
   }
 
   /*

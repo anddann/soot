@@ -22,13 +22,13 @@ package soot.toDex;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Iterator;
 import java.util.Map;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
-import soot.Singletons;
 import soot.Unit;
 import soot.jimple.EnterMonitorStmt;
 import soot.jimple.IdentityStmt;
@@ -44,11 +44,12 @@ import soot.toolkits.graph.UnitGraph;
  *
  */
 public class SynchronizedMethodTransformer extends BodyTransformer {
-  public SynchronizedMethodTransformer(Singletons.Global g) {
-  }
 
-  public static SynchronizedMethodTransformer v() {
-    return G.v().soot_toDex_SynchronizedMethodTransformer();
+  private Jimple myJimple;
+
+  @Inject
+  public SynchronizedMethodTransformer(Jimple myJimple) {
+    this.myJimple = myJimple;
   }
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {

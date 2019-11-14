@@ -22,6 +22,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayDeque;
 
 import soot.util.Switch;
@@ -37,20 +39,15 @@ public class RefType extends RefLikeType implements Comparable<RefType> {
   private SootResolver mySootResolver;
   private Scene myScene;
 
+  @Inject
+  public RefType(Scene myScene) {
+    super(myScene);
 
-  public RefType() {
     className = "";
   }
 
   // FIXME:???
   private static RefType instance;
-
-  public static RefType v() {
-    if (instance == null) {
-      instance = new RefType();
-    }
-    return instance;
-  }
 
   /** the class name that parameterizes this RefType */
   private String className;
@@ -63,6 +60,7 @@ public class RefType extends RefLikeType implements Comparable<RefType> {
   private AnySubType anySubType;
 
   protected RefType(SootResolver mySootResolver, String className, Scene myScene) {
+    super(myScene);
     this.mySootResolver = mySootResolver;
     this.myScene = myScene;
     if (className.startsWith("[")) {
@@ -245,7 +243,7 @@ public class RefType extends RefLikeType implements Comparable<RefType> {
   public Type getArrayElementType() {
     if (className.equals("java.lang.Object") || className.equals("java.io.Serializable")
         || className.equals("java.lang.Cloneable")) {
-      return RefType.v("java.lang.Object",this.myScene);
+      return RefType.v("java.lang.Object", getMyScene());
     }
     throw new RuntimeException("Attempt to get array base type of a non-array");
   }

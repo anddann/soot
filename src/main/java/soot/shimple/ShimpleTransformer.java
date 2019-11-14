@@ -25,18 +25,17 @@ package soot.shimple;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.G;
+import soot.JastAddJ.Options;
 import soot.MethodSource;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
-import soot.options.Options;
 
 /**
  * Traverses all methods, in all classes from the Scene, and transforms them to Shimple. Typically used for whole-program
@@ -46,13 +45,17 @@ import soot.options.Options;
  **/
 public class ShimpleTransformer extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ShimpleTransformer.class);
+  private Options myOptions;
+  private Scene myScene;
+  private Shimple myShimple;
 
-  public ShimpleTransformer(Singletons.Global g) {
+  @Inject
+  public ShimpleTransformer(Options myOptions, Scene myScene, Shimple myShimple) {
+    this.myOptions = myOptions;
+    this.myScene = myScene;
+    this.myShimple = myShimple;
   }
 
-  public static ShimpleTransformer v() {
-    return G.v().soot_shimple_ShimpleTransformer();
-  }
 
   protected void internalTransform(String phaseName, Map options) {
     if (myOptions.verbose()) {

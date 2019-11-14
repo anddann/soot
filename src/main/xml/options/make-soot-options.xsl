@@ -56,6 +56,7 @@
 
 import soot.*;
 import java.util.*;
+ import com.google.inject.Inject;
 
 /**
  * Soot command-line options parser.
@@ -64,13 +65,17 @@ import java.util.*;
  */
 @javax.annotation.Generated(value = "<xsl:copy-of select="system-property('xsl:vendor')"/> v<xsl:copy-of select="system-property('xsl:version')"/>", comments = "from <xsl:value-of select="tokenize(base-uri(), '/')[last()]"/>")
 public class Options extends OptionsBase {
+        private final PackManager myPackManager;
+        @Inject
+        public Options(PackManager myPackManager){
+        this.myPackManager = myPackManager;
+        }
 
-    public Options(Singletons.Global g) {
-    }
+        public  PackManager getPackManager(){
+        return myPackManager;
+        }
 
-    public static Options v() {
-        return G.v().soot_options_Options();
-    }<xsl:text>
+<xsl:text>
 </xsl:text>
         <xsl:apply-templates mode="constants" select="/options/section"/>
 
@@ -751,7 +756,7 @@ public class <xsl:copy-of select="$filename"/><xsl:if test="extends"> extends <x
 
     public void warnNonexistentPhase() {<xsl:text/>
         <xsl:for-each select="phase|radio_phase|phase/sub_phase|radio_phase/sub_phase">
-        if (!PackManager.v().hasPhase("<xsl:value-of select="alias|alias"/>"))
+        if (!myPackManager.hasPhase("<xsl:value-of select="alias|alias"/>"))
             G.v().out.println("Warning: Options exist for non-existent phase <xsl:value-of select="alias|alias"/>");<xsl:text/>
         </xsl:for-each>
         }

@@ -99,9 +99,6 @@ public class DexFileProvider {
     this.myScene = myScene;
   }
 
-  public static DexFileProvider v() {
-    return G.v().soot_dexpler_DexFileProvider();
-  }
 
   /**
    * Returns all dex files found in dex source sorted by the default dex prioritizer

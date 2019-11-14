@@ -22,6 +22,8 @@ package soot.jimple.toolkits.callgraph;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,16 +31,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.google.inject.Inject;
 import soot.AnySubType;
 import soot.ArrayType;
 import soot.FastHierarchy;
-import soot.G;
 import soot.NullType;
 import soot.PhaseOptions;
 import soot.RefType;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Type;
@@ -69,9 +68,6 @@ public class VirtualCalls {
     this.myScene = myScene;
   }
 
-  public static VirtualCalls v() {
-    return G.v().soot_jimple_toolkits_callgraph_VirtualCalls();
-  }
 
   private final LargeNumberedMap<Type, SmallNumberedMap<SootMethod>> typeToVtbl
       = new LargeNumberedMap<Type, SmallNumberedMap<SootMethod>>(myScene.getTypeNumberer());
@@ -149,13 +145,13 @@ public class VirtualCalls {
   public void resolve(Type t, Type declaredType, Type sigType, NumberedString subSig, SootMethod container,
       ChunkedQueue<SootMethod> targets, boolean appOnly) {
     if (declaredType instanceof ArrayType) {
-      declaredType = RefType.v("java.lang.Object");
+      declaredType = RefType.v("java.lang.Object",myScene);
     }
     if (sigType instanceof ArrayType) {
-      sigType = RefType.v("java.lang.Object");
+      sigType = RefType.v("java.lang.Object",myScene);
     }
     if (t instanceof ArrayType) {
-      t = RefType.v("java.lang.Object");
+      t = RefType.v("java.lang.Object",myScene);
     }
     FastHierarchy fastHierachy = myScene.getOrMakeFastHierarchy();
     if (declaredType != null && !fastHierachy.canStoreType(t, declaredType)) {
@@ -203,10 +199,10 @@ public class VirtualCalls {
       return;
     }
     if (declaredType instanceof ArrayType) {
-      declaredType = RefType.v("java.lang.Object");
+      declaredType = RefType.v("java.lang.Object",myScene);
     }
     if (t instanceof ArrayType) {
-      t = RefType.v("java.lang.Object");
+      t = RefType.v("java.lang.Object",myScene);
     }
     if (declaredType instanceof RefType) {
       RefType parent = (RefType)declaredType;

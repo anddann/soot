@@ -244,7 +244,7 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
       myTimers.graphTimer.end();
     }
 
-    soot.util.myPhaseDumper.dumpGraph(this);
+    myPhaseDumper.dumpGraph(this);
   }
 
   /**

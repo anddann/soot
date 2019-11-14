@@ -24,16 +24,18 @@ package soot.jimple.validation;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.SootMethod;
 import soot.validation.BodyValidator;
 import soot.validation.ValidationException;
 
-public enum MethodValidator implements BodyValidator {
-  INSTANCE;
+public class MethodValidator implements BodyValidator {
 
-  public static MethodValidator v() {
-    return INSTANCE;
+
+  @Inject
+  public MethodValidator(){
+
   }
 
   /**

@@ -24,6 +24,7 @@ package soot.jimple.validation;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.Unit;
 import soot.jimple.IdentityStmt;
@@ -37,11 +38,11 @@ import soot.validation.ValidationException;
  *
  * @author Marc Miltenberger
  */
-public enum IdentityValidator implements BodyValidator {
-  INSTANCE;
+public class IdentityValidator implements BodyValidator {
 
-  public static IdentityValidator v() {
-    return INSTANCE;
+  @Inject
+  public IdentityValidator(){
+
   }
 
   /**

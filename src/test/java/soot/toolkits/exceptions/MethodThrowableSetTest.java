@@ -37,9 +37,7 @@ import org.junit.Test;
 
 import soot.AnySubType;
 import soot.G;
-import soot.PackManager;
 import soot.RefLikeType;
-import soot.Scene;
 import soot.SootMethod;
 import soot.options.Options;
 
@@ -80,7 +78,7 @@ public class MethodThrowableSetTest {
 	private static class ThrowAnalysisForTest extends UnitThrowAnalysis {
 
 		public ThrowAnalysisForTest() {
-			super(true);
+			super(true, myScene);
 		}
 
 		@Override

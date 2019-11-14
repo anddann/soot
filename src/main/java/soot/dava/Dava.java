@@ -103,9 +103,7 @@ public class Dava {
     this.myPrinter = myPrinter;
   }
 
-  public static Dava v() {
-    return G.v().soot_dava_Dava();
-  }
+
 
   private static final String LOG_TO_FILE = null;
   private static final PrintStream LOG_TO_SCREEN = null;

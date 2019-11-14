@@ -60,6 +60,8 @@ import pxb.android.axml.AxmlReader;
 import pxb.android.axml.AxmlVisitor;
 import pxb.android.axml.NodeVisitor;
 
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.Jimple;
 import soot.jimple.spark.internal.ClientAccessibilityOracle;
 import soot.jimple.spark.pag.SparkField;
 import soot.jimple.toolkits.callgraph.CallGraph;
@@ -96,10 +98,12 @@ public class Scene // extends AbstractHost
     private ThrowAnalysis myPedanticThrowAnalysis;
     private ThrowAnalysis myUnitThrowAnalysis;
     private ThrowAnalysis myDalvikThrowAnalysis;
+  private PackageNamer myPackageNamer;
+  private Jimple myJimple;
 
 
-    @Inject
-  public Scene(Options myOptions, PhaseOptions myPhaseOptions, SourceLocator mySourceLocator, SootResolver mySootResolver, PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility, EntryPoints myEntryPoints, ThrowAnalysis myPedanticThrowAnalysis, ThrowAnalysis myUnitThrowAnalysis, ThrowAnalysis myDalvikThrowAnalysis) {
+  @Inject
+  public Scene(Options myOptions, PhaseOptions myPhaseOptions, SourceLocator mySourceLocator, SootResolver mySootResolver, PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility, EntryPoints myEntryPoints, ThrowAnalysis myPedanticThrowAnalysis, ThrowAnalysis myUnitThrowAnalysis, ThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer, Jimple myJimple) {
     this.myOptions = myOptions;
     this.myPhaseOptions = myPhaseOptions;
         this.mySourceLocator = mySourceLocator;
@@ -110,7 +114,9 @@ public class Scene // extends AbstractHost
         this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
         this.myUnitThrowAnalysis = myUnitThrowAnalysis;
         this.myDalvikThrowAnalysis = myDalvikThrowAnalysis;
-        setReservedNames();
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    setReservedNames();
     // load soot.class.path system property, if defined
     String scp = System.getProperty("soot.class.path");
 
@@ -156,9 +162,7 @@ public class Scene // extends AbstractHost
     }
   }
 
-  public static Scene v() {
-    return G.v().soot_Scene();
-  }
+
 
   Chain<SootClass> classes = new HashChain<SootClass>();
   Chain<SootClass> applicationClasses = new HashChain<SootClass>();
@@ -296,7 +300,7 @@ public class Scene // extends AbstractHost
     }
 
     SootMethod mainMethod = mainClass.getMethodUnsafe("main",
-        Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String"), 1)), VoidType.v());
+        Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String",this), 1,this)), VoidType.v());
     if (mainMethod == null) {
       throw new RuntimeException("Main class declares no main method!");
     }
@@ -1072,7 +1076,7 @@ public class Scene // extends AbstractHost
     }
 
     if (result != null && arrayCount != 0) {
-      result = ArrayType.v(result, arrayCount);
+      result = ArrayType.v(result, arrayCount,this);
     }
     return result;
   }
@@ -1144,7 +1148,7 @@ public class Scene // extends AbstractHost
     if ((allowsPhantomRefs() && phantomNonExist) || className.equals(SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME)) {
       type = getOrAddRefType(className);
       synchronized (type) {
-        SootClass c = new SootClass(className, myScene, myOptions, myPackageNamer);
+        SootClass c = new SootClass(className, this, myOptions, myPackageNamer);
         c.isPhantom = true;
         addClassSilent(c);
         c.setPhantomClass();
@@ -1300,7 +1304,7 @@ public class Scene // extends AbstractHost
    */
   public synchronized FastHierarchy getOrMakeFastHierarchy() {
     if (!hasFastHierarchy()) {
-      setFastHierarchy(new FastHierarchy());
+      setFastHierarchy(new FastHierarchy(this));
     }
     return getFastHierarchy();
   }
@@ -1342,7 +1346,7 @@ public class Scene // extends AbstractHost
     if (!hasActiveHierarchy()) {
       // throw new RuntimeException("no active Hierarchy present for
       // scene");
-      setActiveHierarchy(new Hierarchy());
+      setActiveHierarchy(new Hierarchy(this));
     }
 
     return activeHierarchy;
@@ -1910,7 +1914,7 @@ public class Scene // extends AbstractHost
   public SootMethodRef makeMethodRef(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
       boolean isStatic) {
     if (PolymorphicMethodRef.handlesClass(declaringClass)) {
-      return new PolymorphicMethodRef(declaringClass, name, parameterTypes, returnType, isStatic, myScene, myOptions, myJimple);
+      return new PolymorphicMethodRef(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, myJimple);
     }
     return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, myJimple);
   }
@@ -1961,7 +1965,7 @@ public class Scene // extends AbstractHost
       // try to infer a main class from the command line if none is given
       for (Iterator<String> classIter = myOptions.classes().iterator(); classIter.hasNext();) {
         SootClass c = getSootClass(classIter.next());
-        if (c.declaresMethod("main", Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String"), 1)),
+        if (c.declaresMethod("main", Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String",this), 1,this)),
             VoidType.v())) {
           logger.debug("No main class given. Inferred '" + c.getName() + "' as main class.");
           setMainClass(c);
@@ -1973,7 +1977,7 @@ public class Scene // extends AbstractHost
       // given
       for (Iterator<SootClass> classIter = getApplicationClasses().iterator(); classIter.hasNext();) {
         SootClass c = classIter.next();
-        if (c.declaresMethod("main", Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String"), 1)),
+        if (c.declaresMethod("main", Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String",this), 1,this)),
             VoidType.v())) {
           logger.debug("No main class given. Inferred '" + c.getName() + "' as main class.");
           setMainClass(c);
@@ -2016,36 +2020,36 @@ public class Scene // extends AbstractHost
   }
 
   public SootClass makeSootClass(String name) {
-    return new SootClass(name, myScene, myOptions, myPackageNamer);
+    return new SootClass(name, this, myOptions, myPackageNamer);
   }
 
   public SootClass makeSootClass(String name, int modifiers) {
-    return new SootClass(name, myOptions, modifiers, myScene, myPackageNamer);
+    return new SootClass(name, myOptions, modifiers, this, myPackageNamer);
   }
 
   public SootMethod makeSootMethod(String name, List<Type> parameterTypes, Type returnType) {
-    return new SootMethod(name, parameterTypes, returnType, myScene);
+    return new SootMethod(name, parameterTypes, returnType, this);
   }
 
   public SootMethod makeSootMethod(String name, List<Type> parameterTypes, Type returnType, int modifiers) {
-    return new SootMethod(name, parameterTypes, returnType, modifiers, myScene);
+    return new SootMethod(name, parameterTypes, returnType, modifiers, this);
   }
 
   public SootMethod makeSootMethod(String name, List<Type> parameterTypes, Type returnType, int modifiers,
       List<SootClass> thrownExceptions) {
-    return new SootMethod(name, parameterTypes, returnType, modifiers, thrownExceptions, myScene);
+    return new SootMethod(name, parameterTypes, returnType, modifiers, thrownExceptions, this);
   }
 
   public SootField makeSootField(String name, Type type, int modifiers) {
-    return new SootField(myScene, name, type, modifiers, myOptions);
+    return new SootField(this, name, type, modifiers, myOptions);
   }
 
   public SootField makeSootField(String name, Type type) {
-    return new SootField(name, type, myScene, myOptions);
+    return new SootField(name, type, this, myOptions);
   }
 
   public RefType getOrAddRefType(String refTypeName) {
-    return nameToClass.computeIfAbsent(refTypeName, k -> new RefType(mySootResolver, k));
+    return nameToClass.computeIfAbsent(refTypeName, k -> new RefType(mySootResolver, k,this));
   }
 
   /**

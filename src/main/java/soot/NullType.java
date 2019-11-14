@@ -22,6 +22,7 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.util.Switch;
 
 /**
@@ -29,18 +30,14 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class NullType extends RefLikeType {
-  private NullType() {
+
+  @Inject
+  public NullType(Scene myScene) {
+    super(myScene);
   }
 
-  private static NullType instance;
 
-  public static NullType v() {
-    if (instance == null) {
-      instance = new NullType();
-    }
-    return instance;
 
-  }
 
   public int hashCode() {
     return 0x9891DFE1;

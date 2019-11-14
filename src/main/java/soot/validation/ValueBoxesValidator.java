@@ -28,15 +28,16 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.Unit;
 import soot.ValueBox;
 
-public enum ValueBoxesValidator implements BodyValidator {
-  INSTANCE;
+public class ValueBoxesValidator implements BodyValidator {
 
-  public static ValueBoxesValidator v() {
-    return INSTANCE;
+  @Inject
+  public ValueBoxesValidator(){
+
   }
 
   @Override

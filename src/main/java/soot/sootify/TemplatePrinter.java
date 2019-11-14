@@ -24,6 +24,7 @@ package soot.sootify;
 
 import java.io.PrintWriter;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.G;
 import soot.Local;
@@ -37,12 +38,10 @@ public class TemplatePrinter {
   private PrintWriter out;
   private int indentationLevel = 0;
 
-  public TemplatePrinter(Singletons.Global g) {
+  @Inject
+  public TemplatePrinter() {
   }
 
-  public static TemplatePrinter v() {
-    return G.v().soot_sootify_TemplatePrinter();
-  }
 
   // see also class soot.Printer!
   public void printTo(SootClass c, PrintWriter out) {

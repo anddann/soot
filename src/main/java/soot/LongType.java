@@ -22,6 +22,7 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.util.Switch;
 
 /**
@@ -29,16 +30,9 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class LongType extends PrimType {
-  private static LongType instance;
-
-  private LongType() {
-  }
-
-  public static LongType v() {
-    if (instance == null) {
-      instance = new LongType();
-    }
-    return instance;
+  @Inject
+  public LongType(Scene myScene) {
+    super(myScene);
   }
 
   public boolean equals(Object t) {
@@ -58,7 +52,7 @@ public class LongType extends PrimType {
   }
 
   @Override
-  public RefType boxedType(Scene myScene) {
-    return RefType.v("java.lang.Long",myScene);
+  public RefType boxedType() {
+    return RefType.v("java.lang.Long",getMyScene());
   }
 }

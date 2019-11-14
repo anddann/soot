@@ -22,6 +22,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.io.Serializable;
 
 import soot.util.Numberable;
@@ -32,9 +34,16 @@ import soot.util.Switchable;
 @SuppressWarnings("serial")
 public abstract class Type implements Switchable, Serializable, Numberable {
 
+  private final Scene myScene;
 
-  public Type() {
-    myScene.getTypeNumberer().add(this);
+  @Inject
+  public Type(Scene myScene) {
+    this.myScene = myScene;
+    this.myScene.getTypeNumberer().add(this);
+  }
+
+  protected Scene getMyScene() {
+    return myScene;
   }
 
   /** Returns a textual representation of this type. */
@@ -54,13 +63,11 @@ public abstract class Type implements Switchable, Serializable, Numberable {
     return toQuotedString();
   }
 
+
   /** Converts the int-like types (short, byte, boolean and char) to IntType. */
-  public static Type toMachineType(Type t) {
-    if (t.equals(ShortType.v()) || t.equals(ByteType.v()) || t.equals(BooleanType.v()) || t.equals(CharType.v())) {
-      return IntType.v();
-    } else {
-      return t;
-    }
+  public Type toMachineType() {
+    return this;
+
   }
 
   /** Returns the least common superclass of this type and other. */
@@ -82,7 +89,7 @@ public abstract class Type implements Switchable, Serializable, Numberable {
   }
 
   public ArrayType makeArrayType() {
-    return ArrayType.v(this, 1);
+    return ArrayType.v(this, 1, getMyScene());
   }
 
   /**

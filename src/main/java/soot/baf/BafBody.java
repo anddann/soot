@@ -35,6 +35,7 @@ import soot.DoubleType;
 import soot.Local;
 import soot.LongType;
 import soot.PackManager;
+import soot.Printer;
 import soot.SootMethod;
 import soot.Trap;
 import soot.Type;
@@ -50,6 +51,7 @@ import soot.options.Options;
 
 public class BafBody extends Body {
   private static final Logger logger = LoggerFactory.getLogger(BafBody.class);
+  private final Baf myBaf;
   private JimpleToBafContext jimpleToBafContext;
 
   public JimpleToBafContext getContext() {
@@ -58,18 +60,19 @@ public class BafBody extends Body {
 
   @Override
   public Object clone() {
-    Body b = new BafBody(getMethod());
+    Body b = new BafBody(getMethod(),getMyOptions(),getMyPrinter(),myBaf);
     b.importBodyContentsFrom(this);
     return b;
   }
 
-  BafBody(SootMethod m) {
+  BafBody(SootMethod m, Options myOptions, Printer myPrinter, Baf myBaf) {
     super(m, myOptions, myPrinter);
+    this.myBaf = myBaf;
   }
 
-  public BafBody(JimpleBody body, Map<String, String> options, Options myOptions, Baf myBaf, PackManager myPackManager) {
+  public BafBody(JimpleBody body, Map<String, String> options, Options myOptions, Printer myPrinter, Baf myBaf, PackManager myPackManager) {
     super(body.getMethod(), myOptions, myPrinter);
-
+    this.myBaf = myBaf;
     if (myOptions.verbose()) {
       logger.debug("[" + getMethod().getName() + "] Constructing BafBody...");
     }

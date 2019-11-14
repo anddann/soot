@@ -29,10 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.SootMethod;
-import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.StmtBody;
-import soot.options.Options;
 import soot.options.ShimpleOptions;
 import soot.shimple.internal.SPatchingChain;
 import soot.shimple.internal.ShimpleBodyBuilder;
@@ -66,7 +64,7 @@ public class ShimpleBody extends StmtBody {
    * Construct an empty ShimpleBody associated with m.
    **/
   ShimpleBody(SootMethod m, Map options) {
-    super(m);
+    super(m, myOptions, myPrinter);
 
     // must happen before SPatchingChain gets created
     this.options = new ShimpleOptions(options);
@@ -85,7 +83,7 @@ public class ShimpleBody extends StmtBody {
    * naive-phi-elimination) which can be useful for understanding the effect of analyses.
    **/
   ShimpleBody(Body body, Map options) {
-    super(body.getMethod());
+    super(body.getMethod(), myOptions, myPrinter);
 
     if (!(body instanceof JimpleBody || body instanceof ShimpleBody)) {
       throw new RuntimeException("Cannot construct ShimpleBody from given Body type.");

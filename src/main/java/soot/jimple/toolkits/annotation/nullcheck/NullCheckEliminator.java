@@ -57,6 +57,7 @@ public class NullCheckEliminator extends BodyTransformer {
   @Inject
   public NullCheckEliminator(Jimple myJimple) {
     this(new AnalysisFactory());
+    this.myJimple = myJimple;
   }
 
   private NullCheckEliminator(AnalysisFactory f) {

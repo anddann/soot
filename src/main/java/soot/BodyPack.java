@@ -26,7 +26,6 @@ import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import soot.options.Options;
 import soot.toolkits.graph.interaction.InteractionHandler;
 
@@ -36,9 +35,22 @@ import soot.toolkits.graph.interaction.InteractionHandler;
 public class BodyPack extends Pack {
   private static final Logger logger = LoggerFactory.getLogger(BodyPack.class);
 
-  public BodyPack(String name) {
-    super(name);
-  }
+    public Options getMyOptions() {
+        return myOptions;
+    }
+
+    public InteractionHandler getMyInteractionHandler() {
+        return myInteractionHandler;
+    }
+
+    private final Options myOptions;
+    private final InteractionHandler myInteractionHandler;
+
+    public BodyPack(String name, PhaseOptions myPhaseOptions, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(name, myPhaseOptions);
+        this.myOptions = myOptions;
+        this.myInteractionHandler = myInteractionHandler;
+    }
 
   protected void internalApply(Body b) {
     for (Iterator<Transform> tIt = this.iterator(); tIt.hasNext();) {

@@ -24,6 +24,7 @@ package soot.jimple.validation;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.SootMethod;
 import soot.Unit;
@@ -38,11 +39,12 @@ import soot.validation.ValidationException;
  *
  * @author Steven Arzt
  */
-public enum InvokeArgumentValidator implements BodyValidator {
-  INSTANCE;
+public class InvokeArgumentValidator implements BodyValidator {
 
-  public static InvokeArgumentValidator v() {
-    return INSTANCE;
+
+  @Inject
+  public InvokeArgumentValidator(){
+
   }
 
   @Override

@@ -26,6 +26,7 @@ import com.google.common.collect.Maps;
 
 import java.util.Map;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.G;
 import soot.Singletons;
@@ -67,11 +68,9 @@ public class SmartLocalDefsPool {
     pool.clear();
   }
 
-  public static SmartLocalDefsPool v() {
-    return G.v().soot_toolkits_scalar_SmartLocalDefsPool();
-  }
 
-  public SmartLocalDefsPool(Singletons.Global g) {
+  @Inject
+  public SmartLocalDefsPool() {
   }
 
   public void invalidate(Body b) {

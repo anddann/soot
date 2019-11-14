@@ -24,14 +24,15 @@ package soot.validation;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.UnitBox;
 
-public enum UnitBoxesValidator implements BodyValidator {
-  INSTANCE;
+public class UnitBoxesValidator implements BodyValidator {
 
-  public static UnitBoxesValidator v() {
-    return INSTANCE;
+  @Inject
+  public UnitBoxesValidator(){
+
   }
 
   @Override

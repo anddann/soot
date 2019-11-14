@@ -22,17 +22,16 @@ package soot.baf;
  * #L%
  */
 
-import soot.G;
-import soot.Singletons;
+import com.google.inject.Inject;
+
+import soot.Scene;
 import soot.Type;
 import soot.util.Switch;
 
 public class WordType extends Type {
-  public WordType(Singletons.Global g) {
-  }
-
-  public static WordType v() {
-    return G.v().soot_baf_WordType();
+  @Inject
+  public WordType(Scene myScene) {
+    super(myScene);
   }
 
   public boolean equals(Object t) {

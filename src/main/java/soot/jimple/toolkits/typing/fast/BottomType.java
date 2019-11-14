@@ -24,7 +24,9 @@ package soot.jimple.toolkits.typing.fast;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.G;
+import soot.Scene;
 import soot.Singletons;
 import soot.Type;
 
@@ -33,18 +35,12 @@ import soot.Type;
  */
 public class BottomType extends Type {
 
-
-  private static BottomType instance;
-
-  private BottomType() {
+  
+  @Inject
+  public BottomType(Scene myScene) {
+    super(myScene);
   }
 
-  public static BottomType v() {
-    if (instance == null) {
-      instance = new BottomType();
-    }
-    return instance;
-  }
 
   public String toString() {
     return "bottom_type";

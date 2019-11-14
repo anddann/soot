@@ -24,6 +24,7 @@ package soot.tagkit;
 
 import java.util.LinkedList;
 
+import com.google.inject.Inject;
 import soot.G;
 import soot.IdentityUnit;
 import soot.Singletons;
@@ -31,12 +32,11 @@ import soot.Unit;
 
 /** The aggregator for LineNumberTable attribute. */
 public class LineNumberTagAggregator extends FirstTagAggregator {
-  public LineNumberTagAggregator(Singletons.Global g) {
+
+  @Inject
+  public LineNumberTagAggregator() {
   }
 
-  public static LineNumberTagAggregator v() {
-    return G.v().soot_tagkit_LineNumberTagAggregator();
-  }
 
   /** Decide whether this tag should be aggregated by this aggregator. */
   public boolean wantTag(Tag t) {

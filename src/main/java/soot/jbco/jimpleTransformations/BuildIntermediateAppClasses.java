@@ -39,6 +39,7 @@ import soot.Local;
 import soot.Modifier;
 import soot.PatchingChain;
 import soot.PrimType;
+import soot.Scene;
 import soot.SceneTransformer;
 import soot.SootClass;
 import soot.SootMethod;
@@ -70,6 +71,12 @@ public class BuildIntermediateAppClasses extends SceneTransformer implements IJb
 
   private static int newclasses = 0;
   private static int newmethods = 0;
+  private Scene myScene;
+
+
+  public BuildIntermediateAppClasses(Scene myScene){
+    this.myScene=myScene;
+  }
 
   public void outputSummary() {
     out.println("New buffer classes created: " + newclasses);
@@ -263,7 +270,7 @@ public class BuildIntermediateAppClasses extends SceneTransformer implements IJb
 
     myScene.releaseActiveHierarchy();
     myScene.getActiveHierarchy();
-    myScene.setFastHierarchy(new FastHierarchy());
+    myScene.setFastHierarchy(new FastHierarchy(myScene));
   }
 
   private Optional<SootMethod> findAccessibleInSuperClassesBySubSig(SootClass base, String subSig) {

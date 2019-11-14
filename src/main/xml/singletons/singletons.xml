@@ -171,4 +171,25 @@
   <class>soot.jbco.jimpleTransformations.MethodRenamer</class>
   <class>soot.LambdaMetaFactory</class>
   <class>soot.jbco.jimpleTransformations.FieldRenamer</class>
+  <class>soot.validation.BodyValidator</class>
+  <class>soot.validation.LocalsValidator</class>
+  <class>soot.validation.ValueBoxesValidator</class>
+  <class>soot.validation.UsesValidator</class>
+  <class>soot.jimple.validation.IdentityStatementsValidator</class>
+  <class>soot.jimple.validation.MethodValidator</class>
+  <class>soot.validation.CheckVoidLocalesValidator</class>
+  <class>soot.jimple.validation.InvokeArgumentValidator</class>
+  <class>soot.jimple.validation.ReturnStatementsValidator</class>
+  <class>soot.validation.CheckEscapingValidator</class>
+  <class>soot.jimple.validation.JimpleTrapValidator</class>
+  <class>soot.jimple.validation.TypesValidator</class>
+  <class>soot.validation.TrapsValidator</class>
+  <class>soot.jimple.validation.IdentityValidator</class>
+  <class>soot.validation.UnitBoxesValidator</class>
+  <class>soot.jimple.validation.NewValidator</class>
+  <class>soot.validation.CheckInitValidator</class>
+  <class>soot.jimple.validation.FieldRefValidator</class>
+  <class>soot.validation.CheckTypesValidator</class>
+  <class>soot.jimple.validation.InvokeValidator</class>
+  <class>soot.toolkits.scalar.ConstantInitializerToTagTransformer</class>
 </singletons>

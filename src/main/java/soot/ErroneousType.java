@@ -22,6 +22,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import soot.util.Switch;
 
 /**
@@ -29,19 +31,11 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class ErroneousType extends Type {
-  private static ErroneousType instance;
 
-  private ErroneousType() {
+  @Inject
+  public ErroneousType(Scene myScene) {
+    super(myScene);
   }
-  public static ErroneousType v() {
-    if (instance == null) {
-      instance = new ErroneousType();
-    }
-    return instance;
-
-  }
-
-
 
   public int hashCode() {
     return 0x92473FFF;

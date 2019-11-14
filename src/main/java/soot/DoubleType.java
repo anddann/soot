@@ -22,6 +22,7 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.util.Switch;
 
 /**
@@ -29,19 +30,9 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class DoubleType extends PrimType {
-  private DoubleType() {
-  }
-
-
-  private static DoubleType instance;
-
-
-  public static DoubleType v() {
-    if (instance == null) {
-      instance = new DoubleType();
-    }
-    return instance;
-
+  @Inject
+  public DoubleType(Scene myScene) {
+    super(myScene);
   }
 
   public boolean equals(Object t) {
@@ -61,7 +52,7 @@ public class DoubleType extends PrimType {
   }
 
   @Override
-  public RefType boxedType(Scene myScene) {
-    return RefType.v("java.lang.Double", myScene);
+  public RefType boxedType() {
+    return RefType.v("java.lang.Double", getMyScene());
   }
 }

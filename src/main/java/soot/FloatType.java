@@ -22,6 +22,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import soot.util.Switch;
 
 /**
@@ -29,16 +31,9 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class FloatType extends PrimType {
-  private FloatType() {
-  }
-  private static FloatType instance;
-
-  public static FloatType v() {
-    if (instance == null) {
-      instance = new FloatType();
-    }
-    return instance;
-
+  @Inject
+  public FloatType(Scene myScene) {
+    super(myScene);
   }
 
   public boolean equals(Object t) {
@@ -58,7 +53,7 @@ public class FloatType extends PrimType {
   }
 
   @Override
-  public RefType boxedType(Scene myScene) {
-    return RefType.v("java.lang.Float",myScene);
+  public RefType boxedType() {
+    return RefType.v("java.lang.Float", getMyScene());
   }
 }

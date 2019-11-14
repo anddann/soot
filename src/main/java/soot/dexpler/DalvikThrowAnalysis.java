@@ -20,30 +20,9 @@
 
 package soot.dexpler;
 
+import com.google.inject.Inject;
+
 import soot.FastHierarchy;
-
-/*-
- * #%L
- * Soot - a J*va Optimization Framework
- * %%
- * Copyright (C) 1997 - 2018 Raja Vallée-Rai and others
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU General Lesser Public
- * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/lgpl-2.1.html>.
- * #L%
- */
-
 import soot.G;
 import soot.NullType;
 import soot.PrimType;
@@ -62,6 +41,28 @@ import soot.jimple.EnterMonitorStmt;
 import soot.jimple.StringConstant;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.exceptions.UnitThrowAnalysis;
+
+/*-
+ * #%L
+ * Soot - a J*va Optimization Framework
+ * %%
+ * Copyright (C) 1997 - 2018 Raja Vallée-Rai and others
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ *
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
 
 /**
  *
@@ -153,37 +154,25 @@ import soot.toolkits.exceptions.UnitThrowAnalysis;
 
 public class DalvikThrowAnalysis extends UnitThrowAnalysis {
 
+  private Scene myScene;
+
   /**
    * Constructs a <code>DalvikThrowAnalysis</code> for inclusion in Soot's global variable manager, {@link G}.
    *
    * @param g
    *          guarantees that the constructor may only be called from {@link Singletons}.
+   * @param myScene1
    */
-  public DalvikThrowAnalysis(Singletons.Global g) {
+  @Inject
+  public DalvikThrowAnalysis(ThrowableSet.Manager mgr, Scene myScene) {
+    super(mgr,myScene);
+    this.myScene = myScene;
   }
 
-  /**
-   * Returns the single instance of <code>DalvikThrowAnalysis</code>.
-   *
-   * @return Soot's <code>UnitThrowAnalysis</code>.
-   */
-  public static DalvikThrowAnalysis v() {
-    return G.v().soot_dexpler_DalvikThrowAnalysis();
-  }
-
-  protected DalvikThrowAnalysis(boolean isInterproc) {
-    super(isInterproc);
-  }
-
-  public DalvikThrowAnalysis(Singletons.Global g, boolean isInterproc) {
-    super(isInterproc);
-  }
 
   public static DalvikThrowAnalysis interproceduralAnalysis = null;
 
-  public static DalvikThrowAnalysis interproc() {
-    return G.v().interproceduralDalvikThrowAnalysis();
-  }
+
 
   @Override
   protected ThrowableSet defaultResult() {

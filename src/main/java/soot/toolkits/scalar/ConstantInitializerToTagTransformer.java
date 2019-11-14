@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,9 +69,10 @@ import soot.tagkit.Tag;
 public class ConstantInitializerToTagTransformer extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ConstantInitializerToTagTransformer.class);
   private static final ConstantInitializerToTagTransformer INSTANCE = new ConstantInitializerToTagTransformer();
+  private Scene myScene;
 
-  public static ConstantInitializerToTagTransformer v() {
-    return INSTANCE;
+  @Inject
+  public ConstantInitializerToTagTransformer() {
   }
 
   @Override

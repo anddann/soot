@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import soot.Body;
-import soot.Singletons;
 import soot.Trap;
 import soot.Unit;
 import soot.jimple.Jimple;
@@ -53,12 +53,18 @@ import soot.toolkits.graph.ExceptionalUnitGraph;
  */
 public class TrapMinimizer extends TrapTransformer {
 
-  public TrapMinimizer(Singletons.Global g) {
+  private DalvikThrowAnalysis myDalvikThrowAnalysis;
+  private Options myOptions;
+  private Jimple myJimple;
+
+  @Inject
+  public TrapMinimizer(DalvikThrowAnalysis myDalvikThrowAnalysis, Options myOptions, Jimple myJimple) {
+    this.myDalvikThrowAnalysis = myDalvikThrowAnalysis;
+    this.myOptions = myOptions;
+    this.myJimple = myJimple;
   }
 
-  public static TrapMinimizer v() {
-    return soot.G.v().soot_dexpler_TrapMinimizer();
-  }
+
 
   @Override
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {

@@ -2635,7 +2635,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       invokeClass = ((soot.RefType) Util.getSootType(field.fieldInstance().container())).getSootClass();
     } else {
       if (myInitialResolver.hierarchy() == null) {
-        myInitialResolver.hierarchy(new soot.FastHierarchy());
+        myInitialResolver.hierarchy(new soot.FastHierarchy(myScene));
       }
       soot.SootClass containingClass = ((soot.RefType) Util.getSootType(field.fieldInstance().container())).getSootClass();
       soot.SootClass addToClass;
@@ -4340,7 +4340,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       if (call.methodInstance().flags().isProtected()) {
 
         if (myInitialResolver.hierarchy() == null) {
-          myInitialResolver.hierarchy(new soot.FastHierarchy());
+          myInitialResolver.hierarchy(new soot.FastHierarchy(myScene));
         }
         soot.SootClass addToClass;
         if (body.getMethod().getDeclaringClass().hasOuterClass()) {

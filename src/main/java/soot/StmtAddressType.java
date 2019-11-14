@@ -22,6 +22,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import soot.util.Switch;
 
 /**
@@ -31,14 +33,9 @@ import soot.util.Switch;
 public class StmtAddressType extends Type {
   private static StmtAddressType instance;
 
-  private StmtAddressType() {
-  }
-
-  public static StmtAddressType v() {
-    if(instance==null){
-      instance = new StmtAddressType();
-    }
-    return instance;
+  @Inject
+  public StmtAddressType(Scene myScene) {
+    super(myScene);
   }
 
   public boolean equals(Object t) {

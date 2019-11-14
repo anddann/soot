@@ -26,8 +26,8 @@ package soot;
  * A wrapper object for a pack of optimizations. Provides chain-like operations, except that the key is the phase name.
  */
 public class ScenePack extends Pack {
-  public ScenePack(String name) {
-    super(name);
+  public ScenePack(String name,PhaseOptions myPhaseOptions) {
+    super(name, myPhaseOptions);
   }
 
   protected void internalApply() {

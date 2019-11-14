@@ -25,6 +25,7 @@ package soot.toolkits.exceptions;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import com.google.inject.Inject;
 import heros.solver.IDESolver;
 
 import java.util.ArrayList;
@@ -37,7 +38,6 @@ import java.util.Set;
 
 import soot.Body;
 import soot.FastHierarchy;
-import soot.G;
 import soot.IntegerType;
 import soot.Local;
 import soot.LongType;
@@ -46,7 +46,6 @@ import soot.PatchingChain;
 import soot.RefLikeType;
 import soot.RefType;
 import soot.Scene;
-import soot.Singletons;
 import soot.SootMethod;
 import soot.SootMethodRef;
 import soot.Trap;
@@ -211,52 +210,30 @@ import soot.toolkits.exceptions.ThrowableSet.Pair;
  */
 public class UnitThrowAnalysis extends AbstractThrowAnalysis {
 
-  protected final ThrowableSet.Manager mgr = ThrowableSet.myManager;
+  protected final ThrowableSet.Manager mgr;
 
   // Cache the response to mightThrowImplicitly():
-  private final ThrowableSet implicitThrowExceptions = ThrowableSet.myManager.VM_ERRORS
-      .add(ThrowableSet.myManager.NULL_POINTER_EXCEPTION).add(ThrowableSet.myManager.ILLEGAL_MONITOR_STATE_EXCEPTION);
+  private final ThrowableSet implicitThrowExceptions;
+  private Scene myScene;
 
-  /**
-   * Constructs a <code>UnitThrowAnalysis</code> for inclusion in Soot's global variable manager, {@link G}.
-   *
-   * @param g
-   *          guarantees that the constructor may only be called from {@link Singletons}.
-   */
-  public UnitThrowAnalysis(Singletons.Global g) {
-    this(false);
+
+  @Inject
+  public UnitThrowAnalysis(ThrowableSet.Manager mgr, Scene myScene) {
+    this.myScene = myScene;
+    this.isInterproc = false;
+    this.mgr = mgr;
+    implicitThrowExceptions = mgr.VM_ERRORS
+            .add(mgr.NULL_POINTER_EXCEPTION).add(mgr.ILLEGAL_MONITOR_STATE_EXCEPTION);
   }
 
-  /**
-   * A protected constructor for use by unit tests.
-   */
-  protected UnitThrowAnalysis() {
-    this(false);
-  }
-
-  /**
-   * Returns the single instance of <code>UnitThrowAnalysis</code>.
-   *
-   * @return Soot's <code>UnitThrowAnalysis</code>.
-   */
-  public static UnitThrowAnalysis v() {
-    return G.v().soot_toolkits_exceptions_UnitThrowAnalysis();
-  }
 
   protected final boolean isInterproc;
 
-  protected UnitThrowAnalysis(boolean isInterproc) {
-    this.isInterproc = isInterproc;
-  }
+
 
   public static UnitThrowAnalysis interproceduralAnalysis = null;
 
-  public static UnitThrowAnalysis interproc() {
-    if (interproceduralAnalysis == null) {
-      interproceduralAnalysis = new UnitThrowAnalysis(true);
-    }
-    return interproceduralAnalysis;
-  }
+
 
   protected ThrowableSet defaultResult() {
     return mgr.VM_ERRORS;
@@ -312,7 +289,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
    */
   protected ThrowableSet mightThrow(SootMethod sm) {
     if (!isInterproc) {
-      return ThrowableSet.myManager.ALL_THROWABLES;
+      return mgr.ALL_THROWABLES;
     }
     return methodToThrowSet.getUnchecked(sm);
   }
@@ -338,13 +315,13 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
   private ThrowableSet mightThrow(SootMethod sm, Set<SootMethod> doneSet) {
     // Do not run in loops
     if (!doneSet.add(sm)) {
-      return ThrowableSet.myManager.EMPTY;
+      return mgr.EMPTY;
     }
 
     // If we don't have body, we silently ignore the method. This is
     // unsound, but would otherwise always bloat our result set.
     if (!sm.hasActiveBody()) {
-      return ThrowableSet.myManager.EMPTY;
+      return mgr.EMPTY;
     }
 
     // We need a mapping between unit and exception
@@ -364,7 +341,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
       }
     }
 
-    ThrowableSet methodSet = ThrowableSet.myManager.EMPTY;
+    ThrowableSet methodSet = mgr.EMPTY;
     if (sm.hasActiveBody()) {
       Body methodBody = sm.getActiveBody();
 
@@ -565,7 +542,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
       result = result.add(mgr.NULL_POINTER_EXCEPTION);
       result = result.add(mgr.INITIALIZATION_ERRORS);
       // might throw anything
-      result = result.add(ThrowableSet.myManager.ALL_THROWABLES);
+      result = result.add(mgr.ALL_THROWABLES);
     }
 
     @Override

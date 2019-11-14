@@ -22,6 +22,7 @@ package soot.jimple.spark.internal;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.G;
 import soot.Singletons;
 import soot.SootField;
@@ -36,12 +37,10 @@ import soot.SootMethod;
  */
 public class PublicAndProtectedAccessibility implements ClientAccessibilityOracle {
 
-  public PublicAndProtectedAccessibility(Singletons.Global g) {
+  @Inject
+  public PublicAndProtectedAccessibility() {
   }
 
-  public static PublicAndProtectedAccessibility v() {
-    return G.v().soot_jimple_spark_internal_PublicAndProtectedAccessibility();
-  }
 
   @Override
   public boolean isAccessible(SootMethod method) {

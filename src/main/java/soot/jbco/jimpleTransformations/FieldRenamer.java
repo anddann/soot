@@ -31,12 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BooleanType;
-import soot.G;
 import soot.IntegerType;
 import soot.Local;
 import soot.Modifier;
@@ -44,7 +44,6 @@ import soot.PatchingChain;
 import soot.RefType;
 import soot.Scene;
 import soot.SceneTransformer;
-import soot.Singletons;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootFieldRef;
@@ -93,30 +92,27 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
   private boolean renameFields = false;
 
   private final Object fieldNamesLock = new Object();
+  private Scene myScene;
+  private Jimple myJimple;
 
   /**
    * Singleton constructor.
    *
    * @param global
    *          the singletons container. Must not be {@code null}
+   * @param myScene
+   * @param myJimple
    * @throws NullPointerException
    *           when {@code global} argument is {@code null}
    */
-  public FieldRenamer(Singletons.Global global) {
-    if (global == null) {
-      throw new NullPointerException("Cannot instantiate FieldRenamer with null Singletons.Global");
-    }
+
+  @Inject
+  public FieldRenamer(Scene myScene, Jimple myJimple) {
+    this.myScene = myScene;
+    this.myJimple = myJimple;
+
 
     this.nameGenerator = new JunkNameGenerator();
-  }
-
-  /**
-   * Singleton getter.
-   *
-   * @return returns instance of {@link FieldRenamer}
-   */
-  public static FieldRenamer v() {
-    return G.v().soot_jbco_jimpleTransformations_FieldRenamer();
   }
 
   @Override

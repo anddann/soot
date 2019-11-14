@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
 public class RadioScenePack extends ScenePack {
   private static final Logger logger = LoggerFactory.getLogger(RadioScenePack.class);
 
-  public RadioScenePack(String name) {
-    super(name);
+  public RadioScenePack(String name,PhaseOptions myPhaseOptions) {
+    super(name,myPhaseOptions);
   }
 
   protected void internalApply() {
@@ -45,7 +45,7 @@ public class RadioScenePack extends ScenePack {
     for (Iterator<Transform> tIt = this.iterator(); tIt.hasNext();) {
 
       final Transform t = tIt.next();
-      Map<String, String> opts = myPhaseOptions().getPhaseOptions(t);
+      Map<String, String> opts = getMyPhaseOptions().getPhaseOptions(t);
       if (!PhaseOptions.getBoolean(opts, "enabled")) {
         continue;
       }
@@ -85,10 +85,10 @@ public class RadioScenePack extends ScenePack {
   }
 
   private void checkEnabled(Transform t) {
-    Map<String, String> options = myPhaseOptions().getPhaseOptions(t);
+    Map<String, String> options = getMyPhaseOptions().getPhaseOptions(t);
     if (PhaseOptions.getBoolean(options, "enabled")) {
       // Enabling this one will disable all the others
-      myPhaseOptions().setPhaseOption(t, "enabled:true");
+      getMyPhaseOptions().setPhaseOption(t, "enabled:true");
     }
   }
 }

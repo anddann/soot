@@ -22,6 +22,8 @@ package soot.validation;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.List;
 
 import soot.Body;
@@ -29,11 +31,11 @@ import soot.Local;
 import soot.Value;
 import soot.ValueBox;
 
-public enum LocalsValidator implements BodyValidator {
-  INSTANCE;
+public class LocalsValidator implements BodyValidator {
 
-  public static LocalsValidator v() {
-    return INSTANCE;
+  @Inject
+  public LocalsValidator() {
+
   }
 
   @Override

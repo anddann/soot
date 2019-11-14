@@ -22,17 +22,19 @@ package soot.coffi;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.G;
+import soot.Scene;
 import soot.Singletons;
 import soot.Type;
 
 public class Long2ndHalfType extends Type {
-  public Long2ndHalfType(Singletons.Global g) {
+
+  @Inject
+  public Long2ndHalfType(Scene myScene) {
+    super(myScene);
   }
 
-  public static Long2ndHalfType v() {
-    return G.v().soot_coffi_Long2ndHalfType();
-  }
 
   public boolean equals(Type otherType) {
     return otherType instanceof Long2ndHalfType;

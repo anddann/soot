@@ -22,6 +22,7 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.util.Switch;
 
 /**
@@ -29,18 +30,12 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class IntType extends PrimType implements IntegerType {
-  private IntType() {
+
+  @Inject
+  public IntType(Scene myScene) {
+    super(myScene);
   }
 
-  private static IntType instance;
-
-  public static IntType v() {
-    if (instance == null) {
-      instance = new IntType();
-    }
-    return instance;
-
-  }
 
   /**
    * Returns true if the given object is equal to this one. Since IntType is a singleton, object equality is fine.
@@ -62,7 +57,7 @@ public class IntType extends PrimType implements IntegerType {
   }
 
   @Override
-  public RefType boxedType(Scene myScene) {
-    return RefType.v("java.lang.Integer", myScene);
+  public RefType boxedType() {
+    return RefType.v("java.lang.Integer", getMyScene());
   }
 }

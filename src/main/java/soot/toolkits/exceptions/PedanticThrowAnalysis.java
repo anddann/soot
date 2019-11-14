@@ -22,6 +22,7 @@ package soot.toolkits.exceptions;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.G;
 import soot.Singletons;
 import soot.Unit;
@@ -36,23 +37,22 @@ import soot.jimple.ThrowStmt;
  */
 public class PedanticThrowAnalysis extends AbstractThrowAnalysis {
 
+  private ThrowableSet.Manager mgr;
+
   /**
    * Constructs a <code>PedanticThrowAnalysis</code> for inclusion in Soot's global variable manager, {@link G}.
    *
    * @param g
    *          guarantees that the constructor may only be called from {@link Singletons}.
+   * @param mgr
    */
-  public PedanticThrowAnalysis(Singletons.Global g) {
+
+  @Inject
+  public PedanticThrowAnalysis(ThrowableSet.Manager mgr) {
+    this.mgr = mgr;
   }
 
-  /**
-   * Returns the single instance of <code>PedanticThrowAnalysis</code>.
-   *
-   * @return Soot's <code>PedanticThrowAnalysis</code>.
-   */
-  public static PedanticThrowAnalysis v() {
-    return G.v().soot_toolkits_exceptions_PedanticThrowAnalysis();
-  }
+
 
   /**
    * Returns the set of all <code>Throwable</code>s as the set of types that the specified unit might throw, regardless of
@@ -64,7 +64,7 @@ public class PedanticThrowAnalysis extends AbstractThrowAnalysis {
    * @return the set of all <code>Throwable</code>s.
    */
   public ThrowableSet mightThrow(Unit u) {
-    return ThrowableSet.myManager.ALL_THROWABLES;
+    return mgr.ALL_THROWABLES;
   }
 
   /**

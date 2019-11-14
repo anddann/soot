@@ -22,6 +22,7 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.util.Switch;
 
 /**
@@ -29,17 +30,12 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class ShortType extends PrimType implements IntegerType {
-  private ShortType() {
-  }
+  private final IntType intType;
 
-
-  public static ShortType instance;
-
-  public static ShortType v() {
-    if(instance==null){
-      instance=new ShortType();
-    }
-    return instance;
+  @Inject
+  public ShortType(Scene myScene, IntType intType) {
+    super(myScene);
+    this.intType = intType;
   }
 
   public int hashCode() {
@@ -59,7 +55,13 @@ public class ShortType extends PrimType implements IntegerType {
   }
 
   @Override
-  public RefType boxedType(Scene myScene) {
-    return RefType.v("java.lang.Short",myScene);
+  public RefType boxedType() {
+    return RefType.v("java.lang.Short",getMyScene());
+  }
+
+  @Override
+  public Type toMachineType() {
+    return intType;
+
   }
 }

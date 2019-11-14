@@ -192,7 +192,7 @@ public class Util {
         String superName = ((CONSTANT_Utf8_info) (coffiClass.constant_pool[c.name_index])).convert();
         superName = superName.replace('/', '.');
 
-        references.add(RefType.v(superName));
+        references.add(RefType.v(superName,myScene));
         bclass.setSuperclass(mySootResolver.makeClassRef(superName));
       }
     }
@@ -206,7 +206,7 @@ public class Util {
 
         interfaceName = interfaceName.replace('/', '.');
 
-        references.add(RefType.v(interfaceName));
+        references.add(RefType.v(interfaceName,myScene));
         SootClass interfaceClass = mySootResolver.makeClassRef(interfaceName);
         interfaceClass.setModifiers(interfaceClass.getModifiers() | Modifier.INTERFACE);
         bclass.addInterface(interfaceClass);
@@ -348,7 +348,7 @@ public class Util {
 
               exceptionName = exceptionName.replace('/', '.');
 
-              references.add(RefType.v(exceptionName));
+              references.add(RefType.v(exceptionName,myScene));
               method.addExceptionIfAbsent(mySootResolver.makeClassRef(exceptionName));
             }
           } else if (methodInfo.attributes[j] instanceof Synthetic_attribute) {
@@ -393,7 +393,7 @@ public class Util {
             if (name.startsWith("[")) {
               references.add(jimpleTypeOfFieldDescriptor(desc));
             } else {
-              references.add(RefType.v(name));
+              references.add(RefType.v(name,myScene));
             }
           }
           if (coffiClass.constant_pool[k] instanceof CONSTANT_Fieldref_info

@@ -31,6 +31,8 @@ import soot.ArrayType;
 import soot.Body;
 import soot.G;
 import soot.Local;
+import soot.PackManager;
+import soot.Printer;
 import soot.RefType;
 import soot.SootClass;
 import soot.SootFieldRef;
@@ -147,6 +149,7 @@ import soot.jimple.ThrowStmt;
 import soot.jimple.UshrExpr;
 import soot.jimple.VirtualInvokeExpr;
 import soot.jimple.XorExpr;
+import soot.options.Options;
 
 /**
  * The Grimp class contains all the constructors for the components of the Grimp grammar for the Grimp body. <br>
@@ -165,9 +168,6 @@ public class Grimp {
     this.myJimple = myJimple;
   }
 
-  public static Grimp v() {
-    return G.v().soot_grimp_Grimp();
-  }
 
   /**
    * Constructs a XorExpr(Expr, Expr) grammar chunk.
@@ -886,13 +886,13 @@ public class Grimp {
   }
 
   /** Returns an empty GrimpBody associated with method m. */
-  public GrimpBody newBody(SootMethod m) {
-    return new GrimpBody(m);
+  public GrimpBody newBody(SootMethod m,  Options myOptions, Printer myPrinter) {
+    return new GrimpBody(m,  myOptions,  myPrinter, this);
   }
 
   /** Returns a GrimpBody constructed from b. */
-  public GrimpBody newBody(Body b, String phase) {
-    return new GrimpBody(b);
+  public GrimpBody newBody(Body b, String phase, Options myOptions, Printer myPrinter, Grimp grimp, PackManager manager) {
+    return new GrimpBody(b,myOptions,myPrinter,grimp, manager);
   }
 
   public static Value cloneIfNecessary(Value val) {

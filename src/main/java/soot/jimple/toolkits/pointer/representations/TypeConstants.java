@@ -28,15 +28,13 @@ import soot.AnySubType;
 import soot.G;
 import soot.PhaseOptions;
 import soot.RefType;
+import soot.Scene;
 import soot.Type;
 import soot.options.CGOptions;
 
 public class TypeConstants {
   private final PhaseOptions myPhaseOptions;
 
-  public static TypeConstants v() {
-    return G.v().soot_jimple_toolkits_pointer_representations_TypeConstants();
-  }
 
   public Type OBJECTCLASS;
   public Type STRINGCLASS;
@@ -52,36 +50,36 @@ public class TypeConstants {
   public Type PRIVILEGEDACTIONEXCEPTION;
 
   @Inject
-  public TypeConstants(PhaseOptions myPhaseOptions) {
+  public TypeConstants(PhaseOptions myPhaseOptions, Scene myScene) {
     this.myPhaseOptions = myPhaseOptions;
     int jdkver = new CGOptions(myPhaseOptions.getPhaseOptions("cg")).jdkver();
 
-    OBJECTCLASS = RefType.v("java.lang.Object");
+    OBJECTCLASS = RefType.v("java.lang.Object",myScene);
 
-    STRINGCLASS = RefType.v("java.lang.String");
+    STRINGCLASS = RefType.v("java.lang.String",myScene);
 
-    CLASSLOADERCLASS = AnySubType.v(RefType.v("java.lang.ClassLoader"));
+    CLASSLOADERCLASS = AnySubType.v(RefType.v("java.lang.ClassLoader",myScene));
 
-    PROCESSCLASS = AnySubType.v(RefType.v("java.lang.Process"));
+    PROCESSCLASS = AnySubType.v(RefType.v("java.lang.Process",myScene));
 
-    THREADCLASS = AnySubType.v(RefType.v("java.lang.Thread"));
+    THREADCLASS = AnySubType.v(RefType.v("java.lang.Thread",myScene));
 
-    CLASSCLASS = RefType.v("java.lang.Class");
+    CLASSCLASS = RefType.v("java.lang.Class",myScene);
 
-    LEASTCLASS = AnySubType.v(RefType.v("java.lang.Object"));
+    LEASTCLASS = AnySubType.v(RefType.v("java.lang.Object",myScene));
 
-    FIELDCLASS = RefType.v("java.lang.reflect.Field");
+    FIELDCLASS = RefType.v("java.lang.reflect.Field",myScene);
 
-    METHODCLASS = RefType.v("java.lang.reflect.Method");
+    METHODCLASS = RefType.v("java.lang.reflect.Method",myScene);
 
-    CONSTRUCTORCLASS = RefType.v("java.lang.reflect.Constructor");
+    CONSTRUCTORCLASS = RefType.v("java.lang.reflect.Constructor",myScene);
 
     if (jdkver >= 2) {
-      FILESYSTEMCLASS = AnySubType.v(RefType.v("java.io.FileSystem"));
+      FILESYSTEMCLASS = AnySubType.v(RefType.v("java.io.FileSystem",myScene));
     }
 
     if (jdkver >= 2) {
-      PRIVILEGEDACTIONEXCEPTION = AnySubType.v(RefType.v("java.security.PrivilegedActionException"));
+      PRIVILEGEDACTIONEXCEPTION = AnySubType.v(RefType.v("java.security.PrivilegedActionException",myScene));
     }
   }
 }

@@ -22,6 +22,7 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
 import soot.util.Switch;
 
 /**
@@ -29,16 +30,12 @@ import soot.util.Switch;
  */
 @SuppressWarnings("serial")
 public class ByteType extends PrimType implements IntegerType {
-  private ByteType() {
-  }
+  private IntType intType;
 
-  private static ByteType instance;
-
-  public static ByteType v() {
-    if (instance == null) {
-      instance = new ByteType();
-    }
-    return instance;
+  @Inject
+  public ByteType(Scene myScene, IntType intType) {
+    super(myScene);
+    this.intType = intType;
   }
 
   public int hashCode() {
@@ -58,7 +55,13 @@ public class ByteType extends PrimType implements IntegerType {
   }
 
   @Override
-  public RefType boxedType(Scene myScene) {
-    return RefType.v("java.lang.Byte", myScene);
+  public RefType boxedType() {
+    return RefType.v("java.lang.Byte", getMyScene());
+  }
+
+  @Override
+  public Type toMachineType() {
+    return intType;
+
   }
 }
