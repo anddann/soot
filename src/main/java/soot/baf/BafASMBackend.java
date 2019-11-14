@@ -94,10 +94,8 @@ public class BafASMBackend extends AbstractASMBackend {
 
   // Contains one Label for every Unit that is the target of a branch or jump
   protected final Map<Unit, Label> branchTargetLabels = new HashMap<Unit, Label>();
-  private final Scene myScene;
   private Options myOptions;
   private PrimTypeCollector primTypeCollector;
-
 
   /**
    * Returns the ASM Label for a given Unit that is the target of a branch or jump
@@ -116,16 +114,17 @@ public class BafASMBackend extends AbstractASMBackend {
 
   /**
    * Creates a new BafASMBackend with a given enforced java version
-   *  @param sc
+   * 
+   * @param sc
    *          The SootClass the bytecode is to be generated for
    * @param javaVersion
    *          A particular Java version enforced by the user, may be 0 for automatic detection, must not be lower than
    * @param myOptions
    * @param primTypeCollector
    */
-  public BafASMBackend(SootClass sc, int javaVersion, Scene myScene, Options myOptions, PrimTypeCollector primTypeCollector) {
-    super(sc, javaVersion, myOptions, myPackManager);
-    this.myScene = myScene;
+  public BafASMBackend(SootClass sc, int javaVersion, Scene myScene, Options myOptions,
+      PrimTypeCollector primTypeCollector) {
+    super(sc, javaVersion, myOptions, myOptions.getPackManager());
     this.myOptions = myOptions;
     this.primTypeCollector = primTypeCollector;
   }
