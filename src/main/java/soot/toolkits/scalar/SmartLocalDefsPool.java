@@ -28,8 +28,6 @@ import java.util.Map;
 
 import com.google.inject.Inject;
 import soot.Body;
-import soot.G;
-import soot.Singletons;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 
@@ -57,7 +55,7 @@ public class SmartLocalDefsPool {
     if (modCountAndSLD != null && modCountAndSLD.o1.longValue() == b.getModificationCount()) {
       return modCountAndSLD.o2;
     } else {
-      ExceptionalUnitGraph g = new ExceptionalUnitGraph(b);
+      ExceptionalUnitGraph g = new ExceptionalUnitGraph(b, myManager);
       SmartLocalDefs newSLD = new SmartLocalDefs(g, new SimpleLiveLocals(g));
       pool.put(b, new Pair<Long, SmartLocalDefs>(b.getModificationCount(), newSLD));
       return newSLD;

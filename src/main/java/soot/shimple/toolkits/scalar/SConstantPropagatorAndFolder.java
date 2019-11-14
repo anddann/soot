@@ -110,7 +110,7 @@ public class SConstantPropagatorAndFolder extends BodyTransformer {
     }
 
     // *** FIXME: What happens when Shimple is built with another UnitGraph?
-    SCPFAnalysis scpf = new SCPFAnalysis(new ExceptionalUnitGraph(sb), myJimple);
+    SCPFAnalysis scpf = new SCPFAnalysis(new ExceptionalUnitGraph(sb, myManager), myJimple);
 
     propagateResults(scpf.getResults());
     if (pruneCFG) {

@@ -95,18 +95,22 @@ public abstract class AbstractASMBackend {
   protected int javaVersion;
 
   private final Map<SootMethod, BafBody> bafBodyCache = new HashMap<SootMethod, BafBody>();
+  private Options myOptions;
+  private PackManager myPackManager;
 
   /**
    * Creates a new ASM backend
-   *
-   * @param sc
+   *  @param sc
    *          The SootClass that is to be converted into bytecode
    * @param javaVersion
    *          A particular Java version enforced by the user, may be 0 for automatic detection, must not be lower than
-   *          necessary for all features used
+   * @param myOptions
+   * @param myPackManager
    */
-  public AbstractASMBackend(SootClass sc, int javaVersion) {
+  public AbstractASMBackend(SootClass sc, int javaVersion, Options myOptions, PackManager myPackManager) {
     this.sc = sc;
+    this.myOptions = myOptions;
+    this.myPackManager = myPackManager;
 
     int minVersion = getMinJavaVersion(sc);
 
@@ -169,7 +173,7 @@ public abstract class AbstractASMBackend {
     }
 
     if (activeBody instanceof JimpleBody) {
-      body = PackmyManager.convertJimpleBodyToBaf(method);
+      body = myPackManager.convertJimpleBodyToBaf(method);
     } else {
       throw new RuntimeException("ASM-backend can only translate Baf- and JimpleBodies!");
     }

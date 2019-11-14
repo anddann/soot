@@ -48,9 +48,7 @@ public class IfFinder implements FactFinder {
     this.myDava = myDava;
   }
 
-  public static IfFinder v() {
-    return G.v().soot_dava_toolkits_base_finders_IfFinder();
-  }
+
 
   public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
     myDava.log("IfFinder::find()");

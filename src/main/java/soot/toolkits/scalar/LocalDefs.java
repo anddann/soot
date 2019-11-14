@@ -42,7 +42,7 @@ public interface LocalDefs {
     /**
      * Creates a new LocalDefs analysis based on a {@code ExceptionalUnitGraph}
      *
-     * @see soot.toolkits.graph.ExceptionalUnitGraph#ExceptionalUnitGraph(Body)
+     * @see ExceptionalUnitGraph#ExceptionalUnitGraph(Body, soot.toolkits.exceptions.ThrowableSet.Manager)
      * @see soot.validation.UsesValidator
      * @param body
      * @return a new LocalDefs instance
@@ -55,14 +55,14 @@ public interface LocalDefs {
      * Creates a new LocalDefs analysis based on a {@code ExceptionalUnitGraph} If you don't trust the input you should set
      * <code>expectUndefined</code> to <code>true</code>
      *
-     * @see soot.toolkits.graph.ExceptionalUnitGraph#ExceptionalUnitGraph(Body)
+     * @see ExceptionalUnitGraph#ExceptionalUnitGraph(Body, soot.toolkits.exceptions.ThrowableSet.Manager)
      * @param body
      * @param expectUndefinedUses
      *          if you expect uses of locals that are undefined
      * @return a new LocalDefs instance
      */
     public static LocalDefs newLocalDefs(Body body, boolean expectUndefined) {
-      return newLocalDefs(new ExceptionalUnitGraph(body), expectUndefined);
+      return newLocalDefs(new ExceptionalUnitGraph(body, myManager), expectUndefined);
     }
 
     /**

@@ -55,7 +55,7 @@ public class LoopFinder extends BodyTransformer {
     if (loops != null) {
       return loops;
     }
-    return getLoops(new ExceptionalUnitGraph(b));
+    return getLoops(new ExceptionalUnitGraph(b, myManager));
   }
 
   public Set<Loop> getLoops(UnitGraph g) {

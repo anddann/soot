@@ -407,8 +407,8 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
   protected Map<N, A> filterUnitToAfterFlow = Collections.emptyMap();
 
   /** Constructs a flow analysis on the given <code>DirectedGraph</code>. */
-  public FlowAnalysis(DirectedGraph<N> graph) {
-    super(graph);
+  public FlowAnalysis(DirectedGraph<N> graph, boolean interaticveMode, InteractionHandler myInteractionHandler) {
+    super(graph,interaticveMode, myInteractionHandler);
 
     unitToAfterFlow = new IdentityHashMap<N, A>(graph.size() * 2 + 1);
   }
@@ -535,7 +535,7 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
     assert gv != null;
     assert ifh != null;
 
-    ifh = myOptions.interactive_mode() ? ifh : InteractionFlowHandler.NONE;
+    ifh = isInteraticveMode() ? ifh : InteractionFlowHandler.NONE;
 
     final List<Entry<N, A>> universe = Orderer.INSTANCE.newUniverse(graph, gv, entryInitialFlow(), isForward());
     initFlow(universe, inFlow, outFlow);

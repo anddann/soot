@@ -127,7 +127,7 @@ public abstract class AbstractJimpleBasedICFG implements BiDiInterproceduralCFG<
   }
 
   protected DirectedGraph<Unit> makeGraph(Body body) {
-    return enableExceptions ? new ExceptionalUnitGraph(body) : new BriefUnitGraph(body);
+    return enableExceptions ? new ExceptionalUnitGraph(body, myManager) : new BriefUnitGraph(body);
   }
 
   protected Set<Unit> getCallsFromWithinMethod(SootMethod m) {

@@ -28,8 +28,6 @@ import java.util.Map;
 import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
-import soot.Singletons;
 import soot.Value;
 import soot.ValueBox;
 import soot.jimple.Stmt;
@@ -48,7 +46,7 @@ public class LiveVarsTagger extends BodyTransformer {
 
   protected void internalTransform(Body b, String phaseName, Map options) {
 
-    LiveLocals sll = new SimpleLiveLocals(new ExceptionalUnitGraph(b));
+    LiveLocals sll = new SimpleLiveLocals(new ExceptionalUnitGraph(b, myManager));
 
     Iterator it = b.getUnits().iterator();
     while (it.hasNext()) {

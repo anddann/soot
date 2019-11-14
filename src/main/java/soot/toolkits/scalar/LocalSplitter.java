@@ -43,8 +43,10 @@ import soot.Value;
 import soot.ValueBox;
 import soot.options.Options;
 import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.util.LocalBitSetPacker;
+import soot.util.PhaseDumper;
 
 /**
  * A BodyTransformer that attemps to indentify and separate uses of a local variable that are independent of each other.
@@ -71,22 +73,18 @@ public class LocalSplitter extends BodyTransformer {
   private Options myOptions;
   private Timers myTimers;
   private Scene myScene;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
   @Inject
-  public LocalSplitter(Options myOptions, Timers myTimers, Scene myScene) {
+  public LocalSplitter(Options myOptions, Timers myTimers, Scene myScene, PhaseDumper myPhaseDumper) {
     this.myOptions = myOptions;
     this.myTimers = myTimers;
     this.myScene = myScene;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
-  private LocalSplitter(ThrowAnalysis ta) {
-    this(ta, false);
-  }
 
-  private LocalSplitter(ThrowAnalysis ta, boolean omitExceptingUnitEdges) {
-    this.throwAnalysis = ta;
-    this.omitExceptingUnitEdges = omitExceptingUnitEdges;
-  }
 
 
   @Override
@@ -116,7 +114,7 @@ public class LocalSplitter extends BodyTransformer {
     localPacker.pack();
 
     // Go through the definitions, building the webs
-    ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body, throwAnalysis, omitExceptingUnitEdges);
+    ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body, throwAnalysis, omitExceptingUnitEdges, myManager, myPhaseDumper);
 
     // run in panic mode on first split (maybe change this depending on the input
     // source)

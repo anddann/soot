@@ -50,9 +50,13 @@ import soot.util.Chain;
  */
 public abstract class ForwardBranchedFlowAnalysis<A> extends BranchedFlowAnalysis<Unit, A> {
   private static final Logger logger = LoggerFactory.getLogger(ForwardBranchedFlowAnalysis.class);
+  private final boolean interaticveMode;
+  private final InteractionHandler myInteractionHandler;
 
-  public ForwardBranchedFlowAnalysis(UnitGraph graph) {
-    super(graph);
+  public ForwardBranchedFlowAnalysis(UnitGraph graph,  boolean interaticveMode, InteractionHandler myInteractionHandler) {
+    super(graph,interaticveMode,myInteractionHandler);
+    this.interaticveMode = interaticveMode;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
   protected boolean isForward() {
@@ -230,7 +234,7 @@ public abstract class ForwardBranchedFlowAnalysis<A> extends BranchedFlowAnalysi
         {
           List<A> afterFallFlow = unitToAfterFallFlow.get(s);
           List<A> afterBranchFlow = getBranchFlowAfter(s);
-          if (myOptions.interactive_mode()) {
+          if (interaticveMode) {
             InteractionHandler ih = myInteractionHandler;
             A savedFlow = newInitialFlow();
             copy(beforeFlow, savedFlow);
@@ -241,7 +245,7 @@ public abstract class ForwardBranchedFlowAnalysis<A> extends BranchedFlowAnalysi
             ih.handleBeforeAnalysisEvent(fi);
           }
           flowThrough(beforeFlow, s, afterFallFlow, afterBranchFlow);
-          if (myOptions.interactive_mode()) {
+          if (interaticveMode) {
             List<A> l = new ArrayList<A>();
             if (!afterFallFlow.isEmpty()) {
               l.addAll(afterFallFlow);
@@ -275,9 +279,9 @@ public abstract class ForwardBranchedFlowAnalysis<A> extends BranchedFlowAnalysi
     // " numNodes: " + numNodes +
     // " numComputations: " + numComputations + " avg: " +
     // Main.truncatedOf((double) numComputations / numNodes, 2));
-
-    myTimers.totalFlowNodes += numNodes;
-    myTimers.totalFlowComputations += numComputations;
+//
+//    myTimers.totalFlowNodes += numNodes;
+//    myTimers.totalFlowComputations += numComputations;
 
   } // end doAnalysis
 

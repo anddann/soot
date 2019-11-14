@@ -47,31 +47,14 @@ public class UnitPatchingChain extends PatchingChain<Unit> {
   /**
    * Inserts instrumentation in a manner such that the resulting control flow graph (CFG) of the program will contain
    * <code>toInsert</code> on an edge that is defined by <code>point_source</code> and <code>point_target</code>.
-   *
-   * @param toInsert
-   *          the instrumentation to be added in the Chain
-   * @param point_src
-   *          the source point of an edge in CFG
-   * @param point_tgt
-   *          the target point of an edge
-   */
-  public void insertOnEdge(Unit toInsert, Unit point_src, Unit point_tgt) {
-    insertOnEdge(Arrays.asList(toInsert), point_src, point_tgt);
-
-  }
-
-  /**
-   * Inserts instrumentation in a manner such that the resulting control flow graph (CFG) of the program will contain
-   * <code>toInsert</code> on an edge that is defined by <code>point_source</code> and <code>point_target</code>.
-   *
+   * 
    * @param toInsert
    *          instrumentation to be added in the Chain
    * @param point_src
    *          the source point of an edge in CFG
    * @param point_tgt
-   *          the target point of an edge
    */
-  public void insertOnEdge(Collection<? extends Unit> toInsert, Unit point_src, Unit point_tgt) {
+  public void insertOnEdge(Collection<? extends Unit> toInsert, Unit point_src, Unit point_tgt, Jimple myJimple) {
 
     if (toInsert == null) {
       throw new RuntimeException("Bad idea! You tried to insert a null object into a Chain!");
@@ -186,33 +169,4 @@ public class UnitPatchingChain extends PatchingChain<Unit> {
 
   }
 
-  /**
-   * Inserts instrumentation in a manner such that the resulting control flow graph (CFG) of the program will contain
-   * <code>toInsert</code> on an edge that is defined by <code>point_source</code> and <code>point_target</code>.
-   *
-   * @param toInsert
-   *          instrumentation to be added in the Chain
-   * @param point_src
-   *          the source point of an edge in CFG
-   * @param point_tgt
-   *          the target point of an edge
-   */
-  public void insertOnEdge(List<Unit> toInsert, Unit point_src, Unit point_tgt) {
-    insertOnEdge((Collection<Unit>) toInsert, point_src, point_tgt);
-  }
-
-  /**
-   * Inserts instrumentation in a manner such that the resulting control flow graph (CFG) of the program will contain
-   * <code>toInsert</code> on an edge that is defined by <code>point_source</code> and <code>point_target</code>.
-   *
-   * @param toInsert
-   *          instrumentation to be added in the Chain
-   * @param point_src
-   *          the source point of an edge in CFG
-   * @param point_tgt
-   *          the target point of an edge
-   */
-  public void insertOnEdge(Chain<Unit> toInsert, Unit point_src, Unit point_tgt) {
-    insertOnEdge((Collection<Unit>) toInsert, point_src, point_tgt);
-  }
 }

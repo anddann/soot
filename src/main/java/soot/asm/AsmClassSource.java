@@ -29,8 +29,11 @@ import org.objectweb.asm.ClassReader;
 
 import soot.ClassSource;
 import soot.FoundFile;
+import soot.Scene;
 import soot.SootClass;
+import soot.SootResolver;
 import soot.javaToJimple.IInitialResolver.Dependencies;
+import soot.options.Options;
 
 /**
  * ASM class source implementation.
@@ -40,17 +43,26 @@ import soot.javaToJimple.IInitialResolver.Dependencies;
 public class AsmClassSource extends ClassSource {
 
   protected FoundFile foundFile;
+  private Scene myScene;
+  private SootResolver mySootResolver;
+  private Options myOptions;
 
   /**
    * Constructs a new ASM class source.
-   * 
-   * @param cls
-   *          fully qualified name of the class.
+   *
    * @param data
    *          stream containing data for class.
+   * @param cls
+   *          fully qualified name of the class.
+   * @param myScene
+   * @param mySootResolver
+   * @param myOptions
    */
-  protected AsmClassSource(String cls, FoundFile foundFile) {
+  protected AsmClassSource(String cls, FoundFile foundFile, Scene myScene, SootResolver mySootResolver, Options myOptions) {
     super(cls);
+    this.myScene = myScene;
+    this.mySootResolver = mySootResolver;
+    this.myOptions = myOptions;
     if (foundFile == null) {
       throw new IllegalStateException("Error: The FoundFile must not be null.");
     }
@@ -63,7 +75,7 @@ public class AsmClassSource extends ClassSource {
     try {
       d = foundFile.inputStream();
       ClassReader clsr = new ClassReader(d);
-      SootClassBuilder scb = new SootClassBuilder(sc);
+      SootClassBuilder scb = new SootClassBuilder(sc, myScene, mySootResolver,  myOptions);
       clsr.accept(scb, ClassReader.SKIP_FRAMES);
       Dependencies deps = new Dependencies();
       deps.typesToSignature.addAll(scb.deps);

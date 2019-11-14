@@ -22,6 +22,7 @@ package soot;
  * #L%
  */
 
+import soot.jimple.Jimple;
 import soot.options.Options;
 
 /**
@@ -42,12 +43,12 @@ public class JimpleClassProvider implements ClassProvider {
   /**
    * Look for the specified class. Return a ClassSource for it if found, or null if it was not found.
    */
-  public ClassSource find(String className) {
+  public ClassSource find(String className, Scene myScene, Jimple myJimple, Options myOptions, SootResolver mySootResolver) {
     // String fileName = className.replace('.', '/') + ".jimple";
     String fileName = className + ".jimple";
     FoundFile file = mySourceLocator.lookupInClassPath(fileName);
     if (file == null) {
-      if (myOptions.permissive_resolving()) {
+      if (this.myOptions.permissive_resolving()) {
         fileName = className.replace('.', '/') + ".jimple";
         file = mySourceLocator.lookupInClassPath(fileName);
       }
@@ -55,6 +56,6 @@ public class JimpleClassProvider implements ClassProvider {
         return null;
       }
     }
-    return new JimpleClassSource(className, file, myOptions, mySootResolver, myScene);
+    return new JimpleClassSource(className, file, this.myOptions, mySootResolver, myScene);
   }
 }

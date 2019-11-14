@@ -22,6 +22,8 @@ package soot.xml;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Date;
@@ -31,7 +33,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +49,14 @@ import soot.SootMethod;
 import soot.Trap;
 import soot.Unit;
 import soot.ValueBox;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.scalar.LiveLocals;
 import soot.toolkits.scalar.SimpleLiveLocals;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 /** XML printing routines all XML output comes through here */
 public class XMLPrinter {
@@ -64,6 +69,10 @@ public class XMLPrinter {
   public XMLRoot root;
   private Scene myScene;
   private Main myMain;
+  private Options myOptions;
+  private ThrowAnalysis myThrowAnalaysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
   // returns the buffer - this is the XML output
   public String toString() {
@@ -96,11 +105,15 @@ public class XMLPrinter {
   }
 
   @Inject
-  public XMLPrinter(Scene myScene, Main myMain) {
+  public XMLPrinter(Scene myScene, Main myMain, Options myOptions, ThrowAnalysis myThrowAnalaysis,
+      ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
     this.myScene = myScene;
     this.myMain = myMain;
+    this.myOptions = myOptions;
+    this.myThrowAnalaysis = myThrowAnalaysis;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
   }
-
 
   private XMLNode xmlNode = null;
 
@@ -116,7 +129,8 @@ public class XMLPrinter {
     Chain<Unit> units = body.getUnits();
 
     // UnitGraph unitGraph = new soot.toolkits.graph.BriefUnitGraph( body );
-    ExceptionalUnitGraph exceptionalUnitGraph = new soot.toolkits.graph.ExceptionalUnitGraph(body);
+    ExceptionalUnitGraph exceptionalUnitGraph = new soot.toolkits.graph.ExceptionalUnitGraph(body, myThrowAnalaysis,
+        myOptions.omit_excepting_unit_edges(), myManager, myPhaseDumper);
 
     // include any analysis which will be used in the xml output
     LiveLocals sll = new SimpleLiveLocals(exceptionalUnitGraph);
@@ -500,8 +514,8 @@ public class XMLPrinter {
         Trap trap = trapIt.next();
 
         // catch java.io.IOException from label0 to label1 with label2;
-        XMLNode catchNode = exceptionsNode.addChild("exception", new String[] { "id", "method", "type" }, new String[] {
-            (statementCount++) + "", cleanMethodName, myScene.quotedNameOf(trap.getException().getName()) });
+        XMLNode catchNode = exceptionsNode.addChild("exception", new String[] { "id", "method", "type" },
+            new String[] { (statementCount++) + "", cleanMethodName, myScene.quotedNameOf(trap.getException().getName()) });
         catchNode.addChild("begin", new String[] { "label" },
             new String[] { stmtToName.get(trap.getBeginUnit()).toString() });
         catchNode.addChild("end", new String[] { "label" }, new String[] { stmtToName.get(trap.getEndUnit()).toString() });

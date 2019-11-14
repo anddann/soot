@@ -37,7 +37,6 @@ import soot.Body;
 import soot.SootMethod;
 import soot.Unit;
 import soot.UnitBox;
-import soot.options.Options;
 import soot.util.Chain;
 
 /**
@@ -71,9 +70,7 @@ public abstract class UnitGraph implements DirectedGraph<Unit> {
     this.body = body;
     unitChain = body.getUnits();
     method = body.getMethod();
-    if (myOptions.verbose()) {
-      logger.debug("[" + method.getName() + "]     Constructing " + this.getClass().getName() + "...");
-    }
+    logger.debug("[" + method.getName() + "]     Constructing " + this.getClass().getName() + "...");
 
   }
 

@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import soot.Body;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.jimple.Stmt;
@@ -83,7 +82,7 @@ public class StartJoinFinder {
           Body b = method.retrieveActiveBody();
 
           // run the intraprocedural analysis
-          StartJoinAnalysis sja = new StartJoinAnalysis(new ExceptionalUnitGraph(b), method, callGraph, pag);
+          StartJoinAnalysis sja = new StartJoinAnalysis(new ExceptionalUnitGraph(b, myManager), method, callGraph, pag);
 
           // Add to interprocedural results
           startStatements.addAll(sja.getStartStatements());

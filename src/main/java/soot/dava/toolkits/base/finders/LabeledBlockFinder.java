@@ -54,9 +54,6 @@ public class LabeledBlockFinder implements FactFinder {
     this.myDava = myDava;
   }
 
-  public static LabeledBlockFinder v() {
-    return G.v().soot_dava_toolkits_base_finders_LabeledBlockFinder();
-  }
 
   private final HashMap<SETNode, Integer> orderNumber = new HashMap();
 

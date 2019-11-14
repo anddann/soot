@@ -173,6 +173,7 @@ public class IntConstant extends ArithmeticConstant {
     return new Integer(value).toString();
   }
 
+
   public Type getType() {
     return IntType.v();
   }

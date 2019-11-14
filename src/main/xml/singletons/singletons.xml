@@ -193,4 +193,5 @@
   <class>soot.jimple.validation.InvokeValidator</class>
   <class>soot.toolkits.scalar.ConstantInitializerToTagTransformer</class>
   <class>soot.PrimTypeCollector</class>
+  <class>soot.jimple.toolkits.callgraph.UnreachableMethodTransformer</class>
 </singletons>

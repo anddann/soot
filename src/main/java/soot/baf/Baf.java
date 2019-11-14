@@ -41,6 +41,8 @@ import soot.LongType;
 import soot.NullType;
 import soot.PackManager;
 import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Printer;
 import soot.RefType;
 import soot.ShortType;
 import soot.SootClass;
@@ -139,17 +141,27 @@ public class Baf {
   private PhaseOptions myPhaseOptions;
   private PackManager myPackmanager;
   private Options myOptions;
+  private Printer myPrinter;
+
+  public PrimTypeCollector getPrimTypeCollector() {
+    return primTypeCollector;
+  }
+
+  private PrimTypeCollector primTypeCollector;
 
   @Inject
-  public Baf(PhaseOptions myPhaseOptions, PackManager myPackmanager, Options myOptions) {
+  public Baf(PhaseOptions myPhaseOptions, PackManager myPackmanager, Options myOptions, Printer myPrinter,
+      PrimTypeCollector primTypeCollector) {
     this.myPhaseOptions = myPhaseOptions;
     this.myPackmanager = myPackmanager;
     this.myOptions = myOptions;
+    this.myPrinter = myPrinter;
+    this.primTypeCollector = primTypeCollector;
   }
 
   public static Type getDescriptorTypeOf(Type opType) {
     if (opType instanceof NullType || opType instanceof ArrayType || opType instanceof RefType) {
-      opType = RefType.v();
+      opType = opType.getMyScene().getPrimTypeCollector().getRefType();
     }
 
     return opType;
@@ -547,17 +559,17 @@ public class Baf {
 
   /** Returns an empty BafBody associated with method m. */
   public BafBody newBody(SootMethod m) {
-    return new BafBody(m);
+    return new BafBody(m, myOptions, myPrinter, this);
   }
 
   /** Returns a BafBody constructed from b. */
   public BafBody newBody(JimpleBody b) {
-    return new BafBody(b, Collections.<String, String>emptyMap(), myOptions, this, myPackmanager);
+    return new BafBody(b, Collections.<String, String>emptyMap(), myOptions, myPrinter, this, myPackmanager);
   }
 
   /** Returns a BafBody constructed from b. */
   public BafBody newBody(JimpleBody b, String phase) {
     Map<String, String> options = myPhaseOptions.getPhaseOptions(phase);
-    return new BafBody(b, options, myOptions, this, myPackmanager);
+    return new BafBody(b, options, myOptions, myPrinter, this, myPackmanager);
   }
 }

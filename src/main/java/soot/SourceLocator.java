@@ -126,18 +126,18 @@ public class SourceLocator {
   private DexFileProvider myDexFileProvider;
   private InitialResolver myInitialResolver;
   private Util myCoffiUtil;
+  private SootResolver mySootResolver;
 
   @Inject
   public SourceLocator(Options myOptions, Scene myScene, DexFileProvider myDexFileProvider,
-                       InitialResolver myInitialResolver, Util myCoffiUtil) {
+      InitialResolver myInitialResolver, Util myCoffiUtil, SootResolver mySootResolver) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myDexFileProvider = myDexFileProvider;
     this.myInitialResolver = myInitialResolver;
     this.myCoffiUtil = myCoffiUtil;
+    this.mySootResolver = mySootResolver;
   }
-
-
 
   /**
    * Create the given directory and all parent directories if {@code dir} is non-null.
@@ -186,7 +186,7 @@ public class SourceLocator {
     JarException ex = null;
     for (ClassProvider cp : classProviders) {
       try {
-        ClassSource ret = cp.find(className);
+        ClassSource ret = cp.find(className, myScene, myOptions, mySootResolver);
         if (ret != null) {
           return ret;
         }
@@ -202,7 +202,7 @@ public class SourceLocator {
         ClassSource ret = new ClassProvider() {
 
           @Override
-          public ClassSource find(String className) {
+          public ClassSource find(String className, Scene myScene, Options myOptions, SootResolver mySootResolver) {
             String fileName = className.replace('.', '/') + ".class";
             InputStream stream = cl.getResourceAsStream(fileName);
             if (stream == null) {
@@ -211,7 +211,7 @@ public class SourceLocator {
             return new CoffiClassSource(className, stream, fileName, myCoffiUtil);
           }
 
-        }.find(className);
+        }.find(className, myScene, myOptions, mySootResolver);
         if (ret != null) {
           return ret;
         }
@@ -242,7 +242,8 @@ public class SourceLocator {
 
   protected void setupClassProviders() {
     classProviders = new LinkedList<ClassProvider>();
-    ClassProvider classFileClassProvider = myOptions.coffi() ? new CoffiClassProvider(this) : new AsmClassProvider(this);
+    ClassProvider classFileClassProvider
+        = myOptions.coffi() ? new CoffiClassProvider(this, myCoffiUtil) : new AsmClassProvider(this);
     switch (myOptions.src_prec()) {
       case Options.src_prec_class:
         classProviders.add(classFileClassProvider);

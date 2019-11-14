@@ -37,7 +37,6 @@ import soot.DoubleType;
 import soot.FloatType;
 import soot.G;
 import soot.IntType;
-import soot.JastAddJ.Options;
 import soot.LongType;
 import soot.Modifier;
 import soot.RefType;
@@ -51,6 +50,7 @@ import soot.Unit;
 import soot.UnitPrinter;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.toolkits.base.renamer.RemoveFullyQualifiedName;
+import soot.options.Options;
 import soot.tagkit.DoubleConstantValueTag;
 import soot.tagkit.FloatConstantValueTag;
 import soot.tagkit.IntegerConstantValueTag;
@@ -426,7 +426,7 @@ public class DavaPrinter {
           } else {
             // if method is abstract then print the declaration
             out.print("    ");
-            out.print(method.getDavaDeclaration());
+            out.print(method.getDavaDeclaration(myScene.getPrimTypeCollector()));
             out.println(";");
 
             if (methodIt.hasNext()) {
@@ -472,7 +472,7 @@ public class DavaPrinter {
   private void printTo(Body b, PrintWriter out) {
     b.validate();
 
-    String decl = b.getMethod().getDavaDeclaration();
+    String decl = b.getMethod().getDavaDeclaration(myScene.getPrimTypeCollector());
 
     {
       out.println("    " + decl);

@@ -39,9 +39,6 @@ public class Timers {
     this.myOptions = myOptions;
   }
 
-  public static Timers v() {
-    return G.v().soot_Timers();
-  }
 
   public int totalFlowNodes;
 

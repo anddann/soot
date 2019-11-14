@@ -111,25 +111,29 @@ public class ThrowableSet {
    */
   protected Map<Object, ThrowableSet> memoizedAdds;
     private Manager myManager;
+  private Scene myScene;
 
-    /**
+  /**
    * Constructs a <code>ThrowableSet</code> which contains the exception types represented in <code>include</code>, except
    * for those which are also in <code>exclude</code>. The constructor is private to ensure that the only way to get a new
    * <code>ThrowableSet</code> is by adding elements to or removing them from an existing set.
-   *
-   * @param include
+   *  @param include
    *          The set of {@link RefType} and {@link AnySubType} objects representing the types to be included in the set.
    * @param exclude
    *          The set of {@link AnySubType} objects representing the types to be excluded from the set.
+   * @param myManager
+   * @param myScene
    */
-  protected ThrowableSet(Set<RefLikeType> include, Set<AnySubType> exclude) {
+  protected ThrowableSet(Set<RefLikeType> include, Set<AnySubType> exclude, Manager myManager, Scene myScene) {
     exceptionsIncluded = getImmutable(include);
     exceptionsExcluded = getImmutable(exclude);
+    this.myManager = myManager;
     // We don't need to clone include and exclude to guarantee
     // immutability since ThrowableSet(Set,Set) is private to this
     // class, where it is only called (via
     // myManager.registerSetIfNew()) with arguments which the
     // callers do not subsequently modify.
+    this.myScene = myScene;
   }
 
   private static <T> Set<T> getImmutable(Set<T> in) {
@@ -203,7 +207,7 @@ public class ThrowableSet {
    * @return a set containing <code>e</code> as well as the exceptions in this set.
    *
    * @throws {@link
-   *           ThrowableSet.IllegalStateException} if this <code>ThrowableSet</code> is the result of a
+   *           ThrowableSet.AlreadyHasExclusionsException} if this <code>ThrowableSet</code> is the result of a
    *           {@link #whichCatchableAs(RefType)} operation and, thus, unable to represent the addition of <code>e</code>.
    */
   public ThrowableSet add(RefType e) throws ThrowableSet.AlreadyHasExclusionsException {
@@ -719,14 +723,14 @@ public class ThrowableSet {
 
       // Is the current type explicitly excluded?
       if (catcherHasNoHierarchy && exclusionBase.equals(catcher)) {
-        return new Pair(ThrowableSet.myManager.EMPTY, this);
+        return new Pair(myManager.EMPTY, this);
       }
 
       if (h.canStoreType(catcher, exclusionBase)) {
         // Because the add() operations ban additions to sets
         // with exclusions, we can be sure no types in this are
         // caught by catcher.
-        return new Pair(ThrowableSet.myManager.EMPTY, this);
+        return new Pair(myManager.EMPTY, this);
       } else if (h.canStoreType(exclusionBase, catcher)) {
         // exclusion wouldn't be in exceptionsExcluded if one
         // of its supertypes were not in exceptionsIncluded,
@@ -881,7 +885,7 @@ public class ThrowableSet {
     final String JAVA_LANG = "java.lang.";
     final String EXCEPTION = "Exception";
 
-    Collection<RefLikeType> vmErrorThrowables = ThrowableSet.myManager.VM_ERRORS.exceptionsIncluded;
+    Collection<RefLikeType> vmErrorThrowables = myManager.VM_ERRORS.exceptionsIncluded;
     boolean containsAllVmErrors = s.containsAll(vmErrorThrowables);
     StringBuffer buf = new StringBuffer();
 
@@ -1058,7 +1062,6 @@ public class ThrowableSet {
 
     /**
      * Constructs a <code>ThrowableSet.Manager</code> for inclusion in Soot's global variable manager, {@link G}.
-     *  @param g
      *          guarantees that the constructor may only be called from {@link Singletons}.
      * @param myScene
      * @param myOptions
@@ -1164,7 +1167,7 @@ public class ThrowableSet {
       if (INSTRUMENTING) {
         registrationCalls++;
       }
-      ThrowableSet result = new ThrowableSet(include, exclude);
+      ThrowableSet result = new ThrowableSet(include, exclude, this, myScene);
       ThrowableSet ref = registry.get(result);
       if (null != ref) {
         return ref;

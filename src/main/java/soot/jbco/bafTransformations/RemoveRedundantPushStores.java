@@ -66,7 +66,7 @@ public class RemoveRedundantPushStores extends BodyTransformer implements IJbcoT
     while (changed) {
       changed = false;
       Unit prevprevprev = null, prevprev = null, prev = null;
-      ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b);
+      ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b, myManager);
       Iterator<Unit> it = units.snapshotIterator();
       while (it.hasNext()) {
         Unit u = it.next();

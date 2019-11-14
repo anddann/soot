@@ -73,7 +73,7 @@ public class TrapMinimizer extends TrapTransformer {
       return;
     }
 
-    ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b, myDalvikThrowAnalysis, myOptions.omit_excepting_unit_edges());
+    ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b, myDalvikThrowAnalysis, myOptions.omit_excepting_unit_edges(), myManager, myPhaseDumper);
     Set<Unit> unitsWithMonitor = getUnitsWithMonitor(eug);
 
     Map<Trap, List<Trap>> replaceTrapBy = new HashMap<Trap, List<Trap>>(b.getTraps().size());

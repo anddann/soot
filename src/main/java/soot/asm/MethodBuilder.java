@@ -31,8 +31,11 @@ import org.objectweb.asm.commons.JSRInlinerAdapter;
 
 import soot.ArrayType;
 import soot.RefType;
+import soot.Scene;
 import soot.SootMethod;
 import soot.Type;
+import soot.jimple.Jimple;
+import soot.options.Options;
 import soot.tagkit.AnnotationConstants;
 import soot.tagkit.AnnotationDefaultTag;
 import soot.tagkit.AnnotationTag;
@@ -51,11 +54,15 @@ class MethodBuilder extends JSRInlinerAdapter {
   private VisibilityAnnotationTag[] invisibleParamAnnotations;
   private final SootMethod method;
   private final SootClassBuilder scb;
+  private Scene myScene;
+  private Options myOptions;
 
-  MethodBuilder(SootMethod method, SootClassBuilder scb, String desc, String[] ex) {
+  MethodBuilder(SootMethod method, SootClassBuilder scb, String desc, String[] ex, Scene myScene, Options myOptions) {
     super(Opcodes.ASM5, null, method.getModifiers(), method.getName(), desc, null, ex);
     this.method = method;
     this.scb = scb;
+    this.myScene = myScene;
+    this.myOptions = myOptions;
   }
 
   private TagBuilder getTagBuilder() {
@@ -202,7 +209,8 @@ class MethodBuilder extends JSRInlinerAdapter {
       method.addTag(tag);
     }
     if (method.isConcrete()) {
-      method.setSource(new AsmMethodSource(maxLocals, instructions, localVariables, tryCatchBlocks));
+      method.setSource(
+          new AsmMethodSource(maxLocals, instructions, localVariables, tryCatchBlocks, myScene,  myOptions));
     }
   }
 }

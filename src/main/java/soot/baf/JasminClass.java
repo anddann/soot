@@ -44,7 +44,6 @@ import soot.Local;
 import soot.LongType;
 import soot.Modifier;
 import soot.NullType;
-import soot.PackManager;
 import soot.RefType;
 import soot.ShortType;
 import soot.SootClass;
@@ -52,7 +51,6 @@ import soot.SootFieldRef;
 import soot.SootMethod;
 import soot.SootMethodRef;
 import soot.StmtAddressType;
-import soot.Timers;
 import soot.Trap;
 import soot.Type;
 import soot.TypeSwitch;
@@ -72,7 +70,6 @@ import soot.jimple.NullConstant;
 import soot.jimple.ParameterRef;
 import soot.jimple.StringConstant;
 import soot.jimple.ThisRef;
-import soot.options.Options;
 import soot.tagkit.JasminAttribute;
 import soot.tagkit.LineNumberTag;
 import soot.tagkit.Tag;
@@ -87,7 +84,7 @@ public class JasminClass extends AbstractJasminClass {
   private static final Logger logger = LoggerFactory.getLogger(JasminClass.class);
 
   public JasminClass(SootClass sootClass) {
-    super(sootClass);
+    super(sootClass, myOptions);
   }
 
   @Override

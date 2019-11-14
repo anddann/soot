@@ -97,7 +97,7 @@ public class ClassInfoFlowAnalysis {
       // Then do smart version that does follow invoke expressions, if possible
       if (method.isConcrete()) {
         Body b = method.retrieveActiveBody();
-        UnitGraph g = new ExceptionalUnitGraph(b);
+        UnitGraph g = new ExceptionalUnitGraph(b, myManager);
         SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(g, dfa);
 
         methodToInfoFlowAnalysis.put(method, smdfa);
@@ -130,7 +130,7 @@ public class ClassInfoFlowAnalysis {
       if (method.isConcrete() && doFullAnalysis)// && method.getDeclaringClass().isApplicationClass())
       {
         Body b = method.retrieveActiveBody();
-        UnitGraph g = new ExceptionalUnitGraph(b);
+        UnitGraph g = new ExceptionalUnitGraph(b, myManager);
         SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(g, dfa);
 
         methodToInfoFlowAnalysis.put(method, smdfa);
@@ -186,7 +186,7 @@ public class ClassInfoFlowAnalysis {
     }
 
     Body b = sm.retrieveActiveBody();
-    UnitGraph g = new ExceptionalUnitGraph(b);
+    UnitGraph g = new ExceptionalUnitGraph(b, myManager);
     HashSet<EquivalentValue> fieldsStaticsParamsAccessed = new HashSet<EquivalentValue>();
 
     // Get list of fields, globals, and parameters that are accessed

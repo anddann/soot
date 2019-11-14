@@ -55,8 +55,6 @@ public class JimpleBody extends StmtBody {
   private static BodyValidator[] validators;
   private Jimple myJimple;
 
-
-
   /**
    * Returns an array containing some validators in order to validate the JimpleBody
    *
@@ -80,18 +78,20 @@ public class JimpleBody extends StmtBody {
     super(m, myOptions, myPrinter);
     this.myJimple = myJimple;
   }
+
   public JimpleBody(Printer myPrinter, Options myOptions, Jimple myJimple) {
-    super( myOptions, myPrinter);
+    super(myOptions, myPrinter);
     this.myJimple = myJimple;
   }
 
   /**
    * Construct an extremely empty JimpleBody, for parsing into.
+   * 
    * @param myOptions
    * @param myJimple
    */
   public JimpleBody(Body body, Options myOptions, Printer myPrinter, Jimple myJimple) {
-    super(body.getMethod(),myOptions,myPrinter);
+    super(body.getMethod(), myOptions, myPrinter);
     this.myJimple = myJimple;
   }
 
@@ -133,13 +133,9 @@ public class JimpleBody extends StmtBody {
     }
   }
 
-  public void validateIdentityStatements() {
-    runValidation(IdentityStatementsValidator.v());
-  }
-
   /** Inserts usual statements for handling this & parameters into body. */
   public void insertIdentityStmts(Scene myScene) {
-    insertIdentityStmts(getMethod().getDeclaringClass(),myScene);
+    insertIdentityStmts(getMethod().getDeclaringClass(), myScene);
   }
 
   /**
@@ -148,7 +144,7 @@ public class JimpleBody extends StmtBody {
    * @param declaringClass
    *          the class, which should be used for this references. Can be null for static methods
    */
-  public void insertIdentityStmts(SootClass declaringClass,Scene myScene) {
+  public void insertIdentityStmts(SootClass declaringClass, Scene myScene) {
     final Jimple jimple = myJimple;
     final PatchingChain<Unit> unitChain = getUnits();
     final Chain<Local> localChain = getLocals();
@@ -160,7 +156,7 @@ public class JimpleBody extends StmtBody {
         throw new IllegalArgumentException(
             String.format("No declaring class given for method %s", method.getSubSignature()));
       }
-      Local l = jimple.newLocal("this", RefType.v(declaringClass,myScene));
+      Local l = jimple.newLocal("this", RefType.v(declaringClass, myScene));
       Stmt s = jimple.newIdentityStmt(l, jimple.newThisRef((RefType) l.getType()));
 
       localChain.add(l);

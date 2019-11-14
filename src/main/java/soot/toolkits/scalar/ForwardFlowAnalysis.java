@@ -23,6 +23,7 @@ package soot.toolkits.scalar;
  */
 
 import soot.toolkits.graph.DirectedGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 
 /**
  * Abstract class that provides the fixed point iteration functionality required by all ForwardFlowAnalyses.
@@ -32,8 +33,8 @@ public abstract class ForwardFlowAnalysis<N, A> extends FlowAnalysis<N, A> {
   /**
    * Construct the analysis from a DirectedGraph representation of a Body.
    */
-  public ForwardFlowAnalysis(DirectedGraph<N> graph) {
-    super(graph);
+  public ForwardFlowAnalysis(DirectedGraph<N> graph, boolean interaticveMode, InteractionHandler myInteractionHandler) {
+    super(graph, interaticveMode, myInteractionHandler);
   }
 
   @Override
@@ -45,7 +46,7 @@ public abstract class ForwardFlowAnalysis<N, A> extends FlowAnalysis<N, A> {
   protected void doAnalysis() {
     int i = doAnalysis(GraphView.FORWARD, InteractionFlowHandler.FORWARD, unitToBeforeFlow, unitToAfterFlow);
 
-    soot.myTimers.totalFlowNodes += graph.size();
-    soot.myTimers.totalFlowComputations += i;
+    // soot.myTimers.totalFlowNodes += graph.size();
+    // soot.myTimers.totalFlowComputations += i;
   }
 }

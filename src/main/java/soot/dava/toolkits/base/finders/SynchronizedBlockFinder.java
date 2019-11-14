@@ -66,9 +66,6 @@ public class SynchronizedBlockFinder implements FactFinder {
     this.myDava = myDava;
   }
 
-  public static SynchronizedBlockFinder v() {
-    return G.v().soot_dava_toolkits_base_finders_SynchronizedBlockFinder();
-  }
 
   private HashMap<AugmentedStmt, Map<Value, Integer>> as2ml;
   private DavaBody davaBody;

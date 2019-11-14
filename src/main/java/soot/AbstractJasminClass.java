@@ -74,6 +74,7 @@ import soot.toolkits.graph.Block;
 
 public abstract class AbstractJasminClass {
   private static final Logger logger = LoggerFactory.getLogger(AbstractJasminClass.class);
+  private final Options myOptions;
   protected Map<Unit, String> unitToLabel;
   protected Map<Local, Integer> localToSlot;
   protected Map<Unit, Integer> subroutineToReturnAddressSlot;
@@ -402,14 +403,14 @@ public abstract class AbstractJasminClass {
     return result.toString();
   }
 
-  public AbstractJasminClass(SootClass sootClass) {
-    if (myOptions.time()) {
-      myTimers.buildJasminTimer.start();
-    }
+  public AbstractJasminClass(SootClass sootClass, Options myOptions) {
+    this.myOptions = myOptions;
+//    if (myOptions.time()) {
+//      myTimers.buildJasminTimer.start();
+//    }
 
-    if (myOptions.verbose()) {
       logger.debug("[" + sootClass.getName() + "] Constructing baf.JasminClass...");
-    }
+
 
     code = new LinkedList<String>();
 
@@ -417,7 +418,7 @@ public abstract class AbstractJasminClass {
     {
       int modifiers = sootClass.getModifiers();
 
-      if ((sootClass.getTag("SourceFileTag") != null) && (!myOptions.no_output_source_file_attribute())) {
+      if ((sootClass.getTag("SourceFileTag") != null) && (!this.myOptions.no_output_source_file_attribute())) {
         String srcName = ((SourceFileTag) sootClass.getTag("SourceFileTag")).getSourceFile();
         // Since Jasmin fails on backslashes and only Windows uses backslashes,
         // but also accepts forward slashes, we transform it.
@@ -430,7 +431,7 @@ public abstract class AbstractJasminClass {
         // 'Badly formatted number' error. When analyzing an Android
         // applications (.apk) their name is stored in srcName and
         // can start with a digit.
-        if (!myOptions.android_jars().isEmpty() && !srcName.isEmpty() && Character.isDigit(srcName.charAt(0))) {
+        if (!this.myOptions.android_jars().isEmpty() && !srcName.isEmpty() && Character.isDigit(srcName.charAt(0))) {
           srcName = "n_" + srcName;
         }
 
@@ -493,7 +494,7 @@ public abstract class AbstractJasminClass {
     // emit inner class attributes
     InnerClassAttribute ica = (InnerClassAttribute) sootClass.getTag("InnerClassAttribute");
     if (ica != null && ica.getSpecs().size() > 0) {
-      if (!myOptions.no_output_inner_classes_attribute()) {
+      if (!this.myOptions.no_output_inner_classes_attribute()) {
         emit(".inner_class_attr ");
         for (InnerClassTag ict : ((InnerClassAttribute) sootClass.getTag("InnerClassAttribute")).getSpecs()) {
           // System.out.println("inner class tag: "+ict);
@@ -613,19 +614,18 @@ public abstract class AbstractJasminClass {
       }
     }
 
-    if (myOptions.time()) {
-      myTimers.buildJasminTimer.end();
-    }
+//    if (myOptions.time()) {
+//      myTimers.buildJasminTimer.end();
+//    }
   }
 
   protected void assignColorsToLocals(Body body) {
-    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Assigning colors to locals...");
-    }
 
-    if (myOptions.time()) {
-      myTimers.packTimer.start();
-    }
+
+//    if (myOptions.time()) {
+//      myTimers.packTimer.start();
+//    }
 
     localToGroup = new HashMap<Local, Object>(body.getLocalCount() * 2 + 1, 0.7f);
     groupToColorCount = new HashMap<Object, Integer>(body.getLocalCount() * 2 + 1, 0.7f);

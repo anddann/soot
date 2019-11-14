@@ -53,7 +53,6 @@ import soot.SootFieldRef;
 import soot.SootMethod;
 import soot.SootMethodRef;
 import soot.StmtAddressType;
-import soot.Timers;
 import soot.Trap;
 import soot.Type;
 import soot.TypeSwitch;
@@ -80,6 +79,7 @@ import soot.util.Chain;
 /** Methods for producing Jasmin code from Jimple. */
 public class JasminClass extends AbstractJasminClass {
   private static final Logger logger = LoggerFactory.getLogger(JasminClass.class);
+  private Options myOptions;
 
   void emit(String s, int stackChange) {
     modifyStackHeight(stackChange);
@@ -102,8 +102,9 @@ public class JasminClass extends AbstractJasminClass {
     }
   }
 
-  public JasminClass(SootClass sootClass) {
-    super(sootClass);
+  public JasminClass(SootClass sootClass, Options myOptions) {
+    super(sootClass, myOptions);
+    this.myOptions = myOptions;
   }
 
   protected void assignColorsToLocals(Body body) {
@@ -120,9 +121,9 @@ public class JasminClass extends AbstractJasminClass {
 
   protected void emitMethodBody(SootMethod method)// , Map options)
   {
-    if (myOptions.time()) {
-      myTimers.buildJasminTimer.end();
-    }
+//    if (myOptions.time()) {
+//      myTimers.buildJasminTimer.end();
+//    }
 
     Body activeBody = method.getActiveBody();
 
@@ -136,9 +137,9 @@ public class JasminClass extends AbstractJasminClass {
 
     // if(body == null)
 
-    if (myOptions.time()) {
-      myTimers.buildJasminTimer.start();
-    }
+//    if (myOptions.time()) {
+//      myTimers.buildJasminTimer.start();
+//    }
 
     Chain<Unit> units = body.getUnits();
 
@@ -156,7 +157,7 @@ public class JasminClass extends AbstractJasminClass {
     boolean disablePeephole = true;
 
     if (!disablePeephole) {
-      stmtGraph = new ExceptionalUnitGraph(body);
+      stmtGraph = new ExceptionalUnitGraph(body, myManager);
       ld = LocalDefs.Factory.newLocalDefs(stmtGraph);
       lu = LocalUses.Factory.newLocalUses(body, ld);
 

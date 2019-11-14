@@ -126,7 +126,7 @@ public abstract class CFGGraphType extends CFGOptionMatcher.CFGOption {
 
   public static final CFGGraphType EXCEPTIONAL_UNIT_GRAPH = new CFGGraphType("ExceptionalUnitGraph") {
     public DirectedGraph buildGraph(Body b) {
-      return new ExceptionalUnitGraph(b);
+      return new ExceptionalUnitGraph(b, myManager);
     }
 
     public DotGraph drawGraph(CFGToDotGraph drawer, DirectedGraph g, Body b) {

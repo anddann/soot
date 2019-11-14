@@ -70,7 +70,7 @@ public class SynchronizedMethodTransformer extends BodyTransformer {
         b.getUnits().insertBeforeNoRedirect(myJimple.newEnterMonitorStmt(b.getThisLocal()), u);
 
         // We also need to leave the monitor when the method terminates
-        UnitGraph graph = new ExceptionalUnitGraph(b);
+        UnitGraph graph = new ExceptionalUnitGraph(b, myManager);
         for (Unit tail : graph.getTails()) {
           b.getUnits().insertBefore(myJimple.newExitMonitorStmt(b.getThisLocal()), tail);
         }

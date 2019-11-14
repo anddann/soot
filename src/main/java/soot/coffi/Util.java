@@ -609,7 +609,7 @@ public class Util {
               throw new RuntimeException("Class reference has no ending ;");
             }
             String className = new String(d, p + 1, index - p - 1);
-            baseType = RefType.v(className);
+            baseType = RefType.v(className,myScene);
             p = index + 1;
             break swtch;
           case 'S':
@@ -635,7 +635,7 @@ public class Util {
       // Determine type
       Type t;
       if (isArray) {
-        t = ArrayType.v(baseType, numDimensions);
+        t = ArrayType.v(baseType, numDimensions,myScene);
       } else {
         t = baseType;
       }
@@ -684,7 +684,7 @@ public class Util {
 
       String className = descriptor.substring(1, descriptor.length() - 1);
 
-      baseType = RefType.v(className.replace('/', '.'));
+      baseType = RefType.v(className.replace('/', '.'),myScene);
     } else if (descriptor.equals("S")) {
       baseType = ShortType.v();
     } else if (descriptor.equals("Z")) {
@@ -695,7 +695,7 @@ public class Util {
 
     // Return type
     if (isArray) {
-      return ArrayType.v(baseType, numDimensions);
+      return ArrayType.v(baseType, numDimensions,myScene);
     } else {
       return baseType;
     }
@@ -1010,7 +1010,7 @@ public class Util {
       String annotType = ((CONSTANT_Utf8_info) coffiClass.constant_pool[annot.type_index]).convert();
       String ref = annotType.substring(1, annotType.length() - 1);
       ref = ref.replace('/', '.');
-      references.add(RefType.v(ref));
+      references.add(RefType.v(ref,myScene));
       AnnotationTag annotTag = new AnnotationTag(annotType,
           createElementTags(annot.num_element_value_pairs, coffiClass, annot.element_value_pairs));
       tag.addAnnotation(annotTag);

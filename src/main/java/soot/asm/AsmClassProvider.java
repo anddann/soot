@@ -25,7 +25,11 @@ package soot.asm;
 import soot.ClassProvider;
 import soot.ClassSource;
 import soot.FoundFile;
+import soot.Scene;
+import soot.SootResolver;
 import soot.SourceLocator;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 /**
  * Objectweb ASM class provider.
@@ -36,14 +40,14 @@ public class AsmClassProvider implements ClassProvider {
 
   private SourceLocator mySourceLocator;
 
-  public AsmClassProvider(SourceLocator mySourceLocator){
+  public AsmClassProvider(SourceLocator mySourceLocator) {
 
     this.mySourceLocator = mySourceLocator;
   }
 
-  public ClassSource find(String cls) {
+  public ClassSource find(String cls, Scene myScene,  Options myOptions, SootResolver mySootResolver) {
     String clsFile = cls.replace('.', '/') + ".class";
     FoundFile file = mySourceLocator.lookupInClassPath(clsFile);
-    return file == null ? null : new AsmClassSource(cls, file);
+    return file == null ? null : new AsmClassSource(cls, file, myScene, mySootResolver, myOptions);
   }
 }

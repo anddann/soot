@@ -22,11 +22,12 @@ package soot.toolkits.exceptions;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,7 @@ import soot.options.Options;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph.ExceptionDest;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 /**
  * A {@link BodyTransformer} that shrinks the protected area covered by each {@link Trap} in the {@link Body} so that it
@@ -58,16 +60,15 @@ public final class TrapTightener extends TrapTransformer {
   protected ThrowAnalysis throwAnalysis = null;
   private Scene myScene;
   private Options myOptions;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
   @Inject
-  public TrapTightener(Options myOptions) {
+  public TrapTightener(Scene myScene, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
+    this.myScene = myScene;
     this.myOptions = myOptions;
-  }
-
-
-  public TrapTightener(ThrowAnalysis ta, Options myOptions) {
-    this.throwAnalysis = ta;
-    this.myOptions = myOptions;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
@@ -82,7 +83,8 @@ public final class TrapTightener extends TrapTransformer {
     Chain<Trap> trapChain = body.getTraps();
     Chain<Unit> unitChain = body.getUnits();
     if (trapChain.size() > 0) {
-      ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body, throwAnalysis);
+      ExceptionalUnitGraph graph
+          = new ExceptionalUnitGraph(body, throwAnalysis, myOptions.omit_excepting_unit_edges(), myManager, myPhaseDumper);
       Set<Unit> unitsWithMonitor = getUnitsWithMonitor(graph);
 
       for (Iterator<Trap> trapIt = trapChain.iterator(); trapIt.hasNext();) {

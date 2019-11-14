@@ -28,13 +28,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import soot.G;
 import soot.Modifier;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
-import soot.VoidType;
 import soot.dava.DavaBody;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DStaticInvokeExpr;
@@ -51,7 +50,8 @@ public class MonitorConverter {
   private final Options myOptions;
 
   @Inject
-  public MonitorConverter(Scene myScene, PackageNamer myPackageNamer, Options myOptions) {
+  public MonitorConverter(Scene myScene, PackageNamer myPackageNamer, Options myOptions,
+      PrimTypeCollector primTypeCollector) {
     this.myScene = myScene;
     this.myPackageNamer = myPackageNamer;
     this.myOptions = myOptions;
@@ -63,15 +63,16 @@ public class MonitorConverter {
     objectSingleton.add(RefType.v("java.lang.Object", myScene));
     v = this.myScene.makeSootMethod("v", new LinkedList(),
         RefType.v("soot.dava.toolkits.base.DavaMonitor.DavaMonitor", myScene), Modifier.PUBLIC | Modifier.STATIC);
-    enter = this.myScene.makeSootMethod("enter", objectSingleton, VoidType.v(), Modifier.PUBLIC | Modifier.SYNCHRONIZED);
-    exit = this.myScene.makeSootMethod("exit", objectSingleton, VoidType.v(), Modifier.PUBLIC | Modifier.SYNCHRONIZED);
+    enter = this.myScene.makeSootMethod("enter", objectSingleton, primTypeCollector.getVoidType(),
+        Modifier.PUBLIC | Modifier.SYNCHRONIZED);
+    exit = this.myScene.makeSootMethod("exit", objectSingleton, primTypeCollector.getVoidType(),
+        Modifier.PUBLIC | Modifier.SYNCHRONIZED);
     davaMonitor.addMethod(v);
     davaMonitor.addMethod(enter);
     davaMonitor.addMethod(exit);
 
     this.myScene.addClass(davaMonitor);
   }
-
 
   private final SootMethod v, enter, exit;
 

@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import soot.Body;
 import soot.EquivalentValue;
 import soot.RefLikeType;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootFieldRef;
@@ -748,12 +747,12 @@ public class ClassLocalObjectsAnalysis {
       boolean includePrimitiveDataFlowIfAvailable) {
     if (includePrimitiveDataFlowIfAvailable && primitiveDfa != null) {
       Body b = sm.retrieveActiveBody();
-      UnitGraph g = new ExceptionalUnitGraph(b);
+      UnitGraph g = new ExceptionalUnitGraph(b, myManager);
       return new SmartMethodLocalObjectsAnalysis(g, primitiveDfa);
     } else if (!methodToMethodLocalObjectsAnalysis.containsKey(sm)) {
       // Analyze this method
       Body b = sm.retrieveActiveBody();
-      UnitGraph g = new ExceptionalUnitGraph(b);
+      UnitGraph g = new ExceptionalUnitGraph(b, myManager);
       SmartMethodLocalObjectsAnalysis smloa = new SmartMethodLocalObjectsAnalysis(g, dfa);
       methodToMethodLocalObjectsAnalysis.put(sm, smloa);
     }

@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.G;
-import soot.Scene;
 import soot.SootMethod;
 import soot.Unit;
 import soot.jimple.AssignStmt;
@@ -46,7 +45,6 @@ import soot.jimple.ReturnVoidStmt;
 import soot.jimple.Stmt;
 import soot.jimple.ThrowStmt;
 import soot.jimple.internal.JNopStmt;
-import soot.jimple.toolkits.pointer.FullObjectSet;
 import soot.jimple.toolkits.pointer.RWSet;
 import soot.jimple.toolkits.pointer.Union;
 import soot.jimple.toolkits.pointer.UnionFactory;
@@ -99,7 +97,7 @@ public class SynchronizedRegionFinder extends ForwardFlowAnalysis<Unit, FlowSet<
     if (graph instanceof ExceptionalUnitGraph) {
       egraph = (ExceptionalUnitGraph) graph;
     } else {
-      egraph = new ExceptionalUnitGraph(b);
+      egraph = new ExceptionalUnitGraph(b, myManager);
     }
 
     slu = LocalUses.Factory.newLocalUses(egraph);

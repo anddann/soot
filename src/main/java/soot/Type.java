@@ -42,7 +42,7 @@ public abstract class Type implements Switchable, Serializable, Numberable {
     this.myScene.getTypeNumberer().add(this);
   }
 
-  protected Scene getMyScene() {
+  public Scene getMyScene() {
     return myScene;
   }
 

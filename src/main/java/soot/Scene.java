@@ -60,6 +60,7 @@ import pxb.android.axml.AxmlReader;
 import pxb.android.axml.AxmlVisitor;
 import pxb.android.axml.NodeVisitor;
 
+import soot.baf.Baf;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.Jimple;
 import soot.jimple.spark.internal.ClientAccessibilityOracle;
@@ -90,34 +91,39 @@ public class Scene // extends AbstractHost
   private final Options myOptions;
   private AndroidVersionInfo androidSDKVersionInfo;
   private PhaseOptions myPhaseOptions;
-    private SourceLocator mySourceLocator;
-    private SootResolver mySootResolver;
-    private PointsToAnalysis myDumbPointerAnalysis;
-    private ClientAccessibilityOracle myPublicAndProtectedAccessibility;
-    private EntryPoints myEntryPoints;
-    private ThrowAnalysis myPedanticThrowAnalysis;
-    private ThrowAnalysis myUnitThrowAnalysis;
-    private ThrowAnalysis myDalvikThrowAnalysis;
+  private SourceLocator mySourceLocator;
+  private SootResolver mySootResolver;
+  private PointsToAnalysis myDumbPointerAnalysis;
+  private ClientAccessibilityOracle myPublicAndProtectedAccessibility;
+  private EntryPoints myEntryPoints;
+  private ThrowAnalysis myPedanticThrowAnalysis;
+  private ThrowAnalysis myUnitThrowAnalysis;
+  private ThrowAnalysis myDalvikThrowAnalysis;
   private PackageNamer myPackageNamer;
   private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
-
+  private Baf myBaf;
 
   @Inject
-  public Scene(Options myOptions, PhaseOptions myPhaseOptions, SourceLocator mySourceLocator, SootResolver mySootResolver, PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility, EntryPoints myEntryPoints, ThrowAnalysis myPedanticThrowAnalysis, ThrowAnalysis myUnitThrowAnalysis, ThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+  public Scene(Options myOptions, PhaseOptions myPhaseOptions, SourceLocator mySourceLocator, SootResolver mySootResolver,
+               PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility,
+               EntryPoints myEntryPoints, ThrowAnalysis myPedanticThrowAnalysis, ThrowAnalysis myUnitThrowAnalysis,
+               ThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer, Jimple myJimple,
+               PrimTypeCollector primTypeCollector, Baf myBaf) {
     this.myOptions = myOptions;
     this.myPhaseOptions = myPhaseOptions;
-        this.mySourceLocator = mySourceLocator;
-        this.mySootResolver = mySootResolver;
-        this.myDumbPointerAnalysis = myDumbPointerAnalysis;
-        this.myPublicAndProtectedAccessibility = myPublicAndProtectedAccessibility;
-        this.myEntryPoints = myEntryPoints;
-        this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
-        this.myUnitThrowAnalysis = myUnitThrowAnalysis;
-        this.myDalvikThrowAnalysis = myDalvikThrowAnalysis;
+    this.mySourceLocator = mySourceLocator;
+    this.mySootResolver = mySootResolver;
+    this.myDumbPointerAnalysis = myDumbPointerAnalysis;
+    this.myPublicAndProtectedAccessibility = myPublicAndProtectedAccessibility;
+    this.myEntryPoints = myEntryPoints;
+    this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
+    this.myUnitThrowAnalysis = myUnitThrowAnalysis;
+    this.myDalvikThrowAnalysis = myDalvikThrowAnalysis;
     this.myPackageNamer = myPackageNamer;
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
+    this.myBaf = myBaf;
     setReservedNames();
     // load soot.class.path system property, if defined
     String scp = System.getProperty("soot.class.path");
@@ -163,8 +169,6 @@ public class Scene // extends AbstractHost
       excludedPackages.add("com.apple.*");
     }
   }
-
-
 
   Chain<SootClass> classes = new HashChain<SootClass>();
   Chain<SootClass> applicationClasses = new HashChain<SootClass>();
@@ -302,7 +306,8 @@ public class Scene // extends AbstractHost
     }
 
     SootMethod mainMethod = mainClass.getMethodUnsafe("main",
-        Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String",this), 1,this)), primTypeCollector.getVoidType());
+        Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String", this), 1, this)),
+        primTypeCollector.getVoidType());
     if (mainMethod == null) {
       throw new RuntimeException("Main class declares no main method!");
     }
@@ -464,11 +469,19 @@ public class Scene // extends AbstractHost
     return androidAPIVersion;
   }
 
-    public PrimTypeCollector getPrimTypeCollector() {
-    return  this.primTypeCollector;
-    }
+  public PrimTypeCollector getPrimTypeCollector() {
+    return this.primTypeCollector;
+  }
 
-    public static class AndroidVersionInfo {
+  public Jimple getMyJimple() {
+    return this.myJimple;
+  }
+
+  public Baf getMyBaf() {
+    return this.myBaf;
+  }
+
+  public static class AndroidVersionInfo {
 
     public int sdkTargetVersion = -1;
     public int minSdkVersion = -1;
@@ -1066,7 +1079,7 @@ public class Scene // extends AbstractHost
       } else if (type.equals("int")) {
         result = primTypeCollector.getIntType();
       } else if (type.equals("float")) {
-        result =primTypeCollector.getFloatType();
+        result = primTypeCollector.getFloatType();
       } else if (type.equals("byte")) {
         result = primTypeCollector.getByteType();
       } else if (type.equals("char")) {
@@ -1082,7 +1095,7 @@ public class Scene // extends AbstractHost
     }
 
     if (result != null && arrayCount != 0) {
-      result = ArrayType.v(result, arrayCount,this);
+      result = ArrayType.v(result, arrayCount, this);
     }
     return result;
   }
@@ -1971,7 +1984,8 @@ public class Scene // extends AbstractHost
       // try to infer a main class from the command line if none is given
       for (Iterator<String> classIter = myOptions.classes().iterator(); classIter.hasNext();) {
         SootClass c = getSootClass(classIter.next());
-        if (c.declaresMethod("main", Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String",this), 1,this)),
+        if (c.declaresMethod("main",
+            Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String", this), 1, this)),
             primTypeCollector.getVoidType())) {
           logger.debug("No main class given. Inferred '" + c.getName() + "' as main class.");
           setMainClass(c);
@@ -1983,7 +1997,8 @@ public class Scene // extends AbstractHost
       // given
       for (Iterator<SootClass> classIter = getApplicationClasses().iterator(); classIter.hasNext();) {
         SootClass c = classIter.next();
-        if (c.declaresMethod("main", Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String",this), 1,this)),
+        if (c.declaresMethod("main",
+            Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String", this), 1, this)),
             primTypeCollector.getVoidType())) {
           logger.debug("No main class given. Inferred '" + c.getName() + "' as main class.");
           setMainClass(c);
@@ -2055,7 +2070,7 @@ public class Scene // extends AbstractHost
   }
 
   public RefType getOrAddRefType(String refTypeName) {
-    return nameToClass.computeIfAbsent(refTypeName, k -> new RefType(mySootResolver, k,this));
+    return nameToClass.computeIfAbsent(refTypeName, k -> new RefType(mySootResolver, k, this));
   }
 
   /**

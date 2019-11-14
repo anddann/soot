@@ -214,7 +214,7 @@ public class LockAllocator extends SceneTransformer {
         SootMethod method = methodsIt.next();
         if (method.isConcrete()) {
           Body b = method.retrieveActiveBody();
-          ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b);
+          ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b, myManager);
           methodToExcUnitGraph.put(method, eug);
 
           // run the intraprocedural analysis

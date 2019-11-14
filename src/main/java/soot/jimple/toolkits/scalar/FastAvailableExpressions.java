@@ -37,7 +37,6 @@ import soot.Unit;
 import soot.Value;
 import soot.jimple.AssignStmt;
 import soot.jimple.Stmt;
-import soot.options.Options;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.UnitValueBoxPair;
@@ -62,7 +61,7 @@ public class FastAvailableExpressions implements AvailableExpressions {
     }
 
     FastAvailableExpressionsAnalysis analysis
-        = new FastAvailableExpressionsAnalysis(new ExceptionalUnitGraph(b), b.getMethod(), st);
+        = new FastAvailableExpressionsAnalysis(new ExceptionalUnitGraph(b, myManager), b.getMethod(), st);
 
     // Build unitToExprs map
     {

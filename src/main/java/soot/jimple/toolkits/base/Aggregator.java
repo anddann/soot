@@ -127,7 +127,7 @@ public class Aggregator extends BodyTransformer {
     boolean hadAggregation = false;
     Chain<Unit> units = body.getUnits();
 
-    ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body);
+    ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body, myManager);
     LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(graph);
     LocalUses localUses = LocalUses.Factory.newLocalUses(body, localDefs);
 

@@ -42,6 +42,7 @@ import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
 import soot.SootResolver;
+import soot.options.Options;
 import soot.tagkit.DoubleConstantValueTag;
 import soot.tagkit.EnclosingMethodTag;
 import soot.tagkit.FloatConstantValueTag;
@@ -64,16 +65,26 @@ public class SootClassBuilder extends ClassVisitor {
   protected TagBuilder tb;
   protected final SootClass klass;
   protected final Set<soot.Type> deps;
+  private Scene myScene;
+  private SootResolver mySootResolver;
+  private Options myOptions;
 
   /**
    * Constructs a new Soot class builder.
    *
    * @param klass
    *          Soot class to build.
+   * @param myScene
+   * @param mySootResolver
+   * @param myJimple
+   * @param myOptions
    */
-  protected SootClassBuilder(SootClass klass) {
+  protected SootClassBuilder(SootClass klass, Scene myScene, SootResolver mySootResolver, Options myOptions) {
     super(Opcodes.ASM5);
     this.klass = klass;
+    this.myScene = myScene;
+    this.mySootResolver = mySootResolver;
+    this.myOptions = myOptions;
     this.deps = new HashSet();
   }
 
@@ -86,7 +97,7 @@ public class SootClassBuilder extends ClassVisitor {
   }
 
   void addDep(String s) {
-    addDep(RefType.v(AsmUtil.baseTypeName(s)));
+    addDep(RefType.v(AsmUtil.baseTypeName(s), myScene));
   }
 
   /**
@@ -108,12 +119,12 @@ public class SootClassBuilder extends ClassVisitor {
     klass.setModifiers(access & ~Opcodes.ACC_SUPER);
     if (superName != null) {
       superName = AsmUtil.toQualifiedName(superName);
-      addDep(RefType.v(superName));
+      addDep(RefType.v(superName, myScene));
       klass.setSuperclass(mySootResolver.makeClassRef(superName));
     }
     for (String intrf : interfaces) {
       intrf = AsmUtil.toQualifiedName(intrf);
-      addDep(RefType.v(intrf));
+      addDep(RefType.v(intrf, myScene));
 
       SootClass interfaceClass = mySootResolver.makeClassRef(intrf);
       interfaceClass.setModifiers(interfaceClass.getModifiers() | Modifier.INTERFACE);
@@ -163,7 +174,7 @@ public class SootClassBuilder extends ClassVisitor {
       thrownExceptions = new ArrayList<SootClass>(len);
       for (int i = 0; i != len; i++) {
         String ex = AsmUtil.toQualifiedName(exceptions[i]);
-        addDep(RefType.v(ex));
+        addDep(RefType.v(ex, myScene));
         thrownExceptions.add(mySootResolver.makeClassRef(ex));
       }
     }
@@ -177,7 +188,7 @@ public class SootClassBuilder extends ClassVisitor {
       method.addTag(new SignatureTag(signature));
     }
     method = klass.getOrAddMethod(method);
-    return new MethodBuilder(method, this, desc, exceptions);
+    return new MethodBuilder(method, this, desc, exceptions, myScene, myOptions);
   }
 
   @Override
@@ -193,7 +204,7 @@ public class SootClassBuilder extends ClassVisitor {
 
     // soot does not resolve all inner classes, e.g., java.util.stream.FindOps$FindSink$... is not resolved
     String innerClassname = AsmUtil.toQualifiedName(name);
-    deps.add(RefType.v(innerClassname));
+    deps.add(RefType.v(innerClassname, myScene));
 
   }
 
@@ -205,7 +216,7 @@ public class SootClassBuilder extends ClassVisitor {
     }
 
     owner = AsmUtil.toQualifiedName(owner);
-    deps.add(RefType.v(owner));
+    deps.add(RefType.v(owner, myScene));
     klass.setOuterClass(mySootResolver.makeClassRef(owner));
   }
 

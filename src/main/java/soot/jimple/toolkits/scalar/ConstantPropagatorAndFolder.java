@@ -72,7 +72,7 @@ public class ConstantPropagatorAndFolder extends BodyTransformer {
       logger.debug("[" + b.getMethod().getName() + "] Propagating and folding constants...");
     }
 
-    UnitGraph g = new ExceptionalUnitGraph(b);
+    UnitGraph g = new ExceptionalUnitGraph(b, myManager);
     LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(g);
 
     // Perform a constant/local propagation pass.

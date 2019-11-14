@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.Local;
@@ -40,6 +41,16 @@ import soot.jimple.JimpleBody;
 import soot.jimple.StringConstant;
 
 public class UnreachableMethodTransformer extends BodyTransformer {
+
+  private Scene myScene;
+  private Jimple myJimple;
+
+  @Inject
+  public UnreachableMethodTransformer(Scene myScene, Jimple myJimple){
+
+    this.myScene = myScene;
+    this.myJimple = myJimple;
+  }
 
 
   protected void internalTransform(Body b, String phaseName, Map options) {
@@ -56,7 +67,7 @@ public class UnreachableMethodTransformer extends BodyTransformer {
     PatchingChain units = body.getUnits();
     List<Unit> list = new Vector<Unit>();
 
-    Local tmpRef = myJimple.newLocal("tmpRef", RefType.v("java.io.PrintStream"));
+    Local tmpRef = myJimple.newLocal("tmpRef", RefType.v("java.io.PrintStream",myScene));
     body.getLocals().add(tmpRef);
     list.add(myJimple.newAssignStmt(tmpRef,
         myJimple.newStaticFieldRef(myScene.getField("<java.lang.System: java.io.PrintStream out>").makeRef())));

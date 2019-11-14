@@ -31,9 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.DoubleType;
 import soot.Local;
-import soot.LongType;
 import soot.PackManager;
 import soot.Printer;
 import soot.SootMethod;
@@ -41,7 +39,6 @@ import soot.Trap;
 import soot.Type;
 import soot.Unit;
 import soot.UnitBox;
-import soot.UnknownType;
 import soot.baf.internal.BafLocal;
 import soot.jimple.ConvertToBaf;
 import soot.jimple.JimpleBody;
@@ -51,6 +48,11 @@ import soot.options.Options;
 
 public class BafBody extends Body {
   private static final Logger logger = LoggerFactory.getLogger(BafBody.class);
+
+  public Baf getMyBaf() {
+    return myBaf;
+  }
+
   private final Baf myBaf;
   private JimpleToBafContext jimpleToBafContext;
 
@@ -60,7 +62,7 @@ public class BafBody extends Body {
 
   @Override
   public Object clone() {
-    Body b = new BafBody(getMethod(),getMyOptions(),getMyPrinter(),myBaf);
+    Body b = new BafBody(getMethod(), getMyOptions(), getMyPrinter(), myBaf);
     b.importBodyContentsFrom(this);
     return b;
   }
@@ -70,7 +72,8 @@ public class BafBody extends Body {
     this.myBaf = myBaf;
   }
 
-  public BafBody(JimpleBody body, Map<String, String> options, Options myOptions, Printer myPrinter, Baf myBaf, PackManager myPackManager) {
+  public BafBody(JimpleBody body, Map<String, String> options, Options myOptions, Printer myPrinter, Baf myBaf,
+      PackManager myPackManager) {
     super(body.getMethod(), myOptions, myPrinter);
     this.myBaf = myBaf;
     if (myOptions.verbose()) {
@@ -85,12 +88,12 @@ public class BafBody extends Body {
     {
       for (Local l : jimpleBody.getLocals()) {
         Type t = l.getType();
-        Local newLocal = myBaf.newLocal(l.getName(), UnknownType.v());
+        Local newLocal = myBaf.newLocal(l.getName(), myBaf.getPrimTypeCollector().getUnknownType());
 
-        if (t.equals(DoubleType.v()) || t.equals(LongType.v())) {
-          newLocal.setType(DoubleWordType.v());
+        if (t.equals(myBaf.getPrimTypeCollector().getDoubleType()) || t.equals(myBaf.getPrimTypeCollector().getLongType())) {
+          newLocal.setType(myBaf.getPrimTypeCollector().getDoubleWordType());
         } else {
-          newLocal.setType(WordType.v());
+          newLocal.setType(myBaf.getPrimTypeCollector().getWordType());
         }
 
         context.setBafLocalOfJimpleLocal(l, newLocal);

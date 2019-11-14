@@ -82,7 +82,7 @@ public class UnreachableCodeEliminator extends BodyTransformer {
           = PhaseOptions.getBoolean(options, "remove-unreachable-traps", true) ? myScene.getDefaultThrowAnalysis()
               : myPedanticThrowAnalysis;
     }
-    ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body, throwAnalysis, false);
+    ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body, throwAnalysis, false, myManager, myPhaseDumper);
 
     Chain<Unit> units = body.getUnits();
     int numPruned = units.size();

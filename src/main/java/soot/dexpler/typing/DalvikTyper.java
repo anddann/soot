@@ -92,7 +92,6 @@ import soot.jimple.InvokeStmt;
 import soot.jimple.LookupSwitchStmt;
 import soot.jimple.NewArrayExpr;
 import soot.jimple.NopStmt;
-import soot.jimple.NullConstant;
 import soot.jimple.RemExpr;
 import soot.jimple.RetStmt;
 import soot.jimple.ReturnStmt;
@@ -413,7 +412,7 @@ public class DalvikTyper implements IDalvikTyper {
     if (!todoUnits.isEmpty()) {
 
       // propagate array types
-      UnitGraph ug = new ExceptionalUnitGraph(b);
+      UnitGraph ug = new ExceptionalUnitGraph(b, myManager);
       SimpleLocalDefs sld = new SimpleLocalDefs(ug);
       SimpleLocalUses slu = new SimpleLocalUses(b, sld);
 

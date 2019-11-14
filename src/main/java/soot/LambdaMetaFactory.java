@@ -23,6 +23,8 @@ package soot;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,16 +62,18 @@ public final class LambdaMetaFactory {
   private Scene myScene;
   private Jimple myJimple;
   private LocalNameStandardizer myLocalNameStandardizer;
+  private PrimTypeCollector primTypeCollector;
 
   @Inject
-  public LambdaMetaFactory(Scene myScene, Jimple myJimple, LocalNameStandardizer myLocalNameStandardizer) {
+  public LambdaMetaFactory(Scene myScene, Jimple myJimple, LocalNameStandardizer myLocalNameStandardizer,
+      PrimTypeCollector primTypeCollector) {
     this.myJimple = myJimple;
     this.myLocalNameStandardizer = myLocalNameStandardizer;
+    this.primTypeCollector = primTypeCollector;
     uniq = 0;
     wrapper = new Wrapper();
     this.myScene = myScene;
   }
-
 
   /**
    * 
@@ -82,8 +85,8 @@ public final class LambdaMetaFactory {
    * @param name
    * @return
    */
-  public SootMethodRef makeLambdaHelper(List<? extends Value> bootstrapArgs, int tag, String name,
-      Type[] invokedType, SootClass enclosingClass) {
+  public SootMethodRef makeLambdaHelper(List<? extends Value> bootstrapArgs, int tag, String name, Type[] invokedType,
+      SootClass enclosingClass) {
     if (bootstrapArgs.size() < 3 || !(bootstrapArgs.get(0) instanceof MethodType)
         || !(bootstrapArgs.get(1) instanceof MethodHandle) || !(bootstrapArgs.get(2) instanceof MethodType)
         || (bootstrapArgs.size() > 3 && !(bootstrapArgs.get(3) instanceof IntConstant))) {
@@ -184,7 +187,7 @@ public final class LambdaMetaFactory {
 
     // additions from altMetafactory
     if (serializable) {
-      tclass.addInterface(RefType.v("java.io.Serializable",myScene).getSootClass());
+      tclass.addInterface(RefType.v("java.io.Serializable", myScene).getSootClass());
     }
     for (int i = 0; i < markerInterfaces.size(); i++) {
       tclass.addInterface(((RefType) AsmUtil.toBaseType(markerInterfaces.get(i).getValue())).getSootClass());
@@ -219,7 +222,8 @@ public final class LambdaMetaFactory {
     tboot.setSource(ms);
 
     // Constructor just copies the captures
-    SootMethod tctor = myScene.makeSootMethod("<init>", capTypes, VoidType.v(), Modifier.PUBLIC);
+    SootMethod tctor
+        = myScene.makeSootMethod("<init>", capTypes, myScene.getPrimTypeCollector().getVoidType(), Modifier.PUBLIC);
     tclass.addMethod(tctor);
     tctor.setSource(ms);
 
@@ -255,8 +259,8 @@ public final class LambdaMetaFactory {
   private void addDispatch(String name, SootClass tclass, MethodType implMethodType, MethodType instantiatedMethodType,
       List<SootField> capFields, MethodHandle implMethod) {
     ThunkMethodSource ms = new ThunkMethodSource(capFields, implMethodType, implMethod, instantiatedMethodType);
-    SootMethod m = myScene.makeSootMethod(name, implMethodType.getParameterTypes(), implMethodType.getReturnType(),
-        Modifier.PUBLIC);
+    SootMethod m
+        = myScene.makeSootMethod(name, implMethodType.getParameterTypes(), implMethodType.getReturnType(), Modifier.PUBLIC);
     tclass.addMethod(m);
     m.setSource(ms);
   }
@@ -275,14 +279,17 @@ public final class LambdaMetaFactory {
     private Map<RefType, SootMethod> primitiveValue;
 
     public Wrapper() {
-      PrimType[] tmp = { BooleanType.v(), ByteType.v(), CharType.v(), DoubleType.v(), FloatType.v(), IntType.v(),
-          LongType.v(), ShortType.v() };
+      PrimType[] tmp = { LambdaMetaFactory.this.primTypeCollector.getBooleanType(),
+          LambdaMetaFactory.this.primTypeCollector.getByteType(), LambdaMetaFactory.this.primTypeCollector.getCharType(),
+          LambdaMetaFactory.this.primTypeCollector.getDoubleType(), LambdaMetaFactory.this.primTypeCollector.getFloatType(),
+          LambdaMetaFactory.this.primTypeCollector.getIntType(), LambdaMetaFactory.this.primTypeCollector.getLongType(),
+          LambdaMetaFactory.this.primTypeCollector.getShortType() };
       wrapperTypes = new HashMap<>();
       primitiveTypes = new HashMap<>();
       valueOf = new HashMap<>();
       primitiveValue = new HashMap<>();
       for (PrimType primType : tmp) {
-        RefType wrapperType = primType.boxedType(myScene);
+        RefType wrapperType = primType.boxedType();
 
         wrapperTypes.put(wrapperType, primType);
         primitiveTypes.put(primType, wrapperType);
@@ -372,10 +379,9 @@ public final class LambdaMetaFactory {
       }
 
       // super java.lang.Object.<init>
-      us.add(myJimple
-          .newInvokeStmt(myJimple.newSpecialInvokeExpr(l,
-              myScene.makeConstructorRef(myScene.getObjectType().getSootClass(), Collections.<Type>emptyList()),
-              Collections.<Value>emptyList())));
+      us.add(myJimple.newInvokeStmt(myJimple.newSpecialInvokeExpr(l,
+          myScene.makeConstructorRef(myScene.getObjectType().getSootClass(), Collections.<Type>emptyList()),
+          Collections.<Value>emptyList())));
 
       // assign parameters to fields
       Iterator<Local> localItr = capLocals.iterator();
@@ -406,8 +412,8 @@ public final class LambdaMetaFactory {
       Local l = lc.generateLocal(tclass.getType());
       Value val = myJimple.newNewExpr(tclass.getType());
       us.add(myJimple.newAssignStmt(l, val));
-      us.add(myJimple
-          .newInvokeStmt(myJimple.newSpecialInvokeExpr(l, myScene.makeConstructorRef(tclass, capTypes), capValues)));
+      us.add(
+          myJimple.newInvokeStmt(myJimple.newSpecialInvokeExpr(l, myScene.makeConstructorRef(tclass, capTypes), capValues)));
       us.add(myJimple.newReturnStmt(l));
     }
 
@@ -564,7 +570,7 @@ public final class LambdaMetaFactory {
      */
     private Local box(Local fromLocal, JimpleBody jb, PatchingChain<Unit> us, LocalGenerator lc) {
       PrimType primitiveType = (PrimType) fromLocal.getType();
-      RefType wrapperType = primitiveType.boxedType(myScene);
+      RefType wrapperType = primitiveType.boxedType();
 
       SootMethod valueOfMethod = wrapper.valueOf.get(primitiveType);
 
@@ -667,11 +673,12 @@ public final class LambdaMetaFactory {
     private void invokeImplMethod(JimpleBody jb, PatchingChain<Unit> us, LocalGenerator lc, List<Local> args) {
       Value value = _invokeImplMethod(jb, us, lc, args);
 
-      if (value instanceof InvokeExpr && soot.VoidType.v().equals(implMethod.getMethodRef().getReturnType())) {
+      if (value instanceof InvokeExpr
+          && LambdaMetaFactory.this.primTypeCollector.getVoidType().equals(implMethod.getMethodRef().getReturnType())) {
         // implementation method is void
         us.add(myJimple.newInvokeStmt(value));
         us.add(myJimple.newReturnVoidStmt());
-      } else if (soot.VoidType.v().equals(implMethodType.getReturnType())) {
+      } else if (LambdaMetaFactory.this.primTypeCollector.getVoidType().equals(implMethodType.getReturnType())) {
         // dispatch method is void
         us.add(myJimple.newInvokeStmt(value));
         us.add(myJimple.newReturnVoidStmt());

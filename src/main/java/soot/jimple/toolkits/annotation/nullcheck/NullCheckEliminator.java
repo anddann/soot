@@ -72,7 +72,7 @@ public class NullCheckEliminator extends BodyTransformer {
     do {
       changed = false;
 
-      NullnessAnalysis analysis = analysisFactory.newAnalysis(new ExceptionalUnitGraph(body));
+      NullnessAnalysis analysis = analysisFactory.newAnalysis(new ExceptionalUnitGraph(body, myManager));
 
       Chain<Unit> units = body.getUnits();
       Stmt s;

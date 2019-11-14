@@ -28,6 +28,7 @@ import java.util.Map;
 
 import soot.Unit;
 import soot.toolkits.graph.DirectedGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 
 /**
  * Abstract class providing functionality for branched flow analysis.
@@ -41,8 +42,8 @@ public abstract class BranchedFlowAnalysis<N extends Unit, A> extends AbstractFl
   protected Map<Unit, List<A>> unitToAfterFallFlow;
   protected Map<Unit, List<A>> unitToAfterBranchFlow;
 
-  public BranchedFlowAnalysis(DirectedGraph<N> graph) {
-    super(graph);
+  public BranchedFlowAnalysis(DirectedGraph<N> graph, boolean interaticveMode, InteractionHandler myInteractionHandler) {
+    super(graph,interaticveMode,myInteractionHandler);
 
     unitToAfterFallFlow = new HashMap<Unit, List<A>>(graph.size() * 2 + 1, 0.7f);
     unitToAfterBranchFlow = new HashMap<Unit, List<A>>(graph.size() * 2 + 1, 0.7f);

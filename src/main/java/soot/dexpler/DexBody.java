@@ -873,7 +873,7 @@ public class DexBody {
 
   protected LocalSplitter getLocalSplitter() {
     if (this.localSplitter == null) {
-      this.localSplitter = new LocalSplitter(myOptions, myDalvikThrowAnalysis, myScene);
+      this.localSplitter = new LocalSplitter(myOptions, myDalvikThrowAnalysis, myScene, myPhaseDumper);
     }
     return this.localSplitter;
   }

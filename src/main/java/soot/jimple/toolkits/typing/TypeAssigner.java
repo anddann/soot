@@ -42,7 +42,6 @@ import soot.BodyTransformer;
 import soot.ByteType;
 import soot.CharType;
 import soot.ErroneousType;
-import soot.G;
 import soot.Local;
 import soot.NullType;
 import soot.PhaseOptions;
@@ -71,26 +70,25 @@ import soot.options.JBTROptions;
  */
 public class TypeAssigner extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(TypeAssigner.class);
-  private static PhaseOptions myPhaseOptions;
   private Options myOptions;
   private Scene myScene;
   private BodyTransformer myConstantPropagatorAndFolder;
   private BodyTransformer myDeadAssignmentEliminator;
   private BodyTransformer myUnusedLocalEliminator;
+  private PhaseOptions myPhaseOptions;
 
   @Inject
   public TypeAssigner(Options myOptions, Scene myScene, BodyTransformer myConstantPropagatorAndFolder,
-      BodyTransformer myDeadAssignmentEliminator, BodyTransformer myUnusedLocalEliminator) {
+                      BodyTransformer myDeadAssignmentEliminator, BodyTransformer myUnusedLocalEliminator, PhaseOptions myPhaseOptions) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myConstantPropagatorAndFolder = myConstantPropagatorAndFolder;
     this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
     this.myUnusedLocalEliminator = myUnusedLocalEliminator;
+    this.myPhaseOptions = myPhaseOptions;
   }
 
-  public static TypeAssigner v() {
-    return G.v().soot_jimple_toolkits_typing_TypeAssigner();
-  }
+
 
   /** Assign types to local variables. * */
   @Override
@@ -277,8 +275,8 @@ public class TypeAssigner extends BodyTransformer {
     {
       Iterator<Local> localIt = b.getLocals().iterator();
 
-      final UnknownType unknownType = UnknownType.v();
-      final ErroneousType errornousType = ErroneousType.v();
+      final UnknownType unknownType = myScene.getPrimTypeCollector().getUnknownType();
+      final ErroneousType errornousType = myScene.getPrimTypeCollector().getErrornousType();
       while (localIt.hasNext()) {
         Local l = localIt.next();
 

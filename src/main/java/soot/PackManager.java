@@ -242,6 +242,7 @@ public class PackManager {
   private TrapSplitter myTrapSplitter;
   private Jimple myJimple;
   private ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer;
+  private UnreachableMethodTransformer myUnreachableMethodTransformer;
 
   @Inject
   public PackManager(PhaseOptions myPhaseOptions, FieldTagger myFieldTagger, Options myOptions,
@@ -277,7 +278,8 @@ public class PackManager {
       Dava myDava, Baf myBaf, Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter,
       NullCheckEliminator myNullCheckEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer,
       EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter, Jimple myJimple,
-      ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer) {
+      ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer,
+      UnreachableMethodTransformer myUnreachableMethodTransformer) {
     this.myPhaseOptions = myPhaseOptions;
     this.myOptions = myOptions;
     // myPhaseOptions.setPackManager(this);
@@ -363,6 +365,7 @@ public class PackManager {
     this.myTrapSplitter = myTrapSplitter;
     this.myJimple = myJimple;
     this.myConstantInitializerToTagTransformer = myConstantInitializerToTagTransformer;
+    this.myUnreachableMethodTransformer = myUnreachableMethodTransformer;
     init();
   }
 
@@ -442,9 +445,9 @@ public class PackManager {
     // Whole-Jimple transformation pack
     addPack(p = new ScenePack("wjtp", myPhaseOptions));
     {
-      p.add(new Transform("wjtp.mhp", myMhpTransformer,myOptions,myPhaseOptions,myPhaseDumper));
-      p.add(new Transform("wjtp.tn", myLockAllocator,myOptions,myPhaseOptions,myPhaseDumper));
-      p.add(new Transform("wjtp.rdc", myRenameDuplicatedClasses,myOptions,myPhaseOptions,myPhaseDumper));
+      p.add(new Transform("wjtp.mhp", myMhpTransformer, myOptions, myPhaseOptions, myPhaseDumper));
+      p.add(new Transform("wjtp.tn", myLockAllocator, myOptions, myPhaseOptions, myPhaseDumper));
+      p.add(new Transform("wjtp.rdc", myRenameDuplicatedClasses, myOptions, myPhaseOptions, myPhaseDumper));
     }
 
     // Whole-Jimple Optimization pack
@@ -514,7 +517,7 @@ public class PackManager {
       p.add(new Transform("jap.rdtagger", myReachingDefsTagger, myOptions, myPhaseOptions, myPhaseDumper));
       p.add(new Transform("jap.lvtagger", myLiveVarsTagger, myOptions, myPhaseOptions, myPhaseDumper));
       p.add(new Transform("jap.che", myCastCheckEliminatorDumper, myOptions, myPhaseOptions, myPhaseDumper));
-      p.add(new Transform("jap.umt", new UnreachableMethodTransformer()));
+      p.add(new Transform("jap.umt", myUnreachableMethodTransformer, myOptions, myPhaseOptions, myPhaseDumper));
       p.add(new Transform("jap.lit", myLoopInvariantFinder, myOptions, myPhaseOptions, myPhaseDumper));
       p.add(new Transform("jap.aet", myAvailExprTagger, myOptions, myPhaseOptions, myPhaseDumper));
       p.add(new Transform("jap.dmt", myDominatorsTagger, myOptions, myPhaseOptions, myPhaseDumper));
@@ -529,10 +532,10 @@ public class PackManager {
     // Grimp body creation
     addPack(p = new BodyPack("gb", myPhaseOptions, myOptions, myInteractionHandler));
     {
-      p.add(new Transform("gb.a1", myAggregator,myOptions,myPhaseOptions,myPhaseDumper));
-      p.add(new Transform("gb.cf", myConstructorFolder,myOptions,myPhaseOptions,myPhaseDumper));
-      p.add(new Transform("gb.a2", myAggregator,myOptions,myPhaseOptions,myPhaseDumper));
-      p.add(new Transform("gb.ule", myUnusedLocalEliminator,myOptions,myPhaseOptions,myPhaseDumper));
+      p.add(new Transform("gb.a1", myAggregator, myOptions, myPhaseOptions, myPhaseDumper));
+      p.add(new Transform("gb.cf", myConstructorFolder, myOptions, myPhaseOptions, myPhaseDumper));
+      p.add(new Transform("gb.a2", myAggregator, myOptions, myPhaseOptions, myPhaseDumper));
+      p.add(new Transform("gb.ule", myUnusedLocalEliminator, myOptions, myPhaseOptions, myPhaseDumper));
     }
 
     // Grimp optimization pack
@@ -1223,7 +1226,7 @@ public class PackManager {
       // PackmyManager.getPack("cfg").apply(m.retrieveActiveBody());
 
       if (produceGrimp) {
-        m.setActiveBody(myGrimp.newBody(m.getActiveBody(), "gb"));
+        m.setActiveBody(myGrimp.newBody(m.getActiveBody(), "gb", myOptions, myPrinter, myGrimp, this));
         getPack("gop").apply(m.getActiveBody());
       } else if (produceBaf) {
         m.setActiveBody(convertJimpleBodyToBaf(m));
@@ -1403,7 +1406,7 @@ public class PackManager {
     if (c.containsBafBody()) {
       return new soot.baf.JasminClass(c);
     } else {
-      return new soot.jimple.JasminClass(c);
+      return new soot.jimple.JasminClass(c, myOptions);
     }
   }
 
@@ -1417,7 +1420,7 @@ public class PackManager {
    */
   protected BafASMBackend createASMBackend(SootClass c) {
     int java_version = myOptions.java_version();
-    return new BafASMBackend(c, java_version, myScene);
+    return new BafASMBackend(c, java_version, myScene, myOptions, myScene.getPrimTypeCollector());
   }
 
   private void postProcessXML(Iterator<SootClass> classes) {

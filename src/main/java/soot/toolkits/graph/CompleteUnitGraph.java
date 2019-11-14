@@ -23,7 +23,6 @@ package soot.toolkits.graph;
  */
 
 import soot.Body;
-import soot.toolkits.exceptions.PedanticThrowAnalysis;
 
 /**
  * <p>
@@ -57,6 +56,6 @@ import soot.toolkits.exceptions.PedanticThrowAnalysis;
  */
 public class CompleteUnitGraph extends ExceptionalUnitGraph {
   public CompleteUnitGraph(Body b) {
-    super(b, myPedanticThrowAnalysis, false);
+    super(b, myPedanticThrowAnalysis, false, myManager, myPhaseDumper);
   }
 }

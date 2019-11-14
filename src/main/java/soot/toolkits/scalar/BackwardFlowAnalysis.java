@@ -23,6 +23,7 @@ package soot.toolkits.scalar;
  */
 
 import soot.toolkits.graph.DirectedGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 
 /**
  * Abstract class that provides the fixed point iteration functionality required by all BackwardFlowAnalyses.
@@ -31,8 +32,8 @@ public abstract class BackwardFlowAnalysis<N, A> extends FlowAnalysis<N, A> {
   /**
    * Construct the analysis from a DirectedGraph representation of a Body.
    */
-  public BackwardFlowAnalysis(DirectedGraph<N> graph) {
-    super(graph);
+  public BackwardFlowAnalysis(DirectedGraph<N> graph, boolean interaticveMode, InteractionHandler myInteractionHandler) {
+    super(graph, interaticveMode, myInteractionHandler);
   }
 
   /**

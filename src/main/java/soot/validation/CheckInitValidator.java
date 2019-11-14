@@ -44,7 +44,7 @@ public class CheckInitValidator implements BodyValidator {
 
   @Override
   public void validate(Body body, List<ValidationException> exception) {
-    ExceptionalUnitGraph g = new ExceptionalUnitGraph(body, ThrowAnalysisFactory.checkInitThrowAnalysis(), false);
+    ExceptionalUnitGraph g = new ExceptionalUnitGraph(body, ThrowAnalysisFactory.checkInitThrowAnalysis(), false, myManager, myPhaseDumper);
 
     InitAnalysis analysis = new InitAnalysis(g);
     for (Unit s : body.getUnits()) {

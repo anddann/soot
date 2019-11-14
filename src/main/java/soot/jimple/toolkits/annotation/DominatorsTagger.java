@@ -29,8 +29,6 @@ import java.util.Map;
 import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
-import soot.Singletons;
 import soot.jimple.Stmt;
 import soot.tagkit.LinkTag;
 import soot.toolkits.graph.ExceptionalUnitGraph;
@@ -48,7 +46,7 @@ public class DominatorsTagger extends BodyTransformer {
 
   protected void internalTransform(Body b, String phaseName, Map opts) {
 
-    MHGDominatorsFinder analysis = new MHGDominatorsFinder(new ExceptionalUnitGraph(b));
+    MHGDominatorsFinder analysis = new MHGDominatorsFinder(new ExceptionalUnitGraph(b, myManager));
     Iterator it = b.getUnits().iterator();
     while (it.hasNext()) {
       Stmt s = (Stmt) it.next();

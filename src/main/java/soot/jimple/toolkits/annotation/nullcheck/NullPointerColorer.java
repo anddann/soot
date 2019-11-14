@@ -31,9 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
 import soot.RefLikeType;
-import soot.Singletons;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
@@ -55,7 +53,7 @@ public class NullPointerColorer extends BodyTransformer {
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
 
-    BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(b));
+    BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(b, myManager));
 
     Iterator<Unit> it = b.getUnits().iterator();
 

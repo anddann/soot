@@ -38,7 +38,6 @@ import soot.TrapManager;
 import soot.Unit;
 import soot.UnitBox;
 import soot.UnitPatchingChain;
-import soot.options.Options;
 import soot.shimple.PhiExpr;
 import soot.shimple.Shimple;
 import soot.shimple.ShimpleBody;
@@ -63,7 +62,6 @@ public class SPatchingChain extends UnitPatchingChain {
   public SPatchingChain(Body aBody, Chain<Unit> aChain) {
     super(aChain);
     this.body = aBody;
-    this.debug = myOptions.debug();
     if (aBody instanceof ShimpleBody) {
       debug |= ((ShimpleBody) aBody).getOptions().debug();
     }
@@ -150,8 +148,8 @@ public class SPatchingChain extends UnitPatchingChain {
             // transformation that moves/removes/modifies
             // a Unit pointed at by a PiExpr knows what
             // it's doing.
-            if (!boxToPhiNode.containsKey(box) && debug) {
-              throw new RuntimeException("SPatchingChain has pointers from a Phi node that has never been seen.");
+            if (!boxToPhiNode.containsKey(box)) {
+              logger.error("SPatchingChain has pointers from a Phi node that has never been seen.");
             }
           }
 
@@ -162,9 +160,8 @@ public class SPatchingChain extends UnitPatchingChain {
             // maybe the user forgot to clearUnitBoxes()
             // when removing a Phi node, or the user removed
             // a Phi node and hasn't put it back yet
-            if (debug) {
-              logger.warn("Orphaned UnitBox to " + unit + "?  SPatchingChain will not move the pointer.");
-            }
+              logger.debug("Orphaned UnitBox to " + unit + "?  SPatchingChain will not move the pointer.");
+
             continue;
           }
         }

@@ -48,12 +48,24 @@ public abstract class AbstractFlowAnalysis<N, A> {
 
   /** The graph being analysed. */
   protected DirectedGraph<N> graph;
+  private final boolean interaticveMode;
+  private final InteractionHandler myInteractionHandler;
+
+  public boolean isInteraticveMode() {
+    return interaticveMode;
+  }
+
+  public InteractionHandler getMyInteractionHandler() {
+    return myInteractionHandler;
+  }
 
   /** Constructs a flow analysis on the given <code>DirectedGraph</code>. */
-  public AbstractFlowAnalysis(DirectedGraph<N> graph) {
+  public AbstractFlowAnalysis(DirectedGraph<N> graph, boolean interaticveMode, InteractionHandler myInteractionHandler) {
     unitToBeforeFlow = new IdentityHashMap<N, A>(graph.size() * 2 + 1);
     this.graph = graph;
-    if (myOptions.interactive_mode()) {
+    this.interaticveMode = interaticveMode;
+    this.myInteractionHandler = myInteractionHandler;
+    if (interaticveMode) {
       myInteractionHandler.handleCfgEvent(graph);
     }
   }

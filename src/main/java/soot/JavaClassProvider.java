@@ -23,6 +23,7 @@ package soot;
  */
 
 import soot.javaToJimple.InitialResolver;
+import soot.jimple.Jimple;
 import soot.options.Options;
 
 /**
@@ -54,9 +55,9 @@ public class JavaClassProvider implements ClassProvider {
   /**
    * Look for the specified class. Return a ClassSource for it if found, or null if it was not found.
    */
-  public ClassSource find(String className) {
+  public ClassSource find(String className, Scene myScene,  Options myOptions, SootResolver mySootResolver) {
 
-    if (myOptions.polyglot() && myInitialResolver.hasASTForSootName(className)) {
+    if (this.myOptions.polyglot() && myInitialResolver.hasASTForSootName(className)) {
       myInitialResolver.setASTForSootName(className);
       return new JavaClassSource(className);
     } else { // jastAdd; or polyglot AST not yet produced

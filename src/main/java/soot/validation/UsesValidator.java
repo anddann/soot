@@ -77,7 +77,7 @@ public class UsesValidator implements BodyValidator {
     // "remove-unreachable-traps" option to true.
 
     ThrowAnalysis throwAnalysis = myPedanticThrowAnalysis;
-    UnitGraph g = new ExceptionalUnitGraph(body, throwAnalysis, false);
+    UnitGraph g = new ExceptionalUnitGraph(body, throwAnalysis, false, myManager, myPhaseDumper);
     LocalDefs ld = LocalDefs.Factory.newLocalDefs(g, true);
 
     Collection<Local> locals = body.getLocals();

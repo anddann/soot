@@ -143,7 +143,7 @@ public class CopyPropagator extends BodyTransformer {
     }
 
     // Go through the definitions, building the webs
-    UnitGraph graph = new ExceptionalUnitGraph(stmtBody, throwAnalysis, forceOmitExceptingUnitEdges);
+    UnitGraph graph = new ExceptionalUnitGraph(stmtBody, throwAnalysis, forceOmitExceptingUnitEdges, myManager, myPhaseDumper);
 
     LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(graph);
 

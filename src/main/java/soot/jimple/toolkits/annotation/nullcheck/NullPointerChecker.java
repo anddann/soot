@@ -98,7 +98,7 @@ public class NullPointerChecker extends BodyTransformer {
         logger.debug("[npc] Null pointer check for " + body.getMethod().getName() + " started on " + start);
       }
 
-      BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(body));
+      BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(body, myManager));
 
       SootClass counterClass = null;
       SootMethod increase = null;

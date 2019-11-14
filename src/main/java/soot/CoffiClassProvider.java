@@ -22,23 +22,29 @@ package soot;
  * #L%
  */
 
+import soot.coffi.Util;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * A class provider looks for a file of a specific format for a specified class, and returns a ClassSource for it if it finds
  * it.
  */
 public class CoffiClassProvider implements ClassProvider {
 
+  private SourceLocator mySourceLocator;
+  private Util myCoffiUtil;
 
-    private SourceLocator mySourceLocator;
+  public CoffiClassProvider(SourceLocator mySourceLocator, Util myCoffiUtil) {
 
-    public CoffiClassProvider(SourceLocator mySourceLocator){
+    this.mySourceLocator = mySourceLocator;
+    this.myCoffiUtil = myCoffiUtil;
+  }
 
-        this.mySourceLocator = mySourceLocator;
-    }
   /**
    * Look for the specified class. Return a ClassSource for it if found, or null if it was not found.
    */
-  public ClassSource find(String className) {
+  public ClassSource find(String className, Scene myScene,  Options myOptions, SootResolver mySootResolver) {
     String fileName = className.replace('.', '/') + ".class";
     FoundFile file = mySourceLocator.lookupInClassPath(fileName);
     if (file == null) {

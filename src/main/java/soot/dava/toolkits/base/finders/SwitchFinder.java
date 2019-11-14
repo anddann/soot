@@ -53,9 +53,6 @@ public class SwitchFinder implements FactFinder {
         this.myDava = myDava;
     }
 
-    public static SwitchFinder v() {
-    return G.v().soot_dava_toolkits_base_finders_SwitchFinder();
-  }
 
   private IterableSet junkBody;
   private HashSet targetSet;

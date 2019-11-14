@@ -36,7 +36,6 @@ import java.util.Set;
 import soot.Body;
 import soot.RefType;
 import soot.Scene;
-import soot.Timers;
 import soot.Trap;
 import soot.Unit;
 import soot.Value;
@@ -56,6 +55,7 @@ import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.util.ArraySet;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 /**
  * <p>
@@ -100,6 +100,7 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
   protected Map<Unit, Collection<ExceptionDest>> unitToExceptionDests;
 
   protected ThrowAnalysis throwAnalysis; // Cached reference to the
+  private ThrowableSet.Manager myManager;
 
   // analysis used to generate this
   // graph, for generating responses
@@ -110,57 +111,60 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
   /**
    * Constructs the graph for a given Body instance, using the <code>ThrowAnalysis</code> and
    * <code>omitExceptingUnitEdges</code> value that are passed as parameters.
-   *
    * @param body
    *          the <code>Body</code> from which to build a graph.
    *
    * @param throwAnalysis
    *          the source of information about the exceptions which each {@link Unit} may throw.
-   *
    * @param omitExceptingUnitEdges
-   *          indicates whether the CFG should omit edges to a handler from trapped <code>Unit</code>s which may implicitly
-   *          throw an exception which the handler catches but which have no potential side effects. The CFG will contain
-   *          edges to the handler from all predecessors of <code>Unit</code>s which may implicitly throw a caught exception
-   *          regardless of the setting for this parameter. If this parameter is <code>false</code>, there will also be edges
-   *          to the handler from all the potentially excepting <code>Unit</code>s themselves. If this parameter is
-   *          <code>true</code>, there will be edges to the handler from the excepting <code>Unit</code>s themselves only if
-   *          they have potential side effects (or if they are themselves the predecessors of other potentially excepting
-   *          <code>Unit</code>s). A setting of <code>true</code> produces CFGs which allow for more precise analyses, since
-   *          a <code>Unit</code> without side effects has no effect on the computational state when it throws an exception.
-   *          Use settings of <code>false</code> for compatibility with more conservative analyses, or to cater to
-   *          conservative bytecode verifiers.
-   */
-  public ExceptionalUnitGraph(Body body, ThrowAnalysis throwAnalysis, boolean omitExceptingUnitEdges) {
+ *          indicates whether the CFG should omit edges to a handler from trapped <code>Unit</code>s which may implicitly
+ *          throw an exception which the handler catches but which have no potential side effects. The CFG will contain
+ *          edges to the handler from all predecessors of <code>Unit</code>s which may implicitly throw a caught exception
+ *          regardless of the setting for this parameter. If this parameter is <code>false</code>, there will also be edges
+ *          to the handler from all the potentially excepting <code>Unit</code>s themselves. If this parameter is
+ *          <code>true</code>, there will be edges to the handler from the excepting <code>Unit</code>s themselves only if
+ *          they have potential side effects (or if they are themselves the predecessors of other potentially excepting
+ *          <code>Unit</code>s). A setting of <code>true</code> produces CFGs which allow for more precise analyses, since
+ *          a <code>Unit</code> without side effects has no effect on the computational state when it throws an exception.
+ *          Use settings of <code>false</code> for compatibility with more conservative analyses, or to cater to
+   * @param myManager
+   * @param myPhaseDumper
+   * */
+  public ExceptionalUnitGraph(Body body, ThrowAnalysis throwAnalysis, boolean omitExceptingUnitEdges, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
     super(body);
-    initialize(throwAnalysis, omitExceptingUnitEdges);
+    this.myManager = myManager;
+    initialize(throwAnalysis, omitExceptingUnitEdges, myPhaseDumper);
   }
 
   /**
    * Constructs the graph from a given Body instance using the passed {@link ThrowAnalysis} and a default value, provided by
    * the {@link Options} class, for the <code>omitExceptingUnitEdges</code> parameter.
-   *
    * @param body
    *          the {@link Body} from which to build a graph.
    *
    * @param throwAnalysis
    *          the source of information about the exceptions which each {@link Unit} may throw.
+   * @param myManager
+   * @param myPhaseDumper
    *
    */
-  public ExceptionalUnitGraph(Body body, ThrowAnalysis throwAnalysis) {
-    this(body, throwAnalysis, myOptions.omit_excepting_unit_edges());
+  public ExceptionalUnitGraph(Body body, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, boolean omit_excepting_unit_edges, PhaseDumper myPhaseDumper) {
+    this(body, throwAnalysis, omit_excepting_unit_edges, myManager, myPhaseDumper);
   }
 
   /**
    * Constructs the graph from a given Body instance, using the {@link Scene} 's default {@link ThrowAnalysis} to estimate
    * the set of exceptions that each {@link Unit} might throw and a default value, provided by the {@link Options} class, for
    * the <code>omitExceptingUnitEdges</code> parameter.
-   *
    * @param body
    *          the <code>Body</code> from which to build a graph.
+   * @param myManager
+   * @param myPhaseDumper
+   * @param myScene
    *
    */
-  public ExceptionalUnitGraph(Body body) {
-    this(body, myScene.getDefaultThrowAnalysis(), myOptions.omit_excepting_unit_edges());
+  public ExceptionalUnitGraph(Body body, ThrowableSet.Manager myManager, boolean omit_excepting_unit_edges, PhaseDumper myPhaseDumper, Scene myScene) {
+    this(body, myScene.getDefaultThrowAnalysis(), omit_excepting_unit_edges, myManager, myPhaseDumper);
   }
 
   /**
@@ -170,7 +174,7 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
    * actually creating the graph edges (because, for example, the subclass overrides a utility method like
    * {@link #buildExceptionDests(ThrowAnalysis)} or {@link #buildExceptionalEdges(ThrowAnalysis, Map, Map, Map, boolean)}
    * with a replacement method that depends on additional parameters passed to the subclass's constructor). The subclass
-   * constructor is responsible for calling {@link #initialize(ThrowAnalysis, boolean)}, or otherwise performing the
+   * constructor is responsible for calling {@link #initialize(ThrowAnalysis, boolean, PhaseDumper)}, or otherwise performing the
    * initialization required to implement <code>ExceptionalUnitGraph</code>'s interface.
    * </p>
    *
@@ -179,37 +183,37 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
    * designed for inheritance; code that uses the <code>protected</code> members of this class may need to be rewritten for
    * each new Soot release.
    * </p>
-   *
-   * @param body
+   *  @param body
    *          the <code>Body</code> from which to build a graph.
    *
    * @param ignoredBogusParameter
    *          a meaningless placeholder, which exists solely to distinguish this constructor from the public
-   *          {@link #ExceptionalUnitGraph(Body)} constructor.
+   *          {@link #ExceptionalUnitGraph(Body, ThrowableSet.Manager)} constructor.
+   * @param myManager
    */
-  protected ExceptionalUnitGraph(Body body, boolean ignoredBogusParameter) {
+  protected ExceptionalUnitGraph(Body body, boolean ignoredBogusParameter, ThrowableSet.Manager myManager) {
     super(body);
+    this.myManager = myManager;
   }
 
   /**
    * Performs the real work of constructing an <code>ExceptionalUnitGraph</code>, factored out of the constructors so that
    * subclasses have the option to delay creating the graph's edges until after they have performed some subclass-specific
    * initialization.
-   *
-   * @param throwAnalysis
+   *  @param throwAnalysis
    *          the source of information about the exceptions which each {@link Unit} may throw.
    *
    * @param omitExceptingUnitEdges
    *          indicates whether the CFG should omit edges to a handler from trapped <code>Unit</code>s which may throw an
-   *          exception which the handler catches but which have no potential side effects.
+   * @param myPhaseDumper
    */
-  protected void initialize(ThrowAnalysis throwAnalysis, boolean omitExceptingUnitEdges) {
+  protected void initialize(ThrowAnalysis throwAnalysis, boolean omitExceptingUnitEdges, PhaseDumper myPhaseDumper) {
     int size = unitChain.size();
     Set<Unit> trapUnitsThatAreHeads = Collections.emptySet();
 
-    if (myOptions.time()) {
-      myTimers.graphTimer.start();
-    }
+//    if (myOptions.time()) {
+//      myTimers.graphTimer.start();
+//    }
 
     unitToUnexceptionalSuccs = new LinkedHashMap<Unit, List<Unit>>(size * 2 + 1, 0.7f);
     unitToUnexceptionalPreds = new LinkedHashMap<Unit, List<Unit>>(size * 2 + 1, 0.7f);
@@ -240,9 +244,9 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
 
     buildHeadsAndTails(trapUnitsThatAreHeads);
 
-    if (myOptions.time()) {
-      myTimers.graphTimer.end();
-    }
+//    if (myOptions.time()) {
+//      myTimers.graphTimer.end();
+//    }
 
     myPhaseDumper.dumpGraph(this);
   }
@@ -288,7 +292,7 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
         }
 
         ThrowableSet.Pair catchableAs = thrownSet.whichCatchableAs(catcher);
-        if (unit.equals(trap.getBeginUnit()) || !catchableAs.getCaught().equals(ThrowableSet.myManager.EMPTY)) {
+        if (unit.equals(trap.getBeginUnit()) || !catchableAs.getCaught().equals(myManager.EMPTY)) {
           result = addDestToMap(result, unit, trap, catchableAs.getCaught());
           unitToUncaughtThrowables.put(unit, catchableAs.getUncaught());
         } else {
@@ -304,7 +308,7 @@ public class ExceptionalUnitGraph extends UnitGraph implements ExceptionalGraph<
     for (Map.Entry<Unit, ThrowableSet> entry : unitToUncaughtThrowables.entrySet()) {
       Unit unit = entry.getKey();
       ThrowableSet escaping = entry.getValue();
-      if (escaping != ThrowableSet.myManager.EMPTY) {
+      if (escaping != myManager.EMPTY) {
         result = addDestToMap(result, unit, null, escaping);
       }
     }

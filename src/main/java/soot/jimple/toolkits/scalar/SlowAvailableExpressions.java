@@ -52,7 +52,7 @@ public class SlowAvailableExpressions implements AvailableExpressions {
 
   /** Wrapper for SlowAvailableExpressionsAnalysis. */
   public SlowAvailableExpressions(Body b) {
-    SlowAvailableExpressionsAnalysis analysis = new SlowAvailableExpressionsAnalysis(new ExceptionalUnitGraph(b));
+    SlowAvailableExpressionsAnalysis analysis = new SlowAvailableExpressionsAnalysis(new ExceptionalUnitGraph(b, myManager));
 
     // Build unitToExprs map
     {

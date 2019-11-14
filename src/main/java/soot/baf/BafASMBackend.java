@@ -49,6 +49,7 @@ import soot.Local;
 import soot.LongType;
 import soot.NullType;
 import soot.PolymorphicMethodRef;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Scene;
 import soot.ShortType;
@@ -94,6 +95,9 @@ public class BafASMBackend extends AbstractASMBackend {
   // Contains one Label for every Unit that is the target of a branch or jump
   protected final Map<Unit, Label> branchTargetLabels = new HashMap<Unit, Label>();
   private final Scene myScene;
+  private Options myOptions;
+  private PrimTypeCollector primTypeCollector;
+
 
   /**
    * Returns the ASM Label for a given Unit that is the target of a branch or jump
@@ -112,16 +116,18 @@ public class BafASMBackend extends AbstractASMBackend {
 
   /**
    * Creates a new BafASMBackend with a given enforced java version
-   *
-   * @param sc
+   *  @param sc
    *          The SootClass the bytecode is to be generated for
    * @param javaVersion
    *          A particular Java version enforced by the user, may be 0 for automatic detection, must not be lower than
-   *          necessary for all features used
+   * @param myOptions
+   * @param primTypeCollector
    */
-  public BafASMBackend(SootClass sc, int javaVersion, Scene myScene) {
-    super(sc, javaVersion);
+  public BafASMBackend(SootClass sc, int javaVersion, Scene myScene, Options myOptions, PrimTypeCollector primTypeCollector) {
+    super(sc, javaVersion, myOptions, myPackManager);
     this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.primTypeCollector = primTypeCollector;
   }
 
   /*
@@ -1244,11 +1250,11 @@ public class BafASMBackend extends AbstractASMBackend {
 
           @Override
           public void caseDoubleType(DoubleType t) {
-            if (to.equals(IntType.v())) {
+            if (to.equals(primTypeCollector.getIntType())) {
               mv.visitInsn(Opcodes.D2I);
-            } else if (to.equals(LongType.v())) {
+            } else if (to.equals(primTypeCollector.getLongType())) {
               mv.visitInsn(Opcodes.D2L);
-            } else if (to.equals(FloatType.v())) {
+            } else if (to.equals(primTypeCollector.getFloatType())) {
               mv.visitInsn(Opcodes.D2F);
             } else {
               throw new RuntimeException("invalid to-type from double");
@@ -1257,11 +1263,11 @@ public class BafASMBackend extends AbstractASMBackend {
 
           @Override
           public void caseFloatType(FloatType t) {
-            if (to.equals(IntType.v())) {
+            if (to.equals(primTypeCollector.getIntType())) {
               mv.visitInsn(Opcodes.F2I);
-            } else if (to.equals(LongType.v())) {
+            } else if (to.equals(primTypeCollector.getLongType())) {
               mv.visitInsn(Opcodes.F2L);
-            } else if (to.equals(DoubleType.v())) {
+            } else if (to.equals(primTypeCollector.getDoubleType())) {
               mv.visitInsn(Opcodes.F2D);
             } else {
               throw new RuntimeException("invalid to-type from float");
@@ -1275,11 +1281,11 @@ public class BafASMBackend extends AbstractASMBackend {
 
           @Override
           public void caseLongType(LongType t) {
-            if (to.equals(IntType.v())) {
+            if (to.equals(primTypeCollector.getIntType())) {
               mv.visitInsn(Opcodes.L2I);
-            } else if (to.equals(FloatType.v())) {
+            } else if (to.equals(primTypeCollector.getFloatType())) {
               mv.visitInsn(Opcodes.L2F);
-            } else if (to.equals(DoubleType.v())) {
+            } else if (to.equals(primTypeCollector.getDoubleType())) {
               mv.visitInsn(Opcodes.L2D);
             } else {
               throw new RuntimeException("invalid to-type from long");
@@ -1297,20 +1303,20 @@ public class BafASMBackend extends AbstractASMBackend {
           }
 
           private void emitIntToTypeCast() {
-            if (to.equals(ByteType.v())) {
+            if (to.equals(primTypeCollector.getByteType())) {
               mv.visitInsn(Opcodes.I2B);
-            } else if (to.equals(CharType.v())) {
+            } else if (to.equals(primTypeCollector.getCharType())) {
               mv.visitInsn(Opcodes.I2C);
-            } else if (to.equals(ShortType.v())) {
+            } else if (to.equals(primTypeCollector.getShortType())) {
               mv.visitInsn(Opcodes.I2S);
-            } else if (to.equals(FloatType.v())) {
+            } else if (to.equals(primTypeCollector.getFloatType())) {
               mv.visitInsn(Opcodes.I2F);
-            } else if (to.equals(LongType.v())) {
+            } else if (to.equals(primTypeCollector.getLongType())) {
               mv.visitInsn(Opcodes.I2L);
-            } else if (to.equals(DoubleType.v())) {
+            } else if (to.equals(primTypeCollector.getDoubleType())) {
               mv.visitInsn(Opcodes.I2D);
-            } else if (to.equals(IntType.v())) {
-            } else if (to.equals(BooleanType.v())) {
+            } else if (to.equals(primTypeCollector.getIntType())) {
+            } else if (to.equals(primTypeCollector.getBooleanType())) {
             } else {
               throw new RuntimeException("invalid to-type from int");
             }
@@ -1492,7 +1498,7 @@ public class BafASMBackend extends AbstractASMBackend {
 
       @Override
       public void caseAndInst(AndInst i) {
-        if (i.getOpType().equals(LongType.v())) {
+        if (i.getOpType().equals(primTypeCollector.getLongType())) {
           mv.visitInsn(Opcodes.LAND);
         } else {
           mv.visitInsn(Opcodes.IAND);
@@ -1501,7 +1507,7 @@ public class BafASMBackend extends AbstractASMBackend {
 
       @Override
       public void caseOrInst(OrInst i) {
-        if (i.getOpType().equals(LongType.v())) {
+        if (i.getOpType().equals(primTypeCollector.getLongType())) {
           mv.visitInsn(Opcodes.LOR);
         } else {
           mv.visitInsn(Opcodes.IOR);
@@ -1510,7 +1516,7 @@ public class BafASMBackend extends AbstractASMBackend {
 
       @Override
       public void caseXorInst(XorInst i) {
-        if (i.getOpType().equals(LongType.v())) {
+        if (i.getOpType().equals(primTypeCollector.getLongType())) {
           mv.visitInsn(Opcodes.LXOR);
         } else {
           mv.visitInsn(Opcodes.IXOR);
@@ -1529,7 +1535,7 @@ public class BafASMBackend extends AbstractASMBackend {
 
       @Override
       public void caseCmpgInst(CmpgInst i) {
-        if (i.getOpType().equals(FloatType.v())) {
+        if (i.getOpType().equals(primTypeCollector.getFloatType())) {
           mv.visitInsn(Opcodes.FCMPG);
         } else {
           mv.visitInsn(Opcodes.DCMPG);
@@ -1538,7 +1544,7 @@ public class BafASMBackend extends AbstractASMBackend {
 
       @Override
       public void caseCmplInst(CmplInst i) {
-        if (i.getOpType().equals(FloatType.v())) {
+        if (i.getOpType().equals(primTypeCollector.getFloatType())) {
           mv.visitInsn(Opcodes.FCMPL);
         } else {
           mv.visitInsn(Opcodes.DCMPL);
@@ -1764,7 +1770,7 @@ public class BafASMBackend extends AbstractASMBackend {
 
       @Override
       public void caseShlInst(ShlInst i) {
-        if (i.getOpType().equals(LongType.v())) {
+        if (i.getOpType().equals(primTypeCollector.getLongType())) {
           mv.visitInsn(Opcodes.LSHL);
         } else {
           mv.visitInsn(Opcodes.ISHL);
@@ -1773,7 +1779,7 @@ public class BafASMBackend extends AbstractASMBackend {
 
       @Override
       public void caseShrInst(ShrInst i) {
-        if (i.getOpType().equals(LongType.v())) {
+        if (i.getOpType().equals(primTypeCollector.getLongType())) {
           mv.visitInsn(Opcodes.LSHR);
         } else {
           mv.visitInsn(Opcodes.ISHR);
@@ -1782,7 +1788,7 @@ public class BafASMBackend extends AbstractASMBackend {
 
       @Override
       public void caseUshrInst(UshrInst i) {
-        if (i.getOpType().equals(LongType.v())) {
+        if (i.getOpType().equals(primTypeCollector.getLongType())) {
           mv.visitInsn(Opcodes.LUSHR);
         } else {
           mv.visitInsn(Opcodes.IUSHR);
@@ -1959,21 +1965,21 @@ public class BafASMBackend extends AbstractASMBackend {
           mv.visitTypeInsn(Opcodes.ANEWARRAY, toTypeDesc(t));
         } else {
           int type;
-          if (t.equals(BooleanType.v())) {
+          if (t.equals(primTypeCollector.getBooleanType())) {
             type = Opcodes.T_BOOLEAN;
-          } else if (t.equals(CharType.v())) {
+          } else if (t.equals(primTypeCollector.getCharType())) {
             type = Opcodes.T_CHAR;
-          } else if (t.equals(FloatType.v())) {
+          } else if (t.equals(primTypeCollector.getFloatType())) {
             type = Opcodes.T_FLOAT;
-          } else if (t.equals(DoubleType.v())) {
+          } else if (t.equals(primTypeCollector.getDoubleType())) {
             type = Opcodes.T_DOUBLE;
-          } else if (t.equals(ByteType.v())) {
+          } else if (t.equals(primTypeCollector.getByteType())) {
             type = Opcodes.T_BYTE;
-          } else if (t.equals(ShortType.v())) {
+          } else if (t.equals(primTypeCollector.getShortType())) {
             type = Opcodes.T_SHORT;
-          } else if (t.equals(IntType.v())) {
+          } else if (t.equals(primTypeCollector.getIntType())) {
             type = Opcodes.T_INT;
-          } else if (t.equals(LongType.v())) {
+          } else if (t.equals(primTypeCollector.getLongType())) {
             type = Opcodes.T_LONG;
           } else {
             throw new RuntimeException("invalid type");
