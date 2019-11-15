@@ -38,7 +38,6 @@ import java.util.Set;
 
 import soot.baf.GotoInst;
 import soot.jimple.GotoStmt;
-import soot.options.Options;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.interaction.FlowInfo;
 import soot.toolkits.graph.interaction.InteractionHandler;
@@ -314,15 +313,16 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
   }
 
   enum InteractionFlowHandler {
+
     NONE, FORWARD {
       @Override
       public <A, N> void handleFlowIn(FlowAnalysis<N, A> a, N s) {
-        beforeEvent(stop(s), a, s);
+        beforeEvent(stop(s,myInteractionHandler), a, s);
       }
 
       @Override
       public <A, N> void handleFlowOut(FlowAnalysis<N, A> a, N s) {
-        afterEvent(myInteractionHandler, a, s);
+        afterEvent(InteractionHandler.v(), a, s);
       }
     },
     BACKWARD {
@@ -333,7 +333,7 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
 
       @Override
       public <A, N> void handleFlowOut(FlowAnalysis<N, A> a, N s) {
-        beforeEvent(myInteractionHandler, a, s);
+        beforeEvent(InteractionHandler.v(), a, s);
       }
     };
 
@@ -355,7 +355,7 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
       i.handleAfterAnalysisEvent(new FlowInfo<A, N>(savedFlow, s, false));
     }
 
-    InteractionHandler stop(Object s) {
+    InteractionHandler stop(Object s, InteractionHandler myInteractionHandler) {
       InteractionHandler h = myInteractionHandler;
       List<?> stopList = h.getStopUnitList();
       if (stopList != null && stopList.contains(s)) {
@@ -408,7 +408,7 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
 
   /** Constructs a flow analysis on the given <code>DirectedGraph</code>. */
   public FlowAnalysis(DirectedGraph<N> graph, boolean interaticveMode, InteractionHandler myInteractionHandler) {
-    super(graph,interaticveMode, myInteractionHandler);
+    super(graph, interaticveMode, myInteractionHandler);
 
     unitToAfterFlow = new IdentityHashMap<N, A>(graph.size() * 2 + 1);
   }

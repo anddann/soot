@@ -640,9 +640,9 @@ public abstract class AbstractJasminClass {
         Object g;
 
         if (sizeOfType(l.getType()) == 1) {
-          g = IntType.v();
+          g = l.getType().getMyScene().getPrimTypeCollector().getIntType();
         } else {
-          g = LongType.v();
+          g = l.getType().getMyScene().getPrimTypeCollector().getLongType();
         }
 
         localToGroup.put(l, g);

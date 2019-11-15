@@ -52,9 +52,6 @@ public class ExceptionFinder implements FactFinder {
   }
 
 
-  public static ExceptionFinder v() {
-    return G.v().soot_dava_toolkits_base_finders_ExceptionFinder();
-  }
 
   public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
     myDava.log("ExceptionFinder::find()");

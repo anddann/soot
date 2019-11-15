@@ -36,6 +36,7 @@ import soot.Body;
 import soot.BodyTransformer;
 import soot.Local;
 import soot.PhaseOptions;
+import soot.Scene;
 import soot.Timers;
 import soot.Unit;
 import soot.Value;
@@ -49,22 +50,30 @@ import soot.jimple.MonitorStmt;
 import soot.jimple.Stmt;
 import soot.jimple.StmtBody;
 import soot.options.Options;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.PseudoTopologicalOrderer;
 import soot.toolkits.scalar.LocalDefs;
 import soot.toolkits.scalar.LocalUses;
 import soot.toolkits.scalar.UnitValueBoxPair;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 public class Aggregator extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(Aggregator.class);
   private Options myOptions;
   private Timers myTimers;
+  private ThrowableSet.Manager myManager;
+  private Scene myScene;
+  private PhaseDumper myPhaseDumper;
 
   @Inject
-  public Aggregator(Options myOptions, Timers myTimers) {
+  public Aggregator(Options myOptions, Timers myTimers, ThrowableSet.Manager myManager, Scene myScene, PhaseDumper myPhaseDumper) {
     this.myOptions = myOptions;
     this.myTimers = myTimers;
+    this.myManager = myManager;
+    this.myScene = myScene;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
 
@@ -112,7 +121,7 @@ public class Aggregator extends BodyTransformer {
 
       // body.printTo(new java.io.PrintWriter(G.v().out, true));
 
-      changed = internalAggregate(body, boxToZone, onlyStackVars);
+      changed = internalAggregate(body, boxToZone, onlyStackVars, myManager,myOptions,myPhaseDumper, myScene);
 
       aggregateCount++;
     } while (changed);
@@ -123,11 +132,11 @@ public class Aggregator extends BodyTransformer {
 
   }
 
-  private static boolean internalAggregate(StmtBody body, Map<ValueBox, Zone> boxToZone, boolean onlyStackVars) {
+  private static boolean internalAggregate(StmtBody body, Map<ValueBox, Zone> boxToZone, boolean onlyStackVars, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumper, Scene myScene) {
     boolean hadAggregation = false;
     Chain<Unit> units = body.getUnits();
 
-    ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body, myManager);
+    ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene);
     LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(graph);
     LocalUses localUses = LocalUses.Factory.newLocalUses(body, localDefs);
 

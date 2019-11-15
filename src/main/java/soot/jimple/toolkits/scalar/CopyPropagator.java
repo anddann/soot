@@ -52,11 +52,13 @@ import soot.jimple.StmtBody;
 import soot.options.CPOptions;
 import soot.options.Options;
 import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.PseudoTopologicalOrderer;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.LocalDefs;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 public class CopyPropagator extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(CopyPropagator.class);
@@ -66,27 +68,18 @@ public class CopyPropagator extends BodyTransformer {
   private Options myOptions;
   private Timers myTimers;
   private Scene myScene;
+  private PhaseDumper myPhaseDumper;
+  private ThrowableSet.Manager myManager;
 
 
-  @Inject
-  public CopyPropagator(Options myOptions, Scene myScene) {
-    this.myOptions = myOptions;
-    this.myScene = myScene;
-  }
 
   @Inject
-  public CopyPropagator(ThrowAnalysis ta, Options myOptions, Scene myScene) {
-    this.throwAnalysis = ta;
-    this.myOptions = myOptions;
-    this.myScene = myScene;
-  }
-  @Inject
-
-  public CopyPropagator(ThrowAnalysis ta, boolean forceOmitExceptingUnitEdges, Options myOptions, Scene myScene) {
+  public CopyPropagator(ThrowAnalysis ta, boolean forceOmitExceptingUnitEdges, Options myOptions, Scene myScene, ThrowableSet.Manager myManager) {
     this.throwAnalysis = ta;
     this.forceOmitExceptingUnitEdges = forceOmitExceptingUnitEdges;
     this.myOptions = myOptions;
     this.myScene = myScene;
+    this.myManager = myManager;
   }
 
 

@@ -36,7 +36,11 @@ import soot.jimple.toolkits.pointer.PASideEffectTester;
 import soot.jimple.toolkits.scalar.PessimisticAvailableExpressionsAnalysis;
 import soot.jimple.toolkits.scalar.SlowAvailableExpressionsAnalysis;
 import soot.options.AETOptions;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
+import soot.util.PhaseDumper;
 
 /**
  * A body transformer that records avail expression information in tags. - both pessimistic and optimistic options
@@ -44,10 +48,18 @@ import soot.toolkits.graph.ExceptionalUnitGraph;
 public class AvailExprTagger extends BodyTransformer {
 
   private Scene myScene;
+  private ThrowableSet.Manager myManager;
+  private Options myOptions;
+  private PhaseDumper myPhaseDumper;
+  private InteractionHandler myInteractionHandler;
 
   @Inject
-  public AvailExprTagger(Scene myScene) {
+  public AvailExprTagger(Scene myScene, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
     this.myScene = myScene;
+    this.myManager = myManager;
+    this.myOptions = myOptions;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
   protected void internalTransform(Body b, String phaseName, Map opts) {
@@ -62,9 +74,9 @@ public class AvailExprTagger extends BodyTransformer {
 
     AETOptions options = new AETOptions(opts);
     if (options.kind() == AETOptions.kind_optimistic) {
-      new SlowAvailableExpressionsAnalysis(new ExceptionalUnitGraph(b, myManager));
+      new SlowAvailableExpressionsAnalysis(new ExceptionalUnitGraph(b,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene),myOptions.interactive_mode(), myInteractionHandler);
     } else {
-      new PessimisticAvailableExpressionsAnalysis(new ExceptionalUnitGraph(b, myManager), b.getMethod(), sideEffect);
+      new PessimisticAvailableExpressionsAnalysis(new ExceptionalUnitGraph(b,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene), b.getMethod(), sideEffect);
     }
   }
 }

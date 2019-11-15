@@ -31,9 +31,9 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.JastAddJ.Options;
 import soot.Local;
 import soot.RefType;
+import soot.Scene;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
@@ -43,11 +43,15 @@ import soot.jimple.DefinitionStmt;
 import soot.jimple.NullConstant;
 import soot.jimple.NumericConstant;
 import soot.jimple.StringConstant;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.Orderer;
 import soot.toolkits.graph.PseudoTopologicalOrderer;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.LocalDefs;
+import soot.util.PhaseDumper;
 
 /**
  * Does constant propagation and folding. Constant folding is the compile-time evaluation of constant expressions (i.e. 2 *
@@ -56,10 +60,18 @@ import soot.toolkits.scalar.LocalDefs;
 public class ConstantPropagatorAndFolder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ConstantPropagatorAndFolder.class);
   private Options myOptions;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
+  private Scene myScene;
+  private ThrowAnalysis myThrowAnalysis;
 
   @Inject
-  public ConstantPropagatorAndFolder(Options myOptions) {
+  public ConstantPropagatorAndFolder(Options myOptions, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Scene myScene) {
     this.myOptions = myOptions;
+    this.myThrowAnalysis = myThrowAnalysis;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myScene = myScene;
   }
 
 
@@ -72,7 +84,7 @@ public class ConstantPropagatorAndFolder extends BodyTransformer {
       logger.debug("[" + b.getMethod().getName() + "] Propagating and folding constants...");
     }
 
-    UnitGraph g = new ExceptionalUnitGraph(b, myManager);
+    UnitGraph g = new ExceptionalUnitGraph(b, myThrowAnalysis,  myOptions.omit_excepting_unit_edges(), myManager,myPhaseDumper);
     LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(g);
 
     // Perform a constant/local propagation pass.

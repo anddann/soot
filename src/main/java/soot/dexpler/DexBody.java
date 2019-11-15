@@ -882,7 +882,7 @@ public class DexBody {
 
   protected UnreachableCodeEliminator getUnreachableCodeEliminator() {
     if (this.unreachableCodeEliminator == null) {
-      this.unreachableCodeEliminator = new UnreachableCodeEliminator(myDalvikThrowAnalysis, myPedanticThrowAnalysis);
+      this.unreachableCodeEliminator = new UnreachableCodeEliminator(myDalvikThrowAnalysis, myPedanticThrowAnalysis, myPhaseDumper);
     }
     return this.unreachableCodeEliminator;
   }
@@ -891,7 +891,7 @@ public class DexBody {
 
   protected CopyPropagator getCopyPopagator() {
     if (this.copyPropagator == null) {
-      this.copyPropagator = new CopyPropagator(myDalvikThrowAnalysis, false);
+      this.copyPropagator = new CopyPropagator(myDalvikThrowAnalysis, false, myManager);
     }
     return this.copyPropagator;
   }

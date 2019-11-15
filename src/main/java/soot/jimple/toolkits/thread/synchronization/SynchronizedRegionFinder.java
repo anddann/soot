@@ -110,7 +110,7 @@ public class SynchronizedRegionFinder extends ForwardFlowAnalysis<Unit, FlowSet<
       };
     }
 
-    tasea = new CriticalSectionAwareSideEffectAnalysis(myScene.getPointsToAnalysis(), myScene.getCallGraph(), null, tlo);
+    tasea = new CriticalSectionAwareSideEffectAnalysis(myScene.getPointsToAnalysis(), myScene.getCallGraph(), null, tlo, myScene);
 
     prepUnits = new ArrayList<Object>();
 

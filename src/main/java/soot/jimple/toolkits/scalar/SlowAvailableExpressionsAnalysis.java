@@ -39,6 +39,7 @@ import soot.jimple.NewMultiArrayExpr;
 import soot.jimple.Stmt;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArrayFlowUniverse;
 import soot.toolkits.scalar.ArrayPackedSet;
 import soot.toolkits.scalar.BoundedFlowSet;
@@ -62,8 +63,8 @@ public class SlowAvailableExpressionsAnalysis extends ForwardFlowAnalysis<Unit, 
 
   FlowSet<Value> emptySet;
 
-  public SlowAvailableExpressionsAnalysis(DirectedGraph<Unit> dg) {
-    super(dg);
+  public SlowAvailableExpressionsAnalysis(DirectedGraph<Unit> dg,boolean interaticveMode, InteractionHandler myInteractionHandler) {
+    super(dg,interaticveMode, myInteractionHandler);
 
     UnitGraph g = (UnitGraph) dg;
 

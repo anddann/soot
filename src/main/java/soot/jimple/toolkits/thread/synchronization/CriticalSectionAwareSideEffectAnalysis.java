@@ -131,6 +131,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
   public Vector sigReadGraylist;
   public Vector sigWriteGraylist;
   public Vector subSigBlacklist;
+  private Scene myScene;
 
   public void findNTRWSets(SootMethod method) {
     if (methodToNTReadSet.containsKey(method) && methodToNTWriteSet.containsKey(method)) {
@@ -239,12 +240,13 @@ public class CriticalSectionAwareSideEffectAnalysis {
   }
 
   public CriticalSectionAwareSideEffectAnalysis(PointsToAnalysis pa, CallGraph cg,
-      Collection<CriticalSection> criticalSections, ThreadLocalObjectsAnalysis tlo) {
+                                                Collection<CriticalSection> criticalSections, ThreadLocalObjectsAnalysis tlo, Scene myScene) {
     this.pa = pa;
     this.cg = cg;
     this.tve = new CriticalSectionVisibleEdgesPred(criticalSections);
     this.tt = new TransitiveTargets(cg, new Filter(tve));
     this.normaltt = new TransitiveTargets(cg, null);
+    this.myScene = myScene;
     this.normalsea = new SideEffectAnalysis(pa, cg);
     this.criticalSections = criticalSections;
     this.eoa = new EncapsulatedObjectAnalysis();
@@ -329,7 +331,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
           SootClass baseTypeClass = ((RefType) pType).getSootClass();
           if (!baseTypeClass.isInterface()) {
             List<SootClass> baseClasses = myScene.getActiveHierarchy().getSuperclassesOfIncluding(baseTypeClass);
-            if (!baseClasses.contains(RefType.v("java.lang.Exception").getSootClass())) {
+            if (!baseClasses.contains(RefType.v("java.lang.Exception",myScene).getSootClass())) {
               for (SootClass baseClass : baseClasses) {
                 for (Iterator baseFieldIt = baseClass.getFields().iterator(); baseFieldIt.hasNext();) {
                   SootField baseField = (SootField) baseFieldIt.next();
@@ -535,7 +537,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
           SootClass baseTypeClass = ((RefType) pType).getSootClass();
           if (!baseTypeClass.isInterface()) {
             List<SootClass> baseClasses = myScene.getActiveHierarchy().getSuperclassesOfIncluding(baseTypeClass);
-            if (!baseClasses.contains(RefType.v("java.lang.Exception").getSootClass())) {
+            if (!baseClasses.contains(RefType.v("java.lang.Exception",myScene).getSootClass())) {
               for (SootClass baseClass : baseClasses) {
                 for (Iterator baseFieldIt = baseClass.getFields().iterator(); baseFieldIt.hasNext();) {
                   SootField baseField = (SootField) baseFieldIt.next();
@@ -789,7 +791,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
       if (baseLocal.getType() instanceof RefType) {
         SootClass baseClass = ((RefType) baseLocal.getType()).getSootClass();
         if (myScene.getActiveHierarchy().isClassSubclassOfIncluding(baseClass,
-            RefType.v("java.lang.Exception").getSootClass())) {
+            RefType.v("java.lang.Exception",myScene).getSootClass())) {
           return null;
         }
       }

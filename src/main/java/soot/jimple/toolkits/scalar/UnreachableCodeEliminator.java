@@ -22,6 +22,8 @@ package soot.jimple.toolkits.scalar;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
@@ -30,21 +32,22 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.JastAddJ.Options;
 import soot.PhaseOptions;
 import soot.Scene;
 import soot.Trap;
 import soot.Unit;
+import soot.JastAddJ.Options;
 import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 public class UnreachableCodeEliminator extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(UnreachableCodeEliminator.class);
@@ -52,19 +55,16 @@ public class UnreachableCodeEliminator extends BodyTransformer {
   private Options myOptions;
   private Scene myScene;
   private ThrowAnalysis myPedanticThrowAnalysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
   @Inject
-  public UnreachableCodeEliminator(Options myOptions, ThrowAnalysis myPedanticThrowAnalysis) {
-    this.myOptions = myOptions;
-    this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
-  }
-
-
-  @Inject
-  public UnreachableCodeEliminator(ThrowAnalysis ta, Options myOptions, ThrowAnalysis myPedanticThrowAnalysis) {
+  public UnreachableCodeEliminator(ThrowAnalysis ta, Options myOptions, ThrowAnalysis myPedanticThrowAnalysis,
+      PhaseDumper myPhaseDumper) {
     this.throwAnalysis = ta;
     this.myOptions = myOptions;
     this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {

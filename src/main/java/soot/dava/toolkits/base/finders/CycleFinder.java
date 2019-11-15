@@ -72,9 +72,6 @@ public class CycleFinder implements FactFinder {
     this.myDava = myDava;
   }
 
-  public static CycleFinder v() {
-    return G.v().soot_dava_toolkits_base_finders_CycleFinder();
-  }
 
   public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
     myDava.log("CycleFinder::find()");

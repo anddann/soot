@@ -68,6 +68,9 @@ import soot.jimple.toolkits.pointer.RWSet;
 import soot.jimple.toolkits.thread.ThreadLocalObjectsAnalysis;
 import soot.jimple.toolkits.thread.mhp.MhpTester;
 import soot.jimple.toolkits.thread.mhp.SynchObliviousMhpAnalysis;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph;
@@ -75,14 +78,23 @@ import soot.toolkits.graph.HashMutableEdgeLabelledDirectedGraph;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.LocalDefs;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 public class LockAllocator extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(LockAllocator.class);
   private Scene myScene;
+  private ThrowAnalysis myThrowAnalysis;
+  private ThrowableSet.Manager myManager;
+  private Options myOptions;
+  private PhaseDumper myPhaseDumer;
 
   @Inject
-  public LockAllocator(Scene myScene) {
+  public LockAllocator(Scene myScene, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumer) {
     this.myScene = myScene;
+    this.myThrowAnalysis = myThrowAnalysis;
+    this.myManager = myManager;
+    this.myOptions = myOptions;
+    this.myPhaseDumer = myPhaseDumer;
   }
 
   List<CriticalSection> criticalSections = null;
@@ -214,7 +226,7 @@ public class LockAllocator extends SceneTransformer {
         SootMethod method = methodsIt.next();
         if (method.isConcrete()) {
           Body b = method.retrieveActiveBody();
-          ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b, myManager);
+          ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b, myThrowAnalysis,myOptions.omit_excepting_unit_edges(), myManager, myPhaseDumer);
           methodToExcUnitGraph.put(method, eug);
 
           // run the intraprocedural analysis
@@ -253,7 +265,7 @@ public class LockAllocator extends SceneTransformer {
     PointsToAnalysis pta = myScene.getPointsToAnalysis();
     CriticalSectionAwareSideEffectAnalysis tasea = null;
     tasea = new CriticalSectionAwareSideEffectAnalysis(pta, myScene.getCallGraph(),
-        (optionOpenNesting ? criticalSections : null), tlo);
+        (optionOpenNesting ? criticalSections : null), tlo, myScene);
     Iterator<CriticalSection> tnIt = criticalSections.iterator();
     while (tnIt.hasNext()) {
       CriticalSection tn = tnIt.next();

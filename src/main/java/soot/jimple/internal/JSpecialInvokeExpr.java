@@ -33,10 +33,10 @@ import soot.jimple.Jimple;
 
 public class JSpecialInvokeExpr extends AbstractSpecialInvokeExpr {
   public JSpecialInvokeExpr(Local base, SootMethodRef methodRef, List<? extends Value> args) {
-    super(myJimple.newLocalBox(base), methodRef, new ImmediateBox[args.size()]);
+    super(base.getType().getMyScene().getMyJimple().newLocalBox(base), methodRef, new ImmediateBox[args.size()]);
 
     for (int i = 0; i < args.size(); i++) {
-      this.argBoxes[i] = myJimple.newImmediateBox(args.get(i));
+      this.argBoxes[i] = base.getType().getMyScene().getMyJimple().newImmediateBox(args.get(i));
     }
   }
 

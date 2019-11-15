@@ -32,28 +32,40 @@ import org.slf4j.LoggerFactory;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.RefLikeType;
+import soot.Scene;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
 import soot.jimple.Stmt;
+import soot.options.Options;
 import soot.tagkit.ColorTag;
 import soot.tagkit.KeyTag;
 import soot.tagkit.StringTag;
 import soot.tagkit.Tag;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.scalar.FlowSet;
+import soot.util.PhaseDumper;
 
 public class NullPointerColorer extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(NullPointerColorer.class);
+  private ThrowableSet.Manager myManager;
+  private Options myOptions;
+  private PhaseDumper myPhaseDumper;
+  private Scene myScene;
 
   @Inject
-  public NullPointerColorer() {
+  public NullPointerColorer(ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumper, Scene myScene) {
+    this.myManager = myManager;
+    this.myOptions = myOptions;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myScene = myScene;
   }
 
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
 
-    BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(b, myManager));
+    BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(b,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene));
 
     Iterator<Unit> it = b.getUnits().iterator();
 

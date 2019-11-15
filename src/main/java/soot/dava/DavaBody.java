@@ -295,7 +295,7 @@ public class DavaBody extends Body {
 
   public Local get_ControlLocal() {
     if (controlLocal == null) {
-      controlLocal = new JimpleLocal("controlLocal", IntType.v());
+      controlLocal = new JimpleLocal("controlLocal", controlLocal.getType().getMyScene().getPrimTypeCollector().getIntType());
       getLocals().add(controlLocal);
     }
 

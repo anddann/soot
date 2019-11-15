@@ -48,11 +48,13 @@ public class CriticalSectionInterferenceGraph {
   boolean optionOneGlobalLock = false;
   boolean optionLeaveOriginalLocks = false;
   boolean optionIncludeEmptyPossibleEdges = false;
+  private Scene myScene;
 
   public CriticalSectionInterferenceGraph(List<CriticalSection> criticalSections, MhpTester mhp, boolean optionOneGlobalLock,
-      boolean optionLeaveOriginalLocks, boolean optionIncludeEmptyPossibleEdges) {
+      boolean optionLeaveOriginalLocks, boolean optionIncludeEmptyPossibleEdges, Scene myScene) {
     this.criticalSections = criticalSections;
     this.mhp = mhp;
+    this.myScene = myScene;
     this.pta = myScene.getPointsToAnalysis();
     this.optionOneGlobalLock = optionOneGlobalLock;
     this.optionLeaveOriginalLocks = optionLeaveOriginalLocks;

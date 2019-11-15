@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.JastAddJ.Options;
 import soot.PhaseOptions;
 import soot.Scene;
 import soot.SootClass;
@@ -50,10 +49,14 @@ import soot.jimple.MonitorStmt;
 import soot.jimple.Stmt;
 import soot.jimple.ThrowStmt;
 import soot.jimple.toolkits.annotation.tags.NullCheckTag;
+import soot.options.Options;
 import soot.tagkit.Tag;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.scalar.FlowSet;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 /*
 ArrayRef
@@ -73,13 +76,19 @@ public class NullPointerChecker extends BodyTransformer {
   private Options myOptions;
   private Scene myScene;
   private Jimple myJimple;
+  private ThrowableSet.Manager myManager;
+  private ThrowAnalysis mythrowAnalysis;
+  private PhaseDumper myPhaseDumper;
 
 
   @Inject
-  public NullPointerChecker(Options myOptions, Scene myScene, Jimple myJimple) {
+  public NullPointerChecker(Options myOptions, Scene myScene, Jimple myJimple, ThrowableSet.Manager myManager, ThrowAnalysis mythrowAnalysis, PhaseDumper myPhaseDumper) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myJimple = myJimple;
+    this.myManager = myManager;
+    this.mythrowAnalysis = mythrowAnalysis;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
 
@@ -98,7 +107,7 @@ public class NullPointerChecker extends BodyTransformer {
         logger.debug("[npc] Null pointer check for " + body.getMethod().getName() + " started on " + start);
       }
 
-      BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(body, myManager));
+      BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(body, mythrowAnalysis, myOptions.omit_excepting_unit_edges(),   myManager,myPhaseDumper));
 
       SootClass counterClass = null;
       SootMethod increase = null;

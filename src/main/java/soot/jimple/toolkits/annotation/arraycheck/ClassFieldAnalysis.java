@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import soot.ArrayType;
 import soot.Body;
-import soot.JastAddJ.Options;
 import soot.Local;
 import soot.Modifier;
 import soot.SootClass;
@@ -55,6 +54,7 @@ import soot.jimple.IntConstant;
 import soot.jimple.NewArrayExpr;
 import soot.jimple.NewMultiArrayExpr;
 import soot.jimple.Stmt;
+import soot.options.Options;
 import soot.toolkits.scalar.LocalDefs;
 
 public class ClassFieldAnalysis {

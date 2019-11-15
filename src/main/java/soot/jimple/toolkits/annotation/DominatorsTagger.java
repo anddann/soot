@@ -29,24 +29,37 @@ import java.util.Map;
 import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
+import soot.Scene;
 import soot.jimple.Stmt;
+import soot.options.Options;
 import soot.tagkit.LinkTag;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.MHGDominatorsFinder;
+import soot.util.PhaseDumper;
 
 /**
  * A body transformer that records avail expression information in tags. - both pessimistic and optimistic options
  */
 public class DominatorsTagger extends BodyTransformer {
 
+  private ThrowableSet.Manager myManager;
+  private Options myOptions;
+  private PhaseDumper myPhaseDumper;
+  private Scene myScene;
+
   @Inject
-  public DominatorsTagger() {
+  public DominatorsTagger(ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumper, Scene myScene) {
+    this.myManager = myManager;
+    this.myOptions = myOptions;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myScene = myScene;
   }
 
 
   protected void internalTransform(Body b, String phaseName, Map opts) {
 
-    MHGDominatorsFinder analysis = new MHGDominatorsFinder(new ExceptionalUnitGraph(b, myManager));
+    MHGDominatorsFinder analysis = new MHGDominatorsFinder(new ExceptionalUnitGraph(b,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene));
     Iterator it = b.getUnits().iterator();
     while (it.hasNext()) {
       Stmt s = (Stmt) it.next();

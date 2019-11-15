@@ -22,31 +22,45 @@ package soot.jimple.toolkits.annotation.liveness;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Iterator;
 import java.util.Map;
 
-import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
+import soot.Scene;
 import soot.Value;
 import soot.ValueBox;
 import soot.jimple.Stmt;
+import soot.options.Options;
 import soot.tagkit.ColorTag;
 import soot.tagkit.StringTag;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.scalar.LiveLocals;
 import soot.toolkits.scalar.SimpleLiveLocals;
+import soot.util.PhaseDumper;
 
 public class LiveVarsTagger extends BodyTransformer {
 
-  @Inject
-  public LiveVarsTagger() {
-  }
+  private ThrowableSet.Manager myManager;
+  private Options myOptions;
+  private PhaseDumper myPhaseDumper;
+  private Scene myScene;
 
+  @Inject
+  public LiveVarsTagger(ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumper, Scene myScene) {
+    this.myManager = myManager;
+    this.myOptions = myOptions;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myScene = myScene;
+  }
 
   protected void internalTransform(Body b, String phaseName, Map options) {
 
-    LiveLocals sll = new SimpleLiveLocals(new ExceptionalUnitGraph(b, myManager));
+    LiveLocals sll = new SimpleLiveLocals(new ExceptionalUnitGraph(b, myManager, myOptions.omit_excepting_unit_edges(),  myPhaseDumper,
+    myScene));
 
     Iterator it = b.getUnits().iterator();
     while (it.hasNext()) {

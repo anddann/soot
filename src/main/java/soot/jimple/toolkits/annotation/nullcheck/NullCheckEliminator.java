@@ -22,12 +22,14 @@ package soot.jimple.toolkits.annotation.nullcheck;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Map;
 
-import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.Immediate;
+import soot.Scene;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.BinopExpr;
@@ -37,13 +39,21 @@ import soot.jimple.Jimple;
 import soot.jimple.NeExpr;
 import soot.jimple.NullConstant;
 import soot.jimple.Stmt;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 public class NullCheckEliminator extends BodyTransformer {
 
   private Jimple myJimple;
+  private Options myOptions;
+  private ThrowableSet.Manager myManager;
+  private  PhaseDumper myPhaseDumper;
+  private Scene myScene;
 
   public static class AnalysisFactory {
     public NullnessAnalysis newAnalysis(UnitGraph g) {
@@ -53,16 +63,23 @@ public class NullCheckEliminator extends BodyTransformer {
 
   private AnalysisFactory analysisFactory;
 
-
   @Inject
-  public NullCheckEliminator(Jimple myJimple) {
-    this(new AnalysisFactory());
+  public NullCheckEliminator(Jimple myJimple, Scene myScene,  ThrowableSet.Manager myManager,  Options myOptions, PhaseDumper myPhaseDumper) {
+    this.myScene = myScene;
+    this.myManager = myManager;
+    this.myOptions = myOptions;
+    this.myPhaseDumper = myPhaseDumper;
+    this.analysisFactory = new AnalysisFactory();
     this.myJimple = myJimple;
   }
 
-  private NullCheckEliminator(AnalysisFactory f) {
-    this.analysisFactory = f;
-  }
+//  private NullCheckEliminator(ThrowAnalysis myManager, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, AnalysisFactory f,  Options myOptions) {
+//    this.myManager = myManager;
+//    this.myPhaseDumper = myPhaseDumper;
+//    this.myScene = myScene;
+//    this.analysisFactory = f;
+//    this.myOptions = myOptions;
+//  }
 
   public void internalTransform(Body body, String phaseName, Map<String, String> options) {
 
@@ -72,7 +89,8 @@ public class NullCheckEliminator extends BodyTransformer {
     do {
       changed = false;
 
-      NullnessAnalysis analysis = analysisFactory.newAnalysis(new ExceptionalUnitGraph(body, myManager));
+      NullnessAnalysis analysis = analysisFactory.newAnalysis(
+          new ExceptionalUnitGraph(body, myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene));
 
       Chain<Unit> units = body.getUnits();
       Stmt s;
