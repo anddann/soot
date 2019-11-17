@@ -282,7 +282,7 @@ public class ForLoopCreationHelper {
       removeLast = false;
     }
 
-    forNode = new ASTForLoopNode(label, init, condition, update, body);
+    forNode = new ASTForLoopNode(label, init, condition, update, body, myTryContentsFinder);
     return true;
   }
 
@@ -411,7 +411,7 @@ public class ForLoopCreationHelper {
     }
 
     if (stmts.size() > 0) {
-      newStmtSeqNode = new ASTStatementSequenceNode(stmts);
+      newStmtSeqNode = new ASTStatementSequenceNode(stmts, myTryContentsFinder, myASTWalker);
     } else {
       newStmtSeqNode = null;
     }

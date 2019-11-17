@@ -35,13 +35,15 @@ import soot.dava.toolkits.base.AST.analysis.Analysis;
 import soot.jimple.Jimple;
 
 public class ASTSynchronizedBlockNode extends ASTLabeledNode {
+  private final Jimple myJimple;
   private List<Object> body;
   private ValueBox localBox;
 
-  public ASTSynchronizedBlockNode(SETNodeLabel label, List<Object> body, Value local) {
+  public ASTSynchronizedBlockNode(SETNodeLabel label, Jimple myJimple, List<Object> body, Value local) {
     super(label);
+    this.myJimple = myJimple;
     this.body = body;
-    this.localBox = myJimple.newLocalBox(local);
+    this.localBox = this.myJimple.newLocalBox(local);
 
     subBodies.add(body);
   }
@@ -68,7 +70,7 @@ public class ASTSynchronizedBlockNode extends ASTLabeledNode {
   }
 
   public Object clone() {
-    return new ASTSynchronizedBlockNode(get_Label(), body, getLocal());
+    return new ASTSynchronizedBlockNode(get_Label(), myJimple, body, getLocal());
   }
 
   public void toString(UnitPrinter up) {

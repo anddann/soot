@@ -140,13 +140,13 @@ public class IdentityOperationEliminator extends BodyTransformer {
    */
   private Value getZeroConst(Type type) {
     if (type instanceof IntType) {
-      return IntConstant.v(0);
+      return constancFactory.createIntConstant(0);
     } else if (type instanceof LongType) {
-      return LongConstant.v(0);
+      return constancFactory.createLongConstant(0);
     } else if (type instanceof FloatType) {
       return FloatConstant.v(0);
     } else if (type instanceof DoubleType) {
-      return DoubleConstant.v(0);
+      return constancFactory.createDoubleConstant(0);
     }
 
     throw new RuntimeException("Unsupported numeric type");

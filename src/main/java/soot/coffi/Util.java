@@ -36,28 +36,19 @@ import org.slf4j.LoggerFactory;
 
 import soot.ArrayType;
 import soot.Body;
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
 import soot.Local;
-import soot.LongType;
 import soot.Modifier;
 import soot.PackManager;
 import soot.PhaseOptions;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Scene;
-import soot.ShortType;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
 import soot.SootResolver;
 import soot.Timers;
 import soot.Type;
-import soot.UnknownType;
-import soot.VoidType;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.options.Options;
@@ -102,10 +93,11 @@ public class Util {
   private PackManager myPackManager;
   private Timers myTimers;
   private CONSTANT_Utf8_collector myCONSTANT_utf8_collector;
+  private PrimTypeCollector myPrimTypeCollector;
 
   @Inject
   public Util(Scene myScene, SootResolver mySootResolver, Jimple myJimple, PhaseOptions myPhaseOptions, Options myOptions,
-      PackManager myPackManager, Timers myTimers, CONSTANT_Utf8_collector myCONSTANT_utf8_collector) {
+              PackManager myPackManager, Timers myTimers, CONSTANT_Utf8_collector myCONSTANT_utf8_collector, PrimTypeCollector myPrimTypeCollector) {
     this.myScene = myScene;
     this.mySootResolver = mySootResolver;
     this.myJimple = myJimple;
@@ -114,6 +106,7 @@ public class Util {
     this.myPackManager = myPackManager;
     this.myTimers = myTimers;
     this.myCONSTANT_utf8_collector = myCONSTANT_utf8_collector;
+    this.myPrimTypeCollector = myPrimTypeCollector;
   }
 
   private cp_info[] activeConstantPool = null;
@@ -142,10 +135,10 @@ public class Util {
     return useFaithfulNaming;
   }
 
-  public void resolveFromClassFile(SootClass aClass, InputStream is, String filePath, Collection<Type> references) {
+  public void resolveFromClassFile(SootClass aClass, InputStream is, String filePath, Collection<Type> references, Util myCoffiUtil) {
     SootClass bclass = aClass;
     String className = bclass.getName();
-    ClassFile coffiClass = new ClassFile(className, myCONSTANT_utf8_collector, myOptions, myTimers);
+    ClassFile coffiClass = new ClassFile(className, myCONSTANT_utf8_collector, myOptions, myTimers, myCoffiUtil);
 
     // Load up class file, and retrieve
     // bclass from class manager.
@@ -574,27 +567,27 @@ public class Util {
             p++;
             continue swtch;
           case 'B':
-            baseType = ByteType.v();
+            baseType = myPrimTypeCollector.getByteType();
             p++;
             break swtch;
           case 'C':
-            baseType = CharType.v();
+            baseType = myPrimTypeCollector.getCharType();
             p++;
             break swtch;
           case 'D':
-            baseType = DoubleType.v();
+            baseType = myPrimTypeCollector.getDoubleType();
             p++;
             break swtch;
           case 'F':
-            baseType = FloatType.v();
+            baseType = myPrimTypeCollector.getFloatType();
             p++;
             break swtch;
           case 'I':
-            baseType = IntType.v();
+            baseType = myPrimTypeCollector.getIntType();
             p++;
             break swtch;
           case 'J':
-            baseType = LongType.v();
+            baseType = myPrimTypeCollector.getLongType();
             p++;
             break swtch;
           case 'L':
@@ -613,15 +606,15 @@ public class Util {
             p = index + 1;
             break swtch;
           case 'S':
-            baseType = ShortType.v();
+            baseType = myPrimTypeCollector.getShortType();
             p++;
             break swtch;
           case 'Z':
-            baseType = BooleanType.v();
+            baseType = myPrimTypeCollector.getBooleanType();
             p++;
             break swtch;
           case 'V':
-            baseType = VoidType.v();
+            baseType = myPrimTypeCollector.getVoidType();
             p++;
             break swtch;
           default:
@@ -664,19 +657,19 @@ public class Util {
 
     // Determine base type
     if (descriptor.equals("B")) {
-      baseType = ByteType.v();
+      baseType = myPrimTypeCollector.getByteType();
     } else if (descriptor.equals("C")) {
-      baseType = CharType.v();
+      baseType = myPrimTypeCollector.getCharType();
     } else if (descriptor.equals("D")) {
-      baseType = DoubleType.v();
+      baseType = myPrimTypeCollector.getDoubleType();
     } else if (descriptor.equals("F")) {
-      baseType = FloatType.v();
+      baseType = myPrimTypeCollector.getFloatType();
     } else if (descriptor.equals("I")) {
-      baseType = IntType.v();
+      baseType = myPrimTypeCollector.getIntType();
     } else if (descriptor.equals("J")) {
-      baseType = LongType.v();
+      baseType = myPrimTypeCollector.getLongType();
     } else if (descriptor.equals("V")) {
-      baseType = VoidType.v();
+      baseType = myPrimTypeCollector.getVoidType();
     } else if (descriptor.startsWith("L")) {
       if (!descriptor.endsWith(";")) {
         throw new RuntimeException("Class reference does not end with ;");
@@ -686,9 +679,9 @@ public class Util {
 
       baseType = RefType.v(className.replace('/', '.'),myScene);
     } else if (descriptor.equals("S")) {
-      baseType = ShortType.v();
+      baseType = myPrimTypeCollector.getShortType();
     } else if (descriptor.equals("Z")) {
-      baseType = BooleanType.v();
+      baseType = myPrimTypeCollector.getBooleanType();
     } else {
       throw new RuntimeException("Unknown field type: " + descriptor);
     }
@@ -721,11 +714,11 @@ public class Util {
   }
 
   Local getLocalForStackOp(JimpleBody listBody, TypeStack typeStack, int index) {
-    if (typeStack.get(index).equals(Double2ndHalfType.v()) || typeStack.get(index).equals(Long2ndHalfType.v())) {
+    if (typeStack.get(index).equals(myPrimTypeCollector.getDouble2ndHalfType()) || typeStack.get(index).equals(myPrimTypeCollector.getLong2ndHalfType())) {
       index--;
     }
 
-    return getLocalCreatingIfNecessary(listBody, "$stack" + index, UnknownType.v());
+    return getLocalCreatingIfNecessary(listBody, "$stack" + index, myPrimTypeCollector.getUnknownType());
   }
 
   String getAbbreviationOfClassName(String className) {
@@ -905,7 +898,7 @@ public class Util {
     if (indexToLocal.containsKey(index)) {
       local = indexToLocal.get(index);
     } else {
-      local = myJimple.newLocal(name, UnknownType.v());
+      local = myJimple.newLocal(name, myPrimTypeCollector.getUnknownType());
       listBody.getLocals().add(local);
       indexToLocal.put(index, local);
     }

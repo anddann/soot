@@ -726,8 +726,8 @@ public class RectangularArrayFinder extends SceneTransformer {
       /* change the first one, reset the right op */
       ArrayType atype = (ArrayType) local.getType();
       List sizes = new ArrayList(2);
-      sizes.add(IntConstant.v(firstdim));
-      sizes.add(IntConstant.v(seconddim));
+      sizes.add(constancFactory.createIntConstant(firstdim));
+      sizes.add(constancFactory.createIntConstant(seconddim));
       Value nmexpr = new JNewMultiArrayExpr(atype, sizes);
 
       ((AssignStmt) startpoint).setRightOp(nmexpr);
@@ -744,7 +744,7 @@ public class RectangularArrayFinder extends SceneTransformer {
         Value rightOp = ((AssignStmt) curstmt).getRightOp();
 
         if (tmplocals[curdim].equals(leftOp) && (rightOp instanceof NewArrayExpr)) {
-          ArrayRef arexpr = new JArrayRef(local, IntConstant.v(curdim));
+          ArrayRef arexpr = new JArrayRef(local, constancFactory.createIntConstant(curdim));
           ((AssignStmt) curstmt).setRightOp(arexpr);
           tmpcur = (Local) leftOp;
         } else if ((leftOp instanceof ArrayRef) && (rightOp.equals(tmpcur))) {

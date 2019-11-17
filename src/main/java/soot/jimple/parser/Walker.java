@@ -218,7 +218,7 @@ public class Walker extends DepthFirstAdapter {
   LinkedList mProductions = new LinkedList();
   SootClass mSootClass = null;
   Map<String, Local> mLocals = null;
-  Value mValue = IntConstant.v(1);
+  Value mValue = constancFactory.createIntConstant(1);
 
   Map<Object, Unit> mLabelToStmtMap; // maps a label to the stmt following it
   // in the jimple source
@@ -1003,11 +1003,11 @@ public class Walker extends DepthFirstAdapter {
     }
 
     if (s.endsWith("L")) {
-      mProductions.addLast(LongConstant.v(sign * Long.parseLong(s.substring(0, s.length() - 1))));
+      mProductions.addLast(constancFactory.createLongConstant(sign * Long.parseLong(s.substring(0, s.length() - 1))));
     } else if (s.equals("2147483648")) {
-      mProductions.addLast(IntConstant.v(sign * Integer.MIN_VALUE));
+      mProductions.addLast(constancFactory.createIntConstant(sign * Integer.MIN_VALUE));
     } else {
-      mProductions.addLast(IntConstant.v(sign * Integer.parseInt(s)));
+      mProductions.addLast(constancFactory.createIntConstant(sign * Integer.parseInt(s)));
     }
   }
 
@@ -1044,27 +1044,27 @@ public class Walker extends DepthFirstAdapter {
 
     s = buf.toString();
     if (s.endsWith("L")) {
-      mProductions.addLast(LongConstant.v(Long.parseLong(s.substring(0, s.length() - 1))));
+      mProductions.addLast(constancFactory.createLongConstant(Long.parseLong(s.substring(0, s.length() - 1))));
     } else if (s.equals("2147483648")) {
-      mProductions.addLast(IntConstant.v(Integer.MIN_VALUE));
+      mProductions.addLast(constancFactory.createIntConstant(Integer.MIN_VALUE));
     } else {
-      mProductions.addLast(IntConstant.v(Integer.parseInt(s)));
+      mProductions.addLast(constancFactory.createIntConstant(Integer.parseInt(s)));
     }
   }
 
   public void outAStringConstant(AStringConstant node) {
     String s = (String) mProductions.removeLast();
-    mProductions.addLast(StringConstant.v(s));
+    mProductions.addLast(constancFactory.createStringConstant(s));
     /*
      * try { String t = StringTools.getUnEscapedStringOf(s);
      *
-     * mProductions.push(StringConstant.v(t)); } catch(RuntimeException e) { logger.debug(""+s); throw e; }
+     * mProductions.push(constancFactory.createStringConstant(t)); } catch(RuntimeException e) { logger.debug(""+s); throw e; }
      */
   }
 
   public void outAClzzConstant(AClzzConstant node) {
     String s = (String) mProductions.removeLast();
-    mProductions.addLast(ClassConstant.v(s));
+    mProductions.addLast(constancFactory.createClassConstant(s));
   }
 
   /* ('#' (('-'? 'Infinity') | 'NaN') ('f' | 'F')? ) ; */
@@ -1116,7 +1116,7 @@ public class Walker extends DepthFirstAdapter {
 
     Object res;
     if (isDouble) {
-      res = DoubleConstant.v(dvalue);
+      res = constancFactory.createDoubleConstant(dvalue);
     } else {
       res = FloatConstant.v(value);
     }

@@ -22,6 +22,9 @@ package soot.jimple;
  * #L%
  */
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 import soot.ArrayType;
 import soot.BooleanType;
 import soot.ByteType;
@@ -32,6 +35,7 @@ import soot.IntType;
 import soot.LongType;
 import soot.PrimType;
 import soot.RefType;
+import soot.Scene;
 import soot.ShortType;
 import soot.Type;
 import soot.util.StringTools;
@@ -39,20 +43,19 @@ import soot.util.Switch;
 
 public class ClassConstant extends Constant {
   public final String value;
+  private Scene myScene;
 
-  private ClassConstant(String s) {
+  @Inject
+  private ClassConstant(String s, @Assisted Scene myScene) {
     this.value = s;
-  }
-
-  public static ClassConstant v(String value) {
+    this.myScene = myScene;
     if (value.contains(".")) {
       throw new RuntimeException("ClassConstants must use class names separated by '/', not '.'!");
     }
-    return new ClassConstant(value);
   }
 
   public static ClassConstant fromType(Type tp) {
-    return v(sootTypeToString(tp));
+    return new ClassConstant(sootTypeToString(tp), tp.getMyScene());
   }
 
   private static String sootTypeToString(Type tp) {
@@ -110,7 +113,7 @@ public class ClassConstant extends Constant {
         tmp = tmp.substring(0, tmp.length() - 1);
       }
       tmp = tmp.replace("/", ".");
-      baseType = RefType.v(tmp);
+      baseType = RefType.v(tmp, myScene);
     } else if (tmp.equals("I")) {
       baseType = IntType.v();
     } else if (tmp.equals("B")) {
@@ -131,14 +134,13 @@ public class ClassConstant extends Constant {
       throw new RuntimeException("Unsupported class constant: " + value);
     }
 
-    return numDimensions > 0 ? ArrayType.v(baseType, numDimensions) : baseType;
+    return numDimensions > 0 ? ArrayType.v(baseType, numDimensions, myScene) : baseType;
   }
 
   /**
-   * Gets an internal representation of the class used in Java bytecode.
-   * The returned string is similar to the fully qualified name but with '/' instead of '.'.
-   * Example: "java/lang/Object".
-   * See https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.2.1
+   * Gets an internal representation of the class used in Java bytecode. The returned string is similar to the fully
+   * qualified name but with '/' instead of '.'. Example: "java/lang/Object". See
+   * https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.2.1
    */
   public String toInternalString() {
     String internal = value;
@@ -177,7 +179,7 @@ public class ClassConstant extends Constant {
   }
 
   public Type getType() {
-    return RefType.v("java.lang.Class");
+    return RefType.v("java.lang.Class", myScene);
   }
 
   public void apply(Switch sw) {

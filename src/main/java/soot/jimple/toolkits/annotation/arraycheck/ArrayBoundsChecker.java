@@ -218,7 +218,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
               }
 
               units.insertBefore(
-                  myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), IntConstant.v(lowercounter))),
+                  myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constancFactory.createIntConstant(lowercounter))),
                   stmt);
 
               int uppercounter = 2;
@@ -227,17 +227,17 @@ public class ArrayBoundsChecker extends BodyTransformer {
               }
 
               units.insertBefore(
-                  myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), IntConstant.v(uppercounter))),
+                  myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constancFactory.createIntConstant(uppercounter))),
                   stmt);
 
               /*
                * if (!lowercheck && !uppercheck) { units.insertBefore(myJimple.newInvokeStmt(
-               * myJimple.newStaticInvokeExpr(increase, IntConstant.v(4))), stmt);
+               * myJimple.newStaticInvokeExpr(increase, constancFactory.createIntConstant(4))), stmt);
                *
                * NullCheckTag nullTag = (NullCheckTag)stmt.getTag("NullCheckTag");
                *
                * if (nullTag != null && !nullTag.needCheck()) units.insertBefore(myJimple.newInvokeStmt(
-               * myJimple.newStaticInvokeExpr(increase, IntConstant.v(7))), stmt); }
+               * myJimple.newStaticInvokeExpr(increase, constancFactory.createIntConstant(7))), stmt); }
                */
             } else {
               Tag checkTag = new ArrayCheckTag(lowercheck, uppercheck);

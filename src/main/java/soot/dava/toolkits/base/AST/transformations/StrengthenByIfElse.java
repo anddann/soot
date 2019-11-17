@@ -153,7 +153,7 @@ public class StrengthenByIfElse {
                     newStmts.add(tempStmt);
                   }
                 }
-                toReturn.add(new ASTStatementSequenceNode(newStmts));
+                toReturn.add(new ASTStatementSequenceNode(newStmts, myTryContentsFinder, myASTWalker));
               }
               return toReturn;
 
@@ -182,7 +182,7 @@ public class StrengthenByIfElse {
 
         // Add the statementSequenceNode AFTER the whileNode
         List<AugmentedStmt> newStmts = new ArrayList<AugmentedStmt>(statements);
-        toReturn.add(new ASTStatementSequenceNode(newStmts));
+        toReturn.add(new ASTStatementSequenceNode(newStmts, myTryContentsFinder, myASTWalker));
         return toReturn;
       } // if stmt was a return stmt
     } // going through the stmts
@@ -207,7 +207,7 @@ public class StrengthenByIfElse {
     SETNodeLabel newLabel = ((ASTLabeledNode) loopNode).get_Label();
 
     // make new ASTWhileNode
-    return new ASTWhileNode(newLabel, newCond, loopBody);
+    return new ASTWhileNode(newLabel, newCond, loopBody, myTryContentsFinder);
   }
 
 } // end class

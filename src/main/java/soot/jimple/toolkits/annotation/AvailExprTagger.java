@@ -76,7 +76,7 @@ public class AvailExprTagger extends BodyTransformer {
     if (options.kind() == AETOptions.kind_optimistic) {
       new SlowAvailableExpressionsAnalysis(new ExceptionalUnitGraph(b,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene),myOptions.interactive_mode(), myInteractionHandler);
     } else {
-      new PessimisticAvailableExpressionsAnalysis(new ExceptionalUnitGraph(b,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene), b.getMethod(), sideEffect);
+      new PessimisticAvailableExpressionsAnalysis(new ExceptionalUnitGraph(b,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene), b.getMethod(), sideEffect, myInteractionHandler, myOptions.interactive_mode());
     }
   }
 }

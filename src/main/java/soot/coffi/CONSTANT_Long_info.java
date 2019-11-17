@@ -97,6 +97,6 @@ class CONSTANT_Long_info extends cp_info {
   }
 
   public Value createJimpleConstantValue(cp_info[] constant_pool) {
-    return LongConstant.v(convert());
+    return constancFactory.createLongConstant(convert());
   }
 }

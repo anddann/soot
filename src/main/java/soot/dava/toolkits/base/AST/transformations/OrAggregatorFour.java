@@ -261,7 +261,7 @@ public class OrAggregatorFour extends DepthFirstAdapter {
       bodyB.add(it.next());
     }
 
-    ASTIfNode newNode = new ASTIfNode(new SETNodeLabel(), newCond, bodyB);
+    ASTIfNode newNode = new ASTIfNode(new SETNodeLabel(), newCond, bodyB, myTryContentsFinder);
 
     // add this node to the bodyA
     bodyA.add(newNode);

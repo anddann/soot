@@ -63,7 +63,7 @@ public class SparseSwitchInstruction extends SwitchInstruction {
     List<IntConstant> lookupValues = new ArrayList<IntConstant>();
     List<Unit> targets = new ArrayList<Unit>();
     for (SwitchElement se : seList) {
-      lookupValues.add(IntConstant.v(se.getKey()));
+      lookupValues.add(constancFactory.createIntConstant(se.getKey()));
       int offset = se.getOffset();
       targets.add(body.instructionAtAddress(codeAddress + offset).getUnit());
     }

@@ -26,7 +26,6 @@ import soot.UnitPrinter;
 import soot.dava.toolkits.base.AST.analysis.Analysis;
 import soot.dava.toolkits.base.misc.ConditionFlipper;
 import soot.jimple.ConditionExpr;
-import soot.jimple.Jimple;
 
 public class ASTBinaryCondition extends ASTUnaryBinaryCondition {
   ConditionExpr condition;
@@ -48,7 +47,7 @@ public class ASTBinaryCondition extends ASTUnaryBinaryCondition {
   }
 
   public void toString(UnitPrinter up) {
-    (myJimple.newConditionExprBox(condition)).toString(up);
+    (this.condition.getType().getMyScene().getMyJimple().newConditionExprBox(condition)).toString(up);
   }
 
   public void flip() {

@@ -70,8 +70,8 @@ public class DexNullThrowTransformer extends BodyTransformer {
       // Check for a null exception
       if (u instanceof ThrowStmt) {
         ThrowStmt throwStmt = (ThrowStmt) u;
-        if (throwStmt.getOp() == myNullConstant || throwStmt.getOp().equals(IntConstant.v(0))
-            || throwStmt.getOp().equals(LongConstant.v(0))) {
+        if (throwStmt.getOp() == myNullConstant || throwStmt.getOp().equals(constancFactory.createIntConstant(0))
+            || throwStmt.getOp().equals(constancFactory.createLongConstant(0))) {
           createThrowStmt(b, throwStmt, lc);
         }
       }
@@ -99,7 +99,7 @@ public class DexNullThrowTransformer extends BodyTransformer {
     Stmt newExStmt = myJimple.newAssignStmt(lcEx, myJimple.newNewExpr(tp));
     body.getUnits().insertBefore(newExStmt, oldStmt);
     Stmt invConsStmt = myJimple.newInvokeStmt(myJimple.newSpecialInvokeExpr(lcEx, constructorRef,
-        Collections.singletonList(StringConstant.v("Null throw statement replaced by Soot"))));
+        Collections.singletonList(constancFactory.createStringConstant("Null throw statement replaced by Soot"))));
     body.getUnits().insertBefore(invConsStmt, oldStmt);
 
     // Throw the exception

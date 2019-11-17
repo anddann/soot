@@ -88,6 +88,6 @@ class CONSTANT_Integer_info extends cp_info {
   }
 
   public Value createJimpleConstantValue(cp_info[] constant_pool) {
-    return IntConstant.v((int) bytes);
+    return constancFactory.createIntConstant((int) bytes);
   }
 }

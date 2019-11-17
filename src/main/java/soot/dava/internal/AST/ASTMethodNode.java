@@ -143,7 +143,7 @@ public class ASTMethodNode extends ASTNode {
       statementSequence.add(as);
     }
 
-    declarations = new ASTStatementSequenceNode(statementSequence);
+    declarations = new ASTStatementSequenceNode(statementSequence, myTryContentsFinder, myASTWalker);
 
     body.add(0, declarations);
     subBodies = new ArrayList<Object>();

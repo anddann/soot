@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import soot.RefType;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.SootMethodRef;
@@ -129,7 +128,7 @@ public class MethodCallFinder extends DepthFirstAdapter {
             SootMethod sootMethod = runtime.getMethod("void <init>(java.lang.String)");
             SootMethodRef methodRef = sootMethod.makeRef();
             RefType myRefType = RefType.v(runtime);
-            StringConstant tempString = StringConstant.v("This method used to have a definition of a final variable. "
+            StringConstant tempString = constancFactory.createStringConstant("This method used to have a definition of a final variable. "
                 + "Dava inlined the definition into the static initializer");
             List list = new ArrayList();
             list.add(tempString);
@@ -141,7 +140,7 @@ public class MethodCallFinder extends DepthFirstAdapter {
             AugmentedStmt augStmt = new AugmentedStmt(throwStmt);
             List<AugmentedStmt> sequence = new ArrayList<AugmentedStmt>();
             sequence.add(augStmt);
-            ASTStatementSequenceNode seqNode = new ASTStatementSequenceNode(sequence);
+            ASTStatementSequenceNode seqNode = new ASTStatementSequenceNode(sequence, myTryContentsFinder, myASTWalker);
             List<Object> subBody = new ArrayList<Object>();
             subBody.add(seqNode);
 
@@ -417,14 +416,14 @@ public class MethodCallFinder extends DepthFirstAdapter {
     List<ASTStatementSequenceNode> toReturn = new ArrayList<ASTStatementSequenceNode>();
 
     if (newInitialNode.size() != 0) {
-      toReturn.add(new ASTStatementSequenceNode(newInitialNode));
+      toReturn.add(new ASTStatementSequenceNode(newInitialNode, myTryContentsFinder, myASTWalker));
     }
 
     // add inline methods body
     toReturn.addAll(body);
 
     if (newSecondNode.size() != 0) {
-      toReturn.add(new ASTStatementSequenceNode(newSecondNode));
+      toReturn.add(new ASTStatementSequenceNode(newSecondNode, myTryContentsFinder, myASTWalker));
     }
 
     return toReturn;

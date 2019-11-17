@@ -175,7 +175,7 @@ public class EmptyElseRemover {
       // so this is the ElseBody to remove
 
       // need to create an ASTIfNode from the ASTIfElseNode
-      ASTIfNode newNode = new ASTIfNode(toRemoveNode.get_Label(), toRemoveNode.get_Condition(), toRemoveNode.getIfBody());
+      ASTIfNode newNode = new ASTIfNode(toRemoveNode.get_Label(), toRemoveNode.get_Condition(), toRemoveNode.getIfBody(), myTryContentsFinder);
 
       // add this node to the newSubBody
       newSubBody.add(newNode);

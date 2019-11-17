@@ -314,7 +314,7 @@ public class LockAllocator extends SceneTransformer {
     // Search for data dependencies between transactions, and split them into disjoint sets
     logger.debug("[wjtp.tn] *** Calculate Locking Groups *** " + (new Date()));
     CriticalSectionInterferenceGraph ig = new CriticalSectionInterferenceGraph(criticalSections, mhp, optionOneGlobalLock,
-        optionLeaveOriginalLocks, optionIncludeEmptyPossibleEdges);
+        optionLeaveOriginalLocks, optionIncludeEmptyPossibleEdges,myScene);
     interferenceGraph = ig; // save in field for later retrieval
 
     // *** Detect the Possibility of Deadlock ***

@@ -77,20 +77,20 @@ public class CPHelper {
 
   public static Value createConstant(Object toConvert) {
     if (toConvert instanceof Long) {
-      return LongConstant.v(((Long) toConvert).longValue());
+      return constancFactory.createLongConstant(((Long) toConvert).longValue());
     } else if (toConvert instanceof Double) {
-      return DoubleConstant.v(((Double) toConvert).doubleValue());
+      return constancFactory.createDoubleConstant(((Double) toConvert).doubleValue());
     } else if (toConvert instanceof Boolean) {
       boolean val = ((Boolean) toConvert).booleanValue();
       if (val) {
-        return DIntConstant.v(1, BooleanType.v());
+        return DconstancFactory.createIntConstant(1, BooleanType.v());
       } else {
-        return DIntConstant.v(0, BooleanType.v());
+        return DconstancFactory.createIntConstant(0, BooleanType.v());
       }
     } else if (toConvert instanceof Float) {
       return FloatConstant.v(((Float) toConvert).floatValue());
     } else if (toConvert instanceof Integer) {
-      return IntConstant.v(((Integer) toConvert).intValue());
+      return constancFactory.createIntConstant(((Integer) toConvert).intValue());
     } else {
       return null;
     }

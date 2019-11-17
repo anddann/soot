@@ -883,7 +883,7 @@ public class DavaBody extends Body {
           javafy(ds.getLeftOpBox());
 
           if (ds.getRightOp() instanceof IntConstant) {
-            ds.getRightOpBox().setValue(DIntConstant.v(((IntConstant) ds.getRightOp()).value, ds.getLeftOp().getType()));
+            ds.getRightOpBox().setValue(DconstancFactory.createIntConstant(((IntConstant) ds.getRightOp()).value, ds.getLeftOp().getType()));
           }
         }
 
@@ -891,7 +891,7 @@ public class DavaBody extends Body {
           ReturnStmt rs = (ReturnStmt) s;
 
           if (rs.getOp() instanceof IntConstant) {
-            rs.getOpBox().setValue(DIntConstant.v(((IntConstant) rs.getOp()).value, body.getMethod().getReturnType()));
+            rs.getOpBox().setValue(DconstancFactory.createIntConstant(((IntConstant) rs.getOp()).value, body.getMethod().getReturnType()));
           } else {
             javafy(rs.getOpBox());
           }
@@ -1080,9 +1080,9 @@ public class DavaBody extends Body {
         leftOp = leftOpBox.getValue();
 
         if (boe instanceof ConditionExpr) {
-          rightOpBox.setValue(DIntConstant.v(((IntConstant) rightOp).value, leftOp.getType()));
+          rightOpBox.setValue(DconstancFactory.createIntConstant(((IntConstant) rightOp).value, leftOp.getType()));
         } else {
-          rightOpBox.setValue(DIntConstant.v(((IntConstant) rightOp).value, null));
+          rightOpBox.setValue(DconstancFactory.createIntConstant(((IntConstant) rightOp).value, null));
         }
       }
     } else if (leftOp instanceof IntConstant) {
@@ -1090,9 +1090,9 @@ public class DavaBody extends Body {
       rightOp = rightOpBox.getValue();
 
       if (boe instanceof ConditionExpr) {
-        leftOpBox.setValue(DIntConstant.v(((IntConstant) leftOp).value, rightOp.getType()));
+        leftOpBox.setValue(DconstancFactory.createIntConstant(((IntConstant) leftOp).value, rightOp.getType()));
       } else {
-        leftOpBox.setValue(DIntConstant.v(((IntConstant) leftOp).value, null));
+        leftOpBox.setValue(DconstancFactory.createIntConstant(((IntConstant) leftOp).value, null));
       }
     } else {
       javafy(rightOpBox);
@@ -1167,7 +1167,7 @@ public class DavaBody extends Body {
       Value arg = ie.getArg(i);
 
       if (arg instanceof IntConstant) {
-        ie.getArgBox(i).setValue(DIntConstant.v(((IntConstant) arg).value, ie.getMethodRef().parameterType(i)));
+        ie.getArgBox(i).setValue(DconstancFactory.createIntConstant(((IntConstant) arg).value, ie.getMethodRef().parameterType(i)));
       } else {
         javafy(ie.getArgBox(i));
       }

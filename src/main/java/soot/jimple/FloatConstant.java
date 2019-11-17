@@ -87,37 +87,37 @@ public class FloatConstant extends RealConstant {
   @Override
   public NumericConstant equalEqual(NumericConstant c) {
     assertInstanceOf(c);
-    return IntConstant.v(Float.compare(this.value, ((FloatConstant) c).value) == 0 ? 1 : 0);
+    return constancFactory.createIntConstant(Float.compare(this.value, ((FloatConstant) c).value) == 0 ? 1 : 0);
   }
 
   @Override
   public NumericConstant notEqual(NumericConstant c) {
     assertInstanceOf(c);
-    return IntConstant.v(Float.compare(this.value, ((FloatConstant) c).value) != 0 ? 1 : 0);
+    return constancFactory.createIntConstant(Float.compare(this.value, ((FloatConstant) c).value) != 0 ? 1 : 0);
   }
 
   @Override
   public NumericConstant lessThan(NumericConstant c) {
     assertInstanceOf(c);
-    return IntConstant.v(Float.compare(this.value, ((FloatConstant) c).value) < 0 ? 1 : 0);
+    return constancFactory.createIntConstant(Float.compare(this.value, ((FloatConstant) c).value) < 0 ? 1 : 0);
   }
 
   @Override
   public NumericConstant lessThanOrEqual(NumericConstant c) {
     assertInstanceOf(c);
-    return IntConstant.v(Float.compare(this.value, ((FloatConstant) c).value) <= 0 ? 1 : 0);
+    return constancFactory.createIntConstant(Float.compare(this.value, ((FloatConstant) c).value) <= 0 ? 1 : 0);
   }
 
   @Override
   public NumericConstant greaterThan(NumericConstant c) {
     assertInstanceOf(c);
-    return IntConstant.v(Float.compare(this.value, ((FloatConstant) c).value) > 0 ? 1 : 0);
+    return constancFactory.createIntConstant(Float.compare(this.value, ((FloatConstant) c).value) > 0 ? 1 : 0);
   }
 
   @Override
   public NumericConstant greaterThanOrEqual(NumericConstant c) {
     assertInstanceOf(c);
-    return IntConstant.v(Float.compare(this.value, ((FloatConstant) c).value) >= 0 ? 1 : 0);
+    return constancFactory.createIntConstant(Float.compare(this.value, ((FloatConstant) c).value) >= 0 ? 1 : 0);
   }
 
   @Override
@@ -125,11 +125,11 @@ public class FloatConstant extends RealConstant {
     assertInstanceOf(constant);
     final float cValue = ((FloatConstant) constant).value;
     if (this.value < cValue) {
-      return IntConstant.v(-1);
+      return constancFactory.createIntConstant(-1);
     } else if (this.value == cValue) {
-      return IntConstant.v(0);
+      return constancFactory.createIntConstant(0);
     } else {
-      return IntConstant.v(1);
+      return constancFactory.createIntConstant(1);
     }
   }
 
@@ -138,11 +138,11 @@ public class FloatConstant extends RealConstant {
     assertInstanceOf(constant);
     final float cValue = ((FloatConstant) constant).value;
     if (this.value > cValue) {
-      return IntConstant.v(1);
+      return constancFactory.createIntConstant(1);
     } else if (this.value == cValue) {
-      return IntConstant.v(0);
+      return constancFactory.createIntConstant(0);
     } else {
-      return IntConstant.v(-1);
+      return constancFactory.createIntConstant(-1);
     }
   }
 

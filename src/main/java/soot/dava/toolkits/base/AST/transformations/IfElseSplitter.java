@@ -156,7 +156,7 @@ public class IfElseSplitter extends DepthFirstAdapter {
         cond.flip();
       }
 
-      ASTIfNode newNode = new ASTIfNode(node.get_Label(), cond, newIfBody);
+      ASTIfNode newNode = new ASTIfNode(node.get_Label(), cond, newIfBody, myTryContentsFinder);
       if (DEBUG) {
         System.out.println("New IF Node is: " + newNode.toString());
         System.out.println("Outer scope body list is:\n");

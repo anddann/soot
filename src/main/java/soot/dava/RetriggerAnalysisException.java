@@ -24,6 +24,6 @@ package soot.dava;
 
 public class RetriggerAnalysisException extends Exception {
   public RetriggerAnalysisException() {
-    myDava.log("RetriggerAnalysisException");
+    //myDava.log("RetriggerAnalysisException");
   }
 }

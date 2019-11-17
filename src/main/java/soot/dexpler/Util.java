@@ -262,15 +262,15 @@ public class Util {
       if (t instanceof RefType || t instanceof ArrayType) {
         ass = myJimple.newAssignStmt(l, myNullConstant);
       } else if (t instanceof LongType) {
-        ass = myJimple.newAssignStmt(l, LongConstant.v(0));
+        ass = myJimple.newAssignStmt(l, constancFactory.createLongConstant(0));
       } else if (t instanceof FloatType) {
         ass = myJimple.newAssignStmt(l, FloatConstant.v(0.0f));
       } else if (t instanceof IntType) {
-        ass = myJimple.newAssignStmt(l, IntConstant.v(0));
+        ass = myJimple.newAssignStmt(l, constancFactory.createIntConstant(0));
       } else if (t instanceof DoubleType) {
-        ass = myJimple.newAssignStmt(l, DoubleConstant.v(0));
+        ass = myJimple.newAssignStmt(l, constancFactory.createDoubleConstant(0));
       } else if (t instanceof BooleanType || t instanceof ByteType || t instanceof CharType || t instanceof ShortType) {
-        ass = myJimple.newAssignStmt(l, IntConstant.v(0));
+        ass = myJimple.newAssignStmt(l, constancFactory.createIntConstant(0));
       } else {
         throw new RuntimeException("error: return type unknown: " + t + " class: " + t.getClass());
       }
@@ -295,7 +295,7 @@ public class Util {
             .newInvokeStmt(myJimple.newSpecialInvokeExpr(l,
                 myScene.makeMethodRef(myScene.getSootClass(exceptionType), "<init>",
                     Collections.singletonList((Type) RefType.v("java.lang.String")), VoidType.v(), false),
-                StringConstant.v(m)));
+                constancFactory.createStringConstant(m)));
     Unit u3 = myJimple.newThrowStmt(l);
     newUnits.add(u1);
     newUnits.add(u2);

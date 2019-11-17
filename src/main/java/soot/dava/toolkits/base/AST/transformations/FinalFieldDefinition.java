@@ -63,7 +63,6 @@ import soot.jimple.DoubleConstant;
 import soot.jimple.FloatConstant;
 import soot.jimple.InvokeExpr;
 import soot.jimple.LongConstant;
-import soot.jimple.NullConstant;
 import soot.jimple.Stmt;
 import soot.jimple.internal.JimpleLocal;
 
@@ -241,7 +240,7 @@ public class FinalFieldDefinition {
             // can add statement here
             stmts.add(defaultStmt);
 
-            ASTStatementSequenceNode newNode = new ASTStatementSequenceNode(stmts);
+            ASTStatementSequenceNode newNode = new ASTStatementSequenceNode(stmts, myTryContentsFinder, myASTWalker);
             // replace this node with the original node
 
             body.remove(body.size() - 1);
@@ -257,7 +256,7 @@ public class FinalFieldDefinition {
       List<AugmentedStmt> newBody = new ArrayList<AugmentedStmt>();
       newBody.add(defaultStmt);
 
-      ASTStatementSequenceNode newNode = new ASTStatementSequenceNode(newBody);
+      ASTStatementSequenceNode newNode = new ASTStatementSequenceNode(newBody, myTryContentsFinder, myASTWalker);
       body.add(newNode);
 
       node.replaceBody(body);
@@ -290,15 +289,15 @@ public class FinalFieldDefinition {
     if (fieldType instanceof RefType) {
       assignStmt = new GAssignStmt(ref, myNullConstant);
     } else if (fieldType instanceof DoubleType) {
-      assignStmt = new GAssignStmt(ref, DoubleConstant.v(0));
+      assignStmt = new GAssignStmt(ref, constancFactory.createDoubleConstant(0));
     } else if (fieldType instanceof FloatType) {
       assignStmt = new GAssignStmt(ref, FloatConstant.v(0));
     } else if (fieldType instanceof LongType) {
-      assignStmt = new GAssignStmt(ref, LongConstant.v(0));
+      assignStmt = new GAssignStmt(ref, constancFactory.createLongConstant(0));
     } else if (fieldType instanceof IntType || fieldType instanceof ByteType || fieldType instanceof ShortType
         || fieldType instanceof CharType || fieldType instanceof BooleanType) {
 
-      assignStmt = new GAssignStmt(ref, DIntConstant.v(0, fieldType));
+      assignStmt = new GAssignStmt(ref, DconstancFactory.createIntConstant(0, fieldType));
     }
 
     if (assignStmt != null) {
@@ -380,7 +379,7 @@ public class FinalFieldDefinition {
         List<AugmentedStmt> stmts = declNode.getStatements();
         stmts.add(as);
 
-        declNode = new ASTStatementSequenceNode(stmts);
+        declNode = new ASTStatementSequenceNode(stmts, myTryContentsFinder, myASTWalker);
 
         List<Object> subBodies = node.get_SubBodies();
         if (subBodies.size() != 1) {
@@ -415,14 +414,14 @@ public class FinalFieldDefinition {
           // the second node is a stmt seq node just add the stmt here
           List<AugmentedStmt> stmts1 = ((ASTStatementSequenceNode) nodeSecond).getStatements();
           stmts1.add(initialization);
-          nodeSecond = new ASTStatementSequenceNode(stmts1);
+          nodeSecond = new ASTStatementSequenceNode(stmts1, myTryContentsFinder, myASTWalker);
           // System.out.println("Init added in exisiting node");
           body.remove(1);
         } else {
           // System.out.println("had to add new node");
           List<AugmentedStmt> tempList = new ArrayList<AugmentedStmt>();
           tempList.add(initialization);
-          nodeSecond = new ASTStatementSequenceNode(tempList);
+          nodeSecond = new ASTStatementSequenceNode(tempList, myTryContentsFinder, myASTWalker);
         }
         body.add(1, nodeSecond);
         node.replaceBody(body);
@@ -522,7 +521,7 @@ public class FinalFieldDefinition {
                 // create a new stmt seq node and add it here
                 List<AugmentedStmt> tempList = new ArrayList<AugmentedStmt>();
                 tempList.add(assignStmt1);
-                ASTStatementSequenceNode lastNode = new ASTStatementSequenceNode(tempList);
+                ASTStatementSequenceNode lastNode = new ASTStatementSequenceNode(tempList, myTryContentsFinder, myASTWalker);
                 ancestorSubBody.add(index + 1, lastNode);
                 // node.replaceBody(body);
                 // System.out.println("here2");

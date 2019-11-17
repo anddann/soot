@@ -43,6 +43,7 @@ public class ASTTryNode extends ASTLabeledNode {
   private List<Object> tryBody, catchList;
   private Map<Object, Object> exceptionMap, paramMap;
   private container tryBodyContainer;
+  private TryContentsFinder myTryContentsFinder;
 
   public class container {
     public Object o;

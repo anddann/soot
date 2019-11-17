@@ -196,7 +196,7 @@ public class NullPointerChecker extends BodyTransformer {
             }
 
             units.insertBefore(
-                myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), IntConstant.v(whichCounter))),
+                myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constancFactory.createIntConstant(whichCounter))),
                 s);
           }
 

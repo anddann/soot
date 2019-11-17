@@ -80,7 +80,7 @@ public class SETSwitchNode extends SETDagNode {
       }
     }
 
-    return new ASTSwitchNode(get_Label(), key, indexList, index2ASTBody);
+    return new ASTSwitchNode(get_Label(), myJimple, key, indexList, index2ASTBody, myASTWalker, myTryContentsFinder);
   }
 
   public AugmentedStmt get_EntryStmt() {

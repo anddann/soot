@@ -35,15 +35,20 @@ import soot.dava.toolkits.base.AST.analysis.Analysis;
 
 public class ASTStatementSequenceNode extends ASTNode {
   private List<AugmentedStmt> statementSequence;
+  private TryContentsFinder myTryContentsFinder;
+  private ASTWalker myASTWalker;
 
-  public ASTStatementSequenceNode(List<AugmentedStmt> statementSequence) {
+  public ASTStatementSequenceNode(List<AugmentedStmt> statementSequence, TryContentsFinder myTryContentsFinder,
+      ASTWalker myASTWalker) {
     super();
 
     this.statementSequence = statementSequence;
+    this.myTryContentsFinder = myTryContentsFinder;
+    this.myASTWalker = myASTWalker;
   }
 
   public Object clone() {
-    return new ASTStatementSequenceNode(statementSequence);
+    return new ASTStatementSequenceNode(statementSequence, myTryContentsFinder, myASTWalker);
   }
 
   public void perform_Analysis(ASTAnalysis a) {

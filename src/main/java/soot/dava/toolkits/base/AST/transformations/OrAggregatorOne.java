@@ -139,7 +139,7 @@ public class OrAggregatorOne extends DepthFirstAdapter {
       newIfBody.add(temp);
     }
 
-    ASTIfNode newNode = new ASTIfNode(new SETNodeLabel(), newCond, newIfBody);
+    ASTIfNode newNode = new ASTIfNode(new SETNodeLabel(), newCond, newIfBody, myTryContentsFinder);
 
     List<Object> newLabeledBlockBody = new ArrayList<Object>();
     newLabeledBlockBody.add(newNode);

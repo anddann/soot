@@ -425,33 +425,33 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       polyglot.ast.IntLit intLit = (polyglot.ast.IntLit) lit;
       long litValue = intLit.value();
       if (intLit.kind() == polyglot.ast.IntLit.INT) {
-        return soot.jimple.IntConstant.v((int) litValue);
+        return soot.jimple.constancFactory.createIntConstant((int) litValue);
       } else {
         // System.out.println(litValue);
-        return soot.jimple.LongConstant.v(litValue);
+        return soot.jimple.constancFactory.createLongConstant(litValue);
       }
     } else if (lit instanceof polyglot.ast.StringLit) {
       String litValue = ((polyglot.ast.StringLit) lit).value();
-      return soot.jimple.StringConstant.v(litValue);
+      return soot.jimple.constancFactory.createStringConstant(litValue);
     } else if (lit instanceof polyglot.ast.NullLit) {
       return soot.jimple.myNullConstant;
     } else if (lit instanceof polyglot.ast.FloatLit) {
       polyglot.ast.FloatLit floatLit = (polyglot.ast.FloatLit) lit;
       double litValue = floatLit.value();
       if (floatLit.kind() == polyglot.ast.FloatLit.DOUBLE) {
-        return soot.jimple.DoubleConstant.v(floatLit.value());
+        return soot.jimple.constancFactory.createDoubleConstant(floatLit.value());
       } else {
         return soot.jimple.FloatConstant.v((float) (floatLit.value()));
       }
     } else if (lit instanceof polyglot.ast.CharLit) {
       char litValue = ((polyglot.ast.CharLit) lit).value();
-      return soot.jimple.IntConstant.v(litValue);
+      return soot.jimple.constancFactory.createIntConstant(litValue);
     } else if (lit instanceof polyglot.ast.BooleanLit) {
       boolean litValue = ((polyglot.ast.BooleanLit) lit).value();
       if (litValue) {
-        return soot.jimple.IntConstant.v(1);
+        return soot.jimple.constancFactory.createIntConstant(1);
       } else {
-        return soot.jimple.IntConstant.v(0);
+        return soot.jimple.constancFactory.createIntConstant(0);
       }
     } else if (lit instanceof polyglot.ast.ClassLit) {
       return getSpecialClassLitLocal((polyglot.ast.ClassLit) lit);
@@ -634,7 +634,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
    * (soot.jimple.Stmt)falseNoop.pop();
    *
    * boolean needIf = needSootIf(sootCond); if (!(sootCond instanceof soot.jimple.ConditionExpr)) { sootCond =
-   * soot.jimple.myJimple.newEqExpr(sootCond, soot.jimple.IntConstant.v(0)); } else { sootCond =
+   * soot.jimple.myJimple.newEqExpr(sootCond, soot.jimple.constancFactory.createIntConstant(0)); } else { sootCond =
    * reverseCondition((soot.jimple.ConditionExpr)sootCond); sootCond = handleDFLCond((soot.jimple.ConditionExpr)sootCond); }
    *
    * // add if soot.jimple.Stmt noop1 = soot.jimple.myJimple.newNopStmt();
@@ -727,9 +727,9 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       if (needIf) {
         if (!(sootCond instanceof soot.jimple.ConditionExpr)) {
           if (!boto) {
-            sootCond = soot.jimple.myJimple.newEqExpr(sootCond, soot.jimple.IntConstant.v(0));
+            sootCond = soot.jimple.myJimple.newEqExpr(sootCond, soot.jimple.constancFactory.createIntConstant(0));
           } else {
-            sootCond = soot.jimple.myJimple.newNeExpr(sootCond, soot.jimple.IntConstant.v(0));
+            sootCond = soot.jimple.myJimple.newNeExpr(sootCond, soot.jimple.constancFactory.createIntConstant(0));
           }
         }
 
@@ -782,7 +782,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
    * polyglot.ast.Expr condition = whileStmt.cond(); soot.Value sootCond = base().createExpr(condition); soot.jimple.Stmt
    * tNoop = (soot.jimple.Stmt)trueNoop.pop(); soot.jimple.Stmt fNoop = (soot.jimple.Stmt)falseNoop.pop(); boolean needIf =
    * needSootIf(sootCond); if (!(sootCond instanceof soot.jimple.ConditionExpr)) { sootCond =
-   * soot.jimple.myJimple.newEqExpr(sootCond, soot.jimple.IntConstant.v(0)); } else { sootCond =
+   * soot.jimple.myJimple.newEqExpr(sootCond, soot.jimple.constancFactory.createIntConstant(0)); } else { sootCond =
    * reverseCondition((soot.jimple.ConditionExpr)sootCond); sootCond = handleDFLCond((soot.jimple.ConditionExpr)sootCond); }
    *
    * if (needIf){ soot.jimple.IfStmt ifStmt = soot.jimple.myJimple.newIfStmt(sootCond, noop1);
@@ -863,7 +863,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
    * trueNoop.pop();
    *
    * boolean needIf = needSootIf(sootCond); if (!(sootCond instanceof soot.jimple.ConditionExpr)) { sootCond =
-   * soot.jimple.myJimple.newNeExpr(sootCond, soot.jimple.IntConstant.v(0)); } else { sootCond =
+   * soot.jimple.myJimple.newNeExpr(sootCond, soot.jimple.constancFactory.createIntConstant(0)); } else { sootCond =
    * handleDFLCond((soot.jimple.ConditionExpr)sootCond); } if (needIf){ soot.jimple.IfStmt ifStmt =
    * soot.jimple.myJimple.newIfStmt(sootCond, noop1); body.getUnits().add(ifStmt); Util.addPosTag(ifStmt.getConditionBox(),
    * condition.position()); Util.addLnPosTags(ifStmt, condition.position()); } else { soot.jimple.GotoStmt gotoIf =
@@ -928,7 +928,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
    * soot.Value sootCond = base().createExpr(condition); trueNoop.pop(); falseNoop.pop();
    *
    * boolean needIf = needSootIf(sootCond); if (!(sootCond instanceof soot.jimple.ConditionExpr)) { sootCond =
-   * soot.jimple.myJimple.newEqExpr(sootCond, soot.jimple.IntConstant.v(0)); } else { sootCond =
+   * soot.jimple.myJimple.newEqExpr(sootCond, soot.jimple.constancFactory.createIntConstant(0)); } else { sootCond =
    * reverseCondition((soot.jimple.ConditionExpr)sootCond); sootCond = handleDFLCond((soot.jimple.ConditionExpr)sootCond); }
    * if (needIf){ soot.jimple.IfStmt ifStmt = soot.jimple.myJimple.newIfStmt(sootCond, noop1);
    *
@@ -969,7 +969,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
    *
    * /*polyglot.ast.Expr condition = forStmt.cond(); if (condition != null) { soot.Value sootCond =
    * base().createExpr(condition); boolean needIf = needSootIf(sootCond); if (!(sootCond instanceof
-   * soot.jimple.ConditionExpr)) { sootCond = soot.jimple.myJimple.newNeExpr(sootCond, soot.jimple.IntConstant.v(0)); }
+   * soot.jimple.ConditionExpr)) { sootCond = soot.jimple.myJimple.newNeExpr(sootCond, soot.jimple.constancFactory.createIntConstant(0)); }
    * else { sootCond = handleDFLCond((soot.jimple.ConditionExpr)sootCond); } if (needIf){ soot.jimple.IfStmt ifStmt =
    * soot.jimple.myJimple.newIfStmt(sootCond, noop1);
    *
@@ -1161,7 +1161,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       ArrayList values = new ArrayList();
       for (int i = 0; i < counter; i++) {
         if (!caseArray[i].isDefault()) {
-          values.add(soot.jimple.IntConstant.v((int) caseArray[i].value()));
+          values.add(soot.jimple.constancFactory.createIntConstant((int) caseArray[i].value()));
         }
       }
 
@@ -1427,7 +1427,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
     body.getUnits().add(fieldAssign);
 
     soot.jimple.NopStmt nop1 = soot.jimple.myJimple.newNopStmt();
-    soot.jimple.ConditionExpr cond1 = soot.jimple.myJimple.newNeExpr(testLocal, soot.jimple.IntConstant.v(0));
+    soot.jimple.ConditionExpr cond1 = soot.jimple.myJimple.newNeExpr(testLocal, soot.jimple.constancFactory.createIntConstant(0));
     soot.jimple.IfStmt testIf = soot.jimple.myJimple.newIfStmt(cond1, nop1);
     body.getUnits().add(testIf);
 
@@ -1438,7 +1438,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       soot.Value sootCond = base().createAggressiveExpr(assertStmt.cond(), false, false);
       boolean needIf = needSootIf(sootCond);
       if (!(sootCond instanceof soot.jimple.ConditionExpr)) {
-        sootCond = soot.jimple.myJimple.newEqExpr(sootCond, soot.jimple.IntConstant.v(1));
+        sootCond = soot.jimple.myJimple.newEqExpr(sootCond, soot.jimple.constancFactory.createIntConstant(1));
       } else {
         sootCond = handleDFLCond((soot.jimple.ConditionExpr) sootCond);
       }
@@ -2536,10 +2536,10 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
   private soot.jimple.Constant getConstant(Object constVal, polyglot.types.Type type) {
     // System.out.println("getConstant: "+constVal);
     if (constVal instanceof String) {
-      return soot.jimple.StringConstant.v((String) constVal);
+      return soot.jimple.constancFactory.createStringConstant((String) constVal);
     } else if (constVal instanceof Boolean) {
       boolean val = ((Boolean) constVal).booleanValue();
-      return soot.jimple.IntConstant.v(val ? 1 : 0);
+      return soot.jimple.constancFactory.createIntConstant(val ? 1 : 0);
     } else if (type.isChar()) {
       char val;
 
@@ -2549,7 +2549,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
         val = ((Character) constVal).charValue();
       }
       // System.out.println("val: "+val);
-      return soot.jimple.IntConstant.v(val);
+      return soot.jimple.constancFactory.createIntConstant(val);
     } else {
       Number num = (Number) constVal;
       // System.out.println("num: "+num);
@@ -2557,17 +2557,17 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       // System.out.println("num: "+num);
       if (num instanceof Long) {
         // System.out.println(((Long)num).longValue());
-        return soot.jimple.LongConstant.v(((Long) num).longValue());
+        return soot.jimple.constancFactory.createLongConstant(((Long) num).longValue());
       } else if (num instanceof Double) {
-        return soot.jimple.DoubleConstant.v(((Double) num).doubleValue());
+        return soot.jimple.constancFactory.createDoubleConstant(((Double) num).doubleValue());
       } else if (num instanceof Float) {
         return soot.jimple.FloatConstant.v(((Float) num).floatValue());
       } else if (num instanceof Byte) {
-        return soot.jimple.IntConstant.v(((Byte) num).byteValue());
+        return soot.jimple.constancFactory.createIntConstant(((Byte) num).byteValue());
       } else if (num instanceof Short) {
-        return soot.jimple.IntConstant.v(((Short) num).shortValue());
+        return soot.jimple.constancFactory.createIntConstant(((Short) num).shortValue());
       } else {
-        return soot.jimple.IntConstant.v(((Integer) num).intValue());
+        return soot.jimple.constancFactory.createIntConstant(((Integer) num).intValue());
       }
     }
   }
@@ -2771,7 +2771,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
         invokeMeth = soot.myScene.makeMethodRef(thisClass, "class$", paramTypes, soot.RefType.v("java.lang.Class"), true);
       }
       ArrayList params = new ArrayList();
-      params.add(soot.jimple.StringConstant.v(Util.getParamNameForClassLit(lit.typeNode().type())));
+      params.add(soot.jimple.constancFactory.createStringConstant(Util.getParamNameForClassLit(lit.typeNode().type())));
       soot.jimple.Expr classInvoke = soot.jimple.myJimple.newStaticInvokeExpr(invokeMeth, params);
       soot.Local methLocal = lg.generateLocal(soot.RefType.v("java.lang.Class"));
       soot.jimple.Stmt invokeAssign = soot.jimple.myJimple.newAssignStmt(methLocal, classInvoke);
@@ -2836,7 +2836,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       if (areAllStringLits(binary)) {
         String result = createStringConstant(binary);
         // System.out.println("created string constant: "+result);
-        return soot.jimple.StringConstant.v(result);
+        return soot.jimple.constancFactory.createStringConstant(result);
       } else {
         soot.Local sb = createStringBuffer(binary);
         sb = generateAppends(binary.left(), sb);
@@ -3165,17 +3165,17 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
     body.getUnits().add(assign);
 
     if (cond instanceof soot.jimple.EqExpr) {
-      cond = soot.jimple.myJimple.newEqExpr(result, soot.jimple.IntConstant.v(0));
+      cond = soot.jimple.myJimple.newEqExpr(result, soot.jimple.constancFactory.createIntConstant(0));
     } else if (cond instanceof soot.jimple.GeExpr) {
-      cond = soot.jimple.myJimple.newGeExpr(result, soot.jimple.IntConstant.v(0));
+      cond = soot.jimple.myJimple.newGeExpr(result, soot.jimple.constancFactory.createIntConstant(0));
     } else if (cond instanceof soot.jimple.GtExpr) {
-      cond = soot.jimple.myJimple.newGtExpr(result, soot.jimple.IntConstant.v(0));
+      cond = soot.jimple.myJimple.newGtExpr(result, soot.jimple.constancFactory.createIntConstant(0));
     } else if (cond instanceof soot.jimple.LeExpr) {
-      cond = soot.jimple.myJimple.newLeExpr(result, soot.jimple.IntConstant.v(0));
+      cond = soot.jimple.myJimple.newLeExpr(result, soot.jimple.constancFactory.createIntConstant(0));
     } else if (cond instanceof soot.jimple.LtExpr) {
-      cond = soot.jimple.myJimple.newLtExpr(result, soot.jimple.IntConstant.v(0));
+      cond = soot.jimple.myJimple.newLtExpr(result, soot.jimple.constancFactory.createIntConstant(0));
     } else if (cond instanceof soot.jimple.NeExpr) {
-      cond = soot.jimple.myJimple.newNeExpr(result, soot.jimple.IntConstant.v(0));
+      cond = soot.jimple.myJimple.newNeExpr(result, soot.jimple.constancFactory.createIntConstant(0));
     } else {
       throw new RuntimeException("Unknown Comparison Expr");
     }
@@ -3216,7 +3216,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
     soot.Value lVal = base().createAggressiveExpr(binary.left(), false, false);
     boolean leftNeedIf = needSootIf(lVal);
     if (!(lVal instanceof soot.jimple.ConditionExpr)) {
-      lVal = soot.jimple.myJimple.newEqExpr(lVal, soot.jimple.IntConstant.v(0));
+      lVal = soot.jimple.myJimple.newEqExpr(lVal, soot.jimple.constancFactory.createIntConstant(0));
     } else {
       lVal = reverseCondition((soot.jimple.ConditionExpr) lVal);
       lVal = handleDFLCond((soot.jimple.ConditionExpr) lVal);
@@ -3239,7 +3239,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
     soot.Value rVal = base().createAggressiveExpr(binary.right(), false, false);
     boolean rightNeedIf = needSootIf(rVal);
     if (!(rVal instanceof soot.jimple.ConditionExpr)) {
-      rVal = soot.jimple.myJimple.newEqExpr(rVal, soot.jimple.IntConstant.v(0));
+      rVal = soot.jimple.myJimple.newEqExpr(rVal, soot.jimple.constancFactory.createIntConstant(0));
     } else {
       rVal = reverseCondition((soot.jimple.ConditionExpr) rVal);
       rVal = handleDFLCond((soot.jimple.ConditionExpr) rVal);
@@ -3259,17 +3259,17 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
 
     // return if cond will be used in if
     /*
-     * if (!falseNoop.empty()){ return soot.jimple.IntConstant.v(1); }
+     * if (!falseNoop.empty()){ return soot.jimple.constancFactory.createIntConstant(1); }
      */
 
-    soot.jimple.Stmt assign1 = soot.jimple.myJimple.newAssignStmt(retLocal, soot.jimple.IntConstant.v(1));
+    soot.jimple.Stmt assign1 = soot.jimple.myJimple.newAssignStmt(retLocal, soot.jimple.constancFactory.createIntConstant(1));
     body.getUnits().add(assign1);
     soot.jimple.Stmt gotoEnd1 = soot.jimple.myJimple.newGotoStmt(endNoop);
     body.getUnits().add(gotoEnd1);
 
     body.getUnits().add(noop1);
 
-    soot.jimple.Stmt assign2 = soot.jimple.myJimple.newAssignStmt(retLocal, soot.jimple.IntConstant.v(0));
+    soot.jimple.Stmt assign2 = soot.jimple.myJimple.newAssignStmt(retLocal, soot.jimple.constancFactory.createIntConstant(0));
     body.getUnits().add(assign2);
 
     body.getUnits().add(endNoop);
@@ -3301,7 +3301,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
     // System.out.println("leftval : "+lVal);
     boolean leftNeedIf = needSootIf(lVal);
     if (!(lVal instanceof soot.jimple.ConditionExpr)) {
-      lVal = soot.jimple.myJimple.newNeExpr(lVal, soot.jimple.IntConstant.v(0));
+      lVal = soot.jimple.myJimple.newNeExpr(lVal, soot.jimple.constancFactory.createIntConstant(0));
     } else {
       // no reversing of condition needed for first expr in conditional
       // or expression
@@ -3323,7 +3323,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
     soot.Value rVal = base().createAggressiveExpr(binary.right(), false, false);
     boolean rightNeedIf = needSootIf(rVal);
     if (!(rVal instanceof soot.jimple.ConditionExpr)) {
-      rVal = soot.jimple.myJimple.newEqExpr(rVal, soot.jimple.IntConstant.v(0));
+      rVal = soot.jimple.myJimple.newEqExpr(rVal, soot.jimple.constancFactory.createIntConstant(0));
     } else {
       // need to reverse right part of conditional or expr
       if (/* !trueNoop.empty() && */ inLeftOr == 0) {
@@ -3348,12 +3348,12 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
 
     // return if cond will be used in if
     /*
-     * if (!trueNoop.empty()){ return soot.jimple.IntConstant.v(1); }
+     * if (!trueNoop.empty()){ return soot.jimple.constancFactory.createIntConstant(1); }
      */
 
     body.getUnits().add(noop1);
 
-    soot.jimple.Stmt assign2 = soot.jimple.myJimple.newAssignStmt(retLocal, soot.jimple.IntConstant.v(1));
+    soot.jimple.Stmt assign2 = soot.jimple.myJimple.newAssignStmt(retLocal, soot.jimple.constancFactory.createIntConstant(1));
     body.getUnits().add(assign2);
     Util.addLnPosTags(assign2, binary.position());
     soot.jimple.Stmt gotoEnd2 = soot.jimple.myJimple.newGotoStmt(endNoop);
@@ -3361,7 +3361,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
 
     body.getUnits().add(noop2);
 
-    soot.jimple.Stmt assign3 = soot.jimple.myJimple.newAssignStmt(retLocal, soot.jimple.IntConstant.v(0));
+    soot.jimple.Stmt assign3 = soot.jimple.myJimple.newAssignStmt(retLocal, soot.jimple.constancFactory.createIntConstant(0));
     body.getUnits().add(assign3);
     Util.addLnPosTags(assign3, binary.position());
 
@@ -3386,7 +3386,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
     soot.jimple.Stmt ifStmt = soot.jimple.myJimple.newIfStmt(newVal, noop1);
     body.getUnits().add(ifStmt);
 
-    body.getUnits().add(soot.jimple.myJimple.newAssignStmt(boolLocal, soot.jimple.IntConstant.v(1)));
+    body.getUnits().add(soot.jimple.myJimple.newAssignStmt(boolLocal, soot.jimple.constancFactory.createIntConstant(1)));
 
     soot.jimple.Stmt noop2 = soot.jimple.myJimple.newNopStmt();
 
@@ -3396,7 +3396,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
 
     body.getUnits().add(noop1);
 
-    body.getUnits().add(soot.jimple.myJimple.newAssignStmt(boolLocal, soot.jimple.IntConstant.v(0)));
+    body.getUnits().add(soot.jimple.myJimple.newAssignStmt(boolLocal, soot.jimple.constancFactory.createIntConstant(0)));
 
     body.getUnits().add(noop2);
 
@@ -3420,7 +3420,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
     soot.jimple.Stmt ifStmt = soot.jimple.myJimple.newIfStmt(newVal, noop1);
     body.getUnits().add(ifStmt);
 
-    body.getUnits().add(soot.jimple.myJimple.newAssignStmt(boolLocal, soot.jimple.IntConstant.v(1)));
+    body.getUnits().add(soot.jimple.myJimple.newAssignStmt(boolLocal, soot.jimple.constancFactory.createIntConstant(1)));
 
     soot.jimple.Stmt noop2 = soot.jimple.myJimple.newNopStmt();
 
@@ -3430,7 +3430,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
 
     body.getUnits().add(noop1);
 
-    body.getUnits().add(soot.jimple.myJimple.newAssignStmt(boolLocal, soot.jimple.IntConstant.v(0)));
+    body.getUnits().add(soot.jimple.myJimple.newAssignStmt(boolLocal, soot.jimple.constancFactory.createIntConstant(0)));
 
     body.getUnits().add(noop2);
 
@@ -3731,7 +3731,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
      * }
      */
     else if (op == polyglot.ast.Unary.BIT_NOT) {
-      soot.jimple.IntConstant int1 = soot.jimple.IntConstant.v(-1);
+      soot.jimple.IntConstant int1 = soot.jimple.constancFactory.createIntConstant(-1);
 
       soot.Local retLocal = generateLocal(expr.type());
 
@@ -3753,14 +3753,14 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
 
         long longVal = ((polyglot.ast.IntLit) expr).value();
         if (((polyglot.ast.IntLit) expr).kind() == polyglot.ast.IntLit.LONG) {
-          sootExpr = soot.jimple.LongConstant.v(-longVal);
+          sootExpr = soot.jimple.constancFactory.createLongConstant(-longVal);
         } else {
-          sootExpr = soot.jimple.IntConstant.v(-(int) longVal);
+          sootExpr = soot.jimple.constancFactory.createIntConstant(-(int) longVal);
         }
       } else if (expr instanceof polyglot.ast.FloatLit) {
         double doubleVal = ((polyglot.ast.FloatLit) expr).value();
         if (((polyglot.ast.FloatLit) expr).kind() == polyglot.ast.FloatLit.DOUBLE) {
-          sootExpr = soot.jimple.DoubleConstant.v(-doubleVal);
+          sootExpr = soot.jimple.constancFactory.createDoubleConstant(-doubleVal);
         } else {
           sootExpr = soot.jimple.FloatConstant.v(-(float) doubleVal);
         }
@@ -3830,7 +3830,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       Util.addLnPosTags(ifStmt.getConditionBox(), expr.position());
 
       if (!falseNoop.empty()) {
-        return soot.jimple.IntConstant.v(1);
+        return soot.jimple.constancFactory.createIntConstant(1);
       }
       soot.Local retLocal = lg.generateLocal(local.getType());
 
@@ -3868,13 +3868,13 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
   protected soot.jimple.Constant getConstant(soot.Type type, int val) {
 
     if (type instanceof soot.DoubleType) {
-      return soot.jimple.DoubleConstant.v(val);
+      return soot.jimple.constancFactory.createDoubleConstant(val);
     } else if (type instanceof soot.FloatType) {
       return soot.jimple.FloatConstant.v(val);
     } else if (type instanceof soot.LongType) {
-      return soot.jimple.LongConstant.v(val);
+      return soot.jimple.constancFactory.createLongConstant(val);
     } else {
-      return soot.jimple.IntConstant.v(val);
+      return soot.jimple.constancFactory.createIntConstant(val);
     }
   }
 
@@ -4460,7 +4460,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
 
       soot.Value dimLocal;
       if (newArrExpr.additionalDims() == 1) {
-        dimLocal = soot.jimple.IntConstant.v(1);
+        dimLocal = soot.jimple.constancFactory.createIntConstant(1);
       } else {
         dimLocal = base().createAggressiveExpr((polyglot.ast.Expr) newArrExpr.dims().get(0), false, false);
       }
@@ -4481,7 +4481,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       }
 
       if (newArrExpr.additionalDims() != 0) {
-        valuesList.add(soot.jimple.IntConstant.v(newArrExpr.additionalDims()));
+        valuesList.add(soot.jimple.constancFactory.createIntConstant(newArrExpr.additionalDims()));
       }
       soot.jimple.NewMultiArrayExpr newMultiArrayExpr
           = soot.jimple.myJimple.newNewMultiArrayExpr((soot.ArrayType) sootType, valuesList);
@@ -4529,7 +4529,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
     // System.out.println("creating new array:
     // "+((soot.ArrayType)local.getType()).getElementType());
     soot.jimple.NewArrayExpr arrExpr = soot.jimple.myJimple.newNewArrayExpr(
-        ((soot.ArrayType) local.getType()).getElementType(), soot.jimple.IntConstant.v(arrInit.elements().size()));
+        ((soot.ArrayType) local.getType()).getElementType(), soot.jimple.constancFactory.createIntConstant(arrInit.elements().size()));
 
     soot.jimple.Stmt assign = soot.jimple.myJimple.newAssignStmt(local, arrExpr);
 
@@ -4567,7 +4567,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       } else {
         elem = base().createAggressiveExpr(elemExpr, false, false);
       }
-      soot.jimple.ArrayRef arrRef = soot.jimple.myJimple.newArrayRef(local, soot.jimple.IntConstant.v(index));
+      soot.jimple.ArrayRef arrRef = soot.jimple.myJimple.newArrayRef(local, soot.jimple.constancFactory.createIntConstant(index));
 
       soot.jimple.AssignStmt elemAssign = soot.jimple.myJimple.newAssignStmt(arrRef, elem);
       body.getUnits().add(elemAssign);

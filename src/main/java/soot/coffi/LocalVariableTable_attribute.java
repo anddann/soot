@@ -37,6 +37,11 @@ class LocalVariableTable_attribute extends attribute_info {
   public int local_variable_table_length;
   /** Actual table of local variables. */
   public local_variable_table_entry local_variable_table[];
+  private Util myCoffiUtil;
+
+  LocalVariableTable_attribute(Util myCoffiUtil) {
+    this.myCoffiUtil = myCoffiUtil;
+  }
 
   /**
    * Locates the first name found for a given local variable.

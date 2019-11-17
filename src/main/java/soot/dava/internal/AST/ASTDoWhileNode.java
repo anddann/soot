@@ -28,14 +28,15 @@ import java.util.List;
 
 import soot.UnitPrinter;
 import soot.dava.internal.SET.SETNodeLabel;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.Analysis;
 import soot.jimple.ConditionExpr;
 
 public class ASTDoWhileNode extends ASTControlFlowNode {
   private List<Object> body;
 
-  public ASTDoWhileNode(SETNodeLabel label, ConditionExpr ce, List<Object> body) {
-    super(label, ce);
+  public ASTDoWhileNode(SETNodeLabel label, ConditionExpr ce, List<Object> body, TryContentsFinder myTryContentsFinder) {
+    super(label, ce, myTryContentsFinder);
     this.body = body;
 
     subBodies.add(body);
@@ -45,8 +46,8 @@ public class ASTDoWhileNode extends ASTControlFlowNode {
    * Nomair A. Naeem 17-FEB-05 Needed because of change of grammar of condition being stored as a ASTCondition rather than
    * the ConditionExpr which was the case before
    */
-  public ASTDoWhileNode(SETNodeLabel label, ASTCondition ce, List<Object> body) {
-    super(label, ce);
+  public ASTDoWhileNode(SETNodeLabel label, ASTCondition ce, List<Object> body, TryContentsFinder myTryContentsFinder) {
+    super(label, ce, myTryContentsFinder);
     this.body = body;
 
     subBodies.add(body);
@@ -62,7 +63,7 @@ public class ASTDoWhileNode extends ASTControlFlowNode {
   }
 
   public Object clone() {
-    return new ASTDoWhileNode(get_Label(), get_Condition(), body);
+    return new ASTDoWhileNode(get_Label(), get_Condition(), body, super.getMyTryContentsFinder());
   }
 
   public void toString(UnitPrinter up) {

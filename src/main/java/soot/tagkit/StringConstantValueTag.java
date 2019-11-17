@@ -43,7 +43,7 @@ public class StringConstantValueTag extends ConstantValueTag {
 
   @Override
   public StringConstant getConstant() {
-    return StringConstant.v(value);
+    return constancFactory.createStringConstant(value);
   }
 
   @Override

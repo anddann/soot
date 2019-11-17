@@ -48,8 +48,8 @@ public abstract class AbstractFlowAnalysis<N, A> {
 
   /** The graph being analysed. */
   protected DirectedGraph<N> graph;
-  private final boolean interaticveMode;
-  private final InteractionHandler myInteractionHandler;
+  protected final boolean interaticveMode;
+  protected final InteractionHandler myInteractionHandler;
 
   public boolean isInteraticveMode() {
     return interaticveMode;

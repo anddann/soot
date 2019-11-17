@@ -28,14 +28,15 @@ import java.util.List;
 
 import soot.UnitPrinter;
 import soot.dava.internal.SET.SETNodeLabel;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.Analysis;
 import soot.jimple.ConditionExpr;
 
 public class ASTIfNode extends ASTControlFlowNode {
   private List<Object> body;
 
-  public ASTIfNode(SETNodeLabel label, ConditionExpr condition, List<Object> body) {
-    super(label, condition);
+  public ASTIfNode(SETNodeLabel label, ConditionExpr condition, List<Object> body, TryContentsFinder myTryContentsFinder) {
+    super(label, condition, myTryContentsFinder);
     this.body = body;
 
     subBodies.add(body);
@@ -45,8 +46,8 @@ public class ASTIfNode extends ASTControlFlowNode {
    * Nomair A. Naeem 17-FEB-05 Needed because of change of grammar of condition being stored as a ASTCondition rather than
    * the ConditionExpr which was the case before
    */
-  public ASTIfNode(SETNodeLabel label, ASTCondition condition, List<Object> body) {
-    super(label, condition);
+  public ASTIfNode(SETNodeLabel label, ASTCondition condition, List<Object> body, TryContentsFinder myTryContentsFinder) {
+    super(label, condition, myTryContentsFinder);
     this.body = body;
 
     subBodies.add(body);
@@ -60,7 +61,7 @@ public class ASTIfNode extends ASTControlFlowNode {
   }
 
   public Object clone() {
-    return new ASTIfNode(get_Label(), get_Condition(), body);
+    return new ASTIfNode(get_Label(), get_Condition(), body, super.getMyTryContentsFinder());
   }
 
   /*

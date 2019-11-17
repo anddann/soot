@@ -69,13 +69,13 @@ public class FilledNewArrayInstruction extends FilledArrayInstruction {
     Type t = DexType.toSoot((TypeReference) filledNewArrayInstr.getReference());
     // NewArrayExpr needs the ElementType as it increases the array dimension by 1
     Type arrayType = ((ArrayType) t).getElementType();
-    NewArrayExpr arrayExpr = myJimple.newNewArrayExpr(arrayType, IntConstant.v(usedRegister));
+    NewArrayExpr arrayExpr = myJimple.newNewArrayExpr(arrayType, constancFactory.createIntConstant(usedRegister));
     // new local generated intentional, will be moved to real register by MoveResult
     Local arrayLocal = body.getStoreResultLocal();
     AssignStmt assign = myJimple.newAssignStmt(arrayLocal, arrayExpr);
     body.add(assign);
     for (int i = 0; i < usedRegister; i++) {
-      ArrayRef arrayRef = myJimple.newArrayRef(arrayLocal, IntConstant.v(i));
+      ArrayRef arrayRef = myJimple.newArrayRef(arrayLocal, constancFactory.createIntConstant(i));
 
       AssignStmt assign2 = myJimple.newAssignStmt(arrayRef, body.getRegisterLocal(regs[i]));
       addTags(assign2);

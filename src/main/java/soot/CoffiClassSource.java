@@ -80,7 +80,7 @@ public class CoffiClassSource extends ClassSource {
     List<Type> references = new ArrayList<Type>();
 
     try {
-      myCoffiUtil.resolveFromClassFile(sc, classFile, fileName, references);
+      myCoffiUtil.resolveFromClassFile(sc, classFile, fileName, references, myCoffiUtil);
     } finally {
       close();
     }

@@ -28,14 +28,15 @@ import java.util.List;
 
 import soot.UnitPrinter;
 import soot.dava.internal.SET.SETNodeLabel;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.Analysis;
 import soot.jimple.ConditionExpr;
 
 public class ASTIfElseNode extends ASTControlFlowNode {
   private List<Object> ifBody, elseBody;
 
-  public ASTIfElseNode(SETNodeLabel label, ConditionExpr condition, List<Object> ifBody, List<Object> elseBody) {
-    super(label, condition);
+  public ASTIfElseNode(SETNodeLabel label, ConditionExpr condition, List<Object> ifBody, List<Object> elseBody, TryContentsFinder myTryContentsFinder) {
+    super(label, condition, myTryContentsFinder);
     this.ifBody = ifBody;
     this.elseBody = elseBody;
 
@@ -47,8 +48,8 @@ public class ASTIfElseNode extends ASTControlFlowNode {
    * Nomair A. Naeem 17-FEB-05 Needed because of change of grammar of condition being stored as a ASTCondition rather than
    * the ConditionExpr which was the case before
    */
-  public ASTIfElseNode(SETNodeLabel label, ASTCondition condition, List<Object> ifBody, List<Object> elseBody) {
-    super(label, condition);
+  public ASTIfElseNode(SETNodeLabel label, ASTCondition condition, List<Object> ifBody, List<Object> elseBody, TryContentsFinder myTryContentsFinder) {
+    super(label, condition, myTryContentsFinder);
     this.ifBody = ifBody;
     this.elseBody = elseBody;
 
@@ -105,7 +106,7 @@ public class ASTIfElseNode extends ASTControlFlowNode {
   }
 
   public Object clone() {
-    return new ASTIfElseNode(get_Label(), get_Condition(), ifBody, elseBody);
+    return new ASTIfElseNode(get_Label(), get_Condition(), ifBody, elseBody, super.getMyTryContentsFinder());
   }
 
   public void toString(UnitPrinter up) {

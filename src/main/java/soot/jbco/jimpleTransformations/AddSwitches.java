@@ -187,7 +187,7 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
 
     Local l = myJimple.newLocal("addswitchlocal", IntType.v());
     locals.add(l);
-    units.insertBeforeNoRedirect(myJimple.newAssignStmt(l, IntConstant.v(0)), first);
+    units.insertBeforeNoRedirect(myJimple.newAssignStmt(l, constancFactory.createIntConstant(0)), first);
     units.insertAfter(myJimple.newTableSwitchStmt(l, 1, zeroheight.size(), targs, u), ifstmt);
 
     switchesadded += zeroheight.size() + 1;
@@ -196,7 +196,7 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
     while (tit.hasNext()) {
       Unit nxt = (Unit) tit.next();
       if (Rand.getInt(5) < 4) {
-        units.insertBefore(myJimple.newAssignStmt(l, myJimple.newAddExpr(l, IntConstant.v(Rand.getInt(3) + 1))), nxt);
+        units.insertBefore(myJimple.newAssignStmt(l, myJimple.newAddExpr(l, constancFactory.createIntConstant(Rand.getInt(3) + 1))), nxt);
       }
     }
 

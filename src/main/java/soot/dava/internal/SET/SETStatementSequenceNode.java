@@ -131,7 +131,7 @@ public class SETStatementSequenceNode extends SETNode {
     if (l.isEmpty()) {
       return null;
     } else {
-      return new ASTStatementSequenceNode(l);
+      return new ASTStatementSequenceNode(l, myTryContentsFinder, myASTWalker);
     }
   }
 

@@ -39,19 +39,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.ArrayType;
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
 import soot.Local;
-import soot.LongType;
 import soot.Modifier;
 import soot.PatchingChain;
 import soot.RefType;
 import soot.Scene;
-import soot.ShortType;
 import soot.SootClass;
 import soot.SootFieldRef;
 import soot.SootMethod;
@@ -60,10 +52,7 @@ import soot.StmtAddressType;
 import soot.Trap;
 import soot.Type;
 import soot.Unit;
-import soot.UnknownType;
 import soot.Value;
-import soot.VoidType;
-import soot.grimp.Grimp;
 import soot.jimple.ArrayRef;
 import soot.jimple.ClassConstant;
 import soot.jimple.ConditionExpr;
@@ -869,7 +858,8 @@ public class CFG {
 
           units.add(myJimple.newIdentityStmt(local, myJimple.newParameterRef(type, argCount)));
 
-          if (type.equals(DoubleType.v()) || type.equals(LongType.v())) {
+          if (type.equals(myScene.getPrimTypeCollector().getDoubleType())
+              || type.equals(myScene.getPrimTypeCollector().getLongType())) {
             currentLocalIndex += 2;
           } else {
             currentLocalIndex += 1;
@@ -922,9 +912,8 @@ public class CFG {
    * @param constant_pool
    *          constant pool of ClassFile.
    * @param this_class
-   *          constant pool index of the CONSTANT_Class_info object for this' class.
-   * @param clearStacks
-   *          if <i>true</i> semantic stacks will be deleted after the process is complete.
+   *          constant pool index of the CONSTANT_Class_info object for this' class. if <i>true</i> semantic stacks will be
+   *          deleted after the process is complete.
    * @return <i>true</i> if all ok, <i>false</i> if there was an error.
    * @see CFG#jimplify(cp_info[], int)
    * @see Stmt
@@ -1072,7 +1061,7 @@ public class CFG {
 
               if (handlerInstructions.contains(s)) {
                 TypeStack exceptionTypeStack
-                    = (TypeStack.v()).push(RefType.v(handlerInstructionToException.get(s).getName()));
+                    = (TypeStack.v()).push(RefType.v(handlerInstructionToException.get(s).getName(), myScene));
 
                 instructionToTypeStack.put(s, exceptionTypeStack);
               } else {
@@ -1093,12 +1082,12 @@ public class CFG {
                 // single object on the stack.
 
                 TypeStack exceptionTypeStack
-                    = (TypeStack.v()).push(RefType.v(handlerInstructionToException.get(s).getName()));
+                    = (TypeStack.v()).push(RefType.v(handlerInstructionToException.get(s).getName(), myScene));
 
                 newTypeStack = exceptionTypeStack;
               } else {
                 try {
-                  newTypeStack = ret.typeStack.merge(oldTypeStack);
+                  newTypeStack = ret.typeStack.merge(oldTypeStack, myScene);
                 } catch (RuntimeException re) {
                   logger.debug("Considering " + s);
                   throw re;
@@ -1218,7 +1207,8 @@ public class CFG {
           if (targetToHandler.containsKey(firstTargetStmt)) {
             newTarget = targetToHandler.get(firstTargetStmt);
           } else {
-            Local local = myCoffiUtil.getLocalCreatingIfNecessary(listBody, "$stack0", UnknownType.v());
+            Local local = myCoffiUtil.getLocalCreatingIfNecessary(listBody, "$stack0",
+                myScene.getPrimTypeCollector().getUnknownType());
 
             newTarget = myJimple.newIdentityStmt(local, myJimple.newCaughtExceptionRef());
 
@@ -1331,9 +1321,11 @@ public class CFG {
   }
 
   private Type byteCodeTypeOf(Type type) {
-    if (type.equals(ShortType.v()) || type.equals(CharType.v()) || type.equals(ByteType.v())
-        || type.equals(BooleanType.v())) {
-      return IntType.v();
+    if (type.equals(myScene.getPrimTypeCollector().getShortType())
+        || type.equals(myScene.getPrimTypeCollector().getCharType())
+        || type.equals(myScene.getPrimTypeCollector().getByteType())
+        || type.equals(myScene.getPrimTypeCollector().getBooleanType())) {
+      return myScene.getPrimTypeCollector().getIntType();
     } else {
       return type;
     }
@@ -1345,11 +1337,11 @@ public class CFG {
 
     switch (x) {
       case ByteCode.BIPUSH:
-        typeStack = typeStack.push(IntType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.SIPUSH:
-        typeStack = typeStack.push(IntType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.LDC1:
@@ -1360,7 +1352,7 @@ public class CFG {
         return processCPEntry(constant_pool, ((Instruction_intindex) ins).arg_i, typeStack, jmethod);
 
       case ByteCode.ACONST_NULL:
-        typeStack = typeStack.push(RefType.v("java.lang.Object"));
+        typeStack = typeStack.push(RefType.v("java.lang.Object", myScene));
         break;
 
       case ByteCode.ICONST_M1:
@@ -1370,65 +1362,65 @@ public class CFG {
       case ByteCode.ICONST_3:
       case ByteCode.ICONST_4:
       case ByteCode.ICONST_5:
-        typeStack = typeStack.push(IntType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
       case ByteCode.LCONST_0:
       case ByteCode.LCONST_1:
-        typeStack = typeStack.push(LongType.v());
-        typeStack = typeStack.push(Long2ndHalfType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
         break;
       case ByteCode.FCONST_0:
       case ByteCode.FCONST_1:
       case ByteCode.FCONST_2:
-        typeStack = typeStack.push(FloatType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getFloatType());
         break;
       case ByteCode.DCONST_0:
       case ByteCode.DCONST_1:
-        typeStack = typeStack.push(DoubleType.v());
-        typeStack = typeStack.push(Double2ndHalfType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDouble2ndHalfType());
         break;
       case ByteCode.ILOAD:
-        typeStack = typeStack.push(IntType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.FLOAD:
-        typeStack = typeStack.push(FloatType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getFloatType());
         break;
 
       case ByteCode.ALOAD:
-        typeStack = typeStack.push(RefType.v("java.lang.Object"));
+        typeStack = typeStack.push(RefType.v("java.lang.Object", myScene));
         // this is highly imprecise
         break;
 
       case ByteCode.DLOAD:
-        typeStack = typeStack.push(DoubleType.v());
-        typeStack = typeStack.push(Double2ndHalfType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDouble2ndHalfType());
         break;
 
       case ByteCode.LLOAD:
-        typeStack = typeStack.push(LongType.v());
-        typeStack = typeStack.push(Long2ndHalfType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
         break;
 
       case ByteCode.ILOAD_0:
       case ByteCode.ILOAD_1:
       case ByteCode.ILOAD_2:
       case ByteCode.ILOAD_3:
-        typeStack = typeStack.push(IntType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.FLOAD_0:
       case ByteCode.FLOAD_1:
       case ByteCode.FLOAD_2:
       case ByteCode.FLOAD_3:
-        typeStack = typeStack.push(FloatType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getFloatType());
         break;
 
       case ByteCode.ALOAD_0:
       case ByteCode.ALOAD_1:
       case ByteCode.ALOAD_2:
       case ByteCode.ALOAD_3:
-        typeStack = typeStack.push(RefType.v("java.lang.Object"));
+        typeStack = typeStack.push(RefType.v("java.lang.Object", myScene));
         // this is highly imprecise
         break;
 
@@ -1436,24 +1428,24 @@ public class CFG {
       case ByteCode.LLOAD_1:
       case ByteCode.LLOAD_2:
       case ByteCode.LLOAD_3:
-        typeStack = typeStack.push(LongType.v());
-        typeStack = typeStack.push(Long2ndHalfType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
         break;
 
       case ByteCode.DLOAD_0:
       case ByteCode.DLOAD_1:
       case ByteCode.DLOAD_2:
       case ByteCode.DLOAD_3:
-        typeStack = typeStack.push(DoubleType.v());
-        typeStack = typeStack.push(Double2ndHalfType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDouble2ndHalfType());
         break;
 
       case ByteCode.ISTORE:
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.FSTORE:
-        typeStack = popSafe(typeStack, FloatType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getFloatType());
         break;
 
       case ByteCode.ASTORE:
@@ -1461,27 +1453,27 @@ public class CFG {
         break;
 
       case ByteCode.LSTORE:
-        typeStack = popSafe(typeStack, Long2ndHalfType.v());
-        typeStack = popSafe(typeStack, LongType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
         break;
 
       case ByteCode.DSTORE:
-        typeStack = popSafe(typeStack, Double2ndHalfType.v());
-        typeStack = popSafe(typeStack, DoubleType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
         break;
 
       case ByteCode.ISTORE_0:
       case ByteCode.ISTORE_1:
       case ByteCode.ISTORE_2:
       case ByteCode.ISTORE_3:
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.FSTORE_0:
       case ByteCode.FSTORE_1:
       case ByteCode.FSTORE_2:
       case ByteCode.FSTORE_3:
-        typeStack = popSafe(typeStack, FloatType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getFloatType());
         break;
 
       case ByteCode.ASTORE_0:
@@ -1500,16 +1492,16 @@ public class CFG {
       case ByteCode.LSTORE_1:
       case ByteCode.LSTORE_2:
       case ByteCode.LSTORE_3:
-        typeStack = popSafe(typeStack, Long2ndHalfType.v());
-        typeStack = popSafe(typeStack, LongType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
         break;
 
       case ByteCode.DSTORE_0:
       case ByteCode.DSTORE_1:
       case ByteCode.DSTORE_2:
       case ByteCode.DSTORE_3:
-        typeStack = popSafe(typeStack, Double2ndHalfType.v());
-        typeStack = popSafe(typeStack, DoubleType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
         break;
 
       case ByteCode.IINC:
@@ -1520,10 +1512,10 @@ public class CFG {
         // break;
 
       case ByteCode.NEWARRAY: {
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         Type baseType = jimpleTypeOfAtype(((Instruction_Newarray) ins).atype);
 
-        typeStack = typeStack.push(ArrayType.v(baseType, 1));
+        typeStack = typeStack.push(ArrayType.v(baseType, 1, myScene));
         break;
       }
 
@@ -1539,10 +1531,10 @@ public class CFG {
           String baseName = getClassName(constant_pool, ((Instruction_Anewarray) ins).arg_i);
           baseType = myCoffiUtil.jimpleTypeOfFieldDescriptor(baseName);
         } else {
-          baseType = RefType.v(name);
+          baseType = RefType.v(name, myScene);
         }
 
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         typeStack = typeStack.push(baseType.makeArrayType());
         break;
       }
@@ -1557,7 +1549,7 @@ public class CFG {
         ArrayType arrayType = (ArrayType) myCoffiUtil.jimpleTypeOfFieldDescriptor(arrayDescriptor);
 
         for (int j = 0; j < bdims; j++) {
-          typeStack = popSafe(typeStack, IntType.v());
+          typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         }
 
         typeStack = typeStack.push(arrayType);
@@ -1566,26 +1558,26 @@ public class CFG {
 
       case ByteCode.ARRAYLENGTH:
         typeStack = popSafeRefType(typeStack);
-        typeStack = typeStack.push(IntType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.IALOAD:
       case ByteCode.BALOAD:
       case ByteCode.CALOAD:
       case ByteCode.SALOAD:
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         typeStack = popSafeRefType(typeStack);
-        typeStack = typeStack.push(IntType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
       case ByteCode.FALOAD:
-        typeStack = popSafe(typeStack, FloatType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getFloatType());
         typeStack = popSafeRefType(typeStack);
-        typeStack = typeStack.push(FloatType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getFloatType());
         break;
 
       case ByteCode.AALOAD: {
 
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
 
         if (typeStack.top() instanceof ArrayType) {
           ArrayType arrayType = (ArrayType) typeStack.top();
@@ -1594,64 +1586,64 @@ public class CFG {
           if (arrayType.numDimensions == 1) {
             typeStack = typeStack.push(arrayType.baseType);
           } else {
-            typeStack = typeStack.push(ArrayType.v(arrayType.baseType, arrayType.numDimensions - 1));
+            typeStack = typeStack.push(ArrayType.v(arrayType.baseType, arrayType.numDimensions - 1, myScene));
           }
         } else {
           // it's a null object
 
           typeStack = popSafeRefType(typeStack);
 
-          typeStack = typeStack.push(RefType.v("java.lang.Object"));
+          typeStack = typeStack.push(RefType.v("java.lang.Object", myScene));
         }
 
         break;
       }
       case ByteCode.LALOAD:
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         typeStack = popSafeRefType(typeStack);
-        typeStack = typeStack.push(LongType.v());
-        typeStack = typeStack.push(Long2ndHalfType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
         break;
 
       case ByteCode.DALOAD:
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         typeStack = popSafeRefType(typeStack);
-        typeStack = typeStack.push(DoubleType.v());
-        typeStack = typeStack.push(Double2ndHalfType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDouble2ndHalfType());
         break;
 
       case ByteCode.IASTORE:
       case ByteCode.BASTORE:
       case ByteCode.CASTORE:
       case ByteCode.SASTORE:
-        typeStack = popSafe(typeStack, IntType.v());
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         typeStack = popSafeRefType(typeStack);
         break;
 
       case ByteCode.AASTORE:
         typeStack = popSafeRefType(typeStack);
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         typeStack = popSafeRefType(typeStack);
         break;
 
       case ByteCode.FASTORE:
-        typeStack = popSafe(typeStack, FloatType.v());
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getFloatType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         typeStack = popSafeRefType(typeStack);
         break;
 
       case ByteCode.LASTORE:
-        typeStack = popSafe(typeStack, Long2ndHalfType.v());
-        typeStack = popSafe(typeStack, LongType.v());
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         typeStack = popSafeRefType(typeStack);
         break;
 
       case ByteCode.DASTORE:
-        typeStack = popSafe(typeStack, Double2ndHalfType.v());
-        typeStack = popSafe(typeStack, DoubleType.v());
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         typeStack = popSafeRefType(typeStack);
         break;
 
@@ -1741,19 +1733,19 @@ public class CFG {
       case ByteCode.IAND:
       case ByteCode.IOR:
       case ByteCode.IXOR:
-        typeStack = popSafe(typeStack, IntType.v());
-        typeStack = popSafe(typeStack, IntType.v());
-        typeStack = typeStack.push(IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.LUSHR:
       case ByteCode.LSHR:
       case ByteCode.LSHL:
-        typeStack = popSafe(typeStack, IntType.v());
-        typeStack = popSafe(typeStack, Long2ndHalfType.v());
-        typeStack = popSafe(typeStack, LongType.v());
-        typeStack = typeStack.push(LongType.v());
-        typeStack = typeStack.push(Long2ndHalfType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
         break;
 
       case ByteCode.LREM:
@@ -1764,12 +1756,12 @@ public class CFG {
       case ByteCode.LAND:
       case ByteCode.LOR:
       case ByteCode.LXOR:
-        typeStack = popSafe(typeStack, Long2ndHalfType.v());
-        typeStack = popSafe(typeStack, LongType.v());
-        typeStack = popSafe(typeStack, Long2ndHalfType.v());
-        typeStack = popSafe(typeStack, LongType.v());
-        typeStack = typeStack.push(LongType.v());
-        typeStack = typeStack.push(Long2ndHalfType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
         break;
 
       case ByteCode.FREM:
@@ -1777,9 +1769,9 @@ public class CFG {
       case ByteCode.FMUL:
       case ByteCode.FSUB:
       case ByteCode.FADD:
-        typeStack = popSafe(typeStack, FloatType.v());
-        typeStack = popSafe(typeStack, FloatType.v());
-        typeStack = typeStack.push(FloatType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getFloatType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getFloatType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getFloatType());
         break;
 
       case ByteCode.DREM:
@@ -1787,12 +1779,12 @@ public class CFG {
       case ByteCode.DMUL:
       case ByteCode.DSUB:
       case ByteCode.DADD:
-        typeStack = popSafe(typeStack, Double2ndHalfType.v());
-        typeStack = popSafe(typeStack, DoubleType.v());
-        typeStack = popSafe(typeStack, Double2ndHalfType.v());
-        typeStack = popSafe(typeStack, DoubleType.v());
-        typeStack = typeStack.push(DoubleType.v());
-        typeStack = typeStack.push(Double2ndHalfType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDouble2ndHalfType());
         break;
 
       case ByteCode.INEG:
@@ -1804,75 +1796,75 @@ public class CFG {
         break;
 
       case ByteCode.I2L:
-        typeStack = popSafe(typeStack, IntType.v());
-        typeStack = typeStack.push(LongType.v());
-        typeStack = typeStack.push(Long2ndHalfType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
         break;
 
       case ByteCode.I2F:
-        typeStack = popSafe(typeStack, IntType.v());
-        typeStack = typeStack.push(FloatType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getFloatType());
         break;
 
       case ByteCode.I2D:
-        typeStack = popSafe(typeStack, IntType.v());
-        typeStack = typeStack.push(DoubleType.v());
-        typeStack = typeStack.push(Double2ndHalfType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDouble2ndHalfType());
         break;
 
       case ByteCode.L2I:
-        typeStack = popSafe(typeStack, Long2ndHalfType.v());
-        typeStack = popSafe(typeStack, LongType.v());
-        typeStack = typeStack.push(IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.L2F:
-        typeStack = popSafe(typeStack, Long2ndHalfType.v());
-        typeStack = popSafe(typeStack, LongType.v());
-        typeStack = typeStack.push(FloatType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getFloatType());
         break;
 
       case ByteCode.L2D:
-        typeStack = popSafe(typeStack, Long2ndHalfType.v());
-        typeStack = popSafe(typeStack, LongType.v());
-        typeStack = typeStack.push(DoubleType.v());
-        typeStack = typeStack.push(Double2ndHalfType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDouble2ndHalfType());
         break;
 
       case ByteCode.F2I:
-        typeStack = popSafe(typeStack, FloatType.v());
-        typeStack = typeStack.push(IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getFloatType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.F2L:
-        typeStack = popSafe(typeStack, FloatType.v());
-        typeStack = typeStack.push(LongType.v());
-        typeStack = typeStack.push(Long2ndHalfType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getFloatType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
         break;
 
       case ByteCode.F2D:
-        typeStack = popSafe(typeStack, FloatType.v());
-        typeStack = typeStack.push(DoubleType.v());
-        typeStack = typeStack.push(Double2ndHalfType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getFloatType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getDouble2ndHalfType());
         break;
 
       case ByteCode.D2I:
-        typeStack = popSafe(typeStack, Double2ndHalfType.v());
-        typeStack = popSafe(typeStack, DoubleType.v());
-        typeStack = typeStack.push(IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.D2L:
-        typeStack = popSafe(typeStack, Double2ndHalfType.v());
-        typeStack = popSafe(typeStack, DoubleType.v());
-        typeStack = typeStack.push(LongType.v());
-        typeStack = typeStack.push(Long2ndHalfType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
         break;
 
       case ByteCode.D2F:
-        typeStack = popSafe(typeStack, Double2ndHalfType.v());
-        typeStack = popSafe(typeStack, DoubleType.v());
-        typeStack = typeStack.push(FloatType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getFloatType());
         break;
 
       case ByteCode.INT2BYTE:
@@ -1888,7 +1880,7 @@ public class CFG {
       case ByteCode.IFLE:
       case ByteCode.IFNE:
       case ByteCode.IFGE:
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.IFNULL:
@@ -1902,32 +1894,32 @@ public class CFG {
       case ByteCode.IF_ICMPNE:
       case ByteCode.IF_ICMPGT:
       case ByteCode.IF_ICMPGE:
-        typeStack = popSafe(typeStack, IntType.v());
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.LCMP:
-        typeStack = popSafe(typeStack, Long2ndHalfType.v());
-        typeStack = popSafe(typeStack, LongType.v());
-        typeStack = popSafe(typeStack, Long2ndHalfType.v());
-        typeStack = popSafe(typeStack, LongType.v());
-        typeStack = typeStack.push(IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.FCMPL:
       case ByteCode.FCMPG:
-        typeStack = popSafe(typeStack, FloatType.v());
-        typeStack = popSafe(typeStack, FloatType.v());
-        typeStack = typeStack.push(IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getFloatType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getFloatType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.DCMPL:
       case ByteCode.DCMPG:
-        typeStack = popSafe(typeStack, Double2ndHalfType.v());
-        typeStack = popSafe(typeStack, DoubleType.v());
-        typeStack = popSafe(typeStack, Double2ndHalfType.v());
-        typeStack = popSafe(typeStack, DoubleType.v());
-        typeStack = typeStack.push(IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.IF_ACMPEQ:
@@ -1942,7 +1934,7 @@ public class CFG {
 
       case ByteCode.JSR:
       case ByteCode.JSR_W:
-        typeStack = typeStack.push(StmtAddressType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getStmtAddressType());
         break;
 
       case ByteCode.RET:
@@ -1955,11 +1947,11 @@ public class CFG {
         break;
 
       case ByteCode.IRETURN:
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.FRETURN:
-        typeStack = popSafe(typeStack, FloatType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getFloatType());
         break;
 
       case ByteCode.ARETURN:
@@ -1967,35 +1959,35 @@ public class CFG {
         break;
 
       case ByteCode.DRETURN:
-        typeStack = popSafe(typeStack, Double2ndHalfType.v());
-        typeStack = popSafe(typeStack, DoubleType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
         break;
 
       case ByteCode.LRETURN:
-        typeStack = popSafe(typeStack, Long2ndHalfType.v());
-        typeStack = popSafe(typeStack, LongType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
         break;
 
       case ByteCode.BREAKPOINT:
         break;
 
       case ByteCode.TABLESWITCH:
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.LOOKUPSWITCH:
-        typeStack = popSafe(typeStack, IntType.v());
+        typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getIntType());
         break;
 
       case ByteCode.PUTFIELD: {
         Type type = byteCodeTypeOf(jimpleTypeOfFieldInFieldRef(cm, constant_pool, ((Instruction_Putfield) ins).arg_i));
 
-        if (type.equals(DoubleType.v())) {
-          typeStack = popSafe(typeStack, Double2ndHalfType.v());
-          typeStack = popSafe(typeStack, DoubleType.v());
-        } else if (type.equals(LongType.v())) {
-          typeStack = popSafe(typeStack, Long2ndHalfType.v());
-          typeStack = popSafe(typeStack, LongType.v());
+        if (type.equals(myScene.getPrimTypeCollector().getDoubleType())) {
+          typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+          typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
+        } else if (type.equals(myScene.getPrimTypeCollector().getLongType())) {
+          typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+          typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
         } else if (type instanceof RefType) {
           typeStack = popSafeRefType(typeStack);
         } else {
@@ -2011,12 +2003,12 @@ public class CFG {
 
         typeStack = popSafeRefType(typeStack);
 
-        if (type.equals(DoubleType.v())) {
-          typeStack = typeStack.push(DoubleType.v());
-          typeStack = typeStack.push(Double2ndHalfType.v());
-        } else if (type.equals(LongType.v())) {
-          typeStack = typeStack.push(LongType.v());
-          typeStack = typeStack.push(Long2ndHalfType.v());
+        if (type.equals(myScene.getPrimTypeCollector().getDoubleType())) {
+          typeStack = typeStack.push(myScene.getPrimTypeCollector().getDoubleType());
+          typeStack = typeStack.push(myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        } else if (type.equals(myScene.getPrimTypeCollector().getLongType())) {
+          typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+          typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
         } else {
           typeStack = typeStack.push(type);
         }
@@ -2026,12 +2018,12 @@ public class CFG {
       case ByteCode.PUTSTATIC: {
         Type type = byteCodeTypeOf(jimpleTypeOfFieldInFieldRef(cm, constant_pool, ((Instruction_Putstatic) ins).arg_i));
 
-        if (type.equals(DoubleType.v())) {
-          typeStack = popSafe(typeStack, Double2ndHalfType.v());
-          typeStack = popSafe(typeStack, DoubleType.v());
-        } else if (type.equals(LongType.v())) {
-          typeStack = popSafe(typeStack, Long2ndHalfType.v());
-          typeStack = popSafe(typeStack, LongType.v());
+        if (type.equals(myScene.getPrimTypeCollector().getDoubleType())) {
+          typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+          typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
+        } else if (type.equals(myScene.getPrimTypeCollector().getLongType())) {
+          typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+          typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
         } else if (type instanceof RefType) {
           typeStack = popSafeRefType(typeStack);
         } else {
@@ -2044,12 +2036,12 @@ public class CFG {
       case ByteCode.GETSTATIC: {
         Type type = byteCodeTypeOf(jimpleTypeOfFieldInFieldRef(cm, constant_pool, ((Instruction_Getstatic) ins).arg_i));
 
-        if (type.equals(DoubleType.v())) {
-          typeStack = typeStack.push(DoubleType.v());
-          typeStack = typeStack.push(Double2ndHalfType.v());
-        } else if (type.equals(LongType.v())) {
-          typeStack = typeStack.push(LongType.v());
-          typeStack = typeStack.push(Long2ndHalfType.v());
+        if (type.equals(myScene.getPrimTypeCollector().getDoubleType())) {
+          typeStack = typeStack.push(myScene.getPrimTypeCollector().getDoubleType());
+          typeStack = typeStack.push(myScene.getPrimTypeCollector().getDouble2ndHalfType());
+        } else if (type.equals(myScene.getPrimTypeCollector().getLongType())) {
+          typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+          typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
         } else {
           typeStack = typeStack.push(type);
         }
@@ -2064,19 +2056,19 @@ public class CFG {
 
         // pop off parameters.
         for (int j = args - 1; j >= 0; j--) {
-          if (typeStack.top().equals(Long2ndHalfType.v())) {
-            typeStack = popSafe(typeStack, Long2ndHalfType.v());
-            typeStack = popSafe(typeStack, LongType.v());
+          if (typeStack.top().equals(myScene.getPrimTypeCollector().getLong2ndHalfType())) {
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
 
-          } else if (typeStack.top().equals(Double2ndHalfType.v())) {
-            typeStack = popSafe(typeStack, Double2ndHalfType.v());
-            typeStack = popSafe(typeStack, DoubleType.v());
+          } else if (typeStack.top().equals(myScene.getPrimTypeCollector().getDouble2ndHalfType())) {
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
           } else {
             typeStack = popSafe(typeStack, typeStack.top());
           }
         }
 
-        if (!returnType.equals(VoidType.v())) {
+        if (!returnType.equals(myScene.getPrimTypeCollector().getVoidType())) {
           typeStack = smartPush(typeStack, returnType);
         }
         break;
@@ -2089,13 +2081,13 @@ public class CFG {
 
         // pop off parameters.
         for (int j = args - 1; j >= 0; j--) {
-          if (typeStack.top().equals(Long2ndHalfType.v())) {
-            typeStack = popSafe(typeStack, Long2ndHalfType.v());
-            typeStack = popSafe(typeStack, LongType.v());
+          if (typeStack.top().equals(myScene.getPrimTypeCollector().getLong2ndHalfType())) {
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
 
-          } else if (typeStack.top().equals(Double2ndHalfType.v())) {
-            typeStack = popSafe(typeStack, Double2ndHalfType.v());
-            typeStack = popSafe(typeStack, DoubleType.v());
+          } else if (typeStack.top().equals(myScene.getPrimTypeCollector().getDouble2ndHalfType())) {
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
           } else {
             typeStack = popSafe(typeStack, typeStack.top());
           }
@@ -2103,7 +2095,7 @@ public class CFG {
 
         typeStack = popSafeRefType(typeStack);
 
-        if (!returnType.equals(VoidType.v())) {
+        if (!returnType.equals(myScene.getPrimTypeCollector().getVoidType())) {
           typeStack = smartPush(typeStack, returnType);
         }
         break;
@@ -2116,13 +2108,13 @@ public class CFG {
 
         // pop off parameters.
         for (int j = args - 1; j >= 0; j--) {
-          if (typeStack.top().equals(Long2ndHalfType.v())) {
-            typeStack = popSafe(typeStack, Long2ndHalfType.v());
-            typeStack = popSafe(typeStack, LongType.v());
+          if (typeStack.top().equals(myScene.getPrimTypeCollector().getLong2ndHalfType())) {
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
 
-          } else if (typeStack.top().equals(Double2ndHalfType.v())) {
-            typeStack = popSafe(typeStack, Double2ndHalfType.v());
-            typeStack = popSafe(typeStack, DoubleType.v());
+          } else if (typeStack.top().equals(myScene.getPrimTypeCollector().getDouble2ndHalfType())) {
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
           } else {
             typeStack = popSafe(typeStack, typeStack.top());
           }
@@ -2130,7 +2122,7 @@ public class CFG {
 
         typeStack = popSafeRefType(typeStack);
 
-        if (!returnType.equals(VoidType.v())) {
+        if (!returnType.equals(myScene.getPrimTypeCollector().getVoidType())) {
           typeStack = smartPush(typeStack, returnType);
         }
         break;
@@ -2143,19 +2135,19 @@ public class CFG {
 
         // pop off parameters.
         for (int j = args - 1; j >= 0; j--) {
-          if (typeStack.top().equals(Long2ndHalfType.v())) {
-            typeStack = popSafe(typeStack, Long2ndHalfType.v());
-            typeStack = popSafe(typeStack, LongType.v());
+          if (typeStack.top().equals(myScene.getPrimTypeCollector().getLong2ndHalfType())) {
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
 
-          } else if (typeStack.top().equals(Double2ndHalfType.v())) {
-            typeStack = popSafe(typeStack, Double2ndHalfType.v());
-            typeStack = popSafe(typeStack, DoubleType.v());
+          } else if (typeStack.top().equals(myScene.getPrimTypeCollector().getDouble2ndHalfType())) {
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
           } else {
             typeStack = popSafe(typeStack, typeStack.top());
           }
         }
 
-        if (!returnType.equals(VoidType.v())) {
+        if (!returnType.equals(myScene.getPrimTypeCollector().getVoidType())) {
           typeStack = smartPush(typeStack, returnType);
         }
         break;
@@ -2168,13 +2160,13 @@ public class CFG {
 
         // pop off parameters.
         for (int j = args - 1; j >= 0; j--) {
-          if (typeStack.top().equals(Long2ndHalfType.v())) {
-            typeStack = popSafe(typeStack, Long2ndHalfType.v());
-            typeStack = popSafe(typeStack, LongType.v());
+          if (typeStack.top().equals(myScene.getPrimTypeCollector().getLong2ndHalfType())) {
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLong2ndHalfType());
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getLongType());
 
-          } else if (typeStack.top().equals(Double2ndHalfType.v())) {
-            typeStack = popSafe(typeStack, Double2ndHalfType.v());
-            typeStack = popSafe(typeStack, DoubleType.v());
+          } else if (typeStack.top().equals(myScene.getPrimTypeCollector().getDouble2ndHalfType())) {
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDouble2ndHalfType());
+            typeStack = popSafe(typeStack, myScene.getPrimTypeCollector().getDoubleType());
           } else {
             typeStack = popSafe(typeStack, typeStack.top());
           }
@@ -2182,7 +2174,7 @@ public class CFG {
 
         typeStack = popSafeRefType(typeStack);
 
-        if (!returnType.equals(VoidType.v())) {
+        if (!returnType.equals(myScene.getPrimTypeCollector().getVoidType())) {
           typeStack = smartPush(typeStack, returnType);
         }
         break;
@@ -2196,7 +2188,7 @@ public class CFG {
         break;
 
       case ByteCode.NEW: {
-        Type type = RefType.v(getClassName(constant_pool, ((Instruction_New) ins).arg_i));
+        Type type = RefType.v(getClassName(constant_pool, ((Instruction_New) ins).arg_i), myScene);
 
         typeStack = typeStack.push(type);
         break;
@@ -2208,9 +2200,10 @@ public class CFG {
         Type castType;
 
         if (className.startsWith("[")) {
-          castType = myCoffiUtil.jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Checkcast) ins).arg_i));
+          castType
+              = myCoffiUtil.jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Checkcast) ins).arg_i));
         } else {
-          castType = RefType.v(className);
+          castType = RefType.v(className, myScene);
         }
 
         typeStack = popSafeRefType(typeStack);
@@ -2220,7 +2213,7 @@ public class CFG {
 
       case ByteCode.INSTANCEOF: {
         typeStack = popSafeRefType(typeStack);
-        typeStack = typeStack.push(IntType.v());
+        typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
         break;
       }
 
@@ -2280,19 +2273,19 @@ public class CFG {
     cp_info c = constant_pool[i];
 
     if (c instanceof CONSTANT_Integer_info) {
-      typeStack = typeStack.push(IntType.v());
+      typeStack = typeStack.push(myScene.getPrimTypeCollector().getIntType());
     } else if (c instanceof CONSTANT_Float_info) {
-      typeStack = typeStack.push(FloatType.v());
+      typeStack = typeStack.push(myScene.getPrimTypeCollector().getFloatType());
     } else if (c instanceof CONSTANT_Long_info) {
-      typeStack = typeStack.push(LongType.v());
-      typeStack = typeStack.push(Long2ndHalfType.v());
+      typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+      typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
     } else if (c instanceof CONSTANT_Double_info) {
-      typeStack = typeStack.push(DoubleType.v());
-      typeStack = typeStack.push(Double2ndHalfType.v());
+      typeStack = typeStack.push(myScene.getPrimTypeCollector().getDoubleType());
+      typeStack = typeStack.push(myScene.getPrimTypeCollector().getDouble2ndHalfType());
     } else if (c instanceof CONSTANT_String_info) {
-      typeStack = typeStack.push(RefType.v("java.lang.String"));
+      typeStack = typeStack.push(RefType.v("java.lang.String", myScene));
     } else if (c instanceof CONSTANT_Utf8_info) {
-      typeStack = typeStack.push(RefType.v("java.lang.String"));
+      typeStack = typeStack.push(RefType.v("java.lang.String", myScene));
     } else if (c instanceof CONSTANT_Class_info) {
       CONSTANT_Class_info info = (CONSTANT_Class_info) c;
       String name = ((CONSTANT_Utf8_info) (constant_pool[info.name_index])).convert();
@@ -2307,38 +2300,38 @@ public class CFG {
         char typeIndicator = name.charAt(dim);
         switch (typeIndicator) {
           case 'I':
-            baseType = IntType.v();
+            baseType = myScene.getPrimTypeCollector().getIntType();
             break;
           case 'C':
-            baseType = CharType.v();
+            baseType = myScene.getPrimTypeCollector().getCharType();
             break;
           case 'F':
-            baseType = FloatType.v();
+            baseType = myScene.getPrimTypeCollector().getFloatType();
             break;
           case 'D':
-            baseType = DoubleType.v();
+            baseType = myScene.getPrimTypeCollector().getDoubleType();
             break;
           case 'B':
-            baseType = ByteType.v();
+            baseType = myScene.getPrimTypeCollector().getByteType();
             break;
           case 'S':
-            baseType = ShortType.v();
+            baseType = myScene.getPrimTypeCollector().getShortType();
             break;
           case 'Z':
-            baseType = BooleanType.v();
+            baseType = myScene.getPrimTypeCollector().getBooleanType();
             break;
           case 'J':
-            baseType = LongType.v();
+            baseType = myScene.getPrimTypeCollector().getLongType();
             break;
           case 'L':
-            baseType = RefType.v(name.substring(dim + 1, name.length() - 1));
+            baseType = RefType.v(name.substring(dim + 1, name.length() - 1), myScene);
             break;
           default:
             throw new RuntimeException("Unknown Array Base Type in Class Constant");
         }
-        typeStack = typeStack.push(ArrayType.v(baseType, dim));
+        typeStack = typeStack.push(ArrayType.v(baseType, dim, myScene));
       } else {
-        typeStack = typeStack.push(RefType.v(name));
+        typeStack = typeStack.push(RefType.v(name, myScene));
       }
     } else {
       throw new RuntimeException("Attempting to push a non-constant cp entry" + c.getClass());
@@ -2348,12 +2341,12 @@ public class CFG {
   }
 
   TypeStack smartPush(TypeStack typeStack, Type type) {
-    if (type.equals(LongType.v())) {
-      typeStack = typeStack.push(LongType.v());
-      typeStack = typeStack.push(Long2ndHalfType.v());
-    } else if (type.equals(DoubleType.v())) {
-      typeStack = typeStack.push(DoubleType.v());
-      typeStack = typeStack.push(Double2ndHalfType.v());
+    if (type.equals(myScene.getPrimTypeCollector().getLongType())) {
+      typeStack = typeStack.push(myScene.getPrimTypeCollector().getLongType());
+      typeStack = typeStack.push(myScene.getPrimTypeCollector().getLong2ndHalfType());
+    } else if (type.equals(myScene.getPrimTypeCollector().getDoubleType())) {
+      typeStack = typeStack.push(myScene.getPrimTypeCollector().getDoubleType());
+      typeStack = typeStack.push(myScene.getPrimTypeCollector().getDouble2ndHalfType());
     } else {
       typeStack = typeStack.push(type);
     }
@@ -2416,7 +2409,6 @@ public class CFG {
    *
    * @param bbq
    *          queue of BasicBlocks to process.
-   * @see jimpleTargetFixup
    */
   private void processTargetFixup(BBQ bbq) {
     BasicBlock b, p;
@@ -2508,8 +2500,8 @@ public class CFG {
    * After the initial jimple construction, a second pass is made to fix up missing Stmt targets for <tt>goto</tt>s,
    * <tt>if</tt>'s etc.
    *
-   * @param c
-   *          code attribute of this method.
+   * code attribute of this method.
+   * 
    * @see CFG#jimplify
    */
   void jimpleTargetFixup() {
@@ -2563,7 +2555,7 @@ public class CFG {
     if (c instanceof CONSTANT_Integer_info) {
       CONSTANT_Integer_info ci = (CONSTANT_Integer_info) c;
 
-      rvalue = IntConstant.v((int) ci.bytes);
+      rvalue = constancFactory.createIntConstant((int) ci.bytes);
       stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else if (c instanceof CONSTANT_Float_info) {
@@ -2575,13 +2567,13 @@ public class CFG {
     } else if (c instanceof CONSTANT_Long_info) {
       CONSTANT_Long_info cl = (CONSTANT_Long_info) c;
 
-      rvalue = LongConstant.v(cl.convert());
+      rvalue = constancFactory.createLongConstant(cl.convert());
       stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else if (c instanceof CONSTANT_Double_info) {
       CONSTANT_Double_info cd = (CONSTANT_Double_info) c;
 
-      rvalue = DoubleConstant.v(cd.convert());
+      rvalue = constancFactory.createDoubleConstant(cd.convert());
 
       stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
@@ -2594,7 +2586,7 @@ public class CFG {
         constant = constant.substring(1, constant.length() - 1);
       }
 
-      rvalue = StringConstant.v(constant);
+      rvalue = constancFactory.createStringConstant(constant);
       stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else if (c instanceof CONSTANT_Utf8_info) {
@@ -2606,14 +2598,14 @@ public class CFG {
         constant = constant.substring(1, constant.length() - 1);
       }
 
-      rvalue = StringConstant.v(constant);
+      rvalue = constancFactory.createStringConstant(constant);
       stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else if (c instanceof CONSTANT_Class_info) {
 
       String className = ((CONSTANT_Utf8_info) (constant_pool[((CONSTANT_Class_info) c).name_index])).convert();
 
-      rvalue = ClassConstant.v(className);
+      rvalue = constancFactory.createClassConstant(className);
       stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else {
@@ -2643,13 +2635,13 @@ public class CFG {
 
     switch (x) {
       case ByteCode.BIPUSH:
-        rvalue = IntConstant.v(((Instruction_Bipush) ins).arg_b);
+        rvalue = constancFactory.createIntConstant(((Instruction_Bipush) ins).arg_b);
         stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
 
       case ByteCode.SIPUSH:
-        rvalue = IntConstant.v(((Instruction_Sipush) ins).arg_i);
+        rvalue = constancFactory.createIntConstant(((Instruction_Sipush) ins).arg_i);
         stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
@@ -2678,14 +2670,14 @@ public class CFG {
       case ByteCode.ICONST_3:
       case ByteCode.ICONST_4:
       case ByteCode.ICONST_5:
-        rvalue = IntConstant.v(x - ByteCode.ICONST_0);
+        rvalue = constancFactory.createIntConstant(x - ByteCode.ICONST_0);
         stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
 
       case ByteCode.LCONST_0:
       case ByteCode.LCONST_1:
-        rvalue = LongConstant.v(x - ByteCode.LCONST_0);
+        rvalue = constancFactory.createLongConstant(x - ByteCode.LCONST_0);
         stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
@@ -2700,7 +2692,7 @@ public class CFG {
 
       case ByteCode.DCONST_0:
       case ByteCode.DCONST_1:
-        rvalue = DoubleConstant.v((x - ByteCode.DCONST_0));
+        rvalue = constancFactory.createDoubleConstant((x - ByteCode.DCONST_0));
         stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
@@ -2889,7 +2881,7 @@ public class CFG {
         Local local = myCoffiUtil.getLocalForIndex(listBody, ((Instruction_Iinc) ins).arg_b, ins);
 
         int amt = (((Instruction_Iinc) ins).arg_c);
-        rhs = myJimple.newAddExpr(local, IntConstant.v(amt));
+        rhs = myJimple.newAddExpr(local, constancFactory.createIntConstant(amt));
         stmt = myJimple.newAssignStmt(local, rhs);
         break;
       }
@@ -2903,7 +2895,8 @@ public class CFG {
 
         rhs = myJimple.newNewArrayExpr(baseType, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
 
         break;
       }
@@ -2914,14 +2907,16 @@ public class CFG {
         Type baseType;
 
         if (baseName.startsWith("[")) {
-          baseType = myCoffiUtil.jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Anewarray) ins).arg_i));
+          baseType
+              = myCoffiUtil.jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Anewarray) ins).arg_i));
         } else {
-          baseType = RefType.v(baseName);
+          baseType = RefType.v(baseName, myScene);
         }
 
         rhs = myJimple.newNewArrayExpr(baseType, myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
       }
 
@@ -2939,14 +2934,16 @@ public class CFG {
 
         rhs = myJimple.newNewMultiArrayExpr(jimpleType, dims);
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
       }
 
       case ByteCode.ARRAYLENGTH:
         rhs = myJimple.newLengthExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.IALOAD:
@@ -3000,10 +2997,12 @@ public class CFG {
 
       case ByteCode.DUP2:
         if (typeSize(typeStack.top()) == 2) {
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
+          stmt = myJimple.newAssignStmt(
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
               myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
         } else {
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
+          stmt = myJimple.newAssignStmt(
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
               myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
           statements.add(stmt);
@@ -3043,13 +3042,13 @@ public class CFG {
           l3 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
           l1 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
-              l3);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2), l3);
 
           statements.add(stmt);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
-              l1);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3), l1);
 
           statements.add(stmt);
 
@@ -3069,17 +3068,18 @@ public class CFG {
 
           statements.add(stmt);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
-              l2);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1), l2);
 
           statements.add(stmt);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
-              l3);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2), l3);
 
           statements.add(stmt);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
+          stmt = myJimple.newAssignStmt(
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
               myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()));
 
           statements.add(stmt);
@@ -3093,17 +3093,18 @@ public class CFG {
           l2 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
           l3 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
-              l2);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1), l2);
 
           statements.add(stmt);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
-              l3);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2), l3);
 
           statements.add(stmt);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 4),
+          stmt = myJimple.newAssignStmt(
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 4),
               myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1));
 
           statements.add(stmt);
@@ -3119,22 +3120,24 @@ public class CFG {
 
           statements.add(stmt);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
-              l2);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1), l2);
 
           statements.add(stmt);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
-              l3);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2), l3);
 
           statements.add(stmt);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
+          stmt = myJimple.newAssignStmt(
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
               myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()));
 
           statements.add(stmt);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 4),
+          stmt = myJimple.newAssignStmt(
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 4),
               myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1));
 
           statements.add(stmt);
@@ -3147,16 +3150,16 @@ public class CFG {
         if (typeSize(typeStack.get(typeStack.topIndex() - 1)) == 2) {
           l2 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
-              l2);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1), l2);
 
           statements.add(stmt);
         } else {
           l1 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex());
           l2 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1),
-              l2);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1), l2);
 
           statements.add(stmt);
 
@@ -3170,38 +3173,41 @@ public class CFG {
         if (typeSize(typeStack.get(typeStack.topIndex() - 3)) == 2) {
           l4 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
-              l4);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3), l4);
 
           statements.add(stmt);
         } else {
           l4 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3);
           l3 = myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3),
-              l4);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 3), l4);
 
           statements.add(stmt);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2),
-              l3);
+          stmt = myJimple
+              .newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 2), l3);
 
           statements.add(stmt);
 
         }
 
         if (typeSize(typeStack.get(typeStack.topIndex() - 1)) == 2) {
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 5),
+          stmt = myJimple.newAssignStmt(
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 5),
               myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1));
 
           statements.add(stmt);
         } else {
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 5),
+          stmt = myJimple.newAssignStmt(
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 5),
               myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 1));
 
           statements.add(stmt);
 
-          stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 4),
+          stmt = myJimple.newAssignStmt(
+              myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex() - 4),
               myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()));
 
           statements.add(stmt);
@@ -3239,7 +3245,8 @@ public class CFG {
         rhs = myJimple.newAddExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.DADD:
@@ -3247,7 +3254,8 @@ public class CFG {
         rhs = myJimple.newAddExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.FSUB:
@@ -3255,7 +3263,8 @@ public class CFG {
         rhs = myJimple.newSubExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.DSUB:
@@ -3263,7 +3272,8 @@ public class CFG {
         rhs = myJimple.newSubExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.FMUL:
@@ -3271,7 +3281,8 @@ public class CFG {
         rhs = myJimple.newMulExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.DMUL:
@@ -3279,7 +3290,8 @@ public class CFG {
         rhs = myJimple.newMulExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.FDIV:
@@ -3287,7 +3299,8 @@ public class CFG {
         rhs = myJimple.newDivExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.DDIV:
@@ -3295,7 +3308,8 @@ public class CFG {
         rhs = myJimple.newDivExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.FREM:
@@ -3303,7 +3317,8 @@ public class CFG {
         rhs = myJimple.newRemExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.DREM:
@@ -3311,7 +3326,8 @@ public class CFG {
         rhs = myJimple.newRemExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.INEG:
@@ -3319,145 +3335,172 @@ public class CFG {
       case ByteCode.FNEG:
       case ByteCode.DNEG:
         rhs = myJimple.newNegExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.ISHL:
         rhs = myJimple.newShlExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.ISHR:
         rhs = myJimple.newShrExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.IUSHR:
         rhs = myJimple.newUshrExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.LSHL:
         rhs = myJimple.newShlExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.LSHR:
         rhs = myJimple.newShrExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.LUSHR:
         rhs = myJimple.newUshrExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 2),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.IAND:
         rhs = myJimple.newAndExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.LAND:
         rhs = myJimple.newAndExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.IOR:
         rhs = myJimple.newOrExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.LOR:
         rhs = myJimple.newOrExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.IXOR:
         rhs = myJimple.newXorExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.LXOR:
         rhs = myJimple.newXorExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.D2L:
       case ByteCode.F2L:
       case ByteCode.I2L:
-        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), LongType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+            myScene.getPrimTypeCollector().getLongType());
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.D2F:
       case ByteCode.L2F:
       case ByteCode.I2F:
-        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), FloatType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+            myScene.getPrimTypeCollector().getFloatType());
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.I2D:
       case ByteCode.L2D:
       case ByteCode.F2D:
-        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), DoubleType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+            myScene.getPrimTypeCollector().getDoubleType());
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.L2I:
       case ByteCode.F2I:
       case ByteCode.D2I:
-        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+            myScene.getPrimTypeCollector().getIntType());
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.INT2BYTE:
-        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), ByteType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+            myScene.getPrimTypeCollector().getByteType());
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.INT2CHAR:
-        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), CharType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+            myScene.getPrimTypeCollector().getCharType());
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.INT2SHORT:
-        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), ShortType.v());
+        rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
+            myScene.getPrimTypeCollector().getShortType());
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.IFEQ:
-        co = myJimple.newEqExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
+        co = myJimple.newEqExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), constancFactory.createIntConstant(0));
 
         stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
@@ -3469,19 +3512,19 @@ public class CFG {
         break;
 
       case ByteCode.IFLT:
-        co = myJimple.newLtExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
+        co = myJimple.newLtExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), constancFactory.createIntConstant(0));
 
         stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IFLE:
-        co = myJimple.newLeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
+        co = myJimple.newLeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), constancFactory.createIntConstant(0));
 
         stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IFNE:
-        co = myJimple.newNeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
+        co = myJimple.newNeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), constancFactory.createIntConstant(0));
 
         stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
@@ -3493,13 +3536,13 @@ public class CFG {
         break;
 
       case ByteCode.IFGT:
-        co = myJimple.newGtExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
+        co = myJimple.newGtExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), constancFactory.createIntConstant(0));
 
         stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
 
       case ByteCode.IFGE:
-        co = myJimple.newGeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), IntConstant.v(0));
+        co = myJimple.newGeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), constancFactory.createIntConstant(0));
 
         stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
@@ -3550,35 +3593,40 @@ public class CFG {
         rhs = myJimple.newCmpExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.FCMPL:
         rhs = myJimple.newCmplExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.FCMPG:
         rhs = myJimple.newCmpgExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.DCMPL:
         rhs = myJimple.newCmplExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.DCMPG:
         rhs = myJimple.newCmpgExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 3),
             myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex() - 1));
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
 
       case ByteCode.IF_ACMPEQ:
@@ -3658,7 +3706,7 @@ public class CFG {
         int npairs = ((Instruction_Lookupswitch) ins).npairs;
 
         for (int j = 0; j < npairs; j++) {
-          matches.add(IntConstant.v(((Instruction_Lookupswitch) ins).match_offsets[j * 2]));
+          matches.add(constancFactory.createIntConstant(((Instruction_Lookupswitch) ins).match_offsets[j * 2]));
         }
 
         stmt = myJimple.newLookupSwitchStmt(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
@@ -3846,7 +3894,7 @@ public class CFG {
 
         rvalue = myJimple.newDynamicInvokeExpr(bootstrapMethodRef, bootstrapArgs, methodRef, kind, Arrays.asList(params));
 
-        if (!returnType.equals(VoidType.v())) {
+        if (!returnType.equals(myScene.getPrimTypeCollector().getVoidType())) {
           stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               rvalue);
         } else {
@@ -3881,7 +3929,7 @@ public class CFG {
         rvalue = myJimple.newVirtualInvokeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
             methodRef, Arrays.asList(params));
 
-        if (!returnType.equals(VoidType.v())) {
+        if (!returnType.equals(myScene.getPrimTypeCollector().getVoidType())) {
           stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               rvalue);
         } else {
@@ -3916,7 +3964,7 @@ public class CFG {
         rvalue = myJimple.newSpecialInvokeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
             methodRef, Arrays.asList(params));
 
-        if (!returnType.equals(VoidType.v())) {
+        if (!returnType.equals(myScene.getPrimTypeCollector().getVoidType())) {
           stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               rvalue);
         } else {
@@ -3956,7 +4004,7 @@ public class CFG {
 
         rvalue = myJimple.newStaticInvokeExpr(methodRef, Arrays.asList(params));
 
-        if (!returnType.equals(VoidType.v())) {
+        if (!returnType.equals(myScene.getPrimTypeCollector().getVoidType())) {
           stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               rvalue);
         } else {
@@ -3992,7 +4040,7 @@ public class CFG {
         rvalue = myJimple.newInterfaceInvokeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
             methodRef, Arrays.asList(params));
 
-        if (!returnType.equals(VoidType.v())) {
+        if (!returnType.equals(myScene.getPrimTypeCollector().getVoidType())) {
           stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
               rvalue);
         } else {
@@ -4009,7 +4057,7 @@ public class CFG {
         SootClass bclass = cm.getSootClass(getClassName(constant_pool, ((Instruction_New) ins).arg_i));
 
         stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
-            myJimple.newNewExpr(RefType.v(bclass.getName())));
+            myJimple.newNewExpr(RefType.v(bclass.getName(), myScene)));
         break;
       }
 
@@ -4019,14 +4067,16 @@ public class CFG {
         Type castType;
 
         if (className.startsWith("[")) {
-          castType = myCoffiUtil.jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Checkcast) ins).arg_i));
+          castType
+              = myCoffiUtil.jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Checkcast) ins).arg_i));
         } else {
-          castType = RefType.v(className);
+          castType = RefType.v(className, myScene);
         }
 
         rhs = myJimple.newCastExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), castType);
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
       }
 
@@ -4039,13 +4089,14 @@ public class CFG {
           checkType
               = myCoffiUtil.jimpleTypeOfFieldDescriptor(getClassName(constant_pool, ((Instruction_Instanceof) ins).arg_i));
         } else {
-          checkType = RefType.v(className);
+          checkType = RefType.v(className, myScene);
         }
 
         rhs = myJimple.newInstanceOfExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()),
             checkType);
 
-        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()), rhs);
+        stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
+            rhs);
         break;
       }
 
@@ -4109,28 +4160,28 @@ public class CFG {
   Type jimpleTypeOfAtype(int atype) {
     switch (atype) {
       case 4:
-        return BooleanType.v();
+        return myScene.getPrimTypeCollector().getBooleanType();
 
       case 5:
-        return CharType.v();
+        return myScene.getPrimTypeCollector().getCharType();
 
       case 6:
-        return FloatType.v();
+        return myScene.getPrimTypeCollector().getFloatType();
 
       case 7:
-        return DoubleType.v();
+        return myScene.getPrimTypeCollector().getDoubleType();
 
       case 8:
-        return ByteType.v();
+        return myScene.getPrimTypeCollector().getByteType();
 
       case 9:
-        return ShortType.v();
+        return myScene.getPrimTypeCollector().getShortType();
 
       case 10:
-        return IntType.v();
+        return myScene.getPrimTypeCollector().getIntType();
 
       case 11:
-        return LongType.v();
+        return myScene.getPrimTypeCollector().getLongType();
 
       default:
         throw new RuntimeException("Undefined 'atype' in NEWARRAY byte instruction");
@@ -4138,8 +4189,10 @@ public class CFG {
   }
 
   int typeSize(Type type) {
-    if (type.equals(LongType.v()) || type.equals(DoubleType.v()) || type.equals(Long2ndHalfType.v())
-        || type.equals(Double2ndHalfType.v())) {
+    if (type.equals(myScene.getPrimTypeCollector().getLongType())
+        || type.equals(myScene.getPrimTypeCollector().getDoubleType())
+        || type.equals(myScene.getPrimTypeCollector().getLong2ndHalfType())
+        || type.equals(myScene.getPrimTypeCollector().getDouble2ndHalfType())) {
       return 2;
     } else {
       return 1;

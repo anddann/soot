@@ -22,6 +22,9 @@ package soot.dexpler.typing;
  * #L%
  */
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 import soot.BooleanType;
 import soot.ByteType;
 import soot.CharType;
@@ -42,13 +45,12 @@ public class UntypedIntOrFloatConstant extends UntypedConstant {
   */
   private static final long serialVersionUID = 4413439694269487822L;
   public final int value;
+  private NullConstant nullConstant;
 
-  private UntypedIntOrFloatConstant(int value) {
+  @Inject
+  public UntypedIntOrFloatConstant(int value, @Assisted NullConstant nullConstant) {
     this.value = value;
-  }
-
-  public static UntypedIntOrFloatConstant v(int value) {
-    return new UntypedIntOrFloatConstant(value);
+    this.nullConstant = nullConstant;
   }
 
   public boolean equals(Object c) {
@@ -65,7 +67,7 @@ public class UntypedIntOrFloatConstant extends UntypedConstant {
   }
 
   public IntConstant toIntConstant() {
-    return IntConstant.v(value);
+    return constancFactory.createIntConstant(value);
   }
 
   @Override
@@ -77,7 +79,7 @@ public class UntypedIntOrFloatConstant extends UntypedConstant {
       return this.toIntConstant();
     } else {
       if (value == 0 && t instanceof RefLikeType) {
-        return myNullConstant;
+        return nullConstant;
       }
       if (t == null) { // if the value is only used in a if to compare against another integer, then use default type of
                        // integer

@@ -22,7 +22,10 @@ package soot.jimple;
  * #L%
  */
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import soot.DoubleType;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.util.Switch;
 
@@ -32,14 +35,14 @@ import soot.util.Switch;
 public class DoubleConstant extends RealConstant {
 
   public final double value;
+  private PrimTypeCollector primTypeCollector;
 
-  private DoubleConstant(double value) {
+  @Inject 
+  private DoubleConstant(double value, @Assisted PrimTypeCollector primTypeCollector) {
     this.value = value;
+    this.primTypeCollector = primTypeCollector;
   }
 
-  public static DoubleConstant v(double value) {
-    return new DoubleConstant(value);
-  }
 
   @Override
   public boolean equals(Object c) {
@@ -59,67 +62,67 @@ public class DoubleConstant extends RealConstant {
   @Override
   public NumericConstant add(NumericConstant c) {
     assertInstanceOf(c);
-    return DoubleConstant.v(this.value + ((DoubleConstant) c).value);
+    return new DoubleConstant(this.value + ((DoubleConstant) c).value,this.primTypeCollector);
   }
 
   @Override
   public NumericConstant subtract(NumericConstant c) {
     assertInstanceOf(c);
-    return DoubleConstant.v(this.value - ((DoubleConstant) c).value);
+    return new DoubleConstant(this.value - ((DoubleConstant) c).value,this.primTypeCollector);
   }
 
   @Override
   public NumericConstant multiply(NumericConstant c) {
     assertInstanceOf(c);
-    return DoubleConstant.v(this.value * ((DoubleConstant) c).value);
+    return new DoubleConstant(this.value * ((DoubleConstant) c).value,this.primTypeCollector);
   }
 
   @Override
   public NumericConstant divide(NumericConstant c) {
     assertInstanceOf(c);
-    return DoubleConstant.v(this.value / ((DoubleConstant) c).value);
+    return new DoubleConstant(this.value / ((DoubleConstant) c).value,this.primTypeCollector);
   }
 
   @Override
   public NumericConstant remainder(NumericConstant c) {
     assertInstanceOf(c);
-    return DoubleConstant.v(this.value % ((DoubleConstant) c).value);
+    return new DoubleConstant(this.value % ((DoubleConstant) c).value,this.primTypeCollector);
   }
 
   @Override
   public NumericConstant equalEqual(NumericConstant c) {
     assertInstanceOf(c);
-    return IntConstant.v(Double.compare(this.value, ((DoubleConstant) c).value) == 0 ? 1 : 0);
+    return new IntConstant((Double.compare(this.value, ((DoubleConstant) c).value) == 0 ? 1 : 0),this.primTypeCollector);
   }
 
   @Override
   public NumericConstant notEqual(NumericConstant c) {
     assertInstanceOf(c);
-    return IntConstant.v(Double.compare(this.value, ((DoubleConstant) c).value) != 0 ? 1 : 0);
+    return new IntConstant((Double.compare(this.value, ((DoubleConstant) c).value) != 0 ? 1 : 0),this.primTypeCollector);
   }
 
   @Override
   public NumericConstant lessThan(NumericConstant c) {
     assertInstanceOf(c);
-    return IntConstant.v(Double.compare(this.value, ((DoubleConstant) c).value) < 0 ? 1 : 0);
+    return new IntConstant((Double.compare(this.value, ((DoubleConstant) c).value) < 0 ? 1 : 0),this.primTypeCollector);
   }
 
   @Override
   public NumericConstant lessThanOrEqual(NumericConstant c) {
     assertInstanceOf(c);
-    return IntConstant.v(Double.compare(this.value, ((DoubleConstant) c).value) <= 0 ? 1 : 0);
+    return new IntConstant((Double.compare(this.value, ((DoubleConstant) c).value) <= 0 ? 1 : 0),this.primTypeCollector);
   }
 
   @Override
   public NumericConstant greaterThan(NumericConstant c) {
     assertInstanceOf(c);
-    return IntConstant.v(Double.compare(this.value, ((DoubleConstant) c).value) > 0 ? 1 : 0);
+    return new IntConstant((Double.compare(this.value, ((DoubleConstant) c).value) > 0 ? 1 : 0),this.primTypeCollector);
   }
 
   @Override
   public NumericConstant greaterThanOrEqual(NumericConstant c) {
     assertInstanceOf(c);
-    return IntConstant.v(Double.compare(this.value, ((DoubleConstant) c).value) >= 0 ? 1 : 0);
+    return new IntConstant((Double.compare(this.value, ((DoubleConstant) c).value) >= 0 ? 1 : 0),this.primTypeCollector);
   }
 
   @Override
@@ -127,11 +130,11 @@ public class DoubleConstant extends RealConstant {
     assertInstanceOf(constant);
     final double cValue = ((DoubleConstant) constant).value;
     if (this.value < cValue) {
-      return IntConstant.v(-1);
+      return new IntConstant(-1,this.primTypeCollector);
     } else if (this.value == cValue) {
-      return IntConstant.v(0);
+      return new IntConstant(0,this.primTypeCollector);
     } else {
-      return IntConstant.v(1);
+      return new IntConstant(1,this.primTypeCollector);
     }
   }
 
@@ -140,17 +143,17 @@ public class DoubleConstant extends RealConstant {
     assertInstanceOf(constant);
     final double cValue = ((DoubleConstant) constant).value;
     if (this.value > cValue) {
-      return IntConstant.v(1);
+      return new IntConstant(1,this.primTypeCollector);
     } else if (this.value == cValue) {
-      return IntConstant.v(0);
+      return new IntConstant(0,this.primTypeCollector);
     } else {
-      return IntConstant.v(-1);
+      return new IntConstant(-1,this.primTypeCollector);
     }
   }
 
   @Override
   public NumericConstant negate() {
-    return DoubleConstant.v(-(this.value));
+    return new DoubleConstant(-(this.value),this.primTypeCollector);
   }
 
   @Override
@@ -166,7 +169,7 @@ public class DoubleConstant extends RealConstant {
 
   @Override
   public Type getType() {
-    return DoubleType.v();
+    return primTypeCollector.getDoubleType();
   }
 
   @Override

@@ -374,8 +374,8 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
     return methodSet;
   }
 
-  private static final IntConstant INT_CONSTANT_ZERO = IntConstant.v(0);
-  private static final LongConstant LONG_CONSTANT_ZERO = LongConstant.v(0);
+  private static final IntConstant INT_CONSTANT_ZERO = constancFactory.createIntConstant(0);
+  private static final LongConstant LONG_CONSTANT_ZERO = constancFactory.createLongConstant(0);
 
   protected class UnitSwitch implements InstSwitch, StmtSwitch {
 

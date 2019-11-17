@@ -90,7 +90,7 @@ public abstract class ConditionalJumpInstruction extends JumpInstruction impleme
    */
   protected ConditionExpr getComparisonExpr(DexBody body, int reg) {
     Local one = body.getRegisterLocal(reg);
-    return getComparisonExpr(one, IntConstant.v(0));
+    return getComparisonExpr(one, constancFactory.createIntConstant(0));
   }
 
   /**

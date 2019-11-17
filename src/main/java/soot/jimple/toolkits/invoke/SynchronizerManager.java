@@ -129,7 +129,7 @@ public class SynchronizerManager {
     units.insertBefore(ifStmt = myJimple.newIfStmt(myJimple.newNeExpr(l, NullConstant.v()), target), target);
 
     units.insertBefore(myJimple.newAssignStmt(l, myJimple.newStaticInvokeExpr(getClassFetcherFor(sc).makeRef(),
-        Arrays.asList(new Value[] { StringConstant.v(sc.getName()) }))), target);
+        Arrays.asList(new Value[] { constancFactory.createStringConstant(sc.getName()) }))), target);
     units.insertBefore(myJimple.newAssignStmt(myJimple.newStaticFieldRef(classCacher.makeRef()), l), target);
 
     ifStmt.setTarget(target);

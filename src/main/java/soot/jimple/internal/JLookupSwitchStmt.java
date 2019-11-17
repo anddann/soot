@@ -61,7 +61,7 @@ public class JLookupSwitchStmt extends AbstractSwitchStmt implements LookupSwitc
     List<IntConstant> clonedLookupValues = new ArrayList<IntConstant>(lookupValueCount);
 
     for (int i = 0; i < lookupValueCount; i++) {
-      clonedLookupValues.add(i, IntConstant.v(getLookupValue(i)));
+      clonedLookupValues.add(i, constancFactory.createIntConstant(getLookupValue(i)));
     }
 
     return new JLookupSwitchStmt(getKey(), clonedLookupValues, getTargets(), getDefaultTarget());
@@ -143,7 +143,7 @@ public class JLookupSwitchStmt extends AbstractSwitchStmt implements LookupSwitc
   }
 
   public void setLookupValue(int index, int value) {
-    lookupValues.set(index, IntConstant.v(value));
+    lookupValues.set(index, constancFactory.createIntConstant(value));
   }
 
   public int getLookupValue(int index) {

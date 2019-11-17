@@ -53,6 +53,11 @@ import soot.validation.ValidationException;
 /** Implementation of the Body class for the Jimple IR. */
 public class JimpleBody extends StmtBody {
   private static BodyValidator[] validators;
+
+  public Jimple getMyJimple() {
+    return myJimple;
+  }
+
   private Jimple myJimple;
 
   /**
@@ -62,10 +67,11 @@ public class JimpleBody extends StmtBody {
    */
   private synchronized static BodyValidator[] getValidators() {
     if (validators == null) {
-      validators = new BodyValidator[] { IdentityStatementsValidator.v(), TypesValidator.v(), ReturnStatementsValidator.v(),
-          InvokeArgumentValidator.v(), FieldRefValidator.v(), NewValidator.v(), JimpleTrapValidator.v(),
-          IdentityValidator.v(), MethodValidator.v()
-          // InvokeValidator.v()
+      validators = new BodyValidator[] {
+              //FIXME: AD
+//              IdentityStatementsValidator.v(), TypesValidator.v(), ReturnStatementsValidator.v(),
+//          InvokeArgumentValidator.v(), FieldRefValidator.v(), NewValidator.v(), JimpleTrapValidator.v(),
+//          IdentityValidator.v(), MethodValidator.v()
       };
     }
     return validators;

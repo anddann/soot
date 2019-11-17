@@ -101,7 +101,7 @@ public class Node implements ReferenceVariable, Numberable {
     }
     Node rep = getReplacement();
     if (rep == this) {
-      return myEmptyPointsToSet;
+      return EmptyPointsToSet.v();
     }
     return rep.getP2Set();
   }

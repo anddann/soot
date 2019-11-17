@@ -64,10 +64,10 @@ public class DexNullInstanceofTransformer extends BodyTransformer {
           // the zero constant, we replace the whole operation with
           // its outcome "false"
           if (iof.getOp() == myNullConstant) {
-            assignStmt.setRightOp(IntConstant.v(0));
+            assignStmt.setRightOp(constancFactory.createIntConstant(0));
           }
           if (iof.getOp() instanceof IntConstant && ((IntConstant) iof.getOp()).value == 0) {
-            assignStmt.setRightOp(IntConstant.v(0));
+            assignStmt.setRightOp(constancFactory.createIntConstant(0));
           }
         }
       }

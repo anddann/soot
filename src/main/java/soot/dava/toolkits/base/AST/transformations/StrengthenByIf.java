@@ -77,7 +77,7 @@ public class StrengthenByIf {
 
             // make new ASTWhileNode
             List<ASTNode> toReturn = new ArrayList<ASTNode>();
-            toReturn.add(new ASTWhileNode(newLabel, newCond, newWhileBody));
+            toReturn.add(new ASTWhileNode(newLabel, newCond, newWhileBody, myTryContentsFinder));
             return toReturn;
 
           } else if (loopNode instanceof ASTDoWhileNode) {
@@ -106,7 +106,7 @@ public class StrengthenByIf {
 
             // make new ASTWhileNode
             List<ASTNode> toReturn = new ArrayList<ASTNode>();
-            toReturn.add(new ASTWhileNode(newLabel, innerCond, newWhileBody));
+            toReturn.add(new ASTWhileNode(newLabel, innerCond, newWhileBody, myTryContentsFinder));
             return toReturn;
           }
         } // if the labels match
@@ -145,7 +145,7 @@ public class StrengthenByIf {
 
                   // make new ASTWhileNode
                   List<ASTNode> toReturn = new ArrayList<ASTNode>();
-                  toReturn.add(new ASTWhileNode(newLabel, innerCond, newWhileBody));
+                  toReturn.add(new ASTWhileNode(newLabel, innerCond, newWhileBody, myTryContentsFinder));
 
                   // Add the statementSequenceNode AFTER the
                   // whileNode except for the laststmt
@@ -157,7 +157,7 @@ public class StrengthenByIf {
                       newStmts.add(tempStmt);
                     }
                   }
-                  toReturn.add(new ASTStatementSequenceNode(newStmts));
+                  toReturn.add(new ASTStatementSequenceNode(newStmts, myTryContentsFinder, myASTWalker));
                   return toReturn;
                 } // labels are the same
               } // labels are non null
@@ -180,7 +180,7 @@ public class StrengthenByIf {
 
               // make new ASTWhileNode
               List<ASTNode> toReturn = new ArrayList<ASTNode>();
-              toReturn.add(new ASTWhileNode(newLabel, innerCond, newWhileBody));
+              toReturn.add(new ASTWhileNode(newLabel, innerCond, newWhileBody, myTryContentsFinder));
 
               // Add the statementSequenceNode AFTER the whileNode
               // except for the laststmt
@@ -189,7 +189,7 @@ public class StrengthenByIf {
               while (tempIt.hasNext()) {
                 newStmts.add(tempIt.next());
               }
-              toReturn.add(new ASTStatementSequenceNode(newStmts));
+              toReturn.add(new ASTStatementSequenceNode(newStmts, myTryContentsFinder, myASTWalker));
               return toReturn;
             }
           }

@@ -645,7 +645,7 @@ public class PAG implements PointsToAnalysis {
 
   public AllocNode makeStringConstantNode(String s) {
     if (opts.types_for_sites() || opts.vta()) {
-      return makeAllocNode(RefType.v("java.lang.String"), RefType.v("java.lang.String"), null);
+      return makeAllocNode(RefType.v("java.lang.String",myScene), RefType.v("java.lang.String",myScene), null);
     }
     StringConstantNode ret = (StringConstantNode) valToAllocNode.get(s);
     if (ret == null) {
@@ -658,7 +658,7 @@ public class PAG implements PointsToAnalysis {
 
   public AllocNode makeClassConstantNode(ClassConstant cc) {
     if (opts.types_for_sites() || opts.vta()) {
-      return makeAllocNode(RefType.v("java.lang.Class"), RefType.v("java.lang.Class"), null);
+      return makeAllocNode(RefType.v("java.lang.Class",myScene), RefType.v("java.lang.Class",myScene), null);
     }
     ClassConstantNode ret = (ClassConstantNode) valToAllocNode.get(cc);
     if (ret == null) {
@@ -699,7 +699,7 @@ public class PAG implements PointsToAnalysis {
   public GlobalVarNode makeGlobalVarNode(Object value, Type type) {
     if (opts.rta()) {
       value = null;
-      type = RefType.v("java.lang.Object");
+      type = RefType.v("java.lang.Object",myScene);
     }
     GlobalVarNode ret = valToGlobalVarNode.get(value);
     if (ret == null) {
@@ -729,7 +729,7 @@ public class PAG implements PointsToAnalysis {
   public LocalVarNode makeLocalVarNode(Object value, Type type, SootMethod method) {
     if (opts.rta()) {
       value = null;
-      type = RefType.v("java.lang.Object");
+      type = RefType.v("java.lang.Object",myScene);
       method = null;
     } else if (value instanceof Local) {
       Local val = (Local) value;
@@ -1285,7 +1285,7 @@ public class PAG implements PointsToAnalysis {
         cls = findLocalVarNode(((VarNode) cls).getVariable());
       }
 
-      VarNode newObject = makeGlobalVarNode(cls, RefType.v("java.lang.Object"));
+      VarNode newObject = makeGlobalVarNode(cls, RefType.v("java.lang.Object",myScene));
       SootClass tgtClass = e.getTgt().method().getDeclaringClass();
       RefType tgtType = tgtClass.getType();
       AllocNode site = makeAllocNode(new Pair<Node, SootClass>(cls, tgtClass), tgtType, null);

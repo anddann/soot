@@ -54,10 +54,10 @@ public class Timer {
     if (g.Timer_isGarbageCollecting) {
       return;
     }
-
-    if (!myOptions.subtract_gc()) {
-      return;
-    }
+//FIXME: add
+//    if (!myOptions.subtract_gc()) {
+//      return;
+//    }
 
     // garbage collects only every 4 calls to avoid round off errors
     if ((g.Timer_count++ % 4) != 0) {

@@ -142,7 +142,7 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
                   locals.add(tmp1);
 
                   // shift the integral portion
-                  Unit newU = myJimple.newAssignStmt(tmp1, myJimple.newShlExpr(op, IntConstant.v(shift)));
+                  Unit newU = myJimple.newAssignStmt(tmp1, myJimple.newShlExpr(op, constancFactory.createIntConstant(shift)));
                   unitsBuilt.add(newU);
                   units.insertBefore(newU, u);
 
@@ -150,11 +150,11 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
                   double rem = (Double) shft_rem[1];
                   if (rem != 1) {
                     if (rem == ((int) rem) && opType instanceof IntType) {
-                      nc = IntConstant.v((int) rem);
+                      nc = constancFactory.createIntConstant((int) rem);
                     } else if (rem == ((long) rem) && opType instanceof LongType) {
-                      nc = LongConstant.v((long) rem);
+                      nc = constancFactory.createLongConstant((long) rem);
                     } else {
-                      nc = DoubleConstant.v(rem);
+                      nc = constancFactory.createDoubleConstant(rem);
                     }
 
                     if (nc instanceof DoubleConstant) {
@@ -189,7 +189,7 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
                     e = myJimple.newAddExpr(tmp1, tmp2);
                   }
                 } else {
-                  e = myJimple.newShlExpr(op, IntConstant.v(shift));
+                  e = myJimple.newShlExpr(op, constancFactory.createIntConstant(shift));
                 }
 
                 if (e.getType().getClass() != as.getLeftOp().getType().getClass()) {
@@ -241,7 +241,7 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
                   shift -= rand * max;
                 }
 
-                Expr e = myJimple.newShrExpr(de.getOp1(), IntConstant.v(shift));
+                Expr e = myJimple.newShrExpr(de.getOp1(), constancFactory.createIntConstant(shift));
 
                 if (e.getType().getClass() != as.getLeftOp().getType().getClass()) {
                   Local tmp = myJimple.newLocal("__tmp_shft_lcl" + localCount++, e.getType());

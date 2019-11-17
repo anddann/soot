@@ -22,19 +22,21 @@ package soot.jimple;
  * #L%
  */
 
-import soot.LongType;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.util.Switch;
 
 public class LongConstant extends ArithmeticConstant {
   public final long value;
+  private PrimTypeCollector primTypeCollector;
 
-  private LongConstant(long value) {
+  @Inject
+  private LongConstant(long value, @Assisted PrimTypeCollector primTypeCollector) {
     this.value = value;
-  }
-
-  public static LongConstant v(long value) {
-    return new LongConstant(value);
+    this.primTypeCollector = primTypeCollector;
   }
 
   public boolean equals(Object c) {
@@ -51,112 +53,112 @@ public class LongConstant extends ArithmeticConstant {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return LongConstant.v(this.value + ((LongConstant) c).value);
+    return new LongConstant(this.value + ((LongConstant) c).value, this.primTypeCollector);
   }
 
   public NumericConstant subtract(NumericConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return LongConstant.v(this.value - ((LongConstant) c).value);
+    return new LongConstant(this.value - ((LongConstant) c).value, this.primTypeCollector);
   }
 
   public NumericConstant multiply(NumericConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return LongConstant.v(this.value * ((LongConstant) c).value);
+    return new LongConstant(this.value * ((LongConstant) c).value, this.primTypeCollector);
   }
 
   public NumericConstant divide(NumericConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return LongConstant.v(this.value / ((LongConstant) c).value);
+    return new LongConstant(this.value / ((LongConstant) c).value, this.primTypeCollector);
   }
 
   public NumericConstant remainder(NumericConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return LongConstant.v(this.value % ((LongConstant) c).value);
+    return new LongConstant(this.value % ((LongConstant) c).value, this.primTypeCollector);
   }
 
   public NumericConstant equalEqual(NumericConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return IntConstant.v((this.value == ((LongConstant) c).value) ? 1 : 0);
+    return new IntConstant((this.value == ((LongConstant) c).value) ? 1 : 0,this.primTypeCollector);
   }
 
   public NumericConstant notEqual(NumericConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return IntConstant.v((this.value != ((LongConstant) c).value) ? 1 : 0);
+    return new IntConstant((this.value != ((LongConstant) c).value) ? 1 : 0,this.primTypeCollector);
   }
 
   public NumericConstant lessThan(NumericConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return IntConstant.v((this.value < ((LongConstant) c).value) ? 1 : 0);
+    return new IntConstant((this.value < ((LongConstant) c).value) ? 1 : 0,this.primTypeCollector);
   }
 
   public NumericConstant lessThanOrEqual(NumericConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return IntConstant.v((this.value <= ((LongConstant) c).value) ? 1 : 0);
+    return new IntConstant((this.value <= ((LongConstant) c).value) ? 1 : 0,this.primTypeCollector);
   }
 
   public NumericConstant greaterThan(NumericConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return IntConstant.v((this.value > ((LongConstant) c).value) ? 1 : 0);
+    return new IntConstant((this.value > ((LongConstant) c).value) ? 1 : 0,this.primTypeCollector);
   }
 
   public NumericConstant greaterThanOrEqual(NumericConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return IntConstant.v((this.value >= ((LongConstant) c).value) ? 1 : 0);
+    return new IntConstant((this.value >= ((LongConstant) c).value) ? 1 : 0,this.primTypeCollector);
   }
 
   public IntConstant cmp(LongConstant c) {
     if (this.value > c.value) {
-      return IntConstant.v(1);
+      return new IntConstant(1,this.primTypeCollector);
     } else if (this.value == c.value) {
-      return IntConstant.v(0);
+      return new IntConstant(0,this.primTypeCollector);
     } else {
-      return IntConstant.v(-1);
+      return new IntConstant(-1,this.primTypeCollector);
     }
   }
 
   public NumericConstant negate() {
-    return LongConstant.v(-(this.value));
+    return new LongConstant(-(this.value), this.primTypeCollector);
   }
 
   public ArithmeticConstant and(ArithmeticConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return LongConstant.v(this.value & ((LongConstant) c).value);
+    return new LongConstant(this.value & ((LongConstant) c).value, this.primTypeCollector);
   }
 
   public ArithmeticConstant or(ArithmeticConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return LongConstant.v(this.value | ((LongConstant) c).value);
+    return new LongConstant(this.value | ((LongConstant) c).value, this.primTypeCollector);
   }
 
   public ArithmeticConstant xor(ArithmeticConstant c) {
     if (!(c instanceof LongConstant)) {
       throw new IllegalArgumentException("LongConstant expected");
     }
-    return LongConstant.v(this.value ^ ((LongConstant) c).value);
+    return new LongConstant(this.value ^ ((LongConstant) c).value, this.primTypeCollector);
   }
 
   public ArithmeticConstant shiftLeft(ArithmeticConstant c) {
@@ -166,21 +168,21 @@ public class LongConstant extends ArithmeticConstant {
     if (!(c instanceof IntConstant)) {
       throw new IllegalArgumentException("IntConstant expected");
     }
-    return LongConstant.v(this.value << ((IntConstant) c).value);
+    return new LongConstant(this.value << ((IntConstant) c).value, this.primTypeCollector);
   }
 
   public ArithmeticConstant shiftRight(ArithmeticConstant c) {
     if (!(c instanceof IntConstant)) {
       throw new IllegalArgumentException("IntConstant expected");
     }
-    return LongConstant.v(this.value >> ((IntConstant) c).value);
+    return new LongConstant(this.value >> ((IntConstant) c).value, this.primTypeCollector);
   }
 
   public ArithmeticConstant unsignedShiftRight(ArithmeticConstant c) {
     if (!(c instanceof IntConstant)) {
       throw new IllegalArgumentException("IntConstant expected");
     }
-    return LongConstant.v(this.value >>> ((IntConstant) c).value);
+    return new LongConstant(this.value >>> ((IntConstant) c).value, this.primTypeCollector);
   }
 
   public String toString() {
@@ -188,7 +190,7 @@ public class LongConstant extends ArithmeticConstant {
   }
 
   public Type getType() {
-    return LongType.v();
+    return primTypeCollector.getLongType();
   }
 
   public void apply(Switch sw) {

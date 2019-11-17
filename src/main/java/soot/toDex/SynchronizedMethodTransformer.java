@@ -33,8 +33,12 @@ import soot.Unit;
 import soot.jimple.EnterMonitorStmt;
 import soot.jimple.IdentityStmt;
 import soot.jimple.Jimple;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.util.PhaseDumper;
 
 /**
  * The Dalvik VM requires synchronized methods to explicitly enter a monitor and leave it in a finally block again after
@@ -46,10 +50,18 @@ import soot.toolkits.graph.UnitGraph;
 public class SynchronizedMethodTransformer extends BodyTransformer {
 
   private Jimple myJimple;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
+  private Options myOptions;
+  private ThrowAnalysis myThrowAnalysis;
 
   @Inject
-  public SynchronizedMethodTransformer(Jimple myJimple) {
+  public SynchronizedMethodTransformer(Jimple myJimple, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Options myOptions, ThrowAnalysis myThrowAnalysis) {
     this.myJimple = myJimple;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myOptions = myOptions;
+    this.myThrowAnalysis = myThrowAnalysis;
   }
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
@@ -70,7 +82,7 @@ public class SynchronizedMethodTransformer extends BodyTransformer {
         b.getUnits().insertBeforeNoRedirect(myJimple.newEnterMonitorStmt(b.getThisLocal()), u);
 
         // We also need to leave the monitor when the method terminates
-        UnitGraph graph = new ExceptionalUnitGraph(b, myManager);
+        UnitGraph graph = new ExceptionalUnitGraph(b, myThrowAnalysis,myManager,myOptions.omit_excepting_unit_edges(),myPhaseDumper);
         for (Unit tail : graph.getTails()) {
           b.getUnits().insertBefore(myJimple.newExitMonitorStmt(b.getThisLocal()), tail);
         }

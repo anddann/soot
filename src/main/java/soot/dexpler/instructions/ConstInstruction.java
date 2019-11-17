@@ -97,39 +97,39 @@ public class ConstInstruction extends DexlibAbstractInstruction {
       case CONST_4:
       case CONST_16:
         if (IDalvikTyper.ENABLE_DVKTYPER) {
-          return UntypedIntOrFloatConstant.v((int) literal);
+          return constancFactory.createUntypedIntOrFloatConstant((int) literal);
         } else {
-          return IntConstant.v((int) literal);
+          return constancFactory.createIntConstant((int) literal);
         }
 
       case CONST_HIGH16:
         if (IDalvikTyper.ENABLE_DVKTYPER) {
           //
-          // return UntypedIntOrFloatConstant.v((int)literal<<16).toFloatConstant();
+          // return constancFactory.createUntypedIntOrFloatConstant((int)literal<<16).toFloatConstant();
           // seems that dexlib correctly puts the 16bits into the topmost bits.
           //
-          return UntypedIntOrFloatConstant.v((int) literal);// .toFloatConstant();
+          return constancFactory.createUntypedIntOrFloatConstant((int) literal);// .toFloatConstant();
         } else {
-          return IntConstant.v((int) literal);
+          return constancFactory.createIntConstant((int) literal);
         }
 
       case CONST_WIDE_HIGH16:
         if (IDalvikTyper.ENABLE_DVKTYPER) {
-          // return UntypedLongOrDoubleConstant.v((long)literal<<48).toDoubleConstant();
+          // return UntypedLongOrconstancFactory.createDoubleConstant((long)literal<<48).toDoubleConstant();
           // seems that dexlib correctly puts the 16bits into the topmost bits.
           //
-          return UntypedLongOrDoubleConstant.v(literal);// .toDoubleConstant();
+          return UntypedLongOrconstancFactory.createDoubleConstant(literal);// .toDoubleConstant();
         } else {
-          return LongConstant.v(literal);
+          return constancFactory.createLongConstant(literal);
         }
 
       case CONST_WIDE:
       case CONST_WIDE_16:
       case CONST_WIDE_32:
         if (IDalvikTyper.ENABLE_DVKTYPER) {
-          return UntypedLongOrDoubleConstant.v(literal);
+          return UntypedLongOrconstancFactory.createDoubleConstant(literal);
         } else {
-          return LongConstant.v(literal);
+          return constancFactory.createLongConstant(literal);
         }
       default:
         throw new IllegalArgumentException("Expected a const or a const-wide instruction, got neither.");

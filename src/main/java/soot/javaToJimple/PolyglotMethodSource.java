@@ -168,7 +168,7 @@ public class PolyglotMethodSource implements MethodSource {
         = soot.myScene.makeMethodRef(assertStatusClass, "class$", paramTypes, soot.RefType.v("java.lang.Class"), true);
 
     ArrayList params = new ArrayList();
-    params.add(soot.jimple.StringConstant.v(paramName));
+    params.add(soot.jimple.constancFactory.createStringConstant(paramName));
     soot.jimple.StaticInvokeExpr invoke = soot.jimple.myJimple.newStaticInvokeExpr(methodToInvoke, params);
     soot.jimple.AssignStmt invokeAssign = soot.jimple.myJimple.newAssignStmt(invokeLocal, invoke);
 
@@ -210,7 +210,7 @@ public class PolyglotMethodSource implements MethodSource {
     body.getUnits().add(testAssign);
 
     // if
-    soot.jimple.ConditionExpr cond2 = soot.jimple.myJimple.newNeExpr(boolLocal1, soot.jimple.IntConstant.v(0));
+    soot.jimple.ConditionExpr cond2 = soot.jimple.myJimple.newNeExpr(boolLocal1, soot.jimple.constancFactory.createIntConstant(0));
 
     soot.jimple.NopStmt nop3 = soot.jimple.myJimple.newNopStmt();
 
@@ -218,7 +218,7 @@ public class PolyglotMethodSource implements MethodSource {
     body.getUnits().add(ifStmt2);
 
     // alternative
-    soot.jimple.AssignStmt altAssign = soot.jimple.myJimple.newAssignStmt(boolLocal2, soot.jimple.IntConstant.v(1));
+    soot.jimple.AssignStmt altAssign = soot.jimple.myJimple.newAssignStmt(boolLocal2, soot.jimple.constancFactory.createIntConstant(1));
 
     body.getUnits().add(altAssign);
 
@@ -230,7 +230,7 @@ public class PolyglotMethodSource implements MethodSource {
 
     body.getUnits().add(nop3);
 
-    soot.jimple.AssignStmt conAssign = soot.jimple.myJimple.newAssignStmt(boolLocal2, soot.jimple.IntConstant.v(0));
+    soot.jimple.AssignStmt conAssign = soot.jimple.myJimple.newAssignStmt(boolLocal2, soot.jimple.constancFactory.createIntConstant(0));
 
     body.getUnits().add(conAssign);
 

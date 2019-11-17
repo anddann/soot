@@ -325,25 +325,25 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
 
   private static Value getConstantType(Type t) {
     if (t instanceof BooleanType) {
-      return IntConstant.v(Rand.getInt(1));
+      return constancFactory.createIntConstant(Rand.getInt(1));
     }
     if (t instanceof IntType) {
-      return IntConstant.v(Rand.getInt());
+      return constancFactory.createIntConstant(Rand.getInt());
     }
     if (t instanceof CharType) {
-      return myJimple.newCastExpr(IntConstant.v(Rand.getInt()), CharType.v());
+      return myJimple.newCastExpr(constancFactory.createIntConstant(Rand.getInt()), CharType.v());
     }
     if (t instanceof ByteType) {
-      return myJimple.newCastExpr(IntConstant.v(Rand.getInt()), ByteType.v());
+      return myJimple.newCastExpr(constancFactory.createIntConstant(Rand.getInt()), ByteType.v());
     }
     if (t instanceof LongType) {
-      return LongConstant.v(Rand.getLong());
+      return constancFactory.createLongConstant(Rand.getLong());
     }
     if (t instanceof FloatType) {
       return FloatConstant.v(Rand.getFloat());
     }
     if (t instanceof DoubleType) {
-      return DoubleConstant.v(Rand.getDouble());
+      return constancFactory.createDoubleConstant(Rand.getDouble());
     }
 
     return myJimple.newCastExpr(myNullConstant, t);

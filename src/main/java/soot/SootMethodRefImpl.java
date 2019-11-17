@@ -336,7 +336,7 @@ public class SootMethodRefImpl implements SootMethodRef {
     SootMethodRef cref = myScene.makeConstructorRef(runtimeExceptionType.getSootClass(),
         Collections.<Type>singletonList(RefType.v("java.lang.String",myScene)));
     SpecialInvokeExpr constructorInvokeExpr = myJimple.newSpecialInvokeExpr(exceptionLocal, cref,
-        StringConstant.v("Unresolved compilation error: Method " + getSignature() + " does not exist!"));
+        constancFactory.createStringConstant("Unresolved compilation error: Method " + getSignature() + " does not exist!"));
     InvokeStmt initStmt = myJimple.newInvokeStmt(constructorInvokeExpr);
     body.getUnits().insertAfter(initStmt, assignStmt);
 

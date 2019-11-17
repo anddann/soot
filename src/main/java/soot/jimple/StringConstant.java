@@ -22,23 +22,26 @@ package soot.jimple;
  * #L%
  */
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 import soot.RefType;
+import soot.Scene;
 import soot.Type;
 import soot.util.StringTools;
 import soot.util.Switch;
 
 public class StringConstant extends Constant {
   public final String value;
+  private Scene myScene;
 
-  private StringConstant(String s) {
+  @Inject
+  private StringConstant(String s, @Assisted Scene myScene) {
+    this.myScene = myScene;
     if (s == null) {
       throw new IllegalArgumentException("String constant cannot be null");
     }
     this.value = s;
-  }
-
-  public static StringConstant v(String value) {
-    return new StringConstant(value);
   }
 
   // In this case, equals should be structural equality.
@@ -56,7 +59,7 @@ public class StringConstant extends Constant {
   }
 
   public Type getType() {
-    return RefType.v("java.lang.String");
+    return RefType.v("java.lang.String", myScene);
   }
 
   public void apply(Switch sw) {

@@ -106,7 +106,7 @@ public class AugmentedStmtGraph implements DirectedGraph<AugmentedStmt> {
   public AugmentedStmtGraph(BriefUnitGraph bug, TrapUnitGraph cug) {
     this();
 
-    myDava.log("AugmentedStmtGraph::AugmentedStmtGraph() - cug.size() = " + cug.size());
+    //myDava.log("AugmentedStmtGraph::AugmentedStmtGraph() - cug.size() = " + cug.size());
 
     // make the augmented statements
     for (Unit u : cug) {

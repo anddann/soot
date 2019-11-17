@@ -27,14 +27,15 @@ import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
 import soot.toolkits.graph.DirectedGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.FlowSet;
 
 /**
  * Implements an available expressions analysis on local variables. pessimistic analysis - for teaching 621
  */
 public class PessimisticAvailableExpressionsAnalysis extends SlowAvailableExpressionsAnalysis {
-  public PessimisticAvailableExpressionsAnalysis(DirectedGraph<Unit> dg, SootMethod m, SideEffectTester st) {
-    super(dg);
+  public PessimisticAvailableExpressionsAnalysis(DirectedGraph<Unit> dg, SootMethod m, SideEffectTester st, InteractionHandler interactionHandler, boolean interacticeMode) {
+    super(dg,interacticeMode, interactionHandler);
   }
 
   protected FlowSet<Value> newInitialFlow() {

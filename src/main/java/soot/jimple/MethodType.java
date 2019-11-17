@@ -22,42 +22,45 @@ package soot.jimple;
  * #L%
  */
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import soot.RefType;
+import soot.Scene;
 import soot.SootMethod;
 import soot.Type;
 import soot.util.Switch;
 
 public class MethodType extends Constant {
-  
+
   private static final long serialVersionUID = 3523899677165980823L;
   protected Type returnType;
   protected List<Type> parameterTypes;
-  
-  private MethodType(List<Type> parameterTypes, Type returnType) {
+  private Scene myScene;
+
+  @Inject
+  private MethodType(List<Type> parameterTypes, Type returnType, @Assisted Scene myScene) {
     this.returnType = returnType;
     this.parameterTypes = parameterTypes;
-  }
-
-  public static MethodType v(List<Type> paramaterTypes, Type returnType) {
-    return new MethodType(paramaterTypes, returnType);
+    this.myScene = myScene;
   }
 
   public Type getType() {
-    return RefType.v("java.lang.invoke.MethodType");
+    return RefType.v("java.lang.invoke.MethodType", myScene);
   }
-  
+
   public String toString() {
-    return "methodtype: " + SootMethod.getSubSignature("__METHODTYPE__", parameterTypes, returnType);
+    return "methodtype: " + SootMethod.getSubSignature("__METHODTYPE__", parameterTypes, returnType, myScene);
   }
-  
+
   public List<Type> getParameterTypes() {
     return parameterTypes == null ? Collections.<Type>emptyList() : parameterTypes;
   }
-  
+
   public Type getReturnType() {
     return returnType;
   }

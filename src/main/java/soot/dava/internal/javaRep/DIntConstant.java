@@ -22,22 +22,23 @@ package soot.dava.internal.javaRep;
  * #L%
  */
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 import soot.BooleanType;
 import soot.ByteType;
 import soot.CharType;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.jimple.IntConstant;
 
 public class DIntConstant extends IntConstant {
   public Type type;
 
-  private DIntConstant(int value, Type type) {
-    super(value);
+  @Inject
+  private DIntConstant(int value, Type type, @Assisted PrimTypeCollector primTypeCollector) {
+    super(value, primTypeCollector);
     this.type = type;
-  }
-
-  public static DIntConstant v(int value, Type type) {
-    return new DIntConstant(value, type);
   }
 
   public String toString() {

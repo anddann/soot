@@ -1229,7 +1229,7 @@ public class OnFlyCallGraphBuilder {
         SootMethodRef cref = runtimeExceptionType.getSootClass()
             .getMethod("<init>", Collections.<Type>singletonList(RefType.v("java.lang.String"))).makeRef();
         SpecialInvokeExpr constructorInvokeExpr
-            = myJimple.newSpecialInvokeExpr(exceptionLocal, cref, StringConstant.v(guard.message));
+            = myJimple.newSpecialInvokeExpr(exceptionLocal, cref, constancFactory.createStringConstant(guard.message));
         InvokeStmt initStmt = myJimple.newInvokeStmt(constructorInvokeExpr);
         body.getUnits().insertAfter(initStmt, assignStmt);
 

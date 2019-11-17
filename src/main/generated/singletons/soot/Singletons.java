@@ -230,6 +230,8 @@ public class Singletons extends AbstractModule{
             bind(soot.validation.CheckTypesValidator.class).in(Scopes.SINGLETON);
             bind(soot.jimple.validation.InvokeValidator.class).in(Scopes.SINGLETON);
             bind(soot.toolkits.scalar.ConstantInitializerToTagTransformer.class).in(Scopes.SINGLETON);
+            bind(soot.PrimTypeCollector.class).in(Scopes.SINGLETON);
+            bind(soot.jimple.toolkits.callgraph.UnreachableMethodTransformer.class).in(Scopes.SINGLETON);
 
             }
 }

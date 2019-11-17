@@ -184,21 +184,23 @@ public class ClassFile {
   private CONSTANT_Utf8_collector myCONSTANT_Utf8_collector;
   private Options myOptions;
   private Timers myTimers;
+  private Util myCoffiUtil;
 
   /**
    * Creates a new ClassFile object given the name of the file.
-   *
-   * @param nfn
+   *  @param nfn
    *          file name which this ClassFile will represent.
    * @param myCONSTANT_utf8_collector
    * @param myOptions
    * @param myTimers
+   * @param myCoffiUtil
    */
-  public ClassFile(String nfn, CONSTANT_Utf8_collector myCONSTANT_utf8_collector, Options myOptions, Timers myTimers) {
+  public ClassFile(String nfn, CONSTANT_Utf8_collector myCONSTANT_utf8_collector, Options myOptions, Timers myTimers, Util myCoffiUtil) {
     fn = nfn;
     myCONSTANT_Utf8_collector = myCONSTANT_utf8_collector;
     this.myOptions = myOptions;
     this.myTimers = myTimers;
+    this.myCoffiUtil = myCoffiUtil;
   }
 
   /** Returns the name of this Class. */
@@ -725,7 +727,7 @@ public class ClassFile {
         }
         a = (attribute_info) la;
       } else if (s.compareTo(attribute_info.LocalVariableTable) == 0) {
-        LocalVariableTable_attribute la = new LocalVariableTable_attribute();
+        LocalVariableTable_attribute la = new LocalVariableTable_attribute(myCoffiUtil);
         la.local_variable_table_length = d.readUnsignedShort();
         int k;
         local_variable_table_entry e;

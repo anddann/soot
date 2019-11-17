@@ -300,7 +300,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
 
     final PatchingChain<Unit> units = body.getUnits();
     if (field.getType() instanceof IntegerType) {
-      units.addFirst(myJimple.newAssignStmt(myJimple.newStaticFieldRef(field.makeRef()), IntConstant.v(value ? 1 : 0)));
+      units.addFirst(myJimple.newAssignStmt(myJimple.newStaticFieldRef(field.makeRef()), constancFactory.createIntConstant(value ? 1 : 0)));
     } else {
       Local bool = myJimple.newLocal("boolLcl", booleanWrapperRefType);
       body.getLocals().add(bool);
@@ -308,7 +308,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
       final SootMethod booleanWrapperConstructor = booleanWrapperRefType.getSootClass().getMethod("void <init>(boolean)");
       units.addFirst(myJimple.newAssignStmt(myJimple.newStaticFieldRef(field.makeRef()), bool));
       units.addFirst(myJimple.newInvokeStmt(
-          myJimple.newSpecialInvokeExpr(bool, booleanWrapperConstructor.makeRef(), IntConstant.v(value ? 1 : 0))));
+          myJimple.newSpecialInvokeExpr(bool, booleanWrapperConstructor.makeRef(), constancFactory.createIntConstant(value ? 1 : 0))));
       units.addFirst(myJimple.newAssignStmt(bool, myJimple.newNewExpr(booleanWrapperRefType)));
     }
     if (addStaticInitializer) {

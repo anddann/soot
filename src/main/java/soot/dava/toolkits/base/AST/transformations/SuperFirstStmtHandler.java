@@ -315,7 +315,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         }
       }
       if (newStmtList.size() != 0) {
-        newBody.add(new ASTStatementSequenceNode(newStmtList));
+        newBody.add(new ASTStatementSequenceNode(newStmtList, myTryContentsFinder, myASTWalker));
       }
     }
     originalASTMethod.replaceBody(newBody);
@@ -354,7 +354,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     originalDavaBody.set_ConstructorUnit(s);
 
     // originalASTMethod has to be made empty
-    originalASTMethod.setDeclarations(new ASTStatementSequenceNode(new ArrayList<AugmentedStmt>()));
+    originalASTMethod.setDeclarations(new ASTStatementSequenceNode(new ArrayList<AugmentedStmt>(), myTryContentsFinder, myASTWalker));
     originalASTMethod.replaceBody(new ArrayList<Object>());
     return true;
 
@@ -433,7 +433,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     while (typeIt.hasNext()) {
       Type tempType = (Type) typeIt.next();
 
-      DIntConstant arg = DIntConstant.v(count, IntType.v());// takes care
+      DIntConstant arg = DconstancFactory.createIntConstant(count, IntType.v());// takes care
       // of the
       // index
       count++;
@@ -670,7 +670,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         Local initLocal = initIt.next();
         Type tempType = initLocal.getType();
 
-        DIntConstant arg = DIntConstant.v(mustInitializeIndex, IntType.v());// takes
+        DIntConstant arg = DconstancFactory.createIntConstant(mustInitializeIndex, IntType.v());// takes
         // care
         // of
         // the
@@ -714,7 +714,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     }
 
     if (newStmts.size() > 0) {
-      newConstructorBody.add(new ASTStatementSequenceNode(newStmts));
+      newConstructorBody.add(new ASTStatementSequenceNode(newStmts, myTryContentsFinder, myASTWalker));
     }
 
     // adding body Y now
@@ -760,9 +760,9 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
       DVariableDeclarationStmt varDecStmt = (DVariableDeclarationStmt) as.get_Stmt();
       newConstructorDeclarations.add(new AugmentedStmt((DVariableDeclarationStmt) varDecStmt.clone()));
     }
-    ASTStatementSequenceNode newDecs = new ASTStatementSequenceNode(new ArrayList<AugmentedStmt>());
+    ASTStatementSequenceNode newDecs = new ASTStatementSequenceNode(new ArrayList<AugmentedStmt>(), myTryContentsFinder, myASTWalker);
     if (newConstructorDeclarations.size() > 0) {
-      newDecs = new ASTStatementSequenceNode(newConstructorDeclarations);
+      newDecs = new ASTStatementSequenceNode(newConstructorDeclarations, myTryContentsFinder, myASTWalker);
       // DONT FORGET TO SET THE DECLARATIONS IN THE METHOD ONCE IT IS
       // CREATED
       // newASTConstructorMethod.setDeclarations(newDecs);
@@ -893,7 +893,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
       newStmts.add(augStmt);
     }
     if (newStmts.size() > 0) {
-      newPreinitBody.add(new ASTStatementSequenceNode(newStmts));
+      newPreinitBody.add(new ASTStatementSequenceNode(newStmts, myTryContentsFinder, myASTWalker));
     }
 
     // setDeclarations in newNode
@@ -904,9 +904,9 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
       DVariableDeclarationStmt varDecStmt = (DVariableDeclarationStmt) as.get_Stmt();
       newPreinitDeclarations.add(new AugmentedStmt((DVariableDeclarationStmt) varDecStmt.clone()));
     }
-    ASTStatementSequenceNode newDecs = new ASTStatementSequenceNode(new ArrayList<AugmentedStmt>());
+    ASTStatementSequenceNode newDecs = new ASTStatementSequenceNode(new ArrayList<AugmentedStmt>(), myTryContentsFinder, myASTWalker);
     if (newPreinitDeclarations.size() > 0) {
-      newDecs = new ASTStatementSequenceNode(newPreinitDeclarations);
+      newDecs = new ASTStatementSequenceNode(newPreinitDeclarations, myTryContentsFinder, myASTWalker);
       // DONT FORGET TO SET THE DECLARATIONS IN THE METHOD ONCE IT IS
       // CREATED
       // newASTPreInitMethod.setDeclarations(newDecs);
@@ -1142,7 +1142,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     // davaHandlerStmts
 
     // store them in an ASTSTatementSequenceNode
-    ASTStatementSequenceNode addedNode = new ASTStatementSequenceNode(davaHandlerStmts);
+    ASTStatementSequenceNode addedNode = new ASTStatementSequenceNode(davaHandlerStmts, myTryContentsFinder, myASTWalker);
 
     // add to method body
     List<Object> subBodies = newASTPreInitMethod.get_SubBodies();

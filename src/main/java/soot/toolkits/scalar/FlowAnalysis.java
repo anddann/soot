@@ -316,24 +316,24 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
 
     NONE, FORWARD {
       @Override
-      public <A, N> void handleFlowIn(FlowAnalysis<N, A> a, N s) {
+      public <A, N> void handleFlowIn(FlowAnalysis<N, A> a, N s, InteractionHandler myInteractionHandler) {
         beforeEvent(stop(s,myInteractionHandler), a, s);
       }
 
       @Override
-      public <A, N> void handleFlowOut(FlowAnalysis<N, A> a, N s) {
-        afterEvent(InteractionHandler.v(), a, s);
+      public <A, N> void handleFlowOut(FlowAnalysis<N, A> a, N s, InteractionHandler myInteractionHandler) {
+        afterEvent(myInteractionHandler, a, s);
       }
     },
     BACKWARD {
       @Override
-      public <A, N> void handleFlowIn(FlowAnalysis<N, A> a, N s) {
-        afterEvent(stop(s), a, s);
+      public <A, N> void handleFlowIn(FlowAnalysis<N, A> a, N s, InteractionHandler myInteractionHandler) {
+        afterEvent(stop(s,myInteractionHandler), a, s);
       }
 
       @Override
-      public <A, N> void handleFlowOut(FlowAnalysis<N, A> a, N s) {
-        beforeEvent(InteractionHandler.v(), a, s);
+      public <A, N> void handleFlowOut(FlowAnalysis<N, A> a, N s, InteractionHandler myInteractionHandler) {
+        beforeEvent(myInteractionHandler, a, s);
       }
     };
 
@@ -364,10 +364,10 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
       return h;
     }
 
-    public <A, N> void handleFlowIn(FlowAnalysis<N, A> a, N s) {
+    public <A, N> void handleFlowIn(FlowAnalysis<N, A> a, N s, InteractionHandler myInteractionHandler) {
     }
 
-    public <A, N> void handleFlowOut(FlowAnalysis<N, A> a, N s) {
+    public <A, N> void handleFlowOut(FlowAnalysis<N, A> a, N s, InteractionHandler myInteractionHandler) {
     }
   }
 
@@ -552,9 +552,9 @@ public abstract class FlowAnalysis<N, A> extends AbstractFlowAnalysis<N, A> {
       meetFlows(e);
 
       // Compute beforeFlow and store it.
-      ifh.handleFlowIn(this, e.data);
+      ifh.handleFlowIn(this, e.data, myInteractionHandler);
       boolean hasChanged = flowThrough(e);
-      ifh.handleFlowOut(this, e.data);
+      ifh.handleFlowOut(this, e.data, myInteractionHandler);
 
       // Update queue appropriately
       if (hasChanged) {

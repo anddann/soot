@@ -41,7 +41,7 @@ public class DoubleConstantValueTag extends ConstantValueTag {
 
   @Override
   public DoubleConstant getConstant() {
-    return DoubleConstant.v(value);
+    return constancFactory.createDoubleConstant(value);
   }
 
   @Override

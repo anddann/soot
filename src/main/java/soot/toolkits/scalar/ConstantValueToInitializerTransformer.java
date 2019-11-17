@@ -97,19 +97,19 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
         Constant constant = null;
         if (t instanceof DoubleConstantValueTag) {
           double value = ((DoubleConstantValueTag) t).getDoubleValue();
-          constant = DoubleConstant.v(value);
+          constant = constancFactory.createDoubleConstant(value);
         } else if (t instanceof FloatConstantValueTag) {
           float value = ((FloatConstantValueTag) t).getFloatValue();
           constant = FloatConstant.v(value);
         } else if (t instanceof IntegerConstantValueTag) {
           int value = ((IntegerConstantValueTag) t).getIntValue();
-          constant = IntConstant.v(value);
+          constant = constancFactory.createIntConstant(value);
         } else if (t instanceof LongConstantValueTag) {
           long value = ((LongConstantValueTag) t).getLongValue();
-          constant = LongConstant.v(value);
+          constant = constancFactory.createLongConstant(value);
         } else if (t instanceof StringConstantValueTag) {
           String value = ((StringConstantValueTag) t).getStringValue();
-          constant = StringConstant.v(value);
+          constant = constancFactory.createStringConstant(value);
         }
 
         if (constant != null) {

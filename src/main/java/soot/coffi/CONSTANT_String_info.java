@@ -94,6 +94,6 @@ class CONSTANT_String_info extends cp_info {
 
   public Value createJimpleConstantValue(cp_info[] constant_pool) {
     CONSTANT_Utf8_info ci = (CONSTANT_Utf8_info) (constant_pool[string_index]);
-    return StringConstant.v(ci.convert());
+    return constancFactory.createStringConstant(ci.convert());
   }
 }

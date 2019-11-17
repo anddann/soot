@@ -32,20 +32,28 @@ import soot.jimple.ConditionExpr;
 public abstract class ASTControlFlowNode extends ASTLabeledNode {
   // protected ValueBox conditionBox;
   ASTCondition condition;
+  private ASTWalker myASTWalker;
+  private TryContentsFinder myTryContentsFinder;
 
-  public ASTControlFlowNode(SETNodeLabel label, ConditionExpr condition) {
+  public TryContentsFinder getMyTryContentsFinder() {
+    return myTryContentsFinder;
+  }
+
+  public ASTControlFlowNode(SETNodeLabel label, ConditionExpr condition, TryContentsFinder myTryContentsFinder) {
     super(label);
     // this.conditionBox = myJimple.newConditionExprBox(condition);
     this.condition = new ASTBinaryCondition(condition);
+    this.myTryContentsFinder = myTryContentsFinder;
   }
 
   /*
    * Nomair A. Naeem 17-FEB-05 Needed because of change of grammar of condition being stored as a ASTCondition rather than
    * the ConditionExpr which was the case before
    */
-  public ASTControlFlowNode(SETNodeLabel label, ASTCondition condition) {
+  public ASTControlFlowNode(SETNodeLabel label, ASTCondition condition, TryContentsFinder myTryContentsFinder) {
     super(label);
     this.condition = condition;
+    this.myTryContentsFinder = myTryContentsFinder;
   }
 
   public ASTCondition get_Condition() {

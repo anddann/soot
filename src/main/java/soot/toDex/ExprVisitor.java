@@ -439,7 +439,7 @@ public class ExprVisitor implements ExprSwitch {
 
     // see for unary ones-complement shortcut, may be a result of Dexpler's
     // conversion
-    if (secondOperand.equals(IntConstant.v(-1)) || secondOperand.equals(LongConstant.v(-1))) {
+    if (secondOperand.equals(constancFactory.createIntConstant(-1)) || secondOperand.equals(constancFactory.createLongConstant(-1))) {
       PrimitiveType destRegType = PrimitiveType.getByName(destinationReg.getType().toString());
       Register orgDestReg = destinationReg;
 
@@ -448,10 +448,10 @@ public class ExprVisitor implements ExprSwitch {
         destinationReg = regAlloc.asTmpReg(IntType.v());
       }
 
-      if (secondOperand.equals(IntConstant.v(-1))) {
+      if (secondOperand.equals(constancFactory.createIntConstant(-1))) {
         Register sourceReg = regAlloc.asImmediate(firstOperand, constantV);
         stmtV.addInsn(new Insn12x(Opcode.NOT_INT, destinationReg, sourceReg), origStmt);
-      } else if (secondOperand.equals(LongConstant.v(-1))) {
+      } else if (secondOperand.equals(constancFactory.createLongConstant(-1))) {
         Register sourceReg = regAlloc.asImmediate(firstOperand, constantV);
         stmtV.addInsn(new Insn12x(Opcode.NOT_LONG, destinationReg, sourceReg), origStmt);
       }
@@ -513,7 +513,7 @@ public class ExprVisitor implements ExprSwitch {
      * null comparison in if-*z opcodes.
      */
     if (potentialNullConstant instanceof NullConstant) {
-      return IntConstant.v(0);
+      return constancFactory.createIntConstant(0);
     }
     return potentialNullConstant;
   }
@@ -674,7 +674,7 @@ public class ExprVisitor implements ExprSwitch {
     // be safe
     // than sorry and it's easy to fix it here.
     if (castType == PrimitiveType.INT && source.getType() instanceof NullType) {
-      source = IntConstant.v(0);
+      source = constancFactory.createIntConstant(0);
     }
 
     // select fitting conversion opcode, depending on the source and cast

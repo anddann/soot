@@ -107,10 +107,13 @@ public abstract class Body extends AbstractHost implements Serializable {
    */
   private synchronized static BodyValidator[] getValidators() {
     if (validators == null) {
-      validators = new BodyValidator[] { LocalsValidator.v(), TrapsValidator.v(), UnitBoxesValidator.v(), UsesValidator.v(),
-          ValueBoxesValidator.v(),
-          // CheckInitValidator.v(),
-          CheckTypesValidator.v(), CheckVoidLocalesValidator.v(), CheckEscapingValidator.v() };
+      validators = new BodyValidator[] {
+             //FIXME: add
+//              LocalsValidator.v(), TrapsValidator.v(), UnitBoxesValidator.v(), UsesValidator.v(),
+//          ValueBoxesValidator.v(),
+//          CheckTypesValidator.v(), CheckVoidLocalesValidator.v(), CheckEscapingValidator.v()
+
+      };
     }
     return validators;
   };

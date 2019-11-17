@@ -185,7 +185,7 @@ public class BuildIntermediateAppClasses extends SceneTransformer implements IJb
             if (returnType instanceof VoidType) {
               units.add(myJimple.newReturnVoidStmt());
             } else if (returnType instanceof PrimType) {
-              units.add(myJimple.newReturnStmt(IntConstant.v(0)));
+              units.add(myJimple.newReturnStmt(constancFactory.createIntConstant(0)));
             } else {
               units.add(myJimple.newReturnStmt(myNullConstant));
             }

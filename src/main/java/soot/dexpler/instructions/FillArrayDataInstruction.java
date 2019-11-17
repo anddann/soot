@@ -97,7 +97,7 @@ public class FillArrayDataInstruction extends PseudoInstruction {
 
     Stmt firstAssign = null;
     for (int i = 0; i < numElements; i++) {
-      ArrayRef arrayRef = myJimple.newArrayRef(arrayReference, IntConstant.v(i));
+      ArrayRef arrayRef = myJimple.newArrayRef(arrayReference, constancFactory.createIntConstant(i));
       NumericConstant element = getArrayElement(elements.get(i), body, destRegister);
       if (element == null) {
         break;
@@ -174,23 +174,23 @@ public class FillArrayDataInstruction extends PseudoInstruction {
     NumericConstant value;
 
     if (elementType instanceof BooleanType) {
-      value = IntConstant.v(element.intValue());
+      value = constancFactory.createIntConstant(element.intValue());
       IntConstant ic = (IntConstant) value;
       if (ic.value != 0) {
-        value = IntConstant.v(1);
+        value = constancFactory.createIntConstant(1);
       }
     } else if (elementType instanceof ByteType) {
-      value = IntConstant.v(element.byteValue());
+      value = constancFactory.createIntConstant(element.byteValue());
     } else if (elementType instanceof CharType || elementType instanceof ShortType) {
-      value = IntConstant.v(element.shortValue());
+      value = constancFactory.createIntConstant(element.shortValue());
     } else if (elementType instanceof DoubleType) {
-      value = DoubleConstant.v(Double.longBitsToDouble(element.longValue()));
+      value = constancFactory.createDoubleConstant(Double.longBitsToDouble(element.longValue()));
     } else if (elementType instanceof FloatType) {
       value = FloatConstant.v(Float.intBitsToFloat(element.intValue()));
     } else if (elementType instanceof IntType) {
-      value = IntConstant.v(element.intValue());
+      value = constancFactory.createIntConstant(element.intValue());
     } else if (elementType instanceof LongType) {
-      value = LongConstant.v(element.longValue());
+      value = constancFactory.createLongConstant(element.longValue());
     } else {
       throw new RuntimeException("Invalid Array Type occured in FillArrayDataInstruction: " + elementType);
     }

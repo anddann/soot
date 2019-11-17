@@ -459,7 +459,7 @@ public class CycleFinder implements FactFinder {
           predecessorSet.add(pas);
         }
 
-        AssignStmt asnStmt = new GAssignStmt(controlLocal, DIntConstant.v(count, null));
+        AssignStmt asnStmt = new GAssignStmt(controlLocal, DconstancFactory.createIntConstant(count, null));
         AugmentedStmt directionStmt = new AugmentedStmt(asnStmt);
 
         directionStmtSet.add(directionStmt);

@@ -86,8 +86,8 @@ public class ShortcutIfGenerator extends DepthFirstAdapter {
       }
 
       // ready for the switch
-      ImmediateBox trueBox = new ImmediateBox(IntConstant.v(1));
-      ImmediateBox falseBox = new ImmediateBox(IntConstant.v(0));
+      ImmediateBox trueBox = new ImmediateBox(constancFactory.createIntConstant(1));
+      ImmediateBox falseBox = new ImmediateBox(constancFactory.createIntConstant(0));
 
       DShortcutIf shortcut = new DShortcutIf(OpBox, trueBox, falseBox);
       if (DEBUG) {

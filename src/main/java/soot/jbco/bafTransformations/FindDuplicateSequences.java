@@ -338,7 +338,7 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
 
         units.insertBefore(store, first);
 
-        Unit pushUnit = myBaf.newPushInst(IntConstant.v(0));
+        Unit pushUnit = myBaf.newPushInst(constancFactory.createIntConstant(0));
         // protectedUnits.add(pushUnit);
 
         units.insertBefore(pushUnit, store);
@@ -357,7 +357,7 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
 
           units.insertBefore(storet, firstt);
 
-          pushUnit = myBaf.newPushInst(IntConstant.v(index++));
+          pushUnit = myBaf.newPushInst(constancFactory.createIntConstant(index++));
           // protectedUnits.add(pushUnit);
 
           units.insertBefore(pushUnit, storet);

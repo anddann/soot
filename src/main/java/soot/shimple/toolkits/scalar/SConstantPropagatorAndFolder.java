@@ -413,8 +413,8 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
 
         conservative = false;
 
-        Constant trueC = IntConstant.v(1);
-        Constant falseC = IntConstant.v(0);
+        Constant trueC = constancFactory.createIntConstant(1);
+        Constant falseC = constancFactory.createIntConstant(0);
 
         if (constant.equals(trueC)) {
           branch = true;

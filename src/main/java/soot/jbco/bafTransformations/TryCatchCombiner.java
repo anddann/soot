@@ -179,7 +179,7 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
       locs.add(controlLocal);
 
       // initialize local to 0=try
-      Unit pushZero = myBaf.newPushInst(IntConstant.v(0));
+      Unit pushZero = myBaf.newPushInst(constancFactory.createIntConstant(0));
       Unit storZero = myBaf.newStoreInst(IntType.v(), controlLocal);
 
       // this is necessary even though it seems like it shouldn't be
@@ -256,10 +256,10 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
 
       // randomize the increment - sometimes store one, sometimes just set to 1
       if (Rand.getInt() % 2 == 0) {
-        units.insertBeforeNoRedirect(myBaf.newPushInst(IntConstant.v(Rand.getInt(3) + 1)), begUnit);
+        units.insertBeforeNoRedirect(myBaf.newPushInst(constancFactory.createIntConstant(Rand.getInt(3) + 1)), begUnit);
         units.insertBeforeNoRedirect(myBaf.newStoreInst(IntType.v(), controlLocal), begUnit);
       } else {
-        units.insertBeforeNoRedirect(myBaf.newIncInst(controlLocal, IntConstant.v(Rand.getInt(3) + 1)), begUnit);
+        units.insertBeforeNoRedirect(myBaf.newIncInst(controlLocal, constancFactory.createIntConstant(Rand.getInt(3) + 1)), begUnit);
       }
 
       trapCount--;

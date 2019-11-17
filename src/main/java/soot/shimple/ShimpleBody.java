@@ -28,9 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
+import soot.Printer;
 import soot.SootMethod;
 import soot.jimple.JimpleBody;
 import soot.jimple.StmtBody;
+import soot.options.Options;
 import soot.options.ShimpleOptions;
 import soot.shimple.internal.SPatchingChain;
 import soot.shimple.internal.ShimpleBodyBuilder;
@@ -63,7 +65,7 @@ public class ShimpleBody extends StmtBody {
   /**
    * Construct an empty ShimpleBody associated with m.
    **/
-  ShimpleBody(SootMethod m, Map options) {
+  ShimpleBody(SootMethod m, Map options, Printer myPrinter, Options myOptions) {
     super(m, myOptions, myPrinter);
 
     // must happen before SPatchingChain gets created
@@ -82,7 +84,7 @@ public class ShimpleBody extends StmtBody {
    * Currently available option is "naive-phi-elimination", typically in the "shimple" phase (eg, -p shimple
    * naive-phi-elimination) which can be useful for understanding the effect of analyses.
    **/
-  ShimpleBody(Body body, Map options) {
+  ShimpleBody(Body body, Map options, Options myOptions, Printer myPrinter) {
     super(body.getMethod(), myOptions, myPrinter);
 
     if (!(body instanceof JimpleBody || body instanceof ShimpleBody)) {

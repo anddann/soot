@@ -39,16 +39,22 @@ import soot.dava.toolkits.base.AST.analysis.Analysis;
 import soot.jimple.Jimple;
 
 public class ASTSwitchNode extends ASTLabeledNode {
+  private final Jimple myJimple;
   private ValueBox keyBox;
   private List<Object> indexList;
   private Map<Object, List<Object>> index2BodyList;
+  private ASTWalker myASTWalker;
+  private TryContentsFinder myTryContentsFinder;
 
-  public ASTSwitchNode(SETNodeLabel label, Value key, List<Object> indexList, Map<Object, List<Object>> index2BodyList) {
+  public ASTSwitchNode(SETNodeLabel label, Jimple myJimple, Value key, List<Object> indexList, Map<Object, List<Object>> index2BodyList, ASTWalker myASTWalker, TryContentsFinder myTryContentsFinder) {
     super(label);
+    this.myJimple = myJimple;
 
-    this.keyBox = myJimple.newRValueBox(key);
+    this.keyBox = this.myJimple.newRValueBox(key);
     this.indexList = indexList;
     this.index2BodyList = index2BodyList;
+    this.myASTWalker = myASTWalker;
+    this.myTryContentsFinder = myTryContentsFinder;
 
     Iterator<Object> it = indexList.iterator();
     while (it.hasNext()) {
@@ -98,7 +104,7 @@ public class ASTSwitchNode extends ASTLabeledNode {
   }
 
   public Object clone() {
-    return new ASTSwitchNode(get_Label(), get_Key(), indexList, index2BodyList);
+    return new ASTSwitchNode(get_Label(), myJimple, get_Key(), indexList, index2BodyList, myASTWalker, myTryContentsFinder);
   }
 
   public void perform_Analysis(ASTAnalysis a) {

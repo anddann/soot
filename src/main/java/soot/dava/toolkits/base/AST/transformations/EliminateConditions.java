@@ -447,7 +447,7 @@ public class EliminateConditions extends DepthFirstAdapter {
         return true;
       } else if (temp instanceof ASTForLoopNode && returned.booleanValue() == false) {
         bodyContainingNode.remove(temp);
-        ASTStatementSequenceNode newNode = new ASTStatementSequenceNode(((ASTForLoopNode) temp).getInit());
+        ASTStatementSequenceNode newNode = new ASTStatementSequenceNode(((ASTForLoopNode) temp).getInit(), myTryContentsFinder, myASTWalker);
         bodyContainingNode.add(index, newNode);
         return true;
       }

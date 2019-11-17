@@ -30,6 +30,7 @@ import soot.Unit;
 import soot.UnitPrinter;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.internal.asg.AugmentedStmt;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.Analysis;
 
 /*
@@ -66,8 +67,8 @@ public class ASTForLoopNode extends ASTControlFlowNode {
   private List<Object> body;
 
   public ASTForLoopNode(SETNodeLabel label, List<AugmentedStmt> init, ASTCondition condition, List<AugmentedStmt> update,
-      List<Object> body) {
-    super(label, condition);
+                        List<Object> body, TryContentsFinder myTryContentsFinder) {
+    super(label, condition, myTryContentsFinder);
     this.body = body;
     this.init = init;
     this.update = update;
@@ -90,7 +91,7 @@ public class ASTForLoopNode extends ASTControlFlowNode {
   }
 
   public Object clone() {
-    return new ASTForLoopNode(get_Label(), init, get_Condition(), update, body);
+    return new ASTForLoopNode(get_Label(), init, get_Condition(), update, body, super.getMyTryContentsFinder());
   }
 
   public void toString(UnitPrinter up) {

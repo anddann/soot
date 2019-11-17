@@ -117,7 +117,7 @@ public class UnopInstruction extends TaggedInstruction {
    * @return
    */
   private Value getNotIntExpr(Local source) {
-    return myJimple.newXorExpr(source, IntConstant.v(-1));
+    return myJimple.newXorExpr(source, constancFactory.createIntConstant(-1));
 
   }
 
@@ -128,7 +128,7 @@ public class UnopInstruction extends TaggedInstruction {
    * @return
    */
   private Value getNotLongExpr(Local source) {
-    return myJimple.newXorExpr(source, LongConstant.v(-1l));
+    return myJimple.newXorExpr(source, constancFactory.createLongConstant(-1l));
 
   }
 

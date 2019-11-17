@@ -517,7 +517,7 @@ final class AsmMethodSource implements MethodSource {
     Local local = getLocal(insn.var);
     assignReadOps(local);
     if (!units.containsKey(insn)) {
-      AddExpr add = myJimple.newAddExpr(local, IntConstant.v(insn.incr));
+      AddExpr add = myJimple.newAddExpr(local, constancFactory.createIntConstant(insn.incr));
       setUnit(insn, myJimple.newAssignStmt(local, add));
     }
   }
@@ -532,13 +532,13 @@ final class AsmMethodSource implements MethodSource {
       if (op == ACONST_NULL) {
         v = NullConstant.v();
       } else if (op >= ICONST_M1 && op <= ICONST_5) {
-        v = IntConstant.v(op - ICONST_0);
+        v = constancFactory.createIntConstant(op - ICONST_0);
       } else if (op == LCONST_0 || op == LCONST_1) {
-        v = LongConstant.v(op - LCONST_0);
+        v = constancFactory.createLongConstant(op - LCONST_0);
       } else if (op >= FCONST_0 && op <= FCONST_2) {
         v = FloatConstant.v(op - FCONST_0);
       } else if (op == DCONST_0 || op == DCONST_1) {
-        v = DoubleConstant.v(op - DCONST_0);
+        v = constancFactory.createDoubleConstant(op - DCONST_0);
       } else {
         throw new AssertionError("Unknown constant opcode: " + op);
       }
@@ -926,7 +926,7 @@ final class AsmMethodSource implements MethodSource {
     if (out == null) {
       Value v;
       if (op == BIPUSH || op == SIPUSH) {
-        v = IntConstant.v(insn.operand);
+        v = constancFactory.createIntConstant(insn.operand);
       } else {
         Type type;
         switch (insn.operand) {
@@ -1019,17 +1019,17 @@ final class AsmMethodSource implements MethodSource {
         frame.in(val, val1);
       } else {
         if (op == IFEQ) {
-          cond = myJimple.newEqExpr(v, IntConstant.v(0));
+          cond = myJimple.newEqExpr(v, constancFactory.createIntConstant(0));
         } else if (op == IFNE) {
-          cond = myJimple.newNeExpr(v, IntConstant.v(0));
+          cond = myJimple.newNeExpr(v, constancFactory.createIntConstant(0));
         } else if (op == IFLT) {
-          cond = myJimple.newLtExpr(v, IntConstant.v(0));
+          cond = myJimple.newLtExpr(v, constancFactory.createIntConstant(0));
         } else if (op == IFGE) {
-          cond = myJimple.newGeExpr(v, IntConstant.v(0));
+          cond = myJimple.newGeExpr(v, constancFactory.createIntConstant(0));
         } else if (op == IFGT) {
-          cond = myJimple.newGtExpr(v, IntConstant.v(0));
+          cond = myJimple.newGtExpr(v, constancFactory.createIntConstant(0));
         } else if (op == IFLE) {
-          cond = myJimple.newLeExpr(v, IntConstant.v(0));
+          cond = myJimple.newLeExpr(v, constancFactory.createIntConstant(0));
         } else if (op == IFNULL) {
           cond = myJimple.newEqExpr(v, NullConstant.v());
         } else if (op == IFNONNULL) {
@@ -1076,30 +1076,30 @@ final class AsmMethodSource implements MethodSource {
   private Value toSootValue(Object val) throws AssertionError {
     Value v;
     if (val instanceof Integer) {
-      v = IntConstant.v((Integer) val);
+      v = constancFactory.createIntConstant((Integer) val);
     } else if (val instanceof Float) {
       v = FloatConstant.v((Float) val);
     } else if (val instanceof Long) {
-      v = LongConstant.v((Long) val);
+      v = constancFactory.createLongConstant((Long) val);
     } else if (val instanceof Double) {
-      v = DoubleConstant.v((Double) val);
+      v = constancFactory.createDoubleConstant((Double) val);
     } else if (val instanceof String) {
-      v = StringConstant.v(val.toString());
+      v = constancFactory.createStringConstant(val.toString());
     } else if (val instanceof org.objectweb.asm.Type) {
       org.objectweb.asm.Type t = (org.objectweb.asm.Type) val;
       if (t.getSort() == org.objectweb.asm.Type.METHOD) {
         List<Type> paramTypes = AsmUtil.toJimpleDesc(((org.objectweb.asm.Type) val).getDescriptor());
         Type returnType = paramTypes.remove(paramTypes.size() - 1);
-        v = MethodType.v(paramTypes, returnType);
+        v = constancFactory.createMethodType(paramTypes, returnType);
       } else {
-        v = ClassConstant.v(((org.objectweb.asm.Type) val).getDescriptor());
+        v = constancFactory.createClassConstant(((org.objectweb.asm.Type) val).getDescriptor());
       }
     } else if (val instanceof Handle) {
       Handle h = (Handle) val;
       if (MethodHandle.isMethodRef(h.getTag())) {
-        v = MethodHandle.v(toSootMethodRef((Handle) val), ((Handle) val).getTag());
+        v = constancFactory.createMethodHandle((toSootMethodRef((Handle) val), ((Handle) val).getTag());
       } else {
-        v = MethodHandle.v(toSootFieldRef((Handle) val), ((Handle) val).getTag());
+        v = constancFactory.createMethodHandle((toSootFieldRef((Handle) val), ((Handle) val).getTag());
       }
     } else {
       throw new AssertionError("Unknown constant type: " + val.getClass());
@@ -1126,7 +1126,7 @@ final class AsmMethodSource implements MethodSource {
 
     List<IntConstant> keys = new ArrayList<IntConstant>(insn.keys.size());
     for (Integer i : insn.keys) {
-      keys.add(IntConstant.v(i));
+      keys.add(constancFactory.createIntConstant(i));
     }
 
     LookupSwitchStmt lss = myJimple.newLookupSwitchStmt(key.stackOrValue(), keys, targets, dflt);

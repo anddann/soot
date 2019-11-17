@@ -81,9 +81,9 @@ import soot.jimple.ReturnStmt;
  * analysis can be performed, a default type is given to rightValue. This default type is "int" for registers whose size is
  * less or equal to 32bits and "long" to registers whose size is 64bits. The problem is that 32bits registers could be either
  * "int" or "float" and 64bits registers "long" or "double". If the analysis concludes that an "int" has to be changed to a
- * "float", rightValue has to change from IntConstant.v(literal) to Float.intBitsToFloat((int) literal). If the analysis
- * concludes that an "long" has to be changed to a "double, rightValue has to change from LongConstant.v(literal) to
- * DoubleConstant.v(Double.longBitsToDouble(literal)).
+ * "float", rightValue has to change from constancFactory.createIntConstant(literal) to Float.intBitsToFloat((int) literal). If the analysis
+ * concludes that an "long" has to be changed to a "double, rightValue has to change from constancFactory.createLongConstant(literal) to
+ * constancFactory.createDoubleConstant(Double.longBitsToDouble(literal)).
  */
 public class DexNumTransformer extends DexTransformer {
   // Note: we need an instance variable for inner class access, treat this as
@@ -322,7 +322,7 @@ public class DexNumTransformer extends DexTransformer {
         s.setRightOp(FloatConstant.v(Float.intBitsToFloat(vVal)));
       } else if (v instanceof LongConstant) {
         long vVal = ((LongConstant) v).value;
-        s.setRightOp(DoubleConstant.v(Double.longBitsToDouble(vVal)));
+        s.setRightOp(constancFactory.createDoubleConstant(Double.longBitsToDouble(vVal)));
       }
     }
 

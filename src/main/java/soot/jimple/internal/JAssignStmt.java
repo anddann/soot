@@ -269,7 +269,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
 
         if (isValidCase && x >= Short.MIN_VALUE && x <= Short.MAX_VALUE) {
           Unit u
-              = myBaf.newIncInst(context.getBafLocalOfJimpleLocal(l), IntConstant.v((expr instanceof AddExpr) ? x : -x));
+              = myBaf.newIncInst(context.getBafLocalOfJimpleLocal(l), constancFactory.createIntConstant((expr instanceof AddExpr) ? x : -x));
 
           u.addAllTagsOf(this);
           out.add(u);

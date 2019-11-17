@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import soot.ArrayType;
 import soot.RefType;
+import soot.Scene;
 import soot.Type;
 
 /*
@@ -120,7 +121,7 @@ class TypeStack {
     }
   }
 
-  public TypeStack merge(TypeStack other) {
+  public TypeStack merge(TypeStack other, Scene myScene) {
 
     if (types.length != other.types.length) {
       throw new RuntimeException(
@@ -142,7 +143,7 @@ class TypeStack {
 
         // logger.debug("Merging: " + types[i] + " with " + other.types[i]);
 
-        newStack.types[i] = RefType.v("java.lang.Object");
+        newStack.types[i] = RefType.v("java.lang.Object",myScene);
       }
     }
 

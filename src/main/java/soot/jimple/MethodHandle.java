@@ -22,11 +22,15 @@ package soot.jimple;
  * #L%
  */
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 import java.util.Objects;
 
 import org.objectweb.asm.Opcodes;
 
 import soot.RefType;
+import soot.Scene;
 import soot.SootFieldRef;
 import soot.SootMethodRef;
 import soot.Type;
@@ -35,35 +39,33 @@ import soot.util.Switch;
 public class MethodHandle extends Constant {
 
   private static final long serialVersionUID = -7948291265532721191L;
-  
+  private Scene myScene;
+
   public static enum Kind {
-    REF_GET_FIELD(Opcodes.H_GETFIELD, "REF_GET_FIELD"), 
-    REF_GET_FIELD_STATIC(Opcodes.H_GETSTATIC, "REF_GET_FIELD_STATIC"), 
-    REF_PUT_FIELD(Opcodes.H_PUTFIELD, "REF_PUT_FIELD"), 
-    REF_PUT_FIELD_STATIC(Opcodes.H_PUTSTATIC, "REF_PUT_FIELD_STATIC"), 
-    REF_INVOKE_VIRTUAL(Opcodes.H_INVOKEVIRTUAL, "REF_INVOKE_VIRTUAL"), 
-    REF_INVOKE_STATIC(Opcodes.H_INVOKESTATIC, "REF_INVOKE_STATIC"),
-    REF_INVOKE_SPECIAL(Opcodes.H_INVOKESPECIAL, "REF_INVOKE_SPECIAL"), 
-    REF_INVOKE_CONSTRUCTOR(Opcodes.H_NEWINVOKESPECIAL, "REF_INVOKE_CONSTRUCTOR"), 
-    REF_INVOKE_INTERFACE(Opcodes.H_INVOKEINTERFACE, "REF_INVOKE_INTERFACE");
+    REF_GET_FIELD(Opcodes.H_GETFIELD, "REF_GET_FIELD"), REF_GET_FIELD_STATIC(Opcodes.H_GETSTATIC,
+        "REF_GET_FIELD_STATIC"), REF_PUT_FIELD(Opcodes.H_PUTFIELD, "REF_PUT_FIELD"), REF_PUT_FIELD_STATIC(
+            Opcodes.H_PUTSTATIC, "REF_PUT_FIELD_STATIC"), REF_INVOKE_VIRTUAL(Opcodes.H_INVOKEVIRTUAL,
+                "REF_INVOKE_VIRTUAL"), REF_INVOKE_STATIC(Opcodes.H_INVOKESTATIC, "REF_INVOKE_STATIC"), REF_INVOKE_SPECIAL(
+                    Opcodes.H_INVOKESPECIAL, "REF_INVOKE_SPECIAL"), REF_INVOKE_CONSTRUCTOR(Opcodes.H_NEWINVOKESPECIAL,
+                        "REF_INVOKE_CONSTRUCTOR"), REF_INVOKE_INTERFACE(Opcodes.H_INVOKEINTERFACE, "REF_INVOKE_INTERFACE");
 
     private final int val;
     private final String valStr;
-    
+
     private Kind(int val, String valStr) {
       this.val = val;
       this.valStr = valStr;
     }
-    
+
     @Override
     public String toString() {
       return valStr;
     }
-    
+
     public int getValue() {
       return val;
     }
-    
+
     public static Kind getKind(int kind) {
       for (Kind k : Kind.values()) {
         if (k.getValue() == kind) {
@@ -72,7 +74,7 @@ public class MethodHandle extends Constant {
       }
       throw new RuntimeException("Error: No method handle kind for value '" + kind + "'.");
     }
-    
+
     public static Kind getKind(String kind) {
       for (Kind k : Kind.values()) {
         if (k.toString().equals(kind)) {
@@ -81,71 +83,67 @@ public class MethodHandle extends Constant {
       }
       throw new RuntimeException("Error: No method handle kind for value '" + kind + "'.");
     }
-    
+
   }
-  
+
   protected final SootFieldRef fieldRef;
   protected final SootMethodRef methodRef;
   protected final int kind;
 
-  private MethodHandle(SootMethodRef ref, int kind) {
+  @Inject
+  private MethodHandle(SootMethodRef ref, int kind, @Assisted Scene myScene) {
     this.methodRef = ref;
     this.kind = kind;
+    this.myScene = myScene;
     this.fieldRef = null;
   }
-  
-  private MethodHandle(SootFieldRef ref, int kind) {
+
+  @Inject
+  private MethodHandle(SootFieldRef ref, int kind, @Assisted Scene myScene) {
     this.fieldRef = ref;
     this.kind = kind;
+    this.myScene = myScene;
     this.methodRef = null;
   }
 
-  public static MethodHandle v(SootMethodRef ref, int tag) {
-    return new MethodHandle(ref, tag);
-  }
-  
-  public static MethodHandle v(SootFieldRef ref, int kind) {
-    return new MethodHandle(ref, kind);
-  }
-
   public String toString() {
-    return "methodhandle: \"" + getKindString() + "\" " 
+    return "methodhandle: \"" + getKindString() + "\" "
         + (methodRef == null ? Objects.toString(fieldRef) : Objects.toString(methodRef));
   }
 
   public Type getType() {
-    return RefType.v("java.lang.invoke.MethodHandle");
+    return RefType.v("java.lang.invoke.MethodHandle", myScene);
   }
 
   public SootMethodRef getMethodRef() {
     return methodRef;
   }
-  
+
   public SootFieldRef getFieldRef() {
     return fieldRef;
   }
-  
+
   public int getKind() {
     return kind;
   }
-  
+
   public String getKindString() {
     return Kind.getKind(kind).toString();
   }
-  
+
   public boolean isFieldRef() {
     return isFieldRef(kind);
   }
-  
+
   public static boolean isFieldRef(int kind) {
-    return kind == Kind.REF_GET_FIELD.getValue() || kind == Kind.REF_GET_FIELD_STATIC.getValue() 
+    return kind == Kind.REF_GET_FIELD.getValue() || kind == Kind.REF_GET_FIELD_STATIC.getValue()
         || kind == Kind.REF_PUT_FIELD.getValue() || kind == Kind.REF_PUT_FIELD_STATIC.getValue();
   }
-  
+
   public boolean isMethodRef() {
     return isMethodRef(kind);
   }
-  
+
   public static boolean isMethodRef(int kind) {
     return kind == Kind.REF_INVOKE_VIRTUAL.getValue() || kind == Kind.REF_INVOKE_STATIC.getValue()
         || kind == Kind.REF_INVOKE_SPECIAL.getValue() || kind == Kind.REF_INVOKE_CONSTRUCTOR.getValue()
@@ -165,7 +163,7 @@ public class MethodHandle extends Constant {
     result = prime * result + kind;
     return result;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {

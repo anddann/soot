@@ -89,7 +89,7 @@ public class IfElseBreaker {
 
     // breaking is possible
     // break and store
-    newIfNode = new ASTIfNode(((ASTLabeledNode) node).get_Label(), node.get_Condition(), ifBody);
+    newIfNode = new ASTIfNode(((ASTLabeledNode) node).get_Label(), node.get_Condition(), ifBody, myTryContentsFinder);
     remainingBody = node.getElseBody();
 
     return true;
@@ -113,7 +113,7 @@ public class IfElseBreaker {
     // flip
     cond.flip();
 
-    newIfNode = new ASTIfNode(((ASTLabeledNode) node).get_Label(), cond, elseBody);
+    newIfNode = new ASTIfNode(((ASTLabeledNode) node).get_Label(), cond, elseBody, myTryContentsFinder);
     remainingBody = node.getIfBody();
 
     return true;

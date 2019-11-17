@@ -174,15 +174,15 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
 
   public static PushInst getPushInitializer(Local l, Type t) {
     if (t instanceof IntegerType) {
-      return myBaf.newPushInst(IntConstant.v(soot.jbco.util.Rand.getInt()));
+      return myBaf.newPushInst(constancFactory.createIntConstant(soot.jbco.util.Rand.getInt()));
     } else if (t instanceof RefLikeType || t instanceof StmtAddressType) {
       return myBaf.newPushInst(myNullConstant);
     } else if (t instanceof LongType) {
-      return myBaf.newPushInst(LongConstant.v(soot.jbco.util.Rand.getLong()));
+      return myBaf.newPushInst(constancFactory.createLongConstant(soot.jbco.util.Rand.getLong()));
     } else if (t instanceof FloatType) {
       return myBaf.newPushInst(FloatConstant.v(soot.jbco.util.Rand.getFloat()));
     } else if (t instanceof DoubleType) {
-      return myBaf.newPushInst(DoubleConstant.v(soot.jbco.util.Rand.getDouble()));
+      return myBaf.newPushInst(constancFactory.createDoubleConstant(soot.jbco.util.Rand.getDouble()));
     }
 
     return null;

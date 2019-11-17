@@ -716,7 +716,7 @@ public class Grimp {
   /** Carries out the mapping from other Value's to Grimp Value's */
   public Value newExpr(Value value) {
     if (value instanceof Expr) {
-      final ExprBox returnedExpr = new ExprBox(IntConstant.v(0));
+      final ExprBox returnedExpr = new ExprBox(constancFactory.createIntConstant(0));
       ((Expr) value).apply(new AbstractExprSwitch() {
         public void caseAddExpr(AddExpr v) {
           returnedExpr.setValue(newAddExpr(newExpr(v.getOp1()), newExpr(v.getOp2())));

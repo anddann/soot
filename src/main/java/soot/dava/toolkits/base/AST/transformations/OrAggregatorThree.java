@@ -228,7 +228,7 @@ public class OrAggregatorThree {
 
     ASTCondition newCond = new ASTOrCondition(firstCond, secondCond);
 
-    ASTIfNode newNode = new ASTIfNode(firstOne.get_Label(), newCond, firstOne.getIfBody());
+    ASTIfNode newNode = new ASTIfNode(firstOne.get_Label(), newCond, firstOne.getIfBody(), myTryContentsFinder);
 
     // add the new node
     newSubBody.add(newNode);

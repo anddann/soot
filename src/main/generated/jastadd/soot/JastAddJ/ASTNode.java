@@ -672,7 +672,7 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol  implements Clonea
    */
   public void endExceptionRange(Body b, ArrayList list) {
     if(list != null) {
-      soot.jimple.Stmt label = newLabel();
+      soot.jimple.Stmt label = newLabel(b.body.getMyJimple());
       b.addLabel(label);
       list.add(label);
       //list.add(b.previousStmt());

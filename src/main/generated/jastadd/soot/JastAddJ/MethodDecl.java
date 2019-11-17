@@ -419,9 +419,9 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 		ArrayList throwtypes = new ArrayList();
 		for (int i = 0; i < getNumException(); i++)
 			throwtypes.add(getException(i).type().getSootClassDecl());
-		String signature = SootMethod.getSubSignature(name, parameters, returnType);
+		String signature = SootMethod.getSubSignature(name, parameters, returnType,returnType.getMyScene());
 		if (!hostType().getSootClassDecl().declaresMethod(signature)) {
-			SootMethod m = myScene.makeSootMethod(name, parameters, returnType, modifiers, throwtypes);
+			SootMethod m = myScene.makeSootMethod(name, parameters, returnType, modifiers, throwtypes,returnType.getMyScene());
 			hostType().getSootClassDecl().addMethod(m);
 			m.addTag(new soot.tagkit.ParamNamesTag(paramnames));
 			sootMethod = m;

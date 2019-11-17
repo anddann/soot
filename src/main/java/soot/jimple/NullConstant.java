@@ -22,27 +22,22 @@ package soot.jimple;
  * #L%
  */
 
-import soot.G;
-import soot.NullType;
-import soot.Singletons;
+import com.google.inject.Inject;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.util.Switch;
 
 public class NullConstant extends Constant {
-  private NullConstant() {
-  }
 
-  private static  NullConstant instance;
+  private PrimTypeCollector primTypeCollector;
 
-  public static NullConstant v() {
-    if(instance==null){
-      instance=new NullConstant();
-    }
-    return instance;
+  @Inject
+  public NullConstant(PrimTypeCollector primTypeCollector) {
+    this.primTypeCollector = primTypeCollector;
   }
 
   public boolean equals(Object c) {
-    return c == instance;
+    return c == this;
   }
 
   public int hashCode() {
@@ -54,7 +49,7 @@ public class NullConstant extends Constant {
   }
 
   public Type getType() {
-    return NullType.v();
+    return primTypeCollector.getNullType();
   }
 
   public void apply(Switch sw) {

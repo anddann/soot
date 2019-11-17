@@ -48,7 +48,7 @@ public class SETSynchronizedBlockNode extends SETNode {
   }
 
   public ASTNode emit_AST() {
-    return new ASTSynchronizedBlockNode(get_Label(), emit_ASTBody(body2childChain.get(subBodies.get(0))), local);
+    return new ASTSynchronizedBlockNode(get_Label(), myJimple, emit_ASTBody(body2childChain.get(subBodies.get(0))), local);
   }
 
   public AugmentedStmt get_EntryStmt() {

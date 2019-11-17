@@ -55,11 +55,11 @@ public class UntypedLongOrDoubleConstant extends UntypedConstant {
   }
 
   public DoubleConstant toDoubleConstant() {
-    return DoubleConstant.v(Double.longBitsToDouble(value));
+    return constancFactory.createDoubleConstant(Double.longBitsToDouble(value));
   }
 
   public LongConstant toLongConstant() {
-    return LongConstant.v(value);
+    return constancFactory.createLongConstant(value);
   }
 
   @Override

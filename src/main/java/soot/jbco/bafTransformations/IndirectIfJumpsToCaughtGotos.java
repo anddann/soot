@@ -151,9 +151,9 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
         toinsert.add(myBaf.newIfGeInst((Unit) units.getSuccOf(nonTrap)));
       }
     } else {
-      toinsert.add(myBaf.newPushInst(soot.jimple.IntConstant.v(BodyBuilder.getIntegerNine())));
+      toinsert.add(myBaf.newPushInst(soot.jimple.constancFactory.createIntConstant(BodyBuilder.getIntegerNine())));
       toinsert.add(myBaf.newPrimitiveCastInst(IntType.v(), ByteType.v()));
-      toinsert.add(myBaf.newPushInst(soot.jimple.IntConstant.v(Rand.getInt() % 2 == 0 ? 9 : 3)));
+      toinsert.add(myBaf.newPushInst(soot.jimple.constancFactory.createIntConstant(Rand.getInt() % 2 == 0 ? 9 : 3)));
       toinsert.add(myBaf.newRemInst(ByteType.v()));
 
       /*
