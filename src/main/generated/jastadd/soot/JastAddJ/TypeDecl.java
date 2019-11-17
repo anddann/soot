@@ -1145,7 +1145,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 												lookupType("java.lang", "NoClassDefFoundError").createQualifiedAccess(),
 												new List().add(new VarAccess("e")
 														.qualifiesAccess(new MethodAccess("getMessage", new List()))),
-												new Opt())))))),
+												new Opt(), myScene, constantFactory)))))),
 								new Opt())))), myScene, myJimple) {
 			public boolean isConstant() {
 				return true;
@@ -1683,12 +1683,12 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 		if (type instanceof LUBType || type instanceof GLBType || type instanceof AbstractWildcardType)
 			type = typeObject();
 		else if (expr.isConstant() && isPrimitive() && type.isReferenceType())
-			return boxed().emitBoxingOperation(b, emitConstant(cast(expr.constant())), expr);
+			return boxed().emitBoxingOperation(b, emitConstant(cast(expr.constant()), constantFactory), expr);
 		else if (expr.isConstant() && !expr.type().isEnumDecl()) {
 			if (type.isPrimitive())
-				return emitConstant(type.cast(expr.constant()));
+				return emitConstant(type.cast(expr.constant()), constantFactory);
 			else
-				return emitConstant(expr.constant());
+				return emitConstant(expr.constant(), constantFactory);
 		}
 		return emitCastTo(b, expr.eval(b), type, expr);
 	}

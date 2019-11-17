@@ -2,22 +2,8 @@
 package soot.JastAddJ;
 
 import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production AnonymousDecl : {@link ClassDecl} ::= <span class="component">{@link Modifiers}</span> <span class="component">&lt;ID:String&gt;</span> <span class="component">[SuperClassAccess:{@link Access}]</span> <span class="component">Implements:{@link Access}*</span> <span class="component">{@link BodyDecl}*</span>;
  * @ast node
@@ -109,7 +95,7 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
    * 
    */
   public AnonymousDecl() {
-    super();
+    super(myScene, myOptions, myPackageNamer);
 
 
   }
@@ -132,7 +118,8 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
    * 
    */
   public AnonymousDecl(Modifiers p0, String p1, List<BodyDecl> p2) {
-    setChild(p0, 0);
+      super(myScene, myOptions, myPackageNamer);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
   }
@@ -141,7 +128,8 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
    * 
    */
   public AnonymousDecl(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2) {
-    setChild(p0, 0);
+      super(myScene, myOptions, myPackageNamer);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
   }
@@ -760,7 +748,7 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
       String anonName = "Anonymous" + nextAnonymousIndex();
 
       ConstructorDecl constructor = new ConstructorDecl(modifiers, anonName,
-          constructorParameterList(decl), new List(), new Opt(), new Block());
+          constructorParameterList(decl), new List(), new Opt(), new Block(), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
       constructor.setDefaultConstructor();
       addBodyDecl(constructor);
 

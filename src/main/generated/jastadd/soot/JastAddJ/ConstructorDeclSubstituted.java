@@ -1,23 +1,13 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+import beaver.Symbol;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production ConstructorDeclSubstituted : {@link ConstructorDecl} ::= <span class="component">&lt;Original:ConstructorDecl&gt;</span>;
  * @ast node
@@ -104,10 +94,14 @@ public class ConstructorDeclSubstituted extends ConstructorDecl implements Clone
   }
   /**
    * @ast method 
-   * 
-   */
-  public ConstructorDeclSubstituted() {
-    super();
+   *
+   * @param myScene
+   * @param myOptions
+   * @param myPackageNamer
+   * @param myJimple
+   * @param primTypeCollector   */
+  public ConstructorDeclSubstituted(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 
 
   }
@@ -129,8 +123,9 @@ public class ConstructorDeclSubstituted extends ConstructorDecl implements Clone
    * @ast method 
    * 
    */
-  public ConstructorDeclSubstituted(Modifiers p0, String p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4, Block p5, ConstructorDecl p6) {
-    setChild(p0, 0);
+  public ConstructorDeclSubstituted(Modifiers p0, String p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4, Block p5, ConstructorDecl p6, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);
@@ -142,8 +137,9 @@ public class ConstructorDeclSubstituted extends ConstructorDecl implements Clone
    * @ast method 
    * 
    */
-  public ConstructorDeclSubstituted(Modifiers p0, beaver.Symbol p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4, Block p5, ConstructorDecl p6) {
-    setChild(p0, 0);
+  public ConstructorDeclSubstituted(Modifiers p0, Symbol p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4, Block p5, ConstructorDecl p6, Scene myScene, PackageNamer myPackageNamer, Options myOptions, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);

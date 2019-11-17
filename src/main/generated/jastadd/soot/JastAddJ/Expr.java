@@ -1,29 +1,20 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import soot.*;
-import soot.util.*;
 import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production Expr : {@link ASTNode};
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:104
  */
 public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
+  private PrimTypeCollector primTypeCollector;
+  private Jimple myJimple;
+
   /**
    * @apilevel low-level
    */
@@ -183,9 +174,9 @@ public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
   protected soot.Value emitBooleanCondition(Body b) {
     b.setLine(this);
     emitEvalBranch(b);
-    soot.jimple.Stmt end_label = newLabel();
+    soot.jimple.Stmt end_label = newLabel(myJimple);
     b.addLabel(false_label());
-    Local result = b.newTemp(soot.BooleanType.v());
+    Local result = b.newTemp(primTypeCollector.getBooleanType());
     b.add(b.newAssignStmt(result, BooleanType.emitConstant(false), this));
     b.add(b.newGotoStmt(end_label, this));
     b.addLabel(true_label());
@@ -266,12 +257,16 @@ public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
   }
   /**
    * @ast method 
-   * 
+   *
+   * @param primTypeCollector
+   * @param myJimple
    */
-  public Expr() {
+  public Expr(PrimTypeCollector primTypeCollector, Jimple myJimple) {
     super();
 
 
+    this.primTypeCollector = primTypeCollector;
+    this.myJimple = myJimple;
   }
   /**
    * Initializes the child array to the correct size.
@@ -877,7 +872,7 @@ public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
   /**
    * @apilevel internal
    */
-  private soot.jimple.Stmt false_label_compute() {  return getParent().definesLabel() ? condition_false_label() : newLabel();  }
+  private soot.jimple.Stmt false_label_compute() {  return getParent().definesLabel() ? condition_false_label() : newLabel(myJimple);  }
   /**
    * @apilevel internal
    */
@@ -906,7 +901,7 @@ public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
   /**
    * @apilevel internal
    */
-  private soot.jimple.Stmt true_label_compute() {  return getParent().definesLabel() ? condition_true_label() : newLabel();  }
+  private soot.jimple.Stmt true_label_compute() {  return getParent().definesLabel() ? condition_true_label() : newLabel(myJimple);  }
   /**
    * @attribute syn
    * @aspect BooleanExpressions

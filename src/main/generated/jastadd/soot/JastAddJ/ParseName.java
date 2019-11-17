@@ -1,23 +1,6 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
 /**
  * @production ParseName : {@link Access} ::= <span class="component">&lt;ID:String&gt;</span>;
  * @ast node
@@ -96,7 +79,7 @@ public class ParseName extends Access implements Cloneable {
    * 
    */
   public ParseName() {
-    super();
+    super(myScene);
 
 
   }
@@ -115,14 +98,16 @@ public class ParseName extends Access implements Cloneable {
    * 
    */
   public ParseName(String p0) {
-    setID(p0);
+      super(myScene);
+      setID(p0);
   }
   /**
    * @ast method 
    * 
    */
   public ParseName(beaver.Symbol p0) {
-    setID(p0);
+      super(myScene);
+      setID(p0);
   }
   /**
    * @apilevel low-level

@@ -2,22 +2,11 @@
 package soot.JastAddJ;
 
 import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production MethodAccess : {@link Access} ::= <span class="component">&lt;ID:String&gt;</span> <span class="component">Arg:{@link Expr}*</span>;
  * @ast node
@@ -487,7 +476,7 @@ public class MethodAccess extends Access implements Cloneable {
    * 
    */
   public MethodAccess() {
-    super();
+    super(myScene);
 
 
   }
@@ -508,7 +497,8 @@ public class MethodAccess extends Access implements Cloneable {
    * 
    */
   public MethodAccess(String p0, List<Expr> p1) {
-    setID(p0);
+      super(myScene);
+      setID(p0);
     setChild(p1, 0);
   }
   /**
@@ -516,7 +506,8 @@ public class MethodAccess extends Access implements Cloneable {
    * 
    */
   public MethodAccess(beaver.Symbol p0, List<Expr> p1) {
-    setID(p0);
+      super(myScene);
+      setID(p0);
     setChild(p1, 0);
   }
   /**

@@ -347,7 +347,7 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    * 
    */
   public EnumDecl() {
-    super();
+    super(myScene, myOptions, myPackageNamer);
 
 
   }
@@ -370,7 +370,8 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    * 
    */
   public EnumDecl(Modifiers p0, String p1, List<Access> p2, List<BodyDecl> p3) {
-    setChild(p0, 0);
+      super(myScene, myOptions, myPackageNamer);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);
@@ -380,7 +381,8 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    * 
    */
   public EnumDecl(Modifiers p0, beaver.Symbol p1, List<Access> p2, List<BodyDecl> p3) {
-    setChild(p0, 0);
+      super(myScene, myOptions, myPackageNamer);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);
@@ -1126,8 +1128,8 @@ public class EnumDecl extends ClassDecl implements Cloneable {
                 )
               )
             ),
-            new Block(new List())
-          )
+            new Block(new List()),
+                  myScene, myOptions, myPackageNamer, myJimple, primTypeCollector)
         );
       }
       else {

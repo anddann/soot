@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import beaver.Symbol;
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SootMethod;
 import soot.SootMethodRef;
+import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
+import soot.options.Options;
 
 /**
  * @production ConstructorDecl : {@link BodyDecl} ::=
@@ -25,6 +29,12 @@ import soot.jimple.JimpleBody;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:75
  */
 public class ConstructorDecl extends BodyDecl implements Cloneable {
+	private Scene myScene;
+	private Options myOptions;
+	private PackageNamer myPackageNamer;
+	private Jimple myJimple;
+	private PrimTypeCollector primTypeCollector;
+
 	/**
 	 * @apilevel low-level
 	 */
@@ -294,7 +304,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	public BodyDecl substitutedBodyDecl(Parameterization parTypeDecl) {
 		ConstructorDecl c = new ConstructorDeclSubstituted((Modifiers) getModifiers().fullCopy(), getID(),
 				getParameterList().substitute(parTypeDecl), getExceptionList().substitute(parTypeDecl), new Opt(),
-				new Block(), this);
+				new Block(), this, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 		return c;
 	}
 
@@ -355,7 +365,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 		access.addEnclosingVariables = false;
 
 		c = new ConstructorDecl(modifiers, name(), parameters, exceptionList, new Opt(new ExprStmt(access)),
-				new Block(new List().add(new ReturnStmt(new Opt()))));
+				new Block(new List().add(new ReturnStmt(new Opt()))), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 		c = hostType().addConstructor(c);
 		c.addEnclosingVariables = false;
 		hostType().addAccessor(this, "constructor", c);
@@ -383,7 +393,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	 */
 	protected TypeDecl createAnonymousJavaTypeDecl() {
 		ClassDecl classDecl = new ClassDecl(new Modifiers(new List().add(new Modifier("synthetic"))),
-				"" + hostType().nextAnonymousIndex(), new Opt(), new List(), new List());
+				"" + hostType().nextAnonymousIndex(), new Opt(), new List(), new List(), myScene, myOptions, myPackageNamer);
 		classDecl = hostType().addMemberClass(classDecl);
 		hostType().addNestedType(classDecl);
 		return classDecl;
@@ -422,12 +432,12 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 			parameters.add(getParameter(i).type().getSootType());
 			paramnames.add(getParameter(i).name());
 		}
-		soot.Type returnType = soot.VoidType.v();
+		soot.Type returnType = primTypeCollector.getVoidType();
 		int modifiers = sootTypeModifiers();
 		ArrayList throwtypes = new ArrayList();
 		for (int i = 0; i < getNumException(); i++)
 			throwtypes.add(getException(i).type().getSootClassDecl());
-		String signature = SootMethod.getSubSignature(name, parameters, returnType);
+		String signature = SootMethod.getSubSignature(name, parameters, returnType,myScene);
 		if (!hostType().getSootClassDecl().declaresMethod(signature)) {
 			SootMethod m = myScene.makeSootMethod(name, parameters, returnType, modifiers, throwtypes);
 			hostType().getSootClassDecl().addMethod(m);
@@ -546,11 +556,20 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 
 	/**
 	 * @ast method
-	 * 
-	 */
-	public ConstructorDecl() {
+	 *
+	 * @param myScene
+	 * @param myOptions
+	 * @param myPackageNamer
+	 * @param myJimple
+	 * @param primTypeCollector   */
+	public ConstructorDecl(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
 		super();
 
+		this.myScene = myScene;
+		this.myOptions = myOptions;
+		this.myPackageNamer = myPackageNamer;
+		this.myJimple = myJimple;
+		this.primTypeCollector = primTypeCollector;
 	}
 
 	/**
@@ -574,7 +593,12 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	 * 
 	 */
 	public ConstructorDecl(Modifiers p0, String p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4,
-			Block p5) {
+						   Block p5, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+		this.myScene = myScene;
+		this.myOptions = myOptions;
+		this.myPackageNamer = myPackageNamer;
+		this.myJimple = myJimple;
+		this.primTypeCollector = primTypeCollector;
 		setChild(p0, 0);
 		setID(p1);
 		setChild(p2, 1);
@@ -587,8 +611,13 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	 * @ast method
 	 * 
 	 */
-	public ConstructorDecl(Modifiers p0, beaver.Symbol p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4,
-			Block p5) {
+	public ConstructorDecl(Modifiers p0, Symbol p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4,
+						   Block p5, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+		this.myScene = myScene;
+		this.myOptions = myOptions;
+		this.myPackageNamer = myPackageNamer;
+		this.myJimple = myJimple;
+		this.primTypeCollector = primTypeCollector;
 		setChild(p0, 0);
 		setID(p1);
 		setChild(p2, 1);
@@ -2029,7 +2058,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 		// args
 		for (int i = 0; i < getNumParameter(); i++)
 			list.add(getParameter(i).type().getSootType());
-		return hostType().getSootClassDecl().getMethod("<init>", list, soot.VoidType.v());
+		return hostType().getSootClassDecl().getMethod("<init>", list, primTypeCollector.getVoidType());
 	}
 
 	/**

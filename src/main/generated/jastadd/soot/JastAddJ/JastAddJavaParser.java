@@ -1160,7 +1160,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 2];
 					final Symbol _symbol_b = _symbols[offset + 3];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(new List()), IDENTIFIER, new Opt(), new List(), b);
+					 return new ClassDecl(new Modifiers(new List()), IDENTIFIER, new Opt(), new List(), b, myScene, myOptions, myPackageNamer);
 			}
 			case 62: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER class_body.b
 			{
@@ -1170,7 +1170,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 3];
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(m), IDENTIFIER, new Opt(), new List(), b);
+					 return new ClassDecl(new Modifiers(m), IDENTIFIER, new Opt(), new List(), b, myScene, myOptions, myPackageNamer);
 			}
 			case 63: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER super.s class_body.b
 			{
@@ -1180,7 +1180,7 @@ class Events extends Parser.Events {
 					final Opt s = (Opt) _symbol_s.value;
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(new List()), IDENTIFIER, s, new List(), b);
+					 return new ClassDecl(new Modifiers(new List()), IDENTIFIER, s, new List(), b, myScene, myOptions, myPackageNamer);
 			}
 			case 64: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER super.s class_body.b
 			{
@@ -1192,7 +1192,7 @@ class Events extends Parser.Events {
 					final Opt s = (Opt) _symbol_s.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(m), IDENTIFIER, s, new List(), b);
+					 return new ClassDecl(new Modifiers(m), IDENTIFIER, s, new List(), b, myScene, myOptions, myPackageNamer);
 			}
 			case 65: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER interfaces.i class_body.b
 			{
@@ -1202,7 +1202,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(new List()), IDENTIFIER, new Opt(), i, b);
+					 return new ClassDecl(new Modifiers(new List()), IDENTIFIER, new Opt(), i, b, myScene, myOptions, myPackageNamer);
 			}
 			case 66: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER interfaces.i class_body.b
 			{
@@ -1214,7 +1214,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(m), IDENTIFIER, new Opt(), i, b);
+					 return new ClassDecl(new Modifiers(m), IDENTIFIER, new Opt(), i, b, myScene, myOptions, myPackageNamer);
 			}
 			case 67: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER super.s interfaces.i class_body.b
 			{
@@ -1226,7 +1226,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(new List()), IDENTIFIER, s, i, b);
+					 return new ClassDecl(new Modifiers(new List()), IDENTIFIER, s, i, b, myScene, myOptions, myPackageNamer);
 			}
 			case 68: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER super.s interfaces.i class_body.b
 			{
@@ -1240,7 +1240,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 6];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(m), IDENTIFIER, s, i, b);
+					 return new ClassDecl(new Modifiers(m), IDENTIFIER, s, i, b, myScene, myOptions, myPackageNamer);
 			}
 			case 69: // super = EXTENDS.EXTENDS class_type.c
 			{
@@ -1654,7 +1654,7 @@ class Events extends Parser.Events {
 					final Symbol LBRACE = _symbols[offset + 6];
 					final Symbol RBRACE = _symbols[offset + 7];
 					 Block b = new Block(new List()); new List().setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(new List()), IDENTIFIER, pl, tl, new Opt(), b);
+       return new ConstructorDecl(new Modifiers(new List()), IDENTIFIER, pl, tl, new Opt(), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 			}
 			case 117: // constructor_declaration = modifiers.m IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE RBRACE.RBRACE
 			{
@@ -1670,7 +1670,7 @@ class Events extends Parser.Events {
 					final Symbol LBRACE = _symbols[offset + 7];
 					final Symbol RBRACE = _symbols[offset + 8];
 					 Block b = new Block(new List()); new List().setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(), b);
+       return new ConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 			}
 			case 118: // constructor_declaration = IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE explicit_constructor_invocation.c RBRACE.RBRACE
 			{
@@ -1686,7 +1686,7 @@ class Events extends Parser.Events {
 					final ExprStmt c = (ExprStmt) _symbol_c.value;
 					final Symbol RBRACE = _symbols[offset + 8];
 					 Block b = new Block(new List()); new List().setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(new List()), IDENTIFIER, pl, tl, new Opt(c), b);
+       return new ConstructorDecl(new Modifiers(new List()), IDENTIFIER, pl, tl, new Opt(c), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 			}
 			case 119: // constructor_declaration = modifiers.m IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE explicit_constructor_invocation.c RBRACE.RBRACE
 			{
@@ -1704,7 +1704,7 @@ class Events extends Parser.Events {
 					final ExprStmt c = (ExprStmt) _symbol_c.value;
 					final Symbol RBRACE = _symbols[offset + 9];
 					 Block b = new Block(new List()); new List().setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(c), b);
+       return new ConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(c), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 			}
 			case 120: // constructor_declaration = IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE block_statements.l RBRACE.RBRACE
 			{
@@ -1720,7 +1720,7 @@ class Events extends Parser.Events {
 					final List l = (List) _symbol_l.value;
 					final Symbol RBRACE = _symbols[offset + 8];
 					 Block b = new Block(l); l.setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(new List()), IDENTIFIER, pl, tl, new Opt(), b);
+       return new ConstructorDecl(new Modifiers(new List()), IDENTIFIER, pl, tl, new Opt(), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 			}
 			case 121: // constructor_declaration = modifiers.m IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE block_statements.l RBRACE.RBRACE
 			{
@@ -1738,7 +1738,7 @@ class Events extends Parser.Events {
 					final List l = (List) _symbol_l.value;
 					final Symbol RBRACE = _symbols[offset + 9];
 					 Block b = new Block(l); l.setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(), b);
+       return new ConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 			}
 			case 122: // constructor_declaration = IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE explicit_constructor_invocation.c block_statements.l RBRACE.RBRACE
 			{
@@ -1756,7 +1756,7 @@ class Events extends Parser.Events {
 					final List l = (List) _symbol_l.value;
 					final Symbol RBRACE = _symbols[offset + 9];
 					 Block b = new Block(l); l.setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(new List()), IDENTIFIER, pl, tl, new Opt(c), b);
+       return new ConstructorDecl(new Modifiers(new List()), IDENTIFIER, pl, tl, new Opt(c), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 			}
 			case 123: // constructor_declaration = modifiers.m IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE explicit_constructor_invocation.c block_statements.l RBRACE.RBRACE
 			{
@@ -1776,7 +1776,7 @@ class Events extends Parser.Events {
 					final List l = (List) _symbol_l.value;
 					final Symbol RBRACE = _symbols[offset + 10];
 					 Block b = new Block(l); l.setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(c), b);
+       return new ConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(c), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 			}
 			case 124: // explicit_constructor_invocation = THIS.THIS LPAREN.LPAREN argument_list_opt.l RPAREN.RPAREN SEMICOLON.SEMICOLON
 			{
@@ -4867,7 +4867,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 5];
 					final Symbol _symbol_b = _symbols[offset + 6];
 					final Opt b = (Opt) _symbol_b.value;
-					 return new ClassInstanceExpr(t, l, b);
+					 return new ClassInstanceExpr(t, l, b, myScene);
 			}
 			case 468: // class_instance_creation_expression = NEW.NEW type_arguments.a class_or_interface_type.t LPAREN.LPAREN argument_list_opt.l RPAREN.RPAREN subclass_body_opt.b
 			{
@@ -4898,7 +4898,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 7];
 					final Symbol _symbol_b = _symbols[offset + 8];
 					final Opt b = (Opt) _symbol_b.value;
-					 ClassInstanceExpr e = new ClassInstanceExpr(id, l, b); 
+					 ClassInstanceExpr e = new ClassInstanceExpr(id, l, b, myScene);
         e.setStart(NEW.getStart());
         e.setEnd(RPAREN.getEnd());
         return n.qualifiesAccess(e);
@@ -4919,7 +4919,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 8];
 					final Symbol _symbol_b = _symbols[offset + 9];
 					final Opt b = (Opt) _symbol_b.value;
-					 ClassInstanceExpr e = new ClassInstanceExpr(new ParTypeAccess(id, a), l, b); 
+					 ClassInstanceExpr e = new ClassInstanceExpr(new ParTypeAccess(id, a), l, b, myScene);
         e.setStart(NEW.getStart());
         e.setEnd(RPAREN.getEnd());
         return n.qualifiesAccess(e);
@@ -4976,7 +4976,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 7];
 					final Symbol _symbol_b = _symbols[offset + 8];
 					final Opt b = (Opt) _symbol_b.value;
-					 ClassInstanceExpr e = new ClassInstanceExpr(id, l, b); 
+					 ClassInstanceExpr e = new ClassInstanceExpr(id, l, b, myScene);
         e.setStart(NEW.getStart());
         e.setEnd(RPAREN.getEnd());
         return n.qualifiesAccess(e);
@@ -4997,7 +4997,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 8];
 					final Symbol _symbol_b = _symbols[offset + 9];
 					final Opt b = (Opt) _symbol_b.value;
-					 ClassInstanceExpr e = new ClassInstanceExpr(new ParTypeAccess(id, a), l, b); 
+					 ClassInstanceExpr e = new ClassInstanceExpr(new ParTypeAccess(id, a), l, b, myScene);
         e.setStart(NEW.getStart());
         e.setEnd(RPAREN.getEnd());
         return n.qualifiesAccess(e);

@@ -1,7 +1,9 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import beaver.Symbol;
 import soot.*;
+import soot.jimple.Jimple;
 
 /**
  * @production AbstractWildcardType : {@link TypeDecl};
@@ -50,9 +52,11 @@ public abstract class AbstractWildcardType extends TypeDecl implements Cloneable
   }
   /**
    * @ast method 
-   * 
-   */
-  public AbstractWildcardType() {
+   *
+   * @param myScene
+   * @param myJimple
+   * @param mySootResolver */
+  public AbstractWildcardType(Scene myScene, Jimple myJimple, SootResolver mySootResolver) {
     super(myScene, myJimple, mySootResolver);
 
 
@@ -73,7 +77,7 @@ public abstract class AbstractWildcardType extends TypeDecl implements Cloneable
    * @ast method 
    * 
    */
-  public AbstractWildcardType(Modifiers p0, String p1, List<BodyDecl> p2) {
+  public AbstractWildcardType(Modifiers p0, String p1, List<BodyDecl> p2, SootResolver mySootResolver, Jimple myJimple, Scene myScene) {
       super(myScene, myJimple, mySootResolver);
       setChild(p0, 0);
     setID(p1);
@@ -83,7 +87,7 @@ public abstract class AbstractWildcardType extends TypeDecl implements Cloneable
    * @ast method 
    * 
    */
-  public AbstractWildcardType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2) {
+  public AbstractWildcardType(Modifiers p0, Symbol p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver) {
       super(myScene, myJimple, mySootResolver);
       setChild(p0, 0);
     setID(p1);

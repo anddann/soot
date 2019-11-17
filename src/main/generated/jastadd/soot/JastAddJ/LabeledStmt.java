@@ -468,7 +468,7 @@ public class LabeledStmt extends BranchTargetStmt implements Cloneable {
   /**
    * @apilevel internal
    */
-  private soot.jimple.Stmt end_label_compute() {  return newLabel();  }
+  private soot.jimple.Stmt end_label_compute() {  return newLabel(myJimple);  }
   /**
    * @attribute syn
    * @aspect Statements

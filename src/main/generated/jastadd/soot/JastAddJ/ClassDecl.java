@@ -5,7 +5,11 @@ import java.util.HashSet;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import beaver.Symbol;
 import soot.*;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.options.Options;
 import soot.tagkit.SourceFileTag;
 import soot.coffi.CoffiMethodSource;
 
@@ -15,6 +19,10 @@ import soot.coffi.CoffiMethodSource;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:66
  */
 public class ClassDecl extends ReferenceType implements Cloneable {
+  private Scene myScene;
+  private Options myOptions;
+  private PackageNamer myPackageNamer;
+
   /**
    * @apilevel low-level
    */
@@ -420,12 +428,17 @@ public class ClassDecl extends ReferenceType implements Cloneable {
   }
   /**
    * @ast method 
-   * 
-   */
-  public ClassDecl() {
+   *
+   * @param myScene
+   * @param myOptions
+   * @param myPackageNamer */
+  public ClassDecl(Scene myScene, Options myOptions, PackageNamer myPackageNamer) {
     super();
 
 
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
   }
   /**
    * Initializes the child array to the correct size.
@@ -445,7 +458,10 @@ public class ClassDecl extends ReferenceType implements Cloneable {
    * @ast method 
    * 
    */
-  public ClassDecl(Modifiers p0, String p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4) {
+  public ClassDecl(Modifiers p0, String p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4, Scene myScene, Options myOptions, PackageNamer myPackageNamer) {
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
     setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -456,7 +472,10 @@ public class ClassDecl extends ReferenceType implements Cloneable {
    * @ast method 
    * 
    */
-  public ClassDecl(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4) {
+  public ClassDecl(Modifiers p0, Symbol p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4, Scene myScene, Options myOptions, PackageNamer myPackageNamer) {
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
     setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

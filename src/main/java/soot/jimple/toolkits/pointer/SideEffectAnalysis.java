@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import soot.G;
 import soot.Local;
 import soot.MethodOrMethodContext;
 import soot.PointsToAnalysis;
@@ -64,14 +63,14 @@ public class SideEffectAnalysis {
       RWSet ntr = ntReadSet(method, s);
       if (ntr != null) {
         if (read == null) {
-          read = new MethodRWSet();
+          read = new MethodRWSet(fullObjectFactory);
         }
         read.union(ntr);
       }
       RWSet ntw = ntWriteSet(method, s);
       if (ntw != null) {
         if (write == null) {
-          write = new MethodRWSet();
+          write = new MethodRWSet(fullObjectFactory);
         }
         write.union(ntw);
       }

@@ -2,22 +2,9 @@
 package soot.JastAddJ;
 
 import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
 
 /**
  * @production ParClassDecl : {@link ClassDecl} ::= <span class="component">Argument:{@link Access}*</span> <span class="component">[SuperClassAccess:{@link Access}]</span> <span class="component">Implements:{@link Access}*</span> <span class="component">{@link BodyDecl}*</span>;
@@ -285,7 +272,7 @@ public class ParClassDecl extends ClassDecl implements Cloneable, ParTypeDecl, M
    * 
    */
   public ParClassDecl() {
-    super();
+    super(myScene, myOptions, myPackageNamer);
 
 
   }
@@ -309,7 +296,8 @@ public class ParClassDecl extends ClassDecl implements Cloneable, ParTypeDecl, M
    * 
    */
   public ParClassDecl(Modifiers p0, String p1, List<Access> p2) {
-    setChild(p0, 0);
+      super(myScene, myOptions, myPackageNamer);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
   }
@@ -318,7 +306,8 @@ public class ParClassDecl extends ClassDecl implements Cloneable, ParTypeDecl, M
    * 
    */
   public ParClassDecl(Modifiers p0, beaver.Symbol p1, List<Access> p2) {
-    setChild(p0, 0);
+      super(myScene, myOptions, myPackageNamer);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
   }

@@ -2,29 +2,18 @@
 package soot.JastAddJ;
 
 import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import soot.*;
-import soot.util.*;
 import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production ASTNode;
  * @ast node
  * 
  */
 public class ASTNode<T extends ASTNode> extends beaver.Symbol  implements Cloneable, Iterable<T> {
-  private static Object constantFactory;
 
   /**
    * @apilevel low-level
@@ -650,21 +639,21 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol  implements Clonea
    * @aspect Expressions
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddExtensions/JimpleBackend/Expressions.jrag:718
    */
-  public static soot.Value emitConstant(Constant constant) {
+  public static soot.Value emitConstant(Constant constant, ConstantFactory constantFactory) {
     if(constant instanceof Constant.ConstantInt)
       return IntType.emitConstant(constant.intValue());
     else if(constant instanceof Constant.ConstantLong)
-      return constantFactory.getLongConstant(constant.longValue());
+      return constantFactory.createLongConstant(constant.longValue());
     else if(constant instanceof Constant.ConstantFloat)
-      return soot.jimple.FloatConstant.v(constant.floatValue());
+      return constantFactory.createFloatConstant(constant.floatValue());
     else if(constant instanceof Constant.ConstantDouble)
-      return soot.jimple.DoubleConstant.v(constant.doubleValue());
+      return constantFactory.createDoubleConstant(constant.doubleValue());
     else if(constant instanceof Constant.ConstantChar)
       return IntType.emitConstant(constant.intValue());
     else if(constant instanceof Constant.ConstantBoolean)
       return BooleanType.emitConstant(constant.booleanValue());
     else if(constant instanceof Constant.ConstantString)
-      return soot.jimple.StringConstant.v(constant.stringValue());
+      return constantFactory.createStringConstant(constant.stringValue());
     throw new Error("Unexpected constant");
   }
   /**

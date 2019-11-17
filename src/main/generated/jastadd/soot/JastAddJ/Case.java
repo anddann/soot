@@ -1,29 +1,16 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
 import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production Case : {@link Stmt};
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:203
  */
 public abstract class Case extends Stmt implements Cloneable {
+  private Jimple myJimple;
+
   /**
    * @apilevel low-level
    */
@@ -68,12 +55,14 @@ public abstract class Case extends Stmt implements Cloneable {
   }
   /**
    * @ast method 
-   * 
+   *
+   * @param myJimple
    */
-  public Case() {
+  public Case(Jimple myJimple) {
     super();
 
 
+    this.myJimple = myJimple;
   }
   /**
    * Initializes the child array to the correct size.
@@ -232,7 +221,7 @@ public abstract class Case extends Stmt implements Cloneable {
   /**
    * @apilevel internal
    */
-  private soot.jimple.Stmt label_compute() {  return newLabel();  }
+  private soot.jimple.Stmt label_compute() {  return newLabel(myJimple);  }
   /**
    * @attribute syn
    * @aspect PreciseRethrow

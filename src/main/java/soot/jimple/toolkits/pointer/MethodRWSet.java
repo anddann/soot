@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import soot.G;
 import soot.PointsToSet;
 import soot.SootField;
+import soot.jimple.FullObjectFactory;
 
 /** Represents the read or write set of a statement. */
 public class MethodRWSet extends RWSet {
@@ -44,6 +45,7 @@ public class MethodRWSet extends RWSet {
   protected boolean callsNative = false;
   protected boolean isFull = false;
   public static final int MAX_SIZE = Integer.MAX_VALUE;
+  private FullObjectFactory fullObjectFactory;
 
   public String toString() {
     boolean empty = true;
@@ -85,10 +87,11 @@ public class MethodRWSet extends RWSet {
   }
 
   // static int count = 0;
-  public MethodRWSet() {
+  public MethodRWSet(FullObjectFactory fullObjectFactory) {
     /*
      * count++; if( 0 == (count % 1000) ) { logger.debug(""+ "Created "+count+"th MethodRWSet" ); }
      */
+    this.fullObjectFactory = fullObjectFactory;
   }
 
   public boolean getCallsNative() {
@@ -126,7 +129,7 @@ public class MethodRWSet extends RWSet {
   /** Returns a set of base objects whose field f is read/written. */
   public PointsToSet getBaseForField(Object f) {
     if (isFull) {
-      return myFullObjectSet;
+      return fullObjectFactory.getFullObjectSet();
     }
     if (fields == null) {
       return null;

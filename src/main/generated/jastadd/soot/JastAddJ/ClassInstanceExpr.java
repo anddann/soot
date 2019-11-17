@@ -1,29 +1,21 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+import soot.jimple.ConstantFactory;
+
 /**
  * @production ClassInstanceExpr : {@link Access} ::= <span class="component">{@link Access}</span> <span class="component">Arg:{@link Expr}*</span> <span class="component">[{@link TypeDecl}]</span>;
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:37
  */
 public class ClassInstanceExpr extends Access implements Cloneable {
+  private Scene myScene;
+  private ConstantFactory constantFactory;
+
   /**
    * @apilevel low-level
    */
@@ -181,8 +173,8 @@ public class ClassInstanceExpr extends Access implements Cloneable {
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:82
    */
-  public ClassInstanceExpr(Access type, List args) {
-    this(type, args, new Opt());
+  public ClassInstanceExpr(Access type, List args, Scene myScene, ConstantFactory constantFactory) {
+    this(type, args, new Opt(), myScene, constantFactory);
   }
   /**
    * @ast method 
@@ -451,7 +443,7 @@ public class ClassInstanceExpr extends Access implements Cloneable {
       list.add(asImmediate(b, getArg(i).type().emitCastTo(b, getArg(i), decl().getParameter(i).type()))); // MethodInvocationConversion
   
     if(decl().isPrivate() && type() != hostType()) {
-      list.add(asImmediate(b, soot.jimple.myNullConstant));
+      list.add(asImmediate(b, constantFactory.getNullConstant()));
       b.setLine(this);
       b.add(
         b.newInvokeStmt(
@@ -483,12 +475,15 @@ public class ClassInstanceExpr extends Access implements Cloneable {
   }
   /**
    * @ast method 
-   * 
+   *@param myScene
+   * @param constantFactory
    */
-  public ClassInstanceExpr() {
-    super();
+  public ClassInstanceExpr(Scene myScene, ConstantFactory constantFactory) {
+    super(myScene);
 
 
+    this.myScene = myScene;
+    this.constantFactory = constantFactory;
   }
   /**
    * Initializes the child array to the correct size.
@@ -507,7 +502,10 @@ public class ClassInstanceExpr extends Access implements Cloneable {
    * @ast method 
    * 
    */
-  public ClassInstanceExpr(Access p0, List<Expr> p1, Opt<TypeDecl> p2) {
+  public ClassInstanceExpr(Access p0, List<Expr> p1, Opt<TypeDecl> p2, Scene myScene, ConstantFactory constantFactory) {
+      super(myScene);
+    this.myScene = myScene;
+    this.constantFactory = constantFactory;
     setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);

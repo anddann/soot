@@ -966,8 +966,8 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
       new List(),
       new List(),
       new Opt(),
-      new Block()
-    );
+      new Block(),
+            myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
     classDecl.addBodyDecl(constrDecl);      
     return classDecl;
   }

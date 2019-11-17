@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import soot.PointsToSet;
-import soot.Scene;
 import soot.SootField;
 import soot.jimple.spark.pag.Node;
 import soot.jimple.spark.pag.PAG;
@@ -36,7 +35,11 @@ import soot.jimple.spark.sets.P2SetVisitor;
 import soot.jimple.spark.sets.PointsToSetInternal;
 
 public class CodeBlockRWSet extends MethodRWSet {
-  public int size() {
+    public CodeBlockRWSet() {
+        super(fullObjectFactory);
+    }
+
+    public int size() {
     if (globals == null) {
       if (fields == null) {
         return 0;

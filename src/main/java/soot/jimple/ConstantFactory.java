@@ -19,7 +19,7 @@ public interface ConstantFactory {
 
   public DoubleConstant createDoubleConstant(double value);
 
-  public DoubleConstant createLongConstant(double value);
+  public LongConstant createLongConstant(double value);
 
   public NullConstant createNullConstant();
 

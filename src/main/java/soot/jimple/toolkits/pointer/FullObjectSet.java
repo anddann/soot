@@ -22,8 +22,6 @@ package soot.jimple.toolkits.pointer;
  * #L%
  */
 
-import com.google.inject.Inject;
-
 import java.util.Collections;
 import java.util.Set;
 
@@ -36,23 +34,13 @@ import soot.jimple.ClassConstant;
 
 public class FullObjectSet extends Union {
 
-  private final Scene myScene;
-
-  @Inject
   public FullObjectSet(Scene myScene) {
     this(RefType.v("java.lang.Object", myScene));
   }
 
-  public static FullObjectSet v(RefType t) {
-    if (t.getClassName().equals("java.lang.Object")) {
-      return v();
-    }
-    return new FullObjectSet(t);
-  }
-
   private final Set<Type> types;
 
-  private FullObjectSet(RefType declaredType) {
+  public FullObjectSet(RefType declaredType) {
     Type type = AnySubType.v(declaredType);
     types = Collections.singleton(type);
   }

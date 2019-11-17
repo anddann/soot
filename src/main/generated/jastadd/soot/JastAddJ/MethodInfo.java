@@ -96,7 +96,7 @@ public class MethodInfo extends java.lang.Object {
       BodyDecl b;
       if(isConstructor()) {
         b = new ConstructorDecl(BytecodeParser.modifiers(flags), name, parameterList, 
-            exceptionList, new Opt(), new Block());
+            exceptionList, new Opt(), new Block(), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
       }
       else if(attributes.elementValue() != null) {
         b = new AnnotationMethodDecl(BytecodeParser.modifiers(flags), returnType, name, 
