@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import beaver.Symbol;
+import soot.Scene;
 import soot.SootField;
 import soot.SootFieldRef;
 
@@ -18,6 +20,8 @@ import soot.SootFieldRef;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:80
  */
 public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet, Iterator, Variable {
+  private Scene myScene;
+
   /**
    * @apilevel low-level
    */
@@ -300,8 +304,8 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:86
    */
-  public FieldDeclaration(Modifiers m, Access type, String name) {
-    this(m, type, name, new Opt());
+  public FieldDeclaration(Modifiers m, Access type, String name, Scene myScene) {
+    this(m, type, name, new Opt(), myScene);
   }
 
   /**
@@ -309,8 +313,8 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:90
    */
-  public FieldDeclaration(Modifiers m, Access type, String name, Expr init) {
-    this(m, type, name, new Opt(init));
+  public FieldDeclaration(Modifiers m, Access type, String name, Expr init, Scene myScene) {
+    this(m, type, name, new Opt(init), myScene);
   }
 
   /**
@@ -406,7 +410,7 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
       parameters.add(new ParameterDeclaration(fieldQualifier.createQualifiedAccess(), "that"));
 
     m = new MethodDecl(modifiers, type().createQualifiedAccess(), "get$" + name() + "$access$" + accessorIndex, parameters,
-        new List(), new Opt(new Block(new List().add(new ReturnStmt(createAccess())))));
+        new List(), new Opt(new Block(new List().add(new ReturnStmt(createAccess())))), myScene, myJimple);
     m = fieldQualifier.addMemberMethod(m);
     fieldQualifier.addAccessor(this, "field_read", m);
     return m;
@@ -436,7 +440,7 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
     m = new MethodDecl(modifiers, type().createQualifiedAccess(), "set$" + name() + "$access$" + accessorIndex, parameters,
         new List(),
         new Opt(new Block(new List().add(new ExprStmt(new AssignSimpleExpr(createAccess(), new VarAccess("value"))))
-            .add(new ReturnStmt(new Opt(new VarAccess("value")))))));
+            .add(new ReturnStmt(new Opt(new VarAccess("value")))))), myScene, myJimple);
     m = fieldQualifier.addMemberMethod(m);
     fieldQualifier.addAccessor(this, "field_write", m);
     return m;
@@ -520,11 +524,13 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
 
   /**
    * @ast method
-   * 
+   *
+   * @param myScene
    */
-  public FieldDeclaration() {
+  public FieldDeclaration(Scene myScene) {
     super();
 
+    this.myScene = myScene;
   }
 
   /**
@@ -544,7 +550,8 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
    * @ast method
    * 
    */
-  public FieldDeclaration(Modifiers p0, Access p1, String p2, Opt<Expr> p3) {
+  public FieldDeclaration(Modifiers p0, Access p1, String p2, Opt<Expr> p3, Scene myScene) {
+    this.myScene = myScene;
     setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);
@@ -555,7 +562,8 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
    * @ast method
    * 
    */
-  public FieldDeclaration(Modifiers p0, Access p1, beaver.Symbol p2, Opt<Expr> p3) {
+  public FieldDeclaration(Modifiers p0, Access p1, Symbol p2, Opt<Expr> p3, Scene myScene) {
+    this.myScene = myScene;
     setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);

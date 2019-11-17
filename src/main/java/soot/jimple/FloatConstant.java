@@ -22,7 +22,10 @@ package soot.jimple;
  * #L%
  */
 
-import soot.FloatType;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.util.Switch;
 
@@ -32,13 +35,12 @@ import soot.util.Switch;
 public class FloatConstant extends RealConstant {
 
   public final float value;
+  private PrimTypeCollector primTypeCollector;
 
-  private FloatConstant(float value) {
+  @Inject
+  public FloatConstant(float value, @Assisted PrimTypeCollector primTypeCollector) {
     this.value = value;
-  }
-
-  public static FloatConstant v(float value) {
-    return new FloatConstant(value);
+    this.primTypeCollector = primTypeCollector;
   }
 
   public boolean equals(Object c) {
@@ -57,67 +59,67 @@ public class FloatConstant extends RealConstant {
   @Override
   public NumericConstant add(NumericConstant c) {
     assertInstanceOf(c);
-    return FloatConstant.v(this.value + ((FloatConstant) c).value);
+    return new FloatConstant(this.value + ((FloatConstant) c).value, this.primTypeCollector);
   }
 
   @Override
   public NumericConstant subtract(NumericConstant c) {
     assertInstanceOf(c);
-    return FloatConstant.v(this.value - ((FloatConstant) c).value);
+    return new FloatConstant(this.value - ((FloatConstant) c).value, this.primTypeCollector);
   }
 
   @Override
   public NumericConstant multiply(NumericConstant c) {
     assertInstanceOf(c);
-    return FloatConstant.v(this.value * ((FloatConstant) c).value);
+    return new FloatConstant(this.value * ((FloatConstant) c).value, this.primTypeCollector);
   }
 
   @Override
   public NumericConstant divide(NumericConstant c) {
     assertInstanceOf(c);
-    return FloatConstant.v(this.value / ((FloatConstant) c).value);
+    return new FloatConstant(this.value / ((FloatConstant) c).value, this.primTypeCollector);
   }
 
   @Override
   public NumericConstant remainder(NumericConstant c) {
     assertInstanceOf(c);
-    return FloatConstant.v(this.value % ((FloatConstant) c).value);
+    return new FloatConstant(this.value % ((FloatConstant) c).value, this.primTypeCollector);
   }
 
   @Override
   public NumericConstant equalEqual(NumericConstant c) {
     assertInstanceOf(c);
-    return constancFactory.createIntConstant(Float.compare(this.value, ((FloatConstant) c).value) == 0 ? 1 : 0);
+    return new IntConstant(Float.compare(this.value, ((FloatConstant) c).value) == 0 ? 1 : 0, this.primTypeCollector);
   }
 
   @Override
   public NumericConstant notEqual(NumericConstant c) {
     assertInstanceOf(c);
-    return constancFactory.createIntConstant(Float.compare(this.value, ((FloatConstant) c).value) != 0 ? 1 : 0);
+    return new IntConstant(Float.compare(this.value, ((FloatConstant) c).value) != 0 ? 1 : 0, this.primTypeCollector);
   }
 
   @Override
   public NumericConstant lessThan(NumericConstant c) {
     assertInstanceOf(c);
-    return constancFactory.createIntConstant(Float.compare(this.value, ((FloatConstant) c).value) < 0 ? 1 : 0);
+    return new IntConstant(Float.compare(this.value, ((FloatConstant) c).value) < 0 ? 1 : 0, this.primTypeCollector);
   }
 
   @Override
   public NumericConstant lessThanOrEqual(NumericConstant c) {
     assertInstanceOf(c);
-    return constancFactory.createIntConstant(Float.compare(this.value, ((FloatConstant) c).value) <= 0 ? 1 : 0);
+    return new IntConstant(Float.compare(this.value, ((FloatConstant) c).value) <= 0 ? 1 : 0, this.primTypeCollector);
   }
 
   @Override
   public NumericConstant greaterThan(NumericConstant c) {
     assertInstanceOf(c);
-    return constancFactory.createIntConstant(Float.compare(this.value, ((FloatConstant) c).value) > 0 ? 1 : 0);
+    return new IntConstant(Float.compare(this.value, ((FloatConstant) c).value) > 0 ? 1 : 0, this.primTypeCollector);
   }
 
   @Override
   public NumericConstant greaterThanOrEqual(NumericConstant c) {
     assertInstanceOf(c);
-    return constancFactory.createIntConstant(Float.compare(this.value, ((FloatConstant) c).value) >= 0 ? 1 : 0);
+    return new IntConstant(Float.compare(this.value, ((FloatConstant) c).value) >= 0 ? 1 : 0, this.primTypeCollector);
   }
 
   @Override
@@ -125,11 +127,11 @@ public class FloatConstant extends RealConstant {
     assertInstanceOf(constant);
     final float cValue = ((FloatConstant) constant).value;
     if (this.value < cValue) {
-      return constancFactory.createIntConstant(-1);
+      return new IntConstant(-1, this.primTypeCollector);
     } else if (this.value == cValue) {
-      return constancFactory.createIntConstant(0);
+      return new IntConstant(0, this.primTypeCollector);
     } else {
-      return constancFactory.createIntConstant(1);
+      return new IntConstant(1, this.primTypeCollector);
     }
   }
 
@@ -138,17 +140,17 @@ public class FloatConstant extends RealConstant {
     assertInstanceOf(constant);
     final float cValue = ((FloatConstant) constant).value;
     if (this.value > cValue) {
-      return constancFactory.createIntConstant(1);
+      return new IntConstant(1, this.primTypeCollector);
     } else if (this.value == cValue) {
-      return constancFactory.createIntConstant(0);
+      return new IntConstant(0, this.primTypeCollector);
     } else {
-      return constancFactory.createIntConstant(-1);
+      return new IntConstant(-1, this.primTypeCollector);
     }
   }
 
   @Override
   public NumericConstant negate() {
-    return FloatConstant.v(-(this.value));
+    return new FloatConstant(-(this.value), this.primTypeCollector);
   }
 
   @Override
@@ -164,7 +166,7 @@ public class FloatConstant extends RealConstant {
 
   @Override
   public Type getType() {
-    return FloatType.v();
+    return primTypeCollector.getFloatType();
   }
 
   @Override

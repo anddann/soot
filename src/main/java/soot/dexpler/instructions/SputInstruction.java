@@ -60,7 +60,7 @@ public class SputInstruction extends FieldInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      DalvikTyper.v().setType(assign.getRightOpBox(), instanceField.getType(), true);
+      myDalvikTyper().setType(assign.getRightOpBox(), instanceField.getType(), true);
     }
   }
 

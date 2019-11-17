@@ -29,7 +29,6 @@ import java.util.List;
 import com.google.inject.Inject;
 import soot.ArrayType;
 import soot.Body;
-import soot.G;
 import soot.Local;
 import soot.PackManager;
 import soot.Printer;
@@ -104,6 +103,7 @@ import soot.jimple.CmpExpr;
 import soot.jimple.CmpgExpr;
 import soot.jimple.CmplExpr;
 import soot.jimple.Constant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DivExpr;
 import soot.jimple.DynamicInvokeExpr;
 import soot.jimple.EnterMonitorStmt;
@@ -117,7 +117,6 @@ import soot.jimple.IdentityStmt;
 import soot.jimple.IfStmt;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceOfExpr;
-import soot.jimple.IntConstant;
 import soot.jimple.InterfaceInvokeExpr;
 import soot.jimple.InvokeStmt;
 import soot.jimple.Jimple;
@@ -162,10 +161,12 @@ import soot.options.Options;
 
 public class Grimp {
   private Jimple myJimple;
+  private ConstantFactory constancFactory;
 
   @Inject
-  public Grimp(Jimple myJimple) {
+  public Grimp(Jimple myJimple, ConstantFactory constancFactory) {
     this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
   }
 
 

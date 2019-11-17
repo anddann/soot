@@ -43,15 +43,14 @@ import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.AssignStmt;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IdentityStmt;
 import soot.jimple.IfStmt;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
-import soot.jimple.NullConstant;
 import soot.jimple.ParameterRef;
 import soot.jimple.ReturnStmt;
 import soot.jimple.Stmt;
-import soot.jimple.StringConstant;
 import soot.util.Chain;
 
 /** Utility methods for dealing with synchronization. */
@@ -59,11 +58,13 @@ public class SynchronizerManager {
 
   private Scene myScene;
   private Jimple myJimple;
+  private ConstantFactory constancFactory;
 
   @Inject
-  public SynchronizerManager(Scene myScene, Jimple myJimple) {
+  public SynchronizerManager(Scene myScene, Jimple myJimple, ConstantFactory constancFactory) {
     this.myScene = myScene;
     this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
   }
 
 
@@ -126,7 +127,7 @@ public class SynchronizerManager {
     units.insertBefore(myJimple.newAssignStmt(l, myJimple.newStaticFieldRef(classCacher.makeRef())), target);
 
     IfStmt ifStmt;
-    units.insertBefore(ifStmt = myJimple.newIfStmt(myJimple.newNeExpr(l, NullConstant.v()), target), target);
+    units.insertBefore(ifStmt = myJimple.newIfStmt(myJimple.newNeExpr(l, constancFactory.getNullConstant()), target), target);
 
     units.insertBefore(myJimple.newAssignStmt(l, myJimple.newStaticInvokeExpr(getClassFetcherFor(sc).makeRef(),
         Arrays.asList(new Value[] { constancFactory.createStringConstant(sc.getName()) }))), target);

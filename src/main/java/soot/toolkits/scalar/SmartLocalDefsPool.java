@@ -28,8 +28,12 @@ import java.util.Map;
 
 import com.google.inject.Inject;
 import soot.Body;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.util.PhaseDumper;
 
 /**
  * This class implements a pool for {@link SmartLocalDefs} instances. This is useful, as these analyses are expensive to
@@ -42,6 +46,11 @@ import soot.toolkits.graph.UnitGraph;
 public class SmartLocalDefsPool {
 
   protected Map<Body, Pair<Long, SmartLocalDefs>> pool = Maps.newHashMap();
+  private PhaseDumper myPhaseDumper;
+  private ThrowAnalysis myThrowAnalysis;
+  private ThrowableSet.Manager myMananger;
+  private Options myOptions;
+
 
   /**
    * This method returns a fresh instance of a {@link SmartLocalDefs} analysis, based on a freshly created
@@ -55,7 +64,7 @@ public class SmartLocalDefsPool {
     if (modCountAndSLD != null && modCountAndSLD.o1.longValue() == b.getModificationCount()) {
       return modCountAndSLD.o2;
     } else {
-      ExceptionalUnitGraph g = new ExceptionalUnitGraph(b, myManager);
+      ExceptionalUnitGraph g = new ExceptionalUnitGraph(b,myThrowAnalysis,myMananger, myOptions.omit_excepting_unit_edges(), myPhaseDumper);
       SmartLocalDefs newSLD = new SmartLocalDefs(g, new SimpleLiveLocals(g));
       pool.put(b, new Pair<Long, SmartLocalDefs>(b.getModificationCount(), newSLD));
       return newSLD;
@@ -68,7 +77,11 @@ public class SmartLocalDefsPool {
 
 
   @Inject
-  public SmartLocalDefsPool() {
+  public SmartLocalDefsPool(PhaseDumper myPhaseDumper, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myMananger, Options myOptions) {
+    this.myPhaseDumper = myPhaseDumper;
+    this.myThrowAnalysis = myThrowAnalysis;
+    this.myMananger = myMananger;
+    this.myOptions = myOptions;
   }
 
   public void invalidate(Body b) {

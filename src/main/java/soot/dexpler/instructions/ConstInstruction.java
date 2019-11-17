@@ -37,18 +37,20 @@ import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
 import soot.dexpler.typing.DalvikTyper;
 import soot.dexpler.typing.UntypedConstant;
-import soot.dexpler.typing.UntypedIntOrFloatConstant;
-import soot.dexpler.typing.UntypedLongOrDoubleConstant;
 import soot.jimple.AssignStmt;
 import soot.jimple.Constant;
-import soot.jimple.IntConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
-import soot.jimple.LongConstant;
 
 public class ConstInstruction extends DexlibAbstractInstruction {
 
-  public ConstInstruction(Instruction instruction, int codeAdress) {
+  private ConstantFactory constancFactory;
+  private Jimple myJimple;
+
+  public ConstInstruction(Instruction instruction, int codeAdress, ConstantFactory constancFactory, Jimple myJimple) {
     super(instruction, codeAdress);
+    this.constancFactory = constancFactory;
+    this.myJimple = myJimple;
   }
 
   @Override
@@ -63,9 +65,9 @@ public class ConstInstruction extends DexlibAbstractInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       if (cst instanceof UntypedConstant) {
-        DalvikTyper.v().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
+        myDalvikTyper().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
       } else {
-        DalvikTyper.v().setType(assign.getLeftOpBox(), cst.getType(), false);
+        myDalvikTyper().setType(assign.getLeftOpBox(), cst.getType(), false);
       }
     }
   }
@@ -118,7 +120,7 @@ public class ConstInstruction extends DexlibAbstractInstruction {
           // return UntypedLongOrconstancFactory.createDoubleConstant((long)literal<<48).toDoubleConstant();
           // seems that dexlib correctly puts the 16bits into the topmost bits.
           //
-          return UntypedLongOrconstancFactory.createDoubleConstant(literal);// .toDoubleConstant();
+          return constancFactory.createUntypedLongOrDoubleConstant(literal);// .toDoubleConstant();
         } else {
           return constancFactory.createLongConstant(literal);
         }
@@ -127,7 +129,7 @@ public class ConstInstruction extends DexlibAbstractInstruction {
       case CONST_WIDE_16:
       case CONST_WIDE_32:
         if (IDalvikTyper.ENABLE_DVKTYPER) {
-          return UntypedLongOrconstancFactory.createDoubleConstant(literal);
+          return constancFactory.createUntypedLongOrDoubleConstant(literal);
         } else {
           return constancFactory.createLongConstant(literal);
         }

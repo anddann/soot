@@ -1,23 +1,8 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
 import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production VoidType : {@link TypeDecl};
  * @ast node
@@ -103,7 +88,7 @@ public class VoidType extends TypeDecl implements Cloneable {
    * 
    */
   public VoidType() {
-    super();
+    super(myScene, myJimple, mySootResolver);
 
 
   }
@@ -124,7 +109,8 @@ public class VoidType extends TypeDecl implements Cloneable {
    * 
    */
   public VoidType(Modifiers p0, String p1, List<BodyDecl> p2) {
-    setChild(p0, 0);
+      super(myScene, myJimple, mySootResolver);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
   }
@@ -133,7 +119,8 @@ public class VoidType extends TypeDecl implements Cloneable {
    * 
    */
   public VoidType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2) {
-    setChild(p0, 0);
+      super(myScene, myJimple, mySootResolver);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
   }

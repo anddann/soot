@@ -393,7 +393,7 @@ public class DexBody {
     }
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      DalvikTyper.v().clear();
+      myDalvikTyper().clear();
     }
 
     // process method parameters and generate Jimple locals from Dalvik
@@ -410,7 +410,7 @@ public class DexBody {
       add(idStmt);
       paramLocals.add(thisLocal);
       if (IDalvikTyper.ENABLE_DVKTYPER) {
-        DalvikTyper.v().setType(idStmt.leftBox, jBody.getMethod().getDeclaringClass().getType(), false);
+        myDalvikTyper().setType(idStmt.leftBox, jBody.getMethod().getDeclaringClass().getType(), false);
       }
 
     }
@@ -448,7 +448,7 @@ public class DexBody {
         add(idStmt);
         paramLocals.add(gen);
         if (IDalvikTyper.ENABLE_DVKTYPER) {
-          DalvikTyper.v().setType(idStmt.leftBox, t, false);
+          myDalvikTyper().setType(idStmt.leftBox, t, false);
         }
 
         // some parameters may be encoded on two registers.
@@ -596,11 +596,11 @@ public class DexBody {
       DexReturnValuePropagator.v().transform(jBody);
       getCopyPopagator().transform(jBody);
       DexNullThrowTransformer.v().transform(jBody);
-      DalvikTyper.v().typeUntypedConstrantInDiv(jBody);
+      myDalvikTyper().typeUntypedConstrantInDiv(jBody);
       myDeadAssignmentEliminator.transform(jBody);
       myUnusedLocalEliminator.transform(jBody);
 
-      DalvikTyper.v().assignType(jBody);
+      myDalvikTyper().assignType(jBody);
       // jBody.validate();
       jBody.validateUses();
       jBody.validateValueBoxes();

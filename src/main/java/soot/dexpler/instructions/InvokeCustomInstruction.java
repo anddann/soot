@@ -61,22 +61,22 @@ import soot.SootMethodRef;
 import soot.Value;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
-import soot.jimple.ClassConstant;
-import soot.jimple.DoubleConstant;
-import soot.jimple.FloatConstant;
-import soot.jimple.IntConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
-import soot.jimple.LongConstant;
 import soot.jimple.MethodHandle;
 import soot.jimple.MethodHandle.Kind;
-import soot.jimple.MethodType;
-import soot.jimple.NullConstant;
-import soot.jimple.StringConstant;
 
 public class InvokeCustomInstruction extends MethodInvocationInstruction {
 
-  public InvokeCustomInstruction(Instruction instruction, int codeAddress) {
+  private ConstantFactory constancFactory;
+  private Jimple myJimple;
+  private Scene myScene;
+
+  public InvokeCustomInstruction(Instruction instruction, int codeAddress, ConstantFactory constancFactory, Jimple myJimple, Scene myScene) {
     super(instruction, codeAddress);
+    this.constancFactory = constancFactory;
+    this.myJimple = myJimple;
+    this.myScene = myScene;
   }
 
   @Override
@@ -130,7 +130,7 @@ public class InvokeCustomInstruction extends MethodInvocationInstruction {
       } else if (ev instanceof DoubleEncodedValue) {
         out.add(constancFactory.createDoubleConstant(((DoubleEncodedValue) ev).getValue()));
       } else if (ev instanceof FloatEncodedValue) {
-        out.add(FloatConstant.v(((FloatEncodedValue) ev).getValue()));
+        out.add(constancFactory.createFloatConstant(((FloatEncodedValue) ev).getValue()));
       } else if (ev instanceof IntEncodedValue) {
         out.add(constancFactory.createIntConstant(((IntEncodedValue) ev).getValue()));
       } else if (ev instanceof LongEncodedValue) {
@@ -140,7 +140,7 @@ public class InvokeCustomInstruction extends MethodInvocationInstruction {
       } else if (ev instanceof StringEncodedValue) {
         out.add(constancFactory.createStringConstant(((StringEncodedValue) ev).getValue()));
       } else if (ev instanceof NullEncodedValue) {
-        out.add(myNullConstant);
+        out.add(constancFactory.getNullConstant());
       } else if (ev instanceof MethodTypeEncodedValue) {
         MethodProtoReference protRef = ((MethodTypeEncodedValue) ev).getValue();
         out.add(constancFactory.createMethodType(convertParameterTypes(protRef.getParameterTypes()), DexType.toSoot(protRef.getReturnType())));
@@ -152,9 +152,9 @@ public class InvokeCustomInstruction extends MethodInvocationInstruction {
         Kind kind = dexToSootMethodHandleKind(mh.getMethodHandleType());
         MethodHandle handle;
         if (ref instanceof MethodReference) {
-          handle = constancFactory.createMethodHandle((getSootMethodRef((MethodReference) ref, kind), kind.getValue());
+          handle = constancFactory.createMethodHandle(getSootMethodRef((MethodReference) ref, kind), kind.getValue());
         } else if (ref instanceof FieldReference) {
-          handle = constancFactory.createMethodHandle((getSootFieldRef((FieldReference) ref, kind), kind.getValue());
+          handle = constancFactory.createMethodHandle(getSootFieldRef((FieldReference) ref, kind), kind.getValue());
         } else {
           throw new RuntimeException("Error: Unhandled method reference type " + ref.getClass().toString() + ".");
         }

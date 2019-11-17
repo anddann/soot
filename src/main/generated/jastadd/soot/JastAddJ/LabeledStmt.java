@@ -1,29 +1,19 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
+
+import beaver.Symbol;
 import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production LabeledStmt : {@link BranchTargetStmt} ::= <span class="component">&lt;Label:String&gt;</span> <span class="component">{@link Stmt}</span>;
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:199
  */
 public class LabeledStmt extends BranchTargetStmt implements Cloneable {
+  private Jimple myJimple;
+
   /**
    * @apilevel low-level
    */
@@ -138,12 +128,14 @@ public class LabeledStmt extends BranchTargetStmt implements Cloneable {
   }
   /**
    * @ast method 
-   * 
+   *
+   * @param myJimple
    */
-  public LabeledStmt() {
+  public LabeledStmt(Jimple myJimple) {
     super();
 
 
+    this.myJimple = myJimple;
   }
   /**
    * Initializes the child array to the correct size.
@@ -160,7 +152,8 @@ public class LabeledStmt extends BranchTargetStmt implements Cloneable {
    * @ast method 
    * 
    */
-  public LabeledStmt(String p0, Stmt p1) {
+  public LabeledStmt(String p0, Stmt p1, Jimple myJimple) {
+    this.myJimple = myJimple;
     setLabel(p0);
     setChild(p1, 0);
   }
@@ -168,7 +161,8 @@ public class LabeledStmt extends BranchTargetStmt implements Cloneable {
    * @ast method 
    * 
    */
-  public LabeledStmt(beaver.Symbol p0, Stmt p1) {
+  public LabeledStmt(Symbol p0, Stmt p1, Jimple myJimple) {
+    this.myJimple = myJimple;
     setLabel(p0);
     setChild(p1, 0);
   }
@@ -445,7 +439,7 @@ public class LabeledStmt extends BranchTargetStmt implements Cloneable {
   /**
    * @apilevel internal
    */
-  private soot.jimple.Stmt label_compute() {  return newLabel();  }
+  private soot.jimple.Stmt label_compute() {  return newLabel(myJimple);  }
   /**
    * @apilevel internal
    */

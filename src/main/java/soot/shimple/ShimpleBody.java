@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import soot.Body;
 import soot.Printer;
 import soot.SootMethod;
+import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.StmtBody;
 import soot.options.Options;
@@ -61,15 +62,17 @@ public class ShimpleBody extends StmtBody {
   protected ShimpleBodyBuilder sbb;
 
   protected boolean isExtendedSSA = false;
+  private Jimple myShimple;
 
   /**
    * Construct an empty ShimpleBody associated with m.
    **/
-  ShimpleBody(SootMethod m, Map options, Printer myPrinter, Options myOptions) {
+  ShimpleBody(SootMethod m, Map options, Printer myPrinter, Options myOptions, Jimple myShimple) {
     super(m, myOptions, myPrinter);
 
     // must happen before SPatchingChain gets created
     this.options = new ShimpleOptions(options);
+    this.myShimple = myShimple;
     setSSA(true);
     isExtendedSSA = this.options.extended();
 
@@ -84,8 +87,9 @@ public class ShimpleBody extends StmtBody {
    * Currently available option is "naive-phi-elimination", typically in the "shimple" phase (eg, -p shimple
    * naive-phi-elimination) which can be useful for understanding the effect of analyses.
    **/
-  ShimpleBody(Body body, Map options, Options myOptions, Printer myPrinter) {
+  ShimpleBody(Body body, Map options, Options myOptions, Printer myPrinter, Jimple myShimple) {
     super(body.getMethod(), myOptions, myPrinter);
+    this.myShimple = myShimple;
 
     if (!(body instanceof JimpleBody || body instanceof ShimpleBody)) {
       throw new RuntimeException("Cannot construct ShimpleBody from given Body type.");
@@ -151,11 +155,13 @@ public class ShimpleBody extends StmtBody {
    * Remember to setActiveBody() if necessary in your SootMethod.
    *
    * @see #eliminatePhiNodes()
-   **/
-  public JimpleBody toJimpleBody() {
+   *
+   * @param myJimplePar*/
+  public JimpleBody toJimpleBody(Jimple myJimplePar) {
     ShimpleBody sBody = (ShimpleBody) this.clone();
 
     sBody.eliminateNodes();
+    Jimple myJimple = myJimplePar;
     JimpleBody jBody = myJimple.newBody(sBody.getMethod());
     jBody.importBodyContentsFrom(sBody);
     return jBody;
@@ -169,7 +175,7 @@ public class ShimpleBody extends StmtBody {
    * naive-phi-elimination) which skips the dead code elimination and register allocation phase before eliminating Phi nodes.
    * This can be useful for understanding the effect of analyses.
    *
-   * @see #toJimpleBody()
+   * @see #toJimpleBody(Jimple)
    **/
   public void eliminatePhiNodes() {
     sbb.preElimOpt();

@@ -43,6 +43,7 @@ import soot.FloatType;
 import soot.IntType;
 import soot.Local;
 import soot.LongType;
+import soot.Scene;
 import soot.ShortType;
 import soot.SootClass;
 import soot.SootMethod;
@@ -56,6 +57,7 @@ import soot.jimple.CaughtExceptionRef;
 import soot.jimple.ClassConstant;
 import soot.jimple.ConcreteRef;
 import soot.jimple.Constant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DoubleConstant;
 import soot.jimple.EnterMonitorStmt;
 import soot.jimple.ExitMonitorStmt;
@@ -160,12 +162,12 @@ public class StmtVisitor implements StmtSwitch {
   private static final int CHAR_OFFSET = 5;
   private static final int SHORT_OFFSET = 6;
 
-  public StmtVisitor(SootMethod belongingMethod, DexArrayInitDetector arrayInitDetector) {
+  public StmtVisitor(SootMethod belongingMethod, DexArrayInitDetector arrayInitDetector, ConstantFactory constancFactory, Scene myScene) {
     this.belongingMethod = belongingMethod;
     this.arrayInitDetector = arrayInitDetector;
     constantV = new ConstantVisitor(this);
     regAlloc = new RegisterAllocator();
-    exprV = new ExprVisitor(this, constantV, regAlloc);
+    exprV = new ExprVisitor(this, constantV, regAlloc, constancFactory, myScene);
     insns = new ArrayList<Insn>();
     payloads = new ArrayList<AbstractPayload>();
   }

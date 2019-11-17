@@ -33,9 +33,9 @@ import soot.BodyTransformer;
 import soot.Trap;
 import soot.Unit;
 import soot.jimple.CaughtExceptionRef;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IdentityStmt;
 import soot.jimple.Jimple;
-import soot.jimple.NullConstant;
 import soot.jimple.toolkits.scalar.UnreachableCodeEliminator;
 
 /**
@@ -49,11 +49,13 @@ public class TrapSplitter extends BodyTransformer {
 
   private Jimple myJimple;
   private UnreachableCodeEliminator myUnreachableCodeEliminator;
+  private ConstantFactory myConstantFactory;
 
   @Inject
-  public TrapSplitter(Jimple myJimple, UnreachableCodeEliminator myUnreachableCodeEliminator) {
+  public TrapSplitter(Jimple myJimple, UnreachableCodeEliminator myUnreachableCodeEliminator, ConstantFactory myConstantFactory) {
     this.myJimple = myJimple;
     this.myUnreachableCodeEliminator = myUnreachableCodeEliminator;
+    this.myConstantFactory = myConstantFactory;
   }
 
 
@@ -168,7 +170,7 @@ public class TrapSplitter extends BodyTransformer {
       }
     }
     
-    removePotentiallyUselassTraps(b, potentiallyUselessTrapHandlers,myJimple,myUnreachableCodeEliminator);
+    removePotentiallyUselassTraps(b, potentiallyUselessTrapHandlers,myJimple,myUnreachableCodeEliminator, myConstantFactory);
   }
 
   /**
@@ -177,8 +179,9 @@ public class TrapSplitter extends BodyTransformer {
    * The list is changed so that it contains the unreferenced trap handlers.
    * @param b the body
    * @param potentiallyUselessTrapHandlers potentially useless trap handlers
+   * @param myConstantFactory
    */
-  public static void removePotentiallyUselassTraps(Body b, Set<Unit> potentiallyUselessTrapHandlers, Jimple myJimple, UnreachableCodeEliminator myUnreachableCodeEliminator) {
+  public static void removePotentiallyUselassTraps(Body b, Set<Unit> potentiallyUselessTrapHandlers, Jimple myJimple, UnreachableCodeEliminator myUnreachableCodeEliminator, ConstantFactory myConstantFactory) {
     if (potentiallyUselessTrapHandlers == null) {
       return;
     }
@@ -194,7 +197,8 @@ public class TrapSplitter extends BodyTransformer {
         if (assign.getRightOp() instanceof CaughtExceptionRef) {
           //Make sure that the useless trap handler, which is not used
           //anywhere else still gets a valid value.
-          Unit newStmt = myJimple.newAssignStmt(assign.getLeftOp(), NullConstant.v());
+          ConstantFactory constantFactory = myConstantFactory;
+          Unit newStmt = myJimple.newAssignStmt(assign.getLeftOp(), constantFactory.getNullConstant());
           b.getUnits().swapWith(assign, newStmt);
           removedUselessTrap = true;
         }

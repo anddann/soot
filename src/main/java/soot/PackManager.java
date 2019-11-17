@@ -1199,7 +1199,7 @@ public class PackManager {
         getPack("sop").apply(sBody);
 
         if (produceJimple || (wholeShimple && !produceShimple)) {
-          m.setActiveBody(sBody.toJimpleBody());
+          m.setActiveBody(sBody.toJimpleBody(myJimple));
         }
       }
 

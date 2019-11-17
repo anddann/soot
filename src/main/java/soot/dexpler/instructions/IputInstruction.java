@@ -63,7 +63,7 @@ public class IputInstruction extends FieldInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // Debug.printDbg(IDalvikTyper.DEBUG, "constraint: "+ assign);
-      DalvikTyper.v().setType(assign.getRightOpBox(), instanceField.getType(), true);
+      myDalvikTyper().setType(assign.getRightOpBox(), instanceField.getType(), true);
     }
   }
 

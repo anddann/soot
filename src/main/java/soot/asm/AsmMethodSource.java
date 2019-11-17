@@ -59,19 +59,13 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import soot.ArrayType;
 import soot.Body;
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
+import soot.LambdaMetaFactory;
 import soot.Local;
-import soot.LongType;
 import soot.MethodSource;
+import soot.PackManager;
 import soot.PhaseOptions;
 import soot.RefType;
 import soot.Scene;
-import soot.ShortType;
 import soot.SootClass;
 import soot.SootFieldRef;
 import soot.SootMethod;
@@ -80,23 +74,21 @@ import soot.Trap;
 import soot.Type;
 import soot.Unit;
 import soot.UnitBox;
-import soot.UnknownType;
 import soot.Value;
 import soot.ValueBox;
 import soot.VoidType;
+import soot.coffi.Util;
 import soot.jimple.AddExpr;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
 import soot.jimple.BinopExpr;
 import soot.jimple.CastExpr;
 import soot.jimple.CaughtExceptionRef;
-import soot.jimple.ClassConstant;
 import soot.jimple.ConditionExpr;
 import soot.jimple.Constant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DefinitionStmt;
-import soot.jimple.DoubleConstant;
 import soot.jimple.FieldRef;
-import soot.jimple.FloatConstant;
 import soot.jimple.GotoStmt;
 import soot.jimple.IdentityStmt;
 import soot.jimple.InstanceFieldRef;
@@ -106,17 +98,13 @@ import soot.jimple.IntConstant;
 import soot.jimple.InvokeExpr;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
-import soot.jimple.LongConstant;
 import soot.jimple.LookupSwitchStmt;
 import soot.jimple.MethodHandle;
-import soot.jimple.MethodType;
 import soot.jimple.MonitorStmt;
 import soot.jimple.NewArrayExpr;
 import soot.jimple.NewMultiArrayExpr;
 import soot.jimple.NopStmt;
-import soot.jimple.NullConstant;
 import soot.jimple.ReturnStmt;
-import soot.jimple.StringConstant;
 import soot.jimple.TableSwitchStmt;
 import soot.jimple.ThrowStmt;
 import soot.jimple.UnopExpr;
@@ -184,9 +172,14 @@ final class AsmMethodSource implements MethodSource {
   private Scene myScene;
   private Jimple myJimple;
   private Options myOptions;
+    private ConstantFactory constancFactory;
+    private LambdaMetaFactory myLambdaMetaFactory;
+    private PackManager myPackManager;
+    private PhaseOptions myPhaseOptions;
+    private Util myCoffiUtil;
 
-  AsmMethodSource(int maxLocals, InsnList insns, List<LocalVariableNode> localVars, List<TryCatchBlockNode> tryCatchBlocks,
-      Scene myScene,  Options myOptions) {
+    AsmMethodSource(int maxLocals, InsnList insns, List<LocalVariableNode> localVars, List<TryCatchBlockNode> tryCatchBlocks,
+                    Scene myScene, Options myOptions, ConstantFactory constancFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, PhaseOptions myPhaseOptions, Util myCoffiUtil) {
     this.maxLocals = maxLocals;
     this.instructions = insns;
     this.localVars = localVars;
@@ -194,7 +187,12 @@ final class AsmMethodSource implements MethodSource {
     this.myScene = myScene;
     this.myJimple = myScene.getMyJimple();
     this.myOptions = myOptions;
-  }
+        this.constancFactory = constancFactory;
+        this.myLambdaMetaFactory = myLambdaMetaFactory;
+        this.myPackManager = myPackManager;
+        this.myPhaseOptions = myPhaseOptions;
+        this.myCoffiUtil = myCoffiUtil;
+    }
 
   private StackFrame getFrame(AbstractInsnNode insn) {
     StackFrame frame = frames.get(insn);
@@ -228,7 +226,7 @@ final class AsmMethodSource implements MethodSource {
       } else {
         name = "l" + idx;
       }
-      l = myJimple.newLocal(name, UnknownType.v());
+      l = myJimple.newLocal(name, myScene.getPrimTypeCollector().getUnknownType());
       locals.put(i, l);
     }
     return l;
@@ -373,7 +371,7 @@ final class AsmMethodSource implements MethodSource {
 
   Local newStackLocal() {
     Integer idx = nextLocal++;
-    Local l = myJimple.newLocal("$stack" + idx, UnknownType.v());
+    Local l = myJimple.newLocal("$stack" + idx, myScene.getPrimTypeCollector().getUnknownType());
     locals.put(idx, l);
     return l;
   }
@@ -530,13 +528,13 @@ final class AsmMethodSource implements MethodSource {
     if (out == null) {
       Value v;
       if (op == ACONST_NULL) {
-        v = NullConstant.v();
+        v = constancFactory.getNullConstant();
       } else if (op >= ICONST_M1 && op <= ICONST_5) {
         v = constancFactory.createIntConstant(op - ICONST_0);
       } else if (op == LCONST_0 || op == LCONST_1) {
         v = constancFactory.createLongConstant(op - LCONST_0);
       } else if (op >= FCONST_0 && op <= FCONST_2) {
-        v = FloatConstant.v(op - FCONST_0);
+        v = constancFactory.createFloatConstant(op - FCONST_0);
       } else if (op == DCONST_0 || op == DCONST_1) {
         v = constancFactory.createDoubleConstant(op - DCONST_0);
       } else {
@@ -791,19 +789,19 @@ final class AsmMethodSource implements MethodSource {
     if (out == null) {
       Type totype;
       if (op == I2L || op == F2L || op == D2L) {
-        totype = LongType.v();
+        totype = myScene.getPrimTypeCollector().getLongType();
       } else if (op == L2I || op == F2I || op == D2I) {
-        totype = IntType.v();
+        totype = myScene.getPrimTypeCollector().getIntType();
       } else if (op == I2F || op == L2F || op == D2F) {
-        totype = FloatType.v();
+        totype = myScene.getPrimTypeCollector().getFloatType();
       } else if (op == I2D || op == L2D || op == F2D) {
-        totype = DoubleType.v();
+        totype = myScene.getPrimTypeCollector().getDoubleType();
       } else if (op == I2B) {
-        totype = ByteType.v();
+        totype = myScene.getPrimTypeCollector().getByteType();
       } else if (op == I2S) {
-        totype = ShortType.v();
+        totype = myScene.getPrimTypeCollector().getShortType();
       } else if (op == I2C) {
-        totype = CharType.v();
+        totype = myScene.getPrimTypeCollector().getCharType();
       } else {
         throw new AssertionError("Unknonw prim cast op: " + op);
       }
@@ -931,28 +929,28 @@ final class AsmMethodSource implements MethodSource {
         Type type;
         switch (insn.operand) {
           case T_BOOLEAN:
-            type = BooleanType.v();
+            type = myScene.getPrimTypeCollector().getBooleanType();
             break;
           case T_CHAR:
-            type = CharType.v();
+            type = myScene.getPrimTypeCollector().getCharType();
             break;
           case T_FLOAT:
-            type = FloatType.v();
+            type = myScene.getPrimTypeCollector().getFloatType();
             break;
           case T_DOUBLE:
-            type = DoubleType.v();
+            type = myScene.getPrimTypeCollector().getDoubleType();
             break;
           case T_BYTE:
-            type = ByteType.v();
+            type = myScene.getPrimTypeCollector().getByteType();
             break;
           case T_SHORT:
-            type = ShortType.v();
+            type = myScene.getPrimTypeCollector().getShortType();
             break;
           case T_INT:
-            type = IntType.v();
+            type = myScene.getPrimTypeCollector().getIntType();
             break;
           case T_LONG:
-            type = LongType.v();
+            type = myScene.getPrimTypeCollector().getLongType();
             break;
           default:
             throw new AssertionError("Unknown NEWARRAY type!");
@@ -1031,9 +1029,9 @@ final class AsmMethodSource implements MethodSource {
         } else if (op == IFLE) {
           cond = myJimple.newLeExpr(v, constancFactory.createIntConstant(0));
         } else if (op == IFNULL) {
-          cond = myJimple.newEqExpr(v, NullConstant.v());
+          cond = myJimple.newEqExpr(v, constancFactory.getNullConstant());
         } else if (op == IFNONNULL) {
-          cond = myJimple.newNeExpr(v, NullConstant.v());
+          cond = myJimple.newNeExpr(v, constancFactory.getNullConstant());
         } else {
           throw new AssertionError("Unknown if op: " + op);
         }
@@ -1078,7 +1076,7 @@ final class AsmMethodSource implements MethodSource {
     if (val instanceof Integer) {
       v = constancFactory.createIntConstant((Integer) val);
     } else if (val instanceof Float) {
-      v = FloatConstant.v((Float) val);
+      v = constancFactory.createFloatConstant((Float) val);
     } else if (val instanceof Long) {
       v = constancFactory.createLongConstant((Long) val);
     } else if (val instanceof Double) {
@@ -1097,9 +1095,9 @@ final class AsmMethodSource implements MethodSource {
     } else if (val instanceof Handle) {
       Handle h = (Handle) val;
       if (MethodHandle.isMethodRef(h.getTag())) {
-        v = constancFactory.createMethodHandle((toSootMethodRef((Handle) val), ((Handle) val).getTag());
+        v = constancFactory.createMethodHandle(toSootMethodRef((Handle) val), ((Handle) val).getTag());
       } else {
-        v = constancFactory.createMethodHandle((toSootFieldRef((Handle) val), ((Handle) val).getTag());
+        v = constancFactory.createMethodHandle(toSootFieldRef((Handle) val), ((Handle) val).getTag());
       }
     } else {
       throw new AssertionError("Unknown constant type: " + val.getClass());
@@ -1282,7 +1280,7 @@ final class AsmMethodSource implements MethodSource {
 
       SootMethodRef bootstrap_model = null;
 
-      if (PhaseOptions.getBoolean(myPhaseOptions().getPhaseOptions("jb"), "model-lambdametafactory")) {
+      if (PhaseOptions.getBoolean(myPhaseOptions.getPhaseOptions("jb"), "model-lambdametafactory")) {
         String bsmMethodRefStr = bsmMethodRef.toString();
         if (bsmMethodRefStr.equals(METAFACTORY_SIGNATURE) || bsmMethodRefStr.equals(ALT_METAFACTORY_SIGNATURE)) {
           SootClass enclosingClass = body.getMethod().getDeclaringClass();

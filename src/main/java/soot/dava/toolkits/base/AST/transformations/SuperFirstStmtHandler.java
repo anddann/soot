@@ -775,7 +775,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
 
     // have to put the newConstructorBody into an list of subBodies which
     // goes into the newASTConstructorMethod
-    newASTConstructorMethod = new ASTMethodNode(newConstructorBody);
+    newASTConstructorMethod = new ASTMethodNode(newConstructorBody, myTryContentsFinder, myASTWalker);
 
     // dont forget to set the declarations
     newASTConstructorMethod.setDeclarations(newDecs);
@@ -945,7 +945,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
 
     // have to put the newPreinitBody into an list of subBodies which goes
     // into the newASTPreInitMethod
-    newASTPreInitMethod = new ASTMethodNode(newPreinitBody);
+    newASTPreInitMethod = new ASTMethodNode(newPreinitBody, myTryContentsFinder, myASTWalker);
 
     // dont forget to set the declarations
     newASTPreInitMethod.setDeclarations(newDecs);

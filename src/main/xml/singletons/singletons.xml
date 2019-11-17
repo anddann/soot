@@ -194,4 +194,5 @@
   <class>soot.toolkits.scalar.ConstantInitializerToTagTransformer</class>
   <class>soot.PrimTypeCollector</class>
   <class>soot.jimple.toolkits.callgraph.UnreachableMethodTransformer</class>
+  <class>soot.dexpler.typing.DalvikTyper</class>
 </singletons>

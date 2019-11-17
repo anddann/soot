@@ -1,23 +1,10 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production EnumDecl : {@link ClassDecl} ::= <span class="component">{@link Modifiers}</span> <span class="component">&lt;ID:String&gt;</span> <span class="component">[SuperClassAccess:{@link Access}]</span> <span class="component">Implements:{@link Access}*</span> <span class="component">{@link BodyDecl}*</span>;
  * @ast node
@@ -166,8 +153,8 @@ public class EnumDecl extends ClassDecl implements Cloneable {
               )
             )
           )
-      )
-    );
+      ),
+            myScene);
     addBodyDecl(values);
     // public static final Test[] values() { return (Test[])$VALUES.clone(); }
     addBodyDecl(
@@ -200,8 +187,8 @@ public class EnumDecl extends ClassDecl implements Cloneable {
               )
             )
           )
-        )
-      )
+        ),
+              myScene, myJimple)
     );
     // public static Test valueOf(String s) { return (Test)java.lang.Enum.valueOf(Test.class, s); }
     addBodyDecl(
@@ -245,8 +232,8 @@ public class EnumDecl extends ClassDecl implements Cloneable {
               )
             )
           )
-        )
-      )
+        ),
+              myScene, myJimple)
     );
   }
   /**

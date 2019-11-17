@@ -44,6 +44,7 @@ import soot.tagkit.StringTag;
 import soot.tagkit.Tag;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.FlowSet;
 import soot.util.PhaseDumper;
 
@@ -53,19 +54,21 @@ public class NullPointerColorer extends BodyTransformer {
   private Options myOptions;
   private PhaseDumper myPhaseDumper;
   private Scene myScene;
+  private InteractionHandler myInteractionHandler;
 
   @Inject
-  public NullPointerColorer(ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumper, Scene myScene) {
+  public NullPointerColorer(ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumper, Scene myScene, InteractionHandler myInteractionHandler) {
     this.myManager = myManager;
     this.myOptions = myOptions;
     this.myPhaseDumper = myPhaseDumper;
     this.myScene = myScene;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
 
-    BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(b,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene));
+    BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(b,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene), myInteractionHandler, myOptions.interactive_mode());
 
     Iterator<Unit> it = b.getUnits().iterator();
 

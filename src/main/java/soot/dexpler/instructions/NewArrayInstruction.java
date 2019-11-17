@@ -81,8 +81,8 @@ public class NewArrayInstruction extends DexlibAbstractInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      DalvikTyper.v().setType(newArrayExpr.getSizeBox(), IntType.v(), true);
-      DalvikTyper.v().setType(assign.getLeftOpBox(), newArrayExpr.getType(), false);
+      myDalvikTyper().setType(newArrayExpr.getSizeBox(), IntType.v(), true);
+      myDalvikTyper().setType(assign.getLeftOpBox(), newArrayExpr.getType(), false);
     }
   }
 

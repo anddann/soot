@@ -71,8 +71,8 @@ public class Binop2addrInstruction extends TaggedInstruction {
 
     /*
      * if (IDalvikTyper.ENABLE_DVKTYPER) { BinopExpr bexpr = (BinopExpr)expr; short op = instruction.getOpcode().value;
-     * DalvikTyper.v().setType(bexpr.getOp1Box(), op1BinType[op-0xb0], true); DalvikTyper.v().setType(bexpr.getOp2Box(),
-     * op2BinType[op-0xb0], true); DalvikTyper.v().setType(assign.getLeftOpBox(), resBinType[op-0xb0], false); }
+     * myDalvikTyper().setType(bexpr.getOp1Box(), op1BinType[op-0xb0], true); myDalvikTyper().setType(bexpr.getOp2Box(),
+     * op2BinType[op-0xb0], true); myDalvikTyper().setType(assign.getLeftOpBox(), resBinType[op-0xb0], false); }
      */
   }
 

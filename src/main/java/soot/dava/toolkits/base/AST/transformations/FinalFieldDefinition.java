@@ -291,7 +291,7 @@ public class FinalFieldDefinition {
     } else if (fieldType instanceof DoubleType) {
       assignStmt = new GAssignStmt(ref, constancFactory.createDoubleConstant(0));
     } else if (fieldType instanceof FloatType) {
-      assignStmt = new GAssignStmt(ref, FloatConstant.v(0));
+      assignStmt = new GAssignStmt(ref, constancFactory.createFloatConstant(0));
     } else if (fieldType instanceof LongType) {
       assignStmt = new GAssignStmt(ref, constancFactory.createLongConstant(0));
     } else if (fieldType instanceof IntType || fieldType instanceof ByteType || fieldType instanceof ShortType

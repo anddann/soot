@@ -63,7 +63,7 @@ public class UntypedIntOrFloatConstant extends UntypedConstant {
   }
 
   public FloatConstant toFloatConstant() {
-    return FloatConstant.v(Float.intBitsToFloat((int) value));
+    return constancFactory.createFloatConstant(Float.intBitsToFloat((int) value));
   }
 
   public IntConstant toIntConstant() {

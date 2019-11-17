@@ -5,6 +5,8 @@ import java.util.List;
 import soot.SootFieldRef;
 import soot.SootMethodRef;
 import soot.Type;
+import soot.Value;
+import soot.dava.internal.javaRep.DIntConstant;
 import soot.dexpler.typing.UntypedIntOrFloatConstant;
 import soot.dexpler.typing.UntypedLongOrDoubleConstant;
 import soot.shimple.toolkits.scalar.SEvaluator;
@@ -12,6 +14,8 @@ import soot.shimple.toolkits.scalar.SEvaluator;
 public interface ConstantFactory {
 
   public IntConstant createIntConstant(int value);
+
+  public DIntConstant createDIntConstant(int value, Type type);
 
   public DoubleConstant createDoubleConstant(double value);
 
@@ -39,4 +43,5 @@ public interface ConstantFactory {
 
   public SEvaluator.BottomConstant createBottomConstant();
 
+  public NullConstant getNullConstant();
 }

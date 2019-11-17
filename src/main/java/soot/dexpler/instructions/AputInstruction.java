@@ -74,8 +74,8 @@ public class AputInstruction extends FieldInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      DalvikTyper.v().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
-      DalvikTyper.v().setType(arrayRef.getIndexBox(), IntType.v(), true);
+      myDalvikTyper().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
+      myDalvikTyper().setType(arrayRef.getIndexBox(), IntType.v(), true);
     }
   }
 

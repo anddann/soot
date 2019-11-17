@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import beaver.Symbol;
 import soot.Local;
 import soot.RefType;
 import soot.Scene;
@@ -30,6 +31,11 @@ import soot.jimple.JimpleBody;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:41
  */
 public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, SimpleSet, Iterator, VariableScope {
+	private Scene myScene;
+	private Jimple myJimple;
+	private SootResolver mySootResolver;
+
+
 	/**
 	 * @apilevel low-level
 	 */
@@ -1017,7 +1023,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 			m.addModifier(new Modifier("public"));
 			m.addModifier(new Modifier("synthetic"));
 			m.addModifier(new Modifier("final"));
-			addMemberField(new FieldDeclaration(m, v.type().createQualifiedAccess(), "val$" + v.name(), new Opt()));
+			addMemberField(new FieldDeclaration(m, v.type().createQualifiedAccess(), "val$" + v.name(), new Opt(), myScene));
 		}
 	}
 
@@ -1052,7 +1058,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 						new List().add(new Modifier("public")).add(new Modifier("static")).add(new Modifier("final"))),
 				new PrimitiveTypeAccess("boolean"), "$assertionsDisabled",
 				new Opt(new LogNotExpr(topLevelType().createQualifiedAccess().qualifiesAccess(
-						new ClassAccess().qualifiesAccess(new MethodAccess("desiredAssertionStatus", new List()))))));
+						new ClassAccess().qualifiesAccess(new MethodAccess("desiredAssertionStatus", new List()))))), myScene);
 		getBodyDeclList().insertChild(createAssertionsDisabled, 0);
 		// explicit read to trigger possible rewrites
 		createAssertionsDisabled = (FieldDeclaration) getBodyDeclList().getChild(0);
@@ -1084,7 +1090,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 		// static synthetic Class class$java$lang$String;
 		FieldDeclaration f = new FieldDeclaration(
 				new Modifiers(new List().add(new Modifier("public")).add(new Modifier("static"))),
-				lookupType("java.lang", "Class").createQualifiedAccess(), name, new Opt()) {
+				lookupType("java.lang", "Class").createQualifiedAccess(), name, new Opt(), myScene) {
 			public boolean isConstant() {
 				return true;
 			}
@@ -1140,7 +1146,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 												new List().add(new VarAccess("e")
 														.qualifiesAccess(new MethodAccess("getMessage", new List()))),
 												new Opt())))))),
-								new Opt()))))) {
+								new Opt())))), myScene, myJimple) {
 			public boolean isConstant() {
 				return true;
 			}
@@ -1175,7 +1181,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	 */
 	public void jimplify1phase2() {
 		if (needsClinit() && !getSootClassDecl().declaresMethod("<clinit>", new ArrayList())) {
-			clinit = myScene.makeSootMethod("<clinit>", new ArrayList(), soot.VoidType.v(), soot.Modifier.STATIC,
+			clinit = myScene.makeSootMethod("<clinit>", new ArrayList(), myScene.getPrimTypeCollector().getVoidType(), soot.Modifier.STATIC,
 					new ArrayList());
 			getSootClassDecl().addMethod(clinit);
 		}
@@ -1317,11 +1323,16 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 
 	/**
 	 * @ast method
-	 * 
-	 */
-	public TypeDecl() {
+	 *
+	 * @param myScene
+	 * @param myJimple
+	 * @param mySootResolver */
+	public TypeDecl(Scene myScene, Jimple myJimple, SootResolver mySootResolver) {
 		super();
 
+		this.myScene = myScene;
+		this.myJimple = myJimple;
+		this.mySootResolver = mySootResolver;
 	}
 
 	/**
@@ -1342,7 +1353,10 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	 * @ast method
 	 * 
 	 */
-	public TypeDecl(Modifiers p0, String p1, List<BodyDecl> p2) {
+	public TypeDecl(Modifiers p0, String p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver) {
+		this.myScene = myScene;
+		this.myJimple = myJimple;
+		this.mySootResolver = mySootResolver;
 		setChild(p0, 0);
 		setID(p1);
 		setChild(p2, 1);
@@ -1352,7 +1366,10 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	 * @ast method
 	 * 
 	 */
-	public TypeDecl(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2) {
+	public TypeDecl(Modifiers p0, Symbol p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver) {
+		this.myScene = myScene;
+		this.myJimple = myJimple;
+		this.mySootResolver = mySootResolver;
 		setChild(p0, 0);
 		setID(p1);
 		setChild(p2, 1);
@@ -2262,8 +2279,8 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 
 		List body = new List();
 		body.add(new FieldDeclaration(new Modifiers(new List().add(new Modifier("public")).add(new Modifier("final"))),
-				new PrimitiveTypeAccess("int"), "length", new Opt() // [Init:Expr]
-		));
+				new PrimitiveTypeAccess("int"), "length", new Opt(), // [Init:Expr]
+                myScene));
 		MethodDecl clone = null;
 		TypeDecl typeObject = typeObject();
 		for (int i = 0; clone == null && i < typeObject.getNumBodyDecl(); i++) {
@@ -5751,7 +5768,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	 * @apilevel internal
 	 */
 	private Type getSootType_compute() {
-		return RefType.v(erasure().jvmName());
+		return RefType.v(erasure().jvmName(),myScene);
 	}
 
 	/**
@@ -6050,7 +6067,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 																						new VarAccess("length"))),
 																new Opt())),
 												new Opt()))
-										.add(new ReturnStmt(createEnumArray(enumDecl).createBoundFieldAccess())))));
+										.add(new ReturnStmt(createEnumArray(enumDecl).createBoundFieldAccess())))), myScene, myJimple);
 		// add method declaration as a body declaration
 		getBodyDeclList().insertChild(m, 1);
 		// trigger possible rewrites
@@ -6142,7 +6159,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 				new Modifiers(
 						new List().add(new Modifier("static")).add(new Modifier("final")).add(new Modifier("private"))),
 				typeInt().arrayType().createQualifiedAccess(), "$SwitchMap$" + enumDecl.fullName().replace('.', '$'),
-				new Opt());
+				new Opt(), myScene);
 		// add field declaration as a body declaration
 		getBodyDeclList().insertChild(f, 0);
 		// trigger possible rewrites

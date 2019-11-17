@@ -95,6 +95,6 @@ class CONSTANT_Float_info extends cp_info {
   }
 
   public Value createJimpleConstantValue(cp_info[] constant_pool) {
-    return FloatConstant.v(convert());
+    return constancFactory.createFloatConstant(convert());
   }
 }

@@ -319,7 +319,7 @@ public class DexNumTransformer extends DexTransformer {
       Value v = s.getRightOp();
       if ((v instanceof IntConstant)) {
         int vVal = ((IntConstant) v).value;
-        s.setRightOp(FloatConstant.v(Float.intBitsToFloat(vVal)));
+        s.setRightOp(constancFactory.createFloatConstant(Float.intBitsToFloat(vVal)));
       } else if (v instanceof LongConstant) {
         long vVal = ((LongConstant) v).value;
         s.setRightOp(constancFactory.createDoubleConstant(Double.longBitsToDouble(vVal)));

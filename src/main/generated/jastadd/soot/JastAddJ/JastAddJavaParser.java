@@ -1432,7 +1432,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_l = _symbols[offset + 4];
 					final List l = (List) _symbol_l.value;
 					final Symbol RPAREN = _symbols[offset + 5];
-					 return new MethodDecl(new Modifiers(new List()), t.addArrayDims(new List()), IDENTIFIER, l, new List(), new Opt());
+					 return new MethodDecl(new Modifiers(new List()), t.addArrayDims(new List()), IDENTIFIER, l, new List(), new Opt(), myScene, myJimple);
 			}
 			case 96: // method_header = modifiers.m type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN
 			{
@@ -1445,7 +1445,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_l = _symbols[offset + 5];
 					final List l = (List) _symbol_l.value;
 					final Symbol RPAREN = _symbols[offset + 6];
-					 return new MethodDecl(new Modifiers(m), t.addArrayDims(new List()), IDENTIFIER, l, new List(), new Opt());
+					 return new MethodDecl(new Modifiers(m), t.addArrayDims(new List()), IDENTIFIER, l, new List(), new Opt(), myScene, myJimple);
 			}
 			case 97: // method_header = type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN dims.d
 			{
@@ -1458,7 +1458,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 5];
 					final Symbol _symbol_d = _symbols[offset + 6];
 					final List d = (List) _symbol_d.value;
-					 return new MethodDecl(new Modifiers(new List()), t.addArrayDims(d), IDENTIFIER, l, new List(), new Opt());
+					 return new MethodDecl(new Modifiers(new List()), t.addArrayDims(d), IDENTIFIER, l, new List(), new Opt(), myScene, myJimple);
 			}
 			case 98: // method_header = modifiers.m type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN dims.d
 			{
@@ -1473,7 +1473,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 6];
 					final Symbol _symbol_d = _symbols[offset + 7];
 					final List d = (List) _symbol_d.value;
-					 return new MethodDecl(new Modifiers(m), t.addArrayDims(d), IDENTIFIER, l, new List(), new Opt());
+					 return new MethodDecl(new Modifiers(m), t.addArrayDims(d), IDENTIFIER, l, new List(), new Opt(), myScene, myJimple);
 			}
 			case 99: // method_header = type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN throws.tl
 			{
@@ -1486,7 +1486,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 5];
 					final Symbol _symbol_tl = _symbols[offset + 6];
 					final List tl = (List) _symbol_tl.value;
-					 return new MethodDecl(new Modifiers(new List()), t.addArrayDims(new List()), IDENTIFIER, l, tl, new Opt());
+					 return new MethodDecl(new Modifiers(new List()), t.addArrayDims(new List()), IDENTIFIER, l, tl, new Opt(), myScene, myJimple);
 			}
 			case 100: // method_header = modifiers.m type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN throws.tl
 			{
@@ -1501,7 +1501,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 6];
 					final Symbol _symbol_tl = _symbols[offset + 7];
 					final List tl = (List) _symbol_tl.value;
-					 return new MethodDecl(new Modifiers(m), t.addArrayDims(new List()), IDENTIFIER, l, tl, new Opt());
+					 return new MethodDecl(new Modifiers(m), t.addArrayDims(new List()), IDENTIFIER, l, tl, new Opt(), myScene, myJimple);
 			}
 			case 101: // method_header = type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN dims.d throws.tl
 			{
@@ -1516,7 +1516,7 @@ class Events extends Parser.Events {
 					final List d = (List) _symbol_d.value;
 					final Symbol _symbol_tl = _symbols[offset + 7];
 					final List tl = (List) _symbol_tl.value;
-					 return new MethodDecl(new Modifiers(new List()), t.addArrayDims(d), IDENTIFIER, l, tl, new Opt());
+					 return new MethodDecl(new Modifiers(new List()), t.addArrayDims(d), IDENTIFIER, l, tl, new Opt(), myScene, myJimple);
 			}
 			case 102: // method_header = modifiers.m type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN dims.d throws.tl
 			{
@@ -1533,7 +1533,7 @@ class Events extends Parser.Events {
 					final List d = (List) _symbol_d.value;
 					final Symbol _symbol_tl = _symbols[offset + 8];
 					final List tl = (List) _symbol_tl.value;
-					 return new MethodDecl(new Modifiers(m), t.addArrayDims(d), IDENTIFIER, l, tl, new Opt());
+					 return new MethodDecl(new Modifiers(m), t.addArrayDims(d), IDENTIFIER, l, tl, new Opt(), myScene, myJimple);
 			}
 			case 103: // method_header = VOID.VOID IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN throws_opt.tl
 			{
@@ -1545,7 +1545,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 5];
 					final Symbol _symbol_tl = _symbols[offset + 6];
 					final List tl = (List) _symbol_tl.value;
-					 return new MethodDecl(new Modifiers(new List()), new PrimitiveTypeAccess("void"), IDENTIFIER, l, tl, new Opt());
+					 return new MethodDecl(new Modifiers(new List()), new PrimitiveTypeAccess("void"), IDENTIFIER, l, tl, new Opt(), myScene, myJimple);
 			}
 			case 104: // method_header = modifiers.m VOID.VOID IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN throws_opt.tl
 			{
@@ -1559,7 +1559,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 6];
 					final Symbol _symbol_tl = _symbols[offset + 7];
 					final List tl = (List) _symbol_tl.value;
-					 return new MethodDecl(new Modifiers(m), new PrimitiveTypeAccess("void"), IDENTIFIER, l, tl, new Opt());
+					 return new MethodDecl(new Modifiers(m), new PrimitiveTypeAccess("void"), IDENTIFIER, l, tl, new Opt(), myScene, myJimple);
 			}
 			case 105: // formal_parameter_list = formal_parameter.f
 			{
@@ -2254,7 +2254,7 @@ class Events extends Parser.Events {
 					final Symbol COLON = _symbols[offset + 2];
 					final Symbol _symbol_s = _symbols[offset + 3];
 					final Stmt s = (Stmt) _symbol_s.value;
-					 return new LabeledStmt(((String)id.value), s);
+					 return new LabeledStmt(((String)id.value), s, myJimple);
 			}
 			case 187: // labeled_statement_no_short_if = IDENTIFIER.id COLON.COLON statement_no_short_if.s
 			{
@@ -2262,7 +2262,7 @@ class Events extends Parser.Events {
 					final Symbol COLON = _symbols[offset + 2];
 					final Symbol _symbol_s = _symbols[offset + 3];
 					final Stmt s = (Stmt) _symbol_s.value;
-					 return new LabeledStmt(((String)id.value), s);
+					 return new LabeledStmt(((String)id.value), s, myJimple);
 			}
 			case 188: // expression_statement = statement_expression.e SEMICOLON.SEMICOLON
 			{

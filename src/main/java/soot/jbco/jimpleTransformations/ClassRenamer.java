@@ -238,7 +238,7 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
     }
 
     myScene.releaseActiveHierarchy();
-    myScene.setFastHierarchy(new FastHierarchy());
+    myScene.setFastHierarchy(new FastHierarchy(myScene));
 
     if (isVerbose()) {
       logger.info("Updating bytecode class references");
@@ -285,7 +285,7 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
     }
 
     myScene.releaseActiveHierarchy();
-    myScene.setFastHierarchy(new FastHierarchy());
+    myScene.setFastHierarchy(new FastHierarchy(myScene));
   }
 
   private void updateType(Type type) {

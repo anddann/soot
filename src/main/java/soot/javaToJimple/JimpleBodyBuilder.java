@@ -441,7 +441,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       if (floatLit.kind() == polyglot.ast.FloatLit.DOUBLE) {
         return soot.jimple.constancFactory.createDoubleConstant(floatLit.value());
       } else {
-        return soot.jimple.FloatConstant.v((float) (floatLit.value()));
+        return soot.jimple.constancFactory.createFloatConstant((float) (floatLit.value()));
       }
     } else if (lit instanceof polyglot.ast.CharLit) {
       char litValue = ((polyglot.ast.CharLit) lit).value();
@@ -2561,7 +2561,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
       } else if (num instanceof Double) {
         return soot.jimple.constancFactory.createDoubleConstant(((Double) num).doubleValue());
       } else if (num instanceof Float) {
-        return soot.jimple.FloatConstant.v(((Float) num).floatValue());
+        return soot.jimple.constancFactory.createFloatConstant(((Float) num).floatValue());
       } else if (num instanceof Byte) {
         return soot.jimple.constancFactory.createIntConstant(((Byte) num).byteValue());
       } else if (num instanceof Short) {
@@ -3762,7 +3762,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
         if (((polyglot.ast.FloatLit) expr).kind() == polyglot.ast.FloatLit.DOUBLE) {
           sootExpr = soot.jimple.constancFactory.createDoubleConstant(-doubleVal);
         } else {
-          sootExpr = soot.jimple.FloatConstant.v(-(float) doubleVal);
+          sootExpr = soot.jimple.constancFactory.createFloatConstant(-(float) doubleVal);
         }
       } else {
         soot.Value local = base().createAggressiveExpr(expr, false, false);
@@ -3870,7 +3870,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
     if (type instanceof soot.DoubleType) {
       return soot.jimple.constancFactory.createDoubleConstant(val);
     } else if (type instanceof soot.FloatType) {
-      return soot.jimple.FloatConstant.v(val);
+      return soot.jimple.constancFactory.createFloatConstant(val);
     } else if (type instanceof soot.LongType) {
       return soot.jimple.constancFactory.createLongConstant(val);
     } else {

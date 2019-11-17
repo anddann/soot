@@ -39,6 +39,7 @@ import soot.Value;
 import soot.ValueBox;
 import soot.jimple.CastExpr;
 import soot.jimple.Constant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.NullConstant;
 import soot.jimple.NumericConstant;
@@ -64,14 +65,16 @@ public class ConstantPropagatorAndFolder extends BodyTransformer {
   private PhaseDumper myPhaseDumper;
   private Scene myScene;
   private ThrowAnalysis myThrowAnalysis;
+  private ConstantFactory myConstantfactory;
 
   @Inject
-  public ConstantPropagatorAndFolder(Options myOptions, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Scene myScene) {
+  public ConstantPropagatorAndFolder(Options myOptions, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Scene myScene, ConstantFactory myConstantfactory) {
     this.myOptions = myOptions;
     this.myThrowAnalysis = myThrowAnalysis;
     this.myManager = myManager;
     this.myPhaseDumper = myPhaseDumper;
     this.myScene = myScene;
+    this.myConstantfactory = myConstantfactory;
   }
 
 
@@ -110,7 +113,7 @@ public class ConstantPropagatorAndFolder extends BodyTransformer {
             } else if (rhs instanceof CastExpr) {
               CastExpr ce = (CastExpr) rhs;
               if (ce.getCastType() instanceof RefType && ce.getOp() instanceof NullConstant) {
-                defStmt.getRightOpBox().setValue(NullConstant.v());
+                defStmt.getRightOpBox().setValue(myConstantfactory.getNullConstant());
                 numPropagated++;
               }
             }

@@ -100,7 +100,7 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
           constant = constancFactory.createDoubleConstant(value);
         } else if (t instanceof FloatConstantValueTag) {
           float value = ((FloatConstantValueTag) t).getFloatValue();
-          constant = FloatConstant.v(value);
+          constant = constancFactory.createFloatConstant(value);
         } else if (t instanceof IntegerConstantValueTag) {
           int value = ((IntegerConstantValueTag) t).getIntValue();
           constant = constancFactory.createIntConstant(value);

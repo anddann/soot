@@ -33,7 +33,6 @@ import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.G;
 import soot.Local;
 import soot.Unit;
 import soot.dava.Dava;
@@ -46,12 +45,12 @@ import soot.dava.internal.SET.SETUnconditionalWhileNode;
 import soot.dava.internal.SET.SETWhileNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.asg.AugmentedStmtGraph;
-import soot.dava.internal.javaRep.DIntConstant;
 import soot.dava.toolkits.base.misc.ConditionFlipper;
 import soot.grimp.internal.GAssignStmt;
 import soot.grimp.internal.GTableSwitchStmt;
 import soot.jimple.AssignStmt;
 import soot.jimple.ConditionExpr;
+import soot.jimple.ConstantFactory;
 import soot.jimple.GotoStmt;
 import soot.jimple.IfStmt;
 import soot.jimple.LookupSwitchStmt;
@@ -65,11 +64,13 @@ import soot.util.StationaryArrayList;
 public class CycleFinder implements FactFinder {
   private static final Logger logger = LoggerFactory.getLogger(CycleFinder.class);
   private Dava myDava;
+  private ConstantFactory constancFactory;
 
 
   @Inject
-  public CycleFinder(Dava myDava) {
+  public CycleFinder(Dava myDava, ConstantFactory constancFactory) {
     this.myDava = myDava;
+    this.constancFactory = constancFactory;
   }
 
 
@@ -459,7 +460,7 @@ public class CycleFinder implements FactFinder {
           predecessorSet.add(pas);
         }
 
-        AssignStmt asnStmt = new GAssignStmt(controlLocal, DconstancFactory.createIntConstant(count, null));
+        AssignStmt asnStmt = new GAssignStmt(controlLocal, constancFactory.createDIntConstant(count, null));
         AugmentedStmt directionStmt = new AugmentedStmt(asnStmt);
 
         directionStmtSet.add(directionStmt);

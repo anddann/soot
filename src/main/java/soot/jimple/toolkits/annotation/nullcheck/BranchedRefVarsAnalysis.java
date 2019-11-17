@@ -64,6 +64,7 @@ import soot.jimple.StringConstant;
 import soot.jimple.ThisRef;
 import soot.jimple.ThrowStmt;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArrayFlowUniverse;
 import soot.toolkits.scalar.ArrayPackedSet;
 import soot.toolkits.scalar.FlowSet;
@@ -404,8 +405,8 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
    * @deprecated THIS IS KNOWN TO BE BUGGY. USE {@link NullnessAnalysis} INSTEAD!
    */
   @Deprecated
-  public BranchedRefVarsAnalysis(UnitGraph g) {
-    super(g);
+  public BranchedRefVarsAnalysis(UnitGraph g, InteractionHandler myInteractionHandler, boolean interactiveMode) {
+    super(g,interactiveMode, myInteractionHandler);
 
     // initialize all the refType lists
     initRefTypeLists();

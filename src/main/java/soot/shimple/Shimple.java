@@ -35,12 +35,15 @@ import org.slf4j.LoggerFactory;
 import soot.Body;
 import soot.Local;
 import soot.PhaseOptions;
+import soot.Printer;
 import soot.SootMethod;
 import soot.Unit;
 import soot.UnitBox;
 import soot.Value;
 import soot.jimple.AssignStmt;
+import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
+import soot.options.Options;
 import soot.shimple.internal.SPhiExpr;
 import soot.shimple.internal.SPiExpr;
 import soot.toolkits.graph.Block;
@@ -70,11 +73,17 @@ public class Shimple {
   public static final String PI = "Pi";
   public static final String PHASE = "shimple";
   private PhaseOptions myPhaseOptions;
+  private Printer myPrinter;
+  private Options myOptions;
+  private Jimple myShimple;
 
 
   @Inject
-  public Shimple(PhaseOptions myPhaseOptions) {
+  public Shimple(PhaseOptions myPhaseOptions, Printer myPrinter, Options myOptions, Jimple myShimple) {
     this.myPhaseOptions = myPhaseOptions;
+    this.myPrinter = myPrinter;
+    this.myOptions = myOptions;
+    this.myShimple = myShimple;
   }
 
 
@@ -83,14 +92,14 @@ public class Shimple {
    **/
   public ShimpleBody newBody(SootMethod m) {
     Map<String, String> options = myPhaseOptions.getPhaseOptions(PHASE);
-    return new ShimpleBody(m, options, myPrinter, myOptions);
+    return new ShimpleBody(m, options, myPrinter, myOptions, myShimple);
   }
 
   /**
    * Returns an empty ShimpleBody associated with method m, using provided option map.
    **/
   public ShimpleBody newBody(SootMethod m, Map<String, String> options) {
-    return new ShimpleBody(m, options, myPrinter, myOptions);
+    return new ShimpleBody(m, options, myPrinter, myOptions, myShimple);
   }
 
   /**
@@ -98,14 +107,14 @@ public class Shimple {
    **/
   public ShimpleBody newBody(Body b) {
     Map<String, String> options = myPhaseOptions.getPhaseOptions(PHASE);
-    return new ShimpleBody(b, options, myOptions, myPrinter);
+    return new ShimpleBody(b, options, myOptions, myPrinter, myShimple);
   }
 
   /**
    * Returns a ShimpleBody constructed from b, using provided option Map.
    **/
   public ShimpleBody newBody(Body b, Map<String, String> options) {
-    return new ShimpleBody(b, options, myOptions, myPrinter);
+    return new ShimpleBody(b, options, myOptions, myPrinter, myShimple);
   }
 
   /**
@@ -134,7 +143,7 @@ public class Shimple {
    * @see soot.options.ShimpleOptions
    **/
   public JimpleBody newJimpleBody(ShimpleBody body) {
-    return body.toJimpleBody();
+    return body.toJimpleBody(myShimple);
   }
 
   /**

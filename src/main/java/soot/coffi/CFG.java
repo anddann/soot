@@ -2561,7 +2561,7 @@ public class CFG {
     } else if (c instanceof CONSTANT_Float_info) {
       CONSTANT_Float_info cf = (CONSTANT_Float_info) c;
 
-      rvalue = FloatConstant.v(cf.convert());
+      rvalue = constancFactory.createFloatConstant(cf.convert());
       stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
           rvalue);
     } else if (c instanceof CONSTANT_Long_info) {
@@ -2685,7 +2685,7 @@ public class CFG {
       case ByteCode.FCONST_0:
       case ByteCode.FCONST_1:
       case ByteCode.FCONST_2:
-        rvalue = FloatConstant.v((x - ByteCode.FCONST_0));
+        rvalue = constancFactory.createFloatConstant((x - ByteCode.FCONST_0));
         stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;

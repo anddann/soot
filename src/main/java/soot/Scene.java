@@ -1935,7 +1935,7 @@ public class Scene // extends AbstractHost
     if (PolymorphicMethodRef.handlesClass(declaringClass)) {
       return new PolymorphicMethodRef(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, myJimple);
     }
-    return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, myJimple);
+    return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, myJimple, constancFactory);
   }
 
   /** Create an unresolved reference to a constructor. */

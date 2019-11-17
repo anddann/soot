@@ -35,21 +35,22 @@ import soot.RefType;
 import soot.Scene;
 import soot.SootMethod;
 import soot.Unit;
-import soot.jimple.IntConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
-import soot.jimple.StringConstant;
 
 public class UnreachableMethodTransformer extends BodyTransformer {
 
   private Scene myScene;
   private Jimple myJimple;
+  private ConstantFactory constancFactory;
 
   @Inject
-  public UnreachableMethodTransformer(Scene myScene, Jimple myJimple){
+  public UnreachableMethodTransformer(Scene myScene, Jimple myJimple, ConstantFactory constancFactory){
 
     this.myScene = myScene;
     this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
   }
 
 
@@ -90,7 +91,7 @@ public class UnreachableMethodTransformer extends BodyTransformer {
      * if( method.getReturnType() instanceof PrimType ) { if( method.getReturnType() instanceof DoubleType ) { list.add(
      * r=myJimple.newReturnStmt( constancFactory.createDoubleConstant( 0 ) ) ); } else if( method.getReturnType() instanceof LongType ) {
      * list.add( r=myJimple.newReturnStmt( constancFactory.createLongConstant( 0 ) ) ); } else if( method.getReturnType() instanceof FloatType
-     * ) { list.add( r=myJimple.newReturnStmt( FloatConstant.v( 0 ) ) ); } else { list.add( r=myJimple.newReturnStmt(
+     * ) { list.add( r=myJimple.newReturnStmt( constancFactory.createFloatConstant( 0 ) ) ); } else { list.add( r=myJimple.newReturnStmt(
      * constancFactory.createIntConstant( 0 ) ) ); } } else { throw new RuntimeException( "Wrong return method type: " + method.getReturnType()
      * ); }
      */

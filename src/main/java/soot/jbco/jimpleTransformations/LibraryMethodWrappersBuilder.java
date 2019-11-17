@@ -340,7 +340,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
       return constancFactory.createLongConstant(Rand.getLong());
     }
     if (t instanceof FloatType) {
-      return FloatConstant.v(Rand.getFloat());
+      return constancFactory.createFloatConstant(Rand.getFloat());
     }
     if (t instanceof DoubleType) {
       return constancFactory.createDoubleConstant(Rand.getDouble());

@@ -1,23 +1,8 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production EnumConstant : {@link FieldDeclaration} ::= <span class="component">{@link Modifiers}</span> <span class="component">&lt;ID:String&gt;</span> <span class="component">Arg:{@link Expr}*</span> <span class="component">[Init:{@link Expr}]</span> <span class="component">TypeAccess:{@link Access}</span>;
  * @ast node
@@ -181,7 +166,7 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    * 
    */
   public EnumConstant() {
-    super();
+    super(myScene);
 
 
   }
@@ -203,7 +188,8 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    * 
    */
   public EnumConstant(Modifiers p0, String p1, List<Expr> p2, Opt<Expr> p3) {
-    setChild(p0, 0);
+      super(myScene);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);
@@ -213,7 +199,8 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    * 
    */
   public EnumConstant(Modifiers p0, beaver.Symbol p1, List<Expr> p2, Opt<Expr> p3) {
-    setChild(p0, 0);
+      super(myScene);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);

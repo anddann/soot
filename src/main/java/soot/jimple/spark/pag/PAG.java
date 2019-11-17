@@ -53,6 +53,7 @@ import soot.Type;
 import soot.Value;
 import soot.jimple.AssignStmt;
 import soot.jimple.ClassConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.NewExpr;
@@ -101,12 +102,14 @@ public class PAG implements PointsToAnalysis {
     private final PhaseOptions myPhaseOptions;
     private final Scene myScene;
     private SparkField myArrayElement;
+  private ConstantFactory constantFactory;
 
-    public PAG(PhaseOptions myPhaseOptions, Scene myScene, SparkField myArrayElement, final SparkOptions opts) {
+  public PAG(PhaseOptions myPhaseOptions, Scene myScene, SparkField myArrayElement, ConstantFactory constantFactory, final SparkOptions opts) {
         this.myPhaseOptions = myPhaseOptions;
         this.myScene = myScene;
         this.myArrayElement = myArrayElement;
-        this.opts = opts;
+    this.constantFactory = constantFactory;
+    this.opts = opts;
         this.accessibilityOracle = myScene.getClientAccessibilityOracle();
         this.localToNodeMap =   new LargeNumberedMap<>(myScene.getLocalNumberer());
     this.cgOpts = new CGOptions(this.myPhaseOptions.getPhaseOptions("cg"));
@@ -1201,7 +1204,7 @@ public class PAG implements PointsToAnalysis {
       InvokeExpr ie = e.srcStmt().getInvokeExpr();
       Value arg0 = ie.getArg(0);
       // if "null" is passed in, omit the edge
-      if (arg0 != NullConstant.v()) {
+      if (arg0 != constantFactory.getNullConstant()) {
         Node parm0 = srcmpag.nodeFactory().getNode(arg0);
         parm0 = srcmpag.parameterize(parm0, e.srcCtxt());
         parm0 = parm0.getReplacement();
@@ -1221,7 +1224,7 @@ public class PAG implements PointsToAnalysis {
       SootMethod tgt = e.getTgt().method();
       // if "null" is passed in, or target has no parameters, omit the
       // edge
-      if (arg1 != NullConstant.v() && tgt.getParameterCount() > 0) {
+      if (arg1 != constantFactory.getNullConstant() && tgt.getParameterCount() > 0) {
         Node parm1 = srcmpag.nodeFactory().getNode(arg1);
         parm1 = srcmpag.parameterize(parm1, e.srcCtxt());
         parm1 = parm1.getReplacement();
@@ -1304,7 +1307,7 @@ public class PAG implements PointsToAnalysis {
         SootMethod tgt = e.getTgt().method();
         // if "null" is passed in, or target has no parameters, omit the
         // edge
-        if (arg != NullConstant.v() && tgt.getParameterCount() > 0) {
+        if (arg != constantFactory.getNullConstant() && tgt.getParameterCount() > 0) {
           Node parm0 = srcmpag.nodeFactory().getNode(arg);
           parm0 = srcmpag.parameterize(parm0, e.srcCtxt());
           parm0 = parm0.getReplacement();

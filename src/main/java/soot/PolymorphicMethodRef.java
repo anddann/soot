@@ -85,7 +85,7 @@ public class PolymorphicMethodRef extends SootMethodRefImpl {
    */
   public PolymorphicMethodRef(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
                               boolean isStatic, Scene myScene, Options myOptions, Jimple myJimple) {
-    super(declaringClass, name, parameterTypes, returnType, isStatic, myScene, myOptions, myJimple);
+    super(declaringClass, name, parameterTypes, returnType, isStatic, myScene, myOptions, myJimple, constancFactory);
   }
 
   @Override

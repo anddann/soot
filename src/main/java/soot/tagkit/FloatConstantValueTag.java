@@ -41,7 +41,7 @@ public class FloatConstantValueTag extends ConstantValueTag {
 
   @Override
   public FloatConstant getConstant() {
-    return FloatConstant.v(value);
+    return constancFactory.createFloatConstant(value);
   }
 
   @Override

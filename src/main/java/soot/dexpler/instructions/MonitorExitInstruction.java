@@ -55,7 +55,7 @@ public class MonitorExitInstruction extends DexlibAbstractInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // Debug.printDbg(IDalvikTyper.DEBUG, "constraint: "+ exitMonitorStmt);
-      DalvikTyper.v().setType(exitMonitorStmt.getOpBox(), RefType.v("java.lang.Object"), true);
+      myDalvikTyper().setType(exitMonitorStmt.getOpBox(), RefType.v("java.lang.Object"), true);
     }
   }
 }

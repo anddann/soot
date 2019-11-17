@@ -104,7 +104,7 @@ public class InstructionFactory {
       case CONST_WIDE_16:
       case CONST_WIDE_32:
       case CONST_WIDE_HIGH16:
-        return new ConstInstruction(instruction, codeAddress);
+        return new ConstInstruction(instruction, codeAddress, constancFactory);
 
       case CONST_STRING:
       case CONST_STRING_JUMBO:
@@ -188,7 +188,7 @@ public class InstructionFactory {
       case AGET_CHAR:
       case AGET_SHORT:
       case AGET_WIDE:
-        return new AgetInstruction(instruction, codeAddress);
+        return new AgetInstruction(instruction, codeAddress, myJimple);
 
       case APUT:
       case APUT_OBJECT:
@@ -261,7 +261,7 @@ public class InstructionFactory {
  
       case INVOKE_CUSTOM:
       case INVOKE_CUSTOM_RANGE:
-        return new InvokeCustomInstruction(instruction, codeAddress);
+        return new InvokeCustomInstruction(instruction, codeAddress, constancFactory, myJimple, myScene);
 
       case NEG_INT:
       case NOT_INT:

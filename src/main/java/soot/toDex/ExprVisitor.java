@@ -39,6 +39,7 @@ import soot.LongType;
 import soot.NullType;
 import soot.PrimType;
 import soot.RefType;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Type;
@@ -49,6 +50,7 @@ import soot.jimple.CastExpr;
 import soot.jimple.CmpExpr;
 import soot.jimple.CmpgExpr;
 import soot.jimple.CmplExpr;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DivExpr;
 import soot.jimple.DynamicInvokeExpr;
 import soot.jimple.EqExpr;
@@ -63,7 +65,6 @@ import soot.jimple.InterfaceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.LeExpr;
 import soot.jimple.LengthExpr;
-import soot.jimple.LongConstant;
 import soot.jimple.LtExpr;
 import soot.jimple.MulExpr;
 import soot.jimple.NeExpr;
@@ -124,11 +125,15 @@ public class ExprVisitor implements ExprSwitch {
   protected Stmt origStmt;
 
   private int lastInvokeInstructionPosition;
+  private ConstantFactory constancFactory;
+  private Scene myScene;
 
-  public ExprVisitor(StmtVisitor stmtV, ConstantVisitor constantV, RegisterAllocator regAlloc) {
+  public ExprVisitor(StmtVisitor stmtV, ConstantVisitor constantV, RegisterAllocator regAlloc, ConstantFactory constancFactory, Scene myScene) {
     this.stmtV = stmtV;
     this.constantV = constantV;
     this.regAlloc = regAlloc;
+    this.constancFactory = constancFactory;
+    this.myScene = myScene;
   }
 
   public void setDestinationReg(Register destinationReg) {
@@ -333,7 +338,7 @@ public class ExprVisitor implements ExprSwitch {
     Register secondOpReg = regAlloc.asImmediate(secondOperand, constantV);
     Register orgDestReg = destinationReg;
     if (isSmallerThan(destRegType, PrimitiveType.INT)) {
-      destinationReg = regAlloc.asTmpReg(IntType.v());
+      destinationReg = regAlloc.asTmpReg(myScene.getPrimTypeCollector().getIntType());
     } else {
       // If the second register is not of the precise target type, we need
       // to
@@ -445,7 +450,7 @@ public class ExprVisitor implements ExprSwitch {
 
       // We may need a temporary register if we need a typecast
       if (isBiggerThan(PrimitiveType.getByName(secondOperand.getType().toString()), destRegType)) {
-        destinationReg = regAlloc.asTmpReg(IntType.v());
+        destinationReg = regAlloc.asTmpReg(myScene.getPrimTypeCollector().getIntType());
       }
 
       if (secondOperand.equals(constancFactory.createIntConstant(-1))) {
@@ -714,7 +719,7 @@ public class ExprVisitor implements ExprSwitch {
        */
       Opcode castToIntOpc = getCastOpc(sourceType, PrimitiveType.INT);
       Opcode castFromIntOpc = getCastOpc(PrimitiveType.INT, castType);
-      Register tmp = regAlloc.asTmpReg(IntType.v());
+      Register tmp = regAlloc.asTmpReg(myScene.getPrimTypeCollector().getIntType());
       stmtV.addInsn(new Insn12x(castToIntOpc, tmp, sourceReg), origStmt);
       stmtV.addInsn(new Insn12x(castFromIntOpc, destinationReg, tmp.clone()), origStmt);
     } else {
@@ -789,7 +794,7 @@ public class ExprVisitor implements ExprSwitch {
       baseType = at.getElementType();
       numDimensions++;
     }
-    ArrayType arrayType = ArrayType.v(baseType, numDimensions);
+    ArrayType arrayType = ArrayType.v(baseType, numDimensions,myScene);
 
     TypeReference arrayTypeItem = DexPrinter.toTypeReference(arrayType);
     stmtV.addInsn(new Insn22c(Opcode.NEW_ARRAY, destinationReg, sizeReg, arrayTypeItem), origStmt);
@@ -805,7 +810,7 @@ public class ExprVisitor implements ExprSwitch {
     }
     short dimensions = (short) nmae.getSizeCount();
     // get array base type
-    ArrayType arrayType = ArrayType.v(nmae.getBaseType().baseType, dimensions);
+    ArrayType arrayType = ArrayType.v(nmae.getBaseType().baseType, dimensions,myScene);
     TypeReference arrayTypeItem = DexPrinter.toTypeReference(arrayType);
     // get the dimension size registers
     List<Register> dimensionSizeRegs = new ArrayList<Register>();

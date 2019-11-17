@@ -24,6 +24,8 @@ import soot.coffi.CoffiMethodSource;
  * 
  */
 public class ASTNode<T extends ASTNode> extends beaver.Symbol  implements Cloneable, Iterable<T> {
+  private static Object constantFactory;
+
   /**
    * @apilevel low-level
    */
@@ -652,7 +654,7 @@ public class ASTNode<T extends ASTNode> extends beaver.Symbol  implements Clonea
     if(constant instanceof Constant.ConstantInt)
       return IntType.emitConstant(constant.intValue());
     else if(constant instanceof Constant.ConstantLong)
-      return soot.jimple.LongConstant.v(constant.longValue());
+      return constantFactory.getLongConstant(constant.longValue());
     else if(constant instanceof Constant.ConstantFloat)
       return soot.jimple.FloatConstant.v(constant.floatValue());
     else if(constant instanceof Constant.ConstantDouble)

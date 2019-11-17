@@ -22,16 +22,20 @@ package soot.shimple.toolkits.scalar;
  * #L%
  */
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 import java.util.Iterator;
 import java.util.Map;
 
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.UnitBoxOwner;
-import soot.UnknownType;
 import soot.Value;
 import soot.ValueBox;
 import soot.jimple.Constant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Expr;
 import soot.jimple.toolkits.scalar.Evaluator;
 import soot.shimple.PhiExpr;
@@ -99,17 +103,17 @@ public class SEvaluator {
    * @see SEvaluator.TopConstant
    * @see SEvaluator.BottomConstant
    **/
-  public static Constant getFuzzyConstantValueOf(Value v) {
+  public static Constant getFuzzyConstantValueOf(Value v, ConstantFactory constancFactory) {
     if (v instanceof Constant) {
       return (Constant) v;
     }
 
     if (v instanceof Local) {
-      return BottomConstant.v();
+      return constancFactory.createBottomConstant();
     }
 
     if (!(v instanceof Expr)) {
-      return BottomConstant.v();
+      return constancFactory.createBottomConstant();
     }
 
     Expr expr = (Expr) v;
@@ -133,13 +137,13 @@ public class SEvaluator {
         if (constant == null) {
           constant = (Constant) arg;
         } else if (!constant.equals(arg)) {
-          constant = BottomConstant.v();
+          constant = constancFactory.createBottomConstant();
           break;
         }
       }
 
       if (constant == null) {
-        constant = TopConstant.v();
+        constant = constancFactory.createTopConstant();
       }
     } else {
       Iterator valueBoxesIt = expr.getUseBoxes().iterator();
@@ -147,12 +151,12 @@ public class SEvaluator {
         Value value = ((ValueBox) valueBoxesIt.next()).getValue();
 
         if (value instanceof BottomConstant) {
-          constant = BottomConstant.v();
+          constant = constancFactory.createBottomConstant();
           break;
         }
 
         if (value instanceof TopConstant) {
-          constant = TopConstant.v();
+          constant = constancFactory.createTopConstant();
         }
       }
 
@@ -161,7 +165,7 @@ public class SEvaluator {
       }
 
       if (constant == null) {
-        constant = BottomConstant.v();
+        constant = constancFactory.createBottomConstant();
       }
     }
 
@@ -175,7 +179,8 @@ public class SEvaluator {
    * @see SEvaluator.TopConstant
    * @see SEvaluator.BottomConstant
    **/
-  public static Constant getFuzzyConstantValueOf(Value v, Map<Local, Constant> localToConstant) {
+  public static Constant getFuzzyConstantValueOf(Value v, Map<Local, Constant> localToConstant,
+      ConstantFactory constancFactory) {
     if (v instanceof Constant) {
       return (Constant) v;
     }
@@ -185,7 +190,7 @@ public class SEvaluator {
     }
 
     if (!(v instanceof Expr)) {
-      return BottomConstant.v();
+      return constancFactory.createBottomConstant();
     }
 
     /* clone expr and update the clone with our assumptions */
@@ -211,7 +216,7 @@ public class SEvaluator {
 
     /* evaluate the expression */
 
-    return (getFuzzyConstantValueOf(expr));
+    return (getFuzzyConstantValueOf(expr, constancFactory));
   }
 
   /**
@@ -224,17 +229,15 @@ public class SEvaluator {
    * Top i.e. assumed to be a constant, but of unknown value.
    **/
   public static class TopConstant extends MetaConstant {
-    private static final TopConstant constant = new TopConstant();
+    private PrimTypeCollector primTypeCollector;
 
-    private TopConstant() {
-    }
-
-    public static Constant v() {
-      return constant;
+    @Inject
+    private TopConstant(@Assisted PrimTypeCollector primTypeCollector) {
+      this.primTypeCollector = primTypeCollector;
     }
 
     public Type getType() {
-      return UnknownType.v();
+      return primTypeCollector.getUnknownType();
     }
 
     public void apply(Switch sw) {
@@ -246,17 +249,15 @@ public class SEvaluator {
    * Bottom i.e. known not to be a constant.
    **/
   public static class BottomConstant extends MetaConstant {
-    private static final BottomConstant constant = new BottomConstant();
+    private PrimTypeCollector primTypeCollector;
 
-    private BottomConstant() {
-    }
-
-    public static Constant v() {
-      return constant;
+    @Inject
+    private BottomConstant(@Assisted PrimTypeCollector primTypeCollector) {
+      this.primTypeCollector = primTypeCollector;
     }
 
     public Type getType() {
-      return UnknownType.v();
+      return primTypeCollector.getUnknownType();
     }
 
     public void apply(Switch sw) {

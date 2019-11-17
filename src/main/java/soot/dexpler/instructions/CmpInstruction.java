@@ -113,9 +113,9 @@ public class CmpInstruction extends TaggedInstruction {
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       getTag().getName();
       BinopExpr bexpr = (BinopExpr) cmpExpr;
-      DalvikTyper.v().setType(bexpr.getOp1Box(), type, true);
-      DalvikTyper.v().setType(bexpr.getOp2Box(), type, true);
-      DalvikTyper.v().setType(((JAssignStmt) assign).leftBox, IntType.v(), false);
+      myDalvikTyper().setType(bexpr.getOp1Box(), type, true);
+      myDalvikTyper().setType(bexpr.getOp2Box(), type, true);
+      myDalvikTyper().setType(((JAssignStmt) assign).leftBox, IntType.v(), false);
     }
   }
 

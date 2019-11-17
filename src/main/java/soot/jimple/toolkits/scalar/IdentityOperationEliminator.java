@@ -144,7 +144,7 @@ public class IdentityOperationEliminator extends BodyTransformer {
     } else if (type instanceof LongType) {
       return constancFactory.createLongConstant(0);
     } else if (type instanceof FloatType) {
-      return FloatConstant.v(0);
+      return constancFactory.createFloatConstant(0);
     } else if (type instanceof DoubleType) {
       return constancFactory.createDoubleConstant(0);
     }

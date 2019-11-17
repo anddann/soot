@@ -180,7 +180,7 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
     } else if (t instanceof LongType) {
       return myBaf.newPushInst(constancFactory.createLongConstant(soot.jbco.util.Rand.getLong()));
     } else if (t instanceof FloatType) {
-      return myBaf.newPushInst(FloatConstant.v(soot.jbco.util.Rand.getFloat()));
+      return myBaf.newPushInst(constancFactory.createFloatConstant(soot.jbco.util.Rand.getFloat()));
     } else if (t instanceof DoubleType) {
       return myBaf.newPushInst(constancFactory.createDoubleConstant(soot.jbco.util.Rand.getDouble()));
     }

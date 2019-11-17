@@ -49,6 +49,7 @@ import soot.Value;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
 import soot.jimple.CastExpr;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.FieldRef;
 import soot.jimple.IntConstant;
@@ -73,11 +74,13 @@ public class RectangularArrayFinder extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(RectangularArrayFinder.class);
   private Options myOptions;
   private Scene myScene;
+  private ConstantFactory constancFactory;
 
   @Inject
-  public RectangularArrayFinder(Options myOptions, Scene myScene) {
+  public RectangularArrayFinder(Options myOptions, Scene myScene, ConstantFactory constancFactory) {
     this.myOptions = myOptions;
     this.myScene = myScene;
+    this.constancFactory = constancFactory;
   }
 
 

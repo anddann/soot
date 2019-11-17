@@ -45,8 +45,11 @@ import soot.jimple.Jimple;
 
 public class AgetInstruction extends DexlibAbstractInstruction {
 
-  public AgetInstruction(Instruction instruction, int codeAdress) {
+  private Jimple myJimple;
+
+  public AgetInstruction(Instruction instruction, int codeAdress, Jimple myJimple) {
     super(instruction, codeAdress);
+    this.myJimple = myJimple;
   }
 
   @Override
@@ -74,8 +77,8 @@ public class AgetInstruction extends DexlibAbstractInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      DalvikTyper.v().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
-      DalvikTyper.v().setType(arrayRef.getIndexBox(), IntType.v(), true);
+      myDalvikTyper().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
+      myDalvikTyper().setType(arrayRef.getIndexBox(), IntType.v(), true);
     }
   }
 

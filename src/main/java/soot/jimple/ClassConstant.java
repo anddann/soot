@@ -115,21 +115,21 @@ public class ClassConstant extends Constant {
       tmp = tmp.replace("/", ".");
       baseType = RefType.v(tmp, myScene);
     } else if (tmp.equals("I")) {
-      baseType = IntType.v();
+      baseType = this.myScene.getPrimTypeCollector().getIntType();
     } else if (tmp.equals("B")) {
-      baseType = ByteType.v();
+      baseType = this.myScene.getPrimTypeCollector().getByteType();
     } else if (tmp.equals("C")) {
-      baseType = CharType.v();
+      baseType = this.myScene.getPrimTypeCollector().getCharType();
     } else if (tmp.equals("D")) {
-      baseType = DoubleType.v();
+      baseType = this.myScene.getPrimTypeCollector().getDoubleType();
     } else if (tmp.equals("F")) {
-      baseType = FloatType.v();
+      baseType = this.myScene.getPrimTypeCollector().getFloatType();
     } else if (tmp.equals("L")) {
-      baseType = LongType.v();
+      baseType = this.myScene.getPrimTypeCollector().getLongType();
     } else if (tmp.equals("S")) {
-      baseType = ShortType.v();
+      baseType = this.myScene.getPrimTypeCollector().getShortType();
     } else if (tmp.equals("Z")) {
-      baseType = BooleanType.v();
+      baseType = this.myScene.getPrimTypeCollector().getBooleanType();
     } else {
       throw new RuntimeException("Unsupported class constant: " + value);
     }

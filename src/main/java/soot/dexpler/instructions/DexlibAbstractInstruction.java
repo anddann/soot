@@ -243,7 +243,7 @@ public abstract class DexlibAbstractInstruction {
    * DoubleType.v(), DoubleType.v() };
    */
 
-  // public abstract void getConstraint(IDalvikTyper DalvikTyper.v());
+  // public abstract void getConstraint(IDalvikTyper myDalvikTyper());
 
   /**
    * Return the indices used in the given instruction.

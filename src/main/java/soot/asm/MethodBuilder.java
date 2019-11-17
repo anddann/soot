@@ -34,7 +34,6 @@ import soot.RefType;
 import soot.Scene;
 import soot.SootMethod;
 import soot.Type;
-import soot.jimple.Jimple;
 import soot.options.Options;
 import soot.tagkit.AnnotationConstants;
 import soot.tagkit.AnnotationDefaultTag;
@@ -210,7 +209,7 @@ class MethodBuilder extends JSRInlinerAdapter {
     }
     if (method.isConcrete()) {
       method.setSource(
-          new AsmMethodSource(maxLocals, instructions, localVariables, tryCatchBlocks, myScene,  myOptions));
+          new AsmMethodSource(maxLocals, instructions, localVariables, tryCatchBlocks, myScene,  myOptions, constancFactory, myLambdaMetaFactory, myPackManager, myPhaseOptions, myCoffiUtil));
     }
   }
 }

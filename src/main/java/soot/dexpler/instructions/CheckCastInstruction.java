@@ -73,7 +73,7 @@ public class CheckCastInstruction extends DexlibAbstractInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      DalvikTyper.v().setType(assign.getLeftOpBox(), checkCastType, false);
+      myDalvikTyper().setType(assign.getLeftOpBox(), checkCastType, false);
     }
 
   }

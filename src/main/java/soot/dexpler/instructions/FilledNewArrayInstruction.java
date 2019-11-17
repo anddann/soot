@@ -90,9 +90,9 @@ public class FilledNewArrayInstruction extends FilledArrayInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // Debug.printDbg(IDalvikTyper.DEBUG, "constraint: "+ assign);
-      DalvikTyper.v().setType(assign.getLeftOpBox(), arrayExpr.getType(), false);
-      // DalvikTyper.v().setType(array, arrayType, isUse)
-      // DalvikTyper.v().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
+      myDalvikTyper().setType(assign.getLeftOpBox(), arrayExpr.getType(), false);
+      // myDalvikTyper().setType(array, arrayType, isUse)
+      // myDalvikTyper().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
     }
 
   }

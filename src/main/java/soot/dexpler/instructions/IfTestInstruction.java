@@ -56,7 +56,7 @@ public class IfTestInstruction extends ConditionalJumpInstruction {
     addTags(jif);
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // Debug.printDbg(IDalvikTyper.DEBUG, "constraint if: "+ jif +" condition: "+ condition);
-      DalvikTyper.v().addConstraint(condition.getOp1Box(), condition.getOp2Box());
+      myDalvikTyper().addConstraint(condition.getOp1Box(), condition.getOp2Box());
     }
 
     return jif;

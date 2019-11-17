@@ -38,7 +38,7 @@ public class SETTopNode extends SETNode {
   }
 
   public ASTNode emit_AST() {
-    return new ASTMethodNode(emit_ASTBody(body2childChain.get(subBodies.get(0))));
+    return new ASTMethodNode(emit_ASTBody(body2childChain.get(subBodies.get(0))), myTryContentsFinder, myASTWalker);
   }
 
   public AugmentedStmt get_EntryStmt() {

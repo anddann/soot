@@ -41,8 +41,8 @@ import soot.SootMethod;
 import soot.Type;
 import soot.Value;
 import soot.ValueBox;
-import soot.grimp.Grimp;
 import soot.jimple.ArrayRef;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
 import soot.jimple.Stmt;
@@ -64,16 +64,18 @@ public class ArrayBoundsChecker extends BodyTransformer {
   private Scene myScene;
   private Orderer<Block> mySlowPseudoTopologicalOrderer;
   private Jimple myJimple;
+  private ConstantFactory constancFactory;
 
   @Inject
   public ArrayBoundsChecker(Options myOptions, RectangularArrayFinder myRectangularArrayFinder,
-                            ClassFieldAnalysis myClassFieldAnalysis, Scene myScene, Orderer<Block> mySlowPseudoTopologicalOrderer, Jimple myJimple) {
+                            ClassFieldAnalysis myClassFieldAnalysis, Scene myScene, Orderer<Block> mySlowPseudoTopologicalOrderer, Jimple myJimple, ConstantFactory constancFactory) {
     this.myOptions = myOptions;
     this.myRectangularArrayFinder = myRectangularArrayFinder;
     this.myClassFieldAnalysis = myClassFieldAnalysis;
     this.myScene = myScene;
     this.mySlowPseudoTopologicalOrderer = mySlowPseudoTopologicalOrderer;
     this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
   }
 
   protected boolean takeClassField = false;

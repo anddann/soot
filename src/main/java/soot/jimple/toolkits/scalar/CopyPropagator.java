@@ -43,6 +43,7 @@ import soot.ValueBox;
 import soot.jimple.AssignStmt;
 import soot.jimple.CastExpr;
 import soot.jimple.Constant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.IntConstant;
 import soot.jimple.LongConstant;
@@ -70,16 +71,20 @@ public class CopyPropagator extends BodyTransformer {
   private Scene myScene;
   private PhaseDumper myPhaseDumper;
   private ThrowableSet.Manager myManager;
+  private ConstantFactory myConstantfactory;
 
 
 
   @Inject
-  public CopyPropagator(ThrowAnalysis ta, boolean forceOmitExceptingUnitEdges, Options myOptions, Scene myScene, ThrowableSet.Manager myManager) {
+  public CopyPropagator(ThrowAnalysis ta, boolean forceOmitExceptingUnitEdges, Options myOptions, Timers myTimers, Scene myScene, PhaseDumper myPhaseDumper, ThrowableSet.Manager myManager, ConstantFactory myConstantfactory) {
     this.throwAnalysis = ta;
     this.forceOmitExceptingUnitEdges = forceOmitExceptingUnitEdges;
     this.myOptions = myOptions;
+    this.myTimers = myTimers;
     this.myScene = myScene;
+    this.myPhaseDumper = myPhaseDumper;
     this.myManager = myManager;
+    this.myConstantfactory = myConstantfactory;
   }
 
 
@@ -205,8 +210,8 @@ public class CopyPropagator extends BodyTransformer {
                   boolean isConstNull = ce.getOp() instanceof IntConstant && ((IntConstant) ce.getOp()).value == 0;
                   isConstNull |= ce.getOp() instanceof LongConstant && ((LongConstant) ce.getOp()).value == 0;
                   if (isConstNull) {
-                    if (useBox.canContainValue(NullConstant.v())) {
-                      useBox.setValue(NullConstant.v());
+                    if (useBox.canContainValue(myConstantfactory.getNullConstant())) {
+                      useBox.setValue(myConstantfactory.getNullConstant());
                     }
                   }
 

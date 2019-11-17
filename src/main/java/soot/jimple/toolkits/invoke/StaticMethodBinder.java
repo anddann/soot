@@ -44,13 +44,13 @@ import soot.TrapManager;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IdentityStmt;
 import soot.jimple.IfStmt;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
-import soot.jimple.NullConstant;
 import soot.jimple.ParameterRef;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.StaticInvokeExpr;
@@ -74,13 +74,15 @@ public class StaticMethodBinder extends SceneTransformer {
   private Jimple myJimple;
   private SynchronizerManager mySynchronizerManager;
   private LocalNameStandardizer myLocalNameStandardizer;
+  private ConstantFactory myConstantfactory;
 
   @Inject
-  public StaticMethodBinder(Scene myScene, Jimple myJimple, SynchronizerManager mySynchronizerManager, LocalNameStandardizer myLocalNameStandardizer) {
+  public StaticMethodBinder(Scene myScene, Jimple myJimple, SynchronizerManager mySynchronizerManager, LocalNameStandardizer myLocalNameStandardizer, ConstantFactory myConstantfactory) {
     this.myScene = myScene;
     this.myJimple = myJimple;
     this.mySynchronizerManager = mySynchronizerManager;
     this.myLocalNameStandardizer = myLocalNameStandardizer;
+    this.myConstantfactory = myConstantfactory;
   }
 
 
@@ -274,7 +276,7 @@ public class StaticMethodBinder extends SceneTransformer {
                * In this case, we don't use throwPoint; instead, put the code right there.
                */
               Stmt insertee
-                  = myJimple.newIfStmt(myJimple.newNeExpr(((InstanceInvokeExpr) ie).getBase(), NullConstant.v()), s);
+                  = myJimple.newIfStmt(myJimple.newNeExpr(((InstanceInvokeExpr) ie).getBase(), myConstantfactory.getNullConstant()), s);
 
               b.getUnits().insertBefore(insertee, s);
 
@@ -285,7 +287,7 @@ public class StaticMethodBinder extends SceneTransformer {
             } else {
               Stmt throwPoint = ThrowManager.getNullPointerExceptionThrower(b);
               b.getUnits().insertBefore(myJimple
-                  .newIfStmt(myJimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), NullConstant.v()), throwPoint), s);
+                  .newIfStmt(myJimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), myConstantfactory.getNullConstant()), throwPoint), s);
             }
           }
 

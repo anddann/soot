@@ -264,7 +264,7 @@ public class Util {
       } else if (t instanceof LongType) {
         ass = myJimple.newAssignStmt(l, constancFactory.createLongConstant(0));
       } else if (t instanceof FloatType) {
-        ass = myJimple.newAssignStmt(l, FloatConstant.v(0.0f));
+        ass = myJimple.newAssignStmt(l, constancFactory.createFloatConstant(0.0f));
       } else if (t instanceof IntType) {
         ass = myJimple.newAssignStmt(l, constancFactory.createIntConstant(0));
       } else if (t instanceof DoubleType) {

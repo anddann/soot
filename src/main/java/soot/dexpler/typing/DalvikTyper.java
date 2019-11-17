@@ -42,6 +42,8 @@ package soot.dexpler.typing;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,7 +62,9 @@ import soot.IntType;
 import soot.Local;
 import soot.LongType;
 import soot.PrimType;
+import soot.PrimTypeCollector;
 import soot.RefType;
+import soot.Scene;
 import soot.ShortType;
 import soot.Type;
 import soot.Unit;
@@ -78,6 +82,7 @@ import soot.jimple.BinopExpr;
 import soot.jimple.BreakpointStmt;
 import soot.jimple.CastExpr;
 import soot.jimple.Constant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.DivExpr;
 import soot.jimple.DynamicInvokeExpr;
@@ -104,12 +109,16 @@ import soot.jimple.TableSwitchStmt;
 import soot.jimple.ThrowStmt;
 import soot.jimple.UnopExpr;
 import soot.jimple.UshrExpr;
+import soot.options.Options;
 import soot.tagkit.Tag;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.SimpleLocalDefs;
 import soot.toolkits.scalar.SimpleLocalUses;
 import soot.toolkits.scalar.UnitValueBoxPair;
+import soot.util.PhaseDumper;
 
 public class DalvikTyper implements IDalvikTyper {
 
@@ -121,15 +130,21 @@ public class DalvikTyper implements IDalvikTyper {
   private Set<Local> localTemp = new HashSet<Local>();
   private List<LocalObj> localObjList = new ArrayList<LocalObj>();
   private Map<Local, List<LocalObj>> local2Obj = new HashMap<Local, List<LocalObj>>();
+  private Scene myScene;
+  private PrimTypeCollector primTypeCollector;
+  private ThrowableSet.Manager myManager;
+  private Options myOptions;
+  private ConstantFactory constantFactory;
+  private ThrowAnalysis myThrowAnalysis;
+  private PhaseDumper myPhaseDumper;
 
-  private DalvikTyper() {
-  }
-
-  public static DalvikTyper v() {
-    if (dt == null) {
-      dt = new DalvikTyper();
-    }
-    return dt;
+  @Inject
+  private DalvikTyper(Scene myScene, PrimTypeCollector primTypeCollector, ThrowableSet.Manager myManager, Options myOptions, ConstantFactory constantFactory) {
+    this.myScene = myScene;
+    this.primTypeCollector = primTypeCollector;
+    this.myManager = myManager;
+    this.myOptions = myOptions;
+    this.constantFactory = constantFactory;
   }
 
   public void clear() {
@@ -195,7 +210,7 @@ public class DalvikTyper implements IDalvikTyper {
         @Override
         public void caseInvokeStmt(InvokeStmt stmt) {
           // add constraint
-          DalvikTyper.v().setInvokeType(stmt.getInvokeExpr());
+          DalvikTyper.this.setInvokeType(stmt.getInvokeExpr());
 
         }
 
@@ -210,7 +225,7 @@ public class DalvikTyper implements IDalvikTyper {
             NewArrayExpr nae = (NewArrayExpr) r;
             ValueBox sb = nae.getSizeBox();
             if (sb.getValue() instanceof Local) {
-              DalvikTyper.v().setType(sb, IntType.v(), true);
+              DalvikTyper.this.setType(sb,  DalvikTyper.this.primTypeCollector.getIntType(), true);
             }
           }
 
@@ -219,17 +234,17 @@ public class DalvikTyper implements IDalvikTyper {
             ArrayRef ar = stmt.getArrayRef();
             ValueBox sb = ar.getIndexBox();
             if (sb.getValue() instanceof Local) {
-              DalvikTyper.v().setType(sb, IntType.v(), true);
+              DalvikTyper.this.setType(sb,  DalvikTyper.this.primTypeCollector.getIntType(), true);
             }
           }
 
           if (l instanceof Local && r instanceof Local) {
-            DalvikTyper.v().addConstraint(stmt.getLeftOpBox(), stmt.getRightOpBox());
+            DalvikTyper.this.addConstraint(stmt.getLeftOpBox(), stmt.getRightOpBox());
             return;
           }
 
           if (stmt.containsInvokeExpr()) {
-            DalvikTyper.v().setInvokeType(stmt.getInvokeExpr());
+            DalvikTyper.this.setInvokeType(stmt.getInvokeExpr());
           }
 
           if (r instanceof Local) { // l NOT local
@@ -239,7 +254,7 @@ public class DalvikTyper implements IDalvikTyper {
               todoUnits.add(stmt);
               return;
             }
-            DalvikTyper.v().setType(stmt.getRightOpBox(), leftType, true);
+            DalvikTyper.this.setType(stmt.getRightOpBox(), leftType, true);
             return;
           }
 
@@ -257,20 +272,20 @@ public class DalvikTyper implements IDalvikTyper {
 
               // Debug.printDbg("assign stmt tag: ", stmt, t);
               if (t instanceof IntOpTag) {
-                checkExpr(r, IntType.v());
-                DalvikTyper.v().setType(stmt.getLeftOpBox(), IntType.v(), false);
+                checkExpr(r,  DalvikTyper.this.primTypeCollector.getIntType());
+               DalvikTyper.this.setType(stmt.getLeftOpBox(),  DalvikTyper.this.primTypeCollector.getIntType(), false);
                 return;
               } else if (t instanceof FloatOpTag) {
-                checkExpr(r, FloatType.v());
-                DalvikTyper.v().setType(stmt.getLeftOpBox(), FloatType.v(), false);
+                checkExpr(r,  DalvikTyper.this.primTypeCollector.getFloatType());
+               DalvikTyper.this.setType(stmt.getLeftOpBox(),  DalvikTyper.this.primTypeCollector.getFloatType(), false);
                 return;
               } else if (t instanceof DoubleOpTag) {
-                checkExpr(r, DoubleType.v());
-                DalvikTyper.v().setType(stmt.getLeftOpBox(), DoubleType.v(), false);
+                checkExpr(r,  DalvikTyper.this.primTypeCollector.getDoubleType());
+               DalvikTyper.this.setType(stmt.getLeftOpBox(),  DalvikTyper.this.primTypeCollector.getDoubleType(), false);
                 return;
               } else if (t instanceof LongOpTag) {
-                checkExpr(r, LongType.v());
-                DalvikTyper.v().setType(stmt.getLeftOpBox(), LongType.v(), false);
+                checkExpr(r,  DalvikTyper.this.primTypeCollector.getLongType());
+               DalvikTyper.this.setType(stmt.getLeftOpBox(),  DalvikTyper.this.primTypeCollector.getLongType(), false);
                 return;
               }
             }
@@ -287,25 +302,25 @@ public class DalvikTyper implements IDalvikTyper {
                 for (Tag t : stmt.getTags()) {
                   // Debug.printDbg("assign primitive type from stmt tag: ", stmt, t);
                   if (t instanceof IntOpTag) {
-                    DalvikTyper.v().setType(ce.getOpBox(), IntType.v(), false);
+                   DalvikTyper.this.setType(ce.getOpBox(),  DalvikTyper.this.primTypeCollector.getIntType(), false);
                     return;
                   } else if (t instanceof FloatOpTag) {
-                    DalvikTyper.v().setType(ce.getOpBox(), FloatType.v(), false);
+                   DalvikTyper.this.setType(ce.getOpBox(),  DalvikTyper.this.primTypeCollector.getFloatType(), false);
                     return;
                   } else if (t instanceof DoubleOpTag) {
-                    DalvikTyper.v().setType(ce.getOpBox(), DoubleType.v(), false);
+                   DalvikTyper.this.setType(ce.getOpBox(),  DalvikTyper.this.primTypeCollector.getDoubleType(), false);
                     return;
                   } else if (t instanceof LongOpTag) {
-                    DalvikTyper.v().setType(ce.getOpBox(), LongType.v(), false);
+                   DalvikTyper.this.setType(ce.getOpBox(),  DalvikTyper.this.primTypeCollector.getLongType(), false);
                     return;
                   }
                 }
               } else {
                 // incoming type is object
-                DalvikTyper.v().setType(ce.getOpBox(), RefType.v("java.lang.Object"), false);
+               DalvikTyper.this.setType(ce.getOpBox(), RefType.v("java.lang.Object", DalvikTyper.this.myScene), false);
               }
             }
-            DalvikTyper.v().setType(stmt.getLeftOpBox(), rightType, false);
+           DalvikTyper.this.setType(stmt.getLeftOpBox(), rightType, false);
             return;
           }
 
@@ -313,21 +328,21 @@ public class DalvikTyper implements IDalvikTyper {
 
         @Override
         public void caseIdentityStmt(IdentityStmt stmt) {
-          DalvikTyper.v().setType(stmt.getLeftOpBox(), stmt.getRightOp().getType(), false);
+          DalvikTyper.this.setType(stmt.getLeftOpBox(), stmt.getRightOp().getType(), false);
 
         }
 
         @Override
         public void caseEnterMonitorStmt(EnterMonitorStmt stmt) {
           // add constraint
-          DalvikTyper.v().setType(stmt.getOpBox(), RefType.v("java.lang.Object"), true);
+          DalvikTyper.this.setType(stmt.getOpBox(), RefType.v("java.lang.Object", DalvikTyper.this.myScene), true);
 
         }
 
         @Override
         public void caseExitMonitorStmt(ExitMonitorStmt stmt) {
           // add constraint
-          DalvikTyper.v().setType(stmt.getOpBox(), RefType.v("java.lang.Object"), true);
+          DalvikTyper.this.setType(stmt.getOpBox(), RefType.v("java.lang.Object", DalvikTyper.this.myScene), true);
         }
 
         @Override
@@ -345,7 +360,7 @@ public class DalvikTyper implements IDalvikTyper {
             Value op1 = bo.getOp1();
             Value op2 = bo.getOp2();
             if (op1 instanceof Local && op2 instanceof Local) {
-              DalvikTyper.v().addConstraint(bo.getOp1Box(), bo.getOp2Box());
+             DalvikTyper.this.addConstraint(bo.getOp1Box(), bo.getOp2Box());
             }
           }
 
@@ -354,7 +369,7 @@ public class DalvikTyper implements IDalvikTyper {
         @Override
         public void caseLookupSwitchStmt(LookupSwitchStmt stmt) {
           // add constraint
-          DalvikTyper.v().setType(stmt.getKeyBox(), IntType.v(), true);
+         DalvikTyper.this.setType(stmt.getKeyBox(),  DalvikTyper.this.primTypeCollector.getIntType(), true);
 
         }
 
@@ -373,7 +388,7 @@ public class DalvikTyper implements IDalvikTyper {
         @Override
         public void caseReturnStmt(ReturnStmt stmt) {
           // add constraint
-          DalvikTyper.v().setType(stmt.getOpBox(), b.getMethod().getReturnType(), true);
+         DalvikTyper.this.setType(stmt.getOpBox(), b.getMethod().getReturnType(), true);
 
         }
 
@@ -386,14 +401,14 @@ public class DalvikTyper implements IDalvikTyper {
         @Override
         public void caseTableSwitchStmt(TableSwitchStmt stmt) {
           // add constraint
-          DalvikTyper.v().setType(stmt.getKeyBox(), IntType.v(), true);
+         DalvikTyper.this.setType(stmt.getKeyBox(),  DalvikTyper.this.primTypeCollector.getIntType(), true);
 
         }
 
         @Override
         public void caseThrowStmt(ThrowStmt stmt) {
           // add constraint
-          DalvikTyper.v().setType(stmt.getOpBox(), RefType.v("java.lang.Object"), true);
+         DalvikTyper.this.setType(stmt.getOpBox(), RefType.v("java.lang.Object", DalvikTyper.this.myScene), true);
 
         }
 
@@ -412,7 +427,7 @@ public class DalvikTyper implements IDalvikTyper {
     if (!todoUnits.isEmpty()) {
 
       // propagate array types
-      UnitGraph ug = new ExceptionalUnitGraph(b, myManager);
+      UnitGraph ug = new ExceptionalUnitGraph(b,myThrowAnalysis, myManager,  DalvikTyper.this.myOptions.omit_excepting_unit_edges(),myPhaseDumper);
       SimpleLocalDefs sld = new SimpleLocalDefs(ug);
       SimpleLocalUses slu = new SimpleLocalUses(b, sld);
 
@@ -493,7 +508,7 @@ public class DalvikTyper implements IDalvikTyper {
                   }
 
                   toDo.add((DefinitionStmt) use);
-                  DalvikTyper.v().setType(ass2.getLeftOpBox(), newType, true);
+                 DalvikTyper.this.setType(ass2.getLeftOpBox(), newType, true);
                 }
               }
             }
@@ -557,7 +572,7 @@ public class DalvikTyper implements IDalvikTyper {
           todoUnits.add(u);
           continue;
         } else {
-          DalvikTyper.v().setType(ar == l ? ass.getRightOpBox() : ass.getLeftOpBox(), t, true);
+         DalvikTyper.this.setType(ar == l ? ass.getRightOpBox() : ass.getLeftOpBox(), t, true);
           todoUnits.remove(u);
         }
 
@@ -649,7 +664,7 @@ public class DalvikTyper implements IDalvikTyper {
             newValue = ud.toLongConstant();
           } else {
             if (cst instanceof UntypedIntOrFloatConstant && ((UntypedIntOrFloatConstant) cst).value == 0) {
-              newValue = myNullConstant;
+              newValue =  DalvikTyper.this.constantFactory.getNullConstant();
               // Debug.printDbg("new null constant for constraint ", c, " with l type: ", localTyped.get(l));
             } else {
               throw new RuntimeException("unknow type for constance: " + lt);
@@ -792,7 +807,7 @@ public class DalvikTyper implements IDalvikTyper {
                     AssignStmt a = (AssignStmt) u;
                     Value right = a.getRightOp();
                     if (right instanceof CastExpr) {
-                      newValue = myNullConstant;
+                      newValue =  DalvikTyper.this.constantFactory.getNullConstant();
                     } else {
                       newValue = cst.toIntConstant();
                     }
@@ -838,7 +853,7 @@ public class DalvikTyper implements IDalvikTyper {
             NewArrayExpr nae = (NewArrayExpr) stmt.getRightOp();
             if (nae.getSize() instanceof UntypedConstant) {
               UntypedIntOrFloatConstant uc = (UntypedIntOrFloatConstant) nae.getSize();
-              nae.setSize(uc.defineType(IntType.v()));
+              nae.setSize(uc.defineType( DalvikTyper.this.primTypeCollector.getUnknownType()));
             }
           } else if (stmt.getRightOp() instanceof UntypedConstant) {
             UntypedConstant uc = (UntypedConstant) stmt.getRightOp();
@@ -1038,10 +1053,10 @@ public class DalvikTyper implements IDalvikTyper {
         // special case where the second operand is always of type integer
         if ((v instanceof ShrExpr || v instanceof ShlExpr || v instanceof UshrExpr) && ((BinopExpr) v).getOp2() == value) {
           // Debug.printDbg("setting type of operand two of shift expression to integer", value);
-          DalvikTyper.v().setType(vb, IntType.v(), true);
+         DalvikTyper.this.setType(vb,  DalvikTyper.this.primTypeCollector.getIntType(), true);
           continue;
         }
-        DalvikTyper.v().setType(vb, t, true);
+       DalvikTyper.this.setType(vb, t, true);
       } else if (value instanceof UntypedConstant) {
 
         UntypedConstant uc = (UntypedConstant) value;
@@ -1066,13 +1081,13 @@ public class DalvikTyper implements IDalvikTyper {
         continue;
       }
       Type t = invokeExpr.getMethodRef().parameterType(i);
-      DalvikTyper.v().setType(invokeExpr.getArgBox(i), t, true);
+     DalvikTyper.this.setType(invokeExpr.getArgBox(i), t, true);
     }
     if (invokeExpr instanceof StaticInvokeExpr) {
       // nothing to do
     } else if (invokeExpr instanceof InstanceInvokeExpr) {
       InstanceInvokeExpr iie = (InstanceInvokeExpr) invokeExpr;
-      DalvikTyper.v().setType(iie.getBaseBox(), RefType.v("java.lang.Object"), true);
+     DalvikTyper.this.setType(iie.getBaseBox(), RefType.v("java.lang.Object", DalvikTyper.this.myScene), true);
     } else if (invokeExpr instanceof DynamicInvokeExpr) {
       DynamicInvokeExpr die = (DynamicInvokeExpr) invokeExpr;
       // ?
@@ -1143,7 +1158,7 @@ public class DalvikTyper implements IDalvikTyper {
             NewArrayExpr nae = (NewArrayExpr) stmt.getRightOp();
             if (nae.getSize() instanceof UntypedConstant) {
               UntypedIntOrFloatConstant uc = (UntypedIntOrFloatConstant) nae.getSize();
-              nae.setSize(uc.defineType(IntType.v()));
+              nae.setSize(uc.defineType( DalvikTyper.this.primTypeCollector.getIntType()));
             }
           } else if (stmt.getRightOp() instanceof InvokeExpr) {
             changeUntypedConstantsInInvoke((InvokeExpr) stmt.getRightOp());
@@ -1155,22 +1170,22 @@ public class DalvikTyper implements IDalvikTyper {
               for (Tag t : stmt.getTags()) {
                 // Debug.printDbg("assign primitive type from stmt tag: ", stmt, t);
                 if (t instanceof IntOpTag) {
-                  ce.setOp(uc.defineType(IntType.v()));
+                  ce.setOp(uc.defineType( DalvikTyper.this.primTypeCollector.getIntType()));
                   return;
                 } else if (t instanceof FloatOpTag) {
-                  ce.setOp(uc.defineType(FloatType.v()));
+                  ce.setOp(uc.defineType( DalvikTyper.this.primTypeCollector.getFloatType()));
                   return;
                 } else if (t instanceof DoubleOpTag) {
-                  ce.setOp(uc.defineType(DoubleType.v()));
+                  ce.setOp(uc.defineType( DalvikTyper.this.primTypeCollector.getDoubleType()));
                   return;
                 } else if (t instanceof LongOpTag) {
-                  ce.setOp(uc.defineType(LongType.v()));
+                  ce.setOp(uc.defineType( DalvikTyper.this.primTypeCollector.getLongType()));
                   return;
                 }
               }
 
               // 0 -> null
-              ce.setOp(uc.defineType(RefType.v("java.lang.Object")));
+              ce.setOp(uc.defineType(RefType.v("java.lang.Object", DalvikTyper.this.myScene)));
             }
           }
 
@@ -1188,16 +1203,16 @@ public class DalvikTyper implements IDalvikTyper {
             for (Tag t : stmt.getTags()) {
               // Debug.printDbg("div stmt tag: ", stmt, t);
               if (t instanceof IntOpTag) {
-                checkExpr(r, IntType.v());
+                checkExpr(r,  DalvikTyper.this.primTypeCollector.getIntType());
                 return;
               } else if (t instanceof FloatOpTag) {
-                checkExpr(r, FloatType.v());
+                checkExpr(r,  DalvikTyper.this.primTypeCollector.getFloatType());
                 return;
               } else if (t instanceof DoubleOpTag) {
-                checkExpr(r, DoubleType.v());
+                checkExpr(r,  DalvikTyper.this.primTypeCollector.getDoubleType());
                 return;
               } else if (t instanceof LongOpTag) {
-                checkExpr(r, LongType.v());
+                checkExpr(r,  DalvikTyper.this.primTypeCollector.getLongType());
                 return;
               }
             }
@@ -1278,7 +1293,7 @@ public class DalvikTyper implements IDalvikTyper {
         public void caseThrowStmt(ThrowStmt stmt) {
           if (stmt.getOp() instanceof UntypedConstant) {
             UntypedConstant uc = (UntypedConstant) stmt.getOp();
-            stmt.setOp(uc.defineType(RefType.v("java.lang.Object")));
+            stmt.setOp(uc.defineType(RefType.v("java.lang.Object", DalvikTyper.this.myScene)));
           }
         }
 

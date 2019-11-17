@@ -186,7 +186,7 @@ public class FillArrayDataInstruction extends PseudoInstruction {
     } else if (elementType instanceof DoubleType) {
       value = constancFactory.createDoubleConstant(Double.longBitsToDouble(element.longValue()));
     } else if (elementType instanceof FloatType) {
-      value = FloatConstant.v(Float.intBitsToFloat(element.intValue()));
+      value = constancFactory.createFloatConstant(Float.intBitsToFloat(element.intValue()));
     } else if (elementType instanceof IntType) {
       value = constancFactory.createIntConstant(element.intValue());
     } else if (elementType instanceof LongType) {

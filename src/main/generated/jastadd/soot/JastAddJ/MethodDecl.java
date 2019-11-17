@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import beaver.Symbol;
 import soot.Scene;
 import soot.SootMethod;
 import soot.SootMethodRef;
@@ -24,6 +25,9 @@ import soot.jimple.JimpleBody;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:95
  */
 public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iterator {
+	private Scene myScene;
+	private Jimple myJimple;
+
 	/**
 	 * @apilevel low-level
 	 */
@@ -351,7 +355,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 		// build accessor declaration
 		m = new MethodDecl(modifiers, getTypeAccess().type().createQualifiedAccess(),
 				name() + "$access$" + accessorIndex, parameterList, exceptionList,
-				new Opt(new Block(new List().add(createAccessorStmt()))));
+				new Opt(new Block(new List().add(createAccessorStmt()))), myScene, myJimple);
 		m = methodQualifier.addMemberMethod(m);
 		methodQualifier.addAccessor(this, "method", m);
 		return m;
@@ -395,7 +399,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 		else
 			stmt = new ReturnStmt(new Opt(new SuperAccess("super").qualifiesAccess(new MethodAccess(name(), args))));
 		m = new MethodDecl(new Modifiers(new List().add(new Modifier("synthetic"))), type().createQualifiedAccess(),
-				name() + "$access$" + accessorIndex, parameters, new List(), new Opt(new Block(new List().add(stmt))));
+				name() + "$access$" + accessorIndex, parameters, new List(), new Opt(new Block(new List().add(stmt))), myScene, myJimple);
 		m = methodQualifier.addMemberMethod(m);
 		methodQualifier.addAccessor(this, "method_super", m);
 		return m;
@@ -421,7 +425,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 			throwtypes.add(getException(i).type().getSootClassDecl());
 		String signature = SootMethod.getSubSignature(name, parameters, returnType,returnType.getMyScene());
 		if (!hostType().getSootClassDecl().declaresMethod(signature)) {
-			SootMethod m = myScene.makeSootMethod(name, parameters, returnType, modifiers, throwtypes,returnType.getMyScene());
+			SootMethod m = myScene.makeSootMethod(name, parameters, returnType, modifiers, throwtypes);
 			hostType().getSootClassDecl().addMethod(m);
 			m.addTag(new soot.tagkit.ParamNamesTag(paramnames));
 			sootMethod = m;
@@ -606,11 +610,14 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 
 	/**
 	 * @ast method
-	 * 
+	 *@param myScene
+	 * @param myJimple
 	 */
-	public MethodDecl() {
+	public MethodDecl(Scene myScene, Jimple myJimple) {
 		super();
 
+		this.myScene = myScene;
+		this.myJimple = myJimple;
 	}
 
 	/**
@@ -634,7 +641,9 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 	 * 
 	 */
 	public MethodDecl(Modifiers p0, Access p1, String p2, List<ParameterDeclaration> p3, List<Access> p4,
-			Opt<Block> p5) {
+					  Opt<Block> p5, Scene myScene, Jimple myJimple) {
+		this.myScene = myScene;
+		this.myJimple = myJimple;
 		setChild(p0, 0);
 		setChild(p1, 1);
 		setID(p2);
@@ -647,8 +656,10 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 	 * @ast method
 	 * 
 	 */
-	public MethodDecl(Modifiers p0, Access p1, beaver.Symbol p2, List<ParameterDeclaration> p3, List<Access> p4,
-			Opt<Block> p5) {
+	public MethodDecl(Modifiers p0, Access p1, Symbol p2, List<ParameterDeclaration> p3, List<Access> p4,
+					  Opt<Block> p5, Scene myScene, Jimple myJimple) {
+		this.myScene = myScene;
+		this.myJimple = myJimple;
 		setChild(p0, 0);
 		setChild(p1, 1);
 		setID(p2);

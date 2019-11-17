@@ -1,23 +1,8 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production AnnotationMethodDecl : {@link MethodDecl} ::= <span class="component">[DefaultValue:{@link ElementValue}]</span>;
  * @ast node
@@ -128,7 +113,7 @@ public class AnnotationMethodDecl extends MethodDecl implements Cloneable {
    * 
    */
   public AnnotationMethodDecl() {
-    super();
+    super(myScene, myJimple);
 
 
   }
@@ -152,7 +137,8 @@ public class AnnotationMethodDecl extends MethodDecl implements Cloneable {
    * 
    */
   public AnnotationMethodDecl(Modifiers p0, Access p1, String p2, List<ParameterDeclaration> p3, List<Access> p4, Opt<Block> p5, Opt<ElementValue> p6) {
-    setChild(p0, 0);
+      super(myScene, myJimple);
+      setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);
     setChild(p3, 2);
@@ -165,7 +151,8 @@ public class AnnotationMethodDecl extends MethodDecl implements Cloneable {
    * 
    */
   public AnnotationMethodDecl(Modifiers p0, Access p1, beaver.Symbol p2, List<ParameterDeclaration> p3, List<Access> p4, Opt<Block> p5, Opt<ElementValue> p6) {
-    setChild(p0, 0);
+      super(myScene, myJimple);
+      setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);
     setChild(p3, 2);

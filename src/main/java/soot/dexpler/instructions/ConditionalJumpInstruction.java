@@ -70,7 +70,7 @@ public abstract class ConditionalJumpInstruction extends JumpInstruction impleme
     }
   }
 
-  // DalvikTyper.v() here?
+  // myDalvikTyper() here?
 
   public void deferredJimplify(DexBody body) {
     IfStmt s = ifStatement(body);

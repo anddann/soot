@@ -40,9 +40,9 @@ import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
 import soot.jimple.ArrayRef;
+import soot.jimple.ConstantFactory;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceInvokeExpr;
-import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
 import soot.jimple.LengthExpr;
 import soot.jimple.MonitorStmt;
@@ -54,6 +54,7 @@ import soot.tagkit.Tag;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.FlowSet;
 import soot.util.Chain;
 import soot.util.PhaseDumper;
@@ -79,17 +80,21 @@ public class NullPointerChecker extends BodyTransformer {
   private ThrowableSet.Manager myManager;
   private ThrowAnalysis mythrowAnalysis;
   private PhaseDumper myPhaseDumper;
+    private InteractionHandler myInteractionHandler;
+    private ConstantFactory constancFactory;
 
 
-  @Inject
-  public NullPointerChecker(Options myOptions, Scene myScene, Jimple myJimple, ThrowableSet.Manager myManager, ThrowAnalysis mythrowAnalysis, PhaseDumper myPhaseDumper) {
+    @Inject
+  public NullPointerChecker(Options myOptions, Scene myScene, Jimple myJimple, ThrowableSet.Manager myManager, ThrowAnalysis mythrowAnalysis, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, ConstantFactory constancFactory) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myJimple = myJimple;
     this.myManager = myManager;
     this.mythrowAnalysis = mythrowAnalysis;
     this.myPhaseDumper = myPhaseDumper;
-  }
+        this.myInteractionHandler = myInteractionHandler;
+        this.constancFactory = constancFactory;
+    }
 
 
   private boolean isProfiling = false;
@@ -107,7 +112,7 @@ public class NullPointerChecker extends BodyTransformer {
         logger.debug("[npc] Null pointer check for " + body.getMethod().getName() + " started on " + start);
       }
 
-      BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(body, mythrowAnalysis, myOptions.omit_excepting_unit_edges(),   myManager,myPhaseDumper));
+      BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(body, mythrowAnalysis, myOptions.omit_excepting_unit_edges(),   myManager,myPhaseDumper), myInteractionHandler, myOptions.interactive_mode());
 
       SootClass counterClass = null;
       SootMethod increase = null;

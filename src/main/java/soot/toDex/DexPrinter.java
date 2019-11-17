@@ -1299,7 +1299,7 @@ public class DexPrinter {
    * @return the statement visitor
    */
   protected StmtVisitor buildStmtVisitor(SootMethod belongingMethod, DexArrayInitDetector arrayInitDetector) {
-    return new StmtVisitor(belongingMethod, arrayInitDetector);
+    return new StmtVisitor(belongingMethod, arrayInitDetector, constancFactory, myScene);
   }
 
   /**

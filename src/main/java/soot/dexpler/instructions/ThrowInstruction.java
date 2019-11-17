@@ -52,7 +52,7 @@ public class ThrowInstruction extends DexlibAbstractInstruction {
     body.add(throwStmt);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      DalvikTyper.v().setType(throwStmt.getOpBox(), RefType.v("java.lang.Throwable"), true);
+      myDalvikTyper().setType(throwStmt.getOpBox(), RefType.v("java.lang.Throwable"), true);
     }
   }
 }

@@ -33,7 +33,6 @@ import java.util.Set;
 
 import soot.Body;
 import soot.G;
-import soot.IntType;
 import soot.Local;
 import soot.PatchingChain;
 import soot.PhaseOptions;
@@ -58,7 +57,6 @@ import soot.dava.internal.javaRep.DCmpExpr;
 import soot.dava.internal.javaRep.DCmpgExpr;
 import soot.dava.internal.javaRep.DCmplExpr;
 import soot.dava.internal.javaRep.DInstanceFieldRef;
-import soot.dava.internal.javaRep.DIntConstant;
 import soot.dava.internal.javaRep.DInterfaceInvokeExpr;
 import soot.dava.internal.javaRep.DLengthExpr;
 import soot.dava.internal.javaRep.DNegExpr;
@@ -117,6 +115,7 @@ import soot.jimple.CmpgExpr;
 import soot.jimple.CmplExpr;
 import soot.jimple.ConditionExpr;
 import soot.jimple.Constant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.Expr;
 import soot.jimple.IdentityStmt;
@@ -221,16 +220,17 @@ public class DavaBody extends Body {
   private List<CaughtExceptionRef> caughtrefs;
   private Dava myDava;
   private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
+  private ConstantFactory constancFactory;
 
   /**
    * Construct an empty DavaBody
    */
 
   DavaBody(SootMethod m, Options myOptions, Printer myPrinter, ExceptionFinder myExceptionFinder, CycleFinder myCycleFinder,
-      IfFinder myIfFinder, SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder,
-      SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder,
-      MonitorConverter myMonitorConverter, ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover,
-      PhaseOptions myPhaseOptions, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder) {
+           IfFinder myIfFinder, SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder,
+           SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder,
+           MonitorConverter myMonitorConverter, ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover,
+           PhaseOptions myPhaseOptions, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constancFactory) {
     super(m, myOptions, myPrinter);
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -246,6 +246,7 @@ public class DavaBody extends Body {
     this.myPhaseOptions = myPhaseOptions;
     this.myDava = myDava;
     this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
+    this.constancFactory = constancFactory;
 
     pMap = new HashMap<Integer, Value>();
     consumedConditions = new HashSet<Object>();
@@ -340,10 +341,10 @@ public class DavaBody extends Body {
            ThrowNullConverter myThrowNullConverter, SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder,
            CycleFinder myCycleFinder, IfFinder myIfFinder, SwitchFinder mySwitchFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava) {
+           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constancFactory) {
     this(body.getMethod(), myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myDava, myClosestAbruptTargetFinder);
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myDava, myClosestAbruptTargetFinder, constancFactory);
     debug("DavaBody", "creating DavaBody for" + body.getMethod().toString());
     this.myDava.log("\nstart method " + body.getMethod().toString());
 
@@ -883,7 +884,7 @@ public class DavaBody extends Body {
           javafy(ds.getLeftOpBox());
 
           if (ds.getRightOp() instanceof IntConstant) {
-            ds.getRightOpBox().setValue(DconstancFactory.createIntConstant(((IntConstant) ds.getRightOp()).value, ds.getLeftOp().getType()));
+            ds.getRightOpBox().setValue(constancFactory.createDIntConstant(((IntConstant) ds.getRightOp()).value, ds.getLeftOp().getType()));
           }
         }
 
@@ -891,7 +892,7 @@ public class DavaBody extends Body {
           ReturnStmt rs = (ReturnStmt) s;
 
           if (rs.getOp() instanceof IntConstant) {
-            rs.getOpBox().setValue(DconstancFactory.createIntConstant(((IntConstant) rs.getOp()).value, body.getMethod().getReturnType()));
+            rs.getOpBox().setValue(constancFactory.createDIntConstant(((IntConstant) rs.getOp()).value, body.getMethod().getReturnType()));
           } else {
             javafy(rs.getOpBox());
           }
@@ -1080,9 +1081,9 @@ public class DavaBody extends Body {
         leftOp = leftOpBox.getValue();
 
         if (boe instanceof ConditionExpr) {
-          rightOpBox.setValue(DconstancFactory.createIntConstant(((IntConstant) rightOp).value, leftOp.getType()));
+          rightOpBox.setValue(constancFactory.createDIntConstant(((IntConstant) rightOp).value, leftOp.getType()));
         } else {
-          rightOpBox.setValue(DconstancFactory.createIntConstant(((IntConstant) rightOp).value, null));
+          rightOpBox.setValue(constancFactory.createDIntConstant(((IntConstant) rightOp).value, null));
         }
       }
     } else if (leftOp instanceof IntConstant) {
@@ -1090,9 +1091,9 @@ public class DavaBody extends Body {
       rightOp = rightOpBox.getValue();
 
       if (boe instanceof ConditionExpr) {
-        leftOpBox.setValue(DconstancFactory.createIntConstant(((IntConstant) leftOp).value, rightOp.getType()));
+        leftOpBox.setValue(constancFactory.createDIntConstant(((IntConstant) leftOp).value, rightOp.getType()));
       } else {
-        leftOpBox.setValue(DconstancFactory.createIntConstant(((IntConstant) leftOp).value, null));
+        leftOpBox.setValue(constancFactory.createDIntConstant(((IntConstant) leftOp).value, null));
       }
     } else {
       javafy(rightOpBox);
@@ -1167,7 +1168,7 @@ public class DavaBody extends Body {
       Value arg = ie.getArg(i);
 
       if (arg instanceof IntConstant) {
-        ie.getArgBox(i).setValue(DconstancFactory.createIntConstant(((IntConstant) arg).value, ie.getMethodRef().parameterType(i)));
+        ie.getArgBox(i).setValue(constancFactory.createDIntConstant(((IntConstant) arg).value, ie.getMethodRef().parameterType(i)));
       } else {
         javafy(ie.getArgBox(i));
       }

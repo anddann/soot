@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.CompilationDeathException;
-import soot.G;
 import soot.Local;
 import soot.PhaseOptions;
 import soot.Printer;
@@ -131,7 +130,7 @@ public class Dava {
   public DavaBody newBody(SootMethod m) {
     DavaBody davaBody = new DavaBody(m, myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, this, myClosestAbruptTargetFinder);
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, this, myClosestAbruptTargetFinder, constancFactory);
     return davaBody;
   }
 
@@ -139,7 +138,7 @@ public class Dava {
   public DavaBody newBody(Body b) {
     return new DavaBody(b, myOptions, myPrinter, myMonitorConverter, myExceptionFinder, mySynchronizedBlockFinder,
         myThrowNullConverter, mySequenceFinder, myLabeledBlockFinder, myCycleFinder, myIfFinder, mySwitchFinder,
-        myAbruptEdgeFinder, myUselessTryRemover, myPhaseOptions, myClosestAbruptTargetFinder, this);
+        myAbruptEdgeFinder, myUselessTryRemover, myPhaseOptions, myClosestAbruptTargetFinder, this, constancFactory);
 
   }
 

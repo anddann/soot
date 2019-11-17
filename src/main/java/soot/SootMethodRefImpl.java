@@ -33,12 +33,12 @@ import org.slf4j.LoggerFactory;
 
 import soot.javaToJimple.LocalGenerator;
 import soot.jimple.AssignStmt;
+import soot.jimple.ConstantFactory;
 import soot.jimple.InvokeStmt;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.NewExpr;
 import soot.jimple.SpecialInvokeExpr;
-import soot.jimple.StringConstant;
 import soot.options.Options;
 import soot.util.NumberedString;
 
@@ -59,6 +59,7 @@ public class SootMethodRefImpl implements SootMethodRef {
     private Scene myScene;
     private Options myOptions;
   private Jimple myJimple;
+  private ConstantFactory constancFactory;
 
   /**
    * Constructor.
@@ -76,14 +77,16 @@ public class SootMethodRefImpl implements SootMethodRef {
    * @param myScene
      * @param myOptions
      * @param myJimple
+   * @param constancFactory
    * @throws IllegalArgumentException
    *           is thrown when {@code declaringClass}, or {@code name}, or {@code returnType} is null
    */
   public SootMethodRefImpl(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
-                           boolean isStatic, Scene myScene, Options myOptions, Jimple myJimple) {
+                           boolean isStatic, Scene myScene, Options myOptions, Jimple myJimple, ConstantFactory constancFactory) {
       this.myScene = myScene;
       this.myOptions = myOptions;
     this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
     if (declaringClass == null) {
       throw new IllegalArgumentException("Attempt to create SootMethodRef with null class");
     }

@@ -100,15 +100,15 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
 
       if (invocation instanceof InstanceInvokeExpr) {
         Type t = invocation.getMethodRef().declaringClass().getType();
-        DalvikTyper.v().setType(((InstanceInvokeExpr) invocation).getBaseBox(), t, true);
-        // DalvikTyper.v().setObjectType(assign.getLeftOpBox());
+        myDalvikTyper().setType(((InstanceInvokeExpr) invocation).getBaseBox(), t, true);
+        // myDalvikTyper().setObjectType(assign.getLeftOpBox());
       }
       int i = 0;
       for (Type pt : invocation.getMethodRef().parameterTypes()) {
-        DalvikTyper.v().setType(invocation.getArgBox(i++), pt, true);
+        myDalvikTyper().setType(invocation.getArgBox(i++), pt, true);
       }
       if (assign != null) {
-        DalvikTyper.v().setType(assign.getLeftOpBox(), invocation.getType(), false);
+        myDalvikTyper().setType(assign.getLeftOpBox(), invocation.getType(), false);
       }
 
     }

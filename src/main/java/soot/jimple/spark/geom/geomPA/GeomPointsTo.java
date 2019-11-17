@@ -177,7 +177,7 @@ public class GeomPointsTo extends PAG {
 
   // -------------------Constructors--------------------
   public GeomPointsTo(final SparkOptions opts) {
-    super(myPhaseOptions, myScene, myArrayElement, opts);
+    super(myPhaseOptions, myScene, myArrayElement, constantFactory, opts);
   }
 
   public String toString() {

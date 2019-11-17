@@ -1118,7 +1118,7 @@ public class Walker extends DepthFirstAdapter {
     if (isDouble) {
       res = constancFactory.createDoubleConstant(dvalue);
     } else {
-      res = FloatConstant.v(value);
+      res = constancFactory.createFloatConstant(value);
     }
 
     mProductions.addLast(res);

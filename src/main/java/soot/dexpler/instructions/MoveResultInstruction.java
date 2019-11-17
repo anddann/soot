@@ -65,7 +65,7 @@ public class MoveResultInstruction extends DexlibAbstractInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       JAssignStmt jassign = (JAssignStmt) assign;
-      DalvikTyper.v().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
+      myDalvikTyper().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
     }
   }
 

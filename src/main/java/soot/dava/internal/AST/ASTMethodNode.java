@@ -41,6 +41,8 @@ import soot.dava.DavaUnitPrinter;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DVariableDeclarationStmt;
 import soot.dava.toolkits.base.AST.ASTAnalysis;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.Analysis;
 import soot.dava.toolkits.base.renamer.RemoveFullyQualifiedName;
 import soot.jimple.InstanceInvokeExpr;
@@ -66,6 +68,8 @@ public class ASTMethodNode extends ASTNode {
    * Any local in the dontPrintLocals list is not printed in the top declarations
    */
   private List<Local> dontPrintLocals = new ArrayList<Local>();
+  private TryContentsFinder myTryContentsFinder;
+  private ASTWalker myASTWalker;
 
   public ASTStatementSequenceNode getDeclarations() {
     return declarations;
@@ -150,9 +154,11 @@ public class ASTMethodNode extends ASTNode {
     subBodies.add(body);
   }
 
-  public ASTMethodNode(List<Object> body) {
+  public ASTMethodNode(List<Object> body, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker) {
     super();
     this.body = body;
+    this.myTryContentsFinder = myTryContentsFinder;
+    this.myASTWalker = myASTWalker;
     subBodies.add(body);
   }
 
@@ -254,7 +260,7 @@ public class ASTMethodNode extends ASTNode {
   }
 
   public Object clone() {
-    ASTMethodNode toReturn = new ASTMethodNode(body);
+    ASTMethodNode toReturn = new ASTMethodNode(body, myTryContentsFinder, myASTWalker);
     toReturn.setDeclarations((ASTStatementSequenceNode) declarations.clone());
     toReturn.setDontPrintLocals(dontPrintLocals);
     return toReturn;

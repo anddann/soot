@@ -72,7 +72,7 @@ public class SparseSwitchInstruction extends SwitchInstruction {
     addTags(switchStmt);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      DalvikTyper.v().setType(switchStmt.getKeyBox(), IntType.v(), true);
+      myDalvikTyper().setType(switchStmt.getKeyBox(), IntType.v(), true);
     }
 
     return switchStmt;

@@ -77,7 +77,7 @@ public class ContextInsensitiveBuilder {
 
   /** Creates an empty pointer assignment graph. */
   public PAG setup(SparkOptions opts) {
-    pag = opts.geom_pta() ? new GeomPointsTo(opts) : new PAG(myPhaseOptions, myScene, myArrayElement, opts);
+    pag = opts.geom_pta() ? new GeomPointsTo(opts) : new PAG(myPhaseOptions, myScene, myArrayElement, constantFactory, opts);
     if (opts.simulate_natives()) {
       pag.nativeMethodDriver = new NativeMethodDriver(new SparkNativeHelper(pag));
     }

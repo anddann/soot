@@ -88,7 +88,7 @@ public class CPHelper {
         return DconstancFactory.createIntConstant(0, BooleanType.v());
       }
     } else if (toConvert instanceof Float) {
-      return FloatConstant.v(((Float) toConvert).floatValue());
+      return constancFactory.createFloatConstant(((Float) toConvert).floatValue());
     } else if (toConvert instanceof Integer) {
       return constancFactory.createIntConstant(((Integer) toConvert).intValue());
     } else {
