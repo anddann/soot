@@ -68,6 +68,7 @@ import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.dava.toolkits.base.misc.ThrowFinder;
 import soot.grimp.Grimp;
 import soot.grimp.toolkits.base.ConstructorFolder;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.paddle.PaddleHook;
@@ -243,43 +244,44 @@ public class PackManager {
   private Jimple myJimple;
   private ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer;
   private UnreachableMethodTransformer myUnreachableMethodTransformer;
+    private ConstantFactory constancFactory;
 
-  @Inject
+    @Inject
   public PackManager(PhaseOptions myPhaseOptions, FieldTagger myFieldTagger, Options myOptions,
-      SourceLocator mySourceLocator, TrapTightener myTrapTightener,
-      DuplicateCatchAllTrapRemover myDuplicateCatchAllTrapRemover, LocalSplitter myLocalSplitter,
-      TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, EmptySwitchEliminator myEmptySwitchEliminator,
-      Aggregator myAggregator, LocalNameStandardizer myLocalNameStandardizer, UnusedLocalEliminator myUnusedLocalEliminator,
-      CopyPropagator myCopyPropagator, DeadAssignmentEliminator myDeadAssignmentEliminator,
-      UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator,
-      ConstantInvokeMethodBaseTransformer myConstantInvokeMethodBaseTransformer, CHATransformer myCHATransformer,
-      PaddleHook myPaddleHook, MhpTransformer myMhpTransformer, SparkTransformer mySparkTransformer,
-      LockAllocator myLockAllocator, RenameDuplicatedClasses myRenameDuplicatedClasses,
-      StaticMethodBinder myStaticMethodBinder, StaticInliner myStaticInliner,
-      UnreachableMethodsTagger myUnreachableMethodsTagger, UnreachableFieldsTagger myUnreachableFieldsTagger,
-      TightestQualifiersTagger myTightestQualifiersTagger, Scene myScene, RectangularArrayFinder myRectangularArrayFinder,
-      CallGraphGrapher myCallGraphGrapher, PurityAnalysis myPurityAnalysis,
-      ConstantPropagatorAndFolder myConstantPropagatorAndFolder,
-      CommonSubexpressionEliminator myCommonSubexpressionEliminator, LazyCodeMotion myLazyCodeMotion,
-      BusyCodeMotion myBusyCodeMotion, UnconditionalBranchFolder myUnconditionalBranchFolder,
-      ConditionalBranchFolder myConditionalBranchFolder, NullPointerChecker myNullPointerChecker,
-      NullPointerColorer myNullPointerColorer, ArrayBoundsChecker myArrayBoundsChecker,
-      ProfilingGenerator myProfilingGenerator, SideEffectTagger mySideEffectTagger, CallGraphTagger myCallGraphTagger,
-      ParityTagger myParityTagger, ParameterAliasTagger myParameterAliasTagger, ReachingDefsTagger myReachingDefsTagger,
-      LiveVarsTagger myLiveVarsTagger, CastCheckEliminatorDumper myCastCheckEliminatorDumper,
-      LoopInvariantFinder myLoopInvariantFinder, AvailExprTagger myAvailExprTagger, DominatorsTagger myDominatorsTagger,
-      ConstructorFolder myConstructorFolder, LoadStoreOptimizer myLoadStoreOptimizer, PeepholeOptimizer myPeepholeOptimizer,
-      LineNumberTagAggregator myLineNumberTagAggregator, StoreChainOptimizer myStoreChainOptimizer,
-      ArrayNullTagAggregator myArrayNullTagAggregator, DependenceTagAggregator myDependenceTagAggregator,
-      FieldTagAggregator myFieldTagAggregator, LineNumberAdder myLineNumberAdder, InteractionHandler myInteractionHandler,
-      PhaseDumper myPhaseDumper, ShimpleTransformer myShimpleTransformer, ThrowFinder myThrowFinder,
-      PackageNamer myPackageNamer, InnerClassTagAggregator myInnerClassTagAggregator,
-      DavaStaticBlockCleaner myDavaStaticBlockCleaner, DavaPrinter myDavaPrinter, Shimple myShimple, Grimp myGrimp,
-      Dava myDava, Baf myBaf, Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter,
-      NullCheckEliminator myNullCheckEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer,
-      EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter, Jimple myJimple,
-      ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer,
-      UnreachableMethodTransformer myUnreachableMethodTransformer) {
+                     SourceLocator mySourceLocator, TrapTightener myTrapTightener,
+                     DuplicateCatchAllTrapRemover myDuplicateCatchAllTrapRemover, LocalSplitter myLocalSplitter,
+                     TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, EmptySwitchEliminator myEmptySwitchEliminator,
+                     Aggregator myAggregator, LocalNameStandardizer myLocalNameStandardizer, UnusedLocalEliminator myUnusedLocalEliminator,
+                     CopyPropagator myCopyPropagator, DeadAssignmentEliminator myDeadAssignmentEliminator,
+                     UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator,
+                     ConstantInvokeMethodBaseTransformer myConstantInvokeMethodBaseTransformer, CHATransformer myCHATransformer,
+                     PaddleHook myPaddleHook, MhpTransformer myMhpTransformer, SparkTransformer mySparkTransformer,
+                     LockAllocator myLockAllocator, RenameDuplicatedClasses myRenameDuplicatedClasses,
+                     StaticMethodBinder myStaticMethodBinder, StaticInliner myStaticInliner,
+                     UnreachableMethodsTagger myUnreachableMethodsTagger, UnreachableFieldsTagger myUnreachableFieldsTagger,
+                     TightestQualifiersTagger myTightestQualifiersTagger, Scene myScene, RectangularArrayFinder myRectangularArrayFinder,
+                     CallGraphGrapher myCallGraphGrapher, PurityAnalysis myPurityAnalysis,
+                     ConstantPropagatorAndFolder myConstantPropagatorAndFolder,
+                     CommonSubexpressionEliminator myCommonSubexpressionEliminator, LazyCodeMotion myLazyCodeMotion,
+                     BusyCodeMotion myBusyCodeMotion, UnconditionalBranchFolder myUnconditionalBranchFolder,
+                     ConditionalBranchFolder myConditionalBranchFolder, NullPointerChecker myNullPointerChecker,
+                     NullPointerColorer myNullPointerColorer, ArrayBoundsChecker myArrayBoundsChecker,
+                     ProfilingGenerator myProfilingGenerator, SideEffectTagger mySideEffectTagger, CallGraphTagger myCallGraphTagger,
+                     ParityTagger myParityTagger, ParameterAliasTagger myParameterAliasTagger, ReachingDefsTagger myReachingDefsTagger,
+                     LiveVarsTagger myLiveVarsTagger, CastCheckEliminatorDumper myCastCheckEliminatorDumper,
+                     LoopInvariantFinder myLoopInvariantFinder, AvailExprTagger myAvailExprTagger, DominatorsTagger myDominatorsTagger,
+                     ConstructorFolder myConstructorFolder, LoadStoreOptimizer myLoadStoreOptimizer, PeepholeOptimizer myPeepholeOptimizer,
+                     LineNumberTagAggregator myLineNumberTagAggregator, StoreChainOptimizer myStoreChainOptimizer,
+                     ArrayNullTagAggregator myArrayNullTagAggregator, DependenceTagAggregator myDependenceTagAggregator,
+                     FieldTagAggregator myFieldTagAggregator, LineNumberAdder myLineNumberAdder, InteractionHandler myInteractionHandler,
+                     PhaseDumper myPhaseDumper, ShimpleTransformer myShimpleTransformer, ThrowFinder myThrowFinder,
+                     PackageNamer myPackageNamer, InnerClassTagAggregator myInnerClassTagAggregator,
+                     DavaStaticBlockCleaner myDavaStaticBlockCleaner, DavaPrinter myDavaPrinter, Shimple myShimple, Grimp myGrimp,
+                     Dava myDava, Baf myBaf, Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter,
+                     NullCheckEliminator myNullCheckEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer,
+                     EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter, Jimple myJimple,
+                     ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer,
+                     UnreachableMethodTransformer myUnreachableMethodTransformer, ConstantFactory constancFactory) {
     this.myPhaseOptions = myPhaseOptions;
     this.myOptions = myOptions;
     // myPhaseOptions.setPackManager(this);
@@ -366,7 +368,8 @@ public class PackManager {
     this.myJimple = myJimple;
     this.myConstantInitializerToTagTransformer = myConstantInitializerToTagTransformer;
     this.myUnreachableMethodTransformer = myUnreachableMethodTransformer;
-    init();
+        this.constancFactory = constancFactory;
+        init();
   }
 
   public boolean onlyStandardPacks() {
@@ -789,7 +792,7 @@ public class PackManager {
 
   protected void writeDexOutput() {
     dexPrinter = new DexPrinter(myScene, myOptions, mySourceLocator, this, myEmptySwitchEliminator,
-        mySynchronizedMethodTransformer, myFastDexTrapTightener, myTrapSplitter, myJimple);
+        mySynchronizedMethodTransformer, myFastDexTrapTightener, myTrapSplitter, myJimple, constancFactory);
     writeOutput(reachableClasses());
     dexPrinter.print();
     dexPrinter = null;

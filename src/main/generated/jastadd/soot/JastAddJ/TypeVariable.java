@@ -2,22 +2,10 @@
 package soot.JastAddJ;
 
 import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production TypeVariable : {@link ReferenceType} ::= <span class="component">{@link Modifiers}</span> <span class="component">&lt;ID:String&gt;</span> <span class="component">{@link BodyDecl}*</span> <span class="component">TypeBound:{@link Access}*</span>;
  * @ast node
@@ -274,7 +262,7 @@ public class TypeVariable extends ReferenceType implements Cloneable {
    * 
    */
   public TypeVariable() {
-    super();
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
 
 
   }
@@ -288,15 +276,16 @@ public class TypeVariable extends ReferenceType implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(), 1);
-    setChild(new List(), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
   }
   /**
    * @ast method 
    * 
    */
   public TypeVariable(Modifiers p0, String p1, List<BodyDecl> p2, List<Access> p3) {
-    setChild(p0, 0);
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);
@@ -306,7 +295,8 @@ public class TypeVariable extends ReferenceType implements Cloneable {
    * 
    */
   public TypeVariable(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2, List<Access> p3) {
-    setChild(p0, 0);
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);

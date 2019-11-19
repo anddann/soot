@@ -62,6 +62,8 @@ import pxb.android.axml.NodeVisitor;
 
 import soot.baf.Baf;
 import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.FullObjectFactory;
 import soot.jimple.Jimple;
 import soot.jimple.spark.internal.ClientAccessibilityOracle;
 import soot.jimple.spark.pag.SparkField;
@@ -103,13 +105,15 @@ public class Scene // extends AbstractHost
   private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
   private Baf myBaf;
+  private ConstantFactory constancFactory;
+  private FullObjectFactory fullObjectFactory;
 
   @Inject
   public Scene(Options myOptions, PhaseOptions myPhaseOptions, SourceLocator mySourceLocator, SootResolver mySootResolver,
                PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility,
                EntryPoints myEntryPoints, ThrowAnalysis myPedanticThrowAnalysis, ThrowAnalysis myUnitThrowAnalysis,
                ThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer, Jimple myJimple,
-               PrimTypeCollector primTypeCollector, Baf myBaf) {
+               PrimTypeCollector primTypeCollector, Baf myBaf, ConstantFactory constancFactory, FullObjectFactory fullObjectFactory) {
     this.myOptions = myOptions;
     this.myPhaseOptions = myPhaseOptions;
     this.mySourceLocator = mySourceLocator;
@@ -124,6 +128,8 @@ public class Scene // extends AbstractHost
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.myBaf = myBaf;
+    this.constancFactory = constancFactory;
+    this.fullObjectFactory = fullObjectFactory;
     setReservedNames();
     // load soot.class.path system property, if defined
     String scp = System.getProperty("soot.class.path");
@@ -1242,7 +1248,7 @@ public class Scene // extends AbstractHost
 
   public SideEffectAnalysis getSideEffectAnalysis() {
     if (!hasSideEffectAnalysis()) {
-      setSideEffectAnalysis(new SideEffectAnalysis(getPointsToAnalysis(), getCallGraph()));
+      setSideEffectAnalysis(new SideEffectAnalysis(getPointsToAnalysis(), getCallGraph(), fullObjectFactory));
     }
 
     return activeSideEffectAnalysis;

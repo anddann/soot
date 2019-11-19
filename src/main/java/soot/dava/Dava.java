@@ -56,6 +56,7 @@ import soot.dava.toolkits.base.finders.SwitchFinder;
 import soot.dava.toolkits.base.finders.SynchronizedBlockFinder;
 import soot.dava.toolkits.base.misc.MonitorConverter;
 import soot.dava.toolkits.base.misc.ThrowNullConverter;
+import soot.jimple.ConstantFactory;
 import soot.options.Options;
 import soot.util.IterableSet;
 
@@ -77,13 +78,14 @@ public class Dava {
   private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
   private Options myOptions;
   private Printer myPrinter;
+  private ConstantFactory constancFactory;
 
   @Inject
   public Dava(Dava myJimple, ExceptionFinder myExceptionFinder, CycleFinder myCycleFinder, IfFinder myIfFinder,
-      SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder, SequenceFinder mySequenceFinder,
-      LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder, MonitorConverter myMonitorConverter,
-      ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-      ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter) {
+              SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder, SequenceFinder mySequenceFinder,
+              LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder, MonitorConverter myMonitorConverter,
+              ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
+              ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter, ConstantFactory constancFactory) {
     this.myJimple = myJimple;
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -100,6 +102,7 @@ public class Dava {
     this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     this.myOptions = myOptions;
     this.myPrinter = myPrinter;
+    this.constancFactory = constancFactory;
   }
 
 

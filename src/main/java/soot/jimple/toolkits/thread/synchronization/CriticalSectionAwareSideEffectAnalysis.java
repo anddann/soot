@@ -46,6 +46,7 @@ import soot.Value;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
 import soot.jimple.FieldRef;
+import soot.jimple.FullObjectFactory;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
@@ -114,6 +115,7 @@ class WholeObject {
 }
 
 public class CriticalSectionAwareSideEffectAnalysis {
+  private final FullObjectFactory fullObjectFactory;
   PointsToAnalysis pa;
   CallGraph cg;
   Map<SootMethod, CodeBlockRWSet> methodToNTReadSet = new HashMap<SootMethod, CodeBlockRWSet>();
@@ -239,15 +241,16 @@ public class CriticalSectionAwareSideEffectAnalysis {
     return methodToNTWriteSet.get(method);
   }
 
-  public CriticalSectionAwareSideEffectAnalysis(PointsToAnalysis pa, CallGraph cg,
+  public CriticalSectionAwareSideEffectAnalysis(FullObjectFactory fullObjectFactory, PointsToAnalysis pa, CallGraph cg,
                                                 Collection<CriticalSection> criticalSections, ThreadLocalObjectsAnalysis tlo, Scene myScene) {
+    this.fullObjectFactory = fullObjectFactory;
     this.pa = pa;
     this.cg = cg;
     this.tve = new CriticalSectionVisibleEdgesPred(criticalSections);
     this.tt = new TransitiveTargets(cg, new Filter(tve));
     this.normaltt = new TransitiveTargets(cg, null);
     this.myScene = myScene;
-    this.normalsea = new SideEffectAnalysis(pa, cg);
+    this.normalsea = new SideEffectAnalysis(pa, cg, this.fullObjectFactory);
     this.criticalSections = criticalSections;
     this.eoa = new EncapsulatedObjectAnalysis();
     this.tlo = tlo; // can be null

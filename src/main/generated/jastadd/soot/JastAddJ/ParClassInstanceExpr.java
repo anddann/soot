@@ -98,9 +98,9 @@ public class ParClassInstanceExpr extends ClassInstanceExpr implements Cloneable
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
     setChild(new Opt(), 2);
-    setChild(new List(), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 3);
   }
   /**
    * @ast method 

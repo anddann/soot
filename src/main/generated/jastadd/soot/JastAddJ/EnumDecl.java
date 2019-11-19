@@ -5,13 +5,26 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import beaver.Symbol;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production EnumDecl : {@link ClassDecl} ::= <span class="component">{@link Modifiers}</span> <span class="component">&lt;ID:String&gt;</span> <span class="component">[SuperClassAccess:{@link Access}]</span> <span class="component">Implements:{@link Access}*</span> <span class="component">{@link BodyDecl}*</span>;
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Enums.ast:1
  */
 public class EnumDecl extends ClassDecl implements Cloneable {
-  /**
+    private Scene myScene;
+    private Options myOptions;
+    private PackageNamer myPackageNamer;
+    private Jimple myJimple;
+    private PrimTypeCollector primTypeCollector;
+
+    /**
    * @apilevel low-level
    */
   public void flushCache() {
@@ -127,13 +140,13 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    */
   private void addValues() {
     int numConstants = enumConstants().size();
-    List initValues = new List();
+    List initValues = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     for(Iterator iter = enumConstants().iterator(); iter.hasNext(); ) {
       EnumConstant c = (EnumConstant)iter.next();
       initValues.add(c.createBoundFieldAccess());
     }
     FieldDeclaration values = new FieldDeclaration(
-      new Modifiers(new List().add(
+      new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(
         new Modifier("private")).add(
         new Modifier("static")).add(
         new Modifier("final")).add(
@@ -154,12 +167,12 @@ public class EnumDecl extends ClassDecl implements Cloneable {
             )
           )
       ),
-            myScene);
+            myScene, myOptions, myPackageNamer,myJimple, primTypeCollector, constantFactory);
     addBodyDecl(values);
     // public static final Test[] values() { return (Test[])$VALUES.clone(); }
     addBodyDecl(
       new MethodDecl(
-        new Modifiers(new List().add(
+        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(
           new Modifier("public")).add(
           new Modifier("static")).add(
           new Modifier("final")).add(
@@ -167,11 +180,11 @@ public class EnumDecl extends ClassDecl implements Cloneable {
         ),
         arrayType().createQualifiedAccess(),
         "values",
-        new List(),
-        new List(),
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
         new Opt(
           new Block(
-            new List().add(
+            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(
               new ReturnStmt(
                 new Opt(
                   new CastExpr(
@@ -179,7 +192,7 @@ public class EnumDecl extends ClassDecl implements Cloneable {
                     values.createBoundFieldAccess().qualifiesAccess(
                       new MethodAccess(
                         "clone",
-                        new List()
+                        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)
                       )
                     )
                   )
@@ -188,29 +201,29 @@ public class EnumDecl extends ClassDecl implements Cloneable {
             )
           )
         ),
-              myScene, myJimple)
+              myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory)
     );
     // public static Test valueOf(String s) { return (Test)java.lang.Enum.valueOf(Test.class, s); }
     addBodyDecl(
       new MethodDecl(
-        new Modifiers(new List().add(
+        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(
           new Modifier("public")).add(
           new Modifier("static")).add(
           new Modifier("synthetic"))
         ),
         createQualifiedAccess(),
         "valueOf",
-        new List().add(
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(
           new ParameterDeclaration(
-            new Modifiers(new List()),
+            new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)),
             typeString().createQualifiedAccess(),
             "s"
           )
         ),
-        new List(),
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
         new Opt(
           new Block(
-            new List().add(
+            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(
               new ReturnStmt(
                 new Opt(
                   new CastExpr(
@@ -218,7 +231,7 @@ public class EnumDecl extends ClassDecl implements Cloneable {
                     lookupType("java.lang", "Enum").createQualifiedAccess().qualifiesAccess(
                       new MethodAccess(
                         "valueOf",
-                        new List().add(
+                        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(
                           createQualifiedAccess().qualifiesAccess(new ClassAccess())
                         ).add(
                           new VarAccess(
@@ -233,7 +246,7 @@ public class EnumDecl extends ClassDecl implements Cloneable {
             )
           )
         ),
-              myScene, myJimple)
+              myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory)
     );
   }
   /**
@@ -344,12 +357,21 @@ public class EnumDecl extends ClassDecl implements Cloneable {
   }
   /**
    * @ast method 
-   * 
-   */
-  public EnumDecl() {
+   *
+   * @param myScene
+   * @param myOptions
+   * @param myPackageNamer
+   * @param myJimple
+   * @param primTypeCollector   */
+  public EnumDecl(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
     super(myScene, myOptions, myPackageNamer);
 
 
+      this.myScene = myScene;
+      this.myOptions = myOptions;
+      this.myPackageNamer = myPackageNamer;
+      this.myJimple = myJimple;
+      this.primTypeCollector = primTypeCollector;
   }
   /**
    * Initializes the child array to the correct size.
@@ -361,16 +383,21 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(), 1);
-    setChild(new List(), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
     setChild(new Opt(), 3);
   }
   /**
    * @ast method 
    * 
    */
-  public EnumDecl(Modifiers p0, String p1, List<Access> p2, List<BodyDecl> p3) {
+  public EnumDecl(Modifiers p0, String p1, List<Access> p2, List<BodyDecl> p3, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
       super(myScene, myOptions, myPackageNamer);
+      this.myScene = myScene;
+      this.myOptions = myOptions;
+      this.myPackageNamer = myPackageNamer;
+      this.myJimple = myJimple;
+      this.primTypeCollector = primTypeCollector;
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -380,8 +407,13 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public EnumDecl(Modifiers p0, beaver.Symbol p1, List<Access> p2, List<BodyDecl> p3) {
+  public EnumDecl(Modifiers p0, Symbol p1, List<Access> p2, List<BodyDecl> p3, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
       super(myScene, myOptions, myPackageNamer);
+      this.myScene = myScene;
+      this.myOptions = myOptions;
+      this.myPackageNamer = myPackageNamer;
+      this.myJimple = myJimple;
+      this.primTypeCollector = primTypeCollector;
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -866,7 +898,7 @@ public class EnumDecl extends ClassDecl implements Cloneable {
           "java.lang",
           "Enum"
         ),
-        new List().add(createQualifiedAccess())
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(createQualifiedAccess())
       )
     );
   }
@@ -1100,7 +1132,7 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    */  private EnumDecl rewriteRule0() {
 {
       if(noConstructor()) {
-        List parameterList = new List();
+        List parameterList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
         parameterList.add(
           new ParameterDeclaration(new TypeAccess("java.lang", "String"), "p0")
         );
@@ -1109,18 +1141,18 @@ public class EnumDecl extends ClassDecl implements Cloneable {
         );
         addBodyDecl(
           new ConstructorDecl(
-            new Modifiers(new List().add(
+            new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(
               new Modifier("private")).add(
         new Modifier("synthetic"))
             ),
             name(),
             parameterList,
-            new List(),
+            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
             new Opt(
               new ExprStmt(
                 new SuperConstructorAccess(
                   "super",
-                  new List().add(
+                  new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(
                     new VarAccess("p0")
                   ).add(
                     new VarAccess("p1")
@@ -1128,8 +1160,8 @@ public class EnumDecl extends ClassDecl implements Cloneable {
                 )
               )
             ),
-            new Block(new List()),
-                  myScene, myOptions, myPackageNamer, myJimple, primTypeCollector)
+            new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)),
+                  myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)
         );
       }
       else {

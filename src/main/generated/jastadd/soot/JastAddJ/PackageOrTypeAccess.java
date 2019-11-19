@@ -88,7 +88,7 @@ public class PackageOrTypeAccess extends Access implements Cloneable {
    * 
    */
   public PackageOrTypeAccess() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }
@@ -107,7 +107,7 @@ public class PackageOrTypeAccess extends Access implements Cloneable {
    * 
    */
   public PackageOrTypeAccess(String p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
   }
   /**
@@ -115,7 +115,7 @@ public class PackageOrTypeAccess extends Access implements Cloneable {
    * 
    */
   public PackageOrTypeAccess(beaver.Symbol p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
   }
   /**

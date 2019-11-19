@@ -42,6 +42,8 @@ import soot.options.CGOptions;
  * @author Ondrej Lhotak
  */
 public class AllocNode extends Node implements Context {
+  private final PhaseOptions myPhaseOptions;
+
   /** Returns the new expression of this allocation site. */
   public Object getNewExpr() {
     return newExpr;
@@ -68,13 +70,14 @@ public class AllocNode extends Node implements Context {
 
   /* End of public methods. */
 
-  AllocNode(PAG pag, Object newExpr, Type t, SootMethod m) {
+  AllocNode(PAG pag, Object newExpr, Type t, PhaseOptions myPhaseOptions, SootMethod m) {
     super(pag, t);
+    this.myPhaseOptions = myPhaseOptions;
     this.method = m;
     if (t instanceof RefType) {
       RefType rt = (RefType) t;
       if (rt.getSootClass().isAbstract()) {
-        boolean usesReflectionLog = new CGOptions(myPhaseOptions().getPhaseOptions("cg")).reflection_log() != null;
+        boolean usesReflectionLog = new CGOptions(this.myPhaseOptions.getPhaseOptions("cg")).reflection_log() != null;
         if (!usesReflectionLog) {
           throw new RuntimeException("Attempt to create allocnode with abstract type " + t);
         }

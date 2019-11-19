@@ -107,7 +107,7 @@ public class AssertStmt extends Stmt implements Cloneable {
     FieldDeclaration f = hostType().topLevelType().createStaticClassField(hostType().topLevelType().referenceClassFieldName());
     FieldDeclaration assertionsDisabled = hostType().createAssertionsDisabled();
     Expr condition = (Expr)getfirst().fullCopy();
-    List args = new List();
+    List args = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     if(hasExpr())
       if(getExpr().type().isString())
         args.add(new CastExpr(new TypeAccess("java.lang", "Object"), (Expr)getExpr().fullCopy()));

@@ -99,12 +99,12 @@ import soot.util.queue.QueueReader;
  */
 public class PAG implements PointsToAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(PAG.class);
-    private final PhaseOptions myPhaseOptions;
-    private final Scene myScene;
-    private SparkField myArrayElement;
+  private final PhaseOptions myPhaseOptions;
+  private final Scene myScene;
+  private ArrayElement myArrayElement;
   private ConstantFactory constantFactory;
 
-  public PAG(PhaseOptions myPhaseOptions, Scene myScene, SparkField myArrayElement, ConstantFactory constantFactory, final SparkOptions opts) {
+  public PAG(PhaseOptions myPhaseOptions, Scene myScene, ArrayElement myArrayElement, ConstantFactory constantFactory, final SparkOptions opts) {
         this.myPhaseOptions = myPhaseOptions;
         this.myScene = myScene;
         this.myArrayElement = myArrayElement;
@@ -120,7 +120,7 @@ public class PAG implements PointsToAnalysis {
       throw new RuntimeException("Incompatible options rta:true and on-fly-cg:true for cg.spark. Use -p cg-"
           + ".spark on-fly-cg:false when using RTA.");
     }
-    typeManager = new TypeManager(this);
+    typeManager = new TypeManager(myScene, this);
     if (!opts.ignore_types()) {
       typeManager.setFastHierarchy(() -> this.myScene.getOrMakeFastHierarchy());
     }
@@ -196,6 +196,8 @@ public class PAG implements PointsToAnalysis {
         throw new RuntimeException();
     }
     runGeomPTA = opts.geom_pta();
+    this.nodeFactory = new GlobalNodeFactory(myScene, myArrayElement, this);
+
   }
 
   /** Returns the set of objects pointed to by variable l. */
@@ -625,7 +627,7 @@ public class PAG implements PointsToAnalysis {
     if (newExpr instanceof NewExpr) {
       // Do we need to create a new allocation node?
       if (ret == null) {
-        valToAllocNode.put(newExpr, ret = new AllocNode(this, newExpr, type, m));
+        valToAllocNode.put(newExpr, ret = new AllocNode(this, newExpr, type, myPhaseOptions, m));
         newAllocNodes.add(ret);
         addNodeTag(ret, m);
       }
@@ -638,7 +640,7 @@ public class PAG implements PointsToAnalysis {
     else {
       ret = valToReflAllocNode.get(newExpr, type);
       if (ret == null) {
-        valToReflAllocNode.put(newExpr, type, ret = new AllocNode(this, newExpr, type, m));
+        valToReflAllocNode.put(newExpr, type, ret = new AllocNode(this, newExpr, type, myPhaseOptions, m));
         newAllocNodes.add(ret);
         addNodeTag(ret, m);
       }
@@ -648,7 +650,7 @@ public class PAG implements PointsToAnalysis {
 
   public AllocNode makeStringConstantNode(String s) {
     if (opts.types_for_sites() || opts.vta()) {
-      return makeAllocNode(RefType.v("java.lang.String",myScene), RefType.v("java.lang.String",myScene), null);
+      return makeAllocNode(RefType.v("java.lang.String", myScene), RefType.v("java.lang.String", myScene), null);
     }
     StringConstantNode ret = (StringConstantNode) valToAllocNode.get(s);
     if (ret == null) {
@@ -661,7 +663,7 @@ public class PAG implements PointsToAnalysis {
 
   public AllocNode makeClassConstantNode(ClassConstant cc) {
     if (opts.types_for_sites() || opts.vta()) {
-      return makeAllocNode(RefType.v("java.lang.Class",myScene), RefType.v("java.lang.Class",myScene), null);
+      return makeAllocNode(RefType.v("java.lang.Class", myScene), RefType.v("java.lang.Class", myScene), null);
     }
     ClassConstantNode ret = (ClassConstantNode) valToAllocNode.get(cc);
     if (ret == null) {
@@ -702,7 +704,7 @@ public class PAG implements PointsToAnalysis {
   public GlobalVarNode makeGlobalVarNode(Object value, Type type) {
     if (opts.rta()) {
       value = null;
-      type = RefType.v("java.lang.Object",myScene);
+      type = RefType.v("java.lang.Object", myScene);
     }
     GlobalVarNode ret = valToGlobalVarNode.get(value);
     if (ret == null) {
@@ -732,7 +734,7 @@ public class PAG implements PointsToAnalysis {
   public LocalVarNode makeLocalVarNode(Object value, Type type, SootMethod method) {
     if (opts.rta()) {
       value = null;
-      type = RefType.v("java.lang.Object",myScene);
+      type = RefType.v("java.lang.Object", myScene);
       method = null;
     } else if (value instanceof Local) {
       Local val = (Local) value;
@@ -1288,7 +1290,7 @@ public class PAG implements PointsToAnalysis {
         cls = findLocalVarNode(((VarNode) cls).getVariable());
       }
 
-      VarNode newObject = makeGlobalVarNode(cls, RefType.v("java.lang.Object",myScene));
+      VarNode newObject = makeGlobalVarNode(cls, RefType.v("java.lang.Object", myScene));
       SootClass tgtClass = e.getTgt().method().getDeclaringClass();
       RefType tgtType = tgtClass.getType();
       AllocNode site = makeAllocNode(new Pair<Node, SootClass>(cls, tgtClass), tgtType, null);
@@ -1351,8 +1353,7 @@ public class PAG implements PointsToAnalysis {
    * Adds method target as a possible target of the invoke expression in s. If target is null, only creates the nodes for the
    * call site, without actually connecting them to any target method.
    **/
-  public void addCallTarget(MethodPAG srcmpag, MethodPAG tgtmpag, Stmt s, Context srcContext, Context tgtContext,
-      Edge e) {
+  public void addCallTarget(MethodPAG srcmpag, MethodPAG tgtmpag, Stmt s, Context srcContext, Context tgtContext, Edge e) {
     MethodNodeFactory srcnf = srcmpag.nodeFactory();
     MethodNodeFactory tgtnf = tgtmpag.nodeFactory();
     InvokeExpr ie = s.getInvokeExpr();
@@ -1482,7 +1483,7 @@ public class PAG implements PointsToAnalysis {
   private final Map<Value, NewInstanceNode> newInstToNodeMap = new HashMap<>();
   public int maxFinishNumber = 0;
   private Map<Node, Tag> nodeToTag;
-  private final GlobalNodeFactory nodeFactory = new GlobalNodeFactory(this);
+  private final GlobalNodeFactory nodeFactory;
 
   public GlobalNodeFactory nodeFactory() {
     return nodeFactory;

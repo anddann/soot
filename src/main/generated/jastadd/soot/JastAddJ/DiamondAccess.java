@@ -311,7 +311,7 @@ public class DiamondAccess extends Access implements Cloneable {
    * 
    */
   public DiamondAccess() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }
@@ -331,7 +331,7 @@ public class DiamondAccess extends Access implements Cloneable {
    * 
    */
   public DiamondAccess(Access p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setChild(p0, 0);
   }
   /**

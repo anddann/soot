@@ -35,6 +35,7 @@ import soot.Unit;
 import soot.Value;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
+import soot.jimple.FullObjectFactory;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.StaticFieldRef;
 import soot.jimple.Stmt;
@@ -50,6 +51,7 @@ public class SideEffectAnalysis {
   Map<SootMethod, MethodRWSet> methodToNTWriteSet = new HashMap<SootMethod, MethodRWSet>();
   int rwsetcount = 0;
   TransitiveTargets tt;
+  private FullObjectFactory fullObjectFactory;
 
   public void findNTRWSets(SootMethod method) {
     if (methodToNTReadSet.containsKey(method) && methodToNTWriteSet.containsKey(method)) {
@@ -90,13 +92,14 @@ public class SideEffectAnalysis {
   }
 
 
-  public SideEffectAnalysis(PointsToAnalysis pa, CallGraph cg) {
+  public SideEffectAnalysis(PointsToAnalysis pa, CallGraph cg, FullObjectFactory fullObjectFactory) {
     this.pa = pa;
     this.cg = cg;
     this.tt = new TransitiveTargets(cg);
+    this.fullObjectFactory = fullObjectFactory;
   }
 
-  public SideEffectAnalysis(PointsToAnalysis pa, CallGraph cg, Filter filter) {
+  public SideEffectAnalysis(PointsToAnalysis pa, CallGraph cg, Filter filter, FullObjectFactory fullObjectFactory) {
     // This constructor allows customization of call graph edges to
     // consider via the use of a transitive targets filter.
     // For example, using the NonClinitEdgesPred, you can create a
@@ -104,6 +107,7 @@ public class SideEffectAnalysis {
     // - R. Halpert 2006-12-02
     this.pa = pa;
     this.cg = cg;
+    this.fullObjectFactory = fullObjectFactory;
     this.tt = new TransitiveTargets(cg, filter);
   }
 

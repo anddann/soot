@@ -479,7 +479,7 @@ public class ClassInstanceExpr extends Access implements Cloneable {
    * @param constantFactory
    */
   public ClassInstanceExpr(Scene myScene, ConstantFactory constantFactory) {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
     this.myScene = myScene;
@@ -495,7 +495,7 @@ public class ClassInstanceExpr extends Access implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
     setChild(new Opt(), 2);
   }
   /**
@@ -503,7 +503,7 @@ public class ClassInstanceExpr extends Access implements Cloneable {
    * 
    */
   public ClassInstanceExpr(Access p0, List<Expr> p1, Opt<TypeDecl> p2, Scene myScene, ConstantFactory constantFactory) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
     this.myScene = myScene;
     this.constantFactory = constantFactory;
     setChild(p0, 0);
@@ -759,11 +759,11 @@ public class ClassInstanceExpr extends Access implements Cloneable {
     public void transformation() {
     if(decl().isVariableArity() && !invokesVariableArityAsArray()) {
       // arguments to normal parameters
-      List list = new List();
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       for(int i = 0; i < decl().getNumParameter() - 1; i++)
         list.add(getArg(i).fullCopy());
       // arguments to variable arity parameters
-      List last = new List();
+      List last = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       for(int i = decl().getNumParameter() - 1; i < getNumArg(); i++)
         last.add(getArg(i).fullCopy());
       // build an array holding arguments

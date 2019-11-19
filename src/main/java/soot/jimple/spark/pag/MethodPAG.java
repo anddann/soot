@@ -38,7 +38,6 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Type;
 import soot.Unit;
-import soot.VoidType;
 import soot.jimple.Stmt;
 import soot.jimple.spark.builder.MethodNodeFactory;
 import soot.jimple.spark.internal.SparkLibraryHelper;
@@ -54,15 +53,18 @@ import soot.util.queue.QueueReader;
  */
 public final class MethodPAG {
   private PAG pag;
+  private EntryPoints myEntryPoints;
 
   public PAG pag() {
     return pag;
   }
 
-  protected MethodPAG(PAG pag, SootMethod m) {
+  protected MethodPAG(PAG pag, EntryPoints myEntryPoints, SootMethod m, Scene myScene) {
     this.pag = pag;
+    this.myEntryPoints = myEntryPoints;
     this.method = m;
     this.nodeFactory = new MethodNodeFactory(pag, this);
+    this.myScene = myScene;
   }
 
   private Set<Context> addedContexts;
@@ -166,7 +168,7 @@ public final class MethodPAG {
   public static MethodPAG v(PAG pag, SootMethod m) {
     MethodPAG ret = G.v().MethodPAG_methodToPag.get(m);
     if (ret == null) {
-      ret = new MethodPAG(pag, m);
+      ret = new MethodPAG(pag, myEntryPoints, m, myScene);
       G.v().MethodPAG_methodToPag.put(m, ret);
     }
     return ret;
@@ -252,8 +254,9 @@ public final class MethodPAG {
     pag.nativeMethodDriver.process(method, thisNode, retNode, args);
   }
 
-  private final static String mainSubSignature = SootMethod.getSubSignature("main",
-      Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String"), 1)), VoidType.v());
+  private Scene myScene;
+  private final  String mainSubSignature = SootMethod.getSubSignature("main",
+      Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String",myScene), 1,myScene)), myScene.getPrimTypeCollector().getVoidType(),myScene);
 
   protected void addMiscEdges() {
     // Add node for parameter (String[]) in main method

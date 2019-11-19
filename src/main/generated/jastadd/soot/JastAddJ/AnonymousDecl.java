@@ -78,7 +78,7 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
             tree.children[i] = new Opt();
             continue;
           case 4:
-            tree.children[i] = new List();
+            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
             continue;
           }
         ASTNode child = (ASTNode) children[i];
@@ -109,9 +109,9 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
     setChild(new Opt(), 2);
-    setChild(new List(), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 3);
   }
   /**
    * @ast method 
@@ -521,13 +521,13 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
    */
    
   protected List constructorParameterList(ConstructorDecl decl) {
-    List parameterList = new List();
+    List parameterList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     for(int i = 0; i < decl.getNumParameter(); i++) {
       ParameterDeclaration param = decl.getParameter(i);
       if (param instanceof VariableArityParameterDeclaration) {
         parameterList.add(
             new VariableArityParameterDeclaration(
-              new Modifiers(new List()),
+              new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)),
               ((ArrayDecl) param.type()).componentType().createBoundAccess(),
               param.name()
               ));
@@ -685,9 +685,9 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
    */
   private List getImplementsList_compute() {
     if(superType().isInterfaceDecl())
-      return new List().add(superType().createBoundAccess());
+      return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(superType().createBoundAccess());
     else
-      return new List();
+      return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
   }
   /**
    * @attribute inh
@@ -741,20 +741,20 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
    * @apilevel internal
    */  private AnonymousDecl rewriteRule0() {
 {
-      setModifiers(new Modifiers(new List().add(new Modifier("final"))));
+      setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("final"))));
 
       ConstructorDecl decl = constructorDecl();
       Modifiers modifiers = (Modifiers)decl.getModifiers().fullCopy();
       String anonName = "Anonymous" + nextAnonymousIndex();
 
       ConstructorDecl constructor = new ConstructorDecl(modifiers, anonName,
-          constructorParameterList(decl), new List(), new Opt(), new Block(), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+          constructorParameterList(decl), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(), new Block(), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       constructor.setDefaultConstructor();
       addBodyDecl(constructor);
 
       setID(anonName);
 
-      List argList = new List();
+      List argList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       for(int i = 0; i < constructor.getNumParameter(); i++) {
         argList.add(new VarAccess(constructor.getParameter(i).name()));
       }
@@ -778,7 +778,7 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
           }
         }
       }
-      List exceptionList = new List();
+      List exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       for(Iterator iter = set.iterator(); iter.hasNext(); ) {
         TypeDecl exceptionType = (TypeDecl)iter.next();
         if(exceptionType.isNull())

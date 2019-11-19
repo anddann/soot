@@ -1,12 +1,27 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import beaver.Symbol;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production PrimitiveCompilationUnit : {@link CompilationUnit};
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:7
  */
 public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneable {
+    private Scene myScene;
+    private Options myOptions;
+    private PackageNamer myPackageNamer;
+    private Jimple myJimple;
+    private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
+
   /**
    * @apilevel low-level
    */
@@ -111,12 +126,22 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
   }
   /**
    * @ast method 
-   * 
-   */
-  public PrimitiveCompilationUnit() {
-    super();
+   *@param myScene
+   * @param myOptions
+   * @param myPackageNamer
+   * @param myJimple
+   * @param primTypeCollector
+   * @param constantFactory        */
+  public PrimitiveCompilationUnit(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 
 
+      this.myScene = myScene;
+      this.myOptions = myOptions;
+      this.myPackageNamer = myPackageNamer;
+      this.myJimple = myJimple;
+      this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
   }
   /**
    * Initializes the child array to the correct size.
@@ -128,14 +153,21 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(), 0);
-    setChild(new List(), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
   }
   /**
    * @ast method 
    * 
    */
-  public PrimitiveCompilationUnit(java.lang.String p0, List<ImportDecl> p1, List<TypeDecl> p2) {
+  public PrimitiveCompilationUnit(String p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+    this.myScene = myScene;
+      this.myOptions = myOptions;
+      this.myPackageNamer = myPackageNamer;
+      this.myJimple = myJimple;
+      this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
     setPackageDecl(p0);
     setChild(p1, 0);
     setChild(p2, 1);
@@ -144,7 +176,14 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    * @ast method 
    * 
    */
-  public PrimitiveCompilationUnit(beaver.Symbol p0, List<ImportDecl> p1, List<TypeDecl> p2) {
+  public PrimitiveCompilationUnit(Symbol p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+    this.myScene = myScene;
+      this.myOptions = myOptions;
+      this.myPackageNamer = myPackageNamer;
+      this.myJimple = myJimple;
+      this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
     setPackageDecl(p0);
     setChild(p1, 0);
     setChild(p2, 1);
@@ -569,7 +608,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl typeBoolean_compute() {
     BooleanType type = new BooleanType();
-    type.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
+    type.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))));
     type.setID("boolean");
     type.setSuperClassAccess(unknownType().createQualifiedAccess());
     return type;
@@ -606,7 +645,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl typeByte_compute() {
     ByteType type = new ByteType();
-    type.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
+    type.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))));
     type.setID("byte");
     type.setSuperClassAccess(typeShort().createQualifiedAccess());
     return type;
@@ -643,7 +682,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl typeShort_compute() {
     ShortType type = new ShortType();
-    type.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
+    type.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))));
     type.setID("short");
     type.setSuperClassAccess(typeInt().createQualifiedAccess());
     return type;
@@ -680,7 +719,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl typeChar_compute() {
     CharType type = new CharType();
-    type.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
+    type.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))));
     type.setID("char");
     type.setSuperClassAccess(typeInt().createQualifiedAccess());
     return type;
@@ -717,7 +756,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl typeInt_compute() {
     IntType type = new IntType();
-    type.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
+    type.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))));
     type.setID("int");
     type.setSuperClassAccess(typeLong().createQualifiedAccess());
     return type;
@@ -754,7 +793,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl typeLong_compute() {
     LongType type = new LongType();
-    type.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
+    type.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))));
     type.setID("long");
     // Float doesn't seem right here, keeping it because the old code does this
     type.setSuperClassAccess(typeFloat().createQualifiedAccess()); 
@@ -792,7 +831,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl typeFloat_compute() {
     FloatType type = new FloatType();
-    type.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
+    type.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))));
     type.setID("float");
     type.setSuperClassAccess(typeDouble().createQualifiedAccess());
     return type;
@@ -829,7 +868,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl typeDouble_compute() {
     DoubleType type = new DoubleType();
-    type.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
+    type.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))));
     type.setID("double");
     type.setSuperClassAccess(unknownType().createQualifiedAccess());
     return type;
@@ -866,7 +905,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl typeVoid_compute() {
     VoidType classDecl = new VoidType();
-    classDecl.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
+    classDecl.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))));
     classDecl.setID("void");
     return classDecl;
   }
@@ -902,7 +941,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl typeNull_compute() {
     NullType classDecl = new NullType();
-    classDecl.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
+    classDecl.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))));
     classDecl.setID("null");
     return classDecl;
   }
@@ -938,36 +977,36 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl unknownType_compute() {
     ClassDecl classDecl = new UnknownType();
-    classDecl.setModifiers(new Modifiers(new List().add(new Modifier("public"))));
+    classDecl.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))));
     classDecl.setID("Unknown");
     MethodDecl methodDecl = new MethodDecl(
-        new Modifiers(new List().add(
+        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(
           new Modifier("public")
         )),
         new PrimitiveTypeAccess("Unknown"),
         "unknown",
-        new List(),
-        new List(),
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
         new Opt(),
-            myScene, myJimple);
+            myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
     classDecl.addBodyDecl(methodDecl);
     FieldDeclaration fieldDecl = new FieldDeclaration(
-        new Modifiers(new List().add(
+        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(
           new Modifier("public")
         )),
         new PrimitiveTypeAccess("Unknown"),
         "unknown",
         new Opt(),
-            myScene);
+            myScene, myOptions,myPackageNamer,myJimple, primTypeCollector, constantFactory);
     classDecl.addBodyDecl(fieldDecl);   
     ConstructorDecl constrDecl = new ConstructorDecl(
-      new Modifiers(new List().add(new Modifier("public"))),
+      new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))),
       "Unknown",
-      new List(),
-      new List(),
+      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
+      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
       new Opt(),
       new Block(),
-            myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+            myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     classDecl.addBodyDecl(constrDecl);      
     return classDecl;
   }

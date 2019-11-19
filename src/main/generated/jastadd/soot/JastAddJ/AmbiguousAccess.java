@@ -88,7 +88,7 @@ public class AmbiguousAccess extends Access implements Cloneable {
    * 
    */
   public AmbiguousAccess() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }
@@ -107,7 +107,7 @@ public class AmbiguousAccess extends Access implements Cloneable {
    * 
    */
   public AmbiguousAccess(String p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
   }
   /**
@@ -115,7 +115,7 @@ public class AmbiguousAccess extends Access implements Cloneable {
    * 
    */
   public AmbiguousAccess(beaver.Symbol p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
   }
   /**

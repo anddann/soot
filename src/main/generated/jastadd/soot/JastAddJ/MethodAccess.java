@@ -476,7 +476,7 @@ public class MethodAccess extends Access implements Cloneable {
    * 
    */
   public MethodAccess() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }
@@ -490,14 +490,14 @@ public class MethodAccess extends Access implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[1];
-    setChild(new List(), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 0);
   }
   /**
    * @ast method 
    * 
    */
   public MethodAccess(String p0, List<Expr> p1) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
     setChild(p1, 0);
   }
@@ -506,7 +506,7 @@ public class MethodAccess extends Access implements Cloneable {
    * 
    */
   public MethodAccess(beaver.Symbol p0, List<Expr> p1) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
     setChild(p1, 0);
   }
@@ -762,11 +762,11 @@ public class MethodAccess extends Access implements Cloneable {
     public void transformation() {
     if(decl().isVariableArity() && !invokesVariableArityAsArray()) {
       // arguments to normal parameters
-      List list = new List();
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       for(int i = 0; i < decl().getNumParameter() - 1; i++)
         list.add(getArg(i).fullCopy());
       // arguments to variable arity parameters
-      List last = new List();
+      List last = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       for(int i = decl().getNumParameter() - 1; i < getNumArg(); i++)
         last.add(getArg(i).fullCopy());
       // build an array holding arguments

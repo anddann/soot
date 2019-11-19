@@ -208,7 +208,7 @@ public class TypeAccess extends Access implements Cloneable {
    * 
    */
   public TypeAccess() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }
@@ -227,7 +227,7 @@ public class TypeAccess extends Access implements Cloneable {
    * 
    */
   public TypeAccess(String p0, String p1) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setPackage(p0);
     setID(p1);
   }
@@ -236,7 +236,7 @@ public class TypeAccess extends Access implements Cloneable {
    * 
    */
   public TypeAccess(beaver.Symbol p0, beaver.Symbol p1) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setPackage(p0);
     setID(p1);
   }

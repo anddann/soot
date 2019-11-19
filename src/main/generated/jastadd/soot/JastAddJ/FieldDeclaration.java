@@ -8,9 +8,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import beaver.Symbol;
+import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SootField;
 import soot.SootFieldRef;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 /**
  * @production FieldDeclaration : {@link MemberDecl} ::= <span class="component">{@link Modifiers}</span>
@@ -21,6 +26,11 @@ import soot.SootFieldRef;
  */
 public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet, Iterator, Variable {
   private Scene myScene;
+  private Options myOptions;
+  private PackageNamer myPackageNamer;
+  private Jimple myJimple;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
 
   /**
    * @apilevel low-level
@@ -304,8 +314,8 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:86
    */
-  public FieldDeclaration(Modifiers m, Access type, String name, Scene myScene) {
-    this(m, type, name, new Opt(), myScene);
+  public FieldDeclaration(Modifiers m, Access type, String name, Scene myScene, Options myOptions, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, Jimple myJimple, ConstantFactory constantFactory) {
+    this(m, type, name, new Opt(), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
   }
 
   /**
@@ -313,8 +323,8 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:90
    */
-  public FieldDeclaration(Modifiers m, Access type, String name, Expr init, Scene myScene) {
-    this(m, type, name, new Opt(init), myScene);
+  public FieldDeclaration(Modifiers m, Access type, String name, Expr init, Scene myScene, Options myOptions, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, Jimple myJimple, ConstantFactory constantFactory) {
+    this(m, type, name, new Opt(init), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
   }
 
   /**
@@ -400,17 +410,17 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
       return m;
 
     int accessorIndex = fieldQualifier.accessorCounter++;
-    Modifiers modifiers = new Modifiers(new List());
+    Modifiers modifiers = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
     modifiers.addModifier(new Modifier("static"));
     modifiers.addModifier(new Modifier("synthetic"));
     modifiers.addModifier(new Modifier("public"));
 
-    List parameters = new List();
+    List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     if (!isStatic())
       parameters.add(new ParameterDeclaration(fieldQualifier.createQualifiedAccess(), "that"));
 
     m = new MethodDecl(modifiers, type().createQualifiedAccess(), "get$" + name() + "$access$" + accessorIndex, parameters,
-        new List(), new Opt(new Block(new List().add(new ReturnStmt(createAccess())))), myScene, myJimple);
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new ReturnStmt(createAccess())))), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
     m = fieldQualifier.addMemberMethod(m);
     fieldQualifier.addAccessor(this, "field_read", m);
     return m;
@@ -427,20 +437,20 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
       return m;
 
     int accessorIndex = fieldQualifier.accessorCounter++;
-    Modifiers modifiers = new Modifiers(new List());
+    Modifiers modifiers = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
     modifiers.addModifier(new Modifier("static"));
     modifiers.addModifier(new Modifier("synthetic"));
     modifiers.addModifier(new Modifier("public"));
 
-    List parameters = new List();
+    List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     if (!isStatic())
       parameters.add(new ParameterDeclaration(fieldQualifier.createQualifiedAccess(), "that"));
     parameters.add(new ParameterDeclaration(type().createQualifiedAccess(), "value"));
 
     m = new MethodDecl(modifiers, type().createQualifiedAccess(), "set$" + name() + "$access$" + accessorIndex, parameters,
-        new List(),
-        new Opt(new Block(new List().add(new ExprStmt(new AssignSimpleExpr(createAccess(), new VarAccess("value"))))
-            .add(new ReturnStmt(new Opt(new VarAccess("value")))))), myScene, myJimple);
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
+        new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new ExprStmt(new AssignSimpleExpr(createAccess(), new VarAccess("value"))))
+            .add(new ReturnStmt(new Opt(new VarAccess("value")))))), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
     m = fieldQualifier.addMemberMethod(m);
     fieldQualifier.addAccessor(this, "field_write", m);
     return m;
@@ -524,13 +534,21 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
 
   /**
    * @ast method
-   *
-   * @param myScene
-   */
-  public FieldDeclaration(Scene myScene) {
+   *@param myScene
+   * @param myOptions
+   * @param myPackageNamer
+   * @param myJimple
+   * @param primTypeCollector
+   * @param constantFactory        */
+  public FieldDeclaration(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     super();
 
     this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
   }
 
   /**
@@ -550,8 +568,13 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
    * @ast method
    * 
    */
-  public FieldDeclaration(Modifiers p0, Access p1, String p2, Opt<Expr> p3, Scene myScene) {
+  public FieldDeclaration(Modifiers p0, Access p1, String p2, Opt<Expr> p3, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
     setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);
@@ -562,8 +585,13 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
    * @ast method
    * 
    */
-  public FieldDeclaration(Modifiers p0, Access p1, Symbol p2, Opt<Expr> p3, Scene myScene) {
+  public FieldDeclaration(Modifiers p0, Access p1, Symbol p2, Opt<Expr> p3, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
     setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);

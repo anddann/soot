@@ -1,23 +1,8 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
 
 /**
  * @production AnnotatedCompilationUnit : {@link CompilationUnit} ::= <span class="component">{@link Modifiers}</span>;
@@ -121,7 +106,7 @@ public class AnnotatedCompilationUnit extends CompilationUnit implements Cloneab
    * 
    */
   public AnnotatedCompilationUnit() {
-    super();
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 
 
   }
@@ -135,15 +120,16 @@ public class AnnotatedCompilationUnit extends CompilationUnit implements Cloneab
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(), 0);
-    setChild(new List(), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
   }
   /**
    * @ast method 
    * 
    */
   public AnnotatedCompilationUnit(java.lang.String p0, List<ImportDecl> p1, List<TypeDecl> p2, Modifiers p3) {
-    setPackageDecl(p0);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+      setPackageDecl(p0);
     setChild(p1, 0);
     setChild(p2, 1);
     setChild(p3, 2);
@@ -153,7 +139,8 @@ public class AnnotatedCompilationUnit extends CompilationUnit implements Cloneab
    * 
    */
   public AnnotatedCompilationUnit(beaver.Symbol p0, List<ImportDecl> p1, List<TypeDecl> p2, Modifiers p3) {
-    setPackageDecl(p0);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+      setPackageDecl(p0);
     setChild(p1, 0);
     setChild(p2, 1);
     setChild(p3, 2);

@@ -1,12 +1,27 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import beaver.Symbol;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.Value;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production ReferenceType : {@link TypeDecl};
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:44
  */
 public abstract class ReferenceType extends TypeDecl implements Cloneable {
+
+
   /**
    * @apilevel low-level
    */
@@ -40,71 +55,93 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
     return node;
   }
   /**
-   * @ast method 
+   * @ast method
    * @aspect AutoBoxingCodegen
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddExtensions/Jimple1.5Backend/AutoBoxingCodegen.jrag:74
    */
-  public soot.Value emitCastTo(Body b, soot.Value v, TypeDecl type, ASTNode location) {
+  public Value emitCastTo(Body b, Value v, TypeDecl type, ASTNode location) {
     if(this == type)
       return v;
     else if(type instanceof PrimitiveType)
       return type.boxed().emitUnboxingOperation(b, emitCastTo(b, v, type.boxed(), location), location);
-    else 
+    else
       return super.emitCastTo(b, v, type, location);
   }
   /**
-   * @ast method 
-   * 
-   */
-  public ReferenceType() {
-    super(myScene, myJimple, mySootResolver);
+   * @ast method
+   *@param myScene
+   * @param myJimple
+   * @param mySootResolver
+   * @param myPackageNamer
+   * @param myOptions
+   * @param primTypeCollector
+   * @param constantFactory    */
+  public ReferenceType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
 
-
+    this.myScene = myScene;
+    this.myJimple = myJimple;
+    this.myPackageNamer = myPackageNamer;
+    this.myOptions = myOptions;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
   }
   /**
    * Initializes the child array to the correct size.
    * Initializes List and Opt nta children.
    * @apilevel internal
    * @ast method
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
   }
   /**
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
-  public ReferenceType(Modifiers p0, String p1, List<BodyDecl> p2) {
-      super(myScene, myJimple, mySootResolver);
-      setChild(p0, 0);
+  public ReferenceType(Modifiers p0, String p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver, Jimple myJimple1, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
+    this.myJimple = myJimple1;
+    this.myPackageNamer = myPackageNamer;
+    this.myOptions = myOptions;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
+    setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
+    this.myScene = myScene;
   }
   /**
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
-  public ReferenceType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2) {
-      super(myScene, myJimple, mySootResolver);
-      setChild(p0, 0);
+  public ReferenceType(Modifiers p0, Symbol p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver, Jimple myJimple1, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
+    this.myJimple = myJimple1;
+    this.myPackageNamer = myPackageNamer;
+    this.myOptions = myOptions;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
+    setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
+    this.myScene = myScene;
   }
   /**
    * @apilevel low-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   protected int numChildren() {
     return 2;
   }
   /**
    * @apilevel internal
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public boolean mayHaveRewrite() {
     return false;
@@ -113,8 +150,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * Replaces the Modifiers child.
    * @param node The new node to replace the Modifiers child.
    * @apilevel high-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public void setModifiers(Modifiers node) {
     setChild(node, 0);
@@ -123,8 +160,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * Retrieves the Modifiers child.
    * @return The current node used as the Modifiers child.
    * @apilevel high-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public Modifiers getModifiers() {
     return (Modifiers)getChild(0);
@@ -134,8 +171,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * <p><em>This method does not invoke AST transformations.</em></p>
    * @return The current node used as the Modifiers child.
    * @apilevel low-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public Modifiers getModifiersNoTransform() {
     return (Modifiers)getChildNoTransform(0);
@@ -144,8 +181,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * Replaces the lexeme ID.
    * @param value The new value for the lexeme ID.
    * @apilevel high-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public void setID(String value) {
     tokenString_ID = value;
@@ -153,10 +190,10 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
   /**
    * JastAdd-internal setter for lexeme ID using the Beaver parser.
    * @apilevel internal
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
-  public void setID(beaver.Symbol symbol) {
+  public void setID(Symbol symbol) {
     if(symbol.value != null && !(symbol.value instanceof String))
       throw new UnsupportedOperationException("setID is only valid for String lexemes");
     tokenString_ID = (String)symbol.value;
@@ -167,8 +204,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * Retrieves the value for the lexeme ID.
    * @return The value for the lexeme ID.
    * @apilevel high-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public String getID() {
     return tokenString_ID != null ? tokenString_ID : "";
@@ -177,8 +214,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * Replaces the BodyDecl list.
    * @param list The new list node to be used as the BodyDecl list.
    * @apilevel high-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public void setBodyDeclList(List<BodyDecl> list) {
     setChild(list, 1);
@@ -187,8 +224,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * Retrieves the number of children in the BodyDecl list.
    * @return Number of children in the BodyDecl list.
    * @apilevel high-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public int getNumBodyDecl() {
     return getBodyDeclList().getNumChild();
@@ -198,8 +235,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * Calling this method will not trigger rewrites..
    * @return Number of children in the BodyDecl list.
    * @apilevel low-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public int getNumBodyDeclNoTransform() {
     return getBodyDeclListNoTransform().getNumChildNoTransform();
@@ -209,8 +246,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * @param i Index of the element to return.
    * @return The element at position {@code i} in the BodyDecl list.
    * @apilevel high-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   @SuppressWarnings({"unchecked", "cast"})
   public BodyDecl getBodyDecl(int i) {
@@ -220,8 +257,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * Append an element to the BodyDecl list.
    * @param node The element to append to the BodyDecl list.
    * @apilevel high-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public void addBodyDecl(BodyDecl node) {
     List<BodyDecl> list = (parent == null || state == null) ? getBodyDeclListNoTransform() : getBodyDeclList();
@@ -229,8 +266,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
   }
   /**
    * @apilevel low-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public void addBodyDeclNoTransform(BodyDecl node) {
     List<BodyDecl> list = getBodyDeclListNoTransform();
@@ -241,8 +278,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * @param node The new node to replace the old list element.
    * @param i The list index of the node to be replaced.
    * @apilevel high-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public void setBodyDecl(BodyDecl node, int i) {
     List<BodyDecl> list = getBodyDeclList();
@@ -252,8 +289,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * Retrieves the BodyDecl list.
    * @return The node representing the BodyDecl list.
    * @apilevel high-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public List<BodyDecl> getBodyDecls() {
     return getBodyDeclList();
@@ -263,8 +300,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * <p><em>This method does not invoke AST transformations.</em></p>
    * @return The node representing the BodyDecl list.
    * @apilevel low-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   public List<BodyDecl> getBodyDeclsNoTransform() {
     return getBodyDeclListNoTransform();
@@ -273,8 +310,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * Retrieves the BodyDecl list.
    * @return The node representing the BodyDecl list.
    * @apilevel high-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   @SuppressWarnings({"unchecked", "cast"})
   public List<BodyDecl> getBodyDeclList() {
@@ -287,8 +324,8 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * <p><em>This method does not invoke AST transformations.</em></p>
    * @return The node representing the BodyDecl list.
    * @apilevel low-level
-   * @ast method 
-   * 
+   * @ast method
+   *
    */
   @SuppressWarnings({"unchecked", "cast"})
   public List<BodyDecl> getBodyDeclListNoTransform() {
@@ -305,7 +342,7 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
     finally {
     }
   }
-  protected java.util.Map narrowingConversionTo_TypeDecl_values;
+  protected Map narrowingConversionTo_TypeDecl_values;
   /**
    * @attribute syn
    * @aspect TypeConversion
@@ -314,7 +351,7 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
   @SuppressWarnings({"unchecked", "cast"})
   public boolean narrowingConversionTo(TypeDecl type) {
     Object _parameters = type;
-    if(narrowingConversionTo_TypeDecl_values == null) narrowingConversionTo_TypeDecl_values = new java.util.HashMap(4);
+    if(narrowingConversionTo_TypeDecl_values == null) narrowingConversionTo_TypeDecl_values = new HashMap(4);
     if(narrowingConversionTo_TypeDecl_values.containsKey(_parameters)) {
       return ((Boolean)narrowingConversionTo_TypeDecl_values.get(_parameters)).booleanValue();
     }

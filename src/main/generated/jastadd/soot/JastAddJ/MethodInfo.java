@@ -96,7 +96,7 @@ public class MethodInfo extends java.lang.Object {
       BodyDecl b;
       if(isConstructor()) {
         b = new ConstructorDecl(BytecodeParser.modifiers(flags), name, parameterList, 
-            exceptionList, new Opt(), new Block(), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+            exceptionList, new Opt(), new Block(), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       }
       else if(attributes.elementValue() != null) {
         b = new AnnotationMethodDecl(BytecodeParser.modifiers(flags), returnType, name, 
@@ -109,7 +109,7 @@ public class MethodInfo extends java.lang.Object {
       }
       else {
         b = new MethodDecl(BytecodeParser.modifiers(flags), returnType, name, parameterList, 
-            exceptionList, new Opt(new Block()), myScene, myJimple);
+            exceptionList, new Opt(new Block()), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
       }
       if(attributes.annotations != null) {
         for(Iterator iter = attributes.annotations.iterator(); iter.hasNext(); ) {

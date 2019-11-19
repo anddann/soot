@@ -101,7 +101,7 @@ public class ConstructorDeclSubstituted extends ConstructorDecl implements Clone
    * @param myJimple
    * @param primTypeCollector   */
   public ConstructorDeclSubstituted(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 
 
   }
@@ -115,8 +115,8 @@ public class ConstructorDeclSubstituted extends ConstructorDecl implements Clone
    */
   public void init$Children() {
     children = new ASTNode[5];
-    setChild(new List(), 1);
-    setChild(new List(), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
     setChild(new Opt(), 3);
   }
   /**
@@ -124,7 +124,7 @@ public class ConstructorDeclSubstituted extends ConstructorDecl implements Clone
    * 
    */
   public ConstructorDeclSubstituted(Modifiers p0, String p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4, Block p5, ConstructorDecl p6, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
-      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -138,7 +138,7 @@ public class ConstructorDeclSubstituted extends ConstructorDecl implements Clone
    * 
    */
   public ConstructorDeclSubstituted(Modifiers p0, Symbol p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4, Block p5, ConstructorDecl p6, Scene myScene, PackageNamer myPackageNamer, Options myOptions, Jimple myJimple, PrimTypeCollector primTypeCollector) {
-      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

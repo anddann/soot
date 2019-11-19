@@ -166,7 +166,7 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    * 
    */
   public EnumConstant() {
-    super(myScene);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 
 
   }
@@ -180,7 +180,7 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
     setChild(new Opt(), 2);
   }
   /**
@@ -188,7 +188,7 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    * 
    */
   public EnumConstant(Modifiers p0, String p1, List<Expr> p2, Opt<Expr> p3) {
-      super(myScene);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -199,7 +199,7 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    * 
    */
   public EnumConstant(Modifiers p0, beaver.Symbol p1, List<Expr> p2, Opt<Expr> p3) {
-      super(myScene);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

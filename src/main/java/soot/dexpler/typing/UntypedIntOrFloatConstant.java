@@ -30,6 +30,7 @@ import soot.ByteType;
 import soot.CharType;
 import soot.FloatType;
 import soot.IntType;
+import soot.PrimTypeCollector;
 import soot.RefLikeType;
 import soot.ShortType;
 import soot.Type;
@@ -46,11 +47,13 @@ public class UntypedIntOrFloatConstant extends UntypedConstant {
   private static final long serialVersionUID = 4413439694269487822L;
   public final int value;
   private NullConstant nullConstant;
+  private PrimTypeCollector primTypeCollector;
 
   @Inject
-  public UntypedIntOrFloatConstant(int value, @Assisted NullConstant nullConstant) {
+  public UntypedIntOrFloatConstant(int value, @Assisted NullConstant nullConstant, @Assisted PrimTypeCollector primTypeCollector) {
     this.value = value;
     this.nullConstant = nullConstant;
+    this.primTypeCollector = primTypeCollector;
   }
 
   public boolean equals(Object c) {
@@ -63,11 +66,11 @@ public class UntypedIntOrFloatConstant extends UntypedConstant {
   }
 
   public FloatConstant toFloatConstant() {
-    return constancFactory.createFloatConstant(Float.intBitsToFloat((int) value));
+    return new FloatConstant(Float.intBitsToFloat((int) value),primTypeCollector);
   }
 
   public IntConstant toIntConstant() {
-    return constancFactory.createIntConstant(value);
+    return new IntConstant(value, this.primTypeCollector);
   }
 
   @Override

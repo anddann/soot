@@ -74,7 +74,7 @@ public class FieldDeclarationSubstituted extends FieldDeclaration implements Clo
    * 
    */
   public FieldDeclarationSubstituted() {
-    super(myScene);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 
 
   }
@@ -95,7 +95,7 @@ public class FieldDeclarationSubstituted extends FieldDeclaration implements Clo
    * 
    */
   public FieldDeclarationSubstituted(Modifiers p0, Access p1, String p2, Opt<Expr> p3, FieldDeclaration p4) {
-      super(myScene);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);
@@ -107,7 +107,7 @@ public class FieldDeclarationSubstituted extends FieldDeclaration implements Clo
    * 
    */
   public FieldDeclarationSubstituted(Modifiers p0, Access p1, beaver.Symbol p2, Opt<Expr> p3, FieldDeclaration p4) {
-      super(myScene);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);

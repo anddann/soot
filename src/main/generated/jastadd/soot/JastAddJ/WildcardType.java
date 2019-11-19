@@ -1,6 +1,14 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production WildcardType : {@link AbstractWildcardType};
  * @ast node
@@ -75,8 +83,8 @@ public class WildcardType extends AbstractWildcardType implements Cloneable {
    * @ast method 
    * 
    */
-  public WildcardType() {
-    super(myScene, myJimple, mySootResolver);
+  public WildcardType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
 
 
   }
@@ -90,14 +98,14 @@ public class WildcardType extends AbstractWildcardType implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
   }
   /**
    * @ast method 
    * 
    */
-  public WildcardType(Modifiers p0, String p1, List<BodyDecl> p2) {
-      super(myScene, myJimple, mySootResolver);
+  public WildcardType(Modifiers p0, String p1, List<BodyDecl> p2,Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -106,8 +114,8 @@ public class WildcardType extends AbstractWildcardType implements Cloneable {
    * @ast method 
    * 
    */
-  public WildcardType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2) {
-      super(myScene, myJimple, mySootResolver);
+  public WildcardType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2,Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

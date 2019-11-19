@@ -79,7 +79,7 @@ public class ParseName extends Access implements Cloneable {
    * 
    */
   public ParseName() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }
@@ -98,7 +98,7 @@ public class ParseName extends Access implements Cloneable {
    * 
    */
   public ParseName(String p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
   }
   /**
@@ -106,7 +106,7 @@ public class ParseName extends Access implements Cloneable {
    * 
    */
   public ParseName(beaver.Symbol p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
   }
   /**

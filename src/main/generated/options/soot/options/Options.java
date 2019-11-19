@@ -33,6 +33,7 @@ import java.util.List;
 
 import soot.G;
 import soot.PackManager;
+import soot.PhaseOptions;
 
 /**
  * Soot command-line options parser.
@@ -43,14 +44,21 @@ import soot.PackManager;
 public class Options extends OptionsBase {
 
   private final PackManager myPackManager;
+  private PhaseOptions myPhaseOptions;
 
   @Inject
-  public Options(PackManager myPackManager) {
+  public Options(PackManager myPackManager, PhaseOptions myPhaseOptions) {
     this.myPackManager = myPackManager;
+    this.myPhaseOptions = myPhaseOptions;
   }
 
   public PackManager getPackManager() {
     return myPackManager;
+  }
+
+  @Override
+  public PhaseOptions getPhaseOptions() {
+    return myPhaseOptions;
   }
 
   public static final int src_prec_c = 1;

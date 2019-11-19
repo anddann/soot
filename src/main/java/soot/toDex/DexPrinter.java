@@ -131,6 +131,7 @@ import soot.dexpler.DexInnerClassParser;
 import soot.dexpler.DexType;
 import soot.dexpler.Util;
 import soot.jimple.ClassConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IdentityStmt;
 import soot.jimple.Jimple;
 import soot.jimple.MonitorStmt;
@@ -216,8 +217,9 @@ public class DexPrinter {
   private FastDexTrapTightener myFastDexTrapTightener;
   private TrapSplitter myTrapSplitter;
   private Jimple myJimple;
+  private ConstantFactory constancFactory;
 
-  public DexPrinter(Scene myScene, Options myOptions, SourceLocator mySourceLocator, PackManager myPackManager, EmptySwitchEliminator myEmptySwitchEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter, Jimple myJimple) {
+  public DexPrinter(Scene myScene, Options myOptions, SourceLocator mySourceLocator, PackManager myPackManager, EmptySwitchEliminator myEmptySwitchEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter, Jimple myJimple, ConstantFactory constancFactory) {
     this.myScene = myScene;
     this.myOptions=myOptions;
     this.mySourceLocator = mySourceLocator;
@@ -227,6 +229,7 @@ public class DexPrinter {
     this.myFastDexTrapTightener = myFastDexTrapTightener;
     this.myTrapSplitter = myTrapSplitter;
     this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
     dexBuilder = createDexBuilder();
   }
 

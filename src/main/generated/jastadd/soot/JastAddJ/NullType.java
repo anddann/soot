@@ -90,7 +90,7 @@ public class NullType extends TypeDecl implements Cloneable {
    * 
    */
   public NullType() {
-    super(myScene, myJimple, mySootResolver);
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
 
 
   }
@@ -104,14 +104,14 @@ public class NullType extends TypeDecl implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
   }
   /**
    * @ast method 
    * 
    */
   public NullType(Modifiers p0, String p1, List<BodyDecl> p2) {
-      super(myScene, myJimple, mySootResolver);
+      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -121,7 +121,7 @@ public class NullType extends TypeDecl implements Cloneable {
    * 
    */
   public NullType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2) {
-      super(myScene, myJimple, mySootResolver);
+      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

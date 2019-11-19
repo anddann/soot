@@ -162,7 +162,7 @@ public class ClassAccess extends Access implements Cloneable {
    * 
    */
   public ClassAccess() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }

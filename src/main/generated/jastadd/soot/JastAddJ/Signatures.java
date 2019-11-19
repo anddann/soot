@@ -1,22 +1,8 @@
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
   * @ast class
  * 
@@ -103,7 +89,7 @@ public class Signatures extends java.lang.Object {
 
       public boolean hasSuperinterfaceSignature() { return superinterfaceSignature.getNumChildNoTransform() != 0; }
       public List superinterfaceSignature() { return superinterfaceSignature; }
-      protected List superinterfaceSignature = new List(); 
+      protected List superinterfaceSignature = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 
       Access parseSuperclassSignature() {
         return classTypeSignature();
@@ -175,7 +161,7 @@ public class Signatures extends java.lang.Object {
 
       public List exceptionList() { return exceptionList; }
       public boolean hasExceptionList() { return exceptionList.getNumChildNoTransform() != 0; }
-      protected List exceptionList = new List();
+      protected List exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 
       protected Access returnType = null;
       public boolean hasReturnType() { return returnType != null; }
@@ -190,7 +176,7 @@ public class Signatures extends java.lang.Object {
 
     void formalTypeParameters() {
       eat("<");
-      typeParameters = new List();
+      typeParameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       do {
         typeParameters.add(formalTypeParameter());
       } while(!next(">"));
@@ -201,7 +187,7 @@ public class Signatures extends java.lang.Object {
 
     TypeVariable formalTypeParameter() {
       String id = identifier();
-      List bounds = new List();
+      List bounds = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       Access classBound = classBound();
       if(classBound != null)
         bounds.add(classBound);
@@ -210,7 +196,7 @@ public class Signatures extends java.lang.Object {
       }
       if(bounds.getNumChildNoTransform() == 0)
         bounds.add(new TypeAccess("java.lang", "Object"));
-      return new TypeVariable(new Modifiers(new List()), id, new List(), bounds);
+      return new TypeVariable(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), id, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), bounds);
     }
 
 
@@ -306,7 +292,7 @@ public class Signatures extends java.lang.Object {
 
     List typeArguments() {
       eat("<");
-      List list = new List();
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       do {
         list.add(typeArgument());
       } while(!next(">"));

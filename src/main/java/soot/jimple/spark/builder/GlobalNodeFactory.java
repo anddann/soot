@@ -49,16 +49,20 @@ public class GlobalNodeFactory {
   protected final RefType rtThread;
   protected final RefType rtThreadGroup;
   protected final RefType rtThrowable;
+  private final Scene myScene;
+  private ArrayElement myArrayElement;
 
-  public GlobalNodeFactory(PAG pag) {
+  public GlobalNodeFactory(Scene myScene, ArrayElement myArrayElement, PAG pag) {
+    this.myScene = myScene;
+    this.myArrayElement = myArrayElement;
     this.pag = pag;
 
-    this.rtObject = RefType.v("java.lang.Object");
-    this.rtClassLoader = RefType.v("java.lang.ClassLoader");
-    this.rtString = RefType.v("java.lang.String");
-    this.rtThread = RefType.v("java.lang.Thread");
-    this.rtThreadGroup = RefType.v("java.lang.ThreadGroup");
-    this.rtThrowable = RefType.v("java.lang.Throwable");
+    this.rtObject = RefType.v("java.lang.Object", this.myScene);
+    this.rtClassLoader = RefType.v("java.lang.ClassLoader", this.myScene);
+    this.rtString = RefType.v("java.lang.String", this.myScene);
+    this.rtThread = RefType.v("java.lang.Thread", this.myScene);
+    this.rtThreadGroup = RefType.v("java.lang.ThreadGroup", this.myScene);
+    this.rtThrowable = RefType.v("java.lang.Throwable", this.myScene);
   }
 
   final public Node caseDefaultClassLoader() {
@@ -84,9 +88,9 @@ public class GlobalNodeFactory {
 
   final public Node casePrivilegedActionException() {
     AllocNode a = pag.makeAllocNode(PointsToAnalysis.PRIVILEGED_ACTION_EXCEPTION,
-        AnySubType.v(RefType.v("java.security.PrivilegedActionException")), null);
+        AnySubType.v(RefType.v("java.security.PrivilegedActionException",myScene)), null);
     VarNode v = pag.makeGlobalVarNode(PointsToAnalysis.PRIVILEGED_ACTION_EXCEPTION_LOCAL,
-        RefType.v("java.security.PrivilegedActionException"));
+        RefType.v("java.security.PrivilegedActionException",myScene));
     pag.addEdge(a, v);
     return v;
   }
@@ -110,7 +114,7 @@ public class GlobalNodeFactory {
   }
 
   final public Node caseArgv() {
-    ArrayType strArray = ArrayType.v(rtString, 1);
+    ArrayType strArray = ArrayType.v(rtString, 1,myScene);
     AllocNode argv = pag.makeAllocNode(PointsToAnalysis.STRING_ARRAY_NODE, strArray, null);
     VarNode sanl = pag.makeGlobalVarNode(PointsToAnalysis.STRING_ARRAY_NODE_LOCAL, strArray);
     AllocNode stringNode = pag.makeAllocNode(PointsToAnalysis.STRING_NODE, rtString, null);

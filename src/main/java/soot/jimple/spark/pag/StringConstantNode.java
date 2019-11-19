@@ -41,6 +41,6 @@ public class StringConstantNode extends AllocNode {
   /* End of public methods. */
 
   StringConstantNode(PAG pag, String sc) {
-    super(pag, sc, RefType.v("java.lang.String"), null);
+    super(pag, sc, RefType.v("java.lang.String"), myPhaseOptions, null);
   }
 }

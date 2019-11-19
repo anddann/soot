@@ -1,23 +1,9 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production SwitchStmt : {@link BranchTargetStmt} ::= <span class="component">{@link Expr}</span> <span class="component">{@link Block}</span>;
  * @ast node
@@ -192,9 +178,9 @@ public class SwitchStmt extends BranchTargetStmt implements Cloneable {
       hostType().createEnumArray(type);
       hostType().createEnumMethod(type);
       setExpr(
-        hostType().createEnumMethod(type).createBoundAccess(new List()).qualifiesAccess(
+        hostType().createEnumMethod(type).createBoundAccess(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)).qualifiesAccess(
         new ArrayAccess(
-          getExpr().qualifiesAccess(new MethodAccess("ordinal", new List()))
+          getExpr().qualifiesAccess(new MethodAccess("ordinal", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)))
         ))
       );
     }

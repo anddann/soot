@@ -43,6 +43,7 @@ import soot.JastAddJ.JavaParser;
 import soot.JastAddJ.Program;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.javaToJimple.IInitialResolver.Dependencies;
+import soot.jimple.Jimple;
 import soot.options.Options;
 import soot.util.ConcurrentHashMultiMap;
 import soot.util.MultiMap;
@@ -65,13 +66,17 @@ public class SootResolver {
   private Scene myScene;
   private PackageNamer myPackageNamer;
   private SourceLocator mySourceLocator;
+  private Jimple myJimple;
+  private PrimTypeCollector primTypeCollector;
 
   @Inject
-  public SootResolver(Options myOptions, Scene myScene, PackageNamer myPackageNamer, SourceLocator mySourceLocator) {
+  public SootResolver(Options myOptions, Scene myScene, PackageNamer myPackageNamer, SourceLocator mySourceLocator, Jimple myJimple, PrimTypeCollector primTypeCollector) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myPackageNamer = myPackageNamer;
     this.mySourceLocator = mySourceLocator;
+    this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
     worklist[SootClass.HIERARCHY] = new ArrayDeque<SootClass>();
     worklist[SootClass.SIGNATURES] = new ArrayDeque<SootClass>();
     worklist[SootClass.BODIES] = new ArrayDeque<SootClass>();
@@ -79,7 +84,7 @@ public class SootResolver {
 
   protected void initializeProgram() {
     if (myOptions.src_prec() != Options.src_prec_apk_c_j) {
-      program = new Program();
+      program = new Program(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       program.state().reset();
 
       program.initBytecodeReader(new BytecodeParser());

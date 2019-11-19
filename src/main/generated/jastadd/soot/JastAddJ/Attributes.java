@@ -1,22 +1,7 @@
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
 import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
   * @ast class
  * 
@@ -95,7 +80,7 @@ public class Attributes extends java.lang.Object {
           return new ElementAnnotationValue(readAnnotation());
         case '[':
           int index = p.u2();
-          List list = new List();
+          List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
           for(int i = 0; i < index; i++) 
             list.add(readElementValue());
           return new ElementArrayValue(list);
@@ -110,14 +95,14 @@ public class Attributes extends java.lang.Object {
     protected Annotation readAnnotation() {
       Access typeAccess = new FieldDescriptor(p, "").type();
       int num_element_value_pairs = p.u2();
-      List list = new List();
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       for(int i = 0; i < num_element_value_pairs; i++) {
         int element_name_index = p.u2();
         String element_name = p.getCONSTANT_Utf8_Info(element_name_index).string();
         ElementValue element_value = readElementValue();
         list.add(new ElementValuePair(element_name, element_value));
       }
-      return new Annotation("Annotation", typeAccess, list);
+      return new Annotation("Annotation", typeAccess, list, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     }
 
 
@@ -264,7 +249,7 @@ public class Attributes extends java.lang.Object {
 
       private void parseExceptions() {
         int number_of_exceptions = p.u2();
-        exceptionList = new List();
+        exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
         if(BytecodeParser.VERBOSE)
           p.println("      " + number_of_exceptions + " exceptions:");
         for (int i = 0; i < number_of_exceptions; i++) {
@@ -276,7 +261,7 @@ public class Attributes extends java.lang.Object {
       }
 
       public List exceptionList() {
-        return exceptionList != null ? exceptionList : new List();
+        return exceptionList != null ? exceptionList : new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       }
 
       public ElementValue elementValue() {

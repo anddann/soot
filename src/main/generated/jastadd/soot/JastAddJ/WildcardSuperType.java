@@ -1,6 +1,14 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production WildcardSuperType : {@link AbstractWildcardType} ::= <span class="component">{@link Access}</span>;
  * @ast node
@@ -99,8 +107,8 @@ public class WildcardSuperType extends AbstractWildcardType implements Cloneable
    * @ast method 
    * 
    */
-  public WildcardSuperType() {
-    super(myScene, myJimple, mySootResolver);
+  public WildcardSuperType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
 
 
   }
@@ -114,14 +122,14 @@ public class WildcardSuperType extends AbstractWildcardType implements Cloneable
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
   }
   /**
    * @ast method 
    * 
    */
-  public WildcardSuperType(Modifiers p0, String p1, List<BodyDecl> p2, Access p3) {
-      super(myScene, myJimple, mySootResolver);
+  public WildcardSuperType(Modifiers p0, String p1, List<BodyDecl> p2, Access p3,Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -131,8 +139,8 @@ public class WildcardSuperType extends AbstractWildcardType implements Cloneable
    * @ast method 
    * 
    */
-  public WildcardSuperType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2, Access p3) {
-      super(myScene, myJimple, mySootResolver);
+  public WildcardSuperType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2, Access p3,Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

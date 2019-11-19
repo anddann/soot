@@ -296,11 +296,11 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
       return methodHolder;
     String name = "$" + nextAnonymousIndex();
     ClassDecl c = addMemberClass(new ClassDecl(
-      new Modifiers(new List()),
+      new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)),
       name,
       new Opt(),
-      new List(),
-      new List(),
+      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
+      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
             myScene, myOptions, myPackageNamer));
     methodHolder = c;
     return c;
@@ -335,7 +335,7 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
    * 
    */
   public InterfaceDecl() {
-    super();
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
 
 
   }
@@ -349,15 +349,16 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(), 1);
-    setChild(new List(), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
   }
   /**
    * @ast method 
    * 
    */
   public InterfaceDecl(Modifiers p0, String p1, List<Access> p2, List<BodyDecl> p3) {
-    setChild(p0, 0);
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);
@@ -367,7 +368,8 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
    * 
    */
   public InterfaceDecl(Modifiers p0, beaver.Symbol p1, List<Access> p2, List<BodyDecl> p3) {
-    setChild(p0, 0);
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);

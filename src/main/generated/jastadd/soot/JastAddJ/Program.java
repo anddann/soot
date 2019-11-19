@@ -6,12 +6,27 @@ import java.util.*;
 import java.util.ArrayList;
 import java.io.*;
 import java.util.Collection;
+
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production Program : {@link ASTNode} ::= <span class="component">{@link CompilationUnit}*</span>;
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:1
  */
 public class Program extends ASTNode<ASTNode> implements Cloneable {
+  private Scene myScene;
+  private Options myOptions;
+  private PackageNamer myPackageNamer;
+  private Jimple myJimple;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
+
   /**
    * @apilevel low-level
    */
@@ -429,7 +444,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
   public void simpleReset() {
     lookupType_String_String_values = new HashMap();
     hasPackage_String_values = new HashMap();
-    List list = new List();
+    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     for(int i = 0; i < getNumCompilationUnit(); i++) {
       CompilationUnit unit = getCompilationUnit(i);
       if(!unit.fromSource()) {
@@ -626,7 +641,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
 
 		loadedCompilationUnit.remove(fileName);
 
-		List<CompilationUnit> newList = new List<CompilationUnit>();
+		List<CompilationUnit> newList = new List<CompilationUnit>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 		for (soot.JastAddJ.CompilationUnit cu : getCompilationUnits()) {
 			boolean dontAdd = false;
 			if(cu.fromSource()) {
@@ -643,10 +658,20 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
 	}
   /**
    * @ast method 
-   * 
-   */
-  public Program() {
+   *@param myScene
+   * @param myOptions
+   * @param myPackageNamer
+   * @param myJimple
+   * @param primTypeCollector
+   * @param constantFactory        */
+  public Program(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     super();
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
 
     is$Final(true);
 
@@ -661,13 +686,19 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[1];
-    setChild(new List(), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 0);
   }
   /**
    * @ast method 
    * 
    */
-  public Program(List<CompilationUnit> p0) {
+  public Program(List<CompilationUnit> p0, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
     setChild(p0, 0);
     is$Final(true);
   }
@@ -1499,7 +1530,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
   boolean isFinal = this.is$Final();
     CompilationUnit getLibCompilationUnit_String_value = getLibCompilationUnit_compute(fullName);
     if(getLibCompilationUnit_String_list == null) {
-      getLibCompilationUnit_String_list = new List();
+      getLibCompilationUnit_String_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       getLibCompilationUnit_String_list.is$Final = true;
       getLibCompilationUnit_String_list.setParent(this);
     }
@@ -1547,7 +1578,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
    * @apilevel internal
    */
   private PrimitiveCompilationUnit getPrimitiveCompilationUnit_compute() {    
-    PrimitiveCompilationUnit u = new PrimitiveCompilationUnit();
+    PrimitiveCompilationUnit u = new PrimitiveCompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     u.setPackageDecl(PRIMITIVE_PACKAGE_NAME);
     return u;
   }
@@ -1615,8 +1646,8 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
   private WildcardsCompilationUnit wildcards_compute() {
     return new WildcardsCompilationUnit(
       "wildcards",
-      new List(),
-      new List()
+      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
+      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),myScene,myPackageNamer,myJimple,myOptions,primTypeCollector
     );
   }
   /**

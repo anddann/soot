@@ -19,9 +19,7 @@ import soot.coffi.CoffiMethodSource;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:66
  */
 public class ClassDecl extends ReferenceType implements Cloneable {
-  private Scene myScene;
-  private Options myOptions;
-  private PackageNamer myPackageNamer;
+
 
   /**
    * @apilevel low-level
@@ -432,13 +430,9 @@ public class ClassDecl extends ReferenceType implements Cloneable {
    * @param myScene
    * @param myOptions
    * @param myPackageNamer */
-  public ClassDecl(Scene myScene, Options myOptions, PackageNamer myPackageNamer) {
-    super();
+  public ClassDecl(Scene myScene, Options myOptions, PackageNamer myPackageNamer,) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
 
-
-    this.myScene = myScene;
-    this.myOptions = myOptions;
-    this.myPackageNamer = myPackageNamer;
   }
   /**
    * Initializes the child array to the correct size.
@@ -451,14 +445,15 @@ public class ClassDecl extends ReferenceType implements Cloneable {
   public void init$Children() {
     children = new ASTNode[4];
     setChild(new Opt(), 1);
-    setChild(new List(), 2);
-    setChild(new List(), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 3);
   }
   /**
    * @ast method 
    * 
    */
   public ClassDecl(Modifiers p0, String p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4, Scene myScene, Options myOptions, PackageNamer myPackageNamer) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
@@ -473,6 +468,7 @@ public class ClassDecl extends ReferenceType implements Cloneable {
    * 
    */
   public ClassDecl(Modifiers p0, Symbol p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4, Scene myScene, Options myOptions, PackageNamer myPackageNamer) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;

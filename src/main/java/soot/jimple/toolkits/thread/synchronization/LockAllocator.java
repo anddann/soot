@@ -264,7 +264,7 @@ public class LockAllocator extends SceneTransformer {
     logger.debug("[wjtp.tn] *** Find Transitive Read/Write Sets *** " + (new Date()));
     PointsToAnalysis pta = myScene.getPointsToAnalysis();
     CriticalSectionAwareSideEffectAnalysis tasea = null;
-    tasea = new CriticalSectionAwareSideEffectAnalysis(pta, myScene.getCallGraph(),
+    tasea = new CriticalSectionAwareSideEffectAnalysis(fullObjectFactory, pta, myScene.getCallGraph(),
         (optionOpenNesting ? criticalSections : null), tlo, myScene);
     Iterator<CriticalSection> tnIt = criticalSections.iterator();
     while (tnIt.hasNext()) {

@@ -22,8 +22,12 @@ package soot.dexpler.typing;
  * #L%
  */
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 import soot.DoubleType;
 import soot.LongType;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Value;
 import soot.jimple.DoubleConstant;
@@ -36,13 +40,12 @@ public class UntypedLongOrDoubleConstant extends UntypedConstant {
   */
   private static final long serialVersionUID = -3970057807907204253L;
   public final long value;
+  private PrimTypeCollector primTypeCollector;
 
-  private UntypedLongOrDoubleConstant(long value) {
+  @Inject
+  public UntypedLongOrDoubleConstant(long value, @Assisted PrimTypeCollector primTypeCollector) {
     this.value = value;
-  }
-
-  public static UntypedLongOrDoubleConstant v(long value) {
-    return new UntypedLongOrDoubleConstant(value);
+    this.primTypeCollector = primTypeCollector;
   }
 
   public boolean equals(Object c) {
@@ -55,11 +58,11 @@ public class UntypedLongOrDoubleConstant extends UntypedConstant {
   }
 
   public DoubleConstant toDoubleConstant() {
-    return constancFactory.createDoubleConstant(Double.longBitsToDouble(value));
+    return new DoubleConstant(Double.longBitsToDouble(value), primTypeCollector);
   }
 
   public LongConstant toLongConstant() {
-    return constancFactory.createLongConstant(value);
+    return new LongConstant(value, primTypeCollector);
   }
 
   @Override

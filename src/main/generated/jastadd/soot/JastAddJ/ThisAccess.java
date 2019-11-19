@@ -114,7 +114,7 @@ public class ThisAccess extends Access implements Cloneable {
    * 
    */
   public ThisAccess() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }
@@ -133,7 +133,7 @@ public class ThisAccess extends Access implements Cloneable {
    * 
    */
   public ThisAccess(String p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
   }
   /**
@@ -141,7 +141,7 @@ public class ThisAccess extends Access implements Cloneable {
    * 
    */
   public ThisAccess(beaver.Symbol p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
   }
   /**

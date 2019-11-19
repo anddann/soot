@@ -1,12 +1,26 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production List : {@link ASTNode};
  * @ast node
  * 
  */
 public class List<T extends ASTNode> extends ASTNode<T> implements Cloneable {
+  private Scene myScene;
+  private Options myOptions;
+  private PackageNamer myPackageNamer;
+  private Jimple myJimple;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
+
   /**
    * @apilevel low-level
    */
@@ -71,7 +85,7 @@ public class List<T extends ASTNode> extends ASTNode<T> implements Cloneable {
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Generics.jrag:977
    */
   public List substitute(Parameterization parTypeDecl) {
-    List list = new List();
+    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     for(int i = 0; i < getNumChild(); i++) {
       ASTNode node = getChild(i);
       if(node instanceof Access) {
@@ -109,12 +123,23 @@ public class List<T extends ASTNode> extends ASTNode<T> implements Cloneable {
   }
   /**
    * @ast method 
-   * 
+   *@param myScene
+   * @param myOptions
+   * @param myPackageNamer
+   * @param myJimple
+   * @param primTypeCollector
+   * @param constantFactory
    */
-  public List() {
+  public List(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     super();
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
 
 
+    this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
   }
   /**
    * Initializes the child array to the correct size.
@@ -246,11 +271,11 @@ public class List<T extends ASTNode> extends ASTNode<T> implements Cloneable {
       ConstructorDecl constructor = new ConstructorDecl(
             m,
             c.name(),
-            new List(),
-            new List(),
+            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
+            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
             new Opt(),
             new Block(),
-              myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+              myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
       constructor.setDefaultConstructor();
       c.addBodyDecl(constructor);
       return this;

@@ -2,22 +2,9 @@
 package soot.JastAddJ;
 
 import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
 
 /**
  * @production ParInterfaceDecl : {@link InterfaceDecl} ::= <span class="component">Argument:{@link Access}*</span> <span class="component">SuperInterfaceId:{@link Access}*</span> <span class="component">{@link BodyDecl}*</span>;
@@ -141,7 +128,7 @@ public class ParInterfaceDecl extends InterfaceDecl implements Cloneable, ParTyp
           switch (i) {
           case 3:
           case 4:
-            tree.children[i] = new List();
+            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
             continue;
           }
         ASTNode child = (ASTNode) children[i];
@@ -199,7 +186,7 @@ public class ParInterfaceDecl extends InterfaceDecl implements Cloneable, ParTyp
       return ((GenericTypeDecl)genericDecl()).rawType().createBoundAccess();
     if(!usesTypeVariable())
       return super.substitute(parTypeDecl);
-    List list = new List();
+    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     for(int i = 0; i < getNumArgument(); i++)
       list.add(getArgument(i).type().substitute(parTypeDecl));
     return new ParTypeAccess(genericDecl().createQualifiedAccess(), list);
@@ -210,7 +197,7 @@ public class ParInterfaceDecl extends InterfaceDecl implements Cloneable, ParTyp
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/GenericsParTypeDecl.jrag:76
    */
   public Access createQualifiedAccess() {
-    List typeArgumentList = new List();
+    List typeArgumentList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     for(int i = 0; i < getNumArgument(); i++) {
       Access a = (Access)getArgument(i);
       if(a instanceof TypeAccess)
@@ -261,9 +248,9 @@ public class ParInterfaceDecl extends InterfaceDecl implements Cloneable, ParTyp
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(), 1);
-    setChild(new List(), 2);
-    setChild(new List(), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 3);
   }
   /**
    * @ast method 

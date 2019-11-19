@@ -114,7 +114,7 @@ public class SuperAccess extends Access implements Cloneable {
    * 
    */
   public SuperAccess() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }
@@ -133,7 +133,7 @@ public class SuperAccess extends Access implements Cloneable {
    * 
    */
   public SuperAccess(String p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
   }
   /**
@@ -141,7 +141,7 @@ public class SuperAccess extends Access implements Cloneable {
    * 
    */
   public SuperAccess(beaver.Symbol p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
   }
   /**

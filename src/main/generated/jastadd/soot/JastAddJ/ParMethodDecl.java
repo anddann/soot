@@ -128,7 +128,7 @@ public class ParMethodDecl extends MethodDecl implements Cloneable, Parameteriza
    * 
    */
   public ParMethodDecl() {
-    super(myScene, myJimple);
+    super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
 
 
   }
@@ -142,17 +142,17 @@ public class ParMethodDecl extends MethodDecl implements Cloneable, Parameteriza
    */
   public void init$Children() {
     children = new ASTNode[6];
-    setChild(new List(), 2);
-    setChild(new List(), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 3);
     setChild(new Opt(), 4);
-    setChild(new List(), 5);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 5);
   }
   /**
    * @ast method 
    * 
    */
   public ParMethodDecl(Modifiers p0, Access p1, String p2, List<ParameterDeclaration> p3, List<Access> p4, Opt<Block> p5, List<Access> p6, GenericMethodDecl p7) {
-      super(myScene, myJimple);
+      super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
       setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);
@@ -167,7 +167,7 @@ public class ParMethodDecl extends MethodDecl implements Cloneable, Parameteriza
    * 
    */
   public ParMethodDecl(Modifiers p0, Access p1, beaver.Symbol p2, List<ParameterDeclaration> p3, List<Access> p4, Opt<Block> p5, List<Access> p6, GenericMethodDecl p7) {
-      super(myScene, myJimple);
+      super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
       setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);

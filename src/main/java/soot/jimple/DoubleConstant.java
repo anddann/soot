@@ -38,7 +38,7 @@ public class DoubleConstant extends RealConstant {
   private PrimTypeCollector primTypeCollector;
 
   @Inject 
-  private DoubleConstant(double value, @Assisted PrimTypeCollector primTypeCollector) {
+  public DoubleConstant(double value, @Assisted PrimTypeCollector primTypeCollector) {
     this.value = value;
     this.primTypeCollector = primTypeCollector;
   }

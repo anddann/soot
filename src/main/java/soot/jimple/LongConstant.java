@@ -34,7 +34,7 @@ public class LongConstant extends ArithmeticConstant {
   private PrimTypeCollector primTypeCollector;
 
   @Inject
-  private LongConstant(long value, @Assisted PrimTypeCollector primTypeCollector) {
+  public LongConstant(long value, @Assisted PrimTypeCollector primTypeCollector) {
     this.value = value;
     this.primTypeCollector = primTypeCollector;
   }

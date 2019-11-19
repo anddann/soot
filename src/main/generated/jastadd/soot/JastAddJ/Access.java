@@ -4,6 +4,7 @@ package soot.JastAddJ;
 import java.util.ArrayList;
 import java.util.Collection;
 import soot.*;
+import soot.jimple.Jimple;
 
 /**
  * @production Access : {@link Expr};
@@ -145,8 +146,9 @@ public abstract class Access extends Expr implements Cloneable {
    * @ast method 
    *
    * @param myScene
-   */
-  public Access(Scene myScene) {
+   * @param primTypeCollector
+   * @param myJimple */
+  public Access(Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) {
     super(primTypeCollector, myJimple);
 
 

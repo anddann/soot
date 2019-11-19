@@ -94,7 +94,7 @@ public class VariableDecl extends ASTNode<ASTNode> implements Cloneable {
       type.addArrayDims(getDimsList()),
       getID(),
       getInitOpt(),
-            myScene);
+            myScene, myPackageNamer, primTypeCollector, myJimple, constantFactory);
     decl.setStart(start); // copy location information
     decl.setEnd(end); // copy location information
     decl.IDstart = IDstart;
@@ -120,7 +120,7 @@ public class VariableDecl extends ASTNode<ASTNode> implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 0);
     setChild(new Opt(), 1);
   }
   /**

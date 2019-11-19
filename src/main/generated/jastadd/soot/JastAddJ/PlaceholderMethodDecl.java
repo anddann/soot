@@ -1,23 +1,6 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
 /**
  * Placeholder method for type inference on generic instance creation.
  * @production PlaceholderMethodDecl : {@link GenericMethodDecl};
@@ -145,10 +128,10 @@ public class PlaceholderMethodDecl extends GenericMethodDecl implements Cloneabl
    */
   public void init$Children() {
     children = new ASTNode[6];
-    setChild(new List(), 2);
-    setChild(new List(), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 3);
     setChild(new Opt(), 4);
-    setChild(new List(), 5);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 5);
   }
   /**
    * @ast method 

@@ -2,29 +2,27 @@
 package soot.JastAddJ;
 
 import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production TryStmt : {@link Stmt} ::= <span class="component">{@link Block}</span> <span class="component">{@link CatchClause}*</span> <span class="component">[Finally:{@link Block}]</span>;
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:219
  */
 public class TryStmt extends Stmt implements Cloneable, FinallyHost {
-  /**
+    private Scene myScene;
+    private Options myOptions;
+    private PackageNamer myPackageNamer;
+    private Jimple myJimple;
+    private PrimTypeCollector primTypeCollector;
+
+    /**
    * @apilevel low-level
    */
   public void flushCache() {
@@ -360,12 +358,14 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
   }
   /**
    * @ast method 
-   * 
+   *
+   * @param myOptions
    */
-  public TryStmt() {
+  public TryStmt(Options myOptions) {
     super();
 
 
+      this.myOptions = myOptions;
   }
   /**
    * Initializes the child array to the correct size.
@@ -377,15 +377,16 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
     setChild(new Opt(), 2);
   }
   /**
    * @ast method 
    * 
    */
-  public TryStmt(Block p0, List<CatchClause> p1, Opt<Block> p2) {
-    setChild(p0, 0);
+  public TryStmt(Block p0, List<CatchClause> p1, Opt<Block> p2, Options myOptions) {
+      this.myOptions = myOptions;
+      setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);
   }
@@ -1042,7 +1043,7 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
   /**
    * @apilevel internal
    */
-  private soot.jimple.Stmt label_begin_compute() {  return newLabel();  }
+  private soot.jimple.Stmt label_begin_compute() {  return newLabel(myJimple);  }
   /**
    * @apilevel internal
    */
@@ -1071,7 +1072,7 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
   /**
    * @apilevel internal
    */
-  private soot.jimple.Stmt label_block_end_compute() {  return newLabel();  }
+  private soot.jimple.Stmt label_block_end_compute() {  return newLabel(myJimple);  }
   /**
    * @apilevel internal
    */
@@ -1100,7 +1101,7 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
   /**
    * @apilevel internal
    */
-  private soot.jimple.Stmt label_end_compute() {  return newLabel();  }
+  private soot.jimple.Stmt label_end_compute() {  return newLabel(myJimple);  }
   /**
    * @apilevel internal
    */
@@ -1129,7 +1130,7 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
   /**
    * @apilevel internal
    */
-  private soot.jimple.Stmt label_finally_compute() {  return newLabel();  }
+  private soot.jimple.Stmt label_finally_compute() {  return newLabel(myJimple);  }
   /**
    * @apilevel internal
    */
@@ -1158,7 +1159,7 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
   /**
    * @apilevel internal
    */
-  private soot.jimple.Stmt label_finally_block_compute() {  return newLabel();  }
+  private soot.jimple.Stmt label_finally_block_compute() {  return newLabel(myJimple);  }
   /**
    * @apilevel internal
    */
@@ -1187,7 +1188,7 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
   /**
    * @apilevel internal
    */
-  private soot.jimple.Stmt label_exception_handler_compute() {  return newLabel();  }
+  private soot.jimple.Stmt label_exception_handler_compute() {  return newLabel(myJimple);  }
   /**
    * @apilevel internal
    */
@@ -1216,7 +1217,7 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
   /**
    * @apilevel internal
    */
-  private soot.jimple.Stmt label_catch_end_compute() {  return newLabel();  }
+  private soot.jimple.Stmt label_catch_end_compute() {  return newLabel(myJimple);  }
   /**
    * @attribute syn
    * @aspect Statements

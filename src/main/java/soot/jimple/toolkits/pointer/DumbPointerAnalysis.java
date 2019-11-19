@@ -23,6 +23,7 @@ package soot.jimple.toolkits.pointer;
  */
 
 import com.google.inject.Inject;
+
 import soot.Context;
 import soot.Local;
 import soot.PointsToAnalysis;
@@ -30,27 +31,27 @@ import soot.PointsToSet;
 import soot.RefType;
 import soot.SootField;
 import soot.Type;
+import soot.jimple.FullObjectFactory;
 
 /**
  * A very naive pointer analysis that just reports that any points can point to any object.
  */
 public class DumbPointerAnalysis implements PointsToAnalysis {
 
-  private FullObjectSet myFullObjectSet;
+  private FullObjectFactory myFullObjectSet;
 
   @Inject
-  public DumbPointerAnalysis(FullObjectSet myFullObjectSet) {
+  public DumbPointerAnalysis(FullObjectFactory myFullObjectSet) {
     this.myFullObjectSet = myFullObjectSet;
   }
-
 
   /** Returns the set of objects pointed to by variable l. */
   public PointsToSet reachingObjects(Local l) {
     Type t = l.getType();
     if (t instanceof RefType) {
-      return FullObjectSet.v((RefType) t);
+      return myFullObjectSet.createFullObjectSet((RefType) t);
     }
-    return myFullObjectSet;
+    return myFullObjectSet.getFullObjectSet();
   }
 
   /** Returns the set of objects pointed to by variable l in context c. */
@@ -62,9 +63,9 @@ public class DumbPointerAnalysis implements PointsToAnalysis {
   public PointsToSet reachingObjects(SootField f) {
     Type t = f.getType();
     if (t instanceof RefType) {
-      return FullObjectSet.v((RefType) t);
+      return myFullObjectSet.createFullObjectSet((RefType) t);
     }
-    return myFullObjectSet;
+    return myFullObjectSet.getFullObjectSet();
   }
 
   /**
@@ -92,6 +93,6 @@ public class DumbPointerAnalysis implements PointsToAnalysis {
    * Returns the set of objects pointed to by elements of the arrays in the PointsToSet s.
    */
   public PointsToSet reachingObjectsOfArrayElement(PointsToSet s) {
-    return myFullObjectSet;
+    return myFullObjectSet.getFullObjectSet();
   }
 }

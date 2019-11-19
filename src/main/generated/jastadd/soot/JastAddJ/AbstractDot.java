@@ -134,7 +134,7 @@ public class AbstractDot extends Access implements Cloneable {
    * @param myScene
    */
   public AbstractDot(Scene myScene) {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }
@@ -154,7 +154,7 @@ public class AbstractDot extends Access implements Cloneable {
    * 
    */
   public AbstractDot(Expr p0, Access p1, Scene myScene) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setChild(p0, 0);
     setChild(p1, 1);
   }

@@ -1,23 +1,10 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * @production VariableDeclaration : {@link Stmt} ::= <span class="component">{@link Modifiers}</span> <span class="component">TypeAccess:{@link Access}</span> <span class="component">&lt;ID:String&gt;</span> <span class="component">[Init:{@link Expr}]</span>;
  * @ast node
@@ -157,7 +144,7 @@ public class VariableDeclaration extends Stmt implements Cloneable, SimpleSet, I
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:74
    */
   public VariableDeclaration(Access type, String name, Expr init) {
-    this(new Modifiers(new List()), type, name, new Opt(init));
+    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), type, name, new Opt(init));
   }
   /**
    * @ast method 
@@ -165,7 +152,7 @@ public class VariableDeclaration extends Stmt implements Cloneable, SimpleSet, I
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:78
    */
   public VariableDeclaration(Access type, String name) {
-    this(new Modifiers(new List()), type, name, new Opt());
+    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), type, name, new Opt());
   }
   /**
    * @ast method 

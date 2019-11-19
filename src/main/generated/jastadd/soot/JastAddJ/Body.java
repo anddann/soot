@@ -1,22 +1,11 @@
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
 import java.util.*;
-import beaver.*;
 import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
+
 import soot.*;
-import soot.util.*;
 import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
   * @ast class
  * 
@@ -33,12 +22,14 @@ public class Body extends java.lang.Object {
 
 
     TypeDecl typeDecl;
+    private ConstantFactory constantFactory;
 
 
-    public Body(TypeDecl typeDecl, soot.jimple.JimpleBody body, ASTNode container) {
+    public Body(TypeDecl typeDecl, JimpleBody body, ASTNode container, ConstantFactory constantFactory) {
       this.typeDecl = typeDecl;
       this.body = body;
-      chains = new java.util.Stack();
+        this.constantFactory = constantFactory;
+        chains = new java.util.Stack();
       chains.push(body.getUnits());
       setLine(container);
       if(!body.getMethod().isStatic())
@@ -60,7 +51,7 @@ public class Body extends java.lang.Object {
 
 
     public Local newTemp(soot.Value v) {
-      if (v == NullConstant.v())
+      if (v == constantFactory.getNullConstant())
         throw new UnsupportedOperationException(
             "Cannot create a temporary local for null literal");
       Local local = newTemp(v.getType());

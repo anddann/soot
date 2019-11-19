@@ -125,7 +125,7 @@ public class FieldRWTagger extends BodyTransformer {
 
   protected void internalTransform(Body body, String phaseName, Map options) {
     initializationStuff(phaseName);
-    SideEffectAnalysis sea = new SideEffectAnalysis(myDumbPointerAnalysis, myScene.getCallGraph());
+    SideEffectAnalysis sea = new SideEffectAnalysis(myDumbPointerAnalysis, myScene.getCallGraph(), fullObjectFactory);
     sea.findNTRWSets(body.getMethod());
     HashMap<Object, RWSet> stmtToReadSet = new HashMap<Object, RWSet>();
     HashMap<Object, RWSet> stmtToWriteSet = new HashMap<Object, RWSet>();

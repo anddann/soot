@@ -33,7 +33,7 @@ public class IntConstant extends ArithmeticConstant {
   public final int value;
   private PrimTypeCollector primTypeCollector;
 
-  protected IntConstant(int value, @Assisted PrimTypeCollector primTypeCollector) {
+  public IntConstant(int value, @Assisted PrimTypeCollector primTypeCollector) {
     this.value = value;
     this.primTypeCollector = primTypeCollector;
   }

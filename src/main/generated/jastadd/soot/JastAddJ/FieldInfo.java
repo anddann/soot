@@ -45,8 +45,8 @@ public class FieldInfo extends java.lang.Object {
         f = new EnumConstant(
             BytecodeParser.modifiers(flags),
             name,
-            new List(),
-            new List()
+            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
+            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)
             );
       else {
         Signatures.FieldSignature s = attributes.fieldSignature;
@@ -56,7 +56,7 @@ public class FieldInfo extends java.lang.Object {
             type,
             name,
             new Opt(),
-                myScene);
+                myScene, myPackageNamer, primTypeCollector, myJimple, constantFactory);
       }
       if(attributes.constantValue() != null)
         if(fieldDescriptor.isBoolean()) {

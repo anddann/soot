@@ -1,23 +1,8 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
 import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * The JSR 334 try with resources statement.
  * @production TryWithResources : {@link TryStmt} ::= <span class="component">Resource:{@link ResourceDeclaration}*</span> <span class="component">{@link Block}</span> <span class="component">{@link CatchClause}*</span> <span class="component">[Finally:{@link Block}]</span>;
@@ -176,7 +161,7 @@ public class TryWithResources extends TryStmt implements Cloneable, VariableScop
    * 
    */
   public TryWithResources() {
-    super();
+    super(myOptions);
 
 
   }
@@ -190,8 +175,8 @@ public class TryWithResources extends TryStmt implements Cloneable, VariableScop
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(), 0);
-    setChild(new List(), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
     setChild(new Opt(), 3);
   }
   /**
@@ -199,7 +184,8 @@ public class TryWithResources extends TryStmt implements Cloneable, VariableScop
    * 
    */
   public TryWithResources(List<ResourceDeclaration> p0, Block p1, List<CatchClause> p2, Opt<Block> p3) {
-    setChild(p0, 0);
+      super(myOptions);
+      setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);
     setChild(p3, 3);

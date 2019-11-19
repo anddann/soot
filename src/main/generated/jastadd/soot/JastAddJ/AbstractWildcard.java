@@ -34,7 +34,7 @@ public abstract class AbstractWildcard extends Access implements Cloneable {
    * 
    */
   public AbstractWildcard() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import beaver.Symbol;
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
@@ -19,8 +20,11 @@ import soot.SootMethod;
 import soot.SootMethodRef;
 import soot.SootResolver;
 import soot.Type;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
+import soot.options.Options;
 
 /**
  * @production TypeDecl : {@link ASTNode} ::=
@@ -31,9 +35,13 @@ import soot.jimple.JimpleBody;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:41
  */
 public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, SimpleSet, Iterator, VariableScope {
-	private Scene myScene;
-	private Jimple myJimple;
-	private SootResolver mySootResolver;
+	protected Scene myScene;
+	protected Jimple myJimple;
+	protected SootResolver mySootResolver;
+	protected Options myOptions;
+	protected PrimTypeCollector primTypeCollector;
+	protected PackageNamer myPackageNamer;
+	protected ConstantFactory constantFactory;
 
 
 	/**
@@ -1023,7 +1031,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 			m.addModifier(new Modifier("public"));
 			m.addModifier(new Modifier("synthetic"));
 			m.addModifier(new Modifier("final"));
-			addMemberField(new FieldDeclaration(m, v.type().createQualifiedAccess(), "val$" + v.name(), new Opt(), myScene));
+			addMemberField(new FieldDeclaration(m, v.type().createQualifiedAccess(), "val$" + v.name(), new Opt(), myScene, myOptions, myPackageNamer,myJimple,primTypeCollector, constantFactory));
 		}
 	}
 
@@ -1055,10 +1063,10 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 		// !TypeName.class.desiredAssertionStatus();
 		createAssertionsDisabled = new FieldDeclaration(
 				new Modifiers(
-						new List().add(new Modifier("public")).add(new Modifier("static")).add(new Modifier("final"))),
+						new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public")).add(new Modifier("static")).add(new Modifier("final"))),
 				new PrimitiveTypeAccess("boolean"), "$assertionsDisabled",
 				new Opt(new LogNotExpr(topLevelType().createQualifiedAccess().qualifiesAccess(
-						new ClassAccess().qualifiesAccess(new MethodAccess("desiredAssertionStatus", new List()))))), myScene);
+						new ClassAccess().qualifiesAccess(new MethodAccess("desiredAssertionStatus", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)))))),myScene,myOptions,myPackageNamer,myJimple,primTypeCollector, constantFactory);
 		getBodyDeclList().insertChild(createAssertionsDisabled, 0);
 		// explicit read to trigger possible rewrites
 		createAssertionsDisabled = (FieldDeclaration) getBodyDeclList().getChild(0);
@@ -1089,8 +1097,8 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 			return (FieldDeclaration) createStaticClassField.get(name);
 		// static synthetic Class class$java$lang$String;
 		FieldDeclaration f = new FieldDeclaration(
-				new Modifiers(new List().add(new Modifier("public")).add(new Modifier("static"))),
-				lookupType("java.lang", "Class").createQualifiedAccess(), name, new Opt(), myScene) {
+				new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public")).add(new Modifier("static"))),
+				lookupType("java.lang", "Class").createQualifiedAccess(), name, new Opt(),myScene,myOptions,myPackageNamer,myJimple,primTypeCollector, constantFactory) {
 			public boolean isConstant() {
 				return true;
 			}
@@ -1124,29 +1132,29 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 		// }
 		// }
 		createStaticClassMethod = new MethodDecl(
-				new Modifiers(new List().add(new Modifier("public")).add(new Modifier("static"))),
+				new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public")).add(new Modifier("static"))),
 				lookupType("java.lang", "Class").createQualifiedAccess(), "class$",
-				new List().add(new ParameterDeclaration(new Modifiers(new List()),
+				new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new ParameterDeclaration(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)),
 						lookupType("java.lang", "String").createQualifiedAccess(), "name")),
-				new List(),
+				new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
 				new Opt(new Block(
-						new List().add(new TryStmt(
-								new Block(new List().add(
+						new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new TryStmt(
+								new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(
 										new ReturnStmt(new Opt(lookupType("java.lang", "Class").createQualifiedAccess()
 												.qualifiesAccess(new MethodAccess("forName",
-														new List().add(new VarAccess("name")))))))),
-								new List().add(new BasicCatch(
+														new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new VarAccess("name")))))))),
+								new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new BasicCatch(
 										new ParameterDeclaration(
-												new Modifiers(new List()),
+												new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)),
 												lookupType("java.lang", "ClassNotFoundException")
 														.createQualifiedAccess(),
 												"e"),
-										new Block(new List().add(new ThrowStmt(new ClassInstanceExpr(
+										new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new ThrowStmt(new ClassInstanceExpr(
 												lookupType("java.lang", "NoClassDefFoundError").createQualifiedAccess(),
-												new List().add(new VarAccess("e")
-														.qualifiesAccess(new MethodAccess("getMessage", new List()))),
+												new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new VarAccess("e")
+														.qualifiesAccess(new MethodAccess("getMessage", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)))),
 												new Opt(), myScene, constantFactory)))))),
-								new Opt())))), myScene, myJimple) {
+								new Opt(), myOptions)))), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory) {
 			public boolean isConstant() {
 				return true;
 			}
@@ -1223,7 +1231,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 		SootMethod m = clinit;
 		JimpleBody body = myJimple.newBody(m);
 		m.setActiveBody(body);
-		Body b = new Body(this, body, this);
+		Body b = new Body(this, body, this, constantFactory);
 		for (int i = 0; i < getNumBodyDecl(); i++) {
 			BodyDecl bodyDecl = getBodyDecl(i);
 			if (bodyDecl instanceof FieldDeclaration && bodyDecl.generate()) {
@@ -1326,13 +1334,21 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	 *
 	 * @param myScene
 	 * @param myJimple
-	 * @param mySootResolver */
-	public TypeDecl(Scene myScene, Jimple myJimple, SootResolver mySootResolver) {
+	 * @param mySootResolver
+	 * @param myOptions
+	 * @param primTypeCollector
+	 * @param myPackageNamer
+	 * @param constantFactory     */
+	public TypeDecl(Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
 		super();
 
 		this.myScene = myScene;
 		this.myJimple = myJimple;
 		this.mySootResolver = mySootResolver;
+		this.myOptions = myOptions;
+		this.primTypeCollector = primTypeCollector;
+		this.myPackageNamer = myPackageNamer;
+		this.constantFactory = constantFactory;
 	}
 
 	/**
@@ -1346,17 +1362,21 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	 */
 	public void init$Children() {
 		children = new ASTNode[2];
-		setChild(new List(), 1);
+		setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
 	}
 
 	/**
 	 * @ast method
 	 * 
 	 */
-	public TypeDecl(Modifiers p0, String p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver) {
+	public TypeDecl(Modifiers p0, String p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
 		this.myScene = myScene;
 		this.myJimple = myJimple;
 		this.mySootResolver = mySootResolver;
+		this.myOptions = myOptions;
+		this.primTypeCollector = primTypeCollector;
+		this.myPackageNamer = myPackageNamer;
+		this.constantFactory = constantFactory;
 		setChild(p0, 0);
 		setID(p1);
 		setChild(p2, 1);
@@ -1366,10 +1386,14 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	 * @ast method
 	 * 
 	 */
-	public TypeDecl(Modifiers p0, Symbol p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver) {
+	public TypeDecl(Modifiers p0, Symbol p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
 		this.myScene = myScene;
 		this.myJimple = myJimple;
 		this.mySootResolver = mySootResolver;
+		this.myOptions = myOptions;
+		this.primTypeCollector = primTypeCollector;
+		this.myPackageNamer = myPackageNamer;
+		this.constantFactory = constantFactory;
 		setChild(p0, 0);
 		setID(p1);
 		setChild(p2, 1);
@@ -2277,10 +2301,10 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	private TypeDecl arrayType_compute() {
 		String name = name() + "[]";
 
-		List body = new List();
-		body.add(new FieldDeclaration(new Modifiers(new List().add(new Modifier("public")).add(new Modifier("final"))),
+		List body = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+		body.add(new FieldDeclaration(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public")).add(new Modifier("final"))),
 				new PrimitiveTypeAccess("int"), "length", new Opt(), // [Init:Expr]
-                myScene));
+                myScene, myOptions,myPackageNamer,myJimple, primTypeCollector, constantFactory));
 		MethodDecl clone = null;
 		TypeDecl typeObject = typeObject();
 		for (int i = 0; clone == null && i < typeObject.getNumBodyDecl(); i++) {
@@ -2299,13 +2323,13 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 					// expected return type rather than object, and the invoked
 					// method will be the
 					// method in object rather in the array
-					new MethodDeclSubstituted(new Modifiers(new List().add(new Modifier("public"))),
-							new ArrayTypeAccess(createQualifiedAccess()), "clone", new List(), new List(),
+					new MethodDeclSubstituted(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))),
+							new ArrayTypeAccess(createQualifiedAccess()), "clone", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
 							new Opt(new Block()), (MethodDecl) typeObject().memberMethods("clone").iterator().next()));
 		}
-		TypeDecl typeDecl = new ArrayDecl(new Modifiers(new List().add(new Modifier("public"))), name,
+		TypeDecl typeDecl = new ArrayDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("public"))), name,
 				new Opt(typeObject().createQualifiedAccess()), // [SuperClassAccess]
-				new List().add(typeCloneable().createQualifiedAccess()).add(typeSerializable().createQualifiedAccess()), // Implements*
+				new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(typeCloneable().createQualifiedAccess()).add(typeSerializable().createQualifiedAccess()), // Implements*
 				body // BodyDecl*
 		);
 		return typeDecl;
@@ -6042,16 +6066,16 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	private MethodDecl createEnumMethod_compute(TypeDecl enumDecl) {
 		MethodDecl m = new MethodDecl(
 				new Modifiers(
-						new List().add(new Modifier("static")).add(new Modifier("final")).add(new Modifier("private"))),
+						new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("static")).add(new Modifier("final")).add(new Modifier("private"))),
 				typeInt().arrayType()
 						.createQualifiedAccess(),
 				"$SwitchMap$"
 						+ enumDecl.fullName().replace('.',
 								'$'),
-				new List(),
-				new List(), new Opt(
+				new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
+				new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(
 						new Block(
-								new List()
+								new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)
 										.add(new IfStmt(new EQExpr(
 												createEnumArray(enumDecl).createBoundFieldAccess(),
 												new NullLiteral("null")),
@@ -6062,12 +6086,12 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 																		typeInt().createQualifiedAccess(),
 																		enumDecl.createQualifiedAccess()
 																				.qualifiesAccess(new MethodAccess(
-																						"values", new List()))
+																						"values", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)))
 																				.qualifiesAccess(
 																						new VarAccess("length"))),
 																new Opt())),
 												new Opt()))
-										.add(new ReturnStmt(createEnumArray(enumDecl).createBoundFieldAccess())))), myScene, myJimple);
+										.add(new ReturnStmt(createEnumArray(enumDecl).createBoundFieldAccess())))), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
 		// add method declaration as a body declaration
 		getBodyDeclList().insertChild(m, 1);
 		// trigger possible rewrites
@@ -6113,17 +6137,17 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 		MethodDecl m = createEnumMethod(e.hostType());
 		List list = m.getBlock().getStmtList();
 		list.insertChild(new TryStmt(
-				new Block(new List().add(AssignExpr.asStmt(
+				new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(AssignExpr.asStmt(
 						createEnumArray(e.hostType()).createBoundFieldAccess()
 								.qualifiesAccess(new ArrayAccess(e.createBoundFieldAccess()
-										.qualifiesAccess(new MethodAccess("ordinal", new List())))),
+										.qualifiesAccess(new MethodAccess("ordinal", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory))))),
 						new IntegerLiteral(i.toString())))),
-				new List()
+				new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)
 						.add(new BasicCatch(
 								new ParameterDeclaration(
 										lookupType("java.lang", "NoSuchFieldError").createQualifiedAccess(), "e"),
-								new Block(new List()))),
-				new Opt()), list.getNumChild() - 1);
+								new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)))),
+				new Opt(), myOptions), list.getNumChild() - 1);
 		return i.intValue();
 	}
 
@@ -6157,9 +6181,9 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
 	private FieldDeclaration createEnumArray_compute(TypeDecl enumDecl) {
 		FieldDeclaration f = new FieldDeclaration(
 				new Modifiers(
-						new List().add(new Modifier("static")).add(new Modifier("final")).add(new Modifier("private"))),
+						new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("static")).add(new Modifier("final")).add(new Modifier("private"))),
 				typeInt().arrayType().createQualifiedAccess(), "$SwitchMap$" + enumDecl.fullName().replace('.', '$'),
-				new Opt(), myScene);
+				new Opt(), myScene, myOptions, myPackageNamer, myJimple,primTypeCollector, constantFactory);
 		// add field declaration as a body declaration
 		getBodyDeclList().insertChild(f, 0);
 		// trigger possible rewrites

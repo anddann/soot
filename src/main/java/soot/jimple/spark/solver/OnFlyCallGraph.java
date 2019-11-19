@@ -59,6 +59,8 @@ public class OnFlyCallGraph {
   protected final QueueReader<MethodOrMethodContext> reachablesReader;
   protected final QueueReader<Edge> callEdges;
   protected final CallGraph callGraph;
+  private final Scene myScene;
+  private ArrayElement myArrayElement;
 
   public ReachableMethods reachableMethods() {
     return reachableMethods;
@@ -68,12 +70,14 @@ public class OnFlyCallGraph {
     return callGraph;
   }
 
-  public OnFlyCallGraph(PAG pag, boolean appOnly) {
+  public OnFlyCallGraph(PAG pag, boolean appOnly, Scene myScene, ArrayElement myArrayElement) {
     this.pag = pag;
-    callGraph = myScene.internalMakeCallGraph();
-    myScene.setCallGraph(callGraph);
+    this.myScene = myScene;
+    this.myArrayElement = myArrayElement;
+    callGraph = this.myScene.internalMakeCallGraph();
+    this.myScene.setCallGraph(callGraph);
     ContextManager cm = CallGraphBuilder.makeContextManager(callGraph);
-    reachableMethods = myScene.getReachableMethods();
+    reachableMethods = this.myScene.getReachableMethods();
     ofcgb = new OnFlyCallGraphBuilder(cm, reachableMethods, appOnly);
     reachablesReader = reachableMethods.listener();
     callEdges = cm.callGraph().listener();

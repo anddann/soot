@@ -132,7 +132,7 @@ public class ParTypeAccess extends Access implements Cloneable {
    * 
    */
   public ParTypeAccess() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }
@@ -146,14 +146,14 @@ public class ParTypeAccess extends Access implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
   }
   /**
    * @ast method 
    * 
    */
   public ParTypeAccess(Access p0, List<Access> p1) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setChild(p0, 0);
     setChild(p1, 1);
   }
@@ -413,7 +413,7 @@ public class ParTypeAccess extends Access implements Cloneable {
   public Access substituted(Collection<TypeVariable> original, List<TypeVariable> substitution) {
     ASTNode$State state = state();
     try {
-		List<Access> substArgs = new List<Access>();
+		List<Access> substArgs = new List<Access>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 		for (Access arg : getTypeArgumentList())
 			substArgs.add(arg.substituted(original, substitution));
 		return new ParTypeAccess(

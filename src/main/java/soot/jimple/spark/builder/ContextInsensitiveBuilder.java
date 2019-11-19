@@ -82,7 +82,7 @@ public class ContextInsensitiveBuilder {
       pag.nativeMethodDriver = new NativeMethodDriver(new SparkNativeHelper(pag));
     }
     if (opts.on_fly_cg() && !opts.vta()) {
-      ofcg = new OnFlyCallGraph(pag, opts.apponly());
+      ofcg = new OnFlyCallGraph(pag, opts.apponly(), myScene, myArrayElement);
       pag.setOnFlyCallGraph(ofcg);
     } else {
       cgb = new CallGraphBuilder(myDumbPointerAnalysis);

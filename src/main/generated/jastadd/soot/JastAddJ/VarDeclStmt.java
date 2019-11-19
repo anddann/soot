@@ -1,24 +1,6 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
-
 /**
  * @production VarDeclStmt : {@link Stmt} ::= <span class="component">{@link Modifiers}</span> <span class="component">TypeAccess:{@link Access}</span> <span class="component">{@link VariableDecl}*</span>;
  * @ast node
@@ -91,7 +73,7 @@ public class VarDeclStmt extends Stmt implements Cloneable {
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/VariableDeclaration.jrag:163
    */
   private List createVariableDeclarationList() {
-    List varList = new List();
+    List varList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
     for(int j = 0; j < getNumVariableDecl(); j++) {
       VariableDeclaration v =
         getVariableDecl(j).createVariableDeclarationFrom(
@@ -127,7 +109,7 @@ public class VarDeclStmt extends Stmt implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
   }
   /**
    * @ast method 

@@ -62,6 +62,7 @@ import soot.util.queue.QueueReader;
  */
 public final class TypeManager {
 
+  private final Scene myScene;
   private Map<SootClass, List<AllocNode>> class2allocs = new HashMap<SootClass, List<AllocNode>>(1024);
   private List<AllocNode> anySubtypeAllocs = new LinkedList<AllocNode>();
 
@@ -69,12 +70,13 @@ public final class TypeManager {
   protected final RefType rtSerializable;
   protected final RefType rtCloneable;
 
-  public TypeManager(PAG pag) {
+  public TypeManager(Scene myScene, PAG pag) {
+    this.myScene = myScene;
     this.pag = pag;
 
-    this.rtObject = RefType.v("java.lang.Object");
-    this.rtSerializable = RefType.v("java.io.Serializable");
-    this.rtCloneable = RefType.v("java.lang.Cloneable");
+    this.rtObject = RefType.v("java.lang.Object", this.myScene);
+    this.rtSerializable = RefType.v("java.io.Serializable", this.myScene);
+    this.rtCloneable = RefType.v("java.lang.Cloneable", this.myScene);
   }
 
   public static boolean isUnresolved(Type type) {
@@ -151,7 +153,7 @@ public final class TypeManager {
   }
 
   final public void makeTypeMask() {
-    RefType.v("java.lang.Class");
+    RefType.v("java.lang.Class",myScene);
     typeMask = new LargeNumberedMap<Type, BitVector>(myScene.getTypeNumberer());
     if (fh == null) {
       return;

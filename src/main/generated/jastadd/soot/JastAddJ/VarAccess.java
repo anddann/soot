@@ -426,7 +426,7 @@ public class VarAccess extends Access implements Cloneable {
    * 
    */
   public VarAccess() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }
@@ -445,7 +445,7 @@ public class VarAccess extends Access implements Cloneable {
    * 
    */
   public VarAccess(String p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
   }
   /**
@@ -453,7 +453,7 @@ public class VarAccess extends Access implements Cloneable {
    * 
    */
   public VarAccess(beaver.Symbol p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setID(p0);
   }
   /**

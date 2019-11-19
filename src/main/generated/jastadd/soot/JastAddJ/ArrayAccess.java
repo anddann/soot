@@ -111,7 +111,7 @@ public class ArrayAccess extends Access implements Cloneable {
    * 
    */
   public ArrayAccess() {
-    super(myScene);
+    super(myScene, primTypeCollector, myJimple);
 
 
   }
@@ -131,7 +131,7 @@ public class ArrayAccess extends Access implements Cloneable {
    * 
    */
   public ArrayAccess(Expr p0) {
-      super(myScene);
+      super(myScene, primTypeCollector, myJimple);
       setChild(p0, 0);
   }
   /**

@@ -92,7 +92,7 @@ public class PrimitiveType extends TypeDecl implements Cloneable {
    * 
    */
   public PrimitiveType() {
-    super(myScene, myJimple, mySootResolver);
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
 
 
   }
@@ -107,14 +107,14 @@ public class PrimitiveType extends TypeDecl implements Cloneable {
   public void init$Children() {
     children = new ASTNode[3];
     setChild(new Opt(), 1);
-    setChild(new List(), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
   }
   /**
    * @ast method 
    * 
    */
   public PrimitiveType(Modifiers p0, String p1, Opt<Access> p2, List<BodyDecl> p3) {
-      super(myScene, myJimple, mySootResolver);
+      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -125,7 +125,7 @@ public class PrimitiveType extends TypeDecl implements Cloneable {
    * 
    */
   public PrimitiveType(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<BodyDecl> p3) {
-      super(myScene, myJimple, mySootResolver);
+      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
