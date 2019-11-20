@@ -5,7 +5,10 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import soot.*;
+import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 /**
  * @production ClassInstanceExpr : {@link Access} ::= <span class="component">{@link Access}</span> <span class="component">Arg:{@link Expr}*</span> <span class="component">[{@link TypeDecl}]</span>;
@@ -15,6 +18,8 @@ import soot.jimple.ConstantFactory;
 public class ClassInstanceExpr extends Access implements Cloneable {
   private Scene myScene;
   private ConstantFactory constantFactory;
+  private PackageNamer myPackageNamer;
+  private Options myOptions;
 
   /**
    * @apilevel low-level
@@ -173,8 +178,8 @@ public class ClassInstanceExpr extends Access implements Cloneable {
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:82
    */
-  public ClassInstanceExpr(Access type, List args, Scene myScene, ConstantFactory constantFactory) {
-    this(type, args, new Opt(), myScene, constantFactory);
+  public ClassInstanceExpr(Access type, List args, Scene myScene, ConstantFactory constantFactory, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, Jimple myJimple) {
+    this(type, args, new Opt(), myScene, constantFactory, primTypeCollector, myJimple, myPackageNamer);
   }
   /**
    * @ast method 
@@ -475,15 +480,19 @@ public class ClassInstanceExpr extends Access implements Cloneable {
   }
   /**
    * @ast method 
-   *@param myScene
+   *
+   * @param myScene
    * @param constantFactory
-   */
-  public ClassInstanceExpr(Scene myScene, ConstantFactory constantFactory) {
+   * @param primTypeCollector
+   * @param myJimple
+   * @param myPackageNamer   */
+  public ClassInstanceExpr(Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Jimple myJimple, PackageNamer myPackageNamer) {
     super(myScene, primTypeCollector, myJimple);
 
 
     this.myScene = myScene;
     this.constantFactory = constantFactory;
+    this.myPackageNamer = myPackageNamer;
   }
   /**
    * Initializes the child array to the correct size.
@@ -495,17 +504,18 @@ public class ClassInstanceExpr extends Access implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
     setChild(new Opt(), 2);
   }
   /**
    * @ast method 
    * 
    */
-  public ClassInstanceExpr(Access p0, List<Expr> p1, Opt<TypeDecl> p2, Scene myScene, ConstantFactory constantFactory) {
+  public ClassInstanceExpr(Access p0, List<Expr> p1, Opt<TypeDecl> p2, Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Jimple myJimple, PackageNamer myPackageNamer) {
       super(myScene, primTypeCollector, myJimple);
     this.myScene = myScene;
     this.constantFactory = constantFactory;
+    this.myPackageNamer = myPackageNamer;
     setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);
@@ -759,11 +769,11 @@ public class ClassInstanceExpr extends Access implements Cloneable {
     public void transformation() {
     if(decl().isVariableArity() && !invokesVariableArityAsArray()) {
       // arguments to normal parameters
-      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       for(int i = 0; i < decl().getNumParameter() - 1; i++)
         list.add(getArg(i).fullCopy());
       // arguments to variable arity parameters
-      List last = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      List last = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       for(int i = decl().getNumParameter() - 1; i < getNumArg(); i++)
         last.add(getArg(i).fullCopy());
       // build an array holding arguments

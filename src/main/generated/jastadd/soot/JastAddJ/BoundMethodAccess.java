@@ -1,6 +1,13 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production BoundMethodAccess : {@link MethodAccess};
  * @ast node
@@ -74,8 +81,8 @@ public class BoundMethodAccess extends MethodAccess implements Cloneable {
    * @aspect BoundNames
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/BoundNames.jrag:61
    */
-  public BoundMethodAccess(String name, List args, MethodDecl methodDecl) {
-    this(name, args);
+  public BoundMethodAccess(String name, List args, MethodDecl methodDecl,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    this(name, args, myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
     this.methodDecl = methodDecl;
   }
   /**
@@ -89,8 +96,8 @@ public class BoundMethodAccess extends MethodAccess implements Cloneable {
    * @ast method 
    * 
    */
-  public BoundMethodAccess() {
-    super();
+  public BoundMethodAccess(Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
 
 
   }
@@ -104,13 +111,14 @@ public class BoundMethodAccess extends MethodAccess implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[1];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
   }
   /**
    * @ast method 
    * 
    */
-  public BoundMethodAccess(String p0, List<Expr> p1) {
+  public BoundMethodAccess(String p0, List<Expr> p1,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
     setID(p0);
     setChild(p1, 0);
   }
@@ -118,7 +126,8 @@ public class BoundMethodAccess extends MethodAccess implements Cloneable {
    * @ast method 
    * 
    */
-  public BoundMethodAccess(beaver.Symbol p0, List<Expr> p1) {
+  public BoundMethodAccess(beaver.Symbol p0, List<Expr> p1,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
     setID(p0);
     setChild(p1, 0);
   }

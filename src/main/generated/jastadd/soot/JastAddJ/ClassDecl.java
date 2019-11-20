@@ -9,6 +9,8 @@ import java.util.Collection;
 import beaver.Symbol;
 import soot.*;
 import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
 import soot.options.Options;
 import soot.tagkit.SourceFileTag;
 import soot.coffi.CoffiMethodSource;
@@ -430,7 +432,7 @@ public class ClassDecl extends ReferenceType implements Cloneable {
    * @param myScene
    * @param myOptions
    * @param myPackageNamer */
-  public ClassDecl(Scene myScene, Options myOptions, PackageNamer myPackageNamer,) {
+  public ClassDecl(Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
 
   }
@@ -445,15 +447,15 @@ public class ClassDecl extends ReferenceType implements Cloneable {
   public void init$Children() {
     children = new ASTNode[4];
     setChild(new Opt(), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 3);
   }
   /**
    * @ast method 
    * 
    */
-  public ClassDecl(Modifiers p0, String p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4, Scene myScene, Options myOptions, PackageNamer myPackageNamer) {
-    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
+  public ClassDecl(Modifiers p0, String p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
@@ -467,8 +469,8 @@ public class ClassDecl extends ReferenceType implements Cloneable {
    * @ast method 
    * 
    */
-  public ClassDecl(Modifiers p0, Symbol p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4, Scene myScene, Options myOptions, PackageNamer myPackageNamer) {
-    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
+  public ClassDecl(Modifiers p0, Symbol p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;

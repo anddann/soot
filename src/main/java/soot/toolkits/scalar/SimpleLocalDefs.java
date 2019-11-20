@@ -353,10 +353,10 @@ public class SimpleLocalDefs implements LocalDefs {
   }
 
   SimpleLocalDefs(DirectedGraph<Unit> graph, Local[] locals, FlowAnalysisMode mode) {
-    final Options options = myOptions;
-    if (options.time()) {
-      myTimers.defsTimer.start();
-    }
+//    final Options options = myOptions;
+//    if (options.time()) {
+//      myTimers.defsTimer.start();
+//    }
 
     final int N = locals.length;
 
@@ -373,10 +373,10 @@ public class SimpleLocalDefs implements LocalDefs {
     for (int i = 0; i < N; i++) {
       locals[i].setNumber(oldNumbers[i]);
     }
-
-    if (options.time()) {
-      myTimers.defsTimer.end();
-    }
+//
+//    if (options.time()) {
+//      myTimers.defsTimer.end();
+//    }
   }
 
   private void init(DirectedGraph<Unit> graph, Local[] locals, FlowAnalysisMode mode) {

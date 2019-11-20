@@ -5,7 +5,13 @@ import java.util.HashSet;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import beaver.Symbol;
 import soot.*;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 /**
  * @production MethodAccess : {@link Access} ::= <span class="component">&lt;ID:String&gt;</span> <span class="component">Arg:{@link Expr}*</span>;
@@ -13,6 +19,12 @@ import soot.*;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:20
  */
 public class MethodAccess extends Access implements Cloneable {
+
+
+  protected Options myOptions;
+  protected PackageNamer myPackageNamer;
+  protected ConstantFactory constantFactory;
+
   /**
    * @apilevel low-level
    */
@@ -161,8 +173,8 @@ public class MethodAccess extends Access implements Cloneable {
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:56
    */
-  public MethodAccess(String name, List args, int start, int end) {
-    this(name, args);
+  public MethodAccess(String name, List args, int start, int end, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, ConstantFactory constantFactory, ConstantFactory constantFactory1) {
+    this(name, args,myScene,primTypeCollector, myJimple, myOptions, myPackageNamer, constantFactory);
     setStart(start);
     setEnd(end);
   }
@@ -475,10 +487,13 @@ public class MethodAccess extends Access implements Cloneable {
    * @ast method 
    * 
    */
-  public MethodAccess() {
+  public MethodAccess(Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
     super(myScene, primTypeCollector, myJimple);
+    this.myOptions = myOptions;
 
 
+    this.myPackageNamer = myPackageNamer;
+    this.constantFactory = constantFactory;
   }
   /**
    * Initializes the child array to the correct size.
@@ -490,24 +505,30 @@ public class MethodAccess extends Access implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[1];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
   }
   /**
    * @ast method 
    * 
    */
-  public MethodAccess(String p0, List<Expr> p1) {
+  public MethodAccess(String p0, List<Expr> p1, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
       super(myScene, primTypeCollector, myJimple);
-      setID(p0);
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.constantFactory = constantFactory;
+    setID(p0);
     setChild(p1, 0);
   }
   /**
    * @ast method 
    * 
    */
-  public MethodAccess(beaver.Symbol p0, List<Expr> p1) {
+  public MethodAccess(Symbol p0, List<Expr> p1, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
       super(myScene, primTypeCollector, myJimple);
-      setID(p0);
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.constantFactory = constantFactory;
+    setID(p0);
     setChild(p1, 0);
   }
   /**
@@ -762,11 +783,11 @@ public class MethodAccess extends Access implements Cloneable {
     public void transformation() {
     if(decl().isVariableArity() && !invokesVariableArityAsArray()) {
       // arguments to normal parameters
-      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       for(int i = 0; i < decl().getNumParameter() - 1; i++)
         list.add(getArg(i).fullCopy());
       // arguments to variable arity parameters
-      List last = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      List last = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       for(int i = decl().getNumParameter() - 1; i < getNumArg(); i++)
         last.add(getArg(i).fullCopy());
       // build an array holding arguments

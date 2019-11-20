@@ -80,7 +80,7 @@ public class Attributes extends java.lang.Object {
           return new ElementAnnotationValue(readAnnotation());
         case '[':
           int index = p.u2();
-          List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+          List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
           for(int i = 0; i < index; i++) 
             list.add(readElementValue());
           return new ElementArrayValue(list);
@@ -95,7 +95,7 @@ public class Attributes extends java.lang.Object {
     protected Annotation readAnnotation() {
       Access typeAccess = new FieldDescriptor(p, "").type();
       int num_element_value_pairs = p.u2();
-      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       for(int i = 0; i < num_element_value_pairs; i++) {
         int element_name_index = p.u2();
         String element_name = p.getCONSTANT_Utf8_Info(element_name_index).string();
@@ -174,7 +174,7 @@ public class Attributes extends java.lang.Object {
         else if(attribute_name.equals("Signature")) {
           int signature_index = p.u2();
           String s = p.getCONSTANT_Utf8_Info(signature_index).string();
-          methodSignature = new Signatures.MethodSignature(s);
+          methodSignature = new Signatures.MethodSignature(s, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector);
         }
         else if(attribute_name.equals("RuntimeVisibleAnnotations")) {
           int num_annotations = p.u2();
@@ -249,7 +249,7 @@ public class Attributes extends java.lang.Object {
 
       private void parseExceptions() {
         int number_of_exceptions = p.u2();
-        exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+        exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
         if(BytecodeParser.VERBOSE)
           p.println("      " + number_of_exceptions + " exceptions:");
         for (int i = 0; i < number_of_exceptions; i++) {
@@ -261,7 +261,7 @@ public class Attributes extends java.lang.Object {
       }
 
       public List exceptionList() {
-        return exceptionList != null ? exceptionList : new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+        return exceptionList != null ? exceptionList : new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       }
 
       public ElementValue elementValue() {
@@ -303,7 +303,7 @@ public class Attributes extends java.lang.Object {
         else if(attribute_name.equals("Signature")) {
           int signature_index = p.u2();
           String s = p.getCONSTANT_Utf8_Info(signature_index).string();
-          Signatures.ClassSignature classSignature = new Signatures.ClassSignature(s);
+          Signatures.ClassSignature classSignature = new Signatures.ClassSignature(s, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
           typeDecl = typeDecl.makeGeneric(classSignature);
         }
         else if(attribute_name.equals("RuntimeVisibleAnnotations")) {

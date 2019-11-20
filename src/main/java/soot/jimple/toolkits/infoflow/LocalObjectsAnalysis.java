@@ -65,6 +65,7 @@ import soot.toolkits.scalar.Pair;
 
 public class LocalObjectsAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(LocalObjectsAnalysis.class);
+  private final Scene myScene;
   public InfoFlowAnalysis dfa;
   UseFinder uf;
   CallGraph cg;
@@ -73,10 +74,11 @@ public class LocalObjectsAnalysis {
 
   Map<SootMethod, SmartMethodLocalObjectsAnalysis> mloaCache;
 
-  public LocalObjectsAnalysis(InfoFlowAnalysis dfa) {
+  public LocalObjectsAnalysis(Scene myScene, InfoFlowAnalysis dfa) {
+    this.myScene = myScene;
     this.dfa = dfa;
     this.uf = new UseFinder();
-    this.cg = myScene.getCallGraph();
+    this.cg = this.myScene.getCallGraph();
 
     classToClassLocalObjectsAnalysis = new HashMap<SootClass, ClassLocalObjectsAnalysis>();
     mloaCache = new HashMap<SootMethod, SmartMethodLocalObjectsAnalysis>();

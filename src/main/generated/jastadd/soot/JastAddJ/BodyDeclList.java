@@ -80,7 +80,7 @@ public class BodyDeclList extends List implements Cloneable {
    * 
    */
   public BodyDeclList() {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 
     is$Final(true);
 
@@ -138,7 +138,7 @@ public class BodyDeclList extends List implements Cloneable {
   boolean isFinal = this.is$Final();
     BodyDecl localMethodSignatureCopy_MethodDecl_MemberSubstitutor_value = localMethodSignatureCopy_compute(originalMethod, m);
     if(localMethodSignatureCopy_MethodDecl_MemberSubstitutor_list == null) {
-      localMethodSignatureCopy_MethodDecl_MemberSubstitutor_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      localMethodSignatureCopy_MethodDecl_MemberSubstitutor_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       localMethodSignatureCopy_MethodDecl_MemberSubstitutor_list.is$Final = true;
       localMethodSignatureCopy_MethodDecl_MemberSubstitutor_list.setParent(this);
     }
@@ -182,7 +182,7 @@ public class BodyDeclList extends List implements Cloneable {
   boolean isFinal = this.is$Final();
     BodyDecl localFieldCopy_FieldDeclaration_MemberSubstitutor_value = localFieldCopy_compute(originalDecl, m);
     if(localFieldCopy_FieldDeclaration_MemberSubstitutor_list == null) {
-      localFieldCopy_FieldDeclaration_MemberSubstitutor_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      localFieldCopy_FieldDeclaration_MemberSubstitutor_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       localFieldCopy_FieldDeclaration_MemberSubstitutor_list.is$Final = true;
       localFieldCopy_FieldDeclaration_MemberSubstitutor_list.setParent(this);
     }
@@ -226,7 +226,7 @@ public class BodyDeclList extends List implements Cloneable {
   boolean isFinal = this.is$Final();
     MemberClassDecl localClassDeclCopy_ClassDecl_MemberSubstitutor_value = localClassDeclCopy_compute(originalDecl, m);
     if(localClassDeclCopy_ClassDecl_MemberSubstitutor_list == null) {
-      localClassDeclCopy_ClassDecl_MemberSubstitutor_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      localClassDeclCopy_ClassDecl_MemberSubstitutor_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       localClassDeclCopy_ClassDecl_MemberSubstitutor_list.is$Final = true;
       localClassDeclCopy_ClassDecl_MemberSubstitutor_list.setParent(this);
     }
@@ -271,7 +271,7 @@ public class BodyDeclList extends List implements Cloneable {
   boolean isFinal = this.is$Final();
     MemberInterfaceDecl localInterfaceDeclCopy_InterfaceDecl_MemberSubstitutor_value = localInterfaceDeclCopy_compute(originalDecl, m);
     if(localInterfaceDeclCopy_InterfaceDecl_MemberSubstitutor_list == null) {
-      localInterfaceDeclCopy_InterfaceDecl_MemberSubstitutor_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      localInterfaceDeclCopy_InterfaceDecl_MemberSubstitutor_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       localInterfaceDeclCopy_InterfaceDecl_MemberSubstitutor_list.is$Final = true;
       localInterfaceDeclCopy_InterfaceDecl_MemberSubstitutor_list.setParent(this);
     }
@@ -316,7 +316,7 @@ public class BodyDeclList extends List implements Cloneable {
   boolean isFinal = this.is$Final();
     BodyDecl constructorCopy_ConstructorDecl_MemberSubstitutor_value = constructorCopy_compute(originalDecl, m);
     if(constructorCopy_ConstructorDecl_MemberSubstitutor_list == null) {
-      constructorCopy_ConstructorDecl_MemberSubstitutor_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      constructorCopy_ConstructorDecl_MemberSubstitutor_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       constructorCopy_ConstructorDecl_MemberSubstitutor_list.is$Final = true;
       constructorCopy_ConstructorDecl_MemberSubstitutor_list.setParent(this);
     }

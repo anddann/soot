@@ -5,12 +5,16 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import soot.PhaseOptions;
+
 /**
  * @production Modifiers : {@link ASTNode} ::= <span class="component">{@link Modifier}*</span>;
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:190
  */
 public class Modifiers extends ASTNode<ASTNode> implements Cloneable {
+  private PhaseOptions myPhaseOptions;
+
   /**
    * @apilevel low-level
    */
@@ -160,7 +164,7 @@ public class Modifiers extends ASTNode<ASTNode> implements Cloneable {
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddExtensions/Jimple1.5Backend/AnnotationsCodegen.jrag:83
    */
   public void addSourceOnlyAnnotations(Collection c) {
-    if(new soot.options.JBOptions(soot.myPhaseOptions().getPhaseOptions("jb")).
+    if(new soot.options.JBOptions(myPhaseOptions.getPhaseOptions("jb")).
        preserve_source_annotations()) {
 	    for(int i = 0; i < getNumModifier(); i++) {
 	      if(getModifier(i) instanceof Annotation) {
@@ -285,12 +289,14 @@ public class Modifiers extends ASTNode<ASTNode> implements Cloneable {
   public static final int ACC_VARARGS = 0x0080;
   /**
    * @ast method 
-   * 
+   *
+   * @param myPhaseOptions
    */
-  public Modifiers() {
+  public Modifiers(PhaseOptions myPhaseOptions) {
     super();
 
 
+    this.myPhaseOptions = myPhaseOptions;
   }
   /**
    * Initializes the child array to the correct size.
@@ -302,13 +308,14 @@ public class Modifiers extends ASTNode<ASTNode> implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[1];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
   }
   /**
    * @ast method 
    * 
    */
-  public Modifiers(List<Modifier> p0) {
+  public Modifiers(List<Modifier> p0, PhaseOptions myPhaseOptions) {
+    this.myPhaseOptions = myPhaseOptions;
     setChild(p0, 0);
   }
   /**

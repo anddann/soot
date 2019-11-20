@@ -4,12 +4,26 @@ package soot.JastAddJ;
 import java.util.HashSet;
 import java.util.*;
 
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production Block : {@link Stmt} ::= <span class="component">{@link Stmt}*</span>;
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:197
  */
 public class Block extends Stmt implements Cloneable, VariableScope {
+  private Scene myScene;
+  private Options myOptions;
+  private PackageNamer myPackageNamer;
+  private Jimple myJimple;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
+
   /**
    * @apilevel low-level
    */
@@ -129,12 +143,22 @@ public class Block extends Stmt implements Cloneable, VariableScope {
   }
   /**
    * @ast method 
-   * 
-   */
-  public Block() {
+   *@param myScene
+   * @param myOptions
+   * @param myPackageNamer
+   * @param myJimple
+   * @param primTypeCollector
+   * @param constantFactory        */
+  public Block(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     super();
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
 
 
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
   }
   /**
    * Initializes the child array to the correct size.
@@ -146,13 +170,19 @@ public class Block extends Stmt implements Cloneable, VariableScope {
    */
   public void init$Children() {
     children = new ASTNode[1];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
   }
   /**
    * @ast method 
    * 
    */
-  public Block(List<Stmt> p0) {
+  public Block(List<Stmt> p0, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
     setChild(p0, 0);
   }
   /**

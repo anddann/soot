@@ -31,10 +31,8 @@ import soot.ArrayType;
 import soot.Body;
 import soot.Local;
 import soot.RefType;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethodRef;
-import soot.SootResolver;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
@@ -49,14 +47,8 @@ import soot.jimple.FieldRef;
 import soot.jimple.IdentityRef;
 import soot.jimple.IdentityStmt;
 import soot.jimple.InvokeExpr;
-import soot.jimple.Jimple;
 import soot.jimple.NewArrayExpr;
-import soot.jimple.StringConstant;
-import soot.jimple.toolkits.scalar.DeadAssignmentEliminator;
-import soot.jimple.toolkits.scalar.NopEliminator;
-import soot.jimple.toolkits.scalar.UnreachableCodeEliminator;
 import soot.toolkits.scalar.LocalDefs;
-import soot.toolkits.scalar.UnusedLocalEliminator;
 
 public class Validate {
 
@@ -79,7 +71,7 @@ public class Validate {
       }
     }
 
-    final LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(b, true);
+    final LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(b, true, myManager);
 
     Set<Unit> toReplace = new HashSet<Unit>();
 

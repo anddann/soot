@@ -1,22 +1,7 @@
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
 import soot.*;
-import soot.util.*;
-import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+import soot.jimple.Jimple;
 
 /**
   * @ast class
@@ -33,22 +18,22 @@ public class NameType extends java.lang.Object {
 
 
     public static final NameType PACKAGE_NAME = new NameType() {
-      public Access reclassify(String name, int start, int end) { return new PackageAccess(name, start, end); }
+      public Access reclassify(String name, int start, int end, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) { return new PackageAccess(name, start, end); }
     };
 
 
     public static final NameType TYPE_NAME = new NameType() {
-      public Access reclassify(String name, int start, int end) { return new TypeAccess(name, start, end); }
+      public Access reclassify(String name, int start, int end, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) { return new TypeAccess(name, start, end,myScene,primTypeCollector,myJimple); }
     };
 
 
     public static final NameType PACKAGE_OR_TYPE_NAME = new NameType() {
-      public Access reclassify(String name, int start, int end) { return new PackageOrTypeAccess(name, start, end); }
+      public Access reclassify(String name, int start, int end, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) { return new PackageOrTypeAccess(name, start, end); }
     };
 
 
     public static final NameType AMBIGUOUS_NAME = new NameType() {
-      public Access reclassify(String name, int start, int end) { return new AmbiguousAccess(name, start, end); }
+      public Access reclassify(String name, int start, int end, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) { return new AmbiguousAccess(name, start, end); }
     };
 
 
@@ -62,12 +47,12 @@ public class NameType extends java.lang.Object {
 
 
     public static final NameType EXPRESSION_NAME = new NameType() {
-      public Access reclassify(String name, int start, int end) { return new VarAccess(name, start, end); }
+      public Access reclassify(String name, int start, int end, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) { return new VarAccess(name, start, end); }
     };
 
 
 
-    public Access reclassify(String name, int start, int end) {
+    public Access reclassify(String name, int start, int end, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) {
       throw new Error("Can not reclassify ParseName node " + name);
     }
 

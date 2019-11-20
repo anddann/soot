@@ -759,9 +759,9 @@ class Events extends Parser.Events {
        cu = (CompilationUnit)parse(scanner);
      } catch(Parser.Exception e) {
        // build empty compilation unit for failed error recovery
-       cu = new CompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+       cu = new CompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
      } catch(Error e) {
-       cu = new CompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+       cu = new CompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
        errors.add(new Problem(null, e.getMessage(), 0, 0, Problem.Severity.ERROR, Problem.Kind.LEXICAL));
      }
      for(java.util.Iterator iter = errors.iterator(); iter.hasNext(); ) {
@@ -925,7 +925,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_p = _symbols[offset + 1];
 					final IdUse p = (IdUse) _symbol_p.value;
-					 return new CompilationUnit(p.getID(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+					 return new CompilationUnit(p.getID(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 25: // compilation_unit = package_declaration.p import_declarations.i
 			{
@@ -933,7 +933,7 @@ class Events extends Parser.Events {
 					final IdUse p = (IdUse) _symbol_p.value;
 					final Symbol _symbol_i = _symbols[offset + 2];
 					final List i = (List) _symbol_i.value;
-					 return new CompilationUnit(p.getID(), i, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+					 return new CompilationUnit(p.getID(), i, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 26: // compilation_unit = package_declaration.p type_declarations.t
 			{
@@ -941,7 +941,7 @@ class Events extends Parser.Events {
 					final IdUse p = (IdUse) _symbol_p.value;
 					final Symbol _symbol_t = _symbols[offset + 2];
 					final List t = (List) _symbol_t.value;
-					 return new CompilationUnit(p.getID(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+					 return new CompilationUnit(p.getID(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 27: // compilation_unit = package_declaration.p import_declarations.i type_declarations.t
 			{
@@ -951,23 +951,23 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_t = _symbols[offset + 3];
 					final List t = (List) _symbol_t.value;
-					 return new CompilationUnit(p.getID(), i, t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+					 return new CompilationUnit(p.getID(), i, t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 28: // compilation_unit = 
 			{
-					 return new CompilationUnit("", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+					 return new CompilationUnit("", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 29: // compilation_unit = import_declarations.i
 			{
 					final Symbol _symbol_i = _symbols[offset + 1];
 					final List i = (List) _symbol_i.value;
-					 return new CompilationUnit("", i, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+					 return new CompilationUnit("", i, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 30: // compilation_unit = type_declarations.t
 			{
 					final Symbol _symbol_t = _symbols[offset + 1];
 					final List t = (List) _symbol_t.value;
-					 return new CompilationUnit("", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+					 return new CompilationUnit("", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 31: // compilation_unit = import_declarations.i type_declarations.t
 			{
@@ -975,13 +975,13 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_t = _symbols[offset + 2];
 					final List t = (List) _symbol_t.value;
-					 return new CompilationUnit("", i, t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+					 return new CompilationUnit("", i, t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 32: // import_declarations = import_declaration.i
 			{
 					final Symbol _symbol_i = _symbols[offset + 1];
 					final ImportDecl i = (ImportDecl) _symbol_i.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(i);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(i);
 			}
 			case 33: // import_declarations = import_declarations.l import_declaration.i
 			{
@@ -995,7 +995,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_t = _symbols[offset + 1];
 					final TypeDecl t = (TypeDecl) _symbol_t.value;
-					 return !(t instanceof EmptyType) ? new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(t) : new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory) ;
+					 return !(t instanceof EmptyType) ? new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(t) : new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver) ;
 			}
 			case 35: // type_declarations = type_declarations.l type_declaration.t
 			{
@@ -1083,13 +1083,13 @@ class Events extends Parser.Events {
 			case 47: // type_declaration = SEMICOLON.SEMICOLON
 			{
 					final Symbol SEMICOLON = _symbols[offset + 1];
-					 return new EmptyType(new Modifiers(), "EmptyType", new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new EmptyType(new Modifiers(myPhaseOptions), "EmptyType", new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver));
 			}
 			case 48: // modifiers = modifier.m
 			{
 					final Symbol _symbol_m = _symbols[offset + 1];
 					final Modifier m = (Modifier) _symbol_m.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(m);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(m);
 			}
 			case 49: // modifiers = modifiers.l modifier.m
 			{
@@ -1160,7 +1160,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 2];
 					final Symbol _symbol_b = _symbols[offset + 3];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b, myScene, myOptions, myPackageNamer);
+					 return new ClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b, myScene, myOptions, myPackageNamer);
 			}
 			case 62: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER class_body.b
 			{
@@ -1170,7 +1170,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 3];
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(m), IDENTIFIER, new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b, myScene, myOptions, myPackageNamer);
+					 return new ClassDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b, myScene, myOptions, myPackageNamer);
 			}
 			case 63: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER super.s class_body.b
 			{
@@ -1180,7 +1180,7 @@ class Events extends Parser.Events {
 					final Opt s = (Opt) _symbol_s.value;
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b, myScene, myOptions, myPackageNamer);
+					 return new ClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b, myScene, myOptions, myPackageNamer);
 			}
 			case 64: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER super.s class_body.b
 			{
@@ -1192,7 +1192,7 @@ class Events extends Parser.Events {
 					final Opt s = (Opt) _symbol_s.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(m), IDENTIFIER, s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b, myScene, myOptions, myPackageNamer);
+					 return new ClassDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b, myScene, myOptions, myPackageNamer);
 			}
 			case 65: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER interfaces.i class_body.b
 			{
@@ -1202,7 +1202,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, new Opt(), i, b, myScene, myOptions, myPackageNamer);
+					 return new ClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, new Opt(), i, b, myScene, myOptions, myPackageNamer);
 			}
 			case 66: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER interfaces.i class_body.b
 			{
@@ -1214,7 +1214,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(m), IDENTIFIER, new Opt(), i, b, myScene, myOptions, myPackageNamer);
+					 return new ClassDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, new Opt(), i, b, myScene, myOptions, myPackageNamer);
 			}
 			case 67: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER super.s interfaces.i class_body.b
 			{
@@ -1226,7 +1226,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, s, i, b, myScene, myOptions, myPackageNamer);
+					 return new ClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, s, i, b, myScene, myOptions, myPackageNamer);
 			}
 			case 68: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER super.s interfaces.i class_body.b
 			{
@@ -1240,7 +1240,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 6];
 					final List b = (List) _symbol_b.value;
-					 return new ClassDecl(new Modifiers(m), IDENTIFIER, s, i, b, myScene, myOptions, myPackageNamer);
+					 return new ClassDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, s, i, b, myScene, myOptions, myPackageNamer);
 			}
 			case 69: // super = EXTENDS.EXTENDS class_type.c
 			{
@@ -1260,7 +1260,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_i = _symbols[offset + 1];
 					final Access i = (Access) _symbol_i.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(i);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(i);
 			}
 			case 72: // interface_type_list = interface_type_list.l COMMA.COMMA interface_type.i
 			{
@@ -1283,7 +1283,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_c = _symbols[offset + 1];
 					final BodyDecl c = (BodyDecl) _symbol_c.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(c);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(c);
 			}
 			case 75: // class_body_declarations = class_body_declarations.l class_body_declaration.c
 			{
@@ -1344,7 +1344,7 @@ class Events extends Parser.Events {
 			case 84: // class_member_declaration = SEMICOLON.SEMICOLON
 			{
 					final Symbol SEMICOLON = _symbols[offset + 1];
-					 return new InstanceInitializer(new Block());
+					 return new InstanceInitializer(new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
 			}
 			case 85: // field_declaration = type.t variable_declarators.v SEMICOLON.SEMICOLON
 			{
@@ -1353,7 +1353,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_v = _symbols[offset + 2];
 					final List v = (List) _symbol_v.value;
 					final Symbol SEMICOLON = _symbols[offset + 3];
-					 return new FieldDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t, v);
+					 return new FieldDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t, v);
 			}
 			case 86: // field_declaration = modifiers.m type.t variable_declarators.v SEMICOLON.SEMICOLON
 			{
@@ -1364,13 +1364,13 @@ class Events extends Parser.Events {
 					final Symbol _symbol_v = _symbols[offset + 3];
 					final List v = (List) _symbol_v.value;
 					final Symbol SEMICOLON = _symbols[offset + 4];
-					 return new FieldDecl(new Modifiers(m), t, v);
+					 return new FieldDecl(new Modifiers(m, myPhaseOptions), t, v);
 			}
 			case 87: // variable_declarators = variable_declarator.v
 			{
 					final Symbol _symbol_v = _symbols[offset + 1];
 					final VariableDecl v = (VariableDecl) _symbol_v.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(v);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(v);
 			}
 			case 88: // variable_declarators = variable_declarators.l COMMA.COMMA variable_declarator.v
 			{
@@ -1432,7 +1432,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_l = _symbols[offset + 4];
 					final List l = (List) _symbol_l.value;
 					final Symbol RPAREN = _symbols[offset + 5];
-					 return new MethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, l, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+					 return new MethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)), IDENTIFIER, l, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 96: // method_header = modifiers.m type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN
 			{
@@ -1445,7 +1445,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_l = _symbols[offset + 5];
 					final List l = (List) _symbol_l.value;
 					final Symbol RPAREN = _symbols[offset + 6];
-					 return new MethodDecl(new Modifiers(m), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, l, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+					 return new MethodDecl(new Modifiers(m, myPhaseOptions), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)), IDENTIFIER, l, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 97: // method_header = type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN dims.d
 			{
@@ -1458,7 +1458,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 5];
 					final Symbol _symbol_d = _symbols[offset + 6];
 					final List d = (List) _symbol_d.value;
-					 return new MethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t.addArrayDims(d), IDENTIFIER, l, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+					 return new MethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t.addArrayDims(d), IDENTIFIER, l, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 98: // method_header = modifiers.m type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN dims.d
 			{
@@ -1473,7 +1473,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 6];
 					final Symbol _symbol_d = _symbols[offset + 7];
 					final List d = (List) _symbol_d.value;
-					 return new MethodDecl(new Modifiers(m), t.addArrayDims(d), IDENTIFIER, l, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+					 return new MethodDecl(new Modifiers(m, myPhaseOptions), t.addArrayDims(d), IDENTIFIER, l, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 99: // method_header = type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN throws.tl
 			{
@@ -1486,7 +1486,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 5];
 					final Symbol _symbol_tl = _symbols[offset + 6];
 					final List tl = (List) _symbol_tl.value;
-					 return new MethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, l, tl, new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+					 return new MethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)), IDENTIFIER, l, tl, new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 100: // method_header = modifiers.m type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN throws.tl
 			{
@@ -1501,7 +1501,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 6];
 					final Symbol _symbol_tl = _symbols[offset + 7];
 					final List tl = (List) _symbol_tl.value;
-					 return new MethodDecl(new Modifiers(m), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, l, tl, new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+					 return new MethodDecl(new Modifiers(m, myPhaseOptions), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)), IDENTIFIER, l, tl, new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 101: // method_header = type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN dims.d throws.tl
 			{
@@ -1516,7 +1516,7 @@ class Events extends Parser.Events {
 					final List d = (List) _symbol_d.value;
 					final Symbol _symbol_tl = _symbols[offset + 7];
 					final List tl = (List) _symbol_tl.value;
-					 return new MethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t.addArrayDims(d), IDENTIFIER, l, tl, new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+					 return new MethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t.addArrayDims(d), IDENTIFIER, l, tl, new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 102: // method_header = modifiers.m type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN dims.d throws.tl
 			{
@@ -1533,7 +1533,7 @@ class Events extends Parser.Events {
 					final List d = (List) _symbol_d.value;
 					final Symbol _symbol_tl = _symbols[offset + 8];
 					final List tl = (List) _symbol_tl.value;
-					 return new MethodDecl(new Modifiers(m), t.addArrayDims(d), IDENTIFIER, l, tl, new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+					 return new MethodDecl(new Modifiers(m, myPhaseOptions), t.addArrayDims(d), IDENTIFIER, l, tl, new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 103: // method_header = VOID.VOID IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN throws_opt.tl
 			{
@@ -1545,7 +1545,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 5];
 					final Symbol _symbol_tl = _symbols[offset + 6];
 					final List tl = (List) _symbol_tl.value;
-					 return new MethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), new PrimitiveTypeAccess("void"), IDENTIFIER, l, tl, new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+					 return new MethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), new PrimitiveTypeAccess("void"), IDENTIFIER, l, tl, new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 104: // method_header = modifiers.m VOID.VOID IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.l RPAREN.RPAREN throws_opt.tl
 			{
@@ -1559,13 +1559,13 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 6];
 					final Symbol _symbol_tl = _symbols[offset + 7];
 					final List tl = (List) _symbol_tl.value;
-					 return new MethodDecl(new Modifiers(m), new PrimitiveTypeAccess("void"), IDENTIFIER, l, tl, new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+					 return new MethodDecl(new Modifiers(m, myPhaseOptions), new PrimitiveTypeAccess("void"), IDENTIFIER, l, tl, new Opt(), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 105: // formal_parameter_list = formal_parameter.f
 			{
 					final Symbol _symbol_f = _symbols[offset + 1];
 					final ParameterDeclaration f = (ParameterDeclaration) _symbol_f.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(f);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(f);
 			}
 			case 106: // formal_parameter_list = formal_parameter_list.l COMMA.COMMA formal_parameter.f
 			{
@@ -1583,7 +1583,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 2];
 					final Symbol _symbol_d = _symbols[offset + 3];
 					final List d = (List) _symbol_d.value;
-					 return new ParameterDeclaration(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t.addArrayDims(d), IDENTIFIER);
+					 return new ParameterDeclaration(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t.addArrayDims(d), IDENTIFIER);
 			}
 			case 108: // formal_parameter = modifiers.m type.t IDENTIFIER.IDENTIFIER dims_opt.d
 			{
@@ -1594,7 +1594,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 3];
 					final Symbol _symbol_d = _symbols[offset + 4];
 					final List d = (List) _symbol_d.value;
-					 return new ParameterDeclaration(new Modifiers(m), t.addArrayDims(d), IDENTIFIER);
+					 return new ParameterDeclaration(new Modifiers(m, myPhaseOptions), t.addArrayDims(d), IDENTIFIER);
 			}
 			case 109: // throws = THROWS.THROWS class_type_list.l
 			{
@@ -1607,7 +1607,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_c = _symbols[offset + 1];
 					final Access c = (Access) _symbol_c.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(c);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(c);
 			}
 			case 111: // class_type_list = class_type_list.l COMMA.COMMA class_type.c
 			{
@@ -1653,8 +1653,8 @@ class Events extends Parser.Events {
 					final List tl = (List) _symbol_tl.value;
 					final Symbol LBRACE = _symbols[offset + 6];
 					final Symbol RBRACE = _symbols[offset + 7];
-					 Block b = new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)); new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, pl, tl, new Opt(), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 Block b = new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory); new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
+       return new ConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, pl, tl, new Opt(), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 117: // constructor_declaration = modifiers.m IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE RBRACE.RBRACE
 			{
@@ -1669,8 +1669,8 @@ class Events extends Parser.Events {
 					final List tl = (List) _symbol_tl.value;
 					final Symbol LBRACE = _symbols[offset + 7];
 					final Symbol RBRACE = _symbols[offset + 8];
-					 Block b = new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)); new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 Block b = new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory); new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
+       return new ConstructorDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, pl, tl, new Opt(), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 118: // constructor_declaration = IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE explicit_constructor_invocation.c RBRACE.RBRACE
 			{
@@ -1685,8 +1685,8 @@ class Events extends Parser.Events {
 					final Symbol _symbol_c = _symbols[offset + 7];
 					final ExprStmt c = (ExprStmt) _symbol_c.value;
 					final Symbol RBRACE = _symbols[offset + 8];
-					 Block b = new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)); new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, pl, tl, new Opt(c), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 Block b = new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory); new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
+       return new ConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, pl, tl, new Opt(c), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 119: // constructor_declaration = modifiers.m IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE explicit_constructor_invocation.c RBRACE.RBRACE
 			{
@@ -1703,8 +1703,8 @@ class Events extends Parser.Events {
 					final Symbol _symbol_c = _symbols[offset + 8];
 					final ExprStmt c = (ExprStmt) _symbol_c.value;
 					final Symbol RBRACE = _symbols[offset + 9];
-					 Block b = new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)); new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(c), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 Block b = new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory); new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
+       return new ConstructorDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, pl, tl, new Opt(c), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 120: // constructor_declaration = IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE block_statements.l RBRACE.RBRACE
 			{
@@ -1719,8 +1719,8 @@ class Events extends Parser.Events {
 					final Symbol _symbol_l = _symbols[offset + 7];
 					final List l = (List) _symbol_l.value;
 					final Symbol RBRACE = _symbols[offset + 8];
-					 Block b = new Block(l); l.setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, pl, tl, new Opt(), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 Block b = new Block(l, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory); l.setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
+       return new ConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, pl, tl, new Opt(), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 121: // constructor_declaration = modifiers.m IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE block_statements.l RBRACE.RBRACE
 			{
@@ -1737,8 +1737,8 @@ class Events extends Parser.Events {
 					final Symbol _symbol_l = _symbols[offset + 8];
 					final List l = (List) _symbol_l.value;
 					final Symbol RBRACE = _symbols[offset + 9];
-					 Block b = new Block(l); l.setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 Block b = new Block(l, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory); l.setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
+       return new ConstructorDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, pl, tl, new Opt(), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 122: // constructor_declaration = IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE explicit_constructor_invocation.c block_statements.l RBRACE.RBRACE
 			{
@@ -1755,8 +1755,8 @@ class Events extends Parser.Events {
 					final Symbol _symbol_l = _symbols[offset + 8];
 					final List l = (List) _symbol_l.value;
 					final Symbol RBRACE = _symbols[offset + 9];
-					 Block b = new Block(l); l.setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, pl, tl, new Opt(c), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 Block b = new Block(l, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory); l.setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
+       return new ConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, pl, tl, new Opt(c), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 123: // constructor_declaration = modifiers.m IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE explicit_constructor_invocation.c block_statements.l RBRACE.RBRACE
 			{
@@ -1775,8 +1775,8 @@ class Events extends Parser.Events {
 					final Symbol _symbol_l = _symbols[offset + 9];
 					final List l = (List) _symbol_l.value;
 					final Symbol RBRACE = _symbols[offset + 10];
-					 Block b = new Block(l); l.setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
-       return new ConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(c), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 Block b = new Block(l, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory); l.setStart(LBRACE.getStart() + 1); b.setStart(LBRACE.getStart()); b.setEnd(RBRACE.getEnd());
+       return new ConstructorDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, pl, tl, new Opt(c), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 124: // explicit_constructor_invocation = THIS.THIS LPAREN.LPAREN argument_list_opt.l RPAREN.RPAREN SEMICOLON.SEMICOLON
 			{
@@ -1842,7 +1842,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 2];
 					final Symbol _symbol_b = _symbols[offset + 3];
 					final List b = (List) _symbol_b.value;
-					 return new InterfaceDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b);
+					 return new InterfaceDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b);
 			}
 			case 129: // interface_declaration = modifiers.m INTERFACE.INTERFACE IDENTIFIER.IDENTIFIER interface_body.b
 			{
@@ -1852,7 +1852,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 3];
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new InterfaceDecl(new Modifiers(m), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b);
+					 return new InterfaceDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b);
 			}
 			case 130: // interface_declaration = INTERFACE.INTERFACE IDENTIFIER.IDENTIFIER extends_interfaces.i interface_body.b
 			{
@@ -1862,7 +1862,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new InterfaceDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, i, b);
+					 return new InterfaceDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, i, b);
 			}
 			case 131: // interface_declaration = modifiers.m INTERFACE.INTERFACE IDENTIFIER.IDENTIFIER extends_interfaces.i interface_body.b
 			{
@@ -1874,14 +1874,14 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new InterfaceDecl(new Modifiers(m), IDENTIFIER, i, b);
+					 return new InterfaceDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, i, b);
 			}
 			case 132: // extends_interfaces = EXTENDS.EXTENDS interface_type.i
 			{
 					final Symbol EXTENDS = _symbols[offset + 1];
 					final Symbol _symbol_i = _symbols[offset + 2];
 					final Access i = (Access) _symbol_i.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(i);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(i);
 			}
 			case 133: // extends_interfaces = extends_interfaces.l COMMA.COMMA interface_type.i
 			{
@@ -1904,7 +1904,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_i = _symbols[offset + 1];
 					final BodyDecl i = (BodyDecl) _symbol_i.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(i);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(i);
 			}
 			case 136: // interface_member_declarations = interface_member_declarations.l interface_member_declaration.i
 			{
@@ -1941,7 +1941,7 @@ class Events extends Parser.Events {
 			case 141: // interface_member_declaration = SEMICOLON.SEMICOLON
 			{
 					final Symbol SEMICOLON = _symbols[offset + 1];
-					 return new StaticInitializer(new Block());
+					 return new StaticInitializer(new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
 			}
 			case 142: // constant_declaration = field_declaration.f
 			{
@@ -1960,7 +1960,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol LBRACE = _symbols[offset + 1];
 					final Symbol RBRACE = _symbols[offset + 2];
-					 return new ArrayInit(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new ArrayInit(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver));
 			}
 			case 145: // array_initializer = LBRACE.LBRACE variable_initializers.v RBRACE.RBRACE
 			{
@@ -1975,7 +1975,7 @@ class Events extends Parser.Events {
 					final Symbol LBRACE = _symbols[offset + 1];
 					final Symbol COMMA = _symbols[offset + 2];
 					final Symbol RBRACE = _symbols[offset + 3];
-					 return new ArrayInit(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new ArrayInit(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver));
 			}
 			case 147: // array_initializer = LBRACE.LBRACE variable_initializers.v COMMA.COMMA RBRACE.RBRACE
 			{
@@ -1990,7 +1990,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_v = _symbols[offset + 1];
 					final Expr v = (Expr) _symbol_v.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(v);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(v);
 			}
 			case 149: // variable_initializers = variable_initializers.l COMMA.COMMA variable_initializer.v
 			{
@@ -2007,13 +2007,13 @@ class Events extends Parser.Events {
 					final Symbol _symbol_l = _symbols[offset + 2];
 					final List l = (List) _symbol_l.value;
 					final Symbol RBRACE = _symbols[offset + 3];
-					 return new Block(l);
+					 return new Block(l, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 151: // block_statements = block_statement.b
 			{
 					final Symbol _symbol_b = _symbols[offset + 1];
 					final Stmt b = (Stmt) _symbol_b.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(b);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(b);
 			}
 			case 152: // block_statements = block_statements.l block_statement.b
 			{
@@ -2054,7 +2054,7 @@ class Events extends Parser.Events {
 					final Access t = (Access) _symbol_t.value;
 					final Symbol _symbol_l = _symbols[offset + 2];
 					final List l = (List) _symbol_l.value;
-					 return new VarDeclStmt(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t, l);
+					 return new VarDeclStmt(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t, l);
 			}
 			case 158: // local_variable_declaration = modifiers.m type.t variable_declarators.l
 			{
@@ -2064,7 +2064,7 @@ class Events extends Parser.Events {
 					final Access t = (Access) _symbol_t.value;
 					final Symbol _symbol_l = _symbols[offset + 3];
 					final List l = (List) _symbol_l.value;
-					 return new VarDeclStmt(new Modifiers(m), t, l);
+					 return new VarDeclStmt(new Modifiers(m, myPhaseOptions), t, l);
 			}
 			case 159: // statement = statement_without_trailing_substatement.s
 			{
@@ -2332,7 +2332,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_s = _symbols[offset + 3];
 					final List s = (List) _symbol_s.value;
 					final Symbol RBRACE = _symbols[offset + 4];
-					 for(int ii = 0; ii < s.getNumChildNoTransform(); ii++) l.add(s.getChildNoTransform(ii)); return new Block(l);
+					 for(int ii = 0; ii < s.getNumChildNoTransform(); ii++) l.add(s.getChildNoTransform(ii)); return new Block(l, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 198: // switch_block = LBRACE.LBRACE switch_block_statement_groups.l RBRACE.RBRACE
 			{
@@ -2340,7 +2340,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_l = _symbols[offset + 2];
 					final List l = (List) _symbol_l.value;
 					final Symbol RBRACE = _symbols[offset + 3];
-					 return new Block(l);
+					 return new Block(l, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 199: // switch_block = LBRACE.LBRACE switch_labels.l RBRACE.RBRACE
 			{
@@ -2348,13 +2348,13 @@ class Events extends Parser.Events {
 					final Symbol _symbol_l = _symbols[offset + 2];
 					final List l = (List) _symbol_l.value;
 					final Symbol RBRACE = _symbols[offset + 3];
-					 return new Block(l);
+					 return new Block(l, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 200: // switch_block = LBRACE.LBRACE RBRACE.RBRACE
 			{
 					final Symbol LBRACE = _symbols[offset + 1];
 					final Symbol RBRACE = _symbols[offset + 2];
-					 return new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 201: // switch_block_statement_groups = switch_block_statement_group.g
 			{
@@ -2386,7 +2386,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_s = _symbols[offset + 1];
 					final Case s = (Case) _symbol_s.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(s);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(s);
 			}
 			case 205: // switch_labels = switch_labels.l switch_label.s
 			{
@@ -2489,7 +2489,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_d = _symbols[offset + 1];
 					final VarDeclStmt d = (VarDeclStmt) _symbol_d.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(d);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(d);
 			}
 			case 215: // for_update = statement_expression_list.l
 			{
@@ -2501,7 +2501,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_e = _symbols[offset + 1];
 					final ExprStmt e = (ExprStmt) _symbol_e.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(e);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(e);
 			}
 			case 217: // statement_expression_list = statement_expression_list.l COMMA.COMMA statement_expression.e
 			{
@@ -2572,7 +2572,7 @@ class Events extends Parser.Events {
 					final Block b = (Block) _symbol_b.value;
 					final Symbol _symbol_c = _symbols[offset + 3];
 					final List c = (List) _symbol_c.value;
-					 return new TryStmt(b, c, new Opt(), myOptions);
+					 return new TryStmt(b, c, new Opt(), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 226: // try_statement = TRY.TRY block.b finally.f
 			{
@@ -2581,7 +2581,7 @@ class Events extends Parser.Events {
 					final Block b = (Block) _symbol_b.value;
 					final Symbol _symbol_f = _symbols[offset + 3];
 					final Block f = (Block) _symbol_f.value;
-					 return new TryStmt(b, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(f), myOptions);
+					 return new TryStmt(b, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(f), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 227: // try_statement = TRY.TRY block.b catches.c finally.f
 			{
@@ -2592,13 +2592,13 @@ class Events extends Parser.Events {
 					final List c = (List) _symbol_c.value;
 					final Symbol _symbol_f = _symbols[offset + 4];
 					final Block f = (Block) _symbol_f.value;
-					 return new TryStmt(b, c, new Opt(f), myOptions);
+					 return new TryStmt(b, c, new Opt(f), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 228: // catches = catch_clause.c
 			{
 					final Symbol _symbol_c = _symbols[offset + 1];
 					final CatchClause c = (CatchClause) _symbol_c.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(c);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(c);
 			}
 			case 229: // catches = catches.l catch_clause.c
 			{
@@ -2672,13 +2672,13 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_b = _symbols[offset + 1];
 					final List b = (List) _symbol_b.value;
-					 return new Opt(new AnonymousDecl(new Modifiers(), "Anonymous", b));
+					 return new Opt(new AnonymousDecl(new Modifiers(myPhaseOptions), "Anonymous", b));
 			}
 			case 239: // argument_list = expression.e
 			{
 					final Symbol _symbol_e = _symbols[offset + 1];
 					final Expr e = (Expr) _symbol_e.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(e);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(e);
 			}
 			case 240: // argument_list = argument_list.l COMMA.COMMA expression.e
 			{
@@ -2755,7 +2755,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_e = _symbols[offset + 1];
 					final Dims e = (Dims) _symbol_e.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(e);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(e);
 			}
 			case 248: // dim_exprs = dim_exprs.l dim_expr.e
 			{
@@ -2778,7 +2778,7 @@ class Events extends Parser.Events {
 					final Symbol LBRACK = _symbols[offset + 1];
 					final Symbol RBRACK = _symbols[offset + 2];
 					 Dims d = new Dims(new Opt()); d.setStart(LBRACK.getStart()); d.setEnd(RBRACK.getEnd());
-                                                  return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(d);
+                                                  return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(d);
 			}
 			case 251: // dims = dims.l LBRACK.LBRACK RBRACK.RBRACK
 			{
@@ -3048,7 +3048,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 3];
 					final Symbol _symbol_e = _symbols[offset + 4];
 					final Expr e = (Expr) _symbol_e.value;
-					 return new CastExpr(t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), e);
+					 return new CastExpr(t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)), e);
 			}
 			case 279: // cast_expression = LPAREN.LPAREN primitive_type.t dims.d RPAREN.RPAREN unary_expression.e
 			{
@@ -3070,7 +3070,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 3];
 					final Symbol _symbol_e = _symbols[offset + 4];
 					final Expr e = (Expr) _symbol_e.value;
-					 return new CastExpr(t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), e);
+					 return new CastExpr(t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)), e);
 			}
 			case 281: // cast_expression = LPAREN.LPAREN name.t dims.d RPAREN.RPAREN unary_expression_not_plus_minus.e
 			{
@@ -3478,27 +3478,27 @@ class Events extends Parser.Events {
 			{
 					final Symbol error = _symbols[offset + 1];
 					final Symbol SEMICOLON = _symbols[offset + 2];
-					 return new InstanceInitializer(new Block());
+					 return new InstanceInitializer(new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
 			}
 			case 331: // class_body_declaration = error.error LBRACE.LBRACE
 			{
 					final Symbol error = _symbols[offset + 1];
 					final Symbol LBRACE = _symbols[offset + 2];
-					 return new InstanceInitializer(new Block());
+					 return new InstanceInitializer(new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
 			}
 			case 332: // block = LBRACE.LBRACE error.error RBRACE.RBRACE
 			{
 					final Symbol LBRACE = _symbols[offset + 1];
 					final Symbol error = _symbols[offset + 2];
 					final Symbol RBRACE = _symbols[offset + 3];
-					 return new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 333: // switch_block = LBRACE.LBRACE error.error RBRACE.RBRACE
 			{
 					final Symbol LBRACE = _symbols[offset + 1];
 					final Symbol error = _symbols[offset + 2];
 					final Symbol RBRACE = _symbols[offset + 3];
-					 return new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 334: // statement = error.error SEMICOLON.SEMICOLON
 			{
@@ -3537,8 +3537,8 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 3];
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 AnnotationDecl a = new AnnotationDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, b);
-   a.setStart(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).getStart());
+					 AnnotationDecl a = new AnnotationDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, b);
+   a.setStart(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).getStart());
    a.setEnd(b.getEnd());
    return a;
 			}
@@ -3551,7 +3551,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 4];
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 AnnotationDecl a = new AnnotationDecl(new Modifiers(m), IDENTIFIER, b); 
+					 AnnotationDecl a = new AnnotationDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, b);
    a.setStart(m.getStart());
    a.setEnd(b.getEnd());
    return a;
@@ -3568,7 +3568,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_i = _symbols[offset + 1];
 					final BodyDecl i = (BodyDecl) _symbol_i.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(i);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(i);
 			}
 			case 342: // annotation_type_element_declarations = annotation_type_element_declarations.l annotation_type_element_declaration.i
 			{
@@ -3588,8 +3588,8 @@ class Events extends Parser.Events {
 					final Symbol _symbol_default_value = _symbols[offset + 5];
 					final Opt default_value = (Opt) _symbol_default_value.value;
 					final Symbol SEMICOLON = _symbols[offset + 6];
-					 AnnotationMethodDecl a = new AnnotationMethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t, IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(), default_value);
-     a.setStart(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).getStart());
+					 AnnotationMethodDecl a = new AnnotationMethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t, IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(), default_value);
+     a.setStart(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).getStart());
      a.setEnd(SEMICOLON.getEnd());
      return a;
 			}
@@ -3605,7 +3605,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_default_value = _symbols[offset + 6];
 					final Opt default_value = (Opt) _symbol_default_value.value;
 					final Symbol SEMICOLON = _symbols[offset + 7];
-					 AnnotationMethodDecl a = new AnnotationMethodDecl(new Modifiers(m), t, IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(), default_value);
+					 AnnotationMethodDecl a = new AnnotationMethodDecl(new Modifiers(m, myPhaseOptions), t, IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(), default_value);
      a.setStart(m.getStart());
      a.setEnd(SEMICOLON.getEnd());
      return a;
@@ -3649,7 +3649,7 @@ class Events extends Parser.Events {
 			case 350: // annotation_type_element_declaration = SEMICOLON.SEMICOLON
 			{
 					final Symbol SEMICOLON = _symbols[offset + 1];
-					 return new StaticInitializer(new Block());
+					 return new StaticInitializer(new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
 			}
 			case 351: // default_value = DEFAULT.DEFAULT element_value.element_value
 			{
@@ -3676,7 +3676,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_element_value_pair = _symbols[offset + 1];
 					final ElementValuePair element_value_pair = (ElementValuePair) _symbol_element_value_pair.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(element_value_pair);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(element_value_pair);
 			}
 			case 358: // element_value_pairs = element_value_pairs.element_value_pairs COMMA.COMMA element_value_pair.element_value_pair
 			{
@@ -3723,7 +3723,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol LBRACE = _symbols[offset + 1];
 					final Symbol RBRACE = _symbols[offset + 2];
-					 return new ElementArrayValue(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new ElementArrayValue(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver));
 			}
 			case 364: // element_value_array_initializer = LBRACE.LBRACE element_values.element_values RBRACE.RBRACE
 			{
@@ -3738,7 +3738,7 @@ class Events extends Parser.Events {
 					final Symbol LBRACE = _symbols[offset + 1];
 					final Symbol COMMA = _symbols[offset + 2];
 					final Symbol RBRACE = _symbols[offset + 3];
-					 return new ElementArrayValue(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new ElementArrayValue(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver));
 			}
 			case 366: // element_value_array_initializer = LBRACE.LBRACE element_values.element_values COMMA.COMMA RBRACE.RBRACE
 			{
@@ -3753,7 +3753,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_element_value = _symbols[offset + 1];
 					final ElementValue element_value = (ElementValue) _symbol_element_value.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(element_value);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(element_value);
 			}
 			case 368: // element_values = element_values.element_values COMMA.COMMA element_value.element_value
 			{
@@ -3769,7 +3769,7 @@ class Events extends Parser.Events {
 					final Symbol AT = _symbols[offset + 1];
 					final Symbol _symbol_name = _symbols[offset + 2];
 					final Access name = (Access) _symbol_name.value;
-					 return new Annotation("annotation", name, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new Annotation("annotation", name, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
 			}
 			case 370: // single_element_annotation = AT.AT name.name LPAREN.LPAREN element_value.element_value RPAREN.RPAREN
 			{
@@ -3780,7 +3780,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_element_value = _symbols[offset + 4];
 					final ElementValue element_value = (ElementValue) _symbol_element_value.value;
 					final Symbol RPAREN = _symbols[offset + 5];
-					 Annotation a = new Annotation("annotation", name, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new ElementValuePair("value", element_value)), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 Annotation a = new Annotation("annotation", name, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(new ElementValuePair("value", element_value)), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
      a.setStart(AT.getStart());
      a.setEnd(RPAREN.getEnd());
      return a;
@@ -3791,7 +3791,7 @@ class Events extends Parser.Events {
 					final List a = (List) _symbol_a.value;
 					final Symbol _symbol_p = _symbols[offset + 2];
 					final IdUse p = (IdUse) _symbol_p.value;
-					 return new AnnotatedCompilationUnit(p.getID(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Modifiers(a));
+					 return new AnnotatedCompilationUnit(p.getID(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Modifiers(a, myPhaseOptions));
 			}
 			case 372: // compilation_unit = modifiers.a package_declaration.p import_declarations.i
 			{
@@ -3801,7 +3801,7 @@ class Events extends Parser.Events {
 					final IdUse p = (IdUse) _symbol_p.value;
 					final Symbol _symbol_i = _symbols[offset + 3];
 					final List i = (List) _symbol_i.value;
-					 return new AnnotatedCompilationUnit(p.getID(), i, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Modifiers(a));
+					 return new AnnotatedCompilationUnit(p.getID(), i, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Modifiers(a, myPhaseOptions));
 			}
 			case 373: // compilation_unit = modifiers.a package_declaration.p type_declarations.t
 			{
@@ -3811,7 +3811,7 @@ class Events extends Parser.Events {
 					final IdUse p = (IdUse) _symbol_p.value;
 					final Symbol _symbol_t = _symbols[offset + 3];
 					final List t = (List) _symbol_t.value;
-					 return new AnnotatedCompilationUnit(p.getID(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), t, new Modifiers(a));
+					 return new AnnotatedCompilationUnit(p.getID(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), t, new Modifiers(a, myPhaseOptions));
 			}
 			case 374: // compilation_unit = modifiers.a package_declaration.p import_declarations.i type_declarations.t
 			{
@@ -3823,7 +3823,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_t = _symbols[offset + 4];
 					final List t = (List) _symbol_t.value;
-					 return new AnnotatedCompilationUnit(p.getID(), i, t, new Modifiers(a));
+					 return new AnnotatedCompilationUnit(p.getID(), i, t, new Modifiers(a, myPhaseOptions));
 			}
 			case 375: // statement = enhanced_for_statement.f
 			{
@@ -3872,7 +3872,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 2];
 					final Symbol _symbol_d = _symbols[offset + 3];
 					final List d = (List) _symbol_d.value;
-					 return new VariableDeclaration(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t.addArrayDims(d), IDENTIFIER, new Opt());
+					 return new VariableDeclaration(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t.addArrayDims(d), IDENTIFIER, new Opt());
 			}
 			case 380: // enhanced_for_parameter = modifiers.m type.t IDENTIFIER.IDENTIFIER dims_opt.d
 			{
@@ -3883,7 +3883,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 3];
 					final Symbol _symbol_d = _symbols[offset + 4];
 					final List d = (List) _symbol_d.value;
-					 return new VariableDeclaration(new Modifiers(m), t.addArrayDims(d), IDENTIFIER, new Opt());
+					 return new VariableDeclaration(new Modifiers(m, myPhaseOptions), t.addArrayDims(d), IDENTIFIER, new Opt());
 			}
 			case 381: // type_declaration = enum_declaration.i
 			{
@@ -3909,7 +3909,7 @@ class Events extends Parser.Events {
 					final Symbol id = _symbols[offset + 2];
 					final Symbol _symbol_b = _symbols[offset + 3];
 					final List b = (List) _symbol_b.value;
-					 return new EnumDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+					 return new EnumDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 			}
 			case 385: // enum_declaration = modifiers.m ENUM.ENUM IDENTIFIER.id enum_body.b
 			{
@@ -3919,7 +3919,7 @@ class Events extends Parser.Events {
 					final Symbol id = _symbols[offset + 3];
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new EnumDecl(new Modifiers(m), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+					 return new EnumDecl(new Modifiers(m, myPhaseOptions), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 			}
 			case 386: // enum_declaration = ENUM.ENUM IDENTIFIER.id interfaces.i enum_body.b
 			{
@@ -3929,7 +3929,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new EnumDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), ((String)id.value), i, b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+					 return new EnumDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), ((String)id.value), i, b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 			}
 			case 387: // enum_declaration = modifiers.m ENUM.ENUM IDENTIFIER.id interfaces.i enum_body.b
 			{
@@ -3941,13 +3941,13 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new EnumDecl(new Modifiers(m), ((String)id.value), i, b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+					 return new EnumDecl(new Modifiers(m, myPhaseOptions), ((String)id.value), i, b, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 			}
 			case 388: // enum_body = LBRACE.LBRACE RBRACE.RBRACE
 			{
 					final Symbol LBRACE = _symbols[offset + 1];
 					final Symbol RBRACE = _symbols[offset + 2];
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 389: // enum_body = LBRACE.LBRACE enum_constants.enum_constants RBRACE.RBRACE
 			{
@@ -3962,7 +3962,7 @@ class Events extends Parser.Events {
 					final Symbol LBRACE = _symbols[offset + 1];
 					final Symbol COMMA = _symbols[offset + 2];
 					final Symbol RBRACE = _symbols[offset + 3];
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 391: // enum_body = LBRACE.LBRACE enum_constants.enum_constants COMMA.COMMA RBRACE.RBRACE
 			{
@@ -4015,7 +4015,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_enum_constant = _symbols[offset + 1];
 					final BodyDecl enum_constant = (BodyDecl) _symbol_enum_constant.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(enum_constant);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(enum_constant);
 			}
 			case 397: // enum_constants = enum_constants.enum_constants COMMA.COMMA enum_constant.enum_constant
 			{
@@ -4029,21 +4029,21 @@ class Events extends Parser.Events {
 			case 398: // enum_constant = IDENTIFIER.id
 			{
 					final Symbol id = _symbols[offset + 1];
-					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver));
 			}
 			case 399: // enum_constant = annotations.annotations IDENTIFIER.id
 			{
 					final Symbol _symbol_annotations = _symbols[offset + 1];
 					final List annotations = (List) _symbol_annotations.value;
 					final Symbol id = _symbols[offset + 2];
-					 return new EnumConstant(new Modifiers(annotations), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new EnumConstant(new Modifiers(annotations, myPhaseOptions), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver));
 			}
 			case 400: // enum_constant = IDENTIFIER.id arguments.arguments
 			{
 					final Symbol id = _symbols[offset + 1];
 					final Symbol _symbol_arguments = _symbols[offset + 2];
 					final List arguments = (List) _symbol_arguments.value;
-					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), ((String)id.value), arguments, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), ((String)id.value), arguments, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver));
 			}
 			case 401: // enum_constant = annotations.annotations IDENTIFIER.id arguments.arguments
 			{
@@ -4052,14 +4052,14 @@ class Events extends Parser.Events {
 					final Symbol id = _symbols[offset + 2];
 					final Symbol _symbol_arguments = _symbols[offset + 3];
 					final List arguments = (List) _symbol_arguments.value;
-					 return new EnumConstant(new Modifiers(annotations), ((String)id.value), arguments, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new EnumConstant(new Modifiers(annotations, myPhaseOptions), ((String)id.value), arguments, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver));
 			}
 			case 402: // enum_constant = IDENTIFIER.id class_body.class_body
 			{
 					final Symbol id = _symbols[offset + 1];
 					final Symbol _symbol_class_body = _symbols[offset + 2];
 					final List class_body = (List) _symbol_class_body.value;
-					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), class_body);
+					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), class_body);
 			}
 			case 403: // enum_constant = annotations.annotations IDENTIFIER.id class_body.class_body
 			{
@@ -4068,7 +4068,7 @@ class Events extends Parser.Events {
 					final Symbol id = _symbols[offset + 2];
 					final Symbol _symbol_class_body = _symbols[offset + 3];
 					final List class_body = (List) _symbol_class_body.value;
-					 return new EnumConstant(new Modifiers(annotations), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), class_body);
+					 return new EnumConstant(new Modifiers(annotations, myPhaseOptions), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), class_body);
 			}
 			case 404: // enum_constant = IDENTIFIER.id arguments.arguments class_body.class_body
 			{
@@ -4077,7 +4077,7 @@ class Events extends Parser.Events {
 					final List arguments = (List) _symbol_arguments.value;
 					final Symbol _symbol_class_body = _symbols[offset + 3];
 					final List class_body = (List) _symbol_class_body.value;
-					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), ((String)id.value), arguments, class_body);
+					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), ((String)id.value), arguments, class_body);
 			}
 			case 405: // enum_constant = annotations.annotations IDENTIFIER.id arguments.arguments class_body.class_body
 			{
@@ -4088,7 +4088,7 @@ class Events extends Parser.Events {
 					final List arguments = (List) _symbol_arguments.value;
 					final Symbol _symbol_class_body = _symbols[offset + 4];
 					final List class_body = (List) _symbol_class_body.value;
-					 return new EnumConstant(new Modifiers(annotations), ((String)id.value), arguments, class_body);
+					 return new EnumConstant(new Modifiers(annotations, myPhaseOptions), ((String)id.value), arguments, class_body);
 			}
 			case 406: // arguments = LPAREN.LPAREN argument_list.argument_list RPAREN.RPAREN
 			{
@@ -4102,7 +4102,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_annotation = _symbols[offset + 1];
 					final Annotation annotation = (Annotation) _symbol_annotation.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(annotation);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(annotation);
 			}
 			case 408: // annotations = annotations.annotations annotation.annotation
 			{
@@ -4244,7 +4244,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_p = _symbols[offset + 6];
 					final List p = (List) _symbol_p.value;
 					final Symbol RPAREN = _symbols[offset + 7];
-					 return new GenericMethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, p, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(), l);
+					 return new GenericMethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)), IDENTIFIER, p, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(), l);
 			}
 			case 419: // method_header = modifiers.m LT.LT type_parameter_list_1.l type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.p RPAREN.RPAREN
 			{
@@ -4260,7 +4260,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_p = _symbols[offset + 7];
 					final List p = (List) _symbol_p.value;
 					final Symbol RPAREN = _symbols[offset + 8];
-					 return new GenericMethodDecl(new Modifiers(m), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, p, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(), l);
+					 return new GenericMethodDecl(new Modifiers(m, myPhaseOptions), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)), IDENTIFIER, p, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(), l);
 			}
 			case 420: // method_header = LT.LT type_parameter_list_1.l type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.p RPAREN.RPAREN dims.d
 			{
@@ -4276,7 +4276,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 7];
 					final Symbol _symbol_d = _symbols[offset + 8];
 					final List d = (List) _symbol_d.value;
-					 return new GenericMethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t.addArrayDims(d), IDENTIFIER, p, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(), l);
+					 return new GenericMethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t.addArrayDims(d), IDENTIFIER, p, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(), l);
 			}
 			case 421: // method_header = modifiers.m LT.LT type_parameter_list_1.l type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.p RPAREN.RPAREN dims.d
 			{
@@ -4294,7 +4294,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 8];
 					final Symbol _symbol_d = _symbols[offset + 9];
 					final List d = (List) _symbol_d.value;
-					 return new GenericMethodDecl(new Modifiers(m), t.addArrayDims(d), IDENTIFIER, p, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(), l);
+					 return new GenericMethodDecl(new Modifiers(m, myPhaseOptions), t.addArrayDims(d), IDENTIFIER, p, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(), l);
 			}
 			case 422: // method_header = LT.LT type_parameter_list_1.l type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.p RPAREN.RPAREN throws.tl
 			{
@@ -4310,7 +4310,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 7];
 					final Symbol _symbol_tl = _symbols[offset + 8];
 					final List tl = (List) _symbol_tl.value;
-					 return new GenericMethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, p, tl, new Opt(), l);
+					 return new GenericMethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)), IDENTIFIER, p, tl, new Opt(), l);
 			}
 			case 423: // method_header = modifiers.m LT.LT type_parameter_list_1.l type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.p RPAREN.RPAREN throws.tl
 			{
@@ -4328,7 +4328,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 8];
 					final Symbol _symbol_tl = _symbols[offset + 9];
 					final List tl = (List) _symbol_tl.value;
-					 return new GenericMethodDecl(new Modifiers(m), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, p, tl, new Opt(), l);
+					 return new GenericMethodDecl(new Modifiers(m, myPhaseOptions), t.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)), IDENTIFIER, p, tl, new Opt(), l);
 			}
 			case 424: // method_header = LT.LT type_parameter_list_1.l type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.p RPAREN.RPAREN dims.d throws.tl
 			{
@@ -4346,7 +4346,7 @@ class Events extends Parser.Events {
 					final List d = (List) _symbol_d.value;
 					final Symbol _symbol_tl = _symbols[offset + 9];
 					final List tl = (List) _symbol_tl.value;
-					 return new GenericMethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t.addArrayDims(d), IDENTIFIER, p, tl, new Opt(), l);
+					 return new GenericMethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t.addArrayDims(d), IDENTIFIER, p, tl, new Opt(), l);
 			}
 			case 425: // method_header = modifiers.m LT.LT type_parameter_list_1.l type.t IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.p RPAREN.RPAREN dims.d throws.tl
 			{
@@ -4366,7 +4366,7 @@ class Events extends Parser.Events {
 					final List d = (List) _symbol_d.value;
 					final Symbol _symbol_tl = _symbols[offset + 10];
 					final List tl = (List) _symbol_tl.value;
-					 return new GenericMethodDecl(new Modifiers(m), t.addArrayDims(d), IDENTIFIER, p, tl, new Opt(), l);
+					 return new GenericMethodDecl(new Modifiers(m, myPhaseOptions), t.addArrayDims(d), IDENTIFIER, p, tl, new Opt(), l);
 			}
 			case 426: // method_header = LT.LT type_parameter_list_1.l VOID.VOID IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.p RPAREN.RPAREN throws_opt.tl
 			{
@@ -4381,7 +4381,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 7];
 					final Symbol _symbol_tl = _symbols[offset + 8];
 					final List tl = (List) _symbol_tl.value;
-					 return new GenericMethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), new PrimitiveTypeAccess("void"), IDENTIFIER, p, tl, new Opt(), l);
+					 return new GenericMethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), new PrimitiveTypeAccess("void"), IDENTIFIER, p, tl, new Opt(), l);
 			}
 			case 427: // method_header = modifiers.m LT.LT type_parameter_list_1.l VOID.VOID IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.p RPAREN.RPAREN throws_opt.tl
 			{
@@ -4398,7 +4398,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 8];
 					final Symbol _symbol_tl = _symbols[offset + 9];
 					final List tl = (List) _symbol_tl.value;
-					 return new GenericMethodDecl(new Modifiers(m), new PrimitiveTypeAccess("void"), IDENTIFIER, p, tl, new Opt(), l);
+					 return new GenericMethodDecl(new Modifiers(m, myPhaseOptions), new PrimitiveTypeAccess("void"), IDENTIFIER, p, tl, new Opt(), l);
 			}
 			case 428: // constructor_declaration = LT.LT type_parameter_list_1.l IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE RBRACE.RBRACE
 			{
@@ -4414,7 +4414,7 @@ class Events extends Parser.Events {
 					final List tl = (List) _symbol_tl.value;
 					final Symbol LBRACE = _symbols[offset + 8];
 					final Symbol RBRACE = _symbols[offset + 9];
-					 return new GenericConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, pl, tl, new Opt(), new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), l);
+					 return new GenericConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, pl, tl, new Opt(), new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), l);
 			}
 			case 429: // constructor_declaration = modifiers.m LT.LT type_parameter_list_1.l IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE RBRACE.RBRACE
 			{
@@ -4432,7 +4432,7 @@ class Events extends Parser.Events {
 					final List tl = (List) _symbol_tl.value;
 					final Symbol LBRACE = _symbols[offset + 9];
 					final Symbol RBRACE = _symbols[offset + 10];
-					 return new GenericConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(), new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), l);
+					 return new GenericConstructorDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, pl, tl, new Opt(), new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), l);
 			}
 			case 430: // constructor_declaration = LT.LT type_parameter_list_1.l IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE explicit_constructor_invocation.c RBRACE.RBRACE
 			{
@@ -4450,7 +4450,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_c = _symbols[offset + 9];
 					final ExprStmt c = (ExprStmt) _symbol_c.value;
 					final Symbol RBRACE = _symbols[offset + 10];
-					 return new GenericConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, pl, tl, new Opt(c), new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), l);
+					 return new GenericConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, pl, tl, new Opt(c), new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), l);
 			}
 			case 431: // constructor_declaration = modifiers.m LT.LT type_parameter_list_1.l IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE explicit_constructor_invocation.c RBRACE.RBRACE
 			{
@@ -4470,7 +4470,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_c = _symbols[offset + 10];
 					final ExprStmt c = (ExprStmt) _symbol_c.value;
 					final Symbol RBRACE = _symbols[offset + 11];
-					 return new GenericConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(c), new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), l);
+					 return new GenericConstructorDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, pl, tl, new Opt(c), new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), l);
 			}
 			case 432: // constructor_declaration = LT.LT type_parameter_list_1.l IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE block_statements.bl RBRACE.RBRACE
 			{
@@ -4488,7 +4488,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_bl = _symbols[offset + 9];
 					final List bl = (List) _symbol_bl.value;
 					final Symbol RBRACE = _symbols[offset + 10];
-					 return new GenericConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, pl, tl, new Opt(), new Block(bl), l);
+					 return new GenericConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, pl, tl, new Opt(), new Block(bl, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), l);
 			}
 			case 433: // constructor_declaration = modifiers.m LT.LT type_parameter_list_1.l IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE block_statements.bl RBRACE.RBRACE
 			{
@@ -4508,7 +4508,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_bl = _symbols[offset + 10];
 					final List bl = (List) _symbol_bl.value;
 					final Symbol RBRACE = _symbols[offset + 11];
-					 return new GenericConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(), new Block(bl), l);
+					 return new GenericConstructorDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, pl, tl, new Opt(), new Block(bl, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), l);
 			}
 			case 434: // constructor_declaration = LT.LT type_parameter_list_1.l IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE explicit_constructor_invocation.c block_statements.bl RBRACE.RBRACE
 			{
@@ -4528,7 +4528,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_bl = _symbols[offset + 10];
 					final List bl = (List) _symbol_bl.value;
 					final Symbol RBRACE = _symbols[offset + 11];
-					 return new GenericConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, pl, tl, new Opt(c), new Block(bl), l);
+					 return new GenericConstructorDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, pl, tl, new Opt(c), new Block(bl, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), l);
 			}
 			case 435: // constructor_declaration = modifiers.m LT.LT type_parameter_list_1.l IDENTIFIER.IDENTIFIER LPAREN.LPAREN formal_parameter_list_opt.pl RPAREN.RPAREN throws_opt.tl LBRACE.LBRACE explicit_constructor_invocation.c block_statements.bl RBRACE.RBRACE
 			{
@@ -4550,7 +4550,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_bl = _symbols[offset + 11];
 					final List bl = (List) _symbol_bl.value;
 					final Symbol RBRACE = _symbols[offset + 12];
-					 return new GenericConstructorDecl(new Modifiers(m), IDENTIFIER, pl, tl, new Opt(c), new Block(bl), l);
+					 return new GenericConstructorDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, pl, tl, new Opt(c), new Block(bl, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), l);
 			}
 			case 436: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p class_body.b
 			{
@@ -4560,7 +4560,7 @@ class Events extends Parser.Events {
 					final List p = (List) _symbol_p.value;
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b, p);
+					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b, p);
 			}
 			case 437: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p class_body.b
 			{
@@ -4572,7 +4572,7 @@ class Events extends Parser.Events {
 					final List p = (List) _symbol_p.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(m), IDENTIFIER, new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b, p);
+					 return new GenericClassDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b, p);
 			}
 			case 438: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p super.s class_body.b
 			{
@@ -4584,7 +4584,7 @@ class Events extends Parser.Events {
 					final Opt s = (Opt) _symbol_s.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b, p);
+					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b, p);
 			}
 			case 439: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p super.s class_body.b
 			{
@@ -4598,7 +4598,7 @@ class Events extends Parser.Events {
 					final Opt s = (Opt) _symbol_s.value;
 					final Symbol _symbol_b = _symbols[offset + 6];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(m), IDENTIFIER, s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b, p);
+					 return new GenericClassDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b, p);
 			}
 			case 440: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p interfaces.i class_body.b
 			{
@@ -4610,7 +4610,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, new Opt(), i, b, p);
+					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, new Opt(), i, b, p);
 			}
 			case 441: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p interfaces.i class_body.b
 			{
@@ -4624,7 +4624,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 6];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(m), IDENTIFIER, new Opt(), i, b, p);
+					 return new GenericClassDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, new Opt(), i, b, p);
 			}
 			case 442: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p super.s interfaces.i class_body.b
 			{
@@ -4638,7 +4638,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 6];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, s, i, b, p);
+					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, s, i, b, p);
 			}
 			case 443: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p super.s interfaces.i class_body.b
 			{
@@ -4654,7 +4654,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 7];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(m), IDENTIFIER, s, i, b, p);
+					 return new GenericClassDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, s, i, b, p);
 			}
 			case 444: // interface_declaration = INTERFACE.INTERFACE IDENTIFIER.IDENTIFIER type_parameters.p interface_body.b
 			{
@@ -4664,7 +4664,7 @@ class Events extends Parser.Events {
 					final List p = (List) _symbol_p.value;
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new GenericInterfaceDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b, p);
+					 return new GenericInterfaceDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b, p);
 			}
 			case 445: // interface_declaration = modifiers.m INTERFACE.INTERFACE IDENTIFIER.IDENTIFIER type_parameters.p interface_body.b
 			{
@@ -4676,7 +4676,7 @@ class Events extends Parser.Events {
 					final List p = (List) _symbol_p.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new GenericInterfaceDecl(new Modifiers(m), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), b, p);
+					 return new GenericInterfaceDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), b, p);
 			}
 			case 446: // interface_declaration = INTERFACE.INTERFACE IDENTIFIER.IDENTIFIER type_parameters.p extends_interfaces.i interface_body.b
 			{
@@ -4688,7 +4688,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new GenericInterfaceDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), IDENTIFIER, i, b, p);
+					 return new GenericInterfaceDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), IDENTIFIER, i, b, p);
 			}
 			case 447: // interface_declaration = modifiers.m INTERFACE.INTERFACE IDENTIFIER.IDENTIFIER type_parameters.p extends_interfaces.i interface_body.b
 			{
@@ -4702,7 +4702,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 6];
 					final List b = (List) _symbol_b.value;
-					 return new GenericInterfaceDecl(new Modifiers(m), IDENTIFIER, i, b, p);
+					 return new GenericInterfaceDecl(new Modifiers(m, myPhaseOptions), IDENTIFIER, i, b, p);
 			}
 			case 448: // class_or_interface = name.n
 			{
@@ -4867,7 +4867,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 5];
 					final Symbol _symbol_b = _symbols[offset + 6];
 					final Opt b = (Opt) _symbol_b.value;
-					 return new ClassInstanceExpr(t, l, b, myScene);
+					 return new ClassInstanceExpr(t, l, b, myScene, myPackageNamer);
 			}
 			case 468: // class_instance_creation_expression = NEW.NEW type_arguments.a class_or_interface_type.t LPAREN.LPAREN argument_list_opt.l RPAREN.RPAREN subclass_body_opt.b
 			{
@@ -4898,7 +4898,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 7];
 					final Symbol _symbol_b = _symbols[offset + 8];
 					final Opt b = (Opt) _symbol_b.value;
-					 ClassInstanceExpr e = new ClassInstanceExpr(id, l, b, myScene);
+					 ClassInstanceExpr e = new ClassInstanceExpr(id, l, b, myScene, myPackageNamer);
         e.setStart(NEW.getStart());
         e.setEnd(RPAREN.getEnd());
         return n.qualifiesAccess(e);
@@ -4919,7 +4919,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 8];
 					final Symbol _symbol_b = _symbols[offset + 9];
 					final Opt b = (Opt) _symbol_b.value;
-					 ClassInstanceExpr e = new ClassInstanceExpr(new ParTypeAccess(id, a), l, b, myScene);
+					 ClassInstanceExpr e = new ClassInstanceExpr(new ParTypeAccess(id, a), l, b, myScene, myPackageNamer);
         e.setStart(NEW.getStart());
         e.setEnd(RPAREN.getEnd());
         return n.qualifiesAccess(e);
@@ -4976,7 +4976,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 7];
 					final Symbol _symbol_b = _symbols[offset + 8];
 					final Opt b = (Opt) _symbol_b.value;
-					 ClassInstanceExpr e = new ClassInstanceExpr(id, l, b, myScene);
+					 ClassInstanceExpr e = new ClassInstanceExpr(id, l, b, myScene, myPackageNamer);
         e.setStart(NEW.getStart());
         e.setEnd(RPAREN.getEnd());
         return n.qualifiesAccess(e);
@@ -4997,7 +4997,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 8];
 					final Symbol _symbol_b = _symbols[offset + 9];
 					final Opt b = (Opt) _symbol_b.value;
-					 ClassInstanceExpr e = new ClassInstanceExpr(new ParTypeAccess(id, a), l, b, myScene);
+					 ClassInstanceExpr e = new ClassInstanceExpr(new ParTypeAccess(id, a), l, b, myScene, myPackageNamer);
         e.setStart(NEW.getStart());
         e.setEnd(RPAREN.getEnd());
         return n.qualifiesAccess(e);
@@ -5044,7 +5044,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_a = _symbols[offset + 1];
 					final Access a = (Access) _symbol_a.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(a);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(a);
 			}
 			case 478: // type_argument_list = type_argument_list.l COMMA.COMMA type_argument.a
 			{
@@ -5059,7 +5059,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_a = _symbols[offset + 1];
 					final Access a = (Access) _symbol_a.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(a);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(a);
 			}
 			case 480: // type_argument_list_1 = type_argument_list.l COMMA.COMMA type_argument_1.a
 			{
@@ -5074,7 +5074,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_a = _symbols[offset + 1];
 					final Access a = (Access) _symbol_a.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(a);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(a);
 			}
 			case 482: // type_argument_list_2 = type_argument_list.l COMMA.COMMA type_argument_2.a
 			{
@@ -5089,7 +5089,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_a = _symbols[offset + 1];
 					final Access a = (Access) _symbol_a.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(a);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(a);
 			}
 			case 484: // type_argument_list_3 = type_argument_list.l COMMA.COMMA type_argument_3.a
 			{
@@ -5198,7 +5198,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 5];
 					final Symbol _symbol_e = _symbols[offset + 6];
 					final Expr e = (Expr) _symbol_e.value;
-					 return new CastExpr(new ParTypeAccess(n, a).addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), e);
+					 return new CastExpr(new ParTypeAccess(n, a).addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)), e);
 			}
 			case 499: // cast_expression = LPAREN.LPAREN name.n LT.LT type_argument_list_1.a dims.d RPAREN.RPAREN unary_expression_not_plus_minus.e
 			{
@@ -5229,7 +5229,7 @@ class Events extends Parser.Events {
 					final Symbol RPAREN = _symbols[offset + 7];
 					final Symbol _symbol_e = _symbols[offset + 8];
 					final Expr e = (Expr) _symbol_e.value;
-					 return new CastExpr(new ParTypeAccess(n, a).qualifiesAccess(t).addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), e);
+					 return new CastExpr(new ParTypeAccess(n, a).qualifiesAccess(t).addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)), e);
 			}
 			case 501: // cast_expression = LPAREN.LPAREN name.n LT.LT type_argument_list_1.a DOT.DOT class_or_interface_type.t dims.d RPAREN.RPAREN unary_expression_not_plus_minus.e
 			{
@@ -5269,13 +5269,13 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_p = _symbols[offset + 1];
 					final TypeVariable p = (TypeVariable) _symbol_p.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(p);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(p);
 			}
 			case 505: // type_parameter_list_1 = type_parameter_1.p
 			{
 					final Symbol _symbol_p = _symbols[offset + 1];
 					final TypeVariable p = (TypeVariable) _symbol_p.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(p);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(p);
 			}
 			case 506: // type_parameter_list_1 = type_parameter_list.l COMMA.COMMA type_parameter_1.p
 			{
@@ -5289,34 +5289,34 @@ class Events extends Parser.Events {
 			case 507: // type_parameter = IDENTIFIER.IDENTIFIER
 			{
 					final Symbol IDENTIFIER = _symbols[offset + 1];
-					 return new TypeVariable(new Modifiers(), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new TypeVariable(new Modifiers(myPhaseOptions), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver));
 			}
 			case 508: // type_parameter = IDENTIFIER.IDENTIFIER type_bound.l
 			{
 					final Symbol IDENTIFIER = _symbols[offset + 1];
 					final Symbol _symbol_l = _symbols[offset + 2];
 					final List l = (List) _symbol_l.value;
-					 return new TypeVariable(new Modifiers(), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), l);
+					 return new TypeVariable(new Modifiers(myPhaseOptions), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), l);
 			}
 			case 509: // type_parameter_1 = IDENTIFIER.IDENTIFIER GT.GT
 			{
 					final Symbol IDENTIFIER = _symbols[offset + 1];
 					final Symbol GT = _symbols[offset + 2];
-					 return new TypeVariable(new Modifiers(), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+					 return new TypeVariable(new Modifiers(myPhaseOptions), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver));
 			}
 			case 510: // type_parameter_1 = IDENTIFIER.IDENTIFIER type_bound_1.l
 			{
 					final Symbol IDENTIFIER = _symbols[offset + 1];
 					final Symbol _symbol_l = _symbols[offset + 2];
 					final List l = (List) _symbol_l.value;
-					 return new TypeVariable(new Modifiers(), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), l);
+					 return new TypeVariable(new Modifiers(myPhaseOptions), IDENTIFIER, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), l);
 			}
 			case 511: // type_bound = EXTENDS.EXTENDS reference_type.t
 			{
 					final Symbol EXTENDS = _symbols[offset + 1];
 					final Symbol _symbol_t = _symbols[offset + 2];
 					final Access t = (Access) _symbol_t.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(t);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(t);
 			}
 			case 512: // type_bound = EXTENDS.EXTENDS reference_type.t additional_bound_list.l
 			{
@@ -5332,7 +5332,7 @@ class Events extends Parser.Events {
 					final Symbol EXTENDS = _symbols[offset + 1];
 					final Symbol _symbol_t = _symbols[offset + 2];
 					final Access t = (Access) _symbol_t.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(t);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(t);
 			}
 			case 514: // type_bound_1 = EXTENDS.EXTENDS reference_type.t additional_bound_list_1.l
 			{
@@ -5355,7 +5355,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_b = _symbols[offset + 1];
 					final Access b = (Access) _symbol_b.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(b);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(b);
 			}
 			case 517: // additional_bound_list_1 = additional_bound.b additional_bound_list_1.l
 			{
@@ -5369,7 +5369,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_b = _symbols[offset + 1];
 					final Access b = (Access) _symbol_b.value;
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(b);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(b);
 			}
 			case 519: // additional_bound = AND.AND interface_type.t
 			{
@@ -5427,7 +5427,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 3];
 					final Symbol _symbol_d = _symbols[offset + 4];
 					final List d = (List) _symbol_d.value;
-					 return new VariableArityParameterDeclaration(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), t.addArrayDims(d), IDENTIFIER);
+					 return new VariableArityParameterDeclaration(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), t.addArrayDims(d), IDENTIFIER);
 			}
 			case 526: // formal_parameter = modifiers.m type.t ELLIPSIS.ELLIPSIS IDENTIFIER.IDENTIFIER dims_opt.d
 			{
@@ -5439,7 +5439,7 @@ class Events extends Parser.Events {
 					final Symbol IDENTIFIER = _symbols[offset + 4];
 					final Symbol _symbol_d = _symbols[offset + 5];
 					final List d = (List) _symbol_d.value;
-					 return new VariableArityParameterDeclaration(new Modifiers(m), t.addArrayDims(d), IDENTIFIER);
+					 return new VariableArityParameterDeclaration(new Modifiers(m, myPhaseOptions), t.addArrayDims(d), IDENTIFIER);
 			}
 			case 527: // primary_no_new_array = literal.l
 			{
@@ -5454,7 +5454,7 @@ class Events extends Parser.Events {
 					final Symbol DOT = _symbols[offset + 2];
 					final Symbol _symbol_c = _symbols[offset + 3];
 					final ClassAccess c = (ClassAccess) _symbol_c.value;
-					 return n.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)).qualifiesAccess(c);
+					 return n.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)).qualifiesAccess(c);
 			}
 			case 529: // primary_no_new_array = primitive_type.n dims.d DOT.DOT class_literal.c
 			{
@@ -5474,7 +5474,7 @@ class Events extends Parser.Events {
 					final Symbol DOT = _symbols[offset + 2];
 					final Symbol _symbol_c = _symbols[offset + 3];
 					final ClassAccess c = (ClassAccess) _symbol_c.value;
-					 return n.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)).qualifiesAccess(c);
+					 return n.addArrayDims(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)).qualifiesAccess(c);
 			}
 			case 531: // primary_no_new_array = name.n dims.d DOT.DOT class_literal.c
 			{
@@ -6118,7 +6118,7 @@ class Events extends Parser.Events {
 			}
 			case 614: // annotation_type_element_declarations_opt = 
 			{
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 615: // annotation_type_element_declarations_opt = annotation_type_element_declarations.n
 			{
@@ -6138,7 +6138,7 @@ class Events extends Parser.Events {
 			}
 			case 618: // block_statements_opt = 
 			{
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 619: // block_statements_opt = block_statements.n
 			{
@@ -6158,7 +6158,7 @@ class Events extends Parser.Events {
 			}
 			case 622: // interface_member_declarations_opt = 
 			{
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 623: // interface_member_declarations_opt = interface_member_declarations.n
 			{
@@ -6168,7 +6168,7 @@ class Events extends Parser.Events {
 			}
 			case 624: // argument_list_opt = 
 			{
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 625: // argument_list_opt = argument_list.n
 			{
@@ -6188,7 +6188,7 @@ class Events extends Parser.Events {
 			}
 			case 628: // dims_opt = 
 			{
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 629: // dims_opt = dims.n
 			{
@@ -6198,7 +6198,7 @@ class Events extends Parser.Events {
 			}
 			case 630: // class_body_declarations_opt = 
 			{
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 631: // class_body_declarations_opt = class_body_declarations.n
 			{
@@ -6208,7 +6208,7 @@ class Events extends Parser.Events {
 			}
 			case 632: // element_value_pairs_opt = 
 			{
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 633: // element_value_pairs_opt = element_value_pairs.n
 			{
@@ -6218,7 +6218,7 @@ class Events extends Parser.Events {
 			}
 			case 634: // throws_opt = 
 			{
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 635: // throws_opt = throws.n
 			{
@@ -6228,7 +6228,7 @@ class Events extends Parser.Events {
 			}
 			case 636: // for_init_opt = 
 			{
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 637: // for_init_opt = for_init.n
 			{
@@ -6238,7 +6238,7 @@ class Events extends Parser.Events {
 			}
 			case 638: // formal_parameter_list_opt = 
 			{
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 639: // formal_parameter_list_opt = formal_parameter_list.n
 			{
@@ -6248,7 +6248,7 @@ class Events extends Parser.Events {
 			}
 			case 640: // for_update_opt = 
 			{
-					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+					 return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 			}
 			case 641: // for_update_opt = for_update.n
 			{

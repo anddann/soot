@@ -5,6 +5,12 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production TypeAccess : {@link Access} ::= <span class="component">&lt;Package:String&gt;</span> <span class="component">&lt;ID:String&gt;</span>;
  * @ast node
@@ -121,8 +127,8 @@ public class TypeAccess extends Access implements Cloneable {
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:23
    */
-  public TypeAccess(String name, int start, int end) {
-    this(name);
+  public TypeAccess(String name, int start, int end,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) {
+    this(name,myScene,primTypeCollector,myJimple);
     this.start = this.IDstart = start;
     this.end = this.IDend = end;
   }
@@ -131,8 +137,8 @@ public class TypeAccess extends Access implements Cloneable {
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:44
    */
-  public TypeAccess(String typeName) {
-    this("", typeName);
+  public TypeAccess(String typeName,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) {
+    this("", typeName,myScene,primTypeCollector,myJimple);
   }
   /**
    * @ast method 
@@ -207,7 +213,7 @@ public class TypeAccess extends Access implements Cloneable {
    * @ast method 
    * 
    */
-  public TypeAccess() {
+  public TypeAccess(Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) {
     super(myScene, primTypeCollector, myJimple);
 
 
@@ -226,7 +232,7 @@ public class TypeAccess extends Access implements Cloneable {
    * @ast method 
    * 
    */
-  public TypeAccess(String p0, String p1) {
+  public TypeAccess(String p0, String p1,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) {
       super(myScene, primTypeCollector, myJimple);
       setPackage(p0);
     setID(p1);
@@ -235,7 +241,7 @@ public class TypeAccess extends Access implements Cloneable {
    * @ast method 
    * 
    */
-  public TypeAccess(beaver.Symbol p0, beaver.Symbol p1) {
+  public TypeAccess(beaver.Symbol p0, beaver.Symbol p1,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) {
       super(myScene, primTypeCollector, myJimple);
       setPackage(p0);
     setID(p1);
@@ -616,7 +622,7 @@ public class TypeAccess extends Access implements Cloneable {
 		int i = 0;
 		for (TypeVariable typeVar : original) {
 			if (typeVar == decl)
-				return new TypeAccess(substitution.getChild(i).getID());
+				return new TypeAccess(substitution.getChild(i).getID(),myScene,primTypeCollector,myJimple);
 			i += 1;
 		}
 		return super.substituted(original, substitution);

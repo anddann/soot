@@ -53,6 +53,7 @@ import soot.Unit;
 import soot.Value;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.FieldRef;
+import soot.jimple.FullObjectFactory;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.Ref;
 import soot.jimple.StaticFieldRef;
@@ -87,14 +88,16 @@ public class LockAllocator extends SceneTransformer {
   private ThrowableSet.Manager myManager;
   private Options myOptions;
   private PhaseDumper myPhaseDumer;
+  private FullObjectFactory fullObjectFactory;
 
   @Inject
-  public LockAllocator(Scene myScene, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumer) {
+  public LockAllocator(Scene myScene, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumer, FullObjectFactory fullObjectFactory) {
     this.myScene = myScene;
     this.myThrowAnalysis = myThrowAnalysis;
     this.myManager = myManager;
     this.myOptions = myOptions;
     this.myPhaseDumer = myPhaseDumer;
+    this.fullObjectFactory = fullObjectFactory;
   }
 
   List<CriticalSection> criticalSections = null;

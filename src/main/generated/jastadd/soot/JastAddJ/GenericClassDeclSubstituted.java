@@ -86,7 +86,7 @@ public class GenericClassDeclSubstituted extends GenericClassDecl implements Clo
       for (int i = 0; i < children.length; ++i) {
           switch (i) {
           case 6:
-            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
             continue;
           }
         ASTNode child = (ASTNode) children[i];
@@ -118,9 +118,9 @@ public class GenericClassDeclSubstituted extends GenericClassDecl implements Clo
   public void init$Children() {
     children = new ASTNode[5];
     setChild(new Opt(), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 3);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 4);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 4);
   }
   /**
    * @ast method 

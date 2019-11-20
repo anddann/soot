@@ -107,7 +107,7 @@ public class FloatType extends FloatingPointType implements Cloneable {
   public void init$Children() {
     children = new ASTNode[3];
     setChild(new Opt(), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
   }
   /**
    * @ast method 

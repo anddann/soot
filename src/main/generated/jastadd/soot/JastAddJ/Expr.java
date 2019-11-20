@@ -12,8 +12,8 @@ import soot.jimple.*;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:104
  */
 public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
-  private PrimTypeCollector primTypeCollector;
-  private Jimple myJimple;
+  protected PrimTypeCollector primTypeCollector;
+  protected Jimple myJimple;
 
   /**
    * @apilevel low-level

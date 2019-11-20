@@ -98,7 +98,7 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
       return new Opt<TypeDecl>();
     return new Opt<TypeDecl>(
       new AnonymousDecl(
-        new Modifiers(),
+        new Modifiers(myPhaseOptions),
         "Anonymous",
         bds
       )
@@ -180,7 +180,7 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
     setChild(new Opt(), 2);
   }
   /**

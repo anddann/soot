@@ -93,13 +93,13 @@ public class SmartLocalDefs implements LocalDefs {
   public SmartLocalDefs(UnitGraph g, LiveLocals live) {
     this.graph = g;
 
-    if (myOptions.time()) {
-      myTimers.defsTimer.start();
-    }
-
-    if (myOptions.verbose()) {
-      logger.debug("[" + g.getBody().getMethod().getName() + "]     Constructing SmartLocalDefs...");
-    }
+//    if (myOptions.time()) {
+//      myTimers.defsTimer.start();
+//    }
+//
+//    if (myOptions.verbose()) {
+//      logger.debug("[" + g.getBody().getMethod().getName() + "]     Constructing SmartLocalDefs...");
+//    }
 
     final LocalBitSetPacker localPacker = new LocalBitSetPacker(g.getBody());
     localPacker.pack();
@@ -122,13 +122,13 @@ public class SmartLocalDefs implements LocalDefs {
       addDefOf(l, u);
     }
 
-    if (myOptions.verbose()) {
-      logger.debug("[" + g.getBody().getMethod().getName() + "]        done localToDefs map...");
-    }
+//    if (myOptions.verbose()) {
+//      logger.debug("[" + g.getBody().getMethod().getName() + "]        done localToDefs map...");
+//    }
 
-    if (myOptions.verbose()) {
-      logger.debug("[" + g.getBody().getMethod().getName() + "]        done unitToMask map...");
-    }
+//    if (myOptions.verbose()) {
+//      logger.debug("[" + g.getBody().getMethod().getName() + "]        done unitToMask map...");
+//    }
 
     analysis = new LocalDefsAnalysis(graph);
 
@@ -164,13 +164,13 @@ public class SmartLocalDefs implements LocalDefs {
 
     localPacker.unpack();
 
-    if (myOptions.time()) {
-      myTimers.defsTimer.end();
-    }
-
-    if (myOptions.verbose()) {
-      logger.debug("[" + g.getBody().getMethod().getName() + "]     SmartLocalDefs finished.");
-    }
+//    if (myOptions.time()) {
+//      myTimers.defsTimer.end();
+//    }
+//
+//    if (myOptions.verbose()) {
+//      logger.debug("[" + g.getBody().getMethod().getName() + "]     SmartLocalDefs finished.");
+//    }
   }
 
   private Local localDef(Unit u) {

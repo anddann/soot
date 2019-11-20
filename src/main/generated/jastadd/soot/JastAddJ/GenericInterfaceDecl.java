@@ -107,7 +107,7 @@ public class GenericInterfaceDecl extends InterfaceDecl implements Cloneable, Ge
       getID(),
       getSuperInterfaceIdList().substitute(parTypeDecl),
      // ES:  new List(),
-      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), // delegates TypeParameter lookup to original
+      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), // delegates TypeParameter lookup to original
       this
     );
     return c;
@@ -191,7 +191,7 @@ public class GenericInterfaceDecl extends InterfaceDecl implements Cloneable, Ge
    */
   public List createArgumentList(ArrayList params) {
     GenericTypeDecl original = (GenericTypeDecl)original();
-    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
     if(params.isEmpty()) {
       // Change: Don't add any thing to the list. 
       // Concern: The previous version seem to add the erasure of the type variable for some reason,  
@@ -223,9 +223,9 @@ public class GenericInterfaceDecl extends InterfaceDecl implements Cloneable, Ge
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 3);
   }
   /**
    * @ast method 
@@ -746,7 +746,7 @@ public class GenericInterfaceDecl extends InterfaceDecl implements Cloneable, Ge
   boolean isFinal = this.is$Final();
     TypeDecl lookupParTypeDecl_ArrayList_value = lookupParTypeDecl_compute(list);
     if(lookupParTypeDecl_ArrayList_list == null) {
-      lookupParTypeDecl_ArrayList_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      lookupParTypeDecl_ArrayList_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       lookupParTypeDecl_ArrayList_list.is$Final = true;
       lookupParTypeDecl_ArrayList_list.setParent(this);
     }

@@ -96,20 +96,20 @@ public class MethodInfo extends java.lang.Object {
       BodyDecl b;
       if(isConstructor()) {
         b = new ConstructorDecl(BytecodeParser.modifiers(flags), name, parameterList, 
-            exceptionList, new Opt(), new Block(), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+            exceptionList, new Opt(), new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       }
       else if(attributes.elementValue() != null) {
         b = new AnnotationMethodDecl(BytecodeParser.modifiers(flags), returnType, name, 
             parameterList, exceptionList, 
-            new Opt(new Block()), new Opt(attributes.elementValue()));
+            new Opt(new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), new Opt(attributes.elementValue()));
       }
       else if(s != null && s.hasFormalTypeParameters()) {
         b = new GenericMethodDecl(BytecodeParser.modifiers(flags), returnType, name, parameterList, 
-            exceptionList, new Opt(new Block()), s.typeParameters());
+            exceptionList, new Opt(new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), s.typeParameters());
       }
       else {
         b = new MethodDecl(BytecodeParser.modifiers(flags), returnType, name, parameterList, 
-            exceptionList, new Opt(new Block()), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+            exceptionList, new Opt(new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
       }
       if(attributes.annotations != null) {
         for(Iterator iter = attributes.annotations.iterator(); iter.hasNext(); ) {

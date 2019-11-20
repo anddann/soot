@@ -144,7 +144,7 @@ public class VariableDeclaration extends Stmt implements Cloneable, SimpleSet, I
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:74
    */
   public VariableDeclaration(Access type, String name, Expr init) {
-    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), type, name, new Opt(init));
+    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), type, name, new Opt(init));
   }
   /**
    * @ast method 
@@ -152,7 +152,7 @@ public class VariableDeclaration extends Stmt implements Cloneable, SimpleSet, I
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:78
    */
   public VariableDeclaration(Access type, String name) {
-    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), type, name, new Opt());
+    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), type, name, new Opt());
   }
   /**
    * @ast method 

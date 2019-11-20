@@ -69,7 +69,7 @@ public class EnumInstanceExpr extends ClassInstanceExpr implements Cloneable {
             tree.children[i] = null;
             continue;
           case 2:
-            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
             continue;
           }
         ASTNode child = (ASTNode) children[i];
@@ -86,7 +86,7 @@ public class EnumInstanceExpr extends ClassInstanceExpr implements Cloneable {
    * 
    */
   public EnumInstanceExpr() {
-    super(myScene, constantFactory);
+    super(myScene, constantFactory, primTypeCollector, myJimple, myPackageNamer);
 
 
   }
@@ -101,14 +101,14 @@ public class EnumInstanceExpr extends ClassInstanceExpr implements Cloneable {
   public void init$Children() {
     children = new ASTNode[3];
     setChild(new Opt(), 0);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
   }
   /**
    * @ast method 
    * 
    */
   public EnumInstanceExpr(Opt<TypeDecl> p0) {
-      super(myScene, constantFactory);
+      super(myScene, constantFactory, primTypeCollector, myJimple, myPackageNamer);
       setChild(p0, 0);
   }
   /**
@@ -409,7 +409,7 @@ public class EnumInstanceExpr extends ClassInstanceExpr implements Cloneable {
     int idx = ecs.getIndexOfChild(ec);
     if(idx == -1)
       throw new Error("internal: cannot determine numeric value of enum constant");
-    List<Expr> argList = new List<Expr>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+    List<Expr> argList = new List<Expr>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
     argList.add(Literal.buildStringLiteral(ec.name()));
     argList.add(Literal.buildIntegerLiteral(idx));
     for(Expr arg : ec.getArgs())

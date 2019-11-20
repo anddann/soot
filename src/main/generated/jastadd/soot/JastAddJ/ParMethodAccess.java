@@ -3,6 +3,13 @@ package soot.JastAddJ;
 
 import java.util.ArrayList;
 
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production ParMethodAccess : {@link MethodAccess} ::= <span class="component">TypeArgument:{@link Access}*</span>;
  * @ast node
@@ -106,8 +113,8 @@ public class ParMethodAccess extends MethodAccess implements Cloneable {
    * @ast method 
    * 
    */
-  public ParMethodAccess() {
-    super();
+  public ParMethodAccess(Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
 
 
   }
@@ -121,14 +128,16 @@ public class ParMethodAccess extends MethodAccess implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 0);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
   }
   /**
    * @ast method 
    * 
    */
-  public ParMethodAccess(String p0, List<Expr> p1, List<Access> p2) {
+  public ParMethodAccess(String p0, List<Expr> p1, List<Access> p2,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
+
     setID(p0);
     setChild(p1, 0);
     setChild(p2, 1);
@@ -137,7 +146,8 @@ public class ParMethodAccess extends MethodAccess implements Cloneable {
    * @ast method 
    * 
    */
-  public ParMethodAccess(beaver.Symbol p0, List<Expr> p1, List<Access> p2) {
+  public ParMethodAccess(beaver.Symbol p0, List<Expr> p1, List<Access> p2,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
     setID(p0);
     setChild(p1, 0);
     setChild(p2, 1);

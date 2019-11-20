@@ -11,6 +11,7 @@ import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SootMethod;
 import soot.SootMethodRef;
+import soot.SootResolver;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
@@ -36,6 +37,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	private Jimple myJimple;
 	private PrimTypeCollector primTypeCollector;
 	private ConstantFactory constantFactory;
+	private SootResolver mySootResolver;
 
 	/**
 	 * @apilevel low-level
@@ -278,7 +280,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	 */
 	protected void transformEnumConstructors() {
 		// make sure constructor is private
-		Modifiers newModifiers = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+		Modifiers newModifiers = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions);
 		for (int i = 0; i < getModifiers().getNumModifier(); ++i) {
 			String modifier = getModifiers().getModifier(i).getID();
 			if (modifier.equals("public") || modifier.equals("private") || modifier.equals("protected"))
@@ -291,11 +293,11 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 		// add implicit super constructor access since we are traversing
 		// without doing rewrites
 		if (!hasConstructorInvocation()) {
-			setConstructorInvocation(new ExprStmt(new SuperConstructorAccess("super", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory))));
+			setConstructorInvocation(new ExprStmt(new SuperConstructorAccess("super", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver))));
 		}
 		super.transformEnumConstructors();
-		getParameterList().insertChild(new ParameterDeclaration(new TypeAccess("java.lang", "String"), "@p0"), 0);
-		getParameterList().insertChild(new ParameterDeclaration(new TypeAccess("int"), "@p1"), 1);
+		getParameterList().insertChild(new ParameterDeclaration(new TypeAccess("java.lang", "String",myScene,primTypeCollector,myJimple), "@p0"), 0);
+		getParameterList().insertChild(new ParameterDeclaration(new TypeAccess("int",myScene,primTypeCollector,myJimple), "@p1"), 1);
 	}
 
 	/**
@@ -306,7 +308,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	public BodyDecl substitutedBodyDecl(Parameterization parTypeDecl) {
 		ConstructorDecl c = new ConstructorDeclSubstituted((Modifiers) getModifiers().fullCopy(), getID(),
 				getParameterList().substitute(parTypeDecl), getExceptionList().substitute(parTypeDecl), new Opt(),
-				new Block(), this, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+				new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), this, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
 		return c;
 	}
 
@@ -349,25 +351,25 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 		// building accessor
 		addEnclosingVariables();
 
-		Modifiers modifiers = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+		Modifiers modifiers = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions);
 		modifiers.addModifier(new Modifier("synthetic"));
 		modifiers.addModifier(new Modifier("public"));
 
 		List parameters = createAccessorParameters();
 
-		List exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+		List exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 		for (int i = 0; i < getNumException(); i++)
 			exceptionList.add(getException(i).type().createQualifiedAccess());
 
 		// add all parameters as arguments except for the dummy parameter
-		List args = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+		List args = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 		for (int i = 0; i < parameters.getNumChildNoTransform() - 1; i++)
 			args.add(new VarAccess(((ParameterDeclaration) parameters.getChildNoTransform(i)).name()));
 		ConstructorAccess access = new ConstructorAccess("this", args);
 		access.addEnclosingVariables = false;
 
 		c = new ConstructorDecl(modifiers, name(), parameters, exceptionList, new Opt(new ExprStmt(access)),
-				new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new ReturnStmt(new Opt()))), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+				new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(new ReturnStmt(new Opt())), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 		c = hostType().addConstructor(c);
 		c.addEnclosingVariables = false;
 		hostType().addAccessor(this, "constructor", c);
@@ -380,7 +382,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	 * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Backend/InnerClasses.jrag:536
 	 */
 	protected List createAccessorParameters() {
-		List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+		List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
 		for (int i = 0; i < getNumParameter(); i++)
 			parameters.add(new ParameterDeclaration(getParameter(i).type(), getParameter(i).name()));
 		parameters.add(
@@ -394,8 +396,11 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	 * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Backend/InnerClasses.jrag:544
 	 */
 	protected TypeDecl createAnonymousJavaTypeDecl() {
-		ClassDecl classDecl = new ClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new Modifier("synthetic"))),
-				"" + hostType().nextAnonymousIndex(), new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), myScene, myOptions, myPackageNamer);
+		List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+		Modifiers synthetic = new Modifiers(list.add(new Modifier("synthetic")), myPhaseOptions);
+		String s = "" + hostType().nextAnonymousIndex();
+		ClassDecl classDecl = new ClassDecl(synthetic,
+				s, new Opt(), list, list, myScene,myJimple,mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
 		classDecl = hostType().addMemberClass(classDecl);
 		hostType().addNestedType(classDecl);
 		return classDecl;
@@ -558,13 +563,15 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 
 	/**
 	 * @ast method
-	 *@param myScene
+	 *
+	 * @param myScene
 	 * @param myOptions
 	 * @param myPackageNamer
 	 * @param myJimple
 	 * @param primTypeCollector
-	 * @param constantFactory        */
-	public ConstructorDecl(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+	 * @param constantFactory
+	 * @param mySootResolver     */
+	public ConstructorDecl(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
 		super();
 
 		this.myScene = myScene;
@@ -573,6 +580,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 		this.myJimple = myJimple;
 		this.primTypeCollector = primTypeCollector;
 		this.constantFactory = constantFactory;
+		this.mySootResolver = mySootResolver;
 	}
 
 	/**
@@ -586,8 +594,8 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	 */
 	public void init$Children() {
 		children = new ASTNode[5];
-		setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
-		setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
+		setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+		setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
 		setChild(new Opt(), 3);
 	}
 
@@ -596,13 +604,14 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	 * 
 	 */
 	public ConstructorDecl(Modifiers p0, String p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4,
-						   Block p5, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+						   Block p5, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
 		this.myScene = myScene;
 		this.myOptions = myOptions;
 		this.myPackageNamer = myPackageNamer;
 		this.myJimple = myJimple;
 		this.primTypeCollector = primTypeCollector;
 		this.constantFactory = constantFactory;
+		this.mySootResolver = mySootResolver;
 		setChild(p0, 0);
 		setID(p1);
 		setChild(p2, 1);
@@ -616,13 +625,14 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	 * 
 	 */
 	public ConstructorDecl(Modifiers p0, Symbol p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4,
-						   Block p5, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+						   Block p5, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
 		this.myScene = myScene;
 		this.myOptions = myOptions;
 		this.myPackageNamer = myPackageNamer;
 		this.myJimple = myJimple;
 		this.primTypeCollector = primTypeCollector;
 		this.constantFactory = constantFactory;
+		this.mySootResolver = mySootResolver;
 		setChild(p0, 0);
 		setID(p1);
 		setChild(p2, 1);
@@ -2614,7 +2624,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	 */
 	private ConstructorDecl rewriteRule0() {
 		{
-			setConstructorInvocation(new ExprStmt(new SuperConstructorAccess("super", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory))));
+			setConstructorInvocation(new ExprStmt(new SuperConstructorAccess("super", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver))));
 			return this;
 		}
 	}

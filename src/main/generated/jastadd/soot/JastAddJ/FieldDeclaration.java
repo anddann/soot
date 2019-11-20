@@ -410,17 +410,17 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
       return m;
 
     int accessorIndex = fieldQualifier.accessorCounter++;
-    Modifiers modifiers = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+    Modifiers modifiers = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions);
     modifiers.addModifier(new Modifier("static"));
     modifiers.addModifier(new Modifier("synthetic"));
     modifiers.addModifier(new Modifier("public"));
 
-    List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+    List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
     if (!isStatic())
       parameters.add(new ParameterDeclaration(fieldQualifier.createQualifiedAccess(), "that"));
 
     m = new MethodDecl(modifiers, type().createQualifiedAccess(), "get$" + name() + "$access$" + accessorIndex, parameters,
-        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new ReturnStmt(createAccess())))), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(new ReturnStmt(createAccess())), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
     m = fieldQualifier.addMemberMethod(m);
     fieldQualifier.addAccessor(this, "field_read", m);
     return m;
@@ -437,20 +437,20 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
       return m;
 
     int accessorIndex = fieldQualifier.accessorCounter++;
-    Modifiers modifiers = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory));
+    Modifiers modifiers = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions);
     modifiers.addModifier(new Modifier("static"));
     modifiers.addModifier(new Modifier("synthetic"));
     modifiers.addModifier(new Modifier("public"));
 
-    List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+    List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
     if (!isStatic())
       parameters.add(new ParameterDeclaration(fieldQualifier.createQualifiedAccess(), "that"));
     parameters.add(new ParameterDeclaration(type().createQualifiedAccess(), "value"));
 
     m = new MethodDecl(modifiers, type().createQualifiedAccess(), "set$" + name() + "$access$" + accessorIndex, parameters,
-        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
-        new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new ExprStmt(new AssignSimpleExpr(createAccess(), new VarAccess("value"))))
-            .add(new ReturnStmt(new Opt(new VarAccess("value")))))), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
+        new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(new ExprStmt(new AssignSimpleExpr(createAccess(), new VarAccess("value"))))
+            .add(new ReturnStmt(new Opt(new VarAccess("value")))), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
     m = fieldQualifier.addMemberMethod(m);
     fieldQualifier.addAccessor(this, "field_write", m);
     return m;

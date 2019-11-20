@@ -86,7 +86,7 @@ public class InterfaceDeclSubstituted extends InterfaceDecl implements Cloneable
       for (int i = 0; i < children.length; ++i) {
           switch (i) {
           case 4:
-            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
             continue;
           }
         ASTNode child = (ASTNode) children[i];
@@ -117,8 +117,8 @@ public class InterfaceDeclSubstituted extends InterfaceDecl implements Cloneable
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
   }
   /**
    * @ast method 

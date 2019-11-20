@@ -64,7 +64,7 @@ public class AnnotationDecl extends InterfaceDecl implements Cloneable {
       for (int i = 0; i < children.length; ++i) {
           switch (i) {
           case 3:
-            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
             continue;
           }
         ASTNode child = (ASTNode) children[i];
@@ -128,8 +128,8 @@ public class AnnotationDecl extends InterfaceDecl implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
   }
   /**
    * @ast method 
@@ -497,7 +497,7 @@ public class AnnotationDecl extends InterfaceDecl implements Cloneable {
    * @apilevel internal
    */
   private List getSuperInterfaceIdList_compute() {
-    return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(new TypeAccess("java.lang.annotation", "Annotation"));
+    return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(new TypeAccess("java.lang.annotation", "Annotation"));
   }
   /* It is a compile-time error if the return type of a method declared in an
   annotation type is any type other than one of the following: one of the

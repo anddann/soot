@@ -12,7 +12,7 @@ import soot.jimple.Jimple;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:14
  */
 public abstract class Access extends Expr implements Cloneable {
-  private Scene myScene;
+  protected Scene myScene;
 
   /**
    * @apilevel low-level

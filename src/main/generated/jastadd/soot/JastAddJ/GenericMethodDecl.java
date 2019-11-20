@@ -84,7 +84,7 @@ public class GenericMethodDecl extends MethodDecl implements Cloneable {
     // adding a link to GenericMethodDecl to be used during substitution 
     // instead of the not yet existing parent link
     methodDecl.setGenericMethodDecl(this); 
-    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
     if(typeArguments.isEmpty()) {
       GenericMethodDecl original = original();
       for(int i = 0; i < original.getNumTypeParameter(); i++)
@@ -185,7 +185,7 @@ public class GenericMethodDecl extends MethodDecl implements Cloneable {
    * 
    */
   public GenericMethodDecl() {
-    super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+    super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
 
 
   }
@@ -199,17 +199,17 @@ public class GenericMethodDecl extends MethodDecl implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[6];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 3);
     setChild(new Opt(), 4);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 5);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 5);
   }
   /**
    * @ast method 
    * 
    */
   public GenericMethodDecl(Modifiers p0, Access p1, String p2, List<ParameterDeclaration> p3, List<Access> p4, Opt<Block> p5, List<TypeVariable> p6) {
-      super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+      super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
       setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);
@@ -223,7 +223,7 @@ public class GenericMethodDecl extends MethodDecl implements Cloneable {
    * 
    */
   public GenericMethodDecl(Modifiers p0, Access p1, beaver.Symbol p2, List<ParameterDeclaration> p3, List<Access> p4, Opt<Block> p5, List<TypeVariable> p6) {
-      super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+      super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
       setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);
@@ -839,7 +839,7 @@ public class GenericMethodDecl extends MethodDecl implements Cloneable {
   boolean isFinal = this.is$Final();
     MethodDecl lookupParMethodDecl_java_util_List_value = lookupParMethodDecl_compute(typeArguments);
     if(lookupParMethodDecl_java_util_List_list == null) {
-      lookupParMethodDecl_java_util_List_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      lookupParMethodDecl_java_util_List_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       lookupParMethodDecl_java_util_List_list.is$Final = true;
       lookupParMethodDecl_java_util_List_list.setParent(this);
     }

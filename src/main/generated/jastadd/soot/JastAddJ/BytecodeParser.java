@@ -313,7 +313,7 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
         parseMinor();
         parseMajor();
         parseConstantPool();
-        CompilationUnit cu = new CompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+        CompilationUnit cu = new CompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
         TypeDecl typeDecl = parseTypeDecl();
         cu.setPackageDecl(classInfo.packageDecl());
         cu.addTypeDecl(typeDecl);
@@ -381,7 +381,7 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
         decl.setModifiers(modifiers);
         decl.setID(parseThisClass());
         Access superClass = parseSuperClass();
-        decl.setImplementsList(parseInterfaces(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)));
+        decl.setImplementsList(parseInterfaces(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)));
         return decl;
       }
       else if ((flags & ACC_INTERFACE) == 0) {
@@ -391,7 +391,7 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
         Access superClass = parseSuperClass();
         decl.setSuperClassAccessOpt(superClass == null ? new Opt()
             : new Opt(superClass));
-        decl.setImplementsList(parseInterfaces(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)));
+        decl.setImplementsList(parseInterfaces(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)));
         return decl;
       } else if((flags & ACC_ANNOTATION) == 0) {
         InterfaceDecl decl = new InterfaceDecl();
@@ -400,8 +400,8 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
         Access superClass = parseSuperClass();
         decl.setSuperInterfaceIdList(
             parseInterfaces(
-              superClass == null ? new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)
-              : new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(superClass)));
+              superClass == null ? new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)
+              : new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(superClass)));
         return decl;
       } else {
         AnnotationDecl decl = new AnnotationDecl();
@@ -409,8 +409,8 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
         decl.setID(parseThisClass());
         Access superClass = parseSuperClass();
         parseInterfaces(
-            superClass == null ? new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)
-            : new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(superClass));
+            superClass == null ? new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)
+            : new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(superClass));
         return decl;
       }
     }
@@ -469,7 +469,7 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
 
 
     public static Modifiers modifiers(int flags) {
-      Modifiers m = new Modifiers();
+      Modifiers m = new Modifiers(myPhaseOptions);
       if ((flags & 0x0001) != 0)
         m.addModifier(new Modifier("public"));
       if ((flags & 0x0002) != 0)

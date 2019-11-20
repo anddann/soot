@@ -75,7 +75,7 @@ public class ResourceModifiers extends Modifiers implements Cloneable {
    * 
    */
   public ResourceModifiers() {
-    super();
+    super(myPhaseOptions);
 
 
   }
@@ -89,14 +89,15 @@ public class ResourceModifiers extends Modifiers implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[1];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
   }
   /**
    * @ast method 
    * 
    */
   public ResourceModifiers(List<Modifier> p0) {
-    setChild(p0, 0);
+      super(myPhaseOptions);
+      setChild(p0, 0);
   }
   /**
    * @apilevel low-level

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import soot.*;
 import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.options.Options;
 
@@ -20,9 +21,10 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
     private Options myOptions;
     private PackageNamer myPackageNamer;
     private Jimple myJimple;
-    private PrimTypeCollector primTypeCollector;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
 
-    /**
+  /**
    * @apilevel low-level
    */
   public void flushCache() {
@@ -358,14 +360,22 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
   }
   /**
    * @ast method 
-   *
+   *@param myScene
    * @param myOptions
-   */
-  public TryStmt(Options myOptions) {
+   * @param myPackageNamer
+   * @param myJimple
+   * @param primTypeCollector
+   * @param constantFactory        */
+  public TryStmt(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     super();
+    this.myScene = myScene;
 
 
-      this.myOptions = myOptions;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
   }
   /**
    * Initializes the child array to the correct size.
@@ -377,16 +387,21 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
     setChild(new Opt(), 2);
   }
   /**
    * @ast method 
    * 
    */
-  public TryStmt(Block p0, List<CatchClause> p1, Opt<Block> p2, Options myOptions) {
-      this.myOptions = myOptions;
-      setChild(p0, 0);
+  public TryStmt(Block p0, List<CatchClause> p1, Opt<Block> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
+    setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);
   }

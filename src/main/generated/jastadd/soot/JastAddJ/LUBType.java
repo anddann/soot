@@ -348,14 +348,14 @@ public class LUBType extends ReferenceType implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
   }
   /**
    * @ast method 
    * 
    */
-  public LUBType(Modifiers p0, String p1, List<BodyDecl> p2, List<Access> p3) {
+  public LUBType(Modifiers p0, String p1, List<BodyDecl> p2, List<Access> p3,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
       super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
       setChild(p0, 0);
     setID(p1);
@@ -366,8 +366,8 @@ public class LUBType extends ReferenceType implements Cloneable {
    * @ast method 
    * 
    */
-  public LUBType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2, List<Access> p3) {
-      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory,);
+  public LUBType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2, List<Access> p3,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

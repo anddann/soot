@@ -3,6 +3,7 @@ package soot.JastAddJ;
 
 import soot.PrimTypeCollector;
 import soot.Scene;
+import soot.SootResolver;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
@@ -20,6 +21,7 @@ public class List<T extends ASTNode> extends ASTNode<T> implements Cloneable {
   private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
   private ConstantFactory constantFactory;
+  private SootResolver mySootResolver;
 
   /**
    * @apilevel low-level
@@ -85,7 +87,7 @@ public class List<T extends ASTNode> extends ASTNode<T> implements Cloneable {
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Generics.jrag:977
    */
   public List substitute(Parameterization parTypeDecl) {
-    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
     for(int i = 0; i < getNumChild(); i++) {
       ASTNode node = getChild(i);
       if(node instanceof Access) {
@@ -123,14 +125,15 @@ public class List<T extends ASTNode> extends ASTNode<T> implements Cloneable {
   }
   /**
    * @ast method 
-   *@param myScene
+   *
+   * @param myScene
    * @param myOptions
    * @param myPackageNamer
    * @param myJimple
    * @param primTypeCollector
    * @param constantFactory
-   */
-  public List(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+   * @param mySootResolver     */
+  public List(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
     super();
     this.myScene = myScene;
     this.myOptions = myOptions;
@@ -140,6 +143,7 @@ public class List<T extends ASTNode> extends ASTNode<T> implements Cloneable {
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+    this.mySootResolver = mySootResolver;
   }
   /**
    * Initializes the child array to the correct size.
@@ -264,18 +268,18 @@ public class List<T extends ASTNode> extends ASTNode<T> implements Cloneable {
    */  private List rewriteRule0() {
 {
       ClassDecl c = (ClassDecl)getParent();
-      Modifiers m = new Modifiers();
+      Modifiers m = new Modifiers(myPhaseOptions);
       if(c.isPublic()) m.addModifier(new Modifier("public"));
       else if(c.isProtected()) m.addModifier(new Modifier("protected"));
       else if(c.isPrivate()) m.addModifier(new Modifier("private"));
       ConstructorDecl constructor = new ConstructorDecl(
             m,
             c.name(),
-            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
-            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
+            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
+            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
             new Opt(),
-            new Block(),
-              myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+            new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory),
+              myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       constructor.setDefaultConstructor();
       c.addBodyDecl(constructor);
       return this;

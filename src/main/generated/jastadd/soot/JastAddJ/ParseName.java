@@ -238,6 +238,6 @@ public class ParseName extends Access implements Cloneable {
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/SyntacticClassification.jrag:15
    * @apilevel internal
    */  private Access rewriteRule0() {
-    return nameType().reclassify(name(), start, end);
+    return nameType().reclassify(name(), start, end, myScene, primTypeCollector, myJimple);
   }
 }

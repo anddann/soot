@@ -84,7 +84,7 @@ public class FieldDecl extends MemberDecl implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
   }
   /**
    * @ast method 
@@ -369,7 +369,7 @@ public class FieldDecl extends MemberDecl implements Cloneable {
    * @apilevel internal
    */  private List rewriteTypeDecl_getBodyDecl() {
 {
-      List varList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      List varList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
       for(int j = 0; j < getNumVariableDecl(); j++) {
         FieldDeclaration f = 
           getVariableDecl(j).createFieldDeclarationFrom(

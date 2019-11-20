@@ -307,7 +307,7 @@ public class ElementValuePair extends ASTNode<ASTNode> implements Cloneable {
    * @apilevel internal
    */  private ElementValuePair rewriteRule0() {
 {
-      setElementValue(new ElementArrayValue(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory).add(getElementValue())));
+      setElementValue(new ElementArrayValue(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(getElementValue())));
       return this;
     }  }
 }

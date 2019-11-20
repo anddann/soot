@@ -165,7 +165,7 @@ public final class MethodPAG {
     return nodeFactory;
   }
 
-  public static MethodPAG v(PAG pag, SootMethod m) {
+  public static MethodPAG v(PAG pag, SootMethod m, Scene myScene, EntryPoints myEntryPoints) {
     MethodPAG ret = G.v().MethodPAG_methodToPag.get(m);
     if (ret == null) {
       ret = new MethodPAG(pag, myEntryPoints, m, myScene);

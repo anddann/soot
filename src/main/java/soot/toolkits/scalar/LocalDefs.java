@@ -27,6 +27,7 @@ import java.util.List;
 import soot.Body;
 import soot.Local;
 import soot.Unit;
+import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.SimpleLocalDefs.FlowAnalysisMode;
@@ -48,7 +49,7 @@ public interface LocalDefs {
      * @return a new LocalDefs instance
      */
     public static LocalDefs newLocalDefs(Body body) {
-      return newLocalDefs(body, false);
+      return newLocalDefs(body, false, myManager);
     }
 
     /**
@@ -56,13 +57,14 @@ public interface LocalDefs {
      * <code>expectUndefined</code> to <code>true</code>
      *
      * @see ExceptionalUnitGraph#ExceptionalUnitGraph(Body, soot.toolkits.exceptions.ThrowableSet.Manager)
-     * @param body
      * @param expectUndefinedUses
      *          if you expect uses of locals that are undefined
+     * @param body
+     * @param myThrowAnalysis
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefs(Body body, boolean expectUndefined) {
-      return newLocalDefs(new ExceptionalUnitGraph(body, myManager), expectUndefined);
+    public static LocalDefs newLocalDefs(Body body, boolean expectUndefined, ThrowAnalysis myThrowAnalysis) {
+      return newLocalDefs(new ExceptionalUnitGraph(body, myThrowAnalysis), expectUndefined);
     }
 
     /**

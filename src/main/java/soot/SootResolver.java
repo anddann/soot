@@ -43,6 +43,7 @@ import soot.JastAddJ.JavaParser;
 import soot.JastAddJ.Program;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.javaToJimple.IInitialResolver.Dependencies;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.options.Options;
 import soot.util.ConcurrentHashMultiMap;
@@ -68,15 +69,17 @@ public class SootResolver {
   private SourceLocator mySourceLocator;
   private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
 
   @Inject
-  public SootResolver(Options myOptions, Scene myScene, PackageNamer myPackageNamer, SourceLocator mySourceLocator, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+  public SootResolver(Options myOptions, Scene myScene, PackageNamer myPackageNamer, SourceLocator mySourceLocator, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myPackageNamer = myPackageNamer;
     this.mySourceLocator = mySourceLocator;
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
     worklist[SootClass.HIERARCHY] = new ArrayDeque<SootClass>();
     worklist[SootClass.SIGNATURES] = new ArrayDeque<SootClass>();
     worklist[SootClass.BODIES] = new ArrayDeque<SootClass>();
