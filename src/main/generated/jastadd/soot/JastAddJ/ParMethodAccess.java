@@ -114,7 +114,7 @@ public class ParMethodAccess extends MethodAccess implements Cloneable {
    * 
    */
   public ParMethodAccess(Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
-    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
+    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory, mySootResolver, myPhaseOptions);
 
 
   }
@@ -128,15 +128,15 @@ public class ParMethodAccess extends MethodAccess implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
   }
   /**
    * @ast method 
    * 
    */
   public ParMethodAccess(String p0, List<Expr> p1, List<Access> p2,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
-    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
+    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory, mySootResolver, myPhaseOptions);
 
     setID(p0);
     setChild(p1, 0);
@@ -147,7 +147,7 @@ public class ParMethodAccess extends MethodAccess implements Cloneable {
    * 
    */
   public ParMethodAccess(beaver.Symbol p0, List<Expr> p1, List<Access> p2,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
-    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
+    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory, mySootResolver, myPhaseOptions);
     setID(p0);
     setChild(p1, 0);
     setChild(p2, 1);

@@ -295,13 +295,17 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
     if(methodHolder != null)
       return methodHolder;
     String name = "$" + nextAnonymousIndex();
+    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+    Modifiers astNodes = new Modifiers(list, myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver);
+    List list1 = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+    List list2 = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     ClassDecl c = addMemberClass(new ClassDecl(
-      new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions),
+            astNodes,
       name,
       new Opt(),
-      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
-      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
-            myScene, myOptions, myPackageNamer));
+            list1,
+            list2,
+            myScene,myJimple,  mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions));
     methodHolder = c;
     return c;
   }
@@ -335,7 +339,7 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
    * 
    */
   public InterfaceDecl() {
-    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
 
 
   }
@@ -349,15 +353,15 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 2);
   }
   /**
    * @ast method 
    * 
    */
   public InterfaceDecl(Modifiers p0, String p1, List<Access> p2, List<BodyDecl> p3) {
-      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -368,7 +372,7 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
    * 
    */
   public InterfaceDecl(Modifiers p0, beaver.Symbol p1, List<Access> p2, List<BodyDecl> p3) {
-      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1, myPhaseOptions1);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

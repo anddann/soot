@@ -158,7 +158,7 @@ public class JasminClass extends AbstractJasminClass {
 
     if (!disablePeephole) {
       stmtGraph = new ExceptionalUnitGraph(body, myManager);
-      ld = LocalDefs.Factory.newLocalDefs(stmtGraph);
+      ld = LocalDefs.Factory.newLocalDefs(stmtGraph, myOptions);
       lu = LocalUses.Factory.newLocalUses(body, ld);
 
     }

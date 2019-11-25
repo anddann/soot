@@ -6,6 +6,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 /**
  * @production Modifiers : {@link ASTNode} ::= <span class="component">{@link Modifier}*</span>;
@@ -14,6 +21,13 @@ import soot.PhaseOptions;
  */
 public class Modifiers extends ASTNode<ASTNode> implements Cloneable {
   private PhaseOptions myPhaseOptions;
+  private Scene myScene;
+  private Options myOptions;
+  private PackageNamer myPackageNamer;
+  private Jimple myJimple;
+  private ConstantFactory constantFactory;
+  private PrimTypeCollector primTypeCollector;
+  private SootResolver mySootResolver;
 
   /**
    * @apilevel low-level
@@ -289,14 +303,26 @@ public class Modifiers extends ASTNode<ASTNode> implements Cloneable {
   public static final int ACC_VARARGS = 0x0080;
   /**
    * @ast method 
-   *
-   * @param myPhaseOptions
-   */
-  public Modifiers(PhaseOptions myPhaseOptions) {
+   *@param myPhaseOptions
+   * @param myScene
+   * @param myOptions
+   * @param myPackageNamer
+   * @param myJimple
+   * @param constantFactory
+   * @param primTypeCollector
+   * @param mySootResolver            */
+  public Modifiers(PhaseOptions myPhaseOptions, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, SootResolver mySootResolver) {
     super();
 
 
     this.myPhaseOptions = myPhaseOptions;
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    this.constantFactory = constantFactory;
+    this.primTypeCollector = primTypeCollector;
+    this.mySootResolver = mySootResolver;
   }
   /**
    * Initializes the child array to the correct size.
@@ -308,14 +334,21 @@ public class Modifiers extends ASTNode<ASTNode> implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[1];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 0);
   }
   /**
    * @ast method 
    * 
    */
-  public Modifiers(List<Modifier> p0, PhaseOptions myPhaseOptions) {
+  public Modifiers(List<Modifier> p0, PhaseOptions myPhaseOptions, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, SootResolver mySootResolver) {
     this.myPhaseOptions = myPhaseOptions;
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    this.constantFactory = constantFactory;
+    this.primTypeCollector = primTypeCollector;
+    this.mySootResolver = mySootResolver;
     setChild(p0, 0);
   }
   /**

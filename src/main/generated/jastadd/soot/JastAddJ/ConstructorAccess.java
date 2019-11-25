@@ -227,7 +227,7 @@ public class ConstructorAccess extends Access implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[1];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 0);
   }
   /**
    * @ast method 
@@ -447,11 +447,11 @@ public class ConstructorAccess extends Access implements Cloneable {
     public void transformation() {
     if(decl().isVariableArity() && !invokesVariableArityAsArray()) {
       // arguments to normal parameters
-      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       for(int i = 0; i < decl().getNumParameter() - 1; i++)
         list.add(getArg(i).fullCopy());
       // arguments to variable arity parameters
-      List last = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      List last = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       for(int i = decl().getNumParameter() - 1; i < getNumArg(); i++)
         last.add(getArg(i).fullCopy());
       // build an array holding arguments

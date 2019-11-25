@@ -175,7 +175,7 @@ public class CriticalSectionInterferenceGraph {
               CodeBlockRWSet rw = null;
               int size;
               if (optionLeaveOriginalLocks) {
-                rw = new CodeBlockRWSet();
+                rw = new CodeBlockRWSet(fullObjectFactory, myScene);
                 size = emptyEdge ? 0 : 1;
               } else {
                 rw = tn1.write.intersection(tn2.write);

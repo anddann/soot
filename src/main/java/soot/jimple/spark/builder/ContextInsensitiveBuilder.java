@@ -77,12 +77,12 @@ public class ContextInsensitiveBuilder {
 
   /** Creates an empty pointer assignment graph. */
   public PAG setup(SparkOptions opts) {
-    pag = opts.geom_pta() ? new GeomPointsTo(opts) : new PAG(myPhaseOptions, myScene, myArrayElement, constantFactory, opts);
+    pag = opts.geom_pta() ? new GeomPointsTo(opts) : new PAG(myPhaseOptions, myScene, myArrayElement, constantFactory, myEntrypoints, opts);
     if (opts.simulate_natives()) {
       pag.nativeMethodDriver = new NativeMethodDriver(new SparkNativeHelper(pag));
     }
     if (opts.on_fly_cg() && !opts.vta()) {
-      ofcg = new OnFlyCallGraph(pag, opts.apponly(), myScene, myArrayElement);
+      ofcg = new OnFlyCallGraph(pag, opts.apponly(), myScene, myArrayElement, myEntrypoints);
       pag.setOnFlyCallGraph(ofcg);
     } else {
       cgb = new CallGraphBuilder(myDumbPointerAnalysis);

@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Timers;
+import soot.jimple.ConstantFactory;
 import soot.options.Options;
 
 /**
@@ -185,22 +186,25 @@ public class ClassFile {
   private Options myOptions;
   private Timers myTimers;
   private Util myCoffiUtil;
+    private ConstantFactory constancFactory;
 
-  /**
+    /**
    * Creates a new ClassFile object given the name of the file.
-   *  @param nfn
-   *          file name which this ClassFile will represent.
-   * @param myCONSTANT_utf8_collector
-   * @param myOptions
-   * @param myTimers
-   * @param myCoffiUtil
-   */
-  public ClassFile(String nfn, CONSTANT_Utf8_collector myCONSTANT_utf8_collector, Options myOptions, Timers myTimers, Util myCoffiUtil) {
+     * @param nfn
+     *          file name which this ClassFile will represent.
+     * @param myCONSTANT_utf8_collector
+     * @param myOptions
+     * @param myTimers
+     * @param myCoffiUtil
+     * @param constancFactory
+     */
+  public ClassFile(String nfn, CONSTANT_Utf8_collector myCONSTANT_utf8_collector, Options myOptions, Timers myTimers, Util myCoffiUtil, ConstantFactory constancFactory) {
     fn = nfn;
     myCONSTANT_Utf8_collector = myCONSTANT_utf8_collector;
     this.myOptions = myOptions;
     this.myTimers = myTimers;
     this.myCoffiUtil = myCoffiUtil;
+      this.constancFactory = constancFactory;
   }
 
   /** Returns the name of this Class. */
@@ -607,7 +611,7 @@ public class ClassFile {
           }
           break;
         case cp_info.CONSTANT_Utf8:
-          CONSTANT_Utf8_info cputf8 = new CONSTANT_Utf8_info(d);
+          CONSTANT_Utf8_info cputf8 = new CONSTANT_Utf8_info(d, constancFactory);
           // If an equivalent CONSTANT_Utf8 already exists, we return
           // the pre-existing one and allow cputf8 to be GC'd.
           cp = (cp_info) myCONSTANT_Utf8_collector.add(cputf8);

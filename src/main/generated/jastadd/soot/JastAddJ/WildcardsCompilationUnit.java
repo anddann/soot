@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import beaver.Symbol;
+import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SootResolver;
@@ -22,6 +23,7 @@ import soot.options.Options;
 public class WildcardsCompilationUnit extends CompilationUnit implements Cloneable {
 
   private SootResolver mySootResolver;
+  private PhaseOptions myPhaseOptions;
 
   /**
    * @apilevel low-level
@@ -111,8 +113,8 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Generics.jrag:1414
    */
   public static LUBType createLUBType(Collection bounds, Scene myScene, Options myOptions, PackageNamer myPackageNamer,
-                                      Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
-      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+                                      Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       List boundList = list;
     StringBuffer name = new StringBuffer();
     for (Iterator iter = bounds.iterator(); iter.hasNext();) {
@@ -120,27 +122,28 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
       boundList.add(typeDecl.createBoundAccess());
       name.append("& " + typeDecl.typeName());
     }
-      Modifiers aPublic = new Modifiers(list.add(new Modifier("public")), myPhaseOptions);
+      Modifiers aPublic = new Modifiers(list.add(new Modifier("public")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver);
       LUBType decl = new LUBType(
               aPublic,
-        name.toString(), list, boundList,myScene, myJimple,mySootResolver, myPackageNamer,myOptions,primTypeCollector,constantFactory);
+        name.toString(), list, boundList,myScene, myJimple,mySootResolver, myPackageNamer,myOptions,primTypeCollector,constantFactory, myPhaseOptions);
     return decl;
   }
 
   /**
    * @ast method
-   *
-   * @param myScene
+   *@param myScene
    * @param myPackageNamer
    * @param myJimple
    * @param myOptions
    * @param primTypeCollector
    * @param constantFactory
-   * @param mySootResolver     */
+   * @param mySootResolver
+   * @param myPhaseOptions            */
   public WildcardsCompilationUnit(Scene myScene, PackageNamer myPackageNamer, Jimple myJimple, Options myOptions,
-                                  PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+                                  PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
     this.mySootResolver = mySootResolver;
+    this.myPhaseOptions = myPhaseOptions;
 
     this.myScene = myScene;
     this.myPackageNamer = myPackageNamer;
@@ -159,8 +162,8 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
   }
 
   /**
@@ -168,9 +171,10 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    * 
    */
   public WildcardsCompilationUnit(String p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene,
-                                  PackageNamer myPackageNamer, Jimple myJimple, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+                                  PackageNamer myPackageNamer, Jimple myJimple, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
     this.mySootResolver = mySootResolver;
+    this.myPhaseOptions = myPhaseOptions;
     this.myScene = myScene;
     this.myPackageNamer = myPackageNamer;
     this.myJimple = myJimple;
@@ -186,9 +190,10 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    * 
    */
   public WildcardsCompilationUnit(Symbol p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene,
-                                  PackageNamer myPackageNamer, Jimple myJimple, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+                                  PackageNamer myPackageNamer, Jimple myJimple, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
     this.mySootResolver = mySootResolver;
+    this.myPhaseOptions = myPhaseOptions;
 
     setPackageDecl(p0);
     setChild(p1, 0);
@@ -588,8 +593,8 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl typeWildcard_compute() {
     TypeDecl decl = new WildcardType(
-        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(new Modifier("public")), myPhaseOptions),
-        "?", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),myScene,myJimple,mySootResolver,myOptions,primTypeCollector,myPackageNamer,constantFactory);
+        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new Modifier("public")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
+        "?", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),myScene,myJimple,mySootResolver,myOptions,primTypeCollector,myPackageNamer,constantFactory);
     return decl;
   }
 
@@ -620,7 +625,7 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
     boolean isFinal = this.is$Final();
     TypeDecl lookupWildcardExtends_TypeDecl_value = lookupWildcardExtends_compute(bound);
     if (lookupWildcardExtends_TypeDecl_list == null) {
-      lookupWildcardExtends_TypeDecl_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      lookupWildcardExtends_TypeDecl_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       lookupWildcardExtends_TypeDecl_list.is$Final = true;
       lookupWildcardExtends_TypeDecl_list.setParent(this);
     }
@@ -638,8 +643,8 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl lookupWildcardExtends_compute(TypeDecl bound) {
     TypeDecl decl = new WildcardExtendsType(
-        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(new Modifier("public")), myPhaseOptions),
-        "? extends " + bound.fullName(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
+        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new Modifier("public")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
+        "? extends " + bound.fullName(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
         bound.createBoundAccess(),myScene,myJimple,mySootResolver,myOptions,primTypeCollector,myPackageNamer,constantFactory);
     return decl;
   }
@@ -671,7 +676,7 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
     boolean isFinal = this.is$Final();
     TypeDecl lookupWildcardSuper_TypeDecl_value = lookupWildcardSuper_compute(bound);
     if (lookupWildcardSuper_TypeDecl_list == null) {
-      lookupWildcardSuper_TypeDecl_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      lookupWildcardSuper_TypeDecl_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       lookupWildcardSuper_TypeDecl_list.is$Final = true;
       lookupWildcardSuper_TypeDecl_list.setParent(this);
     }
@@ -689,8 +694,8 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    */
   private TypeDecl lookupWildcardSuper_compute(TypeDecl bound) {
     TypeDecl decl = new WildcardSuperType(
-        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(new Modifier("public")), myPhaseOptions),
-        "? super " + bound.fullName(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
+        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new Modifier("public")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
+        "? super " + bound.fullName(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
         bound.createBoundAccess(),myScene,myJimple,mySootResolver,myOptions,primTypeCollector,myPackageNamer,constantFactory);
     return decl;
   }
@@ -722,7 +727,7 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
     boolean isFinal = this.is$Final();
     LUBType lookupLUBType_Collection_value = lookupLUBType_compute(bounds);
     if (lookupLUBType_Collection_list == null) {
-      lookupLUBType_Collection_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      lookupLUBType_Collection_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       lookupLUBType_Collection_list.is$Final = true;
       lookupLUBType_Collection_list.setParent(this);
     }
@@ -739,7 +744,7 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    * @apilevel internal
    */
   private LUBType lookupLUBType_compute(Collection bounds) {
-    return createLUBType(bounds, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    return createLUBType(bounds, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
   }
 
   /**
@@ -769,7 +774,7 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
     boolean isFinal = this.is$Final();
     GLBType lookupGLBType_ArrayList_value = lookupGLBType_compute(bounds);
     if (lookupGLBType_ArrayList_list == null) {
-      lookupGLBType_ArrayList_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      lookupGLBType_ArrayList_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       lookupGLBType_ArrayList_list.is$Final = true;
       lookupGLBType_ArrayList_list.setParent(this);
     }
@@ -786,7 +791,7 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    * @apilevel internal
    */
   private GLBType lookupGLBType_compute(ArrayList bounds) {
-    List boundList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    List boundList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     StringBuffer name = new StringBuffer();
     for (Iterator iter = bounds.iterator(); iter.hasNext();) {
       TypeDecl typeDecl = (TypeDecl) iter.next();
@@ -794,8 +799,8 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
       name.append("& " + typeDecl.typeName());
     }
     GLBType decl = new GLBType(
-        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(new Modifier("public")), myPhaseOptions),
-        name.toString(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), boundList,myScene,myJimple,mySootResolver,myOptions,primTypeCollector,myPackageNamer,constantFactory);
+        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new Modifier("public")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
+        name.toString(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), boundList,myScene,myJimple,mySootResolver,myOptions,primTypeCollector,myPackageNamer,constantFactory, myPhaseOptions);
     return decl;
   }
 

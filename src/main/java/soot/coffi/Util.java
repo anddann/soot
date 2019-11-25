@@ -138,7 +138,7 @@ public class Util {
   public void resolveFromClassFile(SootClass aClass, InputStream is, String filePath, Collection<Type> references, Util myCoffiUtil) {
     SootClass bclass = aClass;
     String className = bclass.getName();
-    ClassFile coffiClass = new ClassFile(className, myCONSTANT_utf8_collector, myOptions, myTimers, myCoffiUtil);
+    ClassFile coffiClass = new ClassFile(className, myCONSTANT_utf8_collector, myOptions, myTimers, myCoffiUtil, constancFactory);
 
     // Load up class file, and retrieve
     // bclass from class manager.

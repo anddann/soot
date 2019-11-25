@@ -3,7 +3,9 @@ package soot.JastAddJ;
 
 import java.util.Collection;
 
+import soot.PrimTypeCollector;
 import soot.Scene;
+import soot.jimple.Jimple;
 
 /**
  * @production AbstractDot : {@link Access} ::= <span class="component">Left:{@link Expr}</span> <span class="component">Right:{@link Access}</span>;
@@ -133,7 +135,7 @@ public class AbstractDot extends Access implements Cloneable {
    *
    * @param myScene
    */
-  public AbstractDot(Scene myScene) {
+  public AbstractDot(Scene myScene, Jimple myJimple, PrimTypeCollector primTypeCollector) {
     super(myScene, primTypeCollector, myJimple);
 
 
@@ -153,7 +155,7 @@ public class AbstractDot extends Access implements Cloneable {
    * @ast method 
    * 
    */
-  public AbstractDot(Expr p0, Access p1, Scene myScene) {
+  public AbstractDot(Expr p0, Access p1, Scene myScene,Jimple myJimple, PrimTypeCollector primTypeCollector) {
       super(myScene, primTypeCollector, myJimple);
       setChild(p0, 0);
     setChild(p1, 1);

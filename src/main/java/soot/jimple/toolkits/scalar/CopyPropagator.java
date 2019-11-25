@@ -47,7 +47,6 @@ import soot.jimple.ConstantFactory;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.IntConstant;
 import soot.jimple.LongConstant;
-import soot.jimple.NullConstant;
 import soot.jimple.Stmt;
 import soot.jimple.StmtBody;
 import soot.options.CPOptions;
@@ -143,7 +142,7 @@ public class CopyPropagator extends BodyTransformer {
     // Go through the definitions, building the webs
     UnitGraph graph = new ExceptionalUnitGraph(stmtBody, throwAnalysis, forceOmitExceptingUnitEdges, myManager, myPhaseDumper);
 
-    LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(graph);
+    LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(graph, myOptions);
 
     // Perform a local propagation pass.
     {

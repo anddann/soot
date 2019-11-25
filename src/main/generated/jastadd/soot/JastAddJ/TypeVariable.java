@@ -6,12 +6,24 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import beaver.Symbol;
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production TypeVariable : {@link ReferenceType} ::= <span class="component">{@link Modifiers}</span> <span class="component">&lt;ID:String&gt;</span> <span class="component">{@link BodyDecl}*</span> <span class="component">TypeBound:{@link Access}*</span>;
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Generics.ast:18
  */
 public class TypeVariable extends ReferenceType implements Cloneable {
+  private PhaseOptions myPhaseOptions;
+
   /**
    * @apilevel low-level
    */
@@ -261,10 +273,11 @@ public class TypeVariable extends ReferenceType implements Cloneable {
    * @ast method 
    * 
    */
-  public TypeVariable() {
-    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
+  public TypeVariable(Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
 
 
+    this.myPhaseOptions = myPhaseOptions;
   }
   /**
    * Initializes the child array to the correct size.
@@ -276,16 +289,17 @@ public class TypeVariable extends ReferenceType implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 2);
   }
   /**
    * @ast method 
    * 
    */
-  public TypeVariable(Modifiers p0, String p1, List<BodyDecl> p2, List<Access> p3) {
-      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
-      setChild(p0, 0);
+  public TypeVariable(Modifiers p0, String p1, List<BodyDecl> p2, List<Access> p3, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
+    this.myPhaseOptions = myPhaseOptions;
+    setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);
@@ -294,9 +308,10 @@ public class TypeVariable extends ReferenceType implements Cloneable {
    * @ast method 
    * 
    */
-  public TypeVariable(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2, List<Access> p3) {
-      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1);
-      setChild(p0, 0);
+  public TypeVariable(Modifiers p0, Symbol p1, List<BodyDecl> p2, List<Access> p3, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
+    this.myPhaseOptions = myPhaseOptions;
+    setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);
@@ -1521,7 +1536,7 @@ public class TypeVariable extends ReferenceType implements Cloneable {
         new TypeAccess(
           "java.lang",
           "Object"
-        )
+        ,myScene,primTypeCollector,myJimple)
       );
       return this;
     }  }

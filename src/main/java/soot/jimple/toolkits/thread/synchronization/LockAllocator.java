@@ -198,9 +198,9 @@ public class LockAllocator extends SceneTransformer {
     if (optionDoTLO) {
       logger.debug("[wjtp.tn] *** Find Thread-Local Objects *** " + (new Date()));
       if (mhp != null) {
-        tlo = new ThreadLocalObjectsAnalysis(mhp);
+        tlo = new ThreadLocalObjectsAnalysis(mhp, myScene);
       } else {
-        tlo = new ThreadLocalObjectsAnalysis(new SynchObliviousMhpAnalysis());
+        tlo = new ThreadLocalObjectsAnalysis(new SynchObliviousMhpAnalysis(), myScene);
       }
       if (!optionOnFlyTLO) {
         tlo.precompute();
@@ -624,7 +624,7 @@ public class LockAllocator extends SceneTransformer {
         continue;
       }
 
-      LocalDefs ld = LocalDefs.Factory.newLocalDefs(tn.method.retrieveActiveBody());
+      LocalDefs ld = LocalDefs.Factory.newLocalDefs(tn.method.retrieveActiveBody(), myManager);
 
       if (tn.origLock == null || !(tn.origLock instanceof Local)) {
         continue;

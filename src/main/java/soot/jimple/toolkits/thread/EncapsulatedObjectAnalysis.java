@@ -31,8 +31,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
+import soot.Scene;
 import soot.SootMethod;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.util.PhaseDumper;
 
 // EncapsulatedObjectAnalysis written by Richard L. Halpert, 2006-12-26
 // Checks if all methods of a class are "object-pure", meaning that
@@ -44,8 +48,14 @@ public class EncapsulatedObjectAnalysis // extends ForwardFlowAnalysis
   List cachedClasses;
   List<SootMethod> objectPureMethods;
   List<SootMethod> objectPureInitMethods;
+  Options myOptions;
+  ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
+  private Scene myScene;
 
-  public EncapsulatedObjectAnalysis() {
+  public EncapsulatedObjectAnalysis(PhaseDumper myPhaseDumper, Scene myScene) {
+    this.myPhaseDumper = myPhaseDumper;
+    this.myScene = myScene;
     cachedClasses = new ArrayList();
     objectPureMethods = new ArrayList<SootMethod>();
     objectPureInitMethods = new ArrayList<SootMethod>();
@@ -65,7 +75,7 @@ public class EncapsulatedObjectAnalysis // extends ForwardFlowAnalysis
             initMethod = method;
           }
           Body b = method.retrieveActiveBody();
-          EncapsulatedMethodAnalysis ema = new EncapsulatedMethodAnalysis(new ExceptionalUnitGraph(b, myManager));
+          EncapsulatedMethodAnalysis ema = new EncapsulatedMethodAnalysis(new ExceptionalUnitGraph(b, myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene));
           if (ema.isPure()) {
             mayBePureMethods.add(method);
           }

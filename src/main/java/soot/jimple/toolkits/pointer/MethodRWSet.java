@@ -45,7 +45,7 @@ public class MethodRWSet extends RWSet {
   protected boolean callsNative = false;
   protected boolean isFull = false;
   public static final int MAX_SIZE = Integer.MAX_VALUE;
-  private FullObjectFactory fullObjectFactory;
+  protected FullObjectFactory fullObjectFactory;
 
   public String toString() {
     boolean empty = true;

@@ -52,12 +52,10 @@ import soot.Type;
 import soot.Unit;
 import soot.jimple.AssignStmt;
 import soot.jimple.InvokeStmt;
-import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.NewExpr;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
-import soot.options.Options;
 import soot.toolkits.scalar.LocalDefs;
 
 /**
@@ -835,7 +833,7 @@ public class TypeResolver {
   }
 
   private void split_new() {
-    LocalDefs defs = LocalDefs.Factory.newLocalDefs(stmtBody);
+    LocalDefs defs = LocalDefs.Factory.newLocalDefs(stmtBody, myManager);
     PatchingChain<Unit> units = stmtBody.getUnits();
     Stmt[] stmts = new Stmt[units.size()];
 

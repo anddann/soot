@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import beaver.Symbol;
+import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.Scene;
+import soot.SootResolver;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
@@ -25,8 +27,10 @@ public class Annotation extends Modifier implements Cloneable {
   private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
   private ConstantFactory constantFactory;
+    private SootResolver mySootResolver;
+    private PhaseOptions myPhaseOptions;
 
-  /**
+    /**
    * @apilevel low-level
    */
   public void flushCache() {
@@ -187,8 +191,10 @@ public class Annotation extends Modifier implements Cloneable {
    * @param myPackageNamer
    * @param myJimple
    * @param primTypeCollector
-   * @param constantFactory        */
-  public Annotation(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+   * @param constantFactory
+   * @param mySootResolver
+   * @param myPhaseOptions            */
+  public Annotation(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     super();
 
 
@@ -198,6 +204,8 @@ public class Annotation extends Modifier implements Cloneable {
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+      this.mySootResolver = mySootResolver;
+      this.myPhaseOptions = myPhaseOptions;
   }
   /**
    * Initializes the child array to the correct size.
@@ -209,20 +217,22 @@ public class Annotation extends Modifier implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
   }
   /**
    * @ast method 
    * 
    */
-  public Annotation(String p0, Access p1, List<ElementValuePair> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+  public Annotation(String p0, Access p1, List<ElementValuePair> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
-    setID(p0);
+      this.mySootResolver = mySootResolver;
+      this.myPhaseOptions = myPhaseOptions;
+      setID(p0);
     setChild(p1, 0);
     setChild(p2, 1);
   }
@@ -230,14 +240,16 @@ public class Annotation extends Modifier implements Cloneable {
    * @ast method 
    * 
    */
-  public Annotation(Symbol p0, Access p1, List<ElementValuePair> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+  public Annotation(Symbol p0, Access p1, List<ElementValuePair> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
-    setID(p0);
+      this.mySootResolver = mySootResolver;
+      this.myPhaseOptions = myPhaseOptions;
+      setID(p0);
     setChild(p1, 0);
     setChild(p2, 1);
   }

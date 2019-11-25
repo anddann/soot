@@ -23,8 +23,10 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
     private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
   private ConstantFactory constantFactory;
+    private SootResolver mySootResolver;
+    private PhaseOptions myPhaseOptions;
 
-  /**
+    /**
    * @apilevel low-level
    */
   public void flushCache() {
@@ -365,8 +367,10 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
    * @param myPackageNamer
    * @param myJimple
    * @param primTypeCollector
-   * @param constantFactory        */
-  public TryStmt(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+   * @param constantFactory
+   * @param mySootResolver
+   * @param myPhaseOptions            */
+  public TryStmt(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     super();
     this.myScene = myScene;
 
@@ -376,6 +380,8 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+      this.mySootResolver = mySootResolver;
+      this.myPhaseOptions = myPhaseOptions;
   }
   /**
    * Initializes the child array to the correct size.
@@ -387,21 +393,23 @@ public class TryStmt extends Stmt implements Cloneable, FinallyHost {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
     setChild(new Opt(), 2);
   }
   /**
    * @ast method 
    * 
    */
-  public TryStmt(Block p0, List<CatchClause> p1, Opt<Block> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+  public TryStmt(Block p0, List<CatchClause> p1, Opt<Block> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
-    setChild(p0, 0);
+      this.mySootResolver = mySootResolver;
+      this.myPhaseOptions = myPhaseOptions;
+      setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);
   }

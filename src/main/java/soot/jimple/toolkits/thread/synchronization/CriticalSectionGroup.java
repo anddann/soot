@@ -48,7 +48,7 @@ class CriticalSectionGroup implements Iterable<CriticalSection> {
   public CriticalSectionGroup(int groupNum) {
     this.groupNum = groupNum;
     this.criticalSections = new ArrayList<CriticalSection>();
-    this.rwSet = new CodeBlockRWSet();
+    this.rwSet = new CodeBlockRWSet(fullObjectFactory, myScene);
 
     this.isDynamicLock = false;
     this.useDynamicLock = false;

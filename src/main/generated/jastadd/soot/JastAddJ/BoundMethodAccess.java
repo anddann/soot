@@ -97,7 +97,7 @@ public class BoundMethodAccess extends MethodAccess implements Cloneable {
    * 
    */
   public BoundMethodAccess(Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
-    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
+    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory, mySootResolver, myPhaseOptions);
 
 
   }
@@ -111,14 +111,14 @@ public class BoundMethodAccess extends MethodAccess implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[1];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 0);
   }
   /**
    * @ast method 
    * 
    */
   public BoundMethodAccess(String p0, List<Expr> p1,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
-    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
+    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory, mySootResolver, myPhaseOptions);
     setID(p0);
     setChild(p1, 0);
   }
@@ -127,7 +127,7 @@ public class BoundMethodAccess extends MethodAccess implements Cloneable {
    * 
    */
   public BoundMethodAccess(beaver.Symbol p0, List<Expr> p1,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
-    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
+    super(myScene, primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory, mySootResolver, myPhaseOptions);
     setID(p0);
     setChild(p1, 0);
   }

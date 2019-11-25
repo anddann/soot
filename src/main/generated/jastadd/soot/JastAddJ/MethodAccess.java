@@ -24,6 +24,8 @@ public class MethodAccess extends Access implements Cloneable {
   protected Options myOptions;
   protected PackageNamer myPackageNamer;
   protected ConstantFactory constantFactory;
+  private SootResolver mySootResolver;
+  private PhaseOptions myPhaseOptions;
 
   /**
    * @apilevel low-level
@@ -173,8 +175,8 @@ public class MethodAccess extends Access implements Cloneable {
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:56
    */
-  public MethodAccess(String name, List args, int start, int end, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, ConstantFactory constantFactory, ConstantFactory constantFactory1) {
-    this(name, args,myScene,primTypeCollector, myJimple, myOptions, myPackageNamer, constantFactory);
+  public MethodAccess(String name, List args, int start, int end, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, ConstantFactory constantFactory, ConstantFactory constantFactory1, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
+    this(name, args,myScene,primTypeCollector, myJimple, myOptions, myPackageNamer, constantFactory, mySootResolver, myPhaseOptions);
     setStart(start);
     setEnd(end);
   }
@@ -487,13 +489,15 @@ public class MethodAccess extends Access implements Cloneable {
    * @ast method 
    * 
    */
-  public MethodAccess(Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+  public MethodAccess(Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     super(myScene, primTypeCollector, myJimple);
     this.myOptions = myOptions;
 
 
     this.myPackageNamer = myPackageNamer;
     this.constantFactory = constantFactory;
+    this.mySootResolver = mySootResolver;
+    this.myPhaseOptions = myPhaseOptions;
   }
   /**
    * Initializes the child array to the correct size.
@@ -505,17 +509,19 @@ public class MethodAccess extends Access implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[1];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 0);
   }
   /**
    * @ast method 
    * 
    */
-  public MethodAccess(String p0, List<Expr> p1, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+  public MethodAccess(String p0, List<Expr> p1, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
       super(myScene, primTypeCollector, myJimple);
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
     this.constantFactory = constantFactory;
+    this.mySootResolver = mySootResolver;
+    this.myPhaseOptions = myPhaseOptions;
     setID(p0);
     setChild(p1, 0);
   }
@@ -523,11 +529,13 @@ public class MethodAccess extends Access implements Cloneable {
    * @ast method 
    * 
    */
-  public MethodAccess(Symbol p0, List<Expr> p1, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+  public MethodAccess(Symbol p0, List<Expr> p1, Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, PackageNamer myPackageNamer, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
       super(myScene, primTypeCollector, myJimple);
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
     this.constantFactory = constantFactory;
+    this.mySootResolver = mySootResolver;
+    this.myPhaseOptions = myPhaseOptions;
     setID(p0);
     setChild(p1, 0);
   }
@@ -783,11 +791,11 @@ public class MethodAccess extends Access implements Cloneable {
     public void transformation() {
     if(decl().isVariableArity() && !invokesVariableArityAsArray()) {
       // arguments to normal parameters
-      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       for(int i = 0; i < decl().getNumParameter() - 1; i++)
         list.add(getArg(i).fullCopy());
       // arguments to variable arity parameters
-      List last = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      List last = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       for(int i = decl().getNumParameter() - 1; i < getNumArg(); i++)
         last.add(getArg(i).fullCopy());
       // build an array holding arguments

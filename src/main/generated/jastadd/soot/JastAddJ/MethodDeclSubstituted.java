@@ -80,7 +80,7 @@ public class MethodDeclSubstituted extends MethodDecl implements Cloneable {
    * 
    */
   public MethodDeclSubstituted() {
-    super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
+    super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 
 
   }
@@ -94,8 +94,8 @@ public class MethodDeclSubstituted extends MethodDecl implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[5];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 3);
     setChild(new Opt(), 4);
   }
   /**
@@ -103,7 +103,7 @@ public class MethodDeclSubstituted extends MethodDecl implements Cloneable {
    * 
    */
   public MethodDeclSubstituted(Modifiers p0, Access p1, String p2, List<ParameterDeclaration> p3, List<Access> p4, Opt<Block> p5, MethodDecl p6) {
-      super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
+      super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);
@@ -117,7 +117,7 @@ public class MethodDeclSubstituted extends MethodDecl implements Cloneable {
    * 
    */
   public MethodDeclSubstituted(Modifiers p0, Access p1, beaver.Symbol p2, List<ParameterDeclaration> p3, List<Access> p4, Opt<Block> p5, MethodDecl p6) {
-      super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
+      super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setChild(p0, 0);
     setChild(p1, 1);
     setID(p2);

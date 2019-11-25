@@ -242,7 +242,7 @@ public class DeadAssignmentEliminator extends BodyTransformer {
       // Add all the statements which are used to compute values
       // for the essential statements, recursively
 
-      final LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(b);
+      final LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(b, myManager);
 
       if (!allEssential) {
         Set<Unit> essential = new HashSet<Unit>(b.getUnits().size());

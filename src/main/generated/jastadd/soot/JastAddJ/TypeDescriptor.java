@@ -66,7 +66,7 @@ public class TypeDescriptor extends java.lang.Object {
 
 
     public List parameterList() {
-      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       String s = descriptor;
       while(!s.equals("")) {
         s = typeList(s, list);
@@ -76,10 +76,10 @@ public class TypeDescriptor extends java.lang.Object {
 
 
     public List parameterListSkipFirst() {
-      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       String s = descriptor;
       if(!s.equals(""))
-        s = typeList(s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)); // skip first
+        s = typeList(s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)); // skip first
       while(!s.equals("")) {
         s = typeList(s, list);
       }
@@ -92,42 +92,42 @@ public class TypeDescriptor extends java.lang.Object {
       char c = s.charAt(0);
       switch (c) {
         case 'B':
-          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions),
+          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
                 new PrimitiveTypeAccess("byte"), "p" + l.getNumChildNoTransform()));
           return s.substring(1);
         case 'C':
-          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions),
+          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
                 new PrimitiveTypeAccess("char"), "p" + l.getNumChildNoTransform()));
           return s.substring(1);
         case 'D':
-          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions),
+          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
                 new PrimitiveTypeAccess("double"), "p" + l.getNumChildNoTransform()));
           return s.substring(1);
         case 'F':
-          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions),
+          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
                 new PrimitiveTypeAccess("float"), "p" + l.getNumChildNoTransform()));
           return s.substring(1);
         case 'I':
-          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions),
+          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
                 new PrimitiveTypeAccess("int"), "p" + l.getNumChildNoTransform()));
           return s.substring(1);
         case 'J':
-          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions),
+          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
                 new PrimitiveTypeAccess("long"), "p" + l.getNumChildNoTransform()));
           return s.substring(1);
         case 'S':
-          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions),
+          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
                 new PrimitiveTypeAccess("short"), "p" + l.getNumChildNoTransform()));
           return s.substring(1);
         case 'Z':
-          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions),
+          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
                 new PrimitiveTypeAccess("boolean"), "p" + l.getNumChildNoTransform()));
           return s.substring(1);
         case 'L':
           int pos = s.indexOf(';');
           String s1 = s.substring(1, pos);
           String s2 = s.substring(pos+1, s.length());
-          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions),
+          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
                 this.p.fromClassName(s1),
                 "p" + l.getNumChildNoTransform()));
           return s2;
@@ -138,7 +138,7 @@ public class TypeDescriptor extends java.lang.Object {
           ArrayTypeAccess top = bottom;
           for(int j = 0; j < i - 1; j++)
             top = new ArrayTypeAccess(top);
-          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions), top, "p" + l.getNumChild()));
+          l.add(new ParameterDeclaration(new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), top, "p" + l.getNumChild()));
           return arrayTypeList(s.substring(i), bottom);
         default:
           this.p.println("Error: unknown Type \"" + c + "\" in TypeDescriptor");

@@ -238,7 +238,7 @@ public class ClassFieldAnalysis {
 
     /* build D/U web, find the value of each candidate */
     {
-      LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(body);
+      LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(body, myManager);
 
       Set<Map.Entry<Stmt, SootField>> entries = stmtfield.entrySet();
 

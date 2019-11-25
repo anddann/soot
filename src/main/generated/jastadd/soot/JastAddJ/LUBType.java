@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.*;
 import java.util.ArrayList;
 
+import beaver.Symbol;
 import soot.*;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.ConstantFactory;
@@ -17,7 +18,9 @@ import soot.options.Options;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Generics.ast:46
  */
 public class LUBType extends ReferenceType implements Cloneable {
-  /**
+    private PhaseOptions myPhaseOptions;
+
+    /**
    * @apilevel low-level
    */
   public void flushCache() {
@@ -332,11 +335,14 @@ public class LUBType extends ReferenceType implements Cloneable {
    * @param myOptions
    * @param primTypeCollector
    * @param constantFactory
-   * @param myJimple     */
-  public LUBType(Scene myScene, PackageNamer myPackageNamer, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, Jimple myJimple) {
-    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+   * @param myJimple
+   * @param myPhaseOptions
+   * @param myPhaseOptions1       */
+  public LUBType(Scene myScene, PackageNamer myPackageNamer, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, Jimple myJimple, PhaseOptions myPhaseOptions, PhaseOptions myPhaseOptions1) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
 
 
+      this.myPhaseOptions = myPhaseOptions1;
   }
   /**
    * Initializes the child array to the correct size.
@@ -348,15 +354,16 @@ public class LUBType extends ReferenceType implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 2);
   }
   /**
    * @ast method 
    * 
    */
-  public LUBType(Modifiers p0, String p1, List<BodyDecl> p2, List<Access> p3,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
-      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+  public LUBType(Modifiers p0, String p1, List<BodyDecl> p2, List<Access> p3, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
+      this.myPhaseOptions = myPhaseOptions;
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -366,8 +373,9 @@ public class LUBType extends ReferenceType implements Cloneable {
    * @ast method 
    * 
    */
-  public LUBType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2, List<Access> p3,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
-      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+  public LUBType(Modifiers p0, Symbol p1, List<BodyDecl> p2, List<Access> p3, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
+      this.myPhaseOptions = myPhaseOptions;
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

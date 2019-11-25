@@ -20,8 +20,10 @@ public class ClassInstanceExpr extends Access implements Cloneable {
   private ConstantFactory constantFactory;
   private PackageNamer myPackageNamer;
   private Options myOptions;
+    private SootResolver mySootResolver;
+    private PhaseOptions myPhaseOptions;
 
-  /**
+    /**
    * @apilevel low-level
    */
   public void flushCache() {
@@ -178,8 +180,8 @@ public class ClassInstanceExpr extends Access implements Cloneable {
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:82
    */
-  public ClassInstanceExpr(Access type, List args, Scene myScene, ConstantFactory constantFactory, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, Jimple myJimple) {
-    this(type, args, new Opt(), myScene, constantFactory, primTypeCollector, myJimple, myPackageNamer);
+  public ClassInstanceExpr(Access type, List args, Scene myScene, ConstantFactory constantFactory, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, Jimple myJimple, Options myOptions, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
+    this(type, args, new Opt(), myScene, constantFactory, primTypeCollector, myJimple, myPackageNamer, myOptions, mySootResolver, myPhaseOptions);
   }
   /**
    * @ast method 
@@ -480,19 +482,24 @@ public class ClassInstanceExpr extends Access implements Cloneable {
   }
   /**
    * @ast method 
-   *
-   * @param myScene
+   *@param myScene
    * @param constantFactory
    * @param primTypeCollector
    * @param myJimple
-   * @param myPackageNamer   */
-  public ClassInstanceExpr(Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Jimple myJimple, PackageNamer myPackageNamer) {
+   * @param myPackageNamer
+   * @param myOptions
+   * @param mySootResolver
+   * @param myPhaseOptions            */
+  public ClassInstanceExpr(Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     super(myScene, primTypeCollector, myJimple);
 
 
     this.myScene = myScene;
     this.constantFactory = constantFactory;
     this.myPackageNamer = myPackageNamer;
+      this.myOptions = myOptions;
+      this.mySootResolver = mySootResolver;
+      this.myPhaseOptions = myPhaseOptions;
   }
   /**
    * Initializes the child array to the correct size.
@@ -504,19 +511,22 @@ public class ClassInstanceExpr extends Access implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
     setChild(new Opt(), 2);
   }
   /**
    * @ast method 
    * 
    */
-  public ClassInstanceExpr(Access p0, List<Expr> p1, Opt<TypeDecl> p2, Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Jimple myJimple, PackageNamer myPackageNamer) {
+  public ClassInstanceExpr(Access p0, List<Expr> p1, Opt<TypeDecl> p2, Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
       super(myScene, primTypeCollector, myJimple);
     this.myScene = myScene;
     this.constantFactory = constantFactory;
     this.myPackageNamer = myPackageNamer;
-    setChild(p0, 0);
+      this.myOptions = myOptions;
+      this.mySootResolver = mySootResolver;
+      this.myPhaseOptions = myPhaseOptions;
+      setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);
   }
@@ -769,11 +779,11 @@ public class ClassInstanceExpr extends Access implements Cloneable {
     public void transformation() {
     if(decl().isVariableArity() && !invokesVariableArityAsArray()) {
       // arguments to normal parameters
-      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       for(int i = 0; i < decl().getNumParameter() - 1; i++)
         list.add(getArg(i).fullCopy());
       // arguments to variable arity parameters
-      List last = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      List last = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       for(int i = decl().getNumParameter() - 1; i < getNumArg(); i++)
         last.add(getArg(i).fullCopy());
       // build an array holding arguments

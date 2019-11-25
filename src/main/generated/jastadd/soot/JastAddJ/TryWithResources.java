@@ -161,7 +161,7 @@ public class TryWithResources extends TryStmt implements Cloneable, VariableScop
    * 
    */
   public TryWithResources() {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 
 
   }
@@ -175,8 +175,8 @@ public class TryWithResources extends TryStmt implements Cloneable, VariableScop
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 2);
     setChild(new Opt(), 3);
   }
   /**
@@ -184,7 +184,7 @@ public class TryWithResources extends TryStmt implements Cloneable, VariableScop
    * 
    */
   public TryWithResources(List<ResourceDeclaration> p0, Block p1, List<CatchClause> p2, Opt<Block> p3) {
-      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);

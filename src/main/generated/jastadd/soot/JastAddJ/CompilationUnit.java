@@ -8,6 +8,7 @@ import java.util.Collection;
 import beaver.Symbol;
 import soot.PrimTypeCollector;
 import soot.Scene;
+import soot.SootResolver;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
@@ -25,6 +26,7 @@ public class CompilationUnit extends ASTNode<ASTNode> implements Cloneable {
   protected Jimple myJimple;
   protected PrimTypeCollector primTypeCollector;
   protected ConstantFactory constantFactory;
+  private SootResolver mySootResolver;
 
   /**
    * @apilevel low-level
@@ -252,13 +254,15 @@ public class CompilationUnit extends ASTNode<ASTNode> implements Cloneable {
   public boolean isResolved = false;
   /**
    * @ast method 
-   *@param myScene
+   *
+   * @param myScene
    * @param myOptions
    * @param myPackageNamer
    * @param myJimple
    * @param primTypeCollector
-   * @param constantFactory        */
-  public CompilationUnit(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+   * @param constantFactory
+   * @param mySootResolver     */
+  public CompilationUnit(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
     super();
     this.myScene = myScene;
 
@@ -268,6 +272,7 @@ public class CompilationUnit extends ASTNode<ASTNode> implements Cloneable {
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+    this.mySootResolver = mySootResolver;
   }
   /**
    * Initializes the child array to the correct size.
@@ -279,20 +284,21 @@ public class CompilationUnit extends ASTNode<ASTNode> implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
   }
   /**
    * @ast method 
    * 
    */
-  public CompilationUnit(String p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+  public CompilationUnit(String p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+    this.mySootResolver = mySootResolver;
     setPackageDecl(p0);
     setChild(p1, 0);
     setChild(p2, 1);
@@ -301,13 +307,14 @@ public class CompilationUnit extends ASTNode<ASTNode> implements Cloneable {
    * @ast method 
    * 
    */
-  public CompilationUnit(Symbol p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+  public CompilationUnit(Symbol p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+    this.mySootResolver = mySootResolver;
     setPackageDecl(p0);
     setChild(p1, 0);
     setChild(p2, 1);

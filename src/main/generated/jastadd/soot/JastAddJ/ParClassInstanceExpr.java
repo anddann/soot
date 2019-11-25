@@ -84,7 +84,7 @@ public class ParClassInstanceExpr extends ClassInstanceExpr implements Cloneable
    * 
    */
   public ParClassInstanceExpr() {
-    super(myScene, constantFactory, primTypeCollector, myJimple, myPackageNamer);
+    super(myScene, constantFactory, primTypeCollector, myJimple, myPackageNamer, myOptions, mySootResolver, myPhaseOptions);
 
 
   }
@@ -98,16 +98,16 @@ public class ParClassInstanceExpr extends ClassInstanceExpr implements Cloneable
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
     setChild(new Opt(), 2);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 3);
   }
   /**
    * @ast method 
    * 
    */
   public ParClassInstanceExpr(Access p0, List<Expr> p1, Opt<TypeDecl> p2, List<Access> p3) {
-      super(myScene, constantFactory, primTypeCollector, myJimple, myPackageNamer);
+      super(myScene, constantFactory, primTypeCollector, myJimple, myPackageNamer, myOptions, mySootResolver, myPhaseOptions);
       setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);

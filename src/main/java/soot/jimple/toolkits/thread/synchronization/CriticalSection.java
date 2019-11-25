@@ -68,8 +68,8 @@ class CriticalSection extends SynchronizedRegion {
     this.IDNum = nextIDNum;
     nextIDNum++;
     this.nestLevel = nestLevel;
-    this.read = new CodeBlockRWSet();
-    this.write = new CodeBlockRWSet();
+    this.read = new CodeBlockRWSet(fullObjectFactory, myScene);
+    this.write = new CodeBlockRWSet(fullObjectFactory, myScene);
     this.invokes = new HashSet<Unit>();
     this.units = new HashSet<Unit>();
     this.unitToRWSet = new HashMap<Unit, CodeBlockRWSet>();
@@ -92,9 +92,9 @@ class CriticalSection extends SynchronizedRegion {
     this.IDNum = tn.IDNum;
     this.nestLevel = tn.nestLevel;
     this.origLock = tn.origLock;
-    this.read = new CodeBlockRWSet();
+    this.read = new CodeBlockRWSet(fullObjectFactory, myScene);
     this.read.union(tn.read);
-    this.write = new CodeBlockRWSet();
+    this.write = new CodeBlockRWSet(fullObjectFactory, myScene);
     this.write.union(tn.write);
     this.invokes = (HashSet<Unit>) tn.invokes.clone();
     this.units = (HashSet<Unit>) tn.units.clone();

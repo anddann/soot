@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.io.*;
 import java.util.Collection;
 
+import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.Scene;
+import soot.SootResolver;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
@@ -26,6 +28,8 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
   private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
   private ConstantFactory constantFactory;
+  private SootResolver mySootResolver;
+  private PhaseOptions myPhaseOptions;
 
   /**
    * @apilevel low-level
@@ -444,7 +448,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
   public void simpleReset() {
     lookupType_String_String_values = new HashMap();
     hasPackage_String_values = new HashMap();
-    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     for(int i = 0; i < getNumCompilationUnit(); i++) {
       CompilationUnit unit = getCompilationUnit(i);
       if(!unit.fromSource()) {
@@ -641,7 +645,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
 
 		loadedCompilationUnit.remove(fileName);
 
-		List<CompilationUnit> newList = new List<CompilationUnit>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+		List<CompilationUnit> newList = new List<CompilationUnit>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		for (soot.JastAddJ.CompilationUnit cu : getCompilationUnits()) {
 			boolean dontAdd = false;
 			if(cu.fromSource()) {
@@ -663,8 +667,10 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
    * @param myPackageNamer
    * @param myJimple
    * @param primTypeCollector
-   * @param constantFactory        */
-  public Program(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+   * @param constantFactory
+   * @param mySootResolver
+   * @param myPhaseOptions            */
+  public Program(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     super();
     this.myScene = myScene;
     this.myOptions = myOptions;
@@ -672,6 +678,8 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+    this.mySootResolver = mySootResolver;
+    this.myPhaseOptions = myPhaseOptions;
 
     is$Final(true);
 
@@ -686,19 +694,21 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[1];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 0);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 0);
   }
   /**
    * @ast method 
    * 
    */
-  public Program(List<CompilationUnit> p0, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+  public Program(List<CompilationUnit> p0, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+    this.mySootResolver = mySootResolver;
+    this.myPhaseOptions = myPhaseOptions;
     setChild(p0, 0);
     is$Final(true);
   }
@@ -1530,7 +1540,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
   boolean isFinal = this.is$Final();
     CompilationUnit getLibCompilationUnit_String_value = getLibCompilationUnit_compute(fullName);
     if(getLibCompilationUnit_String_list == null) {
-      getLibCompilationUnit_String_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      getLibCompilationUnit_String_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       getLibCompilationUnit_String_list.is$Final = true;
       getLibCompilationUnit_String_list.setParent(this);
     }
@@ -1578,7 +1588,7 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
    * @apilevel internal
    */
   private PrimitiveCompilationUnit getPrimitiveCompilationUnit_compute() {    
-    PrimitiveCompilationUnit u = new PrimitiveCompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    PrimitiveCompilationUnit u = new PrimitiveCompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     u.setPackageDecl(PRIMITIVE_PACKAGE_NAME);
     return u;
   }
@@ -1646,9 +1656,9 @@ public class Program extends ASTNode<ASTNode> implements Cloneable {
   private WildcardsCompilationUnit wildcards_compute() {
     return new WildcardsCompilationUnit(
       "wildcards",
-      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
-      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),myScene,myPackageNamer,myJimple,myOptions,primTypeCollector,
-            constantFactory, mySootResolver);
+      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
+      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),myScene,myPackageNamer,myJimple,myOptions,primTypeCollector,
+            constantFactory, mySootResolver, myPhaseOptions);
   }
   /**
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/AnonymousClasses.jrag:16

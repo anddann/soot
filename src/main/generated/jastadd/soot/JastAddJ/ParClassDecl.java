@@ -135,7 +135,7 @@ public class ParClassDecl extends ClassDecl implements Cloneable, ParTypeDecl, M
             continue;
           case 4:
           case 5:
-            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
             continue;
           }
         ASTNode child = (ASTNode) children[i];
@@ -224,7 +224,7 @@ public class ParClassDecl extends ClassDecl implements Cloneable, ParTypeDecl, M
       return ((GenericTypeDecl)genericDecl()).rawType().createBoundAccess();
     if(!usesTypeVariable())
       return super.substitute(parTypeDecl);
-    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     for(int i = 0; i < getNumArgument(); i++)
       list.add(getArgument(i).type().substitute(parTypeDecl));
     return new ParTypeAccess(genericDecl().createQualifiedAccess(), list);
@@ -235,7 +235,7 @@ public class ParClassDecl extends ClassDecl implements Cloneable, ParTypeDecl, M
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/GenericsParTypeDecl.jrag:76
    */
   public Access createQualifiedAccess() {
-    List typeArgumentList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    List typeArgumentList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     for(int i = 0; i < getNumArgument(); i++) {
       Access a = (Access)getArgument(i);
       if(a instanceof TypeAccess)
@@ -286,10 +286,10 @@ public class ParClassDecl extends ClassDecl implements Cloneable, ParTypeDecl, M
    */
   public void init$Children() {
     children = new ASTNode[5];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
     setChild(new Opt(), 2);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 3);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 4);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 4);
   }
   /**
    * @ast method 

@@ -60,7 +60,6 @@ import soot.jimple.DefinitionStmt;
 import soot.jimple.IntConstant;
 import soot.jimple.LengthExpr;
 import soot.jimple.Stmt;
-import soot.jimple.StringConstant;
 import soot.jimple.toolkits.scalar.LocalCreation;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.scalar.LocalDefs;
@@ -84,7 +83,7 @@ public class DexNullArrayRefTransformer extends BodyTransformer {
 
   protected void internalTransform(final Body body, String phaseName, Map<String, String> options) {
     final ExceptionalUnitGraph g = new ExceptionalUnitGraph(body, myDalvikThrowAnalysis, myManager, myPhaseDumper, myScene);
-    final LocalDefs defs = LocalDefs.Factory.newLocalDefs(g);
+    final LocalDefs defs = LocalDefs.Factory.newLocalDefs(g, myOptions);
     final LocalCreation lc = new LocalCreation(body.getLocals(), "ex");
 
     boolean changed = false;

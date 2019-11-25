@@ -118,7 +118,7 @@ public class LocalSplitter extends BodyTransformer {
 
     // run in panic mode on first split (maybe change this depending on the input
     // source)
-    final LocalDefs defs = LocalDefs.Factory.newLocalDefs(graph, true);
+    final LocalDefs defs = LocalDefs.Factory.newLocalDefs(graph, true, myOptions);
     final LocalUses uses = LocalUses.Factory.newLocalUses(graph, defs);
 
     if (myOptions.time()) {

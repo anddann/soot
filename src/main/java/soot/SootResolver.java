@@ -87,7 +87,7 @@ public class SootResolver {
 
   protected void initializeProgram() {
     if (myOptions.src_prec() != Options.src_prec_apk_c_j) {
-      program = new Program(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      program = new Program(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, this, myPhaseOptions);
       program.state().reset();
 
       program.initBytecodeReader(new BytecodeParser());

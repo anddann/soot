@@ -88,7 +88,7 @@ public class ConstantPropagatorAndFolder extends BodyTransformer {
     }
 
     UnitGraph g = new ExceptionalUnitGraph(b, myThrowAnalysis,  myOptions.omit_excepting_unit_edges(), myManager,myPhaseDumper);
-    LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(g);
+    LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(g, myOptions);
 
     // Perform a constant/local propagation pass.
     Orderer<Unit> orderer = new PseudoTopologicalOrderer<Unit>();

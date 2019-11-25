@@ -88,7 +88,7 @@ public class VoidType extends TypeDecl implements Cloneable {
    * 
    */
   public VoidType() {
-    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
 
 
   }
@@ -102,14 +102,14 @@ public class VoidType extends TypeDecl implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
   }
   /**
    * @ast method 
    * 
    */
   public VoidType(Modifiers p0, String p1, List<BodyDecl> p2) {
-      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
+      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -119,7 +119,7 @@ public class VoidType extends TypeDecl implements Cloneable {
    * 
    */
   public VoidType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2) {
-      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
+      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

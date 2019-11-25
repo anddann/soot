@@ -163,14 +163,14 @@ public class CriticalSectionAwareSideEffectAnalysis {
         RWSet ntr = ntReadSet(method, s);
         if (ntr != null) {
           if (read == null) {
-            read = new CodeBlockRWSet();
+            read = new CodeBlockRWSet(fullObjectFactory, myScene);
           }
           read.union(ntr);
         }
         RWSet ntw = ntWriteSet(method, s);
         if (ntw != null) {
           if (write == null) {
-            write = new CodeBlockRWSet();
+            write = new CodeBlockRWSet(fullObjectFactory, myScene);
           }
           write.union(ntw);
         }
@@ -198,7 +198,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
               // else
               r = approximatedReadSet(method, s, base, true);
               if (read == null) {
-                read = new CodeBlockRWSet();
+                read = new CodeBlockRWSet(fullObjectFactory, myScene);
               }
               if (r != null) {
                 read.union(r);
@@ -213,7 +213,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
               // else
               w = approximatedWriteSet(method, s, base, true);
               if (write == null) {
-                write = new CodeBlockRWSet();
+                write = new CodeBlockRWSet(fullObjectFactory, myScene);
               }
               if (w != null) {
                 write.union(w);
@@ -252,7 +252,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
     this.myScene = myScene;
     this.normalsea = new SideEffectAnalysis(pa, cg, this.fullObjectFactory);
     this.criticalSections = criticalSections;
-    this.eoa = new EncapsulatedObjectAnalysis();
+    this.eoa = new EncapsulatedObjectAnalysis(myPhaseDumper, myScene);
     this.tlo = tlo; // can be null
 
     sigBlacklist = new Vector(); // Signatures of methods known to have effective read/write sets of size 0
@@ -319,7 +319,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
                                                                                                          // reads
                                                                                                          // of
                                                                                                          // all args)
-    CodeBlockRWSet ret = new CodeBlockRWSet();
+    CodeBlockRWSet ret = new CodeBlockRWSet(fullObjectFactory, myScene);
     if (specialRead != null) {
       if (specialRead instanceof Local) {
         Local vLocal = (Local) specialRead;
@@ -354,7 +354,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
           // make fake RW set of <base, all fields> (use a special class)
           // intersect with the REAL RW set of this stmt
           CodeBlockRWSet allRW = ret;
-          ret = new CodeBlockRWSet();
+          ret = new CodeBlockRWSet(fullObjectFactory, myScene);
           RWSet normalRW;
           if (RCache.containsKey(stmt)) {
             normalRW = RCache.get(stmt);
@@ -413,7 +413,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
     }
 
     boolean inaccessibleUses = false;
-    RWSet ret = new CodeBlockRWSet();
+    RWSet ret = new CodeBlockRWSet(fullObjectFactory, myScene);
     tve.setExemptTransaction(tn);
     Iterator<MethodOrMethodContext> targets = tt.iterator(stmt);
     while (!ignore && targets.hasNext()) {
@@ -525,7 +525,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
                                                                                                 // the method call should be
                                                                                                 // approximated by 0 or 1
                                                                                                 // writes
-    CodeBlockRWSet ret = new CodeBlockRWSet();
+    CodeBlockRWSet ret = new CodeBlockRWSet(fullObjectFactory, myScene);
     if (v != null) {
       if (v instanceof Local) {
         Local vLocal = (Local) v;
@@ -560,7 +560,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
           // make fake RW set of <base, all fields> (use a special class)
           // intersect with the REAL RW set of this stmt
           CodeBlockRWSet allRW = ret;
-          ret = new CodeBlockRWSet();
+          ret = new CodeBlockRWSet(fullObjectFactory, myScene);
           RWSet normalRW;
           if (WCache.containsKey(stmt)) {
             normalRW = WCache.get(stmt);
@@ -613,7 +613,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
     }
 
     boolean inaccessibleUses = false;
-    RWSet ret = new CodeBlockRWSet();
+    RWSet ret = new CodeBlockRWSet(fullObjectFactory, myScene);
     tve.setExemptTransaction(tn);
     Iterator<MethodOrMethodContext> targets = tt.iterator(stmt);
     while (!ignore && targets.hasNext()) {
@@ -736,8 +736,8 @@ public class CriticalSectionAwareSideEffectAnalysis {
     } else if (v instanceof Local) {
       Local vLocal = (Local) v;
       PointsToSet base = pa.reachingObjects(vLocal);
-      ret = new CodeBlockRWSet();
-      CodeBlockRWSet stmtRW = new CodeBlockRWSet();
+      ret = new CodeBlockRWSet(fullObjectFactory, myScene);
+      CodeBlockRWSet stmtRW = new CodeBlockRWSet(fullObjectFactory, myScene);
       RWSet rSet = readSet(m, s, tn, new HashSet());
       if (rSet != null) {
         stmtRW.union(rSet);

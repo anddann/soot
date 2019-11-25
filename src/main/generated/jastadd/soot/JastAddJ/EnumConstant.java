@@ -98,7 +98,7 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
       return new Opt<TypeDecl>();
     return new Opt<TypeDecl>(
       new AnonymousDecl(
-        new Modifiers(myPhaseOptions),
+        new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
         "Anonymous",
         bds
       )
@@ -166,7 +166,7 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    * 
    */
   public EnumConstant() {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 
 
   }
@@ -180,7 +180,7 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
     setChild(new Opt(), 2);
   }
   /**
@@ -188,7 +188,7 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    * 
    */
   public EnumConstant(Modifiers p0, String p1, List<Expr> p2, Opt<Expr> p3) {
-      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -199,7 +199,7 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    * 
    */
   public EnumConstant(Modifiers p0, beaver.Symbol p1, List<Expr> p2, Opt<Expr> p3) {
-      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

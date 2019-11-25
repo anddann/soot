@@ -18,7 +18,7 @@ public class Frontend extends java.lang.Object {
 
 
     protected Frontend() {
-      program = new Program(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      program = new Program(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       program.state().reset();
     }
 

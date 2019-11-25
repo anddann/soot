@@ -79,6 +79,7 @@ import soot.toolkits.scalar.UnusedLocalEliminator;
  *      the Control Dependence Graph</a>
  **/
 public class ShimpleBodyBuilder {
+  private final NopEliminator myNopEliminator;
   protected ShimpleBody body;
   protected ShimpleFactory sf;
   protected DominatorTree<Block> dt;
@@ -93,18 +94,31 @@ public class ShimpleBodyBuilder {
   public PiNodeManager pi;
 
   ShimpleOptions options;
+  private DeadAssignmentEliminator myDeadAssignmentEliminator;
+  private UnreachableCodeEliminator myUnreachableCodeEliminator;
+  private UnconditionalBranchFolder myUnconditionalBranchFolder;
+  private Aggregator myAggregator;
+  private UnusedLocalEliminator myUnusedLocalEliminator;
+  private LocalNameStandardizer myLocalNameStandardizer;
 
   /**
    * Transforms the provided body to pure SSA form.
    **/
-  public ShimpleBodyBuilder(ShimpleBody body) {
+  public ShimpleBodyBuilder(NopEliminator myNopEliminator, ShimpleBody body, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer) {
+    this.myNopEliminator = myNopEliminator;
+    this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
+    this.myUnreachableCodeEliminator = myUnreachableCodeEliminator;
+    this.myUnconditionalBranchFolder = myUnconditionalBranchFolder;
+    this.myAggregator = myAggregator;
+    this.myUnusedLocalEliminator = myUnusedLocalEliminator;
+    this.myLocalNameStandardizer = myLocalNameStandardizer;
     // Must remove nops prior to building the CFG because NopStmt appearing
     // before the IdentityStmt in a trap handler that is itself protected
     // by a trap cause Phi nodes to be inserted before the NopStmt and
     // therefore before the IdentityStmt. This introduces a validation
     // problem if the Phi nodes leave residual assignment statements after
     // their removal.
-    myNopEliminator.transform(body);
+    this.myNopEliminator.transform(body);
     this.body = body;
     sf = new DefaultShimpleFactory(body);
     sf.clearCache();

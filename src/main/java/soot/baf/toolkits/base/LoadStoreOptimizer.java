@@ -209,7 +209,7 @@ public class LoadStoreOptimizer extends BodyTransformer {
     }
 
     private void computeLocalDefsAndLocalUsesInfo() {
-      mLocalDefs = LocalDefs.Factory.newLocalDefs(mBody);
+      mLocalDefs = LocalDefs.Factory.newLocalDefs(mBody, myManager);
       mLocalUses = LocalUses.Factory.newLocalUses(mBody, mLocalDefs);
     }
 

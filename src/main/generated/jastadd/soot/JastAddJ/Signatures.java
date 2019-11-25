@@ -3,8 +3,10 @@ package soot.JastAddJ;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.Scene;
+import soot.SootResolver;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
@@ -27,9 +29,11 @@ public class Signatures extends java.lang.Object {
   private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
   private ConstantFactory constantFactory;
+  private SootResolver mySootResolver;
+  private PhaseOptions myPhaseOptions;
 
 
-  public Signatures(String s, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+  public Signatures(String s, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
       data = s;
     this.myScene = myScene;
     this.myOptions = myOptions;
@@ -37,6 +41,8 @@ public class Signatures extends java.lang.Object {
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+    this.mySootResolver = mySootResolver;
+    this.myPhaseOptions = myPhaseOptions;
     pos = 0;
     }
 
@@ -86,14 +92,16 @@ public class Signatures extends java.lang.Object {
     // 4.4.4 Signatures
 
     public static class ClassSignature extends Signatures {
-      public ClassSignature(String s, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
-        super(s, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      public ClassSignature(String s, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
+        super(s, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
         this.myScene = myScene;
         this.myOptions = myOptions;
         this.myPackageNamer = myPackageNamer;
         this.myJimple = myJimple;
         this.primTypeCollector = primTypeCollector;
         this.constantFactory = constantFactory;
+        this.mySootResolver = mySootResolver;
+        this.myPhaseOptions = myPhaseOptions;
         classSignature();
       }
       void classSignature() {
@@ -121,7 +129,9 @@ public class Signatures extends java.lang.Object {
       private Jimple myJimple;
       private PrimTypeCollector primTypeCollector;
       private ConstantFactory constantFactory;
-      protected List superinterfaceSignature = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      private SootResolver mySootResolver;
+      private PhaseOptions myPhaseOptions;
+      protected List superinterfaceSignature = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 
       Access parseSuperclassSignature() {
         return classTypeSignature();
@@ -135,8 +145,8 @@ public class Signatures extends java.lang.Object {
 
 
     public static class FieldSignature extends Signatures {
-      public FieldSignature(String s, Scene myScene,Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
-        super(s, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      public FieldSignature(String s, Scene myScene,Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
+        super(s, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
         fieldTypeAccess = fieldTypeSignature();
       }
       Access fieldTypeAccess() {
@@ -148,14 +158,16 @@ public class Signatures extends java.lang.Object {
 
 
     public static class MethodSignature extends Signatures {
-      public MethodSignature(String s, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
-        super(s, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+      public MethodSignature(String s, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
+        super(s, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
         this.myScene = myScene;
         this.myOptions = myOptions;
         this.myPackageNamer = myPackageNamer;
         this.myJimple = myJimple;
         this.constantFactory = constantFactory;
         this.primTypeCollector = primTypeCollector;
+        this.mySootResolver = mySootResolver;
+        this.myPhaseOptions = myPhaseOptions;
         methodTypeSignature();
       }
       void methodTypeSignature() {
@@ -206,7 +218,9 @@ public class Signatures extends java.lang.Object {
       private Jimple myJimple;
       private ConstantFactory constantFactory;
       private PrimTypeCollector primTypeCollector;
-      protected List exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      private SootResolver mySootResolver;
+      private PhaseOptions myPhaseOptions;
+      protected List exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 
       protected Access returnType = null;
       public boolean hasReturnType() { return returnType != null; }
@@ -221,7 +235,7 @@ public class Signatures extends java.lang.Object {
 
     void formalTypeParameters() {
       eat("<");
-      typeParameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      typeParameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       do {
         typeParameters.add(formalTypeParameter());
       } while(!next(">"));
@@ -232,7 +246,7 @@ public class Signatures extends java.lang.Object {
 
     TypeVariable formalTypeParameter() {
       String id = identifier();
-      List bounds = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      List bounds = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       Access classBound = classBound();
       if(classBound != null)
         bounds.add(classBound);
@@ -240,8 +254,10 @@ public class Signatures extends java.lang.Object {
         bounds.add(interfaceBound());
       }
       if(bounds.getNumChildNoTransform() == 0)
-        bounds.add(new TypeAccess("java.lang", "Object"));
-      return new TypeVariable(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), id, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), bounds);
+        bounds.add(new TypeAccess("java.lang", "Object",myScene,primTypeCollector,myJimple));
+      Modifiers astNodes = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver);
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+      return new TypeVariable(astNodes, id, list, bounds,myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions);
     }
 
 
@@ -299,7 +315,7 @@ public class Signatures extends java.lang.Object {
         typeName = identifier();
       }
       Access a = typeName.indexOf('$') == -1 ?
-        new TypeAccess(packageName.toString(), typeName) : 
+        new TypeAccess(packageName.toString(), typeName,myScene,primTypeCollector,myJimple) :
         new BytecodeTypeAccess(packageName.toString(), typeName);
       if(next("<")) { // type arguments of top level type
         a = new ParTypeAccess(a, typeArguments());
@@ -317,7 +333,7 @@ public class Signatures extends java.lang.Object {
       eat(".");
       String id = identifier();
       Access a = id.indexOf('$') == -1 ?
-        new TypeAccess(id) : new BytecodeTypeAccess("", id);
+        new TypeAccess(id,myScene,primTypeCollector,myJimple) : new BytecodeTypeAccess("", id);
       if(next("<")) {
         a = new ParTypeAccess(a, typeArguments());
       }
@@ -330,14 +346,14 @@ public class Signatures extends java.lang.Object {
       eat("T");
       String id = identifier();
       eat(";");
-      return new TypeAccess(id);
+      return new TypeAccess(id,myScene,primTypeCollector,myJimple);
     }
 
 
 
     List typeArguments() {
       eat("<");
-      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       do {
         list.add(typeArgument());
       } while(!next(">"));

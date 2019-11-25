@@ -210,8 +210,8 @@ public abstract class ForwardFlowAnalysisExtended<N, A> {
       }
     }
 
-    myTimers.totalFlowNodes += n;
-    myTimers.totalFlowComputations += numComputations;
+//    myTimers.totalFlowNodes += n;
+//    myTimers.totalFlowComputations += numComputations;
   }
 
   protected abstract void flowThrough(A in, N cur, N next, A out);

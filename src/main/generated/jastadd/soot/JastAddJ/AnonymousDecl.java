@@ -78,7 +78,7 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
             tree.children[i] = new Opt();
             continue;
           case 4:
-            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+            tree.children[i] = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
             continue;
           }
         ASTNode child = (ASTNode) children[i];
@@ -109,9 +109,9 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
     setChild(new Opt(), 2);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 3);
   }
   /**
    * @ast method 
@@ -521,13 +521,13 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
    */
    
   protected List constructorParameterList(ConstructorDecl decl) {
-    List parameterList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    List parameterList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     for(int i = 0; i < decl.getNumParameter(); i++) {
       ParameterDeclaration param = decl.getParameter(i);
       if (param instanceof VariableArityParameterDeclaration) {
         parameterList.add(
             new VariableArityParameterDeclaration(
-              new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions),
+              new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
               ((ArrayDecl) param.type()).componentType().createBoundAccess(),
               param.name()
               ));
@@ -685,9 +685,9 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
    */
   private List getImplementsList_compute() {
     if(superType().isInterfaceDecl())
-      return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(superType().createBoundAccess());
+      return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(superType().createBoundAccess());
     else
-      return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
   }
   /**
    * @attribute inh
@@ -741,20 +741,20 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
    * @apilevel internal
    */  private AnonymousDecl rewriteRule0() {
 {
-      setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(new Modifier("final")), myPhaseOptions));
+      setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new Modifier("final")), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver));
 
       ConstructorDecl decl = constructorDecl();
       Modifiers modifiers = (Modifiers)decl.getModifiers().fullCopy();
       String anonName = "Anonymous" + nextAnonymousIndex();
 
       ConstructorDecl constructor = new ConstructorDecl(modifiers, anonName,
-          constructorParameterList(decl), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(), new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+          constructorParameterList(decl), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), new Opt(), new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       constructor.setDefaultConstructor();
       addBodyDecl(constructor);
 
       setID(anonName);
 
-      List argList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      List argList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       for(int i = 0; i < constructor.getNumParameter(); i++) {
         argList.add(new VarAccess(constructor.getParameter(i).name()));
       }
@@ -778,7 +778,7 @@ public class AnonymousDecl extends ClassDecl implements Cloneable {
           }
         }
       }
-      List exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      List exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       for(Iterator iter = set.iterator(); iter.hasNext(); ) {
         TypeDecl exceptionType = (TypeDecl)iter.next();
         if(exceptionType.isNull())

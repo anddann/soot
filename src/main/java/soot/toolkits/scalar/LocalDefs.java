@@ -27,6 +27,7 @@ import java.util.List;
 import soot.Body;
 import soot.Local;
 import soot.Unit;
+import soot.options.Options;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
@@ -46,10 +47,11 @@ public interface LocalDefs {
      * @see ExceptionalUnitGraph#ExceptionalUnitGraph(Body, soot.toolkits.exceptions.ThrowableSet.Manager)
      * @see soot.validation.UsesValidator
      * @param body
+     * @param myManager
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefs(Body body) {
-      return newLocalDefs(body, false, myManager);
+    public static LocalDefs newLocalDefs(Body body, ThrowAnalysis myManager) {
+      return newLocalDefs(body, false, myManager, myOptions);
     }
 
     /**
@@ -61,10 +63,11 @@ public interface LocalDefs {
      *          if you expect uses of locals that are undefined
      * @param body
      * @param myThrowAnalysis
+     * @param myOptions
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefs(Body body, boolean expectUndefined, ThrowAnalysis myThrowAnalysis) {
-      return newLocalDefs(new ExceptionalUnitGraph(body, myThrowAnalysis), expectUndefined);
+    public static LocalDefs newLocalDefs(Body body, boolean expectUndefined, ThrowAnalysis myThrowAnalysis, Options myOptions) {
+      return newLocalDefs(new ExceptionalUnitGraph(body, myThrowAnalysis), expectUndefined, myOptions);
     }
 
     /**
@@ -73,10 +76,11 @@ public interface LocalDefs {
      * @see soot.toolkits.graph.UnitGraph#UnitGraph(Body)
      * @param graph
      *          the graph to work with
+     * @param myOptions
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefs(UnitGraph graph) {
-      return newLocalDefs(graph, false);
+    public static LocalDefs newLocalDefs(UnitGraph graph, Options myOptions) {
+      return newLocalDefs(graph, false, myOptions);
     }
 
     /**
@@ -89,11 +93,12 @@ public interface LocalDefs {
      *          the graph to work with
      * @param expectUndefined
      *          if you expect uses of locals that are undefined
+     * @param myOptions
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefs(UnitGraph graph, boolean expectUndefined) {
+    public static LocalDefs newLocalDefs(UnitGraph graph, boolean expectUndefined, Options myOptions) {
       // return new SmartLocalDefs(graph, LiveLocals.Factory.newLiveLocals(graph));
-      return new SimpleLocalDefs(graph, expectUndefined ? FlowAnalysisMode.OmitSSA : FlowAnalysisMode.Automatic);
+      return new SimpleLocalDefs(graph, expectUndefined ? FlowAnalysisMode.OmitSSA : FlowAnalysisMode.Automatic, myOptions);
     }
 
     /**
@@ -105,11 +110,12 @@ public interface LocalDefs {
      * @see soot.validation.UsesValidator
      * @param graph
      *          the graph to work with
+     * @param myOptions
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefsFlowInsensitive(UnitGraph graph) {
+    public static LocalDefs newLocalDefsFlowInsensitive(UnitGraph graph, Options myOptions) {
       // return new SmartLocalDefs(graph, LiveLocals.Factory.newLiveLocals(graph));
-      return new SimpleLocalDefs(graph, FlowAnalysisMode.FlowInsensitive);
+      return new SimpleLocalDefs(graph, FlowAnalysisMode.FlowInsensitive, myOptions);
     }
   }
 

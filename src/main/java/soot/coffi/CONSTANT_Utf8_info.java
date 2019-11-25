@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import soot.G;
 import soot.Value;
-import soot.jimple.StringConstant;
+import soot.jimple.ConstantFactory;
 
 /**
  * A constant pool entry of type CONSTANT_Utf8; note this is <b>not</b> multithread safe. It is, however, immutable.
@@ -49,9 +49,11 @@ public class CONSTANT_Utf8_info extends cp_info {
   private String s;
   /** Byte array of actual utf8 string. */
   private final byte bytes[];
+  private ConstantFactory constancFactory;
 
   /** Constructor from a DataInputSream */
-  public CONSTANT_Utf8_info(DataInputStream d) throws IOException {
+  public CONSTANT_Utf8_info(DataInputStream d, ConstantFactory constancFactory) throws IOException {
+    this.constancFactory = constancFactory;
     int len;
     len = d.readUnsignedShort();
     bytes = new byte[len + 2];

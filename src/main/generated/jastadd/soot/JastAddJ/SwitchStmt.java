@@ -178,9 +178,9 @@ public class SwitchStmt extends BranchTargetStmt implements Cloneable {
       hostType().createEnumArray(type);
       hostType().createEnumMethod(type);
       setExpr(
-        hostType().createEnumMethod(type).createBoundAccess(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)).qualifiesAccess(
+        hostType().createEnumMethod(type).createBoundAccess(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)).qualifiesAccess(
         new ArrayAccess(
-          getExpr().qualifiesAccess(new MethodAccess("ordinal", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)))
+          getExpr().qualifiesAccess(new MethodAccess("ordinal", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)))
         ))
       );
     }

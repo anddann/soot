@@ -73,7 +73,7 @@ public class VarDeclStmt extends Stmt implements Cloneable {
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/VariableDeclaration.jrag:163
    */
   private List createVariableDeclarationList() {
-    List varList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    List varList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     for(int j = 0; j < getNumVariableDecl(); j++) {
       VariableDeclaration v =
         getVariableDecl(j).createVariableDeclarationFrom(
@@ -109,7 +109,7 @@ public class VarDeclStmt extends Stmt implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 2);
   }
   /**
    * @ast method 

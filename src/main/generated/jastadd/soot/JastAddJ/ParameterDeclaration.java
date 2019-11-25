@@ -142,7 +142,7 @@ public class ParameterDeclaration extends ASTNode<ASTNode> implements Cloneable,
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:11
    */
   public ParameterDeclaration(Access type, String name) {
-    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), type, name);
+    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), type, name);
   }
   /**
    * @ast method 
@@ -150,7 +150,7 @@ public class ParameterDeclaration extends ASTNode<ASTNode> implements Cloneable,
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:14
    */
   public ParameterDeclaration(TypeDecl type, String name) {
-    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions), type.createQualifiedAccess(), name);
+    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), type.createQualifiedAccess(), name);
   }
   /**
    * @ast method 

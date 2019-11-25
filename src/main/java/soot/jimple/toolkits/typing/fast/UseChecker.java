@@ -34,7 +34,6 @@ import soot.Local;
 import soot.NullType;
 import soot.PrimType;
 import soot.RefType;
-import soot.Scene;
 import soot.SootMethodRef;
 import soot.Type;
 import soot.Unit;
@@ -206,7 +205,7 @@ public class UseChecker extends AbstractStmtSwitch {
           Type rhsType = this.tg.get((Local) rhs);
           if (rhsType instanceof PrimType) {
             if (defs == null) {
-              defs = LocalDefs.Factory.newLocalDefs(jb);
+              defs = LocalDefs.Factory.newLocalDefs(jb, myManager);
               uses = LocalUses.Factory.newLocalUses(jb, defs);
             }
 
@@ -271,7 +270,7 @@ public class UseChecker extends AbstractStmtSwitch {
               || rt.getSootClass().getName().equals("java.io.Serializable")
               || rt.getSootClass().getName().equals("java.lang.Cloneable")) {
             if (defs == null) {
-              defs = LocalDefs.Factory.newLocalDefs(jb);
+              defs = LocalDefs.Factory.newLocalDefs(jb, myManager);
               uses = LocalUses.Factory.newLocalUses(jb, defs);
             }
 

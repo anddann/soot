@@ -78,7 +78,7 @@ public class UsesValidator implements BodyValidator {
 
     ThrowAnalysis throwAnalysis = myPedanticThrowAnalysis;
     UnitGraph g = new ExceptionalUnitGraph(body, throwAnalysis, false, myManager, myPhaseDumper);
-    LocalDefs ld = LocalDefs.Factory.newLocalDefs(g, true);
+    LocalDefs ld = LocalDefs.Factory.newLocalDefs(g, true, myOptions);
 
     Collection<Local> locals = body.getLocals();
     for (Unit u : body.getUnits()) {

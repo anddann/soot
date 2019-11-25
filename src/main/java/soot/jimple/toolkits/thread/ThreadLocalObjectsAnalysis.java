@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.EquivalentValue;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Value;
@@ -65,7 +66,7 @@ public class ThreadLocalObjectsAnalysis extends LocalObjectsAnalysis implements 
   Map fieldCache;
   Map invokeCache;
 
-  public ThreadLocalObjectsAnalysis(MhpTester mhp) // must include main class
+  public ThreadLocalObjectsAnalysis(MhpTester mhp, Scene myScene) // must include main class
   {
     super(myScene, new InfoFlowAnalysis(false, true, printDebug)); // ref-only, with inner fields
     this.mhp = mhp;

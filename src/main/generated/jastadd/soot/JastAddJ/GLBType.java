@@ -4,6 +4,7 @@ package soot.JastAddJ;
 import java.util.HashSet;
 import java.util.ArrayList;
 
+import beaver.Symbol;
 import soot.*;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.ConstantFactory;
@@ -16,6 +17,8 @@ import soot.options.Options;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Generics.ast:47
  */
 public class GLBType extends ReferenceType implements Cloneable {
+  private PhaseOptions myPhaseOptions;
+
   /**
    * @apilevel low-level
    */
@@ -96,10 +99,11 @@ public class GLBType extends ReferenceType implements Cloneable {
    * @ast method 
    * 
    */
-  public GLBType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
-    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+  public GLBType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
 
 
+    this.myPhaseOptions = myPhaseOptions;
   }
   /**
    * Initializes the child array to the correct size.
@@ -111,16 +115,17 @@ public class GLBType extends ReferenceType implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[3];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 2);
   }
   /**
    * @ast method 
    * 
    */
-  public GLBType(Modifiers p0, String p1, List<BodyDecl> p2, List<Access> p3,Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
-      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
-      setChild(p0, 0);
+  public GLBType(Modifiers p0, String p1, List<BodyDecl> p2, List<Access> p3, Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
+    this.myPhaseOptions = myPhaseOptions;
+    setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);
@@ -129,9 +134,10 @@ public class GLBType extends ReferenceType implements Cloneable {
    * @ast method 
    * 
    */
-  public GLBType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2, List<Access> p3,Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
-      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
-      setChild(p0, 0);
+  public GLBType(Modifiers p0, Symbol p1, List<BodyDecl> p2, List<Access> p3, Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
+    this.myPhaseOptions = myPhaseOptions;
+    setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);

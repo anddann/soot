@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import beaver.Symbol;
+import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SootResolver;
@@ -21,6 +22,8 @@ import soot.options.Options;
  */
 public abstract class ReferenceType extends TypeDecl implements Cloneable {
 
+
+  protected PhaseOptions myPhaseOptions;
 
   /**
    * @apilevel low-level
@@ -75,9 +78,11 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * @param myPackageNamer
    * @param myOptions
    * @param primTypeCollector
-   * @param constantFactory    */
-  public ReferenceType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
-    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
+   * @param constantFactory
+   * @param myPhaseOptions
+             */
+  public ReferenceType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
 
     this.myScene = myScene;
     this.myJimple = myJimple;
@@ -96,14 +101,15 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
   }
   /**
    * @ast method
    *
    */
-  public ReferenceType(Modifiers p0, String p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver, Jimple myJimple1, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
-      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
+  public ReferenceType(Modifiers p0, String p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PhaseOptions myPhaseOptions, Jimple myJimple1, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
+    this.myPhaseOptions = myPhaseOptions;
     this.myJimple = myJimple1;
     this.myPackageNamer = myPackageNamer;
     this.myOptions = myOptions;
@@ -118,8 +124,9 @@ public abstract class ReferenceType extends TypeDecl implements Cloneable {
    * @ast method
    *
    */
-  public ReferenceType(Modifiers p0, Symbol p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver, Jimple myJimple1, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
-      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
+  public ReferenceType(Modifiers p0, Symbol p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PhaseOptions myPhaseOptions, Jimple myJimple1, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
+    this.myPhaseOptions = myPhaseOptions;
     this.myJimple = myJimple1;
     this.myPackageNamer = myPackageNamer;
     this.myOptions = myOptions;

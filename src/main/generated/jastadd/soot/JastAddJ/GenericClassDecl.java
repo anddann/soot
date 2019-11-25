@@ -113,7 +113,7 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
       hasSuperClassAccess() ? new Opt(getSuperClassAccess().type().substitute(parTypeDecl)) : new Opt(),
       getImplementsList().substitute(parTypeDecl),
     // ES:   new List(),
-      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), // delegates TypeParameter lookup to original
+      new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), // delegates TypeParameter lookup to original
       this
     );
     return c;
@@ -209,7 +209,7 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
    */
   public List createArgumentList(ArrayList params) {
     GenericTypeDecl original = (GenericTypeDecl)original();
-    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     if(params.isEmpty()) {
       // Change: Don't add any thing to the list. 
       // Concern: The previous version seem to add the erasure of the type variable for some reason,  
@@ -242,9 +242,9 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
   public void init$Children() {
     children = new ASTNode[5];
     setChild(new Opt(), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 3);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 4);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 3);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 4);
   }
   /**
    * @ast method 
@@ -831,7 +831,7 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
   boolean isFinal = this.is$Final();
     TypeDecl lookupParTypeDecl_ArrayList_value = lookupParTypeDecl_compute(list);
     if(lookupParTypeDecl_ArrayList_list == null) {
-      lookupParTypeDecl_ArrayList_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      lookupParTypeDecl_ArrayList_list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       lookupParTypeDecl_ArrayList_list.is$Final = true;
       lookupParTypeDecl_ArrayList_list.setParent(this);
     }
@@ -1093,10 +1093,10 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
    */
   private List<PlaceholderMethodDecl> getPlaceholderMethodList_compute() {
 		List<PlaceholderMethodDecl> placeholderMethods =
-			new List<PlaceholderMethodDecl>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+			new List<PlaceholderMethodDecl>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		List<TypeVariable> typeParams = getTypeParameterList();
-		List<TypeVariable> classTypeVars = new List<TypeVariable>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
-		List<Access> typeArgs = new List<Access>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+		List<TypeVariable> classTypeVars = new List<TypeVariable>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+		List<Access> typeArgs = new List<Access>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 
 		// copy the list of type parameters
 		int arg = 0;
@@ -1105,14 +1105,14 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
 			typeArgs.add(new TypeAccess(substName));
 
 			TypeVariable typeVar = (TypeVariable) iter.next();
-			List<Access> typeBounds = new List<Access>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+			List<Access> typeBounds = new List<Access>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			for (Access typeBound : typeVar.getTypeBoundList())
 				typeBounds.add((Access) typeBound.cloneSubtree());
 			classTypeVars.add(
 					new TypeVariable(
-						new Modifiers(myPhaseOptions),
+						new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
 						substName,
-						new List<BodyDecl>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
+						new List<BodyDecl>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
 						typeBounds));
 		}
 
@@ -1131,7 +1131,7 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
 
 			Collection<TypeVariable> originalTypeVars =
 				new LinkedList<TypeVariable>();
-			List<TypeVariable> typeVars = new List<TypeVariable>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+			List<TypeVariable> typeVars = new List<TypeVariable>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			for (TypeVariable typeVar : typeParams)
 				originalTypeVars.add(typeVar);
 			for (TypeVariable typeVar : classTypeVars)
@@ -1140,32 +1140,32 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
 			if (decl instanceof GenericConstructorDecl) {
 				GenericConstructorDecl genericDecl =
 					(GenericConstructorDecl) decl;
-				List<TypeVariable> typeVariables = new List<TypeVariable>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+				List<TypeVariable> typeVariables = new List<TypeVariable>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 				for (int i = 0; i < genericDecl.getNumTypeParameter(); ++i) {
 					String substName = "#" + (arg+i);
 
 					TypeVariable typeVar = genericDecl.getTypeParameter(i);
 					originalTypeVars.add(typeVar);
-					List<Access> typeBounds = new List<Access>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+					List<Access> typeBounds = new List<Access>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 					for (Access typeBound : typeVar.getTypeBoundList())
 						typeBounds.add((Access) typeBound.cloneSubtree());
 					typeVars.add(
 							new TypeVariable(
-								new Modifiers(myPhaseOptions),
+								new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
 								substName,
-								new List<BodyDecl>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
+								new List<BodyDecl>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
 								typeBounds));
 				}
 			}
 
 			List<ParameterDeclaration> substParameters =
-				new List<ParameterDeclaration>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+				new List<ParameterDeclaration>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			for (ParameterDeclaration param : decl.getParameterList()) {
 				substParameters.add(param.substituted(
 							originalTypeVars, typeVars));
 			}
 
-			List<Access> substExceptions = new List<Access>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+			List<Access> substExceptions = new List<Access>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			for (Access exception : decl.getExceptionList()) {
 				substExceptions.add(exception.substituted(
 							originalTypeVars, typeVars));
@@ -1178,7 +1178,7 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
 					"#"+getID(),
 					substParameters,
 					substExceptions,
-					new Opt(new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)),
+					new Opt(new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)),
 					typeVars);
 
 			placeholderMethods.add(placeholderMethod);

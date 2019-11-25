@@ -35,7 +35,6 @@ import java.util.Map;
 
 import soot.IdentityUnit;
 import soot.Local;
-import soot.Timers;
 import soot.Trap;
 import soot.Unit;
 import soot.Value;
@@ -45,11 +44,14 @@ import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalGraph;
 import soot.toolkits.graph.ExceptionalGraph.ExceptionDest;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 
 /**
  * Analysis that provides an implementation of the LocalDefs interface.
  */
 public class SimpleLocalDefs implements LocalDefs {
+  private Options myOptions;
+
   static private class StaticSingleAssignment implements LocalDefs {
     final Map<Local, List<Unit>> result;
 
@@ -146,8 +148,8 @@ public class SimpleLocalDefs implements LocalDefs {
 
     private Map<Unit, Integer> indexOfUnit;
 
-    FlowAssignment(DirectedGraph<Unit> graph, Local[] locals, List<Unit>[] unitList, int units, boolean omitSSA) {
-      super(graph);
+    FlowAssignment(DirectedGraph<Unit> graph, Local[] locals, List<Unit>[] unitList, int units, boolean omitSSA, Options myOptions, InteractionHandler myInteractionHandler) {
+      super(graph,myOptions.interactive_mode(),myInteractionHandler);
 
       final int N = locals.length;
 
@@ -315,23 +317,24 @@ public class SimpleLocalDefs implements LocalDefs {
   private LocalDefs def;
 
   /**
-   * 
+   *
    * @param graph
+   * @param myOptions
    */
-  public SimpleLocalDefs(UnitGraph graph) {
-    this(graph, FlowAnalysisMode.Automatic);
+  public SimpleLocalDefs(UnitGraph graph, Options myOptions) {
+    this(graph, FlowAnalysisMode.Automatic, myOptions);
   }
 
-  public SimpleLocalDefs(UnitGraph graph, FlowAnalysisMode mode) {
-    this(graph, graph.getBody().getLocals(), mode);
+  public SimpleLocalDefs(UnitGraph graph, FlowAnalysisMode mode, Options myOptions) {
+    this(graph, graph.getBody().getLocals(), mode, myOptions);
   }
 
-  SimpleLocalDefs(DirectedGraph<Unit> graph, Collection<Local> locals, FlowAnalysisMode mode) {
-    this(graph, locals.toArray(new Local[locals.size()]), mode);
+  SimpleLocalDefs(DirectedGraph<Unit> graph, Collection<Local> locals, FlowAnalysisMode mode, Options myOptions) {
+    this(graph, locals.toArray(new Local[locals.size()]), mode, myOptions);
   }
 
-  SimpleLocalDefs(DirectedGraph<Unit> graph, Local[] locals, boolean omitSSA) {
-    this(graph, locals, omitSSA ? FlowAnalysisMode.OmitSSA : FlowAnalysisMode.Automatic);
+  SimpleLocalDefs(DirectedGraph<Unit> graph, Local[] locals, boolean omitSSA, Options myOptions) {
+    this(graph, locals, omitSSA ? FlowAnalysisMode.OmitSSA : FlowAnalysisMode.Automatic, myOptions);
   }
 
   /**
@@ -352,7 +355,8 @@ public class SimpleLocalDefs implements LocalDefs {
     FlowInsensitive
   }
 
-  SimpleLocalDefs(DirectedGraph<Unit> graph, Local[] locals, FlowAnalysisMode mode) {
+  SimpleLocalDefs(DirectedGraph<Unit> graph, Local[] locals, FlowAnalysisMode mode, Options myOptions) {
+    this.myOptions = myOptions;
 //    final Options options = myOptions;
 //    if (options.time()) {
 //      myTimers.defsTimer.start();
@@ -422,7 +426,7 @@ public class SimpleLocalDefs implements LocalDefs {
     }
 
     if (doFlowAnalsis && mode != FlowAnalysisMode.FlowInsensitive) {
-      def = new FlowAssignment(graph, locals, unitList, units, omitSSA);
+      def = new FlowAssignment(graph, locals, unitList, units, omitSSA, myOptions);
     } else {
       def = new StaticSingleAssignment(locals, unitList);
     }

@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Context;
+import soot.EntryPoints;
 import soot.FastHierarchy;
 import soot.Kind;
 import soot.Local;
@@ -103,12 +104,14 @@ public class PAG implements PointsToAnalysis {
   private final Scene myScene;
   private ArrayElement myArrayElement;
   private ConstantFactory constantFactory;
+  private EntryPoints myEntrypoints;
 
-  public PAG(PhaseOptions myPhaseOptions, Scene myScene, ArrayElement myArrayElement, ConstantFactory constantFactory, final SparkOptions opts) {
+  public PAG(PhaseOptions myPhaseOptions, Scene myScene, ArrayElement myArrayElement, ConstantFactory constantFactory, EntryPoints myEntrypoints, final SparkOptions opts) {
         this.myPhaseOptions = myPhaseOptions;
         this.myScene = myScene;
         this.myArrayElement = myArrayElement;
     this.constantFactory = constantFactory;
+    this.myEntrypoints = myEntrypoints;
     this.opts = opts;
         this.accessibilityOracle = myScene.getClientAccessibilityOracle();
         this.localToNodeMap =   new LargeNumberedMap<>(myScene.getLocalNumberer());
@@ -1078,8 +1081,8 @@ public class PAG implements PointsToAnalysis {
     if (!e.passesParameters()) {
       return;
     }
-    MethodPAG srcmpag = MethodPAG.v(this, e.src());
-    MethodPAG tgtmpag = MethodPAG.v(this, e.tgt());
+    MethodPAG srcmpag = MethodPAG.v(this, e.src(),myScene,myEntrypoints);
+    MethodPAG tgtmpag = MethodPAG.v(this, e.tgt(),myScene,myEntrypoints);
     Pair<Node, Node> pval;
 
     if (e.isExplicit() || e.kind() == Kind.THREAD || e.kind() == Kind.ASYNCTASK) {

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SootResolver;
@@ -25,6 +26,8 @@ import beaver.Symbol;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Enums.ast:1
  */
 public class EnumDecl extends ClassDecl implements Cloneable {
+
+  private PhaseOptions myPhaseOptions;
 
   /**
    * @apilevel low-level
@@ -149,54 +152,54 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    */
   private void addValues() {
     int numConstants = enumConstants().size();
-    List initValues = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    List initValues = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     for (Iterator iter = enumConstants().iterator(); iter.hasNext();) {
       EnumConstant c = (EnumConstant) iter.next();
       initValues.add(c.createBoundFieldAccess());
     }
     FieldDeclaration values = new FieldDeclaration(
-        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)
+        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
             .add(new Modifier("private")).add(new Modifier("static")).add(new Modifier("final"))
-            .add(new Modifier("synthetic")), myPhaseOptions),
+            .add(new Modifier("synthetic")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
         arrayType().createQualifiedAccess(), "$VALUES",
         new Opt(new ArrayCreationExpr(
             new ArrayTypeWithSizeAccess(createQualifiedAccess(), Literal.buildIntegerLiteral(enumConstants().size())),
             new Opt(new ArrayInit(initValues)))),
-        myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory);
+        myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     addBodyDecl(values);
     // public static final Test[] values() { return (Test[])$VALUES.clone(); }
     addBodyDecl(new MethodDecl(
-        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)
+        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
             .add(new Modifier("public")).add(new Modifier("static")).add(new Modifier("final"))
-            .add(new Modifier("synthetic")), myPhaseOptions),
+            .add(new Modifier("synthetic")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
         arrayType().createQualifiedAccess(), "values",
-        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
-        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
-        new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
+        new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
             .add(new ReturnStmt(new Opt(new CastExpr(arrayType().createQualifiedAccess(),
                 values.createBoundFieldAccess()
                     .qualifiesAccess(new MethodAccess("clone",
-                        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myScene,
-                        primTypeCollector, myJimple, myOptions, myPackageNamer, constantFactory)))))), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)),
-        myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver));
+                        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myScene,
+                        primTypeCollector, myJimple, myOptions, myPackageNamer, constantFactory, mySootResolver, myPhaseOptions)))))), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)),
+        myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions));
     // public static Test valueOf(String s) { return (Test)java.lang.Enum.valueOf(Test.class, s); }
     addBodyDecl(new MethodDecl(
-        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)
-            .add(new Modifier("public")).add(new Modifier("static")).add(new Modifier("synthetic")), myPhaseOptions),
+        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
+            .add(new Modifier("public")).add(new Modifier("static")).add(new Modifier("synthetic")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
         createQualifiedAccess(), "valueOf",
-        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
             .add(new ParameterDeclaration(
-                new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions),
+                new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
                 typeString().createQualifiedAccess(), "s")),
-        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
-        new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
+        new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
             .add(new ReturnStmt(new Opt(new CastExpr(createQualifiedAccess(),
                 lookupType("java.lang", "Enum").createQualifiedAccess()
                     .qualifiesAccess(new MethodAccess("valueOf",
-                        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)
+                        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
                             .add(createQualifiedAccess().qualifiesAccess(new ClassAccess())).add(new VarAccess("s")),
-                        myScene, primTypeCollector, myJimple, myOptions, myPackageNamer, constantFactory)))))), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)),
-        myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver));
+                        myScene, primTypeCollector, myJimple, myOptions, myPackageNamer, constantFactory, mySootResolver, myPhaseOptions)))))), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)),
+        myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions));
   }
 
   /**
@@ -306,17 +309,18 @@ public class EnumDecl extends ClassDecl implements Cloneable {
 
   /**
    * @ast method
-   *
-   * @param myScene
+   *@param myScene
    * @param myOptions
    * @param myPackageNamer
    * @param myJimple
    * @param primTypeCollector
+   * @param myPhaseOptions
    */
   public EnumDecl(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, SootResolver sootResolver,
-      PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
-    super(myScene, myJimple, sootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+                  PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, sootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
 
+    this.myPhaseOptions = myPhaseOptions;
   }
 
   /**
@@ -329,8 +333,8 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[4];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 1);
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 1);
+    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 2);
     setChild(new Opt(), 3);
   }
 
@@ -339,9 +343,10 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    * 
    */
   public EnumDecl(Modifiers p0, String p1, List<Access> p2, List<BodyDecl> p3, Scene myScene, Options myOptions,
-      PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, SootResolver mySootResolver,
-      ConstantFactory constantFactory) {
-    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+                  PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, SootResolver mySootResolver,
+                  ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
+    this.myPhaseOptions = myPhaseOptions;
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
@@ -358,9 +363,10 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    * 
    */
   public EnumDecl(Modifiers p0, Symbol p1, List<Access> p2, List<BodyDecl> p3, Scene myScene, Options myOptions,
-      PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, SootResolver mySootResolver,
-      ConstantFactory constantFactory) {
-    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+                  PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, SootResolver mySootResolver,
+                  ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
+    this.myPhaseOptions = myPhaseOptions;
 
     setChild(p0, 0);
     setID(p1);
@@ -958,7 +964,7 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    */
   private Opt getSuperClassAccessOpt_compute() {
     return new Opt(new ParTypeAccess(new TypeAccess("java.lang", "Enum",myScene,primTypeCollector,myJimple),
-        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)
+        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
             .add(createQualifiedAccess())));
   }
 
@@ -1208,19 +1214,19 @@ public class EnumDecl extends ClassDecl implements Cloneable {
   private EnumDecl rewriteRule0() {
     {
       if (noConstructor()) {
-        List parameterList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+        List parameterList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
         parameterList.add(new ParameterDeclaration(new TypeAccess("java.lang", "String",myScene,primTypeCollector,myJimple), "p0"));
         parameterList.add(new ParameterDeclaration(new TypeAccess("int",myScene,primTypeCollector,myJimple), "p1"));
         addBodyDecl(new ConstructorDecl(
-            new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)
-                .add(new Modifier("private")).add(new Modifier("synthetic")), myPhaseOptions),
+            new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
+                .add(new Modifier("private")).add(new Modifier("synthetic")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
             name(), parameterList,
-            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver),
+            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
             new Opt(new ExprStmt(new SuperConstructorAccess("super",
-                new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver)
+                new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
                     .add(new VarAccess("p0")).add(new VarAccess("p1"))))),
-            new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory), myScene,
-            myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver));
+            new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myScene,
+            myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions));
       } else {
         transformEnumConstructors();
       }

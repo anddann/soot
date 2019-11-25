@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import beaver.Symbol;
+import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SootMethod;
@@ -37,8 +38,9 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 	private PrimTypeCollector primTypeCollector;
 	private ConstantFactory constantFactory;
     private SootResolver mySootResolver;
+	private PhaseOptions myPhaseOptions;
 
-    /**
+	/**
 	 * @apilevel low-level
 	 */
 	public void flushCache() {
@@ -340,7 +342,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 
 		int accessorIndex = methodQualifier.accessorCounter++;
 
-		List parameterList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+		List parameterList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		for (int i = 0; i < getNumParameter(); i++)
 			parameterList.add(new ParameterDeclaration(
 					// We don't need to create a qualified access to the type
@@ -352,12 +354,13 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 					// method we are generating an access for is not declared
 					// in the methodQualifier type
 					getParameter(i).type().createQualifiedAccess(), getParameter(i).name()));
-		List exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+		List exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		for (int i = 0; i < getNumException(); i++)
 			exceptionList.add((Access) getException(i).fullCopy());
 
 		// add synthetic flag to modifiers
-		Modifiers modifiers = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), myPhaseOptions);
+		List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+		Modifiers modifiers = new Modifiers(list, myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver);
 		if (getModifiers().isStatic())
 			modifiers.addModifier(new Modifier("static"));
 		modifiers.addModifier(new Modifier("synthetic"));
@@ -365,7 +368,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 		// build accessor declaration
 		m = new MethodDecl(modifiers, getTypeAccess().type().createQualifiedAccess(),
 				name() + "$access$" + accessorIndex, parameterList, exceptionList,
-				new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(createAccessorStmt()), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
+				new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(createAccessorStmt()), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		m = methodQualifier.addMemberMethod(m);
 		methodQualifier.addAccessor(this, "method", m);
 		return m;
@@ -377,7 +380,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 	 * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Backend/InnerClasses.jrag:247
 	 */
 	private Stmt createAccessorStmt() {
-		List argumentList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+		List argumentList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		for (int i = 0; i < getNumParameter(); i++)
 			argumentList.add(new VarAccess(getParameter(i).name()));
 		Access access = new BoundMethodAccess(name(), argumentList, this,myScene,primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory);
@@ -397,19 +400,20 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 			return m;
 
 		int accessorIndex = methodQualifier.accessorCounter++;
-		List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
-		List args = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+		List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+		List args = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		for (int i = 0; i < getNumParameter(); i++) {
 			parameters.add(new ParameterDeclaration(getParameter(i).type(), getParameter(i).name()));
 			args.add(new VarAccess(getParameter(i).name()));
 		}
 		Stmt stmt;
 		if (type().isVoid())
-			stmt = new ExprStmt(new SuperAccess("super").qualifiesAccess(new MethodAccess(name(), args,myScene,primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory)));
+			stmt = new ExprStmt(new SuperAccess("super").qualifiesAccess(new MethodAccess(name(), args,myScene,primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory, mySootResolver, myPhaseOptions)));
 		else
-			stmt = new ReturnStmt(new Opt(new SuperAccess("super").qualifiesAccess(new MethodAccess(name(), args,myScene,primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory))));
-		m = new MethodDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(new Modifier("synthetic")), myPhaseOptions), type().createQualifiedAccess(),
-				name() + "$access$" + accessorIndex, parameters, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(stmt), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver);
+			stmt = new ReturnStmt(new Opt(new SuperAccess("super").qualifiesAccess(new MethodAccess(name(), args,myScene,primTypeCollector,myJimple,myOptions,myPackageNamer,constantFactory, mySootResolver, myPhaseOptions))));
+		List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+		m = new MethodDecl(new Modifiers(list.add(new Modifier("synthetic")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), type().createQualifiedAccess(),
+				name() + "$access$" + accessorIndex, parameters, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(stmt), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		m = methodQualifier.addMemberMethod(m);
 		methodQualifier.addAccessor(this, "method_super", m);
 		return m;
@@ -572,8 +576,8 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 					if (!processed.contains(key)) {
 						processed.add(key);
 
-						List args = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
-						List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+						List args = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+						List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 						for (int i = 0; i < getNumParameter(); i++) {
 							args.add(new CastExpr(getParameter(i).type().erasure().createBoundAccess(),
 									new VarAccess("p" + i)));
@@ -585,16 +589,16 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 						} else {
 							stmt = new ReturnStmt(createBoundAccess(args));
 						}
-						List modifiersList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+						List modifiersList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 						if (isPublic())
 							modifiersList.add(new Modifier("public"));
 						else if (isProtected())
 							modifiersList.add(new Modifier("protected"));
 						else if (isPrivate())
 							modifiersList.add(new Modifier("private"));
-						MethodDecl bridge = new BridgeMethodDecl(new Modifiers(modifiersList, myPhaseOptions),
+						MethodDecl bridge = new BridgeMethodDecl(new Modifiers(modifiersList, myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
 								erased.type().erasure().createBoundAccess(), erased.name(), parameters,
-								(List) getExceptionList().fullCopy(), new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver).add(stmt), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory)));
+								(List) getExceptionList().fullCopy(), new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(stmt), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)));
 						hostType().addBodyDecl(bridge);
 					}
 				}
@@ -620,15 +624,15 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 
 	/**
 	 * @ast method
-	 *
-     * @param myScene
-     * @param myJimple
-     * @param myPackageNamer
-     * @param myOptions
-     * @param primTypeCollector
-     * @param constantFactory
-     * @param mySootResolver     */
-	public MethodDecl(Scene myScene, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
+	 *@param myScene
+	 * @param myJimple
+	 * @param myPackageNamer
+	 * @param myOptions
+	 * @param primTypeCollector
+	 * @param constantFactory
+	 * @param mySootResolver
+	 * @param myPhaseOptions            */
+	public MethodDecl(Scene myScene, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
 		super();
 
 		this.myScene = myScene;
@@ -638,7 +642,8 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 		this.primTypeCollector = primTypeCollector;
 		this.constantFactory = constantFactory;
         this.mySootResolver = mySootResolver;
-    }
+		this.myPhaseOptions = myPhaseOptions;
+	}
 
 	/**
 	 * Initializes the child array to the correct size. Initializes List and Opt
@@ -651,8 +656,8 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 	 */
 	public void init$Children() {
 		children = new ASTNode[5];
-		setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 2);
-		setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver), 3);
+		setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 2);
+		setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 3);
 		setChild(new Opt(), 4);
 	}
 
@@ -661,7 +666,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 	 * 
 	 */
 	public MethodDecl(Modifiers p0, Access p1, String p2, List<ParameterDeclaration> p3, List<Access> p4,
-                      Opt<Block> p5, Scene myScene, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
+					  Opt<Block> p5, Scene myScene, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
 		this.myScene = myScene;
 		this.myJimple = myJimple;
 		this.myPackageNamer = myPackageNamer;
@@ -669,7 +674,8 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 		this.primTypeCollector = primTypeCollector;
 		this.constantFactory = constantFactory;
         this.mySootResolver = mySootResolver;
-        setChild(p0, 0);
+		this.myPhaseOptions = myPhaseOptions;
+		setChild(p0, 0);
 		setChild(p1, 1);
 		setID(p2);
 		setChild(p3, 2);
@@ -682,7 +688,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 	 * 
 	 */
 	public MethodDecl(Modifiers p0, Access p1, Symbol p2, List<ParameterDeclaration> p3, List<Access> p4,
-                      Opt<Block> p5, Scene myScene, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
+					  Opt<Block> p5, Scene myScene, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
 		this.myScene = myScene;
 		this.myJimple = myJimple;
 		this.myPackageNamer = myPackageNamer;
@@ -690,7 +696,8 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 		this.primTypeCollector = primTypeCollector;
 		this.constantFactory = constantFactory;
         this.mySootResolver = mySootResolver;
-        setChild(p0, 0);
+		this.myPhaseOptions = myPhaseOptions;
+		setChild(p0, 0);
 		setChild(p1, 1);
 		setID(p2);
 		setChild(p3, 2);
