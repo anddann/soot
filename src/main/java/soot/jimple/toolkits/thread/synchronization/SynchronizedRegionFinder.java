@@ -110,14 +110,14 @@ public class SynchronizedRegionFinder extends ForwardFlowAnalysis<Unit, FlowSet<
       };
     }
 
-    tasea = new CriticalSectionAwareSideEffectAnalysis(fullObjectFactory, myScene.getPointsToAnalysis(), myScene.getCallGraph(), null, tlo, myScene);
+    tasea = new CriticalSectionAwareSideEffectAnalysis(fullObjectFactory, myPhaseDumper, myScene.getPointsToAnalysis(), myScene.getCallGraph(), null, tlo, myScene);
 
     prepUnits = new ArrayList<Object>();
 
     methodTn = null;
     if (method.isSynchronized()) {
       // Entire method is transactional
-      methodTn = new CriticalSection(true, method, 1);
+      methodTn = new CriticalSection(true, method, 1, fullObjectFactory, myScene);
       methodTn.beginning = ((JimpleBody) body).getFirstNonIdentityStmt();
     }
     doAnalysis();
@@ -348,7 +348,7 @@ public class SynchronizedRegionFinder extends ForwardFlowAnalysis<Unit, FlowSet<
     // If this statement was a monitorenter, and no transaction object yet exists for it,
     // create one.
     if (addSelf) {
-      CriticalSection newTn = new CriticalSection(false, method, nestLevel + 1);
+      CriticalSection newTn = new CriticalSection(false, method, nestLevel + 1, fullObjectFactory, myScene);
       newTn.entermonitor = stmt;
       newTn.beginning = (Stmt) units.getSuccOf(stmt);
       if (stmt instanceof EnterMonitorStmt) {

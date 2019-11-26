@@ -139,7 +139,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    * @param mySootResolver
    * @param myPhaseOptions            */
   public PrimitiveCompilationUnit(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 
 
       this.myScene = myScene;
@@ -169,7 +169,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    * 
    */
   public PrimitiveCompilationUnit(String p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     this.myScene = myScene;
       this.myOptions = myOptions;
       this.myPackageNamer = myPackageNamer;
@@ -187,7 +187,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    * 
    */
   public PrimitiveCompilationUnit(Symbol p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     this.myScene = myScene;
       this.myOptions = myOptions;
       this.myPackageNamer = myPackageNamer;

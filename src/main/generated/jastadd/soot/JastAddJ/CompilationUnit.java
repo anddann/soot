@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import beaver.Symbol;
+import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SootResolver;
@@ -26,7 +27,8 @@ public class CompilationUnit extends ASTNode<ASTNode> implements Cloneable {
   protected Jimple myJimple;
   protected PrimTypeCollector primTypeCollector;
   protected ConstantFactory constantFactory;
-  private SootResolver mySootResolver;
+  protected SootResolver mySootResolver;
+  protected PhaseOptions myPhaseOptions;
 
   /**
    * @apilevel low-level
@@ -254,15 +256,15 @@ public class CompilationUnit extends ASTNode<ASTNode> implements Cloneable {
   public boolean isResolved = false;
   /**
    * @ast method 
-   *
-   * @param myScene
+   *@param myScene
    * @param myOptions
    * @param myPackageNamer
    * @param myJimple
    * @param primTypeCollector
    * @param constantFactory
-   * @param mySootResolver     */
-  public CompilationUnit(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
+   * @param mySootResolver
+   * @param myPhaseOptions            */
+  public CompilationUnit(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     super();
     this.myScene = myScene;
 
@@ -273,6 +275,7 @@ public class CompilationUnit extends ASTNode<ASTNode> implements Cloneable {
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
     this.mySootResolver = mySootResolver;
+    this.myPhaseOptions = myPhaseOptions;
   }
   /**
    * Initializes the child array to the correct size.
@@ -291,7 +294,7 @@ public class CompilationUnit extends ASTNode<ASTNode> implements Cloneable {
    * @ast method 
    * 
    */
-  public CompilationUnit(String p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
+  public CompilationUnit(String p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
@@ -299,6 +302,7 @@ public class CompilationUnit extends ASTNode<ASTNode> implements Cloneable {
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
     this.mySootResolver = mySootResolver;
+    this.myPhaseOptions = myPhaseOptions;
     setPackageDecl(p0);
     setChild(p1, 0);
     setChild(p2, 1);
@@ -307,7 +311,7 @@ public class CompilationUnit extends ASTNode<ASTNode> implements Cloneable {
    * @ast method 
    * 
    */
-  public CompilationUnit(Symbol p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver) {
+  public CompilationUnit(Symbol p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
@@ -315,6 +319,7 @@ public class CompilationUnit extends ASTNode<ASTNode> implements Cloneable {
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
     this.mySootResolver = mySootResolver;
+    this.myPhaseOptions = myPhaseOptions;
     setPackageDecl(p0);
     setChild(p1, 0);
     setChild(p2, 1);

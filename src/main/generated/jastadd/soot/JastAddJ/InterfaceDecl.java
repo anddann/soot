@@ -5,6 +5,10 @@ import java.util.HashSet;
 import java.util.*;
 import java.util.Collection;
 import soot.*;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
 import soot.tagkit.SourceFileTag;
 
 /**
@@ -338,8 +342,8 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
    * @ast method 
    * 
    */
-  public InterfaceDecl() {
-    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+  public InterfaceDecl(Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory,myPhaseOptions);
 
 
   }
@@ -360,8 +364,8 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
    * @ast method 
    * 
    */
-  public InterfaceDecl(Modifiers p0, String p1, List<Access> p2, List<BodyDecl> p3) {
-      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+  public InterfaceDecl(Modifiers p0, String p1, List<Access> p2, List<BodyDecl> p3, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -371,8 +375,8 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
    * @ast method 
    * 
    */
-  public InterfaceDecl(Modifiers p0, beaver.Symbol p1, List<Access> p2, List<BodyDecl> p3) {
-      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, constantFactory1, myPhaseOptions1);
+  public InterfaceDecl(Modifiers p0, beaver.Symbol p1, List<Access> p2, List<BodyDecl> p3,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+      super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory,myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

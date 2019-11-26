@@ -106,7 +106,7 @@ public class AnnotatedCompilationUnit extends CompilationUnit implements Cloneab
    * 
    */
   public AnnotatedCompilationUnit() {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 
 
   }
@@ -128,7 +128,7 @@ public class AnnotatedCompilationUnit extends CompilationUnit implements Cloneab
    * 
    */
   public AnnotatedCompilationUnit(java.lang.String p0, List<ImportDecl> p1, List<TypeDecl> p2, Modifiers p3) {
-      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setPackageDecl(p0);
     setChild(p1, 0);
     setChild(p2, 1);
@@ -139,7 +139,7 @@ public class AnnotatedCompilationUnit extends CompilationUnit implements Cloneab
    * 
    */
   public AnnotatedCompilationUnit(beaver.Symbol p0, List<ImportDecl> p1, List<TypeDecl> p2, Modifiers p3) {
-      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setPackageDecl(p0);
     setChild(p1, 0);
     setChild(p2, 1);

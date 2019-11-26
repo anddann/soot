@@ -28,10 +28,8 @@ import java.util.Map;
 
 import soot.Body;
 import soot.G;
-import soot.Scene;
 import soot.Unit;
 import soot.jimple.Stmt;
-import soot.jimple.toolkits.pointer.FullObjectSet;
 import soot.jimple.toolkits.pointer.RWSet;
 import soot.jimple.toolkits.pointer.SideEffectAnalysis;
 import soot.jimple.toolkits.pointer.Union;
@@ -104,7 +102,7 @@ public class StrayRWFinder extends BackwardFlowAnalysis {
 
     in.copy(out);
     if (addSelf.booleanValue()) {
-      CriticalSection tn = new CriticalSection(false, body.getMethod(), 0);
+      CriticalSection tn = new CriticalSection(false, body.getMethod(), 0, fullObjectFactory, myScene);
       tn.entermonitor = (Stmt) unit;
       tn.units.add((Unit) unit);
       tn.read.union(stmtRead);

@@ -70,10 +70,13 @@ import soot.jimple.NullConstant;
 import soot.jimple.RemExpr;
 import soot.jimple.Stmt;
 import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.scalar.LocalDefs;
 import soot.toolkits.scalar.LocalUses;
 import soot.toolkits.scalar.UnitValueBoxPair;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 public class DeadAssignmentEliminator extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(DeadAssignmentEliminator.class);
@@ -81,14 +84,20 @@ public class DeadAssignmentEliminator extends BodyTransformer {
   private Timers myTimers;
   private Jimple myJimple;
   private Scene myScene;
+  private PhaseDumper phaseDumper;
+  private ThrowAnalysis throwAnalysis;
+  private ThrowableSet.Manager myManager;
 
 
   @Inject
-  public DeadAssignmentEliminator(Options myOptions, Timers myTimers, Jimple myJimple, Scene myScene) {
+  public DeadAssignmentEliminator(Options myOptions, Timers myTimers, Jimple myJimple, Scene myScene, PhaseDumper phaseDumper, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager) {
     this.myOptions = myOptions;
     this.myTimers = myTimers;
     this.myJimple = myJimple;
     this.myScene = myScene;
+    this.phaseDumper = phaseDumper;
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
   }
 
 
@@ -241,8 +250,7 @@ public class DeadAssignmentEliminator extends BodyTransformer {
     if (checkInvoke || !allEssential) {
       // Add all the statements which are used to compute values
       // for the essential statements, recursively
-
-      final LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(b, myManager);
+      final LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(b,  throwAnalysis, myManager, myOptions, phaseDumper);
 
       if (!allEssential) {
         Set<Unit> essential = new HashSet<Unit>(b.getUnits().size());

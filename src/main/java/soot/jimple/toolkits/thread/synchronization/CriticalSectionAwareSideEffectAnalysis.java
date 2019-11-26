@@ -64,6 +64,7 @@ import soot.jimple.toolkits.pointer.SideEffectAnalysis;
 import soot.jimple.toolkits.pointer.StmtRWSet;
 import soot.jimple.toolkits.thread.EncapsulatedObjectAnalysis;
 import soot.jimple.toolkits.thread.ThreadLocalObjectsAnalysis;
+import soot.util.PhaseDumper;
 
 /**
  * Generates side-effect information from a PointsToAnalysis. Uses various heuristic rules to filter out side-effects that
@@ -116,6 +117,7 @@ class WholeObject {
 
 public class CriticalSectionAwareSideEffectAnalysis {
   private final FullObjectFactory fullObjectFactory;
+  private final PhaseDumper myPhaseDumper;
   PointsToAnalysis pa;
   CallGraph cg;
   Map<SootMethod, CodeBlockRWSet> methodToNTReadSet = new HashMap<SootMethod, CodeBlockRWSet>();
@@ -241,9 +243,10 @@ public class CriticalSectionAwareSideEffectAnalysis {
     return methodToNTWriteSet.get(method);
   }
 
-  public CriticalSectionAwareSideEffectAnalysis(FullObjectFactory fullObjectFactory, PointsToAnalysis pa, CallGraph cg,
+  public CriticalSectionAwareSideEffectAnalysis(FullObjectFactory fullObjectFactory, PhaseDumper myPhaseDumper, PointsToAnalysis pa, CallGraph cg,
                                                 Collection<CriticalSection> criticalSections, ThreadLocalObjectsAnalysis tlo, Scene myScene) {
     this.fullObjectFactory = fullObjectFactory;
+    this.myPhaseDumper = myPhaseDumper;
     this.pa = pa;
     this.cg = cg;
     this.tve = new CriticalSectionVisibleEdgesPred(criticalSections);
@@ -252,7 +255,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
     this.myScene = myScene;
     this.normalsea = new SideEffectAnalysis(pa, cg, this.fullObjectFactory);
     this.criticalSections = criticalSections;
-    this.eoa = new EncapsulatedObjectAnalysis(myPhaseDumper, myScene);
+    this.eoa = new EncapsulatedObjectAnalysis(this.myPhaseDumper, myScene);
     this.tlo = tlo; // can be null
 
     sigBlacklist = new Vector(); // Signatures of methods known to have effective read/write sets of size 0

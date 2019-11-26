@@ -70,9 +70,10 @@ public class SootResolver {
   private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
   private ConstantFactory constantFactory;
+  private PhaseOptions myPhaseOptions;
 
   @Inject
-  public SootResolver(Options myOptions, Scene myScene, PackageNamer myPackageNamer, SourceLocator mySourceLocator, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+  public SootResolver(Options myOptions, Scene myScene, PackageNamer myPackageNamer, SourceLocator mySourceLocator, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myPackageNamer = myPackageNamer;
@@ -80,6 +81,7 @@ public class SootResolver {
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+    this.myPhaseOptions = myPhaseOptions;
     worklist[SootClass.HIERARCHY] = new ArrayDeque<SootClass>();
     worklist[SootClass.SIGNATURES] = new ArrayDeque<SootClass>();
     worklist[SootClass.BODIES] = new ArrayDeque<SootClass>();

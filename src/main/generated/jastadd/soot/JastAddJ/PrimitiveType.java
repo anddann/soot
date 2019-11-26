@@ -1,6 +1,15 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production PrimitiveType : {@link TypeDecl} ::= <span class="component">{@link Modifiers}</span> <span class="component">&lt;ID:String&gt;</span> <span class="component">[SuperClassAccess:{@link Access}]</span> <span class="component">{@link BodyDecl}*</span>;
  * @ast node
@@ -91,7 +100,7 @@ public class PrimitiveType extends TypeDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public PrimitiveType() {
+  public PrimitiveType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
     super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
 
 
@@ -113,7 +122,7 @@ public class PrimitiveType extends TypeDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public PrimitiveType(Modifiers p0, String p1, Opt<Access> p2, List<BodyDecl> p3) {
+  public PrimitiveType(Modifiers p0, String p1, Opt<Access> p2, List<BodyDecl> p3,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
       super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
@@ -124,7 +133,7 @@ public class PrimitiveType extends TypeDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public PrimitiveType(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<BodyDecl> p3) {
+  public PrimitiveType(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<BodyDecl> p3,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
       super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);

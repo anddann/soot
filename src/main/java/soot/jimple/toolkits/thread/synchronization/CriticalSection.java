@@ -28,9 +28,11 @@ import java.util.List;
 
 import soot.EquivalentValue;
 import soot.MethodOrMethodContext;
+import soot.Scene;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
+import soot.jimple.FullObjectFactory;
 import soot.jimple.toolkits.pointer.CodeBlockRWSet;
 
 class CriticalSection extends SynchronizedRegion {
@@ -62,9 +64,13 @@ class CriticalSection extends SynchronizedRegion {
   public Value lockObject;
   public Value lockObjectArrayIndex;
   public List<EquivalentValue> lockset;
+  private FullObjectFactory fullObjectFactory;
+  private Scene myScene;
 
-  CriticalSection(boolean wholeMethod, SootMethod method, int nestLevel) {
+  CriticalSection(boolean wholeMethod, SootMethod method, int nestLevel, FullObjectFactory fullObjectFactory, Scene myScene) {
     super();
+    this.fullObjectFactory = fullObjectFactory;
+    this.myScene = myScene;
     this.IDNum = nextIDNum;
     nextIDNum++;
     this.nestLevel = nestLevel;
@@ -87,7 +93,7 @@ class CriticalSection extends SynchronizedRegion {
     this.lockset = null;
   }
 
-  CriticalSection(CriticalSection tn) {
+  CriticalSection(CriticalSection tn, FullObjectFactory fullObjectFactory, Scene myScene) {
     super(tn);
     this.IDNum = tn.IDNum;
     this.nestLevel = tn.nestLevel;
@@ -115,7 +121,7 @@ class CriticalSection extends SynchronizedRegion {
   }
 
   protected Object clone() {
-    return new CriticalSection(this);
+    return new CriticalSection(this, fullObjectFactory, myScene);
   }
 
   public String toString() {

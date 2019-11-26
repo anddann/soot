@@ -29,9 +29,11 @@ import soot.Local;
 import soot.Unit;
 import soot.options.Options;
 import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.SimpleLocalDefs.FlowAnalysisMode;
+import soot.util.PhaseDumper;
 
 /**
  * Provides an interface for querying for the definitions of a Local at a given Unit in a method.
@@ -48,26 +50,30 @@ public interface LocalDefs {
      * @see soot.validation.UsesValidator
      * @param body
      * @param myManager
+     * @param myOptions
+     * @param phaseDumper
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefs(Body body, ThrowAnalysis myManager) {
-      return newLocalDefs(body, false, myManager, myOptions);
+    public static LocalDefs newLocalDefs(Body body, ThrowAnalysis throwAnalysis,  ThrowableSet.Manager myManager, Options myOptions, PhaseDumper phaseDumper) {
+      return newLocalDefs(body, false, throwAnalysis, myOptions, myManager, phaseDumper);
     }
 
     /**
      * Creates a new LocalDefs analysis based on a {@code ExceptionalUnitGraph} If you don't trust the input you should set
      * <code>expectUndefined</code> to <code>true</code>
      *
-     * @see ExceptionalUnitGraph#ExceptionalUnitGraph(Body, soot.toolkits.exceptions.ThrowableSet.Manager)
+     * @see ExceptionalUnitGraph# ExceptionalUnitGraph(Body, soot.toolkits.exceptions.ThrowableSet.Manager)
      * @param expectUndefinedUses
      *          if you expect uses of locals that are undefined
      * @param body
      * @param myThrowAnalysis
      * @param myOptions
+     * @param myManager
+     * @param phaseDumper
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefs(Body body, boolean expectUndefined, ThrowAnalysis myThrowAnalysis, Options myOptions) {
-      return newLocalDefs(new ExceptionalUnitGraph(body, myThrowAnalysis), expectUndefined, myOptions);
+    public static LocalDefs newLocalDefs(Body body, boolean expectUndefined, ThrowAnalysis myThrowAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper phaseDumper) {
+      return newLocalDefs(new ExceptionalUnitGraph(body, myThrowAnalysis,myOptions.omit_excepting_unit_edges(), myManager, phaseDumper), expectUndefined, myOptions);
     }
 
     /**

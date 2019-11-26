@@ -313,7 +313,7 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
         parseMinor();
         parseMajor();
         parseConstantPool();
-        CompilationUnit cu = new CompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+        CompilationUnit cu = new CompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
         TypeDecl typeDecl = parseTypeDecl();
         cu.setPackageDecl(classInfo.packageDecl());
         cu.addTypeDecl(typeDecl);

@@ -33,6 +33,7 @@ import soot.RefLikeType;
 import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
+import soot.jimple.FullObjectFactory;
 import soot.jimple.toolkits.callgraph.ReachableMethods;
 import soot.jimple.toolkits.pointer.CodeBlockRWSet;
 import soot.jimple.toolkits.thread.mhp.MhpTester;
@@ -49,9 +50,10 @@ public class CriticalSectionInterferenceGraph {
   boolean optionLeaveOriginalLocks = false;
   boolean optionIncludeEmptyPossibleEdges = false;
   private Scene myScene;
+  private FullObjectFactory fullObjectFactory;
 
   public CriticalSectionInterferenceGraph(List<CriticalSection> criticalSections, MhpTester mhp, boolean optionOneGlobalLock,
-      boolean optionLeaveOriginalLocks, boolean optionIncludeEmptyPossibleEdges, Scene myScene) {
+                                          boolean optionLeaveOriginalLocks, boolean optionIncludeEmptyPossibleEdges, Scene myScene, FullObjectFactory fullObjectFactory) {
     this.criticalSections = criticalSections;
     this.mhp = mhp;
     this.myScene = myScene;
@@ -59,6 +61,7 @@ public class CriticalSectionInterferenceGraph {
     this.optionOneGlobalLock = optionOneGlobalLock;
     this.optionLeaveOriginalLocks = optionLeaveOriginalLocks;
     this.optionIncludeEmptyPossibleEdges = optionIncludeEmptyPossibleEdges;
+    this.fullObjectFactory = fullObjectFactory;
 
     calculateGroups();
   }

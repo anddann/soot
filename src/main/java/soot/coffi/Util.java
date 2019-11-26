@@ -49,6 +49,7 @@ import soot.SootMethod;
 import soot.SootResolver;
 import soot.Timers;
 import soot.Type;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.options.Options;
@@ -94,10 +95,11 @@ public class Util {
   private Timers myTimers;
   private CONSTANT_Utf8_collector myCONSTANT_utf8_collector;
   private PrimTypeCollector myPrimTypeCollector;
+  private ConstantFactory constancFactory;
 
   @Inject
   public Util(Scene myScene, SootResolver mySootResolver, Jimple myJimple, PhaseOptions myPhaseOptions, Options myOptions,
-              PackManager myPackManager, Timers myTimers, CONSTANT_Utf8_collector myCONSTANT_utf8_collector, PrimTypeCollector myPrimTypeCollector) {
+              PackManager myPackManager, Timers myTimers, CONSTANT_Utf8_collector myCONSTANT_utf8_collector, PrimTypeCollector myPrimTypeCollector, ConstantFactory constancFactory) {
     this.myScene = myScene;
     this.mySootResolver = mySootResolver;
     this.myJimple = myJimple;
@@ -107,6 +109,7 @@ public class Util {
     this.myTimers = myTimers;
     this.myCONSTANT_utf8_collector = myCONSTANT_utf8_collector;
     this.myPrimTypeCollector = myPrimTypeCollector;
+    this.constancFactory = constancFactory;
   }
 
   private cp_info[] activeConstantPool = null;

@@ -759,9 +759,9 @@ class Events extends Parser.Events {
        cu = (CompilationUnit)parse(scanner);
      } catch(Parser.Exception e) {
        // build empty compilation unit for failed error recovery
-       cu = new CompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+       cu = new CompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
      } catch(Error e) {
-       cu = new CompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+       cu = new CompilationUnit(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
        errors.add(new Problem(null, e.getMessage(), 0, 0, Problem.Severity.ERROR, Problem.Kind.LEXICAL));
      }
      for(java.util.Iterator iter = errors.iterator(); iter.hasNext(); ) {
@@ -925,7 +925,7 @@ class Events extends Parser.Events {
 			{
 					final Symbol _symbol_p = _symbols[offset + 1];
 					final IdUse p = (IdUse) _symbol_p.value;
-					 return new CompilationUnit(p.getID(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+					 return new CompilationUnit(p.getID(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			}
 			case 25: // compilation_unit = package_declaration.p import_declarations.i
 			{
@@ -933,7 +933,7 @@ class Events extends Parser.Events {
 					final IdUse p = (IdUse) _symbol_p.value;
 					final Symbol _symbol_i = _symbols[offset + 2];
 					final List i = (List) _symbol_i.value;
-					 return new CompilationUnit(p.getID(), i, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+					 return new CompilationUnit(p.getID(), i, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			}
 			case 26: // compilation_unit = package_declaration.p type_declarations.t
 			{
@@ -941,7 +941,7 @@ class Events extends Parser.Events {
 					final IdUse p = (IdUse) _symbol_p.value;
 					final Symbol _symbol_t = _symbols[offset + 2];
 					final List t = (List) _symbol_t.value;
-					 return new CompilationUnit(p.getID(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+					 return new CompilationUnit(p.getID(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			}
 			case 27: // compilation_unit = package_declaration.p import_declarations.i type_declarations.t
 			{
@@ -951,23 +951,23 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_t = _symbols[offset + 3];
 					final List t = (List) _symbol_t.value;
-					 return new CompilationUnit(p.getID(), i, t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+					 return new CompilationUnit(p.getID(), i, t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			}
 			case 28: // compilation_unit = 
 			{
-					 return new CompilationUnit("", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+					 return new CompilationUnit("", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			}
 			case 29: // compilation_unit = import_declarations.i
 			{
 					final Symbol _symbol_i = _symbols[offset + 1];
 					final List i = (List) _symbol_i.value;
-					 return new CompilationUnit("", i, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+					 return new CompilationUnit("", i, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			}
 			case 30: // compilation_unit = type_declarations.t
 			{
 					final Symbol _symbol_t = _symbols[offset + 1];
 					final List t = (List) _symbol_t.value;
-					 return new CompilationUnit("", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+					 return new CompilationUnit("", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			}
 			case 31: // compilation_unit = import_declarations.i type_declarations.t
 			{
@@ -975,7 +975,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_t = _symbols[offset + 2];
 					final List t = (List) _symbol_t.value;
-					 return new CompilationUnit("", i, t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+					 return new CompilationUnit("", i, t, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			}
 			case 32: // import_declarations = import_declaration.i
 			{

@@ -55,15 +55,24 @@ import soot.jimple.NewArrayExpr;
 import soot.jimple.NewMultiArrayExpr;
 import soot.jimple.Stmt;
 import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.scalar.LocalDefs;
+import soot.util.PhaseDumper;
 
 public class ClassFieldAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(ClassFieldAnalysis.class);
   private Options myOptions;
+  private ThrowAnalysis throwAnalysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper phaseDumper;
 
   @Inject
-  public ClassFieldAnalysis(Options myOptions) {
+  public ClassFieldAnalysis(Options myOptions, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper) {
     this.myOptions = myOptions;
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
+    this.phaseDumper = phaseDumper;
   }
 
 
@@ -238,7 +247,7 @@ public class ClassFieldAnalysis {
 
     /* build D/U web, find the value of each candidate */
     {
-      LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(body, myManager);
+      LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(body, throwAnalysis, myManager, myOptions, phaseDumper);
 
       Set<Map.Entry<Stmt, SootField>> entries = stmtfield.entrySet();
 

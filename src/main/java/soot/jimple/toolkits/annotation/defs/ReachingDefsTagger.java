@@ -32,18 +32,30 @@ import soot.Local;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
+import soot.options.Options;
 import soot.tagkit.LinkTag;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.scalar.LocalDefs;
+import soot.util.PhaseDumper;
 
 public class ReachingDefsTagger extends BodyTransformer {
 
+  private ThrowAnalysis throwAnalysis;
+  private ThrowableSet.Manager myManager;
+  private Options myOptions;
+  private PhaseDumper phaseDumper;
+
   @Inject
-  public ReachingDefsTagger() {
+  public ReachingDefsTagger(ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper phaseDumper) {
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
+    this.myOptions = myOptions;
+    this.phaseDumper = phaseDumper;
   }
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
-
-    LocalDefs ld = LocalDefs.Factory.newLocalDefs(b, myManager);
+    LocalDefs ld = LocalDefs.Factory.newLocalDefs(b, throwAnalysis, myManager, myOptions, phaseDumper);
 
     for (Unit s : b.getUnits()) {
       // System.out.println("stmt: "+s);

@@ -402,7 +402,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 		Modifiers synthetic = new Modifiers(list.add(new Modifier("synthetic")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver);
 		String s = "" + hostType().nextAnonymousIndex();
 		ClassDecl classDecl = new ClassDecl(synthetic,
-				s, new Opt(), list, list, myScene,myJimple,mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory);
+				s, new Opt(), list, list, myScene,myJimple,mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory,myPhaseOptions);
 		classDecl = hostType().addMemberClass(classDecl);
 		hostType().addNestedType(classDecl);
 		return classDecl;

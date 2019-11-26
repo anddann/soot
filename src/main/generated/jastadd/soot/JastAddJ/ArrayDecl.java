@@ -2,6 +2,9 @@
 package soot.JastAddJ;
 
 import soot.*;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
 
 /**
  * @production ArrayDecl : {@link ClassDecl};
@@ -145,8 +148,8 @@ public class ArrayDecl extends ClassDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public ArrayDecl() {
-    super(myScene, myOptions, myPackageNamer);
+  public ArrayDecl(Scene myScene, Jimple myJimple, SootResolver sootResolver, soot.options.Options myOptions, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions phaseOptions){
+    super(myScene,myJimple,sootResolver, myPackageNamer,myOptions,primTypeCollector,constantFactory,phaseOptions);
 
 
   }
@@ -168,8 +171,8 @@ public class ArrayDecl extends ClassDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public ArrayDecl(Modifiers p0, String p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4) {
-      super(myScene, myOptions, myPackageNamer);
+  public ArrayDecl(Modifiers p0, String p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4,Scene myScene, Jimple myJimple, SootResolver sootResolver, soot.options.Options myOptions, PackageNamer myPackageNamer,PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions phaseOptions) {
+    super(myScene,myJimple,sootResolver, myPackageNamer,myOptions,primTypeCollector,constantFactory,phaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -180,8 +183,8 @@ public class ArrayDecl extends ClassDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public ArrayDecl(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4) {
-      super(myScene, myOptions, myPackageNamer);
+  public ArrayDecl(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4,Scene myScene, Jimple myJimple, SootResolver sootResolver, soot.options.Options myOptions, PackageNamer myPackageNamer,PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions phaseOptions) {
+    super(myScene,myJimple,sootResolver, myPackageNamer,myOptions,primTypeCollector,constantFactory,phaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -1247,7 +1250,7 @@ public class ArrayDecl extends ClassDecl implements Cloneable {
   /**
    * @apilevel internal
    */
-  private Type getSootType_compute() {  return soot.ArrayType.v(elementType().getSootType(), dimension());  }
+  private Type getSootType_compute() {  return soot.ArrayType.v(elementType().getSootType(), dimension(),myScene);  }
   /**
 	 * A type is reifiable if it either refers to a non-parameterized type,
 	 * is a raw type, is a parameterized type with only unbound wildcard

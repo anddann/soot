@@ -67,6 +67,8 @@ import soot.baf.StaticGetInst;
 import soot.baf.StaticPutInst;
 import soot.baf.StoreInst;
 import soot.baf.XorInst;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.ZonedBlockGraph;
@@ -74,16 +76,24 @@ import soot.toolkits.scalar.LocalDefs;
 import soot.toolkits.scalar.LocalUses;
 import soot.toolkits.scalar.UnitValueBoxPair;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 public class LoadStoreOptimizer extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(LoadStoreOptimizer.class);
-  private Options myOptions;
+  private soot.options.Options myOptions;
   private Baf myBaf;
+  private ThrowAnalysis throwAnalysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper phaseDumper;
+
 
   @Inject
-  public LoadStoreOptimizer(Options myOptions, Baf myBaf) {
+  public LoadStoreOptimizer(soot.options.Options myOptions, Baf myBaf, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper) {
     this.myOptions = myOptions;
     this.myBaf = myBaf;
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
+    this.phaseDumper = phaseDumper;
   }
 
 
@@ -136,6 +146,7 @@ public class LoadStoreOptimizer extends BodyTransformer {
     private LocalUses mLocalUses;
     private Map<Unit, Block> mUnitToBlockMap; // maps a unit it's containing block
     private boolean mPass2 = false;
+
 
     void go() {
       if (!mUnits.isEmpty()) {
@@ -209,7 +220,7 @@ public class LoadStoreOptimizer extends BodyTransformer {
     }
 
     private void computeLocalDefsAndLocalUsesInfo() {
-      mLocalDefs = LocalDefs.Factory.newLocalDefs(mBody, myManager);
+      mLocalDefs = LocalDefs.Factory.newLocalDefs(mBody, throwAnalysis, myManager, myOptions, phaseDumper);
       mLocalUses = LocalUses.Factory.newLocalUses(mBody, mLocalDefs);
     }
 

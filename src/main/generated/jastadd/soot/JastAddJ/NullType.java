@@ -1,6 +1,15 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production NullType : {@link TypeDecl};
  * @ast node
@@ -89,7 +98,7 @@ public class NullType extends TypeDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public NullType() {
+  public NullType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
     super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
 
 
@@ -110,7 +119,7 @@ public class NullType extends TypeDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public NullType(Modifiers p0, String p1, List<BodyDecl> p2) {
+  public NullType(Modifiers p0, String p1, List<BodyDecl> p2,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
       super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
@@ -120,7 +129,7 @@ public class NullType extends TypeDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public NullType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2) {
+  public NullType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
       super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);

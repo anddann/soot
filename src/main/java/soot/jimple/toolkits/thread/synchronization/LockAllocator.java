@@ -267,7 +267,7 @@ public class LockAllocator extends SceneTransformer {
     logger.debug("[wjtp.tn] *** Find Transitive Read/Write Sets *** " + (new Date()));
     PointsToAnalysis pta = myScene.getPointsToAnalysis();
     CriticalSectionAwareSideEffectAnalysis tasea = null;
-    tasea = new CriticalSectionAwareSideEffectAnalysis(fullObjectFactory, pta, myScene.getCallGraph(),
+    tasea = new CriticalSectionAwareSideEffectAnalysis(fullObjectFactory, myPhaseDumper, pta, myScene.getCallGraph(),
         (optionOpenNesting ? criticalSections : null), tlo, myScene);
     Iterator<CriticalSection> tnIt = criticalSections.iterator();
     while (tnIt.hasNext()) {
@@ -317,7 +317,7 @@ public class LockAllocator extends SceneTransformer {
     // Search for data dependencies between transactions, and split them into disjoint sets
     logger.debug("[wjtp.tn] *** Calculate Locking Groups *** " + (new Date()));
     CriticalSectionInterferenceGraph ig = new CriticalSectionInterferenceGraph(criticalSections, mhp, optionOneGlobalLock,
-        optionLeaveOriginalLocks, optionIncludeEmptyPossibleEdges,myScene);
+        optionLeaveOriginalLocks, optionIncludeEmptyPossibleEdges,myScene, fullObjectFactory);
     interferenceGraph = ig; // save in field for later retrieval
 
     // *** Detect the Possibility of Deadlock ***
@@ -623,8 +623,7 @@ public class LockAllocator extends SceneTransformer {
       if (tn.setNumber <= 0) {
         continue;
       }
-
-      LocalDefs ld = LocalDefs.Factory.newLocalDefs(tn.method.retrieveActiveBody(), myManager);
+      LocalDefs ld = LocalDefs.Factory.newLocalDefs(tn.method.retrieveActiveBody(), myThrowAnalysis, myManager, myOptions, myPhaseDumer);
 
       if (tn.origLock == null || !(tn.origLock instanceof Local)) {
         continue;

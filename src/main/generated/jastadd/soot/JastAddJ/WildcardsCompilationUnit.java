@@ -141,7 +141,7 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    * @param myPhaseOptions            */
   public WildcardsCompilationUnit(Scene myScene, PackageNamer myPackageNamer, Jimple myJimple, Options myOptions,
                                   PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     this.mySootResolver = mySootResolver;
     this.myPhaseOptions = myPhaseOptions;
 
@@ -172,7 +172,7 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    */
   public WildcardsCompilationUnit(String p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene,
                                   PackageNamer myPackageNamer, Jimple myJimple, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     this.mySootResolver = mySootResolver;
     this.myPhaseOptions = myPhaseOptions;
     this.myScene = myScene;
@@ -191,7 +191,7 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    */
   public WildcardsCompilationUnit(Symbol p0, List<ImportDecl> p1, List<TypeDecl> p2, Scene myScene,
                                   PackageNamer myPackageNamer, Jimple myJimple, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
-    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver);
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     this.mySootResolver = mySootResolver;
     this.myPhaseOptions = myPhaseOptions;
 
