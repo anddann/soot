@@ -53,7 +53,7 @@ public class DexReturnValuePropagator extends BodyTransformer {
   @Override
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
     ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body, myDalvikThrowAnalysis, true, myManager, myPhaseDumper);
-    LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(graph, myOptions);
+    LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(graph, myOptions, myInteractionHandler);
     LocalUses localUses = null;
     LocalCreation localCreation = null;
 

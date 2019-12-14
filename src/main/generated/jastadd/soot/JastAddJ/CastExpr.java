@@ -122,7 +122,7 @@ public class CastExpr extends Expr implements Cloneable {
    * 
    */
   public CastExpr() {
-    super(primTypeCollector, myJimple);
+    super(primTypeCollector, myJimple, myScene);
 
 
   }
@@ -142,7 +142,7 @@ public class CastExpr extends Expr implements Cloneable {
    * 
    */
   public CastExpr(Access p0, Expr p1) {
-    super(primTypeCollector, myJimple);
+    super(primTypeCollector, myJimple, myScene);
     setChild(p0, 0);
     setChild(p1, 1);
   }

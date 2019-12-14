@@ -3,6 +3,15 @@ package soot.JastAddJ;
 
 import java.util.*;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production EnumConstant : {@link FieldDeclaration} ::= <span class="component">{@link Modifiers}</span> <span class="component">&lt;ID:String&gt;</span> <span class="component">Arg:{@link Expr}*</span> <span class="component">[Init:{@link Expr}]</span> <span class="component">TypeAccess:{@link Access}</span>;
  * @ast node
@@ -85,15 +94,15 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    * @aspect Enums
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Enums.jrag:197
    */
-  public EnumConstant(Modifiers mods, String name, List<Expr> args, List<BodyDecl> bds) {
-    this(mods, name, args, new Opt<Expr>(new EnumInstanceExpr(createOptAnonymousDecl(bds))));
+  public EnumConstant(Modifiers mods, String name, List<Expr> args, List<BodyDecl> bds, PhaseOptions myPhaseOptions, Scene myScene, Options myOptions, SootResolver mySootResolver, PackageNamer myPackageNamer, Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
+    this(mods, name, args, new Opt<Expr>(new EnumInstanceExpr(createOptAnonymousDecl(bds, myPhaseOptions, myScene, myOptions, mySootResolver, myPackageNamer, myJimple, constantFactory, primTypeCollector))), myScene,  myOptions,  myPackageNamer,  myJimple,  primTypeCollector,  constantFactory,  mySootResolver,  myPhaseOptions);
   }
   /**
    * @ast method 
    * @aspect Enums
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Enums.jrag:236
    */
-  private static Opt<TypeDecl> createOptAnonymousDecl(List<BodyDecl> bds) {
+  private static Opt<TypeDecl> createOptAnonymousDecl(List<BodyDecl> bds, PhaseOptions myPhaseOptions, Scene myScene, Options myOptions, SootResolver mySootResolver, PackageNamer myPackageNamer, Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
     if(bds.getNumChildNoTransform() == 0)
       return new Opt<TypeDecl>();
     return new Opt<TypeDecl>(
@@ -163,9 +172,15 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
   }
   /**
    * @ast method 
-   * 
-   */
-  public EnumConstant() {
+   *@param myScene
+   * @param myOptions
+   * @param myPackageNamer
+   * @param myJimple
+   * @param primTypeCollector
+   * @param constantFactory
+   * @param mySootResolver
+   * @param myPhaseOptions            */
+  public EnumConstant(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 
 
@@ -187,8 +202,8 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    * @ast method 
    * 
    */
-  public EnumConstant(Modifiers p0, String p1, List<Expr> p2, Opt<Expr> p3) {
-      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+  public EnumConstant(Modifiers p0, String p1, List<Expr> p2, Opt<Expr> p3,Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -198,8 +213,8 @@ public class EnumConstant extends FieldDeclaration implements Cloneable {
    * @ast method 
    * 
    */
-  public EnumConstant(Modifiers p0, beaver.Symbol p1, List<Expr> p2, Opt<Expr> p3) {
-      super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+  public EnumConstant(Modifiers p0, beaver.Symbol p1, List<Expr> p2, Opt<Expr> p3,Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
+    super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

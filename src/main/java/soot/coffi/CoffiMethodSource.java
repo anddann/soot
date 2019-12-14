@@ -101,7 +101,7 @@ public class CoffiMethodSource implements MethodSource {
         logger.debug("[" + m.getName() + "]     Building Coffi CFG...");
       }
 
-      new soot.coffi.CFG(coffiMethod, myOptions, myScene, myCoffiUtil, myJimple);
+      new soot.coffi.CFG(coffiMethod, myOptions, myScene, myCoffiUtil, myJimple, constancFactory);
 
       // if just computing metrics, we don't need to actually return body
       if (soot.jbco.Main.metrics) {

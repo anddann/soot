@@ -35,6 +35,7 @@ import soot.Value;
 import soot.jimple.ArrayRef;
 import soot.jimple.CaughtExceptionRef;
 import soot.jimple.ClassConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
@@ -44,7 +45,6 @@ import soot.jimple.MonitorStmt;
 import soot.jimple.NewArrayExpr;
 import soot.jimple.NewExpr;
 import soot.jimple.NewMultiArrayExpr;
-import soot.jimple.NullConstant;
 import soot.jimple.Stmt;
 import soot.jimple.StringConstant;
 import soot.jimple.ThisRef;
@@ -56,6 +56,7 @@ import soot.jimple.internal.JInstanceOfExpr;
 import soot.jimple.internal.JNeExpr;
 import soot.shimple.PhiExpr;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ForwardBranchedFlowAnalysis;
 
 /**
@@ -67,7 +68,9 @@ import soot.toolkits.scalar.ForwardBranchedFlowAnalysis;
  * @author Julian Tibble
  */
 public class NullnessAnalysis extends ForwardBranchedFlowAnalysis<NullnessAnalysis.AnalysisInfo> {
-  /**
+    private ConstantFactory constantFactory;
+
+    /**
    * The analysis info is a simple mapping of type {@link Value} to any of the constants BOTTOM, NON_NULL, NULL or TOP. This
    * class returns BOTTOM by default.
    *
@@ -124,14 +127,17 @@ public class NullnessAnalysis extends ForwardBranchedFlowAnalysis<NullnessAnalys
 
   /**
    * Creates a new analysis for the given graph/
-   *
    * @param graph
    *          any unit graph
+   * @param myInteractionHandler
+   * @param interaticveMode
+   * @param constantFactory
    */
-  public NullnessAnalysis(UnitGraph graph) {
-    super(graph);
+  public NullnessAnalysis(UnitGraph graph, InteractionHandler myInteractionHandler, boolean interaticveMode, ConstantFactory constantFactory) {
+    super(graph, interaticveMode,myInteractionHandler);
+      this.constantFactory = constantFactory;
 
-    doAnalysis();
+      doAnalysis();
   }
 
   /**
@@ -225,12 +231,12 @@ public class NullnessAnalysis extends ForwardBranchedFlowAnalysis<NullnessAnalys
     Value right = eqExpr.getOp2();
 
     Value val = null;
-    if (left == myNullConstant) {
-      if (right != myNullConstant) {
+    if (left == constantFactory.getNullConstant()) {
+      if (right != constantFactory.getNullConstant()) {
         val = right;
       }
-    } else if (right == myNullConstant) {
-      if (left != myNullConstant) {
+    } else if (right == constantFactory.getNullConstant()) {
+      if (left != constantFactory.getNullConstant()) {
         val = left;
       }
     }
@@ -305,7 +311,7 @@ public class NullnessAnalysis extends ForwardBranchedFlowAnalysis<NullnessAnalys
         || right instanceof ClassConstant || right instanceof CaughtExceptionRef) {
       // if we assign new... or @this, the result is non-null
       out.put(left, NON_NULL);
-    } else if (right == myNullConstant) {
+    } else if (right == constantFactory.getNullConstant()) {
       // if we assign null, well, it's null
       out.put(left, NULL);
     } else if (left instanceof Local && right instanceof Local) {

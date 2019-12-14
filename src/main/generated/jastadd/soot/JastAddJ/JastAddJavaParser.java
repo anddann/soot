@@ -3693,7 +3693,7 @@ class Events extends Parser.Events {
 					final Symbol EQ = _symbols[offset + 2];
 					final Symbol _symbol_element_value = _symbols[offset + 3];
 					final ElementValue element_value = (ElementValue) _symbol_element_value.value;
-					 ElementValuePair evp = new ElementValuePair(IDENTIFIER, element_value);
+					 ElementValuePair evp = new ElementValuePair(IDENTIFIER, element_value, myScene);
      evp.setStart(IDENTIFIER.getStart());
      evp.setEnd(element_value.getEnd());
      return evp;
@@ -3780,7 +3780,7 @@ class Events extends Parser.Events {
 					final Symbol _symbol_element_value = _symbols[offset + 4];
 					final ElementValue element_value = (ElementValue) _symbol_element_value.value;
 					final Symbol RPAREN = _symbols[offset + 5];
-					 Annotation a = new Annotation("annotation", name, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new ElementValuePair("value", element_value)), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+					 Annotation a = new Annotation("annotation", name, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new ElementValuePair("value", element_value, myScene)), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
      a.setStart(AT.getStart());
      a.setEnd(RPAREN.getEnd());
      return a;
@@ -4029,21 +4029,21 @@ class Events extends Parser.Events {
 			case 398: // enum_constant = IDENTIFIER.id
 			{
 					final Symbol id = _symbols[offset + 1];
-					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions));
+					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myScene, myOptions, mySootResolver, myPackageNamer, myJimple, constantFactory, primTypeCollector);
 			}
 			case 399: // enum_constant = annotations.annotations IDENTIFIER.id
 			{
 					final Symbol _symbol_annotations = _symbols[offset + 1];
 					final List annotations = (List) _symbol_annotations.value;
 					final Symbol id = _symbols[offset + 2];
-					 return new EnumConstant(new Modifiers(annotations, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions));
+					 return new EnumConstant(new Modifiers(annotations, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myScene, myOptions, mySootResolver, myPackageNamer, myJimple, constantFactory, primTypeCollector);
 			}
 			case 400: // enum_constant = IDENTIFIER.id arguments.arguments
 			{
 					final Symbol id = _symbols[offset + 1];
 					final Symbol _symbol_arguments = _symbols[offset + 2];
 					final List arguments = (List) _symbol_arguments.value;
-					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), arguments, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions));
+					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), arguments, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myScene, myOptions, mySootResolver, myPackageNamer, myJimple, constantFactory, primTypeCollector);
 			}
 			case 401: // enum_constant = annotations.annotations IDENTIFIER.id arguments.arguments
 			{
@@ -4052,14 +4052,14 @@ class Events extends Parser.Events {
 					final Symbol id = _symbols[offset + 2];
 					final Symbol _symbol_arguments = _symbols[offset + 3];
 					final List arguments = (List) _symbol_arguments.value;
-					 return new EnumConstant(new Modifiers(annotations, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), arguments, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions));
+					 return new EnumConstant(new Modifiers(annotations, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), arguments, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myScene, myOptions, mySootResolver, myPackageNamer, myJimple, constantFactory, primTypeCollector);
 			}
 			case 402: // enum_constant = IDENTIFIER.id class_body.class_body
 			{
 					final Symbol id = _symbols[offset + 1];
 					final Symbol _symbol_class_body = _symbols[offset + 2];
 					final List class_body = (List) _symbol_class_body.value;
-					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), class_body);
+					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), class_body, myPhaseOptions, myScene, myOptions, mySootResolver, myPackageNamer, myJimple, constantFactory, primTypeCollector);
 			}
 			case 403: // enum_constant = annotations.annotations IDENTIFIER.id class_body.class_body
 			{
@@ -4068,7 +4068,7 @@ class Events extends Parser.Events {
 					final Symbol id = _symbols[offset + 2];
 					final Symbol _symbol_class_body = _symbols[offset + 3];
 					final List class_body = (List) _symbol_class_body.value;
-					 return new EnumConstant(new Modifiers(annotations, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), class_body);
+					 return new EnumConstant(new Modifiers(annotations, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), class_body, myPhaseOptions, myScene, myOptions, mySootResolver, myPackageNamer, myJimple, constantFactory, primTypeCollector);
 			}
 			case 404: // enum_constant = IDENTIFIER.id arguments.arguments class_body.class_body
 			{
@@ -4077,7 +4077,7 @@ class Events extends Parser.Events {
 					final List arguments = (List) _symbol_arguments.value;
 					final Symbol _symbol_class_body = _symbols[offset + 3];
 					final List class_body = (List) _symbol_class_body.value;
-					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), arguments, class_body);
+					 return new EnumConstant(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), arguments, class_body, myPhaseOptions, myScene, myOptions, mySootResolver, myPackageNamer, myJimple, constantFactory, primTypeCollector);
 			}
 			case 405: // enum_constant = annotations.annotations IDENTIFIER.id arguments.arguments class_body.class_body
 			{
@@ -4088,7 +4088,7 @@ class Events extends Parser.Events {
 					final List arguments = (List) _symbol_arguments.value;
 					final Symbol _symbol_class_body = _symbols[offset + 4];
 					final List class_body = (List) _symbol_class_body.value;
-					 return new EnumConstant(new Modifiers(annotations, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), arguments, class_body);
+					 return new EnumConstant(new Modifiers(annotations, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), ((String)id.value), arguments, class_body, myPhaseOptions, myScene, myOptions, mySootResolver, myPackageNamer, myJimple, constantFactory, primTypeCollector);
 			}
 			case 406: // arguments = LPAREN.LPAREN argument_list.argument_list RPAREN.RPAREN
 			{
@@ -4560,7 +4560,7 @@ class Events extends Parser.Events {
 					final List p = (List) _symbol_p.value;
 					final Symbol _symbol_b = _symbols[offset + 4];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), b, p);
+					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), b, p, primTypeCollector1, constantFactory1);
 			}
 			case 437: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p class_body.b
 			{
@@ -4572,7 +4572,7 @@ class Events extends Parser.Events {
 					final List p = (List) _symbol_p.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(m, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), b, p);
+					 return new GenericClassDecl(new Modifiers(m, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, new Opt(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), b, p, primTypeCollector1, constantFactory1);
 			}
 			case 438: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p super.s class_body.b
 			{
@@ -4584,7 +4584,7 @@ class Events extends Parser.Events {
 					final Opt s = (Opt) _symbol_s.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), b, p);
+					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), b, p, primTypeCollector1, constantFactory1);
 			}
 			case 439: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p super.s class_body.b
 			{
@@ -4598,7 +4598,7 @@ class Events extends Parser.Events {
 					final Opt s = (Opt) _symbol_s.value;
 					final Symbol _symbol_b = _symbols[offset + 6];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(m, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), b, p);
+					 return new GenericClassDecl(new Modifiers(m, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, s, new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), b, p, primTypeCollector1, constantFactory1);
 			}
 			case 440: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p interfaces.i class_body.b
 			{
@@ -4610,7 +4610,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 5];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, new Opt(), i, b, p);
+					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, new Opt(), i, b, p, primTypeCollector1, constantFactory1);
 			}
 			case 441: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p interfaces.i class_body.b
 			{
@@ -4624,7 +4624,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 6];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(m, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, new Opt(), i, b, p);
+					 return new GenericClassDecl(new Modifiers(m, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, new Opt(), i, b, p, primTypeCollector1, constantFactory1);
 			}
 			case 442: // class_declaration = CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p super.s interfaces.i class_body.b
 			{
@@ -4638,7 +4638,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 6];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, s, i, b, p);
+					 return new GenericClassDecl(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, s, i, b, p, primTypeCollector1, constantFactory1);
 			}
 			case 443: // class_declaration = modifiers.m CLASS.CLASS IDENTIFIER.IDENTIFIER type_parameters.p super.s interfaces.i class_body.b
 			{
@@ -4654,7 +4654,7 @@ class Events extends Parser.Events {
 					final List i = (List) _symbol_i.value;
 					final Symbol _symbol_b = _symbols[offset + 7];
 					final List b = (List) _symbol_b.value;
-					 return new GenericClassDecl(new Modifiers(m, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, s, i, b, p);
+					 return new GenericClassDecl(new Modifiers(m, myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), IDENTIFIER, s, i, b, p, primTypeCollector1, constantFactory1);
 			}
 			case 444: // interface_declaration = INTERFACE.INTERFACE IDENTIFIER.IDENTIFIER type_parameters.p interface_body.b
 			{

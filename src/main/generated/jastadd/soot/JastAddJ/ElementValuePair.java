@@ -3,12 +3,32 @@ package soot.JastAddJ;
 
 import java.util.*;
 
+import beaver.Symbol;
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production ElementValuePair : {@link ASTNode} ::= <span class="component">&lt;Name:String&gt;</span> <span class="component">{@link ElementValue}</span>;
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Annotations.ast:8
  */
 public class ElementValuePair extends ASTNode<ASTNode> implements Cloneable {
+  //FIXME: AD fields?
+  private Scene myScene;
+  private Options myOptions;
+  private PackageNamer myPackageNamer;
+  private Jimple myJimple;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
+  private SootResolver mySootResolver;
+  private PhaseOptions myPhaseOptions;
+
   /**
    * @apilevel low-level
    */
@@ -93,12 +113,14 @@ public class ElementValuePair extends ASTNode<ASTNode> implements Cloneable {
   }
   /**
    * @ast method 
-   * 
+   *
+   * @param myScene
    */
-  public ElementValuePair() {
+  public ElementValuePair(Scene myScene) {
     super();
 
 
+    this.myScene = myScene;
   }
   /**
    * Initializes the child array to the correct size.
@@ -115,7 +137,8 @@ public class ElementValuePair extends ASTNode<ASTNode> implements Cloneable {
    * @ast method 
    * 
    */
-  public ElementValuePair(String p0, ElementValue p1) {
+  public ElementValuePair(String p0, ElementValue p1, Scene myScene) {
+    this.myScene = myScene;
     setName(p0);
     setChild(p1, 0);
   }
@@ -123,7 +146,8 @@ public class ElementValuePair extends ASTNode<ASTNode> implements Cloneable {
    * @ast method 
    * 
    */
-  public ElementValuePair(beaver.Symbol p0, ElementValue p1) {
+  public ElementValuePair(Symbol p0, ElementValue p1, Scene myScene) {
+    this.myScene = myScene;
     setName(p0);
     setChild(p1, 0);
   }

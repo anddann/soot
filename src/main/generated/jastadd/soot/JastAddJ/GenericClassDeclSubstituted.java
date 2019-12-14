@@ -5,6 +5,15 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production GenericClassDeclSubstituted : {@link GenericClassDecl} ::= <span class="component">&lt;Original:TypeDecl&gt;</span> <span class="component">{@link BodyDecl}*</span>;
  * @ast node
@@ -102,8 +111,8 @@ public class GenericClassDeclSubstituted extends GenericClassDecl implements Clo
    * @ast method 
    * 
    */
-  public GenericClassDeclSubstituted() {
-    super();
+  public GenericClassDeclSubstituted(Scene scene, Jimple jimple, SootResolver sootResolver, PackageNamer packageNamer, Options options, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory,PhaseOptions phaseOptions) {
+    super(phaseOptions, scene, jimple, packageNamer, sootResolver, options, primTypeCollector, constantFactory);
 
 
   }
@@ -126,8 +135,9 @@ public class GenericClassDeclSubstituted extends GenericClassDecl implements Clo
    * @ast method 
    * 
    */
-  public GenericClassDeclSubstituted(Modifiers p0, String p1, Opt<Access> p2, List<Access> p3, List<TypeVariable> p4, TypeDecl p5) {
-    setChild(p0, 0);
+  public GenericClassDeclSubstituted(Modifiers p0, String p1, Opt<Access> p2, List<Access> p3, List<TypeVariable> p4, TypeDecl p5, Scene scene, Jimple jimple, SootResolver sootResolver, PackageNamer packageNamer, Options options, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory,PhaseOptions phaseOptions) {
+      super(phaseOptions, scene, jimple, packageNamer, sootResolver, options, primTypeCollector, constantFactory);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);
@@ -138,8 +148,9 @@ public class GenericClassDeclSubstituted extends GenericClassDecl implements Clo
    * @ast method 
    * 
    */
-  public GenericClassDeclSubstituted(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<Access> p3, List<TypeVariable> p4, TypeDecl p5) {
-    setChild(p0, 0);
+  public GenericClassDeclSubstituted(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<Access> p3, List<TypeVariable> p4, TypeDecl p5,Scene scene, Jimple jimple, SootResolver sootResolver, PackageNamer packageNamer, Options options, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory,PhaseOptions phaseOptions) {
+      super(phaseOptions, scene, jimple, packageNamer, sootResolver, options, primTypeCollector, constantFactory);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);

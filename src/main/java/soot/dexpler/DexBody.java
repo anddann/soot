@@ -80,7 +80,6 @@ import soot.dexpler.instructions.MoveExceptionInstruction;
 import soot.dexpler.instructions.OdexInstruction;
 import soot.dexpler.instructions.PseudoInstruction;
 import soot.dexpler.instructions.RetypeableInstruction;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.CastExpr;
 import soot.jimple.CaughtExceptionRef;
@@ -873,7 +872,7 @@ public class DexBody {
 
   protected LocalSplitter getLocalSplitter() {
     if (this.localSplitter == null) {
-      this.localSplitter = new LocalSplitter(myOptions, myDalvikThrowAnalysis, myScene, myPhaseDumper);
+      this.localSplitter = new LocalSplitter(myOptions, myDalvikThrowAnalysis, myScene, myManager, myPhaseDumper, myInteractionHandler);
     }
     return this.localSplitter;
   }

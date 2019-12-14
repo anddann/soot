@@ -428,7 +428,7 @@ public class DalvikTyper implements IDalvikTyper {
 
       // propagate array types
       UnitGraph ug = new ExceptionalUnitGraph(b,myThrowAnalysis, myManager,  DalvikTyper.this.myOptions.omit_excepting_unit_edges(),myPhaseDumper);
-      SimpleLocalDefs sld = new SimpleLocalDefs(ug, myOptions);
+      SimpleLocalDefs sld = new SimpleLocalDefs(ug, myOptions, myInteractionHandler);
       SimpleLocalUses slu = new SimpleLocalUses(b, sld);
 
       for (Unit u : b.getUnits()) {

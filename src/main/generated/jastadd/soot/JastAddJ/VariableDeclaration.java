@@ -4,6 +4,10 @@ package soot.JastAddJ;
 import java.util.*;
 import java.util.Collection;
 import soot.*;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 /**
  * @production VariableDeclaration : {@link Stmt} ::= <span class="component">{@link Modifiers}</span> <span class="component">TypeAccess:{@link Access}</span> <span class="component">&lt;ID:String&gt;</span> <span class="component">[Init:{@link Expr}]</span>;
@@ -143,16 +147,18 @@ public class VariableDeclaration extends Stmt implements Cloneable, SimpleSet, I
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:74
    */
-  public VariableDeclaration(Access type, String name, Expr init) {
-    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), type, name, new Opt(init));
+  public VariableDeclaration(Access type, String name, Expr init, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer,
+                             Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), type, name, new Opt(init));
   }
   /**
    * @ast method 
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:78
    */
-  public VariableDeclaration(Access type, String name) {
-    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), type, name, new Opt());
+  public VariableDeclaration(Access type, String name,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer,
+                             Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), type, name, new Opt());
   }
   /**
    * @ast method 

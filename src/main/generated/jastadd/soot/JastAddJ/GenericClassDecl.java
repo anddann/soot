@@ -5,6 +5,15 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production GenericClassDecl : {@link ClassDecl} ::= <span class="component">{@link Modifiers}</span> <span class="component">&lt;ID:String&gt;</span> <span class="component">[SuperClassAccess:{@link Access}]</span> <span class="component">Implements:{@link Access}*</span> <span class="component">{@link BodyDecl}*</span> <span class="component">TypeParameter:{@link TypeVariable}*</span>;
  * @ast node
@@ -114,7 +123,8 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
       getImplementsList().substitute(parTypeDecl),
     // ES:   new List(),
       new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), // delegates TypeParameter lookup to original
-      this
+      this,
+            myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions
     );
     return c;
   }
@@ -224,10 +234,16 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
   }
   /**
    * @ast method 
-   * 
-   */
-  public GenericClassDecl() {
-    super(myScene, myOptions, myPackageNamer);
+   *@param phaseOptions
+   * @param scene
+   * @param jimple
+   * @param packageNamer
+   * @param sootResolver
+   * @param options
+   * @param primTypeCollector1
+   * @param constantFactory1            */
+  public GenericClassDecl(PhaseOptions phaseOptions, Scene scene, Jimple jimple, PackageNamer packageNamer, SootResolver sootResolver, Options options, PrimTypeCollector primTypeCollector1, ConstantFactory constantFactory1) {
+    super(scene, jimple, sootResolver, packageNamer, options, primTypeCollector1, constantFactory1, phaseOptions);
 
 
   }
@@ -250,8 +266,9 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
    * @ast method 
    * 
    */
-  public GenericClassDecl(Modifiers p0, String p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4, List<TypeVariable> p5) {
-      super(myScene, myOptions, myPackageNamer);
+  public GenericClassDecl(Modifiers p0, String p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4, List<TypeVariable> p5, Scene scene, Jimple jimple, SootResolver sootresolver, PackageNamer packagenNamer, Options options,
+                          PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions phaseOptions) {
+    super(scene, jimple, sootresolver, packagenNamer,options, primTypeCollector, constantFactory,  phaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -263,8 +280,9 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
    * @ast method 
    * 
    */
-  public GenericClassDecl(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4, List<TypeVariable> p5) {
-      super(myScene, myOptions, myPackageNamer);
+  public GenericClassDecl(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<Access> p3, List<BodyDecl> p4, List<TypeVariable> p5, Scene scene, Jimple jimple, SootResolver sootresolver, PackageNamer packagenNamer, Options options,
+                          PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions phaseOptions) {
+    super(scene, jimple, sootresolver, packagenNamer,options, primTypeCollector, constantFactory,  phaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -855,7 +873,7 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
     return typeDecl;
     */
         
-    ParClassDecl typeDecl = list.size() == 0 ? new RawClassDecl() : new ParClassDecl();
+    ParClassDecl typeDecl = list.size() == 0 ? new RawClassDecl(myScene,myJimple,mySootResolver,primTypeCollector,myOptions,myPackageNamer,constantFactory,myPhaseOptions) : new ParClassDecl( myScene, myJimple,  mySootResolver,primTypeCollector,myOptions, myPackageNamer           ,  constantFactory,  myPhaseOptions);
     typeDecl.setModifiers((Modifiers)getModifiers().fullCopy());
     typeDecl.setID(getID());
     // ES: trying to only so this for ParClassDecl and then later for RawClassDecl 
@@ -1102,18 +1120,20 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
 		int arg = 0;
 		for (Iterator iter = typeParams.iterator(); iter.hasNext(); ++arg) {
 			String substName = "#"+arg;
-			typeArgs.add(new TypeAccess(substName));
+			typeArgs.add(new TypeAccess(substName,myScene,primTypeCollector,myJimple));
 
 			TypeVariable typeVar = (TypeVariable) iter.next();
 			List<Access> typeBounds = new List<Access>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 			for (Access typeBound : typeVar.getTypeBoundList())
 				typeBounds.add((Access) typeBound.cloneSubtree());
-			classTypeVars.add(
+          Modifiers astNodes = new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver);
+          List<BodyDecl> bodyDecls = new List<>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+          classTypeVars.add(
 					new TypeVariable(
-						new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
+                            astNodes,
 						substName,
-						new List<BodyDecl>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
-						typeBounds));
+                            bodyDecls,
+						typeBounds,myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions));
 		}
 
 		ParTypeAccess returnType = new ParTypeAccess(
@@ -1154,7 +1174,7 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
 								new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
 								substName,
 								new List<BodyDecl>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
-								typeBounds));
+								typeBounds,myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions));
 				}
 			}
 
@@ -1179,7 +1199,8 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
 					substParameters,
 					substExceptions,
 					new Opt(new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)),
-					typeVars);
+					typeVars,
+                        myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 
 			placeholderMethods.add(placeholderMethod);
 		}

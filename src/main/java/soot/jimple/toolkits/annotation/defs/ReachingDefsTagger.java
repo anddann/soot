@@ -36,6 +36,7 @@ import soot.options.Options;
 import soot.tagkit.LinkTag;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LocalDefs;
 import soot.util.PhaseDumper;
 
@@ -45,17 +46,19 @@ public class ReachingDefsTagger extends BodyTransformer {
   private ThrowableSet.Manager myManager;
   private Options myOptions;
   private PhaseDumper phaseDumper;
+  private InteractionHandler myInteractionHandler;
 
   @Inject
-  public ReachingDefsTagger(ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper phaseDumper) {
+  public ReachingDefsTagger(ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
     this.throwAnalysis = throwAnalysis;
     this.myManager = myManager;
     this.myOptions = myOptions;
     this.phaseDumper = phaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
-    LocalDefs ld = LocalDefs.Factory.newLocalDefs(b, throwAnalysis, myManager, myOptions, phaseDumper);
+    LocalDefs ld = LocalDefs.Factory.newLocalDefs(b, throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler);
 
     for (Unit s : b.getUnits()) {
       // System.out.println("stmt: "+s);

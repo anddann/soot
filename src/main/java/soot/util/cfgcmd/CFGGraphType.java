@@ -146,7 +146,7 @@ public abstract class CFGGraphType extends CFGOptionMatcher.CFGOption {
 
   public static final CFGGraphType TRAP_UNIT_GRAPH = new CFGGraphType("TrapUnitGraph") {
     public DirectedGraph buildGraph(Body b) {
-      return new TrapUnitGraph(b);
+      return new TrapUnitGraph(b, myPhaseDumper);
     }
 
     public DotGraph drawGraph(CFGToDotGraph drawer, DirectedGraph g, Body b) {

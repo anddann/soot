@@ -1,6 +1,11 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PrimType;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.jimple.Jimple;
+
 /**
  * @production Dot : {@link AbstractDot};
  * @ast node
@@ -84,7 +89,7 @@ public class Dot extends AbstractDot implements Cloneable {
   public Dot qualifiesAccess(Access access) {
 	  Dot lastDot = lastDot();
 	  Expr l = lastDot.getRightNoTransform();
-	  Dot dot = new Dot(lastDot.getRightNoTransform(), access);
+	  Dot dot = new Dot(lastDot.getRightNoTransform(), access, myScene,  myJimple,  primTypeCollector);
 	  dot.setStart(l.getStart());
 	  dot.setEnd(access.getEnd());
 	  lastDot.setRight(dot);
@@ -122,8 +127,8 @@ public class Dot extends AbstractDot implements Cloneable {
    * @ast method 
    * 
    */
-  public Dot() {
-    super(myScene);
+  public Dot(Scene myScene, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+    super(myScene,myJimple,primTypeCollector);
 
 
   }
@@ -142,8 +147,8 @@ public class Dot extends AbstractDot implements Cloneable {
    * @ast method 
    * 
    */
-  public Dot(Expr p0, Access p1) {
-      super(myScene);
+  public Dot(Expr p0, Access p1,Scene myScene, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+    super(myScene,myJimple,primTypeCollector);
       setChild(p0, 0);
     setChild(p1, 1);
   }

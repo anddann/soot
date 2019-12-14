@@ -31,14 +31,7 @@ import soot.options.Options;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:95
  */
 public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iterator {
-	private Scene myScene;
-	private Jimple myJimple;
-	private PackageNamer myPackageNamer;
-	private Options myOptions;
-	private PrimTypeCollector primTypeCollector;
-	private ConstantFactory constantFactory;
-    private SootResolver mySootResolver;
-	private PhaseOptions myPhaseOptions;
+
 
 	/**
 	 * @apilevel low-level
@@ -353,7 +346,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 					// FALSE! We need to create a qualified access in case the
 					// method we are generating an access for is not declared
 					// in the methodQualifier type
-					getParameter(i).type().createQualifiedAccess(), getParameter(i).name()));
+					getParameter(i).type().createQualifiedAccess(), getParameter(i).name(),myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions));
 		List exceptionList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		for (int i = 0; i < getNumException(); i++)
 			exceptionList.add((Access) getException(i).fullCopy());
@@ -403,7 +396,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 		List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		List args = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		for (int i = 0; i < getNumParameter(); i++) {
-			parameters.add(new ParameterDeclaration(getParameter(i).type(), getParameter(i).name()));
+			parameters.add(new ParameterDeclaration(getParameter(i).type(), getParameter(i).name(),myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions));
 			args.add(new VarAccess(getParameter(i).name()));
 		}
 		Stmt stmt;
@@ -581,7 +574,7 @@ public class MethodDecl extends MemberDecl implements Cloneable, SimpleSet, Iter
 						for (int i = 0; i < getNumParameter(); i++) {
 							args.add(new CastExpr(getParameter(i).type().erasure().createBoundAccess(),
 									new VarAccess("p" + i)));
-							parameters.add(new ParameterDeclaration(erased.getParameter(i).type().erasure(), "p" + i));
+							parameters.add(new ParameterDeclaration(erased.getParameter(i).type().erasure(), "p" + i,myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions));
 						}
 						Stmt stmt;
 						if (type().isVoid()) {

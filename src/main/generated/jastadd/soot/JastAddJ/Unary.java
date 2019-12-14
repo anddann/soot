@@ -96,7 +96,7 @@ public abstract class Unary extends Expr implements Cloneable {
    * 
    */
   public Unary() {
-    super(primTypeCollector, myJimple);
+    super(primTypeCollector, myJimple, myScene);
 
 
   }
@@ -116,7 +116,7 @@ public abstract class Unary extends Expr implements Cloneable {
    * 
    */
   public Unary(Expr p0) {
-      super(primTypeCollector, myJimple);
+      super(primTypeCollector, myJimple, myScene);
       setChild(p0, 0);
   }
   /**

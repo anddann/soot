@@ -102,7 +102,7 @@ public abstract class Binary extends Expr implements Cloneable {
    * 
    */
   public Binary() {
-    super(primTypeCollector, myJimple);
+    super(primTypeCollector, myJimple, myScene);
 
 
   }
@@ -122,7 +122,7 @@ public abstract class Binary extends Expr implements Cloneable {
    * 
    */
   public Binary(Expr p0, Expr p1) {
-      super(primTypeCollector, myJimple);
+      super(primTypeCollector, myJimple, myScene);
       setChild(p0, 0);
     setChild(p1, 1);
   }

@@ -178,7 +178,7 @@ public class ConditionalExpr extends Expr implements Cloneable {
    * 
    */
   public ConditionalExpr() {
-    super(primTypeCollector, myJimple);
+    super(primTypeCollector, myJimple, myScene);
 
 
   }
@@ -198,7 +198,7 @@ public class ConditionalExpr extends Expr implements Cloneable {
    * 
    */
   public ConditionalExpr(Expr p0, Expr p1, Expr p2) {
-      super(primTypeCollector, myJimple);
+      super(primTypeCollector, myJimple, myScene);
       setChild(p0, 0);
     setChild(p1, 1);
     setChild(p2, 2);

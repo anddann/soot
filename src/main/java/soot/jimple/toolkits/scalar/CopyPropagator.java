@@ -56,6 +56,7 @@ import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.PseudoTopologicalOrderer;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LocalDefs;
 import soot.util.Chain;
 import soot.util.PhaseDumper;
@@ -71,11 +72,11 @@ public class CopyPropagator extends BodyTransformer {
   private PhaseDumper myPhaseDumper;
   private ThrowableSet.Manager myManager;
   private ConstantFactory myConstantfactory;
-
+  private InteractionHandler myInteractionHandler;
 
 
   @Inject
-  public CopyPropagator(ThrowAnalysis ta, boolean forceOmitExceptingUnitEdges, Options myOptions, Timers myTimers, Scene myScene, PhaseDumper myPhaseDumper, ThrowableSet.Manager myManager, ConstantFactory myConstantfactory) {
+  public CopyPropagator(ThrowAnalysis ta, boolean forceOmitExceptingUnitEdges, Options myOptions, Timers myTimers, Scene myScene, PhaseDumper myPhaseDumper, ThrowableSet.Manager myManager, ConstantFactory myConstantfactory, InteractionHandler myInteractionHandler) {
     this.throwAnalysis = ta;
     this.forceOmitExceptingUnitEdges = forceOmitExceptingUnitEdges;
     this.myOptions = myOptions;
@@ -84,6 +85,7 @@ public class CopyPropagator extends BodyTransformer {
     this.myPhaseDumper = myPhaseDumper;
     this.myManager = myManager;
     this.myConstantfactory = myConstantfactory;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
 
@@ -142,7 +144,7 @@ public class CopyPropagator extends BodyTransformer {
     // Go through the definitions, building the webs
     UnitGraph graph = new ExceptionalUnitGraph(stmtBody, throwAnalysis, forceOmitExceptingUnitEdges, myManager, myPhaseDumper);
 
-    LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(graph, myOptions);
+    LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(graph, myOptions, myInteractionHandler);
 
     // Perform a local propagation pass.
     {

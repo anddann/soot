@@ -140,7 +140,7 @@ public class ArrayInit extends Expr implements Cloneable {
    * 
    */
   public ArrayInit() {
-    super(primTypeCollector, myJimple);
+    super(primTypeCollector, myJimple, myScene);
 
 
   }
@@ -161,7 +161,7 @@ public class ArrayInit extends Expr implements Cloneable {
    * 
    */
   public ArrayInit(List<Expr> p0) {
-      super(primTypeCollector, myJimple);
+      super(primTypeCollector, myJimple, myScene);
       setChild(p0, 0);
   }
   /**

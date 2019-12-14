@@ -3,6 +3,15 @@ package soot.JastAddJ;
 
 import java.util.ArrayList;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production RawInterfaceDecl : {@link ParInterfaceDecl} ::= <span class="component">Argument:{@link Access}*</span>;
  * @ast node
@@ -104,8 +113,9 @@ public class RawInterfaceDecl extends ParInterfaceDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public RawInterfaceDecl() {
-    super();
+  public RawInterfaceDecl(Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer,
+                          Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
 
 
   }
@@ -127,7 +137,10 @@ public class RawInterfaceDecl extends ParInterfaceDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public RawInterfaceDecl(Modifiers p0, String p1) {
+  public RawInterfaceDecl(Modifiers p0, String p1, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer,
+                          Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
+
     setChild(p0, 0);
     setID(p1);
   }
@@ -135,7 +148,10 @@ public class RawInterfaceDecl extends ParInterfaceDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public RawInterfaceDecl(Modifiers p0, beaver.Symbol p1) {
+  public RawInterfaceDecl(Modifiers p0, beaver.Symbol p1,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer,
+                          Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
+
     setChild(p0, 0);
     setID(p1);
   }

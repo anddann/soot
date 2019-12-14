@@ -592,9 +592,11 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
    * @apilevel internal
    */
   private TypeDecl typeWildcard_compute() {
+    Modifiers aPublic = new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new Modifier("public")), myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver);
+    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     TypeDecl decl = new WildcardType(
-        new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new Modifier("public")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
-        "?", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),myScene,myJimple,mySootResolver,myOptions,primTypeCollector,myPackageNamer,constantFactory);
+            aPublic,
+        "?", list,myScene,myJimple,mySootResolver,myOptions,primTypeCollector,myPackageNamer,constantFactory,myPhaseOptions);
     return decl;
   }
 
@@ -645,7 +647,7 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
     TypeDecl decl = new WildcardExtendsType(
         new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new Modifier("public")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
         "? extends " + bound.fullName(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
-        bound.createBoundAccess(),myScene,myJimple,mySootResolver,myOptions,primTypeCollector,myPackageNamer,constantFactory);
+        bound.createBoundAccess(),myScene,myJimple,mySootResolver,myOptions,primTypeCollector,myPackageNamer,constantFactory,myPhaseOptions);
     return decl;
   }
 
@@ -696,7 +698,7 @@ public class WildcardsCompilationUnit extends CompilationUnit implements Cloneab
     TypeDecl decl = new WildcardSuperType(
         new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new Modifier("public")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),
         "? super " + bound.fullName(), new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
-        bound.createBoundAccess(),myScene,myJimple,mySootResolver,myOptions,primTypeCollector,myPackageNamer,constantFactory);
+        bound.createBoundAccess(),myScene,myJimple,mySootResolver,myOptions,primTypeCollector,myPackageNamer,constantFactory,myPhaseOptions);
     return decl;
   }
 

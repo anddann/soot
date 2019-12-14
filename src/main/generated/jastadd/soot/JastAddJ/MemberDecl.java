@@ -11,6 +11,8 @@ import java.io.*;
 import java.io.FileNotFoundException;
 import java.util.Collection;
 import soot.*;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.options.Options;
 import soot.util.*;
 import soot.jimple.*;
 import soot.coffi.ClassFile;
@@ -24,6 +26,17 @@ import soot.coffi.CoffiMethodSource;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:77
  */
 public abstract class MemberDecl extends BodyDecl implements Cloneable {
+
+
+  //FIXME:AD
+  protected Scene myScene;
+  protected PackageNamer myPackageNamer;
+  protected Options myOptions;
+  protected Jimple myJimple;
+  protected PrimTypeCollector primTypeCollector;
+  protected ConstantFactory constantFactory;
+  protected SootResolver mySootResolver;
+  protected PhaseOptions myPhaseOptions;
   /**
    * @apilevel low-level
    */

@@ -298,8 +298,8 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 			setConstructorInvocation(new ExprStmt(new SuperConstructorAccess("super", new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions))));
 		}
 		super.transformEnumConstructors();
-		getParameterList().insertChild(new ParameterDeclaration(new TypeAccess("java.lang", "String",myScene,primTypeCollector,myJimple), "@p0"), 0);
-		getParameterList().insertChild(new ParameterDeclaration(new TypeAccess("int",myScene,primTypeCollector,myJimple), "@p1"), 1);
+		getParameterList().insertChild(new ParameterDeclaration(new TypeAccess("java.lang", "String",myScene,primTypeCollector,myJimple), "@p0",myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions), 0);
+		getParameterList().insertChild(new ParameterDeclaration(new TypeAccess("int",myScene,primTypeCollector,myJimple), "@p1",myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions), 1);
 	}
 
 	/**
@@ -335,7 +335,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 		hostType().addEnclosingVariables();
 		for (Iterator iter = hostType().enclosingVariables().iterator(); iter.hasNext();) {
 			Variable v = (Variable) iter.next();
-			getParameterList().add(new ParameterDeclaration(v.type(), "val$" + v.name()));
+			getParameterList().add(new ParameterDeclaration(v.type(), "val$" + v.name(),myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions));
 		}
 	}
 
@@ -386,9 +386,9 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	protected List createAccessorParameters() {
 		List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		for (int i = 0; i < getNumParameter(); i++)
-			parameters.add(new ParameterDeclaration(getParameter(i).type(), getParameter(i).name()));
+			parameters.add(new ParameterDeclaration(getParameter(i).type(), getParameter(i).name(),myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions));
 		parameters.add(
-				new ParameterDeclaration(createAnonymousJavaTypeDecl().createBoundAccess(), ("p" + getNumParameter())));
+				new ParameterDeclaration(createAnonymousJavaTypeDecl().createBoundAccess(), ("p" + getNumParameter()),myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions));
 		return parameters;
 	}
 

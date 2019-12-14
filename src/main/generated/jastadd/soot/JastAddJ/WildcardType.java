@@ -1,6 +1,7 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SootResolver;
@@ -83,8 +84,8 @@ public class WildcardType extends AbstractWildcardType implements Cloneable {
    * @ast method 
    * 
    */
-  public WildcardType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
-    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
+  public WildcardType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory,myPhaseOptions);
 
 
   }
@@ -104,8 +105,8 @@ public class WildcardType extends AbstractWildcardType implements Cloneable {
    * @ast method 
    * 
    */
-  public WildcardType(Modifiers p0, String p1, List<BodyDecl> p2,Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
-    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
+  public WildcardType(Modifiers p0, String p1, List<BodyDecl> p2,Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory,PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory,myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -114,8 +115,8 @@ public class WildcardType extends AbstractWildcardType implements Cloneable {
    * @ast method 
    * 
    */
-  public WildcardType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2,Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
-    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory);
+  public WildcardType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2,Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory,PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory,myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

@@ -43,10 +43,17 @@ import soot.Value;
 import soot.jimple.AssignStmt;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
+import soot.jimple.toolkits.base.Aggregator;
+import soot.jimple.toolkits.scalar.DeadAssignmentEliminator;
+import soot.jimple.toolkits.scalar.LocalNameStandardizer;
+import soot.jimple.toolkits.scalar.NopEliminator;
+import soot.jimple.toolkits.scalar.UnconditionalBranchFolder;
+import soot.jimple.toolkits.scalar.UnreachableCodeEliminator;
 import soot.options.Options;
 import soot.shimple.internal.SPhiExpr;
 import soot.shimple.internal.SPiExpr;
 import soot.toolkits.graph.Block;
+import soot.toolkits.scalar.UnusedLocalEliminator;
 import soot.toolkits.scalar.ValueUnitPair;
 import soot.util.Chain;
 
@@ -76,14 +83,28 @@ public class Shimple {
   private Printer myPrinter;
   private Options myOptions;
   private Jimple myShimple;
+  private NopEliminator myNopEliminator;
+  private DeadAssignmentEliminator myDeadAssignmentEliminator;
+  private UnreachableCodeEliminator myUnreachableCodeEliminator;
+  private UnconditionalBranchFolder myUnconditionalBranchFolder;
+  private Aggregator myAggregator;
+  private UnusedLocalEliminator myUnusedLocalEliminator;
+  private LocalNameStandardizer myLocalNameStandardizer;
 
 
   @Inject
-  public Shimple(PhaseOptions myPhaseOptions, Printer myPrinter, Options myOptions, Jimple myShimple) {
+  public Shimple(PhaseOptions myPhaseOptions, Printer myPrinter, Options myOptions, Jimple myShimple, NopEliminator myNopEliminator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer) {
     this.myPhaseOptions = myPhaseOptions;
     this.myPrinter = myPrinter;
     this.myOptions = myOptions;
     this.myShimple = myShimple;
+    this.myNopEliminator = myNopEliminator;
+    this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
+    this.myUnreachableCodeEliminator = myUnreachableCodeEliminator;
+    this.myUnconditionalBranchFolder = myUnconditionalBranchFolder;
+    this.myAggregator = myAggregator;
+    this.myUnusedLocalEliminator = myUnusedLocalEliminator;
+    this.myLocalNameStandardizer = myLocalNameStandardizer;
   }
 
 

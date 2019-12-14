@@ -56,9 +56,11 @@ import soot.LongType;
 import soot.MethodContext;
 import soot.MethodOrMethodContext;
 import soot.NullType;
+import soot.PhaseOptions;
 import soot.PrimType;
 import soot.RefLikeType;
 import soot.RefType;
+import soot.Scene;
 import soot.SceneTransformer;
 import soot.ShortType;
 import soot.SootClass;
@@ -108,72 +110,51 @@ import soot.util.queue.QueueReader;
  */
 public class OnFlyCallGraphBuilder {
   private static final Logger logger = LoggerFactory.getLogger(OnFlyCallGraphBuilder.class);
-  private static final PrimType[] CHAR_NARROWINGS = new PrimType[] { CharType.v() };
-  private static final PrimType[] INT_NARROWINGS
-      = new PrimType[] { IntType.v(), CharType.v(), ShortType.v(), ByteType.v(), ShortType.v() };
-  private static final PrimType[] SHORT_NARROWINGS = new PrimType[] { ShortType.v(), ByteType.v() };
-  private static final PrimType[] LONG_NARROWINGS
-      = new PrimType[] { LongType.v(), IntType.v(), CharType.v(), ShortType.v(), ByteType.v(), ShortType.v() };
-  private static final ByteType[] BYTE_NARROWINGS = new ByteType[] { ByteType.v() };
-  private static final PrimType[] FLOAT_NARROWINGS = new PrimType[] { FloatType.v(), LongType.v(), IntType.v(), CharType.v(),
-      ShortType.v(), ByteType.v(), ShortType.v(), };
-  private static final PrimType[] BOOLEAN_NARROWINGS = new PrimType[] { BooleanType.v() };
-  private static final PrimType[] DOUBLE_NARROWINGS = new PrimType[] { DoubleType.v(), FloatType.v(), LongType.v(),
-      IntType.v(), CharType.v(), ShortType.v(), ByteType.v(), ShortType.v(), };
-  protected final NumberedString sigFinalize = myScene.getSubSigNumberer().findOrAdd("void finalize()");
-  protected final NumberedString sigInit = myScene.getSubSigNumberer().findOrAdd("void <init>()");
-  protected final NumberedString sigStart = myScene.getSubSigNumberer().findOrAdd("void start()");
-  protected final NumberedString sigRun = myScene.getSubSigNumberer().findOrAdd("void run()");
-  protected final NumberedString sigExecute
-      = myScene.getSubSigNumberer().findOrAdd("android.os.AsyncTask execute(java.lang.Object[])");
-  protected final NumberedString sigExecutorExecute
-      = myScene.getSubSigNumberer().findOrAdd("void execute(java.lang.Runnable)");
-  protected final NumberedString sigHandlerPost
-      = myScene.getSubSigNumberer().findOrAdd("boolean post(java.lang.Runnable)");
-  protected final NumberedString sigHandlerPostAtFrontOfQueue
-      = myScene.getSubSigNumberer().findOrAdd("boolean postAtFrontOfQueue(java.lang.Runnable)");
+  private  final PrimType[] CHAR_NARROWINGS;
+  private  final PrimType[] INT_NARROWINGS;
+  private  final PrimType[] SHORT_NARROWINGS;
+  private  final PrimType[] LONG_NARROWINGS;
+  private  final ByteType[] BYTE_NARROWINGS;
+  private  final PrimType[] FLOAT_NARROWINGS;
+  private  final PrimType[] BOOLEAN_NARROWINGS;
+  private  final PrimType[] DOUBLE_NARROWINGS;
+  //FIXME: AD
+  private final Scene myScene;
+  protected final NumberedString sigFinalize;
+  protected final NumberedString sigInit;
+  protected final NumberedString sigStart;
+  protected final NumberedString sigRun;
+  protected final NumberedString sigExecute;
+  protected final NumberedString sigExecutorExecute;
+  protected final NumberedString sigHandlerPost;
+  protected final NumberedString sigHandlerPostAtFrontOfQueue;
   // Method from android.app.Activity
-  protected final NumberedString sigRunOnUiThread
-      = myScene.getSubSigNumberer().findOrAdd("void runOnUiThread(java.lang.Runnable)");
+  protected final NumberedString sigRunOnUiThread;
 
   // type based reflection resolution state
-  protected final NumberedString sigHandlerPostAtTime
-      = myScene.getSubSigNumberer().findOrAdd("boolean postAtTime(java.lang.Runnable,long)");
-  protected final NumberedString sigHandlerPostAtTimeWithToken
-      = myScene.getSubSigNumberer().findOrAdd("boolean postAtTime(java.lang.Runnable,java.lang.Object,long)");
-  protected final NumberedString sigHandlerPostDelayed
-      = myScene.getSubSigNumberer().findOrAdd("boolean postDelayed(java.lang.Runnable,long)");
-  protected final NumberedString sigHandlerSendEmptyMessage
-      = myScene.getSubSigNumberer().findOrAdd("boolean sendEmptyMessage(int)");
-  protected final NumberedString sigHandlerSendEmptyMessageAtTime
-      = myScene.getSubSigNumberer().findOrAdd("boolean sendEmptyMessageAtTime(int,long)");
-  protected final NumberedString sigHandlerSendEmptyMessageDelayed
-      = myScene.getSubSigNumberer().findOrAdd("boolean sendEmptyMessageDelayed(int,long)");
-  protected final NumberedString sigHandlerSendMessage
-      = myScene.getSubSigNumberer().findOrAdd("boolean postAtTime(java.lang.Runnable,long)");
-  protected final NumberedString sigHandlerSendMessageAtFrontOfQueue
-      = myScene.getSubSigNumberer().findOrAdd("boolean sendMessageAtFrontOfQueue(android.os.Message)");
-  protected final NumberedString sigHandlerSendMessageAtTime
-      = myScene.getSubSigNumberer().findOrAdd("boolean sendMessageAtTime(android.os.Message,long)");
-  protected final NumberedString sigHandlerSendMessageDelayed
-      = myScene.getSubSigNumberer().findOrAdd("boolean sendMessageDelayed(android.os.Message,long)");
-  protected final NumberedString sigHandlerHandleMessage
-      = myScene.getSubSigNumberer().findOrAdd("void handleMessage(android.os.Message)");
+  protected final NumberedString sigHandlerPostAtTime;
+  protected final NumberedString sigHandlerPostAtTimeWithToken;
+  protected final NumberedString sigHandlerPostDelayed;
+  protected final NumberedString sigHandlerSendEmptyMessage;
+  protected final NumberedString sigHandlerSendEmptyMessageAtTime;
+  protected final NumberedString sigHandlerSendEmptyMessageDelayed;
+  protected final NumberedString sigHandlerSendMessage;
+  protected final NumberedString sigHandlerSendMessageAtFrontOfQueue;
+  protected final NumberedString sigHandlerSendMessageAtTime;
+  protected final NumberedString sigHandlerSendMessageDelayed;
+  protected final NumberedString sigHandlerHandleMessage;
   protected final NumberedString sigObjRun = myScene.getSubSigNumberer().findOrAdd("java.lang.Object run()");
-  protected final NumberedString sigDoInBackground
-      = myScene.getSubSigNumberer().findOrAdd("java.lang.Object doInBackground(java.lang.Object[])");
-  protected final NumberedString sigForName
-      = myScene.getSubSigNumberer().findOrAdd("java.lang.Class forName(java.lang.String)");
+  protected final NumberedString sigDoInBackground;
+  protected final NumberedString sigForName;
   protected final RefType clRunnable = RefType.v("java.lang.Runnable");
   protected final RefType clAsyncTask = RefType.v("android.os.AsyncTask");
   protected final RefType clHandler = RefType.v("android.os.Handler");
   /** context-insensitive stuff */
-  private final CallGraph cicg = myScene.internalMakeCallGraph();
+  private final CallGraph cicg;
   private final HashSet<SootMethod> analyzedMethods = new HashSet<SootMethod>();
 
   // end type based reflection resolution
-  private final LargeNumberedMap<Local, List<VirtualCallSite>> receiverToSites
-      = new LargeNumberedMap<Local, List<VirtualCallSite>>(myScene.getLocalNumberer()); // Local -> List(VirtualCallSite)
+  private final LargeNumberedMap<Local, List<VirtualCallSite>> receiverToSites; // Local -> List(VirtualCallSite)
   private final LargeNumberedMap<SootMethod, List<Local>> methodToReceivers
       = new LargeNumberedMap<SootMethod, List<Local>>(myScene.getMethodNumberer()); // SootMethod -> List(Local)
   private final LargeNumberedMap<SootMethod, List<Local>> methodToInvokeBases
@@ -207,11 +188,11 @@ public class OnFlyCallGraphBuilder {
   private SootMethod analysisKey = null;
   protected VirtualCalls virtualCalls = myVirtualCalls;
 
-  public OnFlyCallGraphBuilder(ContextManager cm, ReachableMethods rm) {
+  public OnFlyCallGraphBuilder(ContextManager cm, ReachableMethods rm, PhaseOptions myPhaseOptions) {
     this.cm = cm;
     this.rm = rm;
     worklist = rm.listener();
-    options = new CGOptions(myPhaseOptions().getPhaseOptions("cg"));
+    options = new CGOptions(myPhaseOptions.getPhaseOptions("cg"));
     if (!options.verbose()) {
       logger.debug("[Call Graph] For information on where the call graph may be incomplete,"
           + "use the verbose option to the cg phase.");
@@ -227,10 +208,44 @@ public class OnFlyCallGraphBuilder {
       reflectionModel = new TraceBasedReflectionModel();
     }
     this.fh = myScene.getOrMakeFastHierarchy();
+    sigFinalize = myScene.getSubSigNumberer().findOrAdd("void finalize()");
+    sigInit = myScene.getSubSigNumberer().findOrAdd("void <init>()");
+    sigStart = myScene.getSubSigNumberer().findOrAdd("void start()");
+    sigRun = myScene.getSubSigNumberer().findOrAdd("void run()");
+    sigExecute = myScene.getSubSigNumberer().findOrAdd("android.os.AsyncTask execute(java.lang.Object[])");
+    sigExecutorExecute = myScene.getSubSigNumberer().findOrAdd("void execute(java.lang.Runnable)");
+    sigHandlerPost = myScene.getSubSigNumberer().findOrAdd("boolean post(java.lang.Runnable)");
+    sigHandlerPostAtFrontOfQueue = myScene.getSubSigNumberer().findOrAdd("boolean postAtFrontOfQueue(java.lang.Runnable)");
+    sigRunOnUiThread = myScene.getSubSigNumberer().findOrAdd("void runOnUiThread(java.lang.Runnable)");
+    sigHandlerPostAtTime = myScene.getSubSigNumberer().findOrAdd("boolean postAtTime(java.lang.Runnable,long)");
+    CHAR_NARROWINGS = new PrimType[] { CharType.v() };
+    INT_NARROWINGS = new PrimType[] { IntType.v(), CharType.v(), ShortType.v(), ByteType.v(), ShortType.v() };
+    LONG_NARROWINGS = new PrimType[] { LongType.v(), IntType.v(), CharType.v(), ShortType.v(), ByteType.v(), ShortType.v() };
+    SHORT_NARROWINGS = new PrimType[] { ShortType.v(), ByteType.v() };
+    BYTE_NARROWINGS = new ByteType[] { ByteType.v() };
+    FLOAT_NARROWINGS = new PrimType[] { FloatType.v(), LongType.v(), IntType.v(), CharType.v(),
+        ShortType.v(), ByteType.v(), ShortType.v(), };
+    BOOLEAN_NARROWINGS = new PrimType[] { BooleanType.v() };
+    DOUBLE_NARROWINGS = new PrimType[] { DoubleType.v(), FloatType.v(), LongType.v(),
+        IntType.v(), CharType.v(), ShortType.v(), ByteType.v(), ShortType.v(), };
+    sigHandlerPostAtTimeWithToken = myScene.getSubSigNumberer().findOrAdd("boolean postAtTime(java.lang.Runnable,java.lang.Object,long)");
+    sigHandlerPostDelayed = myScene.getSubSigNumberer().findOrAdd("boolean postDelayed(java.lang.Runnable,long)");
+    sigHandlerSendEmptyMessage = myScene.getSubSigNumberer().findOrAdd("boolean sendEmptyMessage(int)");
+    sigHandlerSendEmptyMessageAtTime = myScene.getSubSigNumberer().findOrAdd("boolean sendEmptyMessageAtTime(int,long)");
+    sigHandlerSendEmptyMessageDelayed = myScene.getSubSigNumberer().findOrAdd("boolean sendEmptyMessageDelayed(int,long)");
+    sigHandlerSendMessage = myScene.getSubSigNumberer().findOrAdd("boolean postAtTime(java.lang.Runnable,long)");
+    sigHandlerSendMessageAtFrontOfQueue = myScene.getSubSigNumberer().findOrAdd("boolean sendMessageAtFrontOfQueue(android.os.Message)");
+    sigHandlerSendMessageAtTime = myScene.getSubSigNumberer().findOrAdd("boolean sendMessageAtTime(android.os.Message,long)");
+    sigHandlerSendMessageDelayed = myScene.getSubSigNumberer().findOrAdd("boolean sendMessageDelayed(android.os.Message,long)");
+    sigHandlerHandleMessage = myScene.getSubSigNumberer().findOrAdd("void handleMessage(android.os.Message)");
+    sigDoInBackground = myScene.getSubSigNumberer().findOrAdd("java.lang.Object doInBackground(java.lang.Object[])");
+    sigForName = myScene.getSubSigNumberer().findOrAdd("java.lang.Class forName(java.lang.String)");
+    cicg = myScene.internalMakeCallGraph();
+    receiverToSites = new LargeNumberedMap<Local, List<VirtualCallSite>>(myScene.getLocalNumberer());
   }
 
   public OnFlyCallGraphBuilder(ContextManager cm, ReachableMethods rm, boolean appOnly) {
-    this(cm, rm);
+    this(cm, rm, myPhaseOptions);
     this.appOnly = appOnly;
   }
 
@@ -710,7 +725,7 @@ public class OnFlyCallGraphBuilder {
     } else {
       if (analysisKey != container) {
         ExceptionalUnitGraph graph = new ExceptionalUnitGraph(container.getActiveBody(), myManager);
-        nullnessCache = new NullnessAnalysis(graph);
+        nullnessCache = new NullnessAnalysis(graph, myInteractionHandler, interaticveMode, constantFactory);
         arrayCache = new ConstantArrayAnalysis(graph, container.getActiveBody());
         analysisKey = container;
       }

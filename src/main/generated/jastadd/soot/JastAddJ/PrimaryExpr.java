@@ -34,7 +34,7 @@ public abstract class PrimaryExpr extends Expr implements Cloneable {
    * 
    */
   public PrimaryExpr() {
-    super(primTypeCollector, myJimple);
+    super(primTypeCollector, myJimple, myScene);
 
 
   }

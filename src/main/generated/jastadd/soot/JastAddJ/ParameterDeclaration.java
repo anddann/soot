@@ -4,6 +4,10 @@ package soot.JastAddJ;
 import java.util.*;
 import java.util.Collection;
 import soot.*;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 /**
  * A parameter declaration as used in either method parameter lists
@@ -141,16 +145,16 @@ public class ParameterDeclaration extends ASTNode<ASTNode> implements Cloneable,
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:11
    */
-  public ParameterDeclaration(Access type, String name) {
-    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), type, name);
+  public ParameterDeclaration(Access type, String name, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), type, name);
   }
   /**
    * @ast method 
    * @aspect NodeConstructors
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/NodeConstructors.jrag:14
    */
-  public ParameterDeclaration(TypeDecl type, String name) {
-    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), type.createQualifiedAccess(), name);
+  public ParameterDeclaration(TypeDecl type, String name,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    this(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver), type.createQualifiedAccess(), name);
   }
   /**
    * @ast method 

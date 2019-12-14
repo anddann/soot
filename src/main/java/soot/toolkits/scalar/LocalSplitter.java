@@ -45,6 +45,7 @@ import soot.options.Options;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.util.LocalBitSetPacker;
 import soot.util.PhaseDumper;
 
@@ -75,13 +76,16 @@ public class LocalSplitter extends BodyTransformer {
   private Scene myScene;
   private ThrowableSet.Manager myManager;
   private PhaseDumper myPhaseDumper;
+  private InteractionHandler myInteractionHandler;
 
   @Inject
-  public LocalSplitter(Options myOptions, Timers myTimers, Scene myScene, PhaseDumper myPhaseDumper) {
+  public LocalSplitter(Options myOptions, Timers myTimers, Scene myScene, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
     this.myOptions = myOptions;
     this.myTimers = myTimers;
     this.myScene = myScene;
+    this.myManager = myManager;
     this.myPhaseDumper = myPhaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
 
@@ -118,7 +122,7 @@ public class LocalSplitter extends BodyTransformer {
 
     // run in panic mode on first split (maybe change this depending on the input
     // source)
-    final LocalDefs defs = LocalDefs.Factory.newLocalDefs(graph, true, myOptions);
+    final LocalDefs defs = LocalDefs.Factory.newLocalDefs(graph, true, myOptions, myInteractionHandler);
     final LocalUses uses = LocalUses.Factory.newLocalUses(graph, defs);
 
     if (myOptions.time()) {

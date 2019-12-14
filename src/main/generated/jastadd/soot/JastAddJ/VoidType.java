@@ -2,6 +2,10 @@
 package soot.JastAddJ;
 
 import soot.*;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 /**
  * @production VoidType : {@link TypeDecl};
@@ -87,7 +91,9 @@ public class VoidType extends TypeDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public VoidType() {
+  public VoidType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions,
+                  PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory,
+                  PhaseOptions myPhaseOptions) {
     super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
 
 
@@ -108,7 +114,9 @@ public class VoidType extends TypeDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public VoidType(Modifiers p0, String p1, List<BodyDecl> p2) {
+  public VoidType(Modifiers p0, String p1, List<BodyDecl> p2,Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions,
+                  PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory,
+                  PhaseOptions myPhaseOptions) {
       super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
@@ -118,7 +126,9 @@ public class VoidType extends TypeDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public VoidType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2) {
+  public VoidType(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2,Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions,
+                  PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory,
+                  PhaseOptions myPhaseOptions) {
       super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
@@ -502,7 +512,7 @@ public class VoidType extends TypeDecl implements Cloneable {
   /**
    * @apilevel internal
    */
-  private Type getSootType_compute() {  return soot.VoidType.v();  }
+  private Type getSootType_compute() {  return primTypeCollector.getVoidType();  }
   /**
    * @apilevel internal
    */

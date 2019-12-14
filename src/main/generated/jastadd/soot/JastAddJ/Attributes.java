@@ -100,7 +100,7 @@ public class Attributes extends java.lang.Object {
         int element_name_index = p.u2();
         String element_name = p.getCONSTANT_Utf8_Info(element_name_index).string();
         ElementValue element_value = readElementValue();
-        list.add(new ElementValuePair(element_name, element_value));
+        list.add(new ElementValuePair(element_name, element_value, myScene));
       }
       return new Annotation("Annotation", typeAccess, list, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     }

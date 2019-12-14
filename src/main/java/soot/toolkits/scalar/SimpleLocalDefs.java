@@ -51,6 +51,7 @@ import soot.toolkits.graph.interaction.InteractionHandler;
  */
 public class SimpleLocalDefs implements LocalDefs {
   private Options myOptions;
+  private InteractionHandler myInteractionHandler;
 
   static private class StaticSingleAssignment implements LocalDefs {
     final Map<Local, List<Unit>> result;
@@ -317,24 +318,24 @@ public class SimpleLocalDefs implements LocalDefs {
   private LocalDefs def;
 
   /**
-   *
-   * @param graph
+   *  @param graph
    * @param myOptions
+   * @param myInteractionHandler
    */
-  public SimpleLocalDefs(UnitGraph graph, Options myOptions) {
-    this(graph, FlowAnalysisMode.Automatic, myOptions);
+  public SimpleLocalDefs(UnitGraph graph, Options myOptions, InteractionHandler myInteractionHandler) {
+    this(graph, FlowAnalysisMode.Automatic, myOptions, myInteractionHandler);
   }
 
-  public SimpleLocalDefs(UnitGraph graph, FlowAnalysisMode mode, Options myOptions) {
-    this(graph, graph.getBody().getLocals(), mode, myOptions);
+  public SimpleLocalDefs(UnitGraph graph, FlowAnalysisMode mode, Options myOptions, InteractionHandler myInteractionHandler) {
+    this(graph, graph.getBody().getLocals(), mode, myOptions, myInteractionHandler);
   }
 
-  SimpleLocalDefs(DirectedGraph<Unit> graph, Collection<Local> locals, FlowAnalysisMode mode, Options myOptions) {
-    this(graph, locals.toArray(new Local[locals.size()]), mode, myOptions);
+  SimpleLocalDefs(DirectedGraph<Unit> graph, Collection<Local> locals, FlowAnalysisMode mode, Options myOptions, InteractionHandler myInteractionHandler) {
+    this(graph, locals.toArray(new Local[locals.size()]), mode, myOptions, myInteractionHandler);
   }
 
-  SimpleLocalDefs(DirectedGraph<Unit> graph, Local[] locals, boolean omitSSA, Options myOptions) {
-    this(graph, locals, omitSSA ? FlowAnalysisMode.OmitSSA : FlowAnalysisMode.Automatic, myOptions);
+  SimpleLocalDefs(DirectedGraph<Unit> graph, Local[] locals, boolean omitSSA, Options myOptions, InteractionHandler myInteractionHandler) {
+    this(graph, locals, omitSSA ? FlowAnalysisMode.OmitSSA : FlowAnalysisMode.Automatic, myOptions, myInteractionHandler);
   }
 
   /**
@@ -355,8 +356,9 @@ public class SimpleLocalDefs implements LocalDefs {
     FlowInsensitive
   }
 
-  SimpleLocalDefs(DirectedGraph<Unit> graph, Local[] locals, FlowAnalysisMode mode, Options myOptions) {
+  SimpleLocalDefs(DirectedGraph<Unit> graph, Local[] locals, FlowAnalysisMode mode, Options myOptions, InteractionHandler myInteractionHandler) {
     this.myOptions = myOptions;
+    this.myInteractionHandler = myInteractionHandler;
 //    final Options options = myOptions;
 //    if (options.time()) {
 //      myTimers.defsTimer.start();
@@ -426,7 +428,7 @@ public class SimpleLocalDefs implements LocalDefs {
     }
 
     if (doFlowAnalsis && mode != FlowAnalysisMode.FlowInsensitive) {
-      def = new FlowAssignment(graph, locals, unitList, units, omitSSA, myOptions);
+      def = new FlowAssignment(graph, locals, unitList, units, omitSSA, myOptions,myInteractionHandler);
     } else {
       def = new StaticSingleAssignment(locals, unitList);
     }

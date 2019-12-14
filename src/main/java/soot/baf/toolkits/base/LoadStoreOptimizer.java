@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.JastAddJ.Options;
 import soot.Local;
 import soot.PhaseOptions;
 import soot.Trap;
@@ -67,11 +66,13 @@ import soot.baf.StaticGetInst;
 import soot.baf.StaticPutInst;
 import soot.baf.StoreInst;
 import soot.baf.XorInst;
+import soot.options.Options;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.ZonedBlockGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LocalDefs;
 import soot.toolkits.scalar.LocalUses;
 import soot.toolkits.scalar.UnitValueBoxPair;
@@ -85,15 +86,17 @@ public class LoadStoreOptimizer extends BodyTransformer {
   private ThrowAnalysis throwAnalysis;
   private ThrowableSet.Manager myManager;
   private PhaseDumper phaseDumper;
+  private InteractionHandler myInteractionHandler;
 
 
   @Inject
-  public LoadStoreOptimizer(soot.options.Options myOptions, Baf myBaf, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper) {
+  public LoadStoreOptimizer(Options myOptions, Baf myBaf, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
     this.myOptions = myOptions;
     this.myBaf = myBaf;
     this.throwAnalysis = throwAnalysis;
     this.myManager = myManager;
     this.phaseDumper = phaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
 
@@ -220,7 +223,7 @@ public class LoadStoreOptimizer extends BodyTransformer {
     }
 
     private void computeLocalDefsAndLocalUsesInfo() {
-      mLocalDefs = LocalDefs.Factory.newLocalDefs(mBody, throwAnalysis, myManager, myOptions, phaseDumper);
+      mLocalDefs = LocalDefs.Factory.newLocalDefs(mBody, throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler);
       mLocalUses = LocalUses.Factory.newLocalUses(mBody, mLocalDefs);
     }
 

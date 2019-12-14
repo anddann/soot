@@ -32,6 +32,7 @@ import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.SimpleLocalDefs.FlowAnalysisMode;
 import soot.util.PhaseDumper;
 
@@ -52,10 +53,11 @@ public interface LocalDefs {
      * @param myManager
      * @param myOptions
      * @param phaseDumper
+     * @param myInteractionHandler
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefs(Body body, ThrowAnalysis throwAnalysis,  ThrowableSet.Manager myManager, Options myOptions, PhaseDumper phaseDumper) {
-      return newLocalDefs(body, false, throwAnalysis, myOptions, myManager, phaseDumper);
+    public static LocalDefs newLocalDefs(Body body, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
+      return newLocalDefs(body, false, throwAnalysis, myOptions, myManager, phaseDumper, myInteractionHandler);
     }
 
     /**
@@ -70,10 +72,11 @@ public interface LocalDefs {
      * @param myOptions
      * @param myManager
      * @param phaseDumper
+     * @param myInteractionHandler
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefs(Body body, boolean expectUndefined, ThrowAnalysis myThrowAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper phaseDumper) {
-      return newLocalDefs(new ExceptionalUnitGraph(body, myThrowAnalysis,myOptions.omit_excepting_unit_edges(), myManager, phaseDumper), expectUndefined, myOptions);
+    public static LocalDefs newLocalDefs(Body body, boolean expectUndefined, ThrowAnalysis myThrowAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
+      return newLocalDefs(new ExceptionalUnitGraph(body, myThrowAnalysis,myOptions.omit_excepting_unit_edges(), myManager, phaseDumper), expectUndefined, myOptions, myInteractionHandler);
     }
 
     /**
@@ -83,10 +86,11 @@ public interface LocalDefs {
      * @param graph
      *          the graph to work with
      * @param myOptions
+     * @param myInteractionHandler
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefs(UnitGraph graph, Options myOptions) {
-      return newLocalDefs(graph, false, myOptions);
+    public static LocalDefs newLocalDefs(UnitGraph graph, Options myOptions, InteractionHandler myInteractionHandler) {
+      return newLocalDefs(graph, false, myOptions, myInteractionHandler);
     }
 
     /**
@@ -100,11 +104,12 @@ public interface LocalDefs {
      * @param expectUndefined
      *          if you expect uses of locals that are undefined
      * @param myOptions
+     * @param myInteractionHandler
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefs(UnitGraph graph, boolean expectUndefined, Options myOptions) {
+    public static LocalDefs newLocalDefs(UnitGraph graph, boolean expectUndefined, Options myOptions, InteractionHandler myInteractionHandler) {
       // return new SmartLocalDefs(graph, LiveLocals.Factory.newLiveLocals(graph));
-      return new SimpleLocalDefs(graph, expectUndefined ? FlowAnalysisMode.OmitSSA : FlowAnalysisMode.Automatic, myOptions);
+      return new SimpleLocalDefs(graph, expectUndefined ? FlowAnalysisMode.OmitSSA : FlowAnalysisMode.Automatic, myOptions, myInteractionHandler);
     }
 
     /**
@@ -117,11 +122,12 @@ public interface LocalDefs {
      * @param graph
      *          the graph to work with
      * @param myOptions
+     * @param myInteractionHandler
      * @return a new LocalDefs instance
      */
-    public static LocalDefs newLocalDefsFlowInsensitive(UnitGraph graph, Options myOptions) {
+    public static LocalDefs newLocalDefsFlowInsensitive(UnitGraph graph, Options myOptions, InteractionHandler myInteractionHandler) {
       // return new SmartLocalDefs(graph, LiveLocals.Factory.newLiveLocals(graph));
-      return new SimpleLocalDefs(graph, FlowAnalysisMode.FlowInsensitive, myOptions);
+      return new SimpleLocalDefs(graph, FlowAnalysisMode.FlowInsensitive, myOptions, myInteractionHandler);
     }
   }
 

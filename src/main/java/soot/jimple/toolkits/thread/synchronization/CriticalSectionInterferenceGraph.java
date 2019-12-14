@@ -77,11 +77,11 @@ public class CriticalSectionInterferenceGraph {
   public void calculateGroups() {
     nextGroup = 1;
     groups = new ArrayList<CriticalSectionGroup>();
-    groups.add(new CriticalSectionGroup(0)); // dummy group
+    groups.add(new CriticalSectionGroup(fullObjectFactory, myScene, 0)); // dummy group
 
     if (optionOneGlobalLock) // use one group for all transactions
     {
-      CriticalSectionGroup onlyGroup = new CriticalSectionGroup(nextGroup);
+      CriticalSectionGroup onlyGroup = new CriticalSectionGroup(fullObjectFactory, myScene, nextGroup);
       Iterator<CriticalSection> tnIt1 = criticalSections.iterator();
       while (tnIt1.hasNext()) {
         CriticalSection tn1 = tnIt1.next();
@@ -210,7 +210,7 @@ public class CriticalSectionInterferenceGraph {
                 else if (tn1.setNumber == 0) {
                   // if tn2 is NOT already in a group
                   if (tn2.setNumber == 0) {
-                    CriticalSectionGroup newGroup = new CriticalSectionGroup(nextGroup);
+                    CriticalSectionGroup newGroup = new CriticalSectionGroup(fullObjectFactory, myScene, nextGroup);
                     newGroup.add(tn1);
                     newGroup.add(tn2);
                     groups.add(newGroup);

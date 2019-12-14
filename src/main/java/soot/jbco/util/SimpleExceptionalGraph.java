@@ -43,7 +43,7 @@ public class SimpleExceptionalGraph extends TrapUnitGraph {
    * @param body
    */
   public SimpleExceptionalGraph(Body body) {
-    super(body);
+    super(body, myPhaseDumper);
     int size = unitChain.size();
 
     unitToSuccs = new HashMap<Unit, List<Unit>>(size * 2 + 1, 0.7f);

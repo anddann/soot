@@ -239,7 +239,7 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
             getID(),
             s.hasSuperinterfaceSignature() ? s.superinterfaceSignature() : getSuperInterfaceIdListNoTransform(),
             getBodyDeclListNoTransform(),
-            s.typeParameters()
+            s.typeParameters(),myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions
           ),
           index
       );
@@ -262,7 +262,7 @@ public class InterfaceDecl extends ReferenceType implements Cloneable {
       getID(),
       getSuperInterfaceIdList().substitute(parTypeDecl),
      // ES:  new List(),
-      this
+      this,myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions
     );
     return c;
   }

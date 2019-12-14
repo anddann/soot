@@ -27,14 +27,14 @@ import soot.options.Options;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:80
  */
 public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet, Iterator, Variable {
-  private Scene myScene;
-  private Options myOptions;
-  private PackageNamer myPackageNamer;
-  private Jimple myJimple;
-  private PrimTypeCollector primTypeCollector;
-  private ConstantFactory constantFactory;
-    private SootResolver mySootResolver;
-    private PhaseOptions myPhaseOptions;
+  protected Scene myScene;
+  protected Options myOptions;
+  protected PackageNamer myPackageNamer;
+  protected Jimple myJimple;
+  protected PrimTypeCollector primTypeCollector;
+  protected ConstantFactory constantFactory;
+    protected SootResolver mySootResolver;
+    protected PhaseOptions myPhaseOptions;
 
     /**
    * @apilevel low-level
@@ -421,7 +421,7 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
 
     List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     if (!isStatic())
-      parameters.add(new ParameterDeclaration(fieldQualifier.createQualifiedAccess(), "that"));
+      parameters.add(new ParameterDeclaration(fieldQualifier.createQualifiedAccess(), "that",myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions));
 
     m = new MethodDecl(modifiers, type().createQualifiedAccess(), "get$" + name() + "$access$" + accessorIndex, parameters,
         new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), new Opt(new Block(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new ReturnStmt(createAccess())), myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)), myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
@@ -448,8 +448,8 @@ public class FieldDeclaration extends MemberDecl implements Cloneable, SimpleSet
 
     List parameters = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     if (!isStatic())
-      parameters.add(new ParameterDeclaration(fieldQualifier.createQualifiedAccess(), "that"));
-    parameters.add(new ParameterDeclaration(type().createQualifiedAccess(), "value"));
+      parameters.add(new ParameterDeclaration(fieldQualifier.createQualifiedAccess(), "that",myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions));
+    parameters.add(new ParameterDeclaration(type().createQualifiedAccess(), "value",myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions));
 
     m = new MethodDecl(modifiers, type().createQualifiedAccess(), "set$" + name() + "$access$" + accessorIndex, parameters,
         new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),

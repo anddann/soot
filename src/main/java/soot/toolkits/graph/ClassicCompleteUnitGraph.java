@@ -77,7 +77,7 @@ public class ClassicCompleteUnitGraph extends TrapUnitGraph {
    */
   public ClassicCompleteUnitGraph(Body body) {
     // The TrapUnitGraph constructor will use our buildExceptionalEdges:
-    super(body);
+    super(body, myPhaseDumper);
   }
 
   /**

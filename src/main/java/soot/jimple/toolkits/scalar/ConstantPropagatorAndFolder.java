@@ -51,6 +51,7 @@ import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.Orderer;
 import soot.toolkits.graph.PseudoTopologicalOrderer;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LocalDefs;
 import soot.util.PhaseDumper;
 
@@ -66,15 +67,17 @@ public class ConstantPropagatorAndFolder extends BodyTransformer {
   private Scene myScene;
   private ThrowAnalysis myThrowAnalysis;
   private ConstantFactory myConstantfactory;
+  private InteractionHandler myInteractionHandler;
 
   @Inject
-  public ConstantPropagatorAndFolder(Options myOptions, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Scene myScene, ConstantFactory myConstantfactory) {
+  public ConstantPropagatorAndFolder(Options myOptions, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Scene myScene, ConstantFactory myConstantfactory, InteractionHandler myInteractionHandler) {
     this.myOptions = myOptions;
     this.myThrowAnalysis = myThrowAnalysis;
     this.myManager = myManager;
     this.myPhaseDumper = myPhaseDumper;
     this.myScene = myScene;
     this.myConstantfactory = myConstantfactory;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
 
@@ -88,7 +91,7 @@ public class ConstantPropagatorAndFolder extends BodyTransformer {
     }
 
     UnitGraph g = new ExceptionalUnitGraph(b, myThrowAnalysis,  myOptions.omit_excepting_unit_edges(), myManager,myPhaseDumper);
-    LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(g, myOptions);
+    LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(g, myOptions, myInteractionHandler);
 
     // Perform a constant/local propagation pass.
     Orderer<Unit> orderer = new PseudoTopologicalOrderer<Unit>();

@@ -54,11 +54,9 @@ import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.ArrayRef;
-import soot.jimple.ClassConstant;
 import soot.jimple.ConditionExpr;
-import soot.jimple.DoubleConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Expr;
-import soot.jimple.FloatConstant;
 import soot.jimple.GotoStmt;
 import soot.jimple.IdentityStmt;
 import soot.jimple.IfStmt;
@@ -66,12 +64,10 @@ import soot.jimple.InstanceFieldRef;
 import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
-import soot.jimple.LongConstant;
 import soot.jimple.LookupSwitchStmt;
 import soot.jimple.NullConstant;
 import soot.jimple.StaticFieldRef;
 import soot.jimple.Stmt;
-import soot.jimple.StringConstant;
 import soot.jimple.TableSwitchStmt;
 import soot.options.Options;
 import soot.tagkit.BytecodeOffsetTag;
@@ -116,6 +112,7 @@ public class CFG {
   private Scene myScene;
   private Util myCoffiUtil;
   private Jimple myJimple;
+  private ConstantFactory constancFactory;
 
   /**
    * Constructs a new control flow graph for the given method.
@@ -126,14 +123,16 @@ public class CFG {
    * @param myScene
    * @param myCoffiUtil
    * @param myJimple
+   * @param constancFactory
    * @see method_info
    */
-  public CFG(method_info m, Options myOptions, Scene myScene, Util myCoffiUtil, Jimple myJimple) {
+  public CFG(method_info m, Options myOptions, Scene myScene, Util myCoffiUtil, Jimple myJimple, ConstantFactory constancFactory) {
     this.method = m;
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myCoffiUtil = myCoffiUtil;
     this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
 
     this.sentinel = new Instruction_Nop();
     this.sentinel.next = m.instructions;
@@ -2658,7 +2657,7 @@ public class CFG {
         break;
 
       case ByteCode.ACONST_NULL:
-        rvalue = NullConstant.v();
+        rvalue = constancFactory.getNullConstant();
         stmt = myJimple.newAssignStmt(myCoffiUtil.getLocalForStackOp(listBody, postTypeStack, postTypeStack.topIndex()),
             rvalue);
         break;
@@ -3506,7 +3505,7 @@ public class CFG {
         break;
 
       case ByteCode.IFNULL:
-        co = myJimple.newEqExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), NullConstant.v());
+        co = myJimple.newEqExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), constancFactory.getNullConstant());
 
         stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;
@@ -3530,7 +3529,7 @@ public class CFG {
         break;
 
       case ByteCode.IFNONNULL:
-        co = myJimple.newNeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), NullConstant.v());
+        co = myJimple.newNeExpr(myCoffiUtil.getLocalForStackOp(listBody, typeStack, typeStack.topIndex()), constancFactory.getNullConstant());
 
         stmt = myJimple.newIfStmt(co, new FutureStmt());
         break;

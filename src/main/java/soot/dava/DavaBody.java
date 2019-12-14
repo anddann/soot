@@ -360,7 +360,7 @@ public class DavaBody extends Body {
     // DEBUG=false;
 
     // prime the analysis
-    AugmentedStmtGraph asg = new AugmentedStmtGraph(new BriefUnitGraph(this), new TrapUnitGraph(this));
+    AugmentedStmtGraph asg = new AugmentedStmtGraph(new BriefUnitGraph(this), new TrapUnitGraph(this, myPhaseDumper));
     // System.out.println(asg.toString());
 
     this.myExceptionFinder.preprocess(this, asg);

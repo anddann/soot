@@ -6215,7 +6215,7 @@ public abstract class TypeDecl extends ASTNode<ASTNode> implements Cloneable, Si
             new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver,
                 myPhaseOptions)
                     .add(new BasicCatch(
-                        new ParameterDeclaration(lookupType("java.lang", "NoSuchFieldError").createQualifiedAccess(), "e"),
+                        new ParameterDeclaration(lookupType("java.lang", "NoSuchFieldError").createQualifiedAccess(), "e",myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions),
                         new Block(
                             new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory,
                                 mySootResolver, myPhaseOptions),

@@ -53,6 +53,7 @@ import soot.options.Options;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.PseudoTopologicalOrderer;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LocalDefs;
 import soot.toolkits.scalar.LocalUses;
 import soot.toolkits.scalar.UnitValueBoxPair;
@@ -66,14 +67,16 @@ public class Aggregator extends BodyTransformer {
   private ThrowableSet.Manager myManager;
   private Scene myScene;
   private PhaseDumper myPhaseDumper;
+  private InteractionHandler myInteractionHandler;
 
   @Inject
-  public Aggregator(Options myOptions, Timers myTimers, ThrowableSet.Manager myManager, Scene myScene, PhaseDumper myPhaseDumper) {
+  public Aggregator(Options myOptions, Timers myTimers, ThrowableSet.Manager myManager, Scene myScene, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
     this.myOptions = myOptions;
     this.myTimers = myTimers;
     this.myManager = myManager;
     this.myScene = myScene;
     this.myPhaseDumper = myPhaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
 
@@ -121,7 +124,7 @@ public class Aggregator extends BodyTransformer {
 
       // body.printTo(new java.io.PrintWriter(G.v().out, true));
 
-      changed = internalAggregate(body, boxToZone, onlyStackVars, myManager,myOptions,myPhaseDumper, myScene);
+      changed = internalAggregate(body, boxToZone, onlyStackVars, myManager,myOptions,myPhaseDumper, myScene, myInteractionHandler);
 
       aggregateCount++;
     } while (changed);
@@ -132,12 +135,12 @@ public class Aggregator extends BodyTransformer {
 
   }
 
-  private static boolean internalAggregate(StmtBody body, Map<ValueBox, Zone> boxToZone, boolean onlyStackVars, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumper, Scene myScene) {
+  private static boolean internalAggregate(StmtBody body, Map<ValueBox, Zone> boxToZone, boolean onlyStackVars, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumper, Scene myScene, InteractionHandler myInteractionHandler) {
     boolean hadAggregation = false;
     Chain<Unit> units = body.getUnits();
 
     ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene);
-    LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(graph, myOptions);
+    LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(graph, myOptions, myInteractionHandler);
     LocalUses localUses = LocalUses.Factory.newLocalUses(body, localDefs);
 
     List<Unit> unitList = new PseudoTopologicalOrderer<Unit>().newList(graph, false);

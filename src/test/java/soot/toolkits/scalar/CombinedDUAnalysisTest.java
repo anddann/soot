@@ -36,7 +36,7 @@ public class CombinedDUAnalysisTest {
     public static CombinedAnalysis v(final UnitGraph graph) {
         return new CombinedAnalysis() {
             CombinedDUAnalysis combined = new CombinedDUAnalysis(graph);
-            SimpleLocalDefs defs = new SimpleLocalDefs(graph, myOptions);
+            SimpleLocalDefs defs = new SimpleLocalDefs(graph, myOptions, myInteractionHandler);
             SimpleLocalUses uses = new SimpleLocalUses(graph, defs);
             SimpleLiveLocals live = new SimpleLiveLocals(graph);
             

@@ -33,7 +33,7 @@ import java.util.Set;
 import soot.ArrayType;
 import soot.Body;
 import soot.Local;
-import soot.NullType;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
@@ -46,9 +46,12 @@ import soot.jimple.NullConstant;
 import soot.jimple.Stmt;
 import soot.shimple.PhiExpr;
 import soot.toolkits.graph.DirectedGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
 
 public class ConstantArrayAnalysis extends ForwardFlowAnalysis<Unit, ConstantArrayAnalysis.ArrayState> {
+  private PrimTypeCollector primTypeCollectior;
+
   private class ArrayTypesInternal implements Cloneable {
     BitSet mustAssign;
     BitSet typeState[];
@@ -119,8 +122,9 @@ public class ConstantArrayAnalysis extends ForwardFlowAnalysis<Unit, ConstantArr
   private int typeSize;
   private int szSize;
 
-  public ConstantArrayAnalysis(DirectedGraph<Unit> graph, Body b) {
-    super(graph);
+  public ConstantArrayAnalysis(DirectedGraph<Unit> graph, Body b, boolean interaticveMode, InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollectior) {
+    super(graph,interaticveMode, myInteractionHandler);
+    this.primTypeCollectior = primTypeCollectior;
     for (Local l : b.getLocals()) {
       localToInt.put(l, size++);
     }
@@ -352,7 +356,7 @@ public class ConstantArrayAnalysis extends ForwardFlowAnalysis<Unit, ConstantArr
         toRet.possibleTypes[i].add(rvTypeToInt.get(j));
       }
       if (!ati.mustAssign.get(i)) {
-        toRet.possibleTypes[i].add(NullType.v());
+        toRet.possibleTypes[i].add(primTypeCollectior.getNullType());
       }
     }
     return toRet;

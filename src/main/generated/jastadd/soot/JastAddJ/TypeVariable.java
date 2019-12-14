@@ -670,7 +670,7 @@ public class TypeVariable extends ReferenceType implements Cloneable {
    */
   private TypeDecl toInterface_compute() {
     // convert var to interface
-    InterfaceDecl ITj = new InterfaceDecl();
+    InterfaceDecl ITj = new InterfaceDecl(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
     ITj.setID("ITj_" + hashCode());
     // I'm assuming that TypeVariable has no members of it's own.
     // TODO: would it be enough to add only public members of a bound

@@ -28,10 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 import soot.Body;
-import soot.Timers;
 import soot.Trap;
 import soot.Unit;
-import soot.options.Options;
+import soot.util.PhaseDumper;
 
 /**
  * <p>
@@ -60,19 +59,23 @@ import soot.options.Options;
  * </ol>
  */
 public class TrapUnitGraph extends UnitGraph {
+  private final PhaseDumper myPhaseDumper;
+
   /**
    * Constructs the graph from a given Body instance.
    *
    * @param the
    *          Body instance from which the graph is built.
+   * @param myPhaseDumper
    */
-  public TrapUnitGraph(Body body) {
+  public TrapUnitGraph(Body body, PhaseDumper myPhaseDumper) {
     super(body);
+    this.myPhaseDumper = myPhaseDumper;
     int size = unitChain.size();
 
-    if (myOptions.time()) {
-      myTimers.graphTimer.start();
-    }
+//    if (myOptions.time()) {
+//      myTimers.graphTimer.start();
+//    }
 
     unitToSuccs = new HashMap<Unit, List<Unit>>(size * 2 + 1, 0.7f);
     unitToPreds = new HashMap<Unit, List<Unit>>(size * 2 + 1, 0.7f);
@@ -81,11 +84,11 @@ public class TrapUnitGraph extends UnitGraph {
 
     buildHeadsAndTails();
 
-    if (myOptions.time()) {
-      myTimers.graphTimer.end();
-    }
+//    if (myOptions.time()) {
+//      myTimers.graphTimer.end();
+//    }
 
-    soot.util.myPhaseDumper.dumpGraph(this, body);
+    this.myPhaseDumper.dumpGraph(this, body);
   }
 
   /**

@@ -14,6 +14,7 @@ import soot.jimple.*;
 public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
   protected PrimTypeCollector primTypeCollector;
   protected Jimple myJimple;
+  private Scene myScene;
 
   /**
    * @apilevel low-level
@@ -105,7 +106,7 @@ public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/ResolveAmbiguousNames.jrag:106
    */
   public Dot qualifiesAccess(Access access) {
-    Dot dot = new Dot(this, access);
+    Dot dot = new Dot(this, access,myScene,myJimple,primTypeCollector);
     dot.setStart(this.getStart());
     dot.setEnd(access.getEnd());
     return dot;
@@ -257,16 +258,17 @@ public abstract class Expr extends ASTNode<ASTNode> implements Cloneable {
   }
   /**
    * @ast method 
-   *
-   * @param primTypeCollector
+   *@param primTypeCollector
    * @param myJimple
+   * @param myScene
    */
-  public Expr(PrimTypeCollector primTypeCollector, Jimple myJimple) {
+  public Expr(PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
     super();
 
 
     this.primTypeCollector = primTypeCollector;
     this.myJimple = myJimple;
+    this.myScene = myScene;
   }
   /**
    * Initializes the child array to the correct size.

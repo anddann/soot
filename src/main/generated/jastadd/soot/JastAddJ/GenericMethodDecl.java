@@ -4,6 +4,15 @@ package soot.JastAddJ;
 import java.util.*;
 import java.util.ArrayList;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production GenericMethodDecl : {@link MethodDecl} ::= <span class="component">TypeParameter:{@link TypeVariable}*</span>;
  * @ast node
@@ -167,7 +176,8 @@ public class GenericMethodDecl extends MethodDecl implements Cloneable {
       getParameterList().substitute(parTypeDecl),
       getExceptionList().substitute(parTypeDecl),
       new Opt(),
-      (List)getTypeParameterList().fullCopy()
+      (List)getTypeParameterList().fullCopy(),    myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions
+
     );
     m.original = this;
     //System.out.println("End substituting generic " + signature());
@@ -184,7 +194,7 @@ public class GenericMethodDecl extends MethodDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public GenericMethodDecl() {
+  public GenericMethodDecl(Scene myScene, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 
 
@@ -208,7 +218,7 @@ public class GenericMethodDecl extends MethodDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public GenericMethodDecl(Modifiers p0, Access p1, String p2, List<ParameterDeclaration> p3, List<Access> p4, Opt<Block> p5, List<TypeVariable> p6) {
+  public GenericMethodDecl(Modifiers p0, Access p1, String p2, List<ParameterDeclaration> p3, List<Access> p4, Opt<Block> p5, List<TypeVariable> p6,Scene myScene, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
       super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setChild(p0, 0);
     setChild(p1, 1);
@@ -222,7 +232,7 @@ public class GenericMethodDecl extends MethodDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public GenericMethodDecl(Modifiers p0, Access p1, beaver.Symbol p2, List<ParameterDeclaration> p3, List<Access> p4, Opt<Block> p5, List<TypeVariable> p6) {
+  public GenericMethodDecl(Modifiers p0, Access p1, beaver.Symbol p2, List<ParameterDeclaration> p3, List<Access> p4, Opt<Block> p5, List<TypeVariable> p6,Scene myScene, Jimple myJimple, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
       super(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setChild(p0, 0);
     setChild(p1, 1);

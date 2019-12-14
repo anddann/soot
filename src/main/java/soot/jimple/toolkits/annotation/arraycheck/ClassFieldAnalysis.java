@@ -57,6 +57,7 @@ import soot.jimple.Stmt;
 import soot.options.Options;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LocalDefs;
 import soot.util.PhaseDumper;
 
@@ -66,13 +67,15 @@ public class ClassFieldAnalysis {
   private ThrowAnalysis throwAnalysis;
   private ThrowableSet.Manager myManager;
   private PhaseDumper phaseDumper;
+  private InteractionHandler myInteractionHandler;
 
   @Inject
-  public ClassFieldAnalysis(Options myOptions, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper) {
+  public ClassFieldAnalysis(Options myOptions, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
     this.myOptions = myOptions;
     this.throwAnalysis = throwAnalysis;
     this.myManager = myManager;
     this.phaseDumper = phaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
 
@@ -247,7 +250,7 @@ public class ClassFieldAnalysis {
 
     /* build D/U web, find the value of each candidate */
     {
-      LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(body, throwAnalysis, myManager, myOptions, phaseDumper);
+      LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(body, throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler);
 
       Set<Map.Entry<Stmt, SootField>> entries = stmtfield.entrySet();
 

@@ -76,6 +76,7 @@ import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.HashMutableEdgeLabelledDirectedGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.LocalDefs;
 import soot.util.Chain;
@@ -89,16 +90,20 @@ public class LockAllocator extends SceneTransformer {
   private Options myOptions;
   private PhaseDumper myPhaseDumer;
   private FullObjectFactory fullObjectFactory;
+  private PhaseDumper myPhaseDumper;
+    private InteractionHandler myInteractionHandler;
 
-  @Inject
-  public LockAllocator(Scene myScene, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumer, FullObjectFactory fullObjectFactory) {
+    @Inject
+  public LockAllocator(Scene myScene, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumer, FullObjectFactory fullObjectFactory, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
     this.myScene = myScene;
     this.myThrowAnalysis = myThrowAnalysis;
     this.myManager = myManager;
     this.myOptions = myOptions;
     this.myPhaseDumer = myPhaseDumer;
     this.fullObjectFactory = fullObjectFactory;
-  }
+    this.myPhaseDumper = myPhaseDumper;
+        this.myInteractionHandler = myInteractionHandler;
+    }
 
   List<CriticalSection> criticalSections = null;
   CriticalSectionInterferenceGraph interferenceGraph = null;
@@ -623,7 +628,7 @@ public class LockAllocator extends SceneTransformer {
       if (tn.setNumber <= 0) {
         continue;
       }
-      LocalDefs ld = LocalDefs.Factory.newLocalDefs(tn.method.retrieveActiveBody(), myThrowAnalysis, myManager, myOptions, myPhaseDumer);
+      LocalDefs ld = LocalDefs.Factory.newLocalDefs(tn.method.retrieveActiveBody(), myThrowAnalysis, myManager, myOptions, myPhaseDumer, myInteractionHandler);
 
       if (tn.origLock == null || !(tn.origLock instanceof Local)) {
         continue;

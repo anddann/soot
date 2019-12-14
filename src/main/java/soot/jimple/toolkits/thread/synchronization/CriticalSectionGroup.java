@@ -26,11 +26,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import soot.Scene;
 import soot.Value;
+import soot.jimple.FullObjectFactory;
 import soot.jimple.toolkits.pointer.CodeBlockRWSet;
 import soot.jimple.toolkits.pointer.RWSet;
 
 class CriticalSectionGroup implements Iterable<CriticalSection> {
+  private final FullObjectFactory fullObjectFactory;
+  private final Scene myScene;
   int groupNum;
 
   // Information about the group members
@@ -45,10 +49,12 @@ class CriticalSectionGroup implements Iterable<CriticalSection> {
   public Value lockObject;
   public boolean useLocksets;
 
-  public CriticalSectionGroup(int groupNum) {
+  public CriticalSectionGroup(FullObjectFactory fullObjectFactory, Scene myScene, int groupNum) {
+    this.fullObjectFactory = fullObjectFactory;
+    this.myScene = myScene;
     this.groupNum = groupNum;
     this.criticalSections = new ArrayList<CriticalSection>();
-    this.rwSet = new CodeBlockRWSet(fullObjectFactory, myScene);
+    this.rwSet = new CodeBlockRWSet(this.fullObjectFactory, this.myScene);
 
     this.isDynamicLock = false;
     this.useDynamicLock = false;

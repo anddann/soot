@@ -33,6 +33,7 @@ import soot.Scene;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.BinopExpr;
+import soot.jimple.ConstantFactory;
 import soot.jimple.EqExpr;
 import soot.jimple.IfStmt;
 import soot.jimple.Jimple;
@@ -40,10 +41,10 @@ import soot.jimple.NeExpr;
 import soot.jimple.NullConstant;
 import soot.jimple.Stmt;
 import soot.options.Options;
-import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.util.Chain;
 import soot.util.PhaseDumper;
 
@@ -54,21 +55,25 @@ public class NullCheckEliminator extends BodyTransformer {
   private ThrowableSet.Manager myManager;
   private  PhaseDumper myPhaseDumper;
   private Scene myScene;
+  private InteractionHandler myInteractionHandler;
+  private ConstantFactory constantFactory;
 
   public static class AnalysisFactory {
-    public NullnessAnalysis newAnalysis(UnitGraph g) {
-      return new NullnessAnalysis(g);
+    public NullnessAnalysis newAnalysis(UnitGraph g, boolean interaticveMode, InteractionHandler myInteractionHandler, ConstantFactory constantFactory) {
+      return new NullnessAnalysis(g, myInteractionHandler, interaticveMode, constantFactory);
     }
   }
 
   private AnalysisFactory analysisFactory;
 
   @Inject
-  public NullCheckEliminator(Jimple myJimple, Scene myScene,  ThrowableSet.Manager myManager,  Options myOptions, PhaseDumper myPhaseDumper) {
+  public NullCheckEliminator(Jimple myJimple, Scene myScene, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, ConstantFactory constantFactory) {
     this.myScene = myScene;
     this.myManager = myManager;
     this.myOptions = myOptions;
     this.myPhaseDumper = myPhaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
+    this.constantFactory = constantFactory;
     this.analysisFactory = new AnalysisFactory();
     this.myJimple = myJimple;
   }
@@ -90,7 +95,7 @@ public class NullCheckEliminator extends BodyTransformer {
       changed = false;
 
       NullnessAnalysis analysis = analysisFactory.newAnalysis(
-          new ExceptionalUnitGraph(body, myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene));
+          new ExceptionalUnitGraph(body, myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene), myOptions.interactive_mode(), myInteractionHandler, constantFactory);
 
       Chain<Unit> units = body.getUnits();
       Stmt s;

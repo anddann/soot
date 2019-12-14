@@ -116,7 +116,7 @@ public class InstanceOfExpr extends Expr implements Cloneable {
    * 
    */
   public InstanceOfExpr() {
-    super(primTypeCollector, myJimple);
+    super(primTypeCollector, myJimple, myScene);
 
 
   }
@@ -136,7 +136,7 @@ public class InstanceOfExpr extends Expr implements Cloneable {
    * 
    */
   public InstanceOfExpr(Expr p0, Access p1) {
-      super(primTypeCollector, myJimple);
+      super(primTypeCollector, myJimple, myScene);
       setChild(p0, 0);
     setChild(p1, 1);
   }

@@ -833,7 +833,7 @@ public class TypeResolver {
   }
 
   private void split_new() {
-    LocalDefs defs = LocalDefs.Factory.newLocalDefs(stmtBody, myManager);
+    LocalDefs defs = LocalDefs.Factory.newLocalDefs(stmtBody, myManager, myInteractionHandler);
     PatchingChain<Unit> units = stmtBody.getUnits();
     Stmt[] stmts = new Stmt[units.size()];
 

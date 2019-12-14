@@ -5,6 +5,15 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production GenericInterfaceDeclSubstituted : {@link GenericInterfaceDecl} ::= <span class="component">&lt;Original:TypeDecl&gt;</span> <span class="component">{@link BodyDecl}*</span>;
  * @ast node
@@ -102,8 +111,8 @@ public class GenericInterfaceDeclSubstituted extends GenericInterfaceDecl implem
    * @ast method 
    * 
    */
-  public GenericInterfaceDeclSubstituted() {
-    super();
+  public GenericInterfaceDeclSubstituted(Scene scene, Jimple jimple, SootResolver sootResolver, PackageNamer packageNamer, Options options, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions phaseOptions) {
+      super(scene, jimple, sootResolver, packageNamer, options, primTypeCollector, constantFactory, phaseOptions);
 
 
   }
@@ -125,7 +134,8 @@ public class GenericInterfaceDeclSubstituted extends GenericInterfaceDecl implem
    * @ast method 
    * 
    */
-  public GenericInterfaceDeclSubstituted(Modifiers p0, String p1, List<Access> p2, List<TypeVariable> p3, TypeDecl p4) {
+  public GenericInterfaceDeclSubstituted(Modifiers p0, String p1, List<Access> p2, List<TypeVariable> p3, TypeDecl p4, Scene scene, Jimple jimple, SootResolver sootResolver, PackageNamer packageNamer, soot.options.Options options, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions phaseOptions) {
+      super(scene, jimple, sootResolver, packageNamer, options, primTypeCollector, constantFactory, phaseOptions);
     setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -136,7 +146,8 @@ public class GenericInterfaceDeclSubstituted extends GenericInterfaceDecl implem
    * @ast method 
    * 
    */
-  public GenericInterfaceDeclSubstituted(Modifiers p0, beaver.Symbol p1, List<Access> p2, List<TypeVariable> p3, TypeDecl p4) {
+  public GenericInterfaceDeclSubstituted(Modifiers p0, beaver.Symbol p1, List<Access> p2, List<TypeVariable> p3, TypeDecl p4, Scene scene, Jimple jimple, SootResolver sootResolver, PackageNamer packageNamer, soot.options.Options options, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions phaseOptions) {
+      super(scene, jimple, sootResolver, packageNamer, options, primTypeCollector, constantFactory, phaseOptions);
     setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

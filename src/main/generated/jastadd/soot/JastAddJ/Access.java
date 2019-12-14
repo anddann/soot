@@ -149,7 +149,7 @@ public abstract class Access extends Expr implements Cloneable {
    * @param primTypeCollector
    * @param myJimple */
   public Access(Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) {
-    super(primTypeCollector, myJimple);
+    super(primTypeCollector, myJimple, myScene);
 
 
     this.myScene = myScene;

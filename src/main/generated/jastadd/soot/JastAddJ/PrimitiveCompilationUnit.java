@@ -916,7 +916,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    * @apilevel internal
    */
   private TypeDecl typeVoid_compute() {
-    VoidType classDecl = new VoidType();
+    VoidType classDecl = new VoidType(myScene,  myJimple,mySootResolver,myOptions, primTypeCollector,myPackageNamer, constantFactory,  myPhaseOptions);
     classDecl.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new Modifier("public")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver));
     classDecl.setID("void");
     return classDecl;
@@ -952,7 +952,7 @@ public class PrimitiveCompilationUnit extends CompilationUnit implements Cloneab
    * @apilevel internal
    */
   private TypeDecl typeNull_compute() {
-    NullType classDecl = new NullType();
+    NullType classDecl = new NullType(myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions);
     classDecl.setModifiers(new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new Modifier("public")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver));
     classDecl.setID("null");
     return classDecl;

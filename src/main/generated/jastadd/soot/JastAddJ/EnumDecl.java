@@ -1215,8 +1215,8 @@ public class EnumDecl extends ClassDecl implements Cloneable {
     {
       if (noConstructor()) {
         List parameterList = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
-        parameterList.add(new ParameterDeclaration(new TypeAccess("java.lang", "String",myScene,primTypeCollector,myJimple), "p0"));
-        parameterList.add(new ParameterDeclaration(new TypeAccess("int",myScene,primTypeCollector,myJimple), "p1"));
+        parameterList.add(new ParameterDeclaration(new TypeAccess("java.lang", "String",myScene,primTypeCollector,myJimple), "p0",myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions));
+        parameterList.add(new ParameterDeclaration(new TypeAccess("int",myScene,primTypeCollector,myJimple), "p1",myScene,myJimple,mySootResolver,myPackageNamer,myOptions,primTypeCollector,constantFactory,myPhaseOptions));
         addBodyDecl(new ConstructorDecl(
             new Modifiers(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
                 .add(new Modifier("private")).add(new Modifier("synthetic")), myPhaseOptions,myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver),

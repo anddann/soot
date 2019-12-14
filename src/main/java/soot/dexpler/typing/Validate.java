@@ -71,7 +71,7 @@ public class Validate {
       }
     }
 
-    final LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(b, true, myManager);
+    final LocalDefs localDefs = LocalDefs.Factory.newLocalDefs(b, true, myManager, myInteractionHandler);
 
     Set<Unit> toReplace = new HashSet<Unit>();
 

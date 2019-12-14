@@ -59,7 +59,7 @@ public abstract class AbstractWildcardType extends TypeDecl implements Cloneable
    * @param myScene
    * @param myJimple
    * @param mySootResolver */
-  public AbstractWildcardType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+  public AbstractWildcardType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
     super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
 
 
@@ -80,7 +80,7 @@ public abstract class AbstractWildcardType extends TypeDecl implements Cloneable
    * @ast method 
    * 
    */
-  public AbstractWildcardType(Modifiers p0, String p1, List<BodyDecl> p2, SootResolver mySootResolver, Jimple myJimple, Scene myScene,Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+  public AbstractWildcardType(Modifiers p0, String p1, List<BodyDecl> p2, SootResolver mySootResolver, Jimple myJimple, Scene myScene,Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory,PhaseOptions myPhaseOptions) {
       super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
@@ -90,7 +90,7 @@ public abstract class AbstractWildcardType extends TypeDecl implements Cloneable
    * @ast method 
    * 
    */
-  public AbstractWildcardType(Modifiers p0, Symbol p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver,Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory) {
+  public AbstractWildcardType(Modifiers p0, Symbol p1, List<BodyDecl> p2, Scene myScene, Jimple myJimple, SootResolver mySootResolver,Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory,PhaseOptions myPhaseOptions) {
       super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);

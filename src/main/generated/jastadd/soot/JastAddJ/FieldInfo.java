@@ -46,8 +46,8 @@ public class FieldInfo extends java.lang.Object {
             BytecodeParser.modifiers(flags),
             name,
             new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
-            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
-            );
+            new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions),
+                myPhaseOptions, myScene, myOptions, mySootResolver, myPackageNamer, myJimple, constantFactory, primTypeCollector);
       else {
         Signatures.FieldSignature s = attributes.fieldSignature;
         Access type = s != null ? s.fieldTypeAccess() : fieldDescriptor.type();

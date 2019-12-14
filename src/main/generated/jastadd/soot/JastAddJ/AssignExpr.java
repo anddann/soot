@@ -141,7 +141,7 @@ public abstract class AssignExpr extends Expr implements Cloneable {
    * 
    */
   public AssignExpr() {
-    super(primTypeCollector, myJimple);
+    super(primTypeCollector, myJimple, myScene);
 
 
   }
@@ -161,7 +161,7 @@ public abstract class AssignExpr extends Expr implements Cloneable {
    * 
    */
   public AssignExpr(Expr p0, Expr p1) {
-      super(primTypeCollector, myJimple);
+      super(primTypeCollector, myJimple, myScene);
       setChild(p0, 0);
     setChild(p1, 1);
   }

@@ -39,7 +39,7 @@ public interface LocalUses {
     }
 
     public static LocalUses newLocalUses(Body body) {
-      return newLocalUses(body, newLocalDefs(body, myManager));
+      return newLocalUses(body, newLocalDefs(body, myManager, myInteractionHandler));
     }
 
     public static LocalUses newLocalUses(Body body, LocalDefs localDefs) {
@@ -47,7 +47,7 @@ public interface LocalUses {
     }
 
     public static LocalUses newLocalUses(UnitGraph graph) {
-      return newLocalUses(graph.getBody(), newLocalDefs(graph, myOptions));
+      return newLocalUses(graph.getBody(), newLocalDefs(graph, myOptions, myInteractionHandler));
     }
 
     public static LocalUses newLocalUses(UnitGraph graph, LocalDefs localDefs) {
