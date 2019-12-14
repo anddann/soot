@@ -1,6 +1,15 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production AnnotationDecl : {@link InterfaceDecl} ::= <span class="component">SuperInterfaceId:{@link Access}*</span>;
  * @ast node
@@ -113,8 +122,8 @@ public class AnnotationDecl extends InterfaceDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public AnnotationDecl() {
-    super();
+  public AnnotationDecl(Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory,myPhaseOptions);
 
 
   }
@@ -135,7 +144,8 @@ public class AnnotationDecl extends InterfaceDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public AnnotationDecl(Modifiers p0, String p1, List<BodyDecl> p2) {
+  public AnnotationDecl(Modifiers p0, String p1, List<BodyDecl> p2,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory,myPhaseOptions);
     setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -144,7 +154,8 @@ public class AnnotationDecl extends InterfaceDecl implements Cloneable {
    * @ast method 
    * 
    */
-  public AnnotationDecl(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2) {
+  public AnnotationDecl(Modifiers p0, beaver.Symbol p1, List<BodyDecl> p2,Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory,myPhaseOptions);
     setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -497,7 +508,7 @@ public class AnnotationDecl extends InterfaceDecl implements Cloneable {
    * @apilevel internal
    */
   private List getSuperInterfaceIdList_compute() {
-    return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new TypeAccess("java.lang.annotation", "Annotation"));
+    return new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(new TypeAccess("java.lang.annotation", "Annotation",myScene,primTypeCollector,myJimple));
   }
   /* It is a compile-time error if the return type of a method declared in an
   annotation type is any type other than one of the following: one of the

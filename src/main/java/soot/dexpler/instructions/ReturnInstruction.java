@@ -33,14 +33,12 @@ import org.jf.dexlib2.iface.instruction.formats.Instruction11x;
 import soot.Local;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
-import soot.jimple.Jimple;
 import soot.jimple.ReturnStmt;
 
 public class ReturnInstruction extends DexlibAbstractInstruction {
 
   public ReturnInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override

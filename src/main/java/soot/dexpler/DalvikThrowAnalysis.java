@@ -165,7 +165,7 @@ public class DalvikThrowAnalysis extends UnitThrowAnalysis {
    */
   @Inject
   public DalvikThrowAnalysis(ThrowableSet.Manager mgr, Scene myScene) {
-    super(mgr,myScene);
+    super(mgr,myScene, primeTypeCollector, constancFactory);
     this.myScene = myScene;
   }
 

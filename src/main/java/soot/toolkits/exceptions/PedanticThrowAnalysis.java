@@ -49,6 +49,7 @@ public class PedanticThrowAnalysis extends AbstractThrowAnalysis {
 
   @Inject
   public PedanticThrowAnalysis(ThrowableSet.Manager mgr) {
+    super(mgr);
     this.mgr = mgr;
   }
 
@@ -78,7 +79,7 @@ public class PedanticThrowAnalysis extends AbstractThrowAnalysis {
    * @return the set of all <code>Throwable</code>s.
    */
   public ThrowableSet mightThrowImplicitly(ThrowInst t) {
-    return ThrowableSet.myManager.ALL_THROWABLES;
+    return mgr.ALL_THROWABLES;
   }
 
   /**
@@ -92,6 +93,6 @@ public class PedanticThrowAnalysis extends AbstractThrowAnalysis {
    * @return the set of all <code>Throwable</code>s.
    */
   public ThrowableSet mightThrowImplicitly(ThrowStmt t) {
-    return ThrowableSet.myManager.ALL_THROWABLES;
+    return mgr.ALL_THROWABLES;
   }
 }

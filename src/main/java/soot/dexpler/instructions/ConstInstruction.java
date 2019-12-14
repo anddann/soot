@@ -35,7 +35,6 @@ import org.jf.dexlib2.iface.instruction.WideLiteralInstruction;
 
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.dexpler.typing.UntypedConstant;
 import soot.jimple.AssignStmt;
 import soot.jimple.Constant;
@@ -48,7 +47,7 @@ public class ConstInstruction extends DexlibAbstractInstruction {
   private Jimple myJimple;
 
   public ConstInstruction(Instruction instruction, int codeAdress, ConstantFactory constancFactory, Jimple myJimple) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
     this.constancFactory = constancFactory;
     this.myJimple = myJimple;
   }

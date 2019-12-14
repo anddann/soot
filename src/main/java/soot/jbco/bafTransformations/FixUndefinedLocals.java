@@ -52,10 +52,6 @@ import soot.baf.PushInst;
 import soot.baf.WordType;
 import soot.baf.internal.AbstractOpTypeInst;
 import soot.jbco.IJbcoTransform;
-import soot.jimple.DoubleConstant;
-import soot.jimple.FloatConstant;
-import soot.jimple.IntConstant;
-import soot.jimple.LongConstant;
 import soot.toolkits.scalar.GuaranteedDefs;
 
 /**
@@ -91,7 +87,7 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
     Map<Local, Local> bafToJLocals = soot.jbco.Main.methods2Baf2JLocals.get(b.getMethod());
     ArrayList<Value> initialized = new ArrayList<Value>();
     PatchingChain<Unit> units = b.getUnits();
-    GuaranteedDefs gd = new GuaranteedDefs(new soot.toolkits.graph.ExceptionalUnitGraph(b, myManager));
+    GuaranteedDefs gd = new GuaranteedDefs(myInteractionHander, myOptions, new soot.toolkits.graph.ExceptionalUnitGraph(b, myManager));
     Iterator<Unit> unitIt = units.snapshotIterator();
     Unit after = null;
     while (unitIt.hasNext()) {

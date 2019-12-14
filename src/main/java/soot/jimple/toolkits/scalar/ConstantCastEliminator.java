@@ -34,8 +34,7 @@ import soot.Unit;
 import soot.jimple.AssignStmt;
 import soot.jimple.CastExpr;
 import soot.jimple.Constant;
-import soot.jimple.DoubleConstant;
-import soot.jimple.FloatConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IntConstant;
 
 /**
@@ -47,8 +46,11 @@ import soot.jimple.IntConstant;
  */
 public class ConstantCastEliminator extends BodyTransformer {
 
+  private ConstantFactory constancFactory;
+
   @Inject
-  public ConstantCastEliminator() {
+  public ConstantCastEliminator(ConstantFactory constancFactory) {
+    this.constancFactory = constancFactory;
   }
 
 

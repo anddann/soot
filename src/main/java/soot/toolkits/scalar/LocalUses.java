@@ -28,7 +28,12 @@ import java.util.List;
 
 import soot.Body;
 import soot.Unit;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
+import soot.util.PhaseDumper;
 
 /**
  * Provides an interface to find the Units that use a Local defined at a given Unit.
@@ -38,15 +43,15 @@ public interface LocalUses {
     private Factory() {
     }
 
-    public static LocalUses newLocalUses(Body body) {
-      return newLocalUses(body, newLocalDefs(body, myManager, myInteractionHandler));
+    public static LocalUses newLocalUses(Body body, Options myOptions, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper) {
+      return newLocalUses(body, newLocalDefs(body,throwAnalysis,myManager, myOptions , phaseDumper, myInteractionHandler));
     }
 
     public static LocalUses newLocalUses(Body body, LocalDefs localDefs) {
       return new SimpleLocalUses(body, localDefs);
     }
 
-    public static LocalUses newLocalUses(UnitGraph graph) {
+    public static LocalUses newLocalUses(UnitGraph graph, Options myOptions, InteractionHandler myInteractionHandler) {
       return newLocalUses(graph.getBody(), newLocalDefs(graph, myOptions, myInteractionHandler));
     }
 

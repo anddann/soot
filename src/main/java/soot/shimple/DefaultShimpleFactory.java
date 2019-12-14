@@ -106,7 +106,7 @@ public class DefaultShimpleFactory implements ShimpleFactory {
       return rdFinder;
     }
 
-    rdFinder = new SimpleDominatorsFinder<Block>(getReverseBlockGraph());
+    rdFinder = new SimpleDominatorsFinder<Block>(getReverseBlockGraph(), myOptions, myInteractionHandler);
     return rdFinder;
   }
 
@@ -154,7 +154,7 @@ public class DefaultShimpleFactory implements ShimpleFactory {
       return dFinder;
     }
 
-    dFinder = new SimpleDominatorsFinder<Block>(getBlockGraph());
+    dFinder = new SimpleDominatorsFinder<Block>(getBlockGraph(), myOptions, myInteractionHandler);
     return dFinder;
   }
 

@@ -28,6 +28,7 @@ import java.util.Set;
 import soot.Body;
 import soot.Trap;
 import soot.Unit;
+import soot.util.PhaseDumper;
 
 /**
  * A CFG where the nodes are {@link Block} instances, and where exception boundaries are taken into account when finding the
@@ -52,9 +53,10 @@ public class ZonedBlockGraph extends BlockGraph {
    *
    * @param body
    *          The <tt>Body</tt> for which to produce a <tt>ZonedBlockGraph</tt>.
+   * @param myPhaseDumper
    */
-  public ZonedBlockGraph(Body body) {
-    this(new BriefUnitGraph(body, myPhaseDumper));
+  public ZonedBlockGraph(Body body, PhaseDumper myPhaseDumper) {
+    this(new BriefUnitGraph(body, myPhaseDumper), myPhaseDumper);
   }
 
   /**
@@ -63,11 +65,12 @@ public class ZonedBlockGraph extends BlockGraph {
    *
    * @param unitGraph
    *          The <tt>BriefUnitGraph</tt> for which to produce a <tt>ZonedBlockGraph</tt>.
+   * @param myPhaseDumper
    */
-  public ZonedBlockGraph(BriefUnitGraph unitGraph) {
+  public ZonedBlockGraph(BriefUnitGraph unitGraph, PhaseDumper myPhaseDumper) {
     super(unitGraph);
 
-    soot.util.myPhaseDumper.dumpGraph(this, mBody);
+    myPhaseDumper.dumpGraph(this, mBody);
   }
 
   /**

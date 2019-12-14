@@ -40,16 +40,13 @@ import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
-import soot.jimple.ClassConstant;
 import soot.jimple.Constant;
-import soot.jimple.Jimple;
 
 public class ConstClassInstruction extends DexlibAbstractInstruction {
 
   public ConstClassInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override

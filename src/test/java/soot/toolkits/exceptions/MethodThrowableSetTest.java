@@ -78,7 +78,7 @@ public class MethodThrowableSetTest {
 	private static class ThrowAnalysisForTest extends UnitThrowAnalysis {
 
 		public ThrowAnalysisForTest() {
-			super(true, myScene);
+			super(true, myScene, primeTypeCollector, constancFactory);
 		}
 
 		@Override

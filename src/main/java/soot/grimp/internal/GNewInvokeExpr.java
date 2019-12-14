@@ -40,10 +40,12 @@ import soot.jimple.internal.AbstractInvokeExpr;
 import soot.util.Switch;
 
 public class GNewInvokeExpr extends AbstractInvokeExpr implements NewInvokeExpr, Precedence {
+  private final Grimp myGrimp;
   RefType type;
 
-  public GNewInvokeExpr(RefType type, SootMethodRef methodRef, List args) {
+  public GNewInvokeExpr(RefType type, SootMethodRef methodRef, List args, Grimp myGrimp) {
     super(methodRef, new ExprBox[args.size()]);
+    this.myGrimp = myGrimp;
 
     if (methodRef != null && methodRef.isStatic()) {
       throw new RuntimeException("wrong static-ness");
@@ -53,7 +55,7 @@ public class GNewInvokeExpr extends AbstractInvokeExpr implements NewInvokeExpr,
     this.type = type;
 
     for (int i = 0; i < args.size(); i++) {
-      this.argBoxes[i] = myGrimp.newExprBox((Value) args.get(i));
+      this.argBoxes[i] = this.myGrimp.newExprBox((Value) args.get(i));
     }
   }
 
@@ -128,7 +130,7 @@ public class GNewInvokeExpr extends AbstractInvokeExpr implements NewInvokeExpr,
 
     }
 
-    return new GNewInvokeExpr(getBaseType(), methodRef, clonedArgs);
+    return new GNewInvokeExpr(getBaseType(), methodRef, clonedArgs, myGrimp);
   }
 
   public boolean equivTo(Object o) {

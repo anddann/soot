@@ -45,11 +45,12 @@ package soot.dexpler.instructions;
 import org.jf.dexlib2.iface.instruction.Instruction;
 
 import soot.dexpler.DexBody;
+import soot.options.Options;
 
 public abstract class PseudoInstruction extends DexlibAbstractInstruction {
 
-  public PseudoInstruction(Instruction instruction, int codeAddress) {
-    super(instruction, codeAddress);
+  public PseudoInstruction(Instruction instruction, int codeAddress, Options myOptions) {
+    super(instruction, codeAddress, myOptions);
   }
 
   protected int dataFirstByte = -1;

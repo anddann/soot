@@ -1,6 +1,10 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.jimple.Jimple;
+
 /**
  * @production PrimaryExpr : {@link Expr};
  * @ast node
@@ -33,7 +37,7 @@ public abstract class PrimaryExpr extends Expr implements Cloneable {
    * @ast method 
    * 
    */
-  public PrimaryExpr() {
+  public PrimaryExpr(PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
     super(primTypeCollector, myJimple, myScene);
 
 

@@ -39,16 +39,14 @@ import soot.Local;
 import soot.Unit;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
 import soot.jimple.LookupSwitchStmt;
 import soot.jimple.Stmt;
 
 public class PackedSwitchInstruction extends SwitchInstruction {
 
   public PackedSwitchInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myJimple);
   }
 
   @Override

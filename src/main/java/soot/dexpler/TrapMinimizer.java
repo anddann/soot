@@ -34,9 +34,11 @@ import soot.Trap;
 import soot.Unit;
 import soot.jimple.Jimple;
 import soot.options.Options;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.exceptions.TrapTransformer;
 import soot.toolkits.graph.ExceptionalGraph.ExceptionDest;
 import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.util.PhaseDumper;
 
 /**
  * Transformer that splits traps for Dalvik whenever a statements within the trap cannot reach the trap's handler.
@@ -56,12 +58,16 @@ public class TrapMinimizer extends TrapTransformer {
   private DalvikThrowAnalysis myDalvikThrowAnalysis;
   private Options myOptions;
   private Jimple myJimple;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
   @Inject
-  public TrapMinimizer(DalvikThrowAnalysis myDalvikThrowAnalysis, Options myOptions, Jimple myJimple) {
+  public TrapMinimizer(DalvikThrowAnalysis myDalvikThrowAnalysis, Options myOptions, Jimple myJimple, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
     this.myDalvikThrowAnalysis = myDalvikThrowAnalysis;
     this.myOptions = myOptions;
     this.myJimple = myJimple;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
 

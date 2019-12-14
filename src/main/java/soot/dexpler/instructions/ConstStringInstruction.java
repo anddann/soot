@@ -35,15 +35,13 @@ import org.jf.dexlib2.iface.reference.StringReference;
 
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
-import soot.jimple.Jimple;
 import soot.jimple.StringConstant;
 
 public class ConstStringInstruction extends DexlibAbstractInstruction {
 
   public ConstStringInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override

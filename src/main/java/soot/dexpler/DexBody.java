@@ -58,15 +58,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
+import soot.BodyTransformer;
 import soot.DoubleType;
 import soot.Local;
 import soot.LongType;
 import soot.Modifier;
 import soot.NullType;
+import soot.PackManager;
+import soot.PhaseOptions;
 import soot.PrimType;
+import soot.PrimTypeCollector;
 import soot.RefType;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
+import soot.Timers;
 import soot.Trap;
 import soot.Type;
 import soot.Unit;
@@ -80,11 +86,13 @@ import soot.dexpler.instructions.MoveExceptionInstruction;
 import soot.dexpler.instructions.OdexInstruction;
 import soot.dexpler.instructions.PseudoInstruction;
 import soot.dexpler.instructions.RetypeableInstruction;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.CastExpr;
 import soot.jimple.CaughtExceptionRef;
 import soot.jimple.ConditionExpr;
 import soot.jimple.Constant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.EqExpr;
 import soot.jimple.IfStmt;
@@ -95,13 +103,30 @@ import soot.jimple.NeExpr;
 import soot.jimple.NullConstant;
 import soot.jimple.NumericConstant;
 import soot.jimple.internal.JIdentityStmt;
+import soot.jimple.toolkits.base.Aggregator;
+import soot.jimple.toolkits.scalar.ConditionalBranchFolder;
+import soot.jimple.toolkits.scalar.ConstantCastEliminator;
 import soot.jimple.toolkits.scalar.CopyPropagator;
+import soot.jimple.toolkits.scalar.DeadAssignmentEliminator;
+import soot.jimple.toolkits.scalar.FieldStaticnessCorrector;
+import soot.jimple.toolkits.scalar.IdentityCastEliminator;
+import soot.jimple.toolkits.scalar.IdentityOperationEliminator;
+import soot.jimple.toolkits.scalar.MethodStaticnessCorrector;
+import soot.jimple.toolkits.scalar.NopEliminator;
 import soot.jimple.toolkits.scalar.UnreachableCodeEliminator;
+import soot.jimple.toolkits.typing.TypeAssigner;
 import soot.options.JBOptions;
 import soot.options.Options;
 import soot.tagkit.LineNumberTag;
 import soot.tagkit.SourceLineNumberTag;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
+import soot.toolkits.exceptions.TrapTightener;
+import soot.toolkits.graph.interaction.InteractionHandler;
+import soot.toolkits.scalar.LocalPacker;
 import soot.toolkits.scalar.LocalSplitter;
+import soot.toolkits.scalar.UnusedLocalEliminator;
+import soot.util.PhaseDumper;
 
 /**
  * A DexBody contains the code of a DexMethod and is used as a wrapper around JimpleBody in the jimplification process.
@@ -138,6 +163,36 @@ public class DexBody {
 
   // detect array/instructions overlapping obfuscation
   protected List<PseudoInstruction> pseudoInstructionData = new ArrayList<PseudoInstruction>();
+  //FIXME: AD
+  private Jimple myJimple;
+  private ConstantFactory constancFactory;
+  private DalvikTyper dalivkTyper;
+  private PrimTypeCollector primTypeCollector;
+  private Scene myScene;
+  private Options myOptions;
+  private PhaseOptions myPhaseOptions;
+  private DalvikTyper myDalvikTyper;
+  private DeadAssignmentEliminator myDeadAssignmentEliminator;
+  private UnusedLocalEliminator myUnusedLocalEliminator;
+  private TypeAssigner myTypeAssigner;
+  private LocalPacker myLocalPacker;
+  private PackManager myPackManager;
+  private FieldStaticnessCorrector myFieldStaticnessCorrector;
+  private MethodStaticnessCorrector myMethodStaticnessCorrector;
+  private TrapTightener myTrapTightener;
+  private TrapMinimizer myTrapMinimizer;
+  private Aggregator myAggregator;
+  private ConditionalBranchFolder myConditionalBranchFolder;
+  private ConstantCastEliminator myConstantCastEliminator;
+  private IdentityCastEliminator myIdentityCastEliminator;
+  private IdentityOperationEliminator myIdentityOperationEliminator;
+  private UnreachableCodeEliminator myUnreachableCodeEliminator;
+  private NopEliminator myNopEliminator;
+  private DalvikThrowAnalysis myDalvikThrowAnalysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
+  private InteractionHandler myInteractionHandler;
+  private PedanticThrowAnalysis myPedanticThrowAnalysis;
 
   PseudoInstruction isAddressInData(int a) {
     for (PseudoInstruction pi : pseudoInstructionData) {
@@ -222,7 +277,7 @@ public class DexBody {
   protected void extractDexInstructions(MethodImplementation code) {
     int address = 0;
     for (Instruction instruction : code.getInstructions()) {
-      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address);
+      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address, myJimple, constancFactory, dalivkTyper, primTypeCollector, myScene);
       instructions.add(dexInstruction);
       instructionAtAddress.put(address, dexInstruction);
       address += instruction.getCodeUnits();
@@ -369,8 +424,8 @@ public class DexBody {
   public Body jimplify(Body b, SootMethod m) {
 
     final Jimple jimple = myJimple;
-    final UnknownType unknownType = UnknownType.v();
-    final NullConstant nullConstant = myNullConstant;
+    final UnknownType unknownType = primTypeCollector.getUnknownType();
+    final NullConstant nullConstant = constancFactory.getNullConstant();
     final Options options = myOptions;
 
     /*
@@ -379,20 +434,20 @@ public class DexBody {
      * t_whole_jimplification.start();
      */
 
-    JBOptions jbOptions = new JBOptions(myPhaseOptions().getPhaseOptions("jb"));
+    JBOptions jbOptions = new JBOptions(myPhaseOptions.getPhaseOptions("jb"));
     jBody = (JimpleBody) b;
     deferredInstructions = new ArrayList<DeferableInstruction>();
     instructionsToRetype = new HashSet<RetypeableInstruction>();
     
     if (jbOptions.use_original_names()) {
-      myPhaseOptions().setPhaseOptionIfUnset("jb.lns", "only-stack-locals");
+      myPhaseOptions.setPhaseOptionIfUnset("jb.lns", "only-stack-locals");
     }
     if (jbOptions.stabilize_local_names()) {
-      myPhaseOptions().setPhaseOption("jb.lns", "sort-locals:true");
+      myPhaseOptions.setPhaseOption("jb.lns", "sort-locals:true");
     }
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().clear();
+      myDalvikTyper.clear();
     }
 
     // process method parameters and generate Jimple locals from Dalvik
@@ -409,7 +464,7 @@ public class DexBody {
       add(idStmt);
       paramLocals.add(thisLocal);
       if (IDalvikTyper.ENABLE_DVKTYPER) {
-        myDalvikTyper().setType(idStmt.leftBox, jBody.getMethod().getDeclaringClass().getType(), false);
+        myDalvikTyper.setType(idStmt.leftBox, jBody.getMethod().getDeclaringClass().getType(), false);
       }
 
     }
@@ -447,7 +502,7 @@ public class DexBody {
         add(idStmt);
         paramLocals.add(gen);
         if (IDalvikTyper.ENABLE_DVKTYPER) {
-          myDalvikTyper().setType(idStmt.leftBox, t, false);
+          myDalvikTyper.setType(idStmt.leftBox, t, false);
         }
 
         // some parameters may be encoded on two registers.
@@ -595,11 +650,11 @@ public class DexBody {
       DexReturnValuePropagator.v().transform(jBody);
       getCopyPopagator().transform(jBody);
       DexNullThrowTransformer.v().transform(jBody);
-      myDalvikTyper().typeUntypedConstrantInDiv(jBody);
+      myDalvikTyper.typeUntypedConstrantInDiv(jBody);
       myDeadAssignmentEliminator.transform(jBody);
       myUnusedLocalEliminator.transform(jBody);
 
-      myDalvikTyper().assignType(jBody);
+      myDalvikTyper.assignType(jBody);
       // jBody.validate();
       jBody.validateUses();
       jBody.validateValueBoxes();
@@ -640,9 +695,9 @@ public class DexBody {
     // Remove "instanceof" checks on the null constant
     DexNullInstanceofTransformer.v().transform(jBody);
 
-    TypemyAssigner.transform(jBody);
+    myTypeAssigner.transform(jBody);
 
-    final RefType objectType = RefType.v("java.lang.Object");
+    final RefType objectType = RefType.v("java.lang.Object",myScene);
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       for (Unit u : jBody.getUnits()) {
         if (u instanceof IfStmt) {
@@ -695,7 +750,7 @@ public class DexBody {
                 if (nc.value != 0) {
                   throw new RuntimeException("expected value 0 for int constant. Got " + expr);
                 }
-                expr.setOp2(myNullConstant);
+                expr.setOp2(constancFactory.getNullConstant());
               } else if (op2 instanceof NullConstant && op1 instanceof NumericConstant) {
                 IntConstant nc = (IntConstant) op1;
                 if (nc.value != 0) {
@@ -743,7 +798,7 @@ public class DexBody {
     // again lead to unused locals which we have to remove.
     myLocalPacker.transform(jBody);
     myUnusedLocalEliminator.transform(jBody);
-    PackmyManager.getTransform("jb.lns").apply(jBody);
+    myPackManager.getTransform("jb.lns").apply(jBody);
 
     // Some apps reference static fields as instance fields. We fix this
     // on the fly.
@@ -841,7 +896,7 @@ public class DexBody {
     }
     
     //Must be last to ensure local ordering does not change
-    PackmyManager.getTransform("jb.lns").apply(jBody);
+    myPackManager.getTransform("jb.lns").apply(jBody);
 
     // t_whole_jimplification.end();
 
@@ -872,7 +927,7 @@ public class DexBody {
 
   protected LocalSplitter getLocalSplitter() {
     if (this.localSplitter == null) {
-      this.localSplitter = new LocalSplitter(myOptions, myDalvikThrowAnalysis, myScene, myManager, myPhaseDumper, myInteractionHandler);
+      this.localSplitter = new LocalSplitter(myOptions, myTimmer, myScene, myManager, myPhaseDumper, myInteractionHandler);
     }
     return this.localSplitter;
   }

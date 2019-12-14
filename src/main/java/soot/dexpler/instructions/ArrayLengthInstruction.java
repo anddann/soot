@@ -35,15 +35,13 @@ import soot.IntType;
 import soot.Local;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
-import soot.jimple.Jimple;
 import soot.jimple.LengthExpr;
 
 public class ArrayLengthInstruction extends DexlibAbstractInstruction {
 
   public ArrayLengthInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override

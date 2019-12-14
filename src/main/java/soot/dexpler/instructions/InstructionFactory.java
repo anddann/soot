@@ -29,6 +29,11 @@ package soot.dexpler.instructions;
 
 import org.jf.dexlib2.Opcode;
 import org.jf.dexlib2.iface.instruction.Instruction;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.dexpler.typing.DalvikTyper;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
 
 /**
  * Factory that returns an appropriate Instruction instances for given dexlib instructions and opcodes.
@@ -38,27 +43,34 @@ public class InstructionFactory {
 
   /**
    * Resolve an Instruction from a dexlib instruction.
-   *
    * @param instruction
    *          the corresponding dexlib instruction
    * @param codeAddress
-   *          the byte code address of the instruction
+   * @param jimple
+   * @param constancFactory
+   * @param dalivkTyper
+   * @param primTypeCollector
+   * @param myScene
    */
-  public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress) {
-    return fromOpcode(instruction.getOpcode(), instruction, codeAddress);
+  public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress, Jimple jimple, ConstantFactory constancFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene) {
+    return fromOpcode(instruction.getOpcode(), instruction, codeAddress, constancFactory, jimple, dalivkTyper, primTypeCollector,  myScene);
   }
 
   /**
    * Resolve an Instruction from an dex opcode.
-   *
    * @param op
    *          the opcode of the instruction
    * @param instruction
    *          the corresponding dexlib instruction
    * @param codeAddress
-   *          the byte code address of the instruction
+   * @param constancFactory
+   * @param jimple
+   * @param dalivkTyper
+   * @param primTypeCollector
+   * @param myJimple
+   * @param myScene
    */
-  public static DexlibAbstractInstruction fromOpcode(Opcode op, Instruction instruction, int codeAddress) {
+  public static DexlibAbstractInstruction fromOpcode(Opcode op, Instruction instruction, int codeAddress, ConstantFactory constancFactory, Jimple jimple, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector,  Scene myScene) {
     switch (op) {
 
       case SPARSE_SWITCH_PAYLOAD:
@@ -104,7 +116,7 @@ public class InstructionFactory {
       case CONST_WIDE_16:
       case CONST_WIDE_32:
       case CONST_WIDE_HIGH16:
-        return new ConstInstruction(instruction, codeAddress, constancFactory);
+        return new ConstInstruction(instruction, codeAddress, constancFactory,jimple);
 
       case CONST_STRING:
       case CONST_STRING_JUMBO:
@@ -156,7 +168,7 @@ public class InstructionFactory {
         return new PackedSwitchInstruction(instruction, codeAddress);
       case SPARSE_SWITCH:
         // case SPARSE_SWITCH_PAYLOAD:
-        return new SparseSwitchInstruction(instruction, codeAddress);
+        return new SparseSwitchInstruction(instruction, codeAddress,jimple,constancFactory,dalivkTyper,primTypeCollector);
 
       case CMPL_FLOAT:
       case CMPG_FLOAT:
@@ -188,7 +200,7 @@ public class InstructionFactory {
       case AGET_CHAR:
       case AGET_SHORT:
       case AGET_WIDE:
-        return new AgetInstruction(instruction, codeAddress, myJimple);
+        return new AgetInstruction(instruction, codeAddress, jimple);
 
       case APUT:
       case APUT_OBJECT:
@@ -261,7 +273,7 @@ public class InstructionFactory {
  
       case INVOKE_CUSTOM:
       case INVOKE_CUSTOM_RANGE:
-        return new InvokeCustomInstruction(instruction, codeAddress, constancFactory, myJimple, myScene);
+        return new InvokeCustomInstruction(instruction, codeAddress, constancFactory, jimple, myScene);
 
       case NEG_INT:
       case NOT_INT:

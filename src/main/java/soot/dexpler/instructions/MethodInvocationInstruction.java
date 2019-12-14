@@ -46,21 +46,17 @@ import org.jf.dexlib2.iface.reference.MethodReference;
 import soot.Local;
 import soot.Modifier;
 import soot.RefType;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootFieldRef;
 import soot.SootMethodRef;
-import soot.SootResolver;
 import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.InvokeStmt;
-import soot.jimple.Jimple;
 import soot.jimple.MethodHandle.Kind;
 
 public abstract class MethodInvocationInstruction extends DexlibAbstractInstruction implements DanglingInstruction {
@@ -70,7 +66,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
   protected AssignStmt assign = null;
 
   public MethodInvocationInstruction(Instruction instruction, int codeAddress) {
-    super(instruction, codeAddress);
+    super(instruction, codeAddress, myOptions);
   }
 
   @Override

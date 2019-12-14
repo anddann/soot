@@ -32,7 +32,7 @@ import soot.grimp.internal.GNewInvokeExpr;
 
 public class DNewInvokeExpr extends GNewInvokeExpr {
   public DNewInvokeExpr(RefType type, SootMethodRef methodRef, java.util.List args) {
-    super(type, methodRef, args);
+    super(type, methodRef, args, myGrimp);
   }
 
   public Object clone() {

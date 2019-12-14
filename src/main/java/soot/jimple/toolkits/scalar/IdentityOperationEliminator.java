@@ -30,20 +30,16 @@ import soot.Body;
 import soot.BodyTransformer;
 import soot.DoubleType;
 import soot.FloatType;
-import soot.G;
 import soot.IntType;
 import soot.LongType;
-import soot.Singletons;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.AddExpr;
 import soot.jimple.AssignStmt;
 import soot.jimple.BinopExpr;
-import soot.jimple.DoubleConstant;
-import soot.jimple.FloatConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IntConstant;
-import soot.jimple.LongConstant;
 import soot.jimple.MulExpr;
 import soot.jimple.OrExpr;
 import soot.jimple.SubExpr;
@@ -63,8 +59,11 @@ import soot.jimple.SubExpr;
 public class IdentityOperationEliminator extends BodyTransformer {
 
 
+  private ConstantFactory constancFactory;
+
   @Inject
-  public IdentityOperationEliminator() {
+  public IdentityOperationEliminator(ConstantFactory constancFactory) {
+    this.constancFactory = constancFactory;
   }
 
 

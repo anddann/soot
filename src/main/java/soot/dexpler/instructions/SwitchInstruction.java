@@ -39,9 +39,11 @@ import soot.jimple.Stmt;
 
 public abstract class SwitchInstruction extends PseudoInstruction implements DeferableInstruction {
   protected Unit markerUnit;
+  protected Jimple myJimple;
 
-  public SwitchInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+  public SwitchInstruction(Instruction instruction, int codeAdress, Jimple myJimple) {
+    super(instruction, codeAdress, myOptions);
+    this.myJimple = myJimple;
   }
 
   /**

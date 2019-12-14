@@ -40,9 +40,9 @@ import soot.Body;
 import soot.FastHierarchy;
 import soot.IntegerType;
 import soot.Local;
-import soot.LongType;
 import soot.NullType;
 import soot.PatchingChain;
+import soot.PrimTypeCollector;
 import soot.RefLikeType;
 import soot.RefType;
 import soot.Scene;
@@ -139,6 +139,7 @@ import soot.jimple.ClassConstant;
 import soot.jimple.CmpExpr;
 import soot.jimple.CmpgExpr;
 import soot.jimple.CmplExpr;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DivExpr;
 import soot.jimple.DoubleConstant;
 import soot.jimple.DynamicInvokeExpr;
@@ -215,15 +216,20 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
   // Cache the response to mightThrowImplicitly():
   private final ThrowableSet implicitThrowExceptions;
   private Scene myScene;
+  private PrimTypeCollector primeTypeCollector;
 
 
   @Inject
-  public UnitThrowAnalysis(ThrowableSet.Manager mgr, Scene myScene) {
-    this.myScene = myScene;
+  public UnitThrowAnalysis(ThrowableSet.Manager mgr, Scene myScene, PrimTypeCollector primeTypeCollector, ConstantFactory constancFactory) {
+      super(mgr);
+      this.myScene = myScene;
+    this.primeTypeCollector = primeTypeCollector;
     this.isInterproc = false;
     this.mgr = mgr;
     implicitThrowExceptions = mgr.VM_ERRORS
             .add(mgr.NULL_POINTER_EXCEPTION).add(mgr.ILLEGAL_MONITOR_STATE_EXCEPTION);
+    INT_CONSTANT_ZERO = constancFactory.createIntConstant(0);
+    LONG_CONSTANT_ZERO = constancFactory.createLongConstant(0);
   }
 
 
@@ -374,8 +380,8 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
     return methodSet;
   }
 
-  private static final IntConstant INT_CONSTANT_ZERO = constancFactory.createIntConstant(0);
-  private static final LongConstant LONG_CONSTANT_ZERO = constancFactory.createLongConstant(0);
+  private  final IntConstant INT_CONSTANT_ZERO;
+  private  final LongConstant LONG_CONSTANT_ZERO;
 
   protected class UnitSwitch implements InstSwitch, StmtSwitch {
 
@@ -613,7 +619,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
 
     @Override
     public void caseDivInst(DivInst i) {
-      if (i.getOpType() instanceof IntegerType || i.getOpType() == LongType.v()) {
+      if (i.getOpType() instanceof IntegerType || i.getOpType() == primeTypeCollector.getLongType()) {
         result = result.add(mgr.ARITHMETIC_EXCEPTION);
       }
     }
@@ -628,7 +634,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
 
     @Override
     public void caseRemInst(RemInst i) {
-      if (i.getOpType() instanceof IntegerType || i.getOpType() == LongType.v()) {
+      if (i.getOpType() instanceof IntegerType || i.getOpType() == primeTypeCollector.getLongType()) {
         result = result.add(mgr.ARITHMETIC_EXCEPTION);
       }
     }
@@ -1080,7 +1086,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
       } else if ((divisorType instanceof IntegerType)
           && ((!(divisor instanceof IntConstant)) || (((IntConstant) divisor).equals(INT_CONSTANT_ZERO)))) {
         result = result.add(mgr.ARITHMETIC_EXCEPTION);
-      } else if ((divisorType == LongType.v())
+      } else if ((divisorType == primeTypeCollector.getLongType())
           && ((!(divisor instanceof LongConstant)) || (((LongConstant) divisor).equals(LONG_CONSTANT_ZERO)))) {
         result = result.add(mgr.ARITHMETIC_EXCEPTION);
       }

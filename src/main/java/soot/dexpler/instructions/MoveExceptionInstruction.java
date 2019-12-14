@@ -36,9 +36,7 @@ import soot.RefType;
 import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.IdentityStmt;
-import soot.jimple.Jimple;
 
 public class MoveExceptionInstruction extends DexlibAbstractInstruction implements RetypeableInstruction {
 
@@ -46,7 +44,7 @@ public class MoveExceptionInstruction extends DexlibAbstractInstruction implemen
   protected IdentityStmt stmtToRetype;
 
   public MoveExceptionInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override

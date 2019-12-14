@@ -76,8 +76,10 @@ public class SynchObliviousMhpAnalysis implements MhpTester, Runnable {
                                   // thread-unsafe way
 
   Thread self;
+  private Scene myScene;
 
-  public SynchObliviousMhpAnalysis() {
+  public SynchObliviousMhpAnalysis(Scene myScene) {
+    this.myScene = myScene;
     threadList = new ArrayList<AbstractRuntimeThread>();
     optionPrintDebug = false;
 

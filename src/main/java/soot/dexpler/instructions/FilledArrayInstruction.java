@@ -41,7 +41,7 @@ import soot.dexpler.DexType;
 public abstract class FilledArrayInstruction extends DexlibAbstractInstruction implements DanglingInstruction {
 
   public FilledArrayInstruction(Instruction instruction, int codeAddress) {
-    super(instruction, codeAddress);
+    super(instruction, codeAddress, myOptions);
   }
 
   public void finalize(DexBody body, DexlibAbstractInstruction successor) {

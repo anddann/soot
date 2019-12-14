@@ -2,6 +2,7 @@
 package soot.JastAddJ;
 
 import soot.*;
+import soot.jimple.Jimple;
 
 /**
  * @production AssignExpr : {@link Expr} ::= <span class="component">Dest:{@link Expr}</span> <span class="component">Source:{@link Expr}</span>;
@@ -140,7 +141,7 @@ public abstract class AssignExpr extends Expr implements Cloneable {
    * @ast method 
    * 
    */
-  public AssignExpr() {
+  public AssignExpr(PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
     super(primTypeCollector, myJimple, myScene);
 
 
@@ -160,7 +161,7 @@ public abstract class AssignExpr extends Expr implements Cloneable {
    * @ast method 
    * 
    */
-  public AssignExpr(Expr p0, Expr p1) {
+  public AssignExpr(Expr p0, Expr p1,PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
       super(primTypeCollector, myJimple, myScene);
       setChild(p0, 0);
     setChild(p1, 1);

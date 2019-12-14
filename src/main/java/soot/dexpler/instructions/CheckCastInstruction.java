@@ -40,15 +40,13 @@ import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.CastExpr;
-import soot.jimple.Jimple;
 
 public class CheckCastInstruction extends DexlibAbstractInstruction {
 
   public CheckCastInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override

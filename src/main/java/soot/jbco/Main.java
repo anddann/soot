@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import soot.Local;
 import soot.Pack;
-import soot.PackManager;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Transform;
@@ -59,13 +58,10 @@ import soot.jbco.bafTransformations.WrapSwitchesInTrys;
 import soot.jbco.jimpleTransformations.AddSwitches;
 import soot.jbco.jimpleTransformations.ArithmeticTransformer;
 import soot.jbco.jimpleTransformations.BuildIntermediateAppClasses;
-import soot.jbco.jimpleTransformations.ClassRenamer;
 import soot.jbco.jimpleTransformations.CollectConstants;
 import soot.jbco.jimpleTransformations.CollectJimpleLocals;
-import soot.jbco.jimpleTransformations.FieldRenamer;
 import soot.jbco.jimpleTransformations.GotoInstrumenter;
 import soot.jbco.jimpleTransformations.LibraryMethodWrappersBuilder;
-import soot.jbco.jimpleTransformations.MethodRenamer;
 
 /**
  * @author Michael Batchelder
@@ -421,7 +417,7 @@ public class Main {
       return new IfNullToTryCatch();
     }
     if (name.equals("wjtp.jbco_blbc")) {
-      return new LibraryMethodWrappersBuilder();
+      return new LibraryMethodWrappersBuilder(myScene, myJimple, constancFactory, primTypeCollector);
     }
     if (name.equals("wjtp.jbco_bapibm")) {
       return new BuildIntermediateAppClasses();

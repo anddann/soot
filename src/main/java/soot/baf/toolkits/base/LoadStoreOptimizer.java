@@ -87,16 +87,18 @@ public class LoadStoreOptimizer extends BodyTransformer {
   private ThrowableSet.Manager myManager;
   private PhaseDumper phaseDumper;
   private InteractionHandler myInteractionHandler;
+  private PhaseDumper myPhaseDumper;
 
 
   @Inject
-  public LoadStoreOptimizer(Options myOptions, Baf myBaf, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
+  public LoadStoreOptimizer(Options myOptions, Baf myBaf, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler, PhaseDumper myPhaseDumper) {
     this.myOptions = myOptions;
     this.myBaf = myBaf;
     this.throwAnalysis = throwAnalysis;
     this.myManager = myManager;
     this.phaseDumper = phaseDumper;
     this.myInteractionHandler = myInteractionHandler;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
 
@@ -188,7 +190,7 @@ public class LoadStoreOptimizer extends BodyTransformer {
      * Computes a map binding each unit in a method to the unique basic block that contains it.
      */
     private void buildUnitToBlockMap() {
-      BlockGraph blockGraph = new ZonedBlockGraph(mBody);
+      BlockGraph blockGraph = new ZonedBlockGraph(mBody, myPhaseDumper);
       if (debug) {
         logger.debug("Method " + mBody.getMethod().getName() + " Block Graph: ");
         logger.debug("" + blockGraph);

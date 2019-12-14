@@ -6109,7 +6109,7 @@ class Events extends Parser.Events {
 			case 612: // literal = STRING_LITERAL.STRING_LITERAL
 			{
 					final Symbol STRING_LITERAL = _symbols[offset + 1];
-					 return new StringLiteral(STRING_LITERAL);
+					 return new StringLiteral(STRING_LITERAL, constantFactory);
 			}
 			case 613: // literal = NULL_LITERAL.NULL_LITERAL
 			{

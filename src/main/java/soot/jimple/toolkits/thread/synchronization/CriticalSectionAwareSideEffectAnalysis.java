@@ -255,7 +255,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
     this.myScene = myScene;
     this.normalsea = new SideEffectAnalysis(pa, cg, this.fullObjectFactory);
     this.criticalSections = criticalSections;
-    this.eoa = new EncapsulatedObjectAnalysis(this.myPhaseDumper, myScene);
+    this.eoa = new EncapsulatedObjectAnalysis(this.myPhaseDumper, myScene, primTypeCollector);
     this.tlo = tlo; // can be null
 
     sigBlacklist = new Vector(); // Signatures of methods known to have effective read/write sets of size 0

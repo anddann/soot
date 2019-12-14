@@ -38,6 +38,7 @@ import soot.options.Options;
 import soot.toolkits.graph.DominatorsFinder;
 import soot.toolkits.graph.MHGDominatorsFinder;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 
 /**
  * Find all locals guaranteed to be defined at (just before) a given program point.
@@ -46,14 +47,18 @@ import soot.toolkits.graph.UnitGraph;
  **/
 public class GuaranteedDefs {
   private static final Logger logger = LoggerFactory.getLogger(GuaranteedDefs.class);
+  private final InteractionHandler myInteractionHander;
+  private final Options myOptions;
   protected Map<Unit, List> unitToGuaranteedDefs;
 
-  public GuaranteedDefs(UnitGraph graph) {
-    if (myOptions.verbose()) {
+  public GuaranteedDefs(InteractionHandler myInteractionHander, Options myOptions, UnitGraph graph) {
+    this.myInteractionHander = myInteractionHander;
+    this.myOptions = myOptions;
+//    if (myOptions.verbose()) {
       logger.debug("[" + graph.getBody().getMethod().getName() + "]     Constructing GuaranteedDefs...");
-    }
+//    }
 
-    GuaranteedDefsAnalysis analysis = new GuaranteedDefsAnalysis(graph);
+    GuaranteedDefsAnalysis analysis = new GuaranteedDefsAnalysis(graph, this.myOptions, this.myInteractionHander);
 
     // build map
     {
@@ -83,8 +88,8 @@ class GuaranteedDefsAnalysis extends ForwardFlowAnalysis {
   FlowSet emptySet = new ArraySparseSet();
   Map<Unit, FlowSet> unitToGenerateSet;
 
-  GuaranteedDefsAnalysis(UnitGraph graph) {
-    super(graph);
+  GuaranteedDefsAnalysis(UnitGraph graph, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(graph, myOptions.interactive_mode(), myInteractionHandler);
     DominatorsFinder df = new MHGDominatorsFinder(graph);
     unitToGenerateSet = new HashMap<Unit, FlowSet>(graph.size() * 2 + 1, 0.7f);
 

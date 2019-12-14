@@ -3,11 +3,30 @@ package soot.JastAddJ;
 import java.io.*;
 import java.io.FileNotFoundException;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
   * @ast class
  * 
  */
 public class BytecodeParser extends java.lang.Object implements Flags, BytecodeReader {
+
+    //FIXME:AD
+    private Scene myScene;
+    private Options myOptions;
+    private PackageNamer myPackageNamer;
+    private Jimple myJimple;
+    private ConstantFactory constantFactory;
+    private SootResolver mySootResolver;
+    private PrimTypeCollector primTypeCollector;
+    private PhaseOptions myPhaseOptions;
 
     public CompilationUnit read(InputStream is, String fullName, Program p) throws FileNotFoundException, IOException {
       return new BytecodeParser(is, fullName).parse(null, null, p);
@@ -374,10 +393,10 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
 
     public TypeDecl parseTypeDecl() {
       int flags = u2();
-      Modifiers modifiers = modifiers(flags & 0xfddf);
+      Modifiers modifiers = modifiers(flags & 0xfddf,myPhaseOptions,myScene,myOptions,myPackageNamer,myJimple,constantFactory,primTypeCollector,mySootResolver);
       if((flags & (ACC_INTERFACE | ACC_ENUM)) == ACC_ENUM) {
         // Modifiers <ID:String> /[SuperClassAccess:Access]/ Implements:Access* BodyDecl*;
-        EnumDecl decl = new EnumDecl(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+        EnumDecl decl = new EnumDecl(myScene,myOptions,   myPackageNamer,myJimple, mySootResolver, primTypeCollector, constantFactory, myPhaseOptions);
         decl.setModifiers(modifiers);
         decl.setID(parseThisClass());
         Access superClass = parseSuperClass();
@@ -385,7 +404,7 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
         return decl;
       }
       else if ((flags & ACC_INTERFACE) == 0) {
-        ClassDecl decl = new ClassDecl(myScene, myOptions, myPackageNamer);
+        ClassDecl decl = new ClassDecl(myScene,myJimple, mySootResolver, myPackageNamer, myOptions,primTypeCollector, constantFactory, myPhaseOptions);
         decl.setModifiers(modifiers);
         decl.setID(parseThisClass());
         Access superClass = parseSuperClass();
@@ -394,7 +413,7 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
         decl.setImplementsList(parseInterfaces(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)));
         return decl;
       } else if((flags & ACC_ANNOTATION) == 0) {
-        InterfaceDecl decl = new InterfaceDecl();
+        InterfaceDecl decl = new InterfaceDecl(myScene,myJimple, mySootResolver, myPackageNamer, myOptions,primTypeCollector, constantFactory, myPhaseOptions);
         decl.setModifiers(modifiers);
         decl.setID(parseThisClass());
         Access superClass = parseSuperClass();
@@ -404,7 +423,7 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
               : new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions).add(superClass)));
         return decl;
       } else {
-        AnnotationDecl decl = new AnnotationDecl();
+        AnnotationDecl decl = new AnnotationDecl(myScene,myJimple, mySootResolver, myPackageNamer, myOptions,primTypeCollector, constantFactory, myPhaseOptions);
         decl.setModifiers(modifiers);
         decl.setID(parseThisClass());
         Access superClass = parseSuperClass();
@@ -463,12 +482,12 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
       if(typeName.indexOf('$') != -1)
         return new BytecodeTypeAccess(packageName, typeName);
       else
-        return new TypeAccess(packageName, typeName);
+        return new TypeAccess(packageName, typeName,myScene,primTypeCollector,myJimple);
     }
 
 
 
-    public static Modifiers modifiers(int flags) {
+    public static Modifiers modifiers(int flags,PhaseOptions myPhaseOptions, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, SootResolver mySootResolver) {
       Modifiers m = new Modifiers(myPhaseOptions, myScene, myOptions, myPackageNamer, myJimple, constantFactory, primTypeCollector, mySootResolver);
       if ((flags & 0x0001) != 0)
         m.addModifier(new Modifier("public"));

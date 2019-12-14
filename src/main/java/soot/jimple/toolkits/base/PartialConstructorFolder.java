@@ -39,12 +39,10 @@ import soot.Value;
 import soot.jimple.AssignStmt;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.InvokeStmt;
-import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.NewExpr;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
-import soot.options.Options;
 import soot.toolkits.scalar.LocalUses;
 import soot.toolkits.scalar.UnitValueBoxPair;
 import soot.util.Chain;
@@ -85,7 +83,7 @@ public class PartialConstructorFolder extends BodyTransformer {
     // start ahead one
     nextStmtIt.next();
 
-    LocalUses localUses = LocalUses.Factory.newLocalUses(body);
+    LocalUses localUses = LocalUses.Factory.newLocalUses(body, myManager);
 
     /* fold in NewExpr's with specialinvoke's */
     while (it.hasNext()) {

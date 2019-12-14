@@ -32,6 +32,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import soot.options.Options;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArrayPackedSet;
 import soot.toolkits.scalar.BoundedFlowSet;
 import soot.toolkits.scalar.CollectionFlowUniverse;
@@ -53,13 +55,13 @@ public class SimpleDominatorsFinder<N> implements DominatorsFinder<N> {
   /**
    * Compute dominators for provided singled-headed directed graph.
    **/
-  public SimpleDominatorsFinder(DirectedGraph<N> graph) {
+  public SimpleDominatorsFinder(DirectedGraph<N> graph, Options myOptions, InteractionHandler myInteractionHandler) {
     // if(myOptions.verbose())
     // logger.debug("[" + graph.getBody().getMethod().getName() +
     // "] Finding Dominators...");
 
     this.graph = graph;
-    SimpleDominatorsAnalysis<N> analysis = new SimpleDominatorsAnalysis<N>(graph);
+    SimpleDominatorsAnalysis<N> analysis = new SimpleDominatorsAnalysis<N>(graph, myOptions, myInteractionHandler);
 
     // build node to dominators map
     {
@@ -134,8 +136,8 @@ class SimpleDominatorsAnalysis<N> extends ForwardFlowAnalysis<N, FlowSet<N>> {
   private FlowSet<N> emptySet;
   private BoundedFlowSet<N> fullSet;
 
-  SimpleDominatorsAnalysis(DirectedGraph<N> graph) {
-    super(graph);
+  SimpleDominatorsAnalysis(DirectedGraph<N> graph, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(graph, myOptions.interactive_mode(), myInteractionHandler);
 
     // define empty set, with proper universe for complementation
 

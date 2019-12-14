@@ -216,7 +216,7 @@ public abstract class CFGGraphType extends CFGOptionMatcher.CFGOption {
 
   public static final CFGGraphType ZONED_BLOCK_GRAPH = new CFGGraphType("ZonedBlockGraph") {
     public DirectedGraph buildGraph(Body b) {
-      return new ZonedBlockGraph(b);
+      return new ZonedBlockGraph(b, myPhaseDumper);
     }
 
     public DotGraph drawGraph(CFGToDotGraph drawer, DirectedGraph g, Body b) {

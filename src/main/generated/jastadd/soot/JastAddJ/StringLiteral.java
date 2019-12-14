@@ -1,23 +1,9 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import soot.*;
-import soot.util.*;
+import beaver.Symbol;
 import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
  * String literal.
  * May not contain Unicode escape sequences (Unicode escapes
@@ -27,6 +13,8 @@ import soot.coffi.CoffiMethodSource;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java7Frontend/Literals.ast:37
  */
 public class StringLiteral extends Literal implements Cloneable {
+  private ConstantFactory constantFactory;
+
   /**
    * @apilevel low-level
    */
@@ -107,16 +95,18 @@ public class StringLiteral extends Literal implements Cloneable {
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddExtensions/JimpleBackend/Expressions.jrag:32
    */
   public soot.Value eval(Body b) {
-    return soot.jimple.StringConstant.v(getLITERAL());
+    return constantFactory.createStringConstant(getLITERAL());
   }
   /**
    * @ast method 
-   * 
+   *
+   * @param constantFactory
    */
-  public StringLiteral() {
+  public StringLiteral(ConstantFactory constantFactory) {
     super();
 
 
+    this.constantFactory = constantFactory;
   }
   /**
    * Initializes the child array to the correct size.
@@ -132,14 +122,16 @@ public class StringLiteral extends Literal implements Cloneable {
    * @ast method 
    * 
    */
-  public StringLiteral(String p0) {
+  public StringLiteral(String p0, ConstantFactory constantFactory) {
+    this.constantFactory = constantFactory;
     setLITERAL(p0);
   }
   /**
    * @ast method 
    * 
    */
-  public StringLiteral(beaver.Symbol p0) {
+  public StringLiteral(Symbol p0, ConstantFactory constantFactory) {
+    this.constantFactory = constantFactory;
     setLITERAL(p0);
   }
   /**

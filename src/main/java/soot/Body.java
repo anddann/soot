@@ -274,10 +274,11 @@ public abstract class Body extends AbstractHost implements Serializable {
     }
   }
 
-//  /** Verifies that a ValueBox is not used in more than one place. */
-//  public void validateValueBoxes() {
-//    runValidation(ValueBoxesValidator.v());
-//  }
+  /** Verifies that a ValueBox is not used in more than one place. */
+  public void validateValueBoxes() {
+    //FIXME
+   // runValidation(ValueBoxesValidator.v());
+  }
 //
 //  /** Verifies that each Local of getUseAndDefBoxes() is in this body's locals Chain. */
 //  public void validateLocals() {
@@ -294,10 +295,11 @@ public abstract class Body extends AbstractHost implements Serializable {
 //    runValidation(UnitBoxesValidator.v());
 //  }
 //
-//  /** Verifies that each use in this Body has a def. */
-//  public void validateUses() {
-//    runValidation(UsesValidator.v());
-//  }
+  /** Verifies that each use in this Body has a def. */
+  public void validateUses() {
+    //FIXME
+    //runValidation(UsesValidator.v());
+  }
 
   /** Returns a backed chain of the locals declared in this Body. */
   public Chain<Local> getLocals() {

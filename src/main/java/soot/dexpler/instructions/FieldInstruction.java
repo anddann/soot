@@ -41,22 +41,19 @@ import org.jf.dexlib2.iface.instruction.formats.Instruction23x;
 import org.jf.dexlib2.iface.reference.FieldReference;
 
 import soot.Local;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootFieldRef;
-import soot.SootResolver;
 import soot.Type;
 import soot.UnknownType;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.jimple.AssignStmt;
 import soot.jimple.ConcreteRef;
-import soot.jimple.Jimple;
 
 public abstract class FieldInstruction extends DexlibAbstractInstruction {
 
   public FieldInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   /**

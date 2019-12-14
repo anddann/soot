@@ -38,7 +38,6 @@ import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
 import soot.dexpler.InvalidDalvikBytecodeException;
 import soot.dexpler.tags.ObjectOpTag;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
 import soot.jimple.Jimple;
@@ -48,7 +47,7 @@ public class AgetInstruction extends DexlibAbstractInstruction {
   private Jimple myJimple;
 
   public AgetInstruction(Instruction instruction, int codeAdress, Jimple myJimple) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
     this.myJimple = myJimple;
   }
 

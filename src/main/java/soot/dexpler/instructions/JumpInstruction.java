@@ -38,7 +38,7 @@ public abstract class JumpInstruction extends DexlibAbstractInstruction {
   protected Unit markerUnit;
 
   public JumpInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   protected DexlibAbstractInstruction getTargetInstruction(DexBody body) {

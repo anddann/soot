@@ -49,8 +49,10 @@ import soot.jimple.toolkits.pointer.RWSet;
 import soot.jimple.toolkits.pointer.Union;
 import soot.jimple.toolkits.pointer.UnionFactory;
 import soot.jimple.toolkits.thread.ThreadLocalObjectsAnalysis;
+import soot.options.Options;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
@@ -84,8 +86,8 @@ public class SynchronizedRegionFinder extends ForwardFlowAnalysis<Unit, FlowSet<
   public boolean optionOpenNesting = true;
 
   SynchronizedRegionFinder(UnitGraph graph, Body b, boolean optionPrintDebug, boolean optionOpenNesting,
-      ThreadLocalObjectsAnalysis tlo) {
-    super(graph);
+                           ThreadLocalObjectsAnalysis tlo, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(graph,myOptions.interactive_mode(),myInteractionHandler);
 
     this.optionPrintDebug = optionPrintDebug;
     this.optionOpenNesting = optionOpenNesting;
@@ -100,7 +102,7 @@ public class SynchronizedRegionFinder extends ForwardFlowAnalysis<Unit, FlowSet<
       egraph = new ExceptionalUnitGraph(b, myManager);
     }
 
-    slu = LocalUses.Factory.newLocalUses(egraph);
+    slu = LocalUses.Factory.newLocalUses(egraph, myOptions, myInteractionHandler);
 
     if (G.v().Union_factory == null) {
       G.v().Union_factory = new UnionFactory() {

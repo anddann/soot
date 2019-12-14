@@ -51,7 +51,7 @@ public abstract class TaggedInstruction extends DexlibAbstractInstruction {
   private Tag instructionTag = null;
 
   public TaggedInstruction(Instruction instruction, int codeAddress) {
-    super(instruction, codeAddress);
+    super(instruction, codeAddress, myOptions);
   }
 
   public void setTag(Tag t) {

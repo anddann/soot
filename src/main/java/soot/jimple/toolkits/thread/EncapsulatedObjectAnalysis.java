@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
+import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SootMethod;
 import soot.options.Options;
@@ -52,10 +53,12 @@ public class EncapsulatedObjectAnalysis // extends ForwardFlowAnalysis
   ThrowableSet.Manager myManager;
   private PhaseDumper myPhaseDumper;
   private Scene myScene;
+  private PrimTypeCollector primTypeCollector;
 
-  public EncapsulatedObjectAnalysis(PhaseDumper myPhaseDumper, Scene myScene) {
+  public EncapsulatedObjectAnalysis(PhaseDumper myPhaseDumper, Scene myScene, PrimTypeCollector primTypeCollector) {
     this.myPhaseDumper = myPhaseDumper;
     this.myScene = myScene;
+    this.primTypeCollector = primTypeCollector;
     cachedClasses = new ArrayList();
     objectPureMethods = new ArrayList<SootMethod>();
     objectPureInitMethods = new ArrayList<SootMethod>();
@@ -75,7 +78,7 @@ public class EncapsulatedObjectAnalysis // extends ForwardFlowAnalysis
             initMethod = method;
           }
           Body b = method.retrieveActiveBody();
-          EncapsulatedMethodAnalysis ema = new EncapsulatedMethodAnalysis(new ExceptionalUnitGraph(b, myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene));
+          EncapsulatedMethodAnalysis ema = new EncapsulatedMethodAnalysis(new ExceptionalUnitGraph(b, myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene), primTypeCollector);
           if (ema.isPure()) {
             mayBePureMethods.add(method);
           }

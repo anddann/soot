@@ -30,13 +30,12 @@ package soot.dexpler.instructions;
 import org.jf.dexlib2.iface.instruction.Instruction;
 
 import soot.dexpler.DexBody;
-import soot.jimple.Jimple;
 import soot.jimple.ReturnVoidStmt;
 
 public class ReturnVoidInstruction extends DexlibAbstractInstruction {
 
   public ReturnVoidInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   public void jimplify(DexBody body) {

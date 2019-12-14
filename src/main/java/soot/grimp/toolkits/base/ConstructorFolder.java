@@ -75,7 +75,7 @@ public class ConstructorFolder extends BodyTransformer {
 
     Iterator<Unit> it = stmtList.iterator();
 
-    LocalUses localUses = LocalUses.Factory.newLocalUses(b);
+    LocalUses localUses = LocalUses.Factory.newLocalUses(b, myManager);
 
     /* fold in NewExpr's with specialinvoke's */
     while (it.hasNext()) {

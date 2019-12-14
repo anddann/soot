@@ -34,14 +34,12 @@ import soot.Local;
 import soot.RefType;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ExitMonitorStmt;
-import soot.jimple.Jimple;
 
 public class MonitorExitInstruction extends DexlibAbstractInstruction {
 
   public MonitorExitInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override

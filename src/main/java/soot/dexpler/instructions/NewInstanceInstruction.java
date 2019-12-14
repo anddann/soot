@@ -43,15 +43,13 @@ import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
-import soot.jimple.Jimple;
 import soot.jimple.NewExpr;
 
 public class NewInstanceInstruction extends DexlibAbstractInstruction {
 
   public NewInstanceInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override

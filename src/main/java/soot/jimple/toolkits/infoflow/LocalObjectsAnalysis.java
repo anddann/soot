@@ -204,7 +204,7 @@ public class LocalObjectsAnalysis {
         }
         return isLocal;
       } else {
-        boolean isLocal = SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, sm, mergedContext, ifr.getBase());
+        boolean isLocal = SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, sm, mergedContext, ifr.getBase(),myJimple);
         if (isLocal) {
           ClassLocalObjectsAnalysis cloa = getClassLocalObjectsAnalysis(context.getDeclaringClass());
           isLocal = !cloa.getInnerSharedFields().contains(ifr.getField());
@@ -228,7 +228,7 @@ public class LocalObjectsAnalysis {
       }
     }
 
-    boolean isLocal = SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, sm, mergedContext, localOrRef);
+    boolean isLocal = SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, sm, mergedContext, localOrRef,myJimple);
     if (dfa.printDebug()) {
       if (isLocal) {
         logger.debug("      LOCAL  ( local             from " + context.getDeclaringClass().getShortName() + "."

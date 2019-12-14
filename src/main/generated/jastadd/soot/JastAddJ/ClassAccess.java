@@ -136,7 +136,7 @@ public class ClassAccess extends Access implements Cloneable {
       // emit string literal
         
       ArrayList list = new ArrayList();
-      list.add(new StringLiteral(prevExpr().type().jvmName()).eval(b));
+      list.add(new StringLiteral(prevExpr().type().jvmName(), constantFactory).eval(b));
       Local l = asLocal(b, b.newStaticInvokeExpr(m.sootRef(), list, this));
       b.setLine(this);
       b.add(b.newAssignStmt(

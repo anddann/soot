@@ -320,7 +320,6 @@ public class EnumDecl extends ClassDecl implements Cloneable {
                   PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
     super(myScene, myJimple, sootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
 
-    this.myPhaseOptions = myPhaseOptions;
   }
 
   /**

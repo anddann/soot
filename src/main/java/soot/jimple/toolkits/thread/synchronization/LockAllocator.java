@@ -192,7 +192,7 @@ public class LockAllocator extends SceneTransformer {
     MhpTester mhp = null;
     if (optionDoMHP && myScene.getPointsToAnalysis() instanceof PAG) {
       logger.debug("[wjtp.tn] *** Build May-Happen-in-Parallel Info *** " + (new Date()));
-      mhp = new SynchObliviousMhpAnalysis();
+      mhp = new SynchObliviousMhpAnalysis(myScene);
       if (optionPrintMhpSummary) {
         mhp.printMhpSummary();
       }
@@ -205,7 +205,7 @@ public class LockAllocator extends SceneTransformer {
       if (mhp != null) {
         tlo = new ThreadLocalObjectsAnalysis(mhp, myScene);
       } else {
-        tlo = new ThreadLocalObjectsAnalysis(new SynchObliviousMhpAnalysis(), myScene);
+        tlo = new ThreadLocalObjectsAnalysis(new SynchObliviousMhpAnalysis(myScene), myScene);
       }
       if (!optionOnFlyTLO) {
         tlo.precompute();

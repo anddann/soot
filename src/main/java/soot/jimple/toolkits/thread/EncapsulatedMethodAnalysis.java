@@ -24,7 +24,7 @@ package soot.jimple.toolkits.thread;
 
 import java.util.Iterator;
 
-import soot.IntType;
+import soot.PrimTypeCollector;
 import soot.RefLikeType;
 import soot.Type;
 import soot.jimple.FieldRef;
@@ -36,10 +36,12 @@ import soot.toolkits.graph.UnitGraph;
 
 public class EncapsulatedMethodAnalysis // extends ForwardFlowAnalysis
 {
+  private final PrimTypeCollector primTypeCollector;
   boolean isMethodPure;
   boolean isMethodConditionallyPure;
 
-  public EncapsulatedMethodAnalysis(UnitGraph g) {
+  public EncapsulatedMethodAnalysis(UnitGraph g, PrimTypeCollector primTypeCollector) {
+    this.primTypeCollector = primTypeCollector;
     isMethodPure = true; // innocent until proven guilty :-)
     isMethodConditionallyPure = true;
 
@@ -62,7 +64,7 @@ public class EncapsulatedMethodAnalysis // extends ForwardFlowAnalysis
     Iterator paramTypesIt = g.getBody().getMethod().getParameterTypes().iterator();
     while (paramTypesIt.hasNext()) {
       Type paramType = (Type) paramTypesIt.next();
-      if (paramType.toMachineType() != IntType.v()) {
+      if (paramType.toMachineType() != this.primTypeCollector.getIntType()) {
         isMethodPure = false; // kills purity
         return;
       }

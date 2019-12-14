@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import soot.Body;
 import soot.EquivalentValue;
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.RefLikeType;
 import soot.Scene;
 import soot.SootClass;
@@ -83,6 +84,7 @@ public class ClassInfoFlowAnalysis {
   private PhaseDumper myPhaseDumper;
   private Scene myScene;
   private Jimple myJimple;
+  private PrimTypeCollector primTypeCollector;
 
   public ClassInfoFlowAnalysis(SootClass sootClass, InfoFlowAnalysis dfa) {
     this.sootClass = sootClass;

@@ -58,6 +58,7 @@ public abstract class DexlibAbstractInstruction {
   // protected Unit beginUnit;
   // protected Unit endUnit;
   protected Unit unit;
+  private Options myOptions;
 
   public Instruction getInstruction() {
     return instruction;
@@ -138,11 +139,12 @@ public abstract class DexlibAbstractInstruction {
    * @param instruction
    *          the underlying dexlib instruction
    * @param codeAddress
-   *          the bytecode address of this instruction
+   * @param myOptions
    */
-  public DexlibAbstractInstruction(Instruction instruction, int codeAddress) {
+  public DexlibAbstractInstruction(Instruction instruction, int codeAddress, Options myOptions) {
     this.instruction = instruction;
     this.codeAddress = codeAddress;
+    this.myOptions = myOptions;
   }
 
   public int getLineNumber() {

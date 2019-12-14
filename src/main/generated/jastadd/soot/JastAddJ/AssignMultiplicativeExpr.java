@@ -60,8 +60,8 @@ public abstract class AssignMultiplicativeExpr extends AssignExpr implements Clo
    * @ast method 
    * 
    */
-  public AssignMultiplicativeExpr() {
-    super();
+  public AssignMultiplicativeExpr(PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
+    super(primTypeCollector,myJimple,myScene);
 
 
   }
@@ -80,7 +80,8 @@ public abstract class AssignMultiplicativeExpr extends AssignExpr implements Clo
    * @ast method 
    * 
    */
-  public AssignMultiplicativeExpr(Expr p0, Expr p1) {
+  public AssignMultiplicativeExpr(Expr p0, Expr p1,PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
+    super(primTypeCollector,myJimple,myScene);
     setChild(p0, 0);
     setChild(p1, 1);
   }

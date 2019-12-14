@@ -32,9 +32,7 @@ import org.jf.dexlib2.iface.instruction.OneRegisterInstruction;
 
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
-import soot.jimple.Jimple;
 import soot.jimple.internal.JAssignStmt;
 
 public class MoveResultInstruction extends DexlibAbstractInstruction {
@@ -42,7 +40,7 @@ public class MoveResultInstruction extends DexlibAbstractInstruction {
   // private Expr expr;
 
   public MoveResultInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override

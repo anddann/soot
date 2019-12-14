@@ -228,7 +228,7 @@ public class SparkTransformer extends SceneTransformer {
         propagator = new PropMerge(pag);
         break;
       case SparkOptions.propagator_alias:
-        propagator = new PropAlias(pag);
+        propagator = new PropAlias(myScene, myEmptyPointsToSet, pag);
         break;
       case SparkOptions.propagator_none:
         break;

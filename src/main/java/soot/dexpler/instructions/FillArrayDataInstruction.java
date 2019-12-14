@@ -54,11 +54,7 @@ import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
-import soot.jimple.DoubleConstant;
-import soot.jimple.FloatConstant;
 import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
-import soot.jimple.LongConstant;
 import soot.jimple.NumericConstant;
 import soot.jimple.Stmt;
 
@@ -66,7 +62,7 @@ public class FillArrayDataInstruction extends PseudoInstruction {
   private static final Logger logger = LoggerFactory.getLogger(FillArrayDataInstruction.class);
 
   public FillArrayDataInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override

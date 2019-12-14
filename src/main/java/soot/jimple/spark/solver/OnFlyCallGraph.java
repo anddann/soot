@@ -73,6 +73,7 @@ public class OnFlyCallGraph {
   private final Scene myScene;
     private ArrayElement myArrayElement;
   private EntryPoints myEntrypoints;
+  private ConstantFactory constantFactory;
 
   public ReachableMethods reachableMethods() {
     return reachableMethods;
@@ -82,11 +83,12 @@ public class OnFlyCallGraph {
     return callGraph;
   }
 
-  public OnFlyCallGraph(PAG pag, boolean appOnly, Scene myScene, ArrayElement myArrayElement, EntryPoints myEntrypoints, PhaseOptions myPhaseOptions, VirtualCalls virtualCalls, EntryPoints myEntryPoints, ThrowableSet.Manager throwManager, InteractionHandler myInteractionHandler, Options myOptions, PhaseDumper constantFactory, ConstantFactory myPackManager, PackManager myPhaseDumper, Jimple myJimple, ThrowAnalysis throwAnalysis) {
+  public OnFlyCallGraph(PAG pag, boolean appOnly, Scene myScene, ArrayElement myArrayElement, EntryPoints myEntrypoints, PhaseOptions myPhaseOptions, VirtualCalls virtualCalls, EntryPoints myEntryPoints, ThrowableSet.Manager throwManager, InteractionHandler myInteractionHandler, Options myOptions, PhaseDumper constantFactory, ConstantFactory myPackManager, PackManager myPhaseDumper, Jimple myJimple, ThrowAnalysis throwAnalysis, ConstantFactory constantFactory1) {
     this.pag = pag;
     this.myScene = myScene;
     this.myArrayElement = myArrayElement;
     this.myEntrypoints = myEntrypoints;
+    this.constantFactory = constantFactory1;
     callGraph = this.myScene.internalMakeCallGraph();
     this.myScene.setCallGraph(callGraph);
     ContextManager cm = CallGraphBuilder.makeContextManager(callGraph);

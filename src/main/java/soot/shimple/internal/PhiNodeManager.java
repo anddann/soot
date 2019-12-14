@@ -80,7 +80,7 @@ public class PhiNodeManager {
   }
 
   public void update() {
-    gd = new GuaranteedDefs(sf.getUnitGraph());
+    gd = new GuaranteedDefs(myInteractionHander, myOptions, sf.getUnitGraph());
     cfg = sf.getBlockGraph();
     dt = sf.getDominatorTree();
     df = sf.getDominanceFrontier();

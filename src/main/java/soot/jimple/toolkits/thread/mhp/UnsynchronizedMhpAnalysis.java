@@ -29,4 +29,7 @@ package soot.jimple.toolkits.thread.mhp;
 @Deprecated
 public class UnsynchronizedMhpAnalysis extends SynchObliviousMhpAnalysis {
 
+    public UnsynchronizedMhpAnalysis() {
+        super(myScene);
+    }
 }

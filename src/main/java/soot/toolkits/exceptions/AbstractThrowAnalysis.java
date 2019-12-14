@@ -41,11 +41,17 @@ import soot.jimple.ThrowStmt;
  */
 public abstract class AbstractThrowAnalysis implements ThrowAnalysis {
 
+  private ThrowableSet.Manager myManager;
+
+  protected AbstractThrowAnalysis(ThrowableSet.Manager myManager) {
+    this.myManager = myManager;
+  }
+
   abstract public ThrowableSet mightThrow(Unit u);
 
   public ThrowableSet mightThrowExplicitly(ThrowInst t) {
     // Deducing the type at the top of the Baf stack is beyond me, so...
-    return ThrowableSet.myManager.ALL_THROWABLES;
+    return myManager.ALL_THROWABLES;
   }
 
   public ThrowableSet mightThrowExplicitly(ThrowStmt t) {
@@ -53,15 +59,15 @@ public abstract class AbstractThrowAnalysis implements ThrowAnalysis {
     Type thrownType = thrownExpression.getType();
     if (thrownType == null || thrownType instanceof UnknownType) {
       // We can't identify the type of thrownExpression, so...
-      return ThrowableSet.myManager.ALL_THROWABLES;
+      return myManager.ALL_THROWABLES;
     } else if (thrownType instanceof NullType) {
-      ThrowableSet result = ThrowableSet.myManager.EMPTY;
-      result = result.add(ThrowableSet.myManager.NULL_POINTER_EXCEPTION);
+      ThrowableSet result = myManager.EMPTY;
+      result = result.add(myManager.NULL_POINTER_EXCEPTION);
       return result;
     } else if (!(thrownType instanceof RefType)) {
       throw new IllegalStateException("UnitThrowAnalysis StmtSwitch: type of throw argument is not a RefType!");
     } else {
-      ThrowableSet result = ThrowableSet.myManager.EMPTY;
+      ThrowableSet result = myManager.EMPTY;
       if (thrownExpression instanceof NewInvokeExpr) {
         // In this case, we know the exact type of the
         // argument exception.

@@ -133,7 +133,7 @@ public class MethodCallFinder extends DepthFirstAdapter {
             List list = new ArrayList();
             list.add(tempString);
 
-            GNewInvokeExpr newInvokeExpr = new GNewInvokeExpr(myRefType, methodRef, list);
+            GNewInvokeExpr newInvokeExpr = new GNewInvokeExpr(myRefType, methodRef, list, myGrimp);
 
             GThrowStmt throwStmt = new GThrowStmt(newInvokeExpr);
 

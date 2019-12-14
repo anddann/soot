@@ -24,6 +24,7 @@ package soot.jimple.internal;
 
 import java.util.List;
 
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
@@ -33,8 +34,15 @@ import soot.jimple.Jimple;
 import soot.jimple.JimpleToBafContext;
 
 public class JInstanceOfExpr extends AbstractInstanceOfExpr implements ConvertToBaf {
-  public JInstanceOfExpr(Value op, Type checkType) {
-    super(myJimple.newImmediateBox(op), checkType);
+  private Baf myBaf;
+  private final Jimple myJimple;
+  private PrimTypeCollector primTypeCollector;
+
+  public JInstanceOfExpr(Value op, Type checkType, Baf myBaf, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+    super(myJimple.newImmediateBox(op), checkType, primTypeCollector);
+    this.myBaf = myBaf;
+    this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
   }
 
   public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
@@ -45,7 +53,7 @@ public class JInstanceOfExpr extends AbstractInstanceOfExpr implements ConvertTo
   }
 
   public Object clone() {
-    return new JInstanceOfExpr(Jimple.cloneIfNecessary(getOp()), checkType);
+    return new JInstanceOfExpr(Jimple.cloneIfNecessary(getOp()), checkType, myBaf, myJimple, primTypeCollector);
   }
 
 }

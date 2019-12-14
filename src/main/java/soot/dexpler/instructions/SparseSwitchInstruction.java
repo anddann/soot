@@ -34,12 +34,13 @@ import org.jf.dexlib2.iface.instruction.Instruction;
 import org.jf.dexlib2.iface.instruction.SwitchElement;
 import org.jf.dexlib2.iface.instruction.formats.SparseSwitchPayload;
 
-import soot.IntType;
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.Unit;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
 import soot.dexpler.typing.DalvikTyper;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
 import soot.jimple.LookupSwitchStmt;
@@ -47,8 +48,15 @@ import soot.jimple.Stmt;
 
 public class SparseSwitchInstruction extends SwitchInstruction {
 
-  public SparseSwitchInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+  private ConstantFactory constancFactory;
+  private DalvikTyper myDalvikTyper;
+  private PrimTypeCollector primTypeCollector;
+
+  public SparseSwitchInstruction(Instruction instruction, int codeAdress, Jimple myJimple, ConstantFactory constancFactory, DalvikTyper myDalvikTyper, PrimTypeCollector primTypeCollector) {
+    super(instruction, codeAdress, myJimple);
+    this.constancFactory = constancFactory;
+    this.myDalvikTyper = myDalvikTyper;
+    this.primTypeCollector = primTypeCollector;
   }
 
   @Override
@@ -72,7 +80,7 @@ public class SparseSwitchInstruction extends SwitchInstruction {
     addTags(switchStmt);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(switchStmt.getKeyBox(), IntType.v(), true);
+      myDalvikTyper.setType(switchStmt.getKeyBox(), primTypeCollector.getIntType(), true);
     }
 
     return switchStmt;

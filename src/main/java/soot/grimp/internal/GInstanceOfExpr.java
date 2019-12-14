@@ -29,7 +29,7 @@ import soot.jimple.internal.AbstractInstanceOfExpr;
 
 public class GInstanceOfExpr extends AbstractInstanceOfExpr {
   public GInstanceOfExpr(Value op, Type checkType) {
-    super(myGrimp.newObjExprBox(op), checkType);
+    super(myGrimp.newObjExprBox(op), checkType, primTypeCollector);
   }
 
   public Object clone() {

@@ -44,6 +44,7 @@ import soot.Local;
 import soot.LongType;
 import soot.Modifier;
 import soot.PatchingChain;
+import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SceneTransformer;
 import soot.SootClass;
@@ -57,17 +58,13 @@ import soot.VoidType;
 import soot.jbco.IJbcoTransform;
 import soot.jbco.util.BodyBuilder;
 import soot.jbco.util.Rand;
-import soot.jimple.DoubleConstant;
-import soot.jimple.FloatConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IdentityStmt;
 import soot.jimple.InstanceInvokeExpr;
-import soot.jimple.IntConstant;
 import soot.jimple.InterfaceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
-import soot.jimple.LongConstant;
-import soot.jimple.NullConstant;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.StaticInvokeExpr;
 import soot.jimple.VirtualInvokeExpr;
@@ -92,6 +89,17 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
 
   private int newmethods = 0;
   private int methodcalls = 0;
+  private Scene myScene;
+  private Jimple myJimple;
+  private ConstantFactory constancFactory;
+  private PrimTypeCollector primTypeCollector;
+
+  public LibraryMethodWrappersBuilder(Scene myScene, Jimple myJimple, ConstantFactory constancFactory, PrimTypeCollector primTypeCollector) {
+    this.myScene = myScene;
+    this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
+    this.primTypeCollector = primTypeCollector;
+  }
 
   @Override
   public String[] getDependencies() {
@@ -184,7 +192,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
                 Type pType = parameterTypes.get(argsCount);
                 Local newLocal = myJimple.newLocal("newLocal" + localName++, pType);
                 body.getLocals().add(newLocal);
-                body.getUnits().insertBeforeNoRedirect(myJimple.newAssignStmt(newLocal, getConstantType(pType)), first);
+                body.getUnits().insertBeforeNoRedirect(myJimple.newAssignStmt(newLocal, getConstantType(pType, constancFactory,myJimple, primTypeCollector)), first);
                 args.add(newLocal);
                 argsCount++;
               }
@@ -197,7 +205,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
     }
 
     myScene.releaseActiveHierarchy();
-    myScene.setFastHierarchy(new FastHierarchy());
+    myScene.setFastHierarchy(new FastHierarchy(myScene));
   }
 
   private SootMethodRef getNewMethodRef(SootMethod method) {
@@ -213,7 +221,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
   }
 
   private SootMethodRef buildNewMethod(SootClass fromC, SootMethod sm, InvokeExpr origIE) {
-    final List<SootClass> availableClasses = getVisibleApplicationClasses(sm);
+    final List<SootClass> availableClasses = getVisibleApplicationClasses(sm,myScene);
 
     final int classCount = availableClasses.size();
     if (classCount == 0) {
@@ -246,7 +254,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
       int rtmp = Rand.getInt(classCount + 7);
       if (rtmp >= classCount) {
         rtmp -= classCount;
-        smParamTypes.add(getPrimType(rtmp));
+        smParamTypes.add(getPrimType(rtmp, primTypeCollector));
       } else {
         smParamTypes.add(availableClasses.get(rtmp).getType());
       }
@@ -302,28 +310,28 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
     return newMethod.makeRef();
   }
 
-  private static Type getPrimType(int idx) {
+  private static Type getPrimType(int idx, PrimTypeCollector primTypeCollector) {
     switch (idx) {
       case 0:
-        return IntType.v();
+        return primTypeCollector.getIntType();
       case 1:
-        return CharType.v();
+        return primTypeCollector.getCharType();
       case 2:
-        return ByteType.v();
+        return primTypeCollector.getByteType();
       case 3:
-        return LongType.v();
+        return primTypeCollector.getLongType();
       case 4:
-        return BooleanType.v();
+        return primTypeCollector.getBooleanType();
       case 5:
-        return DoubleType.v();
+        return primTypeCollector.getDoubleType();
       case 6:
-        return FloatType.v();
+        return primTypeCollector.getFloatType();
       default:
-        return IntType.v();
+        return primTypeCollector.getIntType();
     }
   }
 
-  private static Value getConstantType(Type t) {
+  private static Value getConstantType(Type t, ConstantFactory constancFactory, Jimple myJimple, PrimTypeCollector primTypeCollector) {
     if (t instanceof BooleanType) {
       return constancFactory.createIntConstant(Rand.getInt(1));
     }
@@ -331,10 +339,10 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
       return constancFactory.createIntConstant(Rand.getInt());
     }
     if (t instanceof CharType) {
-      return myJimple.newCastExpr(constancFactory.createIntConstant(Rand.getInt()), CharType.v());
+      return myJimple.newCastExpr(constancFactory.createIntConstant(Rand.getInt()), primTypeCollector.getCharType());
     }
     if (t instanceof ByteType) {
-      return myJimple.newCastExpr(constancFactory.createIntConstant(Rand.getInt()), ByteType.v());
+      return myJimple.newCastExpr(constancFactory.createIntConstant(Rand.getInt()), primTypeCollector.getByteType());
     }
     if (t instanceof LongType) {
       return constancFactory.createLongConstant(Rand.getLong());
@@ -346,7 +354,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
       return constancFactory.createDoubleConstant(Rand.getDouble());
     }
 
-    return myJimple.newCastExpr(myNullConstant, t);
+    return myJimple.newCastExpr(constancFactory.getNullConstant(), t);
   }
 
   private static Body getBodySafely(SootMethod method) {
@@ -408,7 +416,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
     }
   }
 
-  private static List<SootClass> getVisibleApplicationClasses(SootMethod visibleBy) {
+  private static List<SootClass> getVisibleApplicationClasses(SootMethod visibleBy, Scene myScene) {
     final List<SootClass> result = new ArrayList<>();
 
     final Iterator<SootClass> applicationClassesIterator = myScene.getApplicationClasses().snapshotIterator();

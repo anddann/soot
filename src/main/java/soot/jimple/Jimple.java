@@ -32,6 +32,7 @@ import soot.ArrayType;
 import soot.ErroneousType;
 import soot.Immediate;
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.Printer;
 import soot.RefType;
 import soot.SootClass;
@@ -122,12 +123,14 @@ public class Jimple {
   private Options myOptions;
   private Printer myPrinter;
     private Baf myBaf;
+    private PrimTypeCollector primTypeCollector;
 
     @Inject
-  public Jimple(Options myOptions, Printer myPrinter, Baf myBaf) {
+  public Jimple(Options myOptions, Printer myPrinter, Baf myBaf, PrimTypeCollector primTypeCollector) {
     this.myOptions = myOptions;
     this.myPrinter = myPrinter;
         this.myBaf = myBaf;
+        this.primTypeCollector = primTypeCollector;
     }
 
 
@@ -386,7 +389,7 @@ public class Jimple {
    * Constructs a InstanceOfExpr(Immediate, Type) grammar chunk.
    */
   public InstanceOfExpr newInstanceOfExpr(Value op1, Type t) {
-    return new JInstanceOfExpr(op1, t);
+    return new JInstanceOfExpr(op1, t, myBaf, this, primTypeCollector);
   }
 
   /**

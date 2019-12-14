@@ -61,8 +61,12 @@ public class PropAlias extends Propagator {
   protected Set<VarNode> aliasWorkList;
   protected Set<FieldRefNode> fieldRefWorkList = new HashSet<FieldRefNode>();
   protected Set<FieldRefNode> outFieldRefWorkList = new HashSet<FieldRefNode>();
+  private Scene myScene;
+  private EmptyPointsToSet myEmptyPointsToSet;
 
-  public PropAlias(PAG pag) {
+  public PropAlias(Scene myScene, EmptyPointsToSet myEmptyPointsToSet, PAG pag) {
+    this.myScene = myScene;
+    this.myEmptyPointsToSet = myEmptyPointsToSet;
     this.pag = pag;
     loadSets = new LargeNumberedMap<FieldRefNode, PointsToSetInternal>(pag.getFieldRefNodeNumberer());
   }

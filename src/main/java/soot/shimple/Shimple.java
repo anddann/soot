@@ -44,6 +44,7 @@ import soot.jimple.AssignStmt;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.toolkits.base.Aggregator;
+import soot.jimple.toolkits.scalar.CopyPropagator;
 import soot.jimple.toolkits.scalar.DeadAssignmentEliminator;
 import soot.jimple.toolkits.scalar.LocalNameStandardizer;
 import soot.jimple.toolkits.scalar.NopEliminator;
@@ -82,7 +83,7 @@ public class Shimple {
   private PhaseOptions myPhaseOptions;
   private Printer myPrinter;
   private Options myOptions;
-  private Jimple myShimple;
+  private Shimple myShimple;
   private NopEliminator myNopEliminator;
   private DeadAssignmentEliminator myDeadAssignmentEliminator;
   private UnreachableCodeEliminator myUnreachableCodeEliminator;
@@ -90,14 +91,18 @@ public class Shimple {
   private Aggregator myAggregator;
   private UnusedLocalEliminator myUnusedLocalEliminator;
   private LocalNameStandardizer myLocalNameStandardizer;
+    private Jimple myJimple;
+    private CopyPropagator myCopyPropagator;
 
 
-  @Inject
-  public Shimple(PhaseOptions myPhaseOptions, Printer myPrinter, Options myOptions, Jimple myShimple, NopEliminator myNopEliminator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer) {
+    @Inject
+  public Shimple(PhaseOptions myPhaseOptions, Printer myPrinter, Options myOptions, Jimple myShimple, NopEliminator myNopEliminator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer, Jimple myJimple, CopyPropagator myCopyPropagator) {
     this.myPhaseOptions = myPhaseOptions;
     this.myPrinter = myPrinter;
     this.myOptions = myOptions;
-    this.myShimple = myShimple;
+        this.myJimple = myJimple;
+        this.myCopyPropagator = myCopyPropagator;
+        this.myShimple = this;
     this.myNopEliminator = myNopEliminator;
     this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
     this.myUnreachableCodeEliminator = myUnreachableCodeEliminator;
@@ -113,14 +118,14 @@ public class Shimple {
    **/
   public ShimpleBody newBody(SootMethod m) {
     Map<String, String> options = myPhaseOptions.getPhaseOptions(PHASE);
-    return new ShimpleBody(m, options, myPrinter, myOptions, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myShimple);
+    return new ShimpleBody(m, options, myPrinter, myOptions, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myJimple, myCopyPropagator, myShimple);
   }
 
   /**
    * Returns an empty ShimpleBody associated with method m, using provided option map.
    **/
   public ShimpleBody newBody(SootMethod m, Map<String, String> options) {
-    return new ShimpleBody(m, options, myPrinter, myOptions, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myShimple);
+    return new ShimpleBody(m, options, myPrinter, myOptions, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myJimple, myCopyPropagator, myShimple);
   }
 
   /**
@@ -128,14 +133,14 @@ public class Shimple {
    **/
   public ShimpleBody newBody(Body b) {
     Map<String, String> options = myPhaseOptions.getPhaseOptions(PHASE);
-    return new ShimpleBody(b, options, myOptions, myPrinter, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myShimple);
+    return new ShimpleBody(b, options, myOptions, myPrinter, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myJimple, myCopyPropagator, myShimple);
   }
 
   /**
    * Returns a ShimpleBody constructed from b, using provided option Map.
    **/
   public ShimpleBody newBody(Body b, Map<String, String> options) {
-    return new ShimpleBody(b, options, myOptions, myPrinter, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myShimple);
+    return new ShimpleBody(b, options, myOptions, myPrinter, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myJimple, myCopyPropagator, myShimple);
   }
 
   /**
@@ -164,7 +169,7 @@ public class Shimple {
    * @see soot.options.ShimpleOptions
    **/
   public JimpleBody newJimpleBody(ShimpleBody body) {
-    return body.toJimpleBody(myShimple);
+    return body.toJimpleBody(myJimple);
   }
 
   /**

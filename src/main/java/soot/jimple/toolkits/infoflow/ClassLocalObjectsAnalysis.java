@@ -643,7 +643,7 @@ public class ClassLocalObjectsAnalysis {
               callingContext.setThisLocal();
             }
           }
-        } else if (SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, containingMethod, containingContext, iie.getBase())) {
+        } else if (SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, containingMethod, containingContext, iie.getBase(),myJimple)) {
           // calling a method on a local object
           callingContext.setAllFieldsLocal();
           callingContext.setThisLocal();
@@ -662,7 +662,7 @@ public class ClassLocalObjectsAnalysis {
         callingContext.setAllParamsShared();
       } else {
         for (int param = 0; param < ie.getArgCount(); param++) {
-          if (SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, containingMethod, containingContext, ie.getArg(param))) {
+          if (SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, containingMethod, containingContext, ie.getArg(param),myJimple)) {
             callingContext.setParamLocal(param);
           } else {
             callingContext.setParamShared(param);

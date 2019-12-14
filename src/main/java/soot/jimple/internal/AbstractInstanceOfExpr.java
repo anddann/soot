@@ -25,7 +25,7 @@ package soot.jimple.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import soot.BooleanType;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.UnitPrinter;
 import soot.Value;
@@ -39,10 +39,12 @@ import soot.util.Switch;
 public abstract class AbstractInstanceOfExpr implements InstanceOfExpr {
   final ValueBox opBox;
   Type checkType;
+  private PrimTypeCollector primTypeCollector;
 
-  protected AbstractInstanceOfExpr(ValueBox opBox, Type checkType) {
+  protected AbstractInstanceOfExpr(ValueBox opBox, Type checkType, PrimTypeCollector primTypeCollector) {
     this.opBox = opBox;
     this.checkType = checkType;
+    this.primTypeCollector = primTypeCollector;
   }
 
   public boolean equivTo(Object o) {
@@ -98,7 +100,7 @@ public abstract class AbstractInstanceOfExpr implements InstanceOfExpr {
   }
 
   public Type getType() {
-    return BooleanType.v();
+    return primTypeCollector.getBooleanType();
   }
 
   public Type getCheckType() {

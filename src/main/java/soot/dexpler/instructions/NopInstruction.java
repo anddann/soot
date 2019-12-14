@@ -30,13 +30,12 @@ package soot.dexpler.instructions;
 import org.jf.dexlib2.iface.instruction.Instruction;
 
 import soot.dexpler.DexBody;
-import soot.jimple.Jimple;
 import soot.jimple.NopStmt;
 
 public class NopInstruction extends DexlibAbstractInstruction {
 
   public NopInstruction(Instruction instruction, int codeAddress) {
-    super(instruction, codeAddress);
+    super(instruction, codeAddress, myOptions);
   }
 
   public void jimplify(DexBody body) {

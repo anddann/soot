@@ -391,7 +391,7 @@ public class Grimp {
    */
 
   public NewInvokeExpr newNewInvokeExpr(RefType base, SootMethodRef method, List args) {
-    return new GNewInvokeExpr(base, method, args);
+    return new GNewInvokeExpr(base, method, args, myGrimp);
   }
 
   /**

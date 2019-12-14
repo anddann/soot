@@ -89,7 +89,7 @@ public class GenericMethodDecl extends MethodDecl implements Cloneable {
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/GenericMethods.jrag:103
    */
   public ParMethodDecl newParMethodDecl(java.util.List typeArguments) {
-    ParMethodDecl methodDecl = typeArguments.isEmpty() ? new RawMethodDecl() : new ParMethodDecl();
+    ParMethodDecl methodDecl = typeArguments.isEmpty() ? new RawMethodDecl() : new ParMethodDecl(myScene, myJimple, myPackageNamer, myOptions, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
     // adding a link to GenericMethodDecl to be used during substitution 
     // instead of the not yet existing parent link
     methodDecl.setGenericMethodDecl(this); 
