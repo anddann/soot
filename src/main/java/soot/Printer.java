@@ -37,6 +37,7 @@ import soot.tagkit.Tag;
 import soot.toolkits.graph.UnitGraph;
 import soot.util.Chain;
 import soot.util.DeterministicHashMap;
+import soot.util.PhaseDumper;
 
 /**
  * Prints out a class and all its methods.
@@ -48,11 +49,13 @@ public class Printer {
   private Function<Body, LabeledUnitPrinter> customUnitPrinter;
   private Scene myScene;
   private Options myOptions;
+  private PhaseDumper myPhaseDumper;
 
   @Inject
-  public Printer(Scene myScene, Options myOptions) {
+  public Printer(Scene myScene, Options myOptions, PhaseDumper myPhaseDumper) {
     this.myScene = myScene;
     this.myOptions = myOptions;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
 
@@ -283,7 +286,7 @@ public class Printer {
     out.println("    {");
     incJimpleLnNum();
 
-    UnitGraph unitGraph = new soot.toolkits.graph.BriefUnitGraph(b);
+    UnitGraph unitGraph = new soot.toolkits.graph.BriefUnitGraph(b, myPhaseDumper);
 
     LabeledUnitPrinter up = getUnitPrinter(b);
 

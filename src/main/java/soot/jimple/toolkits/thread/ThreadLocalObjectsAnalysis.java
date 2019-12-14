@@ -40,6 +40,7 @@ import soot.Value;
 import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InvokeExpr;
+import soot.jimple.Jimple;
 import soot.jimple.Ref;
 import soot.jimple.toolkits.infoflow.CallLocalityContext;
 import soot.jimple.toolkits.infoflow.ClassInfoFlowAnalysis;
@@ -50,6 +51,10 @@ import soot.jimple.toolkits.infoflow.SmartMethodInfoFlowAnalysis;
 import soot.jimple.toolkits.infoflow.SmartMethodLocalObjectsAnalysis;
 import soot.jimple.toolkits.infoflow.UseFinder;
 import soot.jimple.toolkits.thread.mhp.MhpTester;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
+import soot.util.PhaseDumper;
 
 // ThreadLocalObjectsAnalysis written by Richard L. Halpert, 2007-03-05
 // Runs LocalObjectsAnalysis for the special case where we want to know
@@ -68,10 +73,10 @@ public class ThreadLocalObjectsAnalysis extends LocalObjectsAnalysis implements 
 
   public ThreadLocalObjectsAnalysis(MhpTester mhp, Scene myScene) // must include main class
   {
-    super(myScene, new InfoFlowAnalysis(false, true, printDebug)); // ref-only, with inner fields
+    super(myScene, new InfoFlowAnalysis(false, true, printDebug, myScene)); // ref-only, with inner fields
     this.mhp = mhp;
     this.threads = mhp.getThreads();
-    this.primitiveDfa = new InfoFlowAnalysis(true, true, printDebug); // ref+primitive, with inner fields
+    this.primitiveDfa = new InfoFlowAnalysis(true, true, printDebug, myScene); // ref+primitive, with inner fields
 
     valueCache = new HashMap();
     fieldCache = new HashMap();
@@ -93,7 +98,7 @@ public class ThreadLocalObjectsAnalysis extends LocalObjectsAnalysis implements 
 
   // override
   protected ClassLocalObjectsAnalysis newClassLocalObjectsAnalysis(LocalObjectsAnalysis loa, InfoFlowAnalysis dfa,
-      UseFinder uf, SootClass sc) {
+                                                                   UseFinder uf, SootClass sc, Jimple myJimple, ThrowAnalysis throwAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
     // find the right run methods to use for threads of type sc
     List<SootMethod> runMethods = new ArrayList<SootMethod>();
     Iterator<AbstractRuntimeThread> threadsIt = threads.iterator();
@@ -108,7 +113,7 @@ public class ThreadLocalObjectsAnalysis extends LocalObjectsAnalysis implements 
       }
     }
 
-    return new ClassLocalObjectsAnalysis(loa, dfa, primitiveDfa, uf, sc, runMethods);
+    return new ClassLocalObjectsAnalysis(loa, dfa, primitiveDfa, uf, sc, runMethods, myJimple, myScene, throwAnalysis, myOptions, myManager, myPhaseDumper);
   }
 
   // Determines if a RefType Local or a FieldRef is Thread-Local
@@ -214,7 +219,7 @@ public class ThreadLocalObjectsAnalysis extends LocalObjectsAnalysis implements 
           // Get an IFA node for our sharedValue
           EquivalentValue sharedValueEqVal;
           if (sharedValue instanceof InstanceFieldRef) {
-            sharedValueEqVal = InfoFlowAnalysis.getNodeForFieldRef(containingMethod, ((FieldRef) sharedValue).getField());
+            sharedValueEqVal = InfoFlowAnalysis.getNodeForFieldRef(containingMethod, ((FieldRef) sharedValue).getField(), myJimple);
           } else {
             sharedValueEqVal = new EquivalentValue(sharedValue);
           }

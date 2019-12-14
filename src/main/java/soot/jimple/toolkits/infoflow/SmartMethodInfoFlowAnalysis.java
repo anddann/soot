@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import soot.EquivalentValue;
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.RefLikeType;
 import soot.SootClass;
 import soot.SootField;
@@ -42,7 +43,6 @@ import soot.SootMethod;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
-import soot.VoidType;
 import soot.jimple.AnyNewExpr;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
@@ -55,6 +55,7 @@ import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InstanceOfExpr;
 import soot.jimple.InvokeExpr;
+import soot.jimple.Jimple;
 import soot.jimple.ParameterRef;
 import soot.jimple.Ref;
 import soot.jimple.ReturnStmt;
@@ -78,6 +79,8 @@ import soot.toolkits.graph.UnitGraph;
 
 public class SmartMethodInfoFlowAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(SmartMethodInfoFlowAnalysis.class);
+  private final Jimple myJimple;
+  private final PrimTypeCollector primTypeCollector;
   UnitGraph graph;
   SootMethod sm;
   Value thisLocal;
@@ -94,7 +97,9 @@ public class SmartMethodInfoFlowAnalysis {
 
   public static int counter = 0;
 
-  public SmartMethodInfoFlowAnalysis(UnitGraph g, InfoFlowAnalysis dfa) {
+  public SmartMethodInfoFlowAnalysis(Jimple myJimple, PrimTypeCollector primTypeCollector, UnitGraph g, InfoFlowAnalysis dfa) {
+    this.myJimple = myJimple;
+    this.primTypeCollector = primTypeCollector;
     graph = g;
     this.sm = g.getBody().getMethod();
     if (sm.isStatic()) {
@@ -134,9 +139,9 @@ public class SmartMethodInfoFlowAnalysis {
       if (sf.isStatic() || !sm.isStatic()) {
         EquivalentValue fieldRefEqVal;
         if (!sm.isStatic()) {
-          fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, sm.retrieveActiveBody().getThisLocal());
+          fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, sm.retrieveActiveBody().getThisLocal(), this.myJimple);
         } else {
-          fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf);
+          fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, this.myJimple);
         }
 
         if (!infoFlowSummary.containsNode(fieldRefEqVal)) {
@@ -156,9 +161,9 @@ public class SmartMethodInfoFlowAnalysis {
         if (scField.isStatic() || !sm.isStatic()) {
           EquivalentValue fieldRefEqVal;
           if (!sm.isStatic()) {
-            fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, sm.retrieveActiveBody().getThisLocal());
+            fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, sm.retrieveActiveBody().getThisLocal(), this.myJimple);
           } else {
-            fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField);
+            fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, this.myJimple);
           }
           if (!infoFlowSummary.containsNode(fieldRefEqVal)) {
             infoFlowSummary.addNode(fieldRefEqVal);
@@ -178,7 +183,7 @@ public class SmartMethodInfoFlowAnalysis {
 
     // Add returnref of this method
     EquivalentValue returnRefEqVal = new CachedEquivalentValue(returnRef);
-    if (returnRef.getType() != VoidType.v() && !infoFlowSummary.containsNode(returnRefEqVal)) {
+    if (returnRef.getType() != this.primTypeCollector.getVoidType() && !infoFlowSummary.containsNode(returnRefEqVal)) {
       infoFlowSummary.addNode(returnRefEqVal);
     }
 
@@ -338,14 +343,14 @@ public class SmartMethodInfoFlowAnalysis {
 
     if (sink instanceof InstanceFieldRef) {
       InstanceFieldRef ifr = (InstanceFieldRef) sink;
-      sinkEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField(), (Local) ifr.getBase()); // deals with inner fields
+      sinkEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField(), (Local) ifr.getBase(), myJimple); // deals with inner fields
     } else {
       sinkEqVal = new CachedEquivalentValue(sink);
     }
 
     if (source instanceof InstanceFieldRef) {
       InstanceFieldRef ifr = (InstanceFieldRef) source;
-      sourceEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField(), (Local) ifr.getBase()); // deals with inner
+      sourceEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField(), (Local) ifr.getBase(), myJimple); // deals with inner
                                                                                                     // fields
     } else {
       sourceEqVal = new CachedEquivalentValue(source);
@@ -376,7 +381,7 @@ public class SmartMethodInfoFlowAnalysis {
     EquivalentValue sourceEqVal;
     if (source instanceof InstanceFieldRef) {
       InstanceFieldRef ifr = (InstanceFieldRef) source;
-      sourceEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField(), (Local) ifr.getBase()); // deals with inner
+      sourceEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField(), (Local) ifr.getBase(), myJimple); // deals with inner
                                                                                                     // fields
     } else {
       sourceEqVal = new CachedEquivalentValue(source);

@@ -45,7 +45,7 @@ public class BriefBlockGraph extends BlockGraph {
    *          the {@link Body} for which to build a graph.
    */
   public BriefBlockGraph(Body body) {
-    this(new BriefUnitGraph(body));
+    this(new BriefUnitGraph(body, myPhaseDumper));
   }
 
   /**

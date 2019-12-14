@@ -1081,8 +1081,8 @@ public class PAG implements PointsToAnalysis {
     if (!e.passesParameters()) {
       return;
     }
-    MethodPAG srcmpag = MethodPAG.v(this, e.src(),myScene,myEntrypoints);
-    MethodPAG tgtmpag = MethodPAG.v(this, e.tgt(),myScene,myEntrypoints);
+    MethodPAG srcmpag = MethodPAG.v(this, e.src(),myScene,myEntrypoints, myArrayElement, constantFactory);
+    MethodPAG tgtmpag = MethodPAG.v(this, e.tgt(),myScene,myEntrypoints, myArrayElement, constantFactory);
     Pair<Node, Node> pval;
 
     if (e.isExplicit() || e.kind() == Kind.THREAD || e.kind() == Kind.ASYNCTASK) {

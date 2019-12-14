@@ -40,6 +40,7 @@ import soot.jimple.AssignStmt;
 import soot.jimple.CastExpr;
 import soot.jimple.CaughtExceptionRef;
 import soot.jimple.ClassConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Expr;
 import soot.jimple.IdentityRef;
 import soot.jimple.IdentityStmt;
@@ -87,20 +88,28 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
   protected final RefType rtLinkedList;
   protected final RefType rtHashtableEmptyIterator;
   protected final RefType rtHashtableEmptyEnumerator;
+  private final Scene myScene;
+  private ArrayElement myArrayElement;
+  private ConstantFactory constantFactory;
 
-  public MethodNodeFactory(PAG pag, MethodPAG mpag) {
+
+  public MethodNodeFactory(Scene myScene, ArrayElement myArrayElement, ConstantFactory constantFactory, PAG pag, MethodPAG mpag) {
+    this.myScene = myScene;
+    this.myArrayElement = myArrayElement;
+    this.constantFactory = constantFactory;
     this.pag = pag;
     this.mpag = mpag;
 
-    this.rtClass = RefType.v("java.lang.Class");
-    this.rtStringType = RefType.v("java.lang.String");
-    this.rtHashSet = RefType.v("java.util.HashSet");
-    this.rtHashMap = RefType.v("java.util.HashMap");
-    this.rtLinkedList = RefType.v("java.util.LinkedList");
-    this.rtHashtableEmptyIterator = RefType.v("java.util.Hashtable$EmptyIterator");
-    this.rtHashtableEmptyEnumerator = RefType.v("java.util.Hashtable$EmptyEnumerator");
+    this.rtClass = RefType.v("java.lang.Class", this.myScene);
+    this.rtStringType = RefType.v("java.lang.String", this.myScene);
+    this.rtHashSet = RefType.v("java.util.HashSet", this.myScene);
+    this.rtHashMap = RefType.v("java.util.HashMap", this.myScene);
+    this.rtLinkedList = RefType.v("java.util.LinkedList", this.myScene);
+    this.rtHashtableEmptyIterator = RefType.v("java.util.Hashtable$EmptyIterator", this.myScene);
+    this.rtHashtableEmptyEnumerator = RefType.v("java.util.Hashtable$EmptyEnumerator", this.myScene);
 
     setCurrentMethod(mpag.getMethod());
+    accessibilityOracle = myScene.getClientAccessibilityOracle();
   }
 
   /** Sets the method for which a graph is currently being built. */
@@ -443,7 +452,7 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
         && ref.declaringClass().getName().equals("java.lang.Class") && ref.parameterTypes().size() == 1) {
       // This is a call to Class.forName
       StringConstant classNameConst = (StringConstant) v.getArg(0);
-      caseClassConstant(constancFactory.createClassConstant("L" + classNameConst.value.replaceAll("\\.", "/") + ";"));
+      caseClassConstant(constantFactory.createClassConstant("L" + classNameConst.value.replaceAll("\\.", "/") + ";"));
     }
   }
 
@@ -465,5 +474,5 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
   protected final PAG pag;
   protected final MethodPAG mpag;
   protected SootMethod method;
-  protected ClientAccessibilityOracle accessibilityOracle = myScene.getClientAccessibilityOracle();
+  protected ClientAccessibilityOracle accessibilityOracle;
 }

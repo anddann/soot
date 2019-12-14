@@ -116,7 +116,7 @@ public abstract class CFGGraphType extends CFGOptionMatcher.CFGOption {
 
   public static final CFGGraphType BRIEF_UNIT_GRAPH = new CFGGraphType("BriefUnitGraph") {
     public DirectedGraph buildGraph(Body b) {
-      return new BriefUnitGraph(b);
+      return new BriefUnitGraph(b, myPhaseDumper);
     }
 
     public DotGraph drawGraph(CFGToDotGraph drawer, DirectedGraph g, Body b) {

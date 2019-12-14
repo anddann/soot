@@ -70,7 +70,7 @@ public class NewValidator implements BodyValidator {
    */
   @Override
   public void validate(Body body, List<ValidationException> exceptions) {
-    UnitGraph g = new BriefUnitGraph(body);
+    UnitGraph g = new BriefUnitGraph(body, myPhaseDumper);
     for (Unit u : body.getUnits()) {
       if (u instanceof AssignStmt) {
         AssignStmt assign = (AssignStmt) u;

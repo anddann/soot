@@ -26,9 +26,13 @@ import soot.Context;
 import soot.EntryPoints;
 import soot.Local;
 import soot.MethodOrMethodContext;
+import soot.PackManager;
+import soot.PhaseOptions;
 import soot.Scene;
 import soot.Type;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IntConstant;
+import soot.jimple.Jimple;
 import soot.jimple.NewArrayExpr;
 import soot.jimple.spark.pag.AllocDotField;
 import soot.jimple.spark.pag.AllocNode;
@@ -46,6 +50,12 @@ import soot.jimple.toolkits.callgraph.ContextManager;
 import soot.jimple.toolkits.callgraph.Edge;
 import soot.jimple.toolkits.callgraph.OnFlyCallGraphBuilder;
 import soot.jimple.toolkits.callgraph.ReachableMethods;
+import soot.jimple.toolkits.callgraph.VirtualCalls;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
+import soot.toolkits.graph.interaction.InteractionHandler;
+import soot.util.PhaseDumper;
 import soot.util.queue.QueueReader;
 
 /**
@@ -61,7 +71,7 @@ public class OnFlyCallGraph {
   protected final QueueReader<Edge> callEdges;
   protected final CallGraph callGraph;
   private final Scene myScene;
-  private ArrayElement myArrayElement;
+    private ArrayElement myArrayElement;
   private EntryPoints myEntrypoints;
 
   public ReachableMethods reachableMethods() {
@@ -72,7 +82,7 @@ public class OnFlyCallGraph {
     return callGraph;
   }
 
-  public OnFlyCallGraph(PAG pag, boolean appOnly, Scene myScene, ArrayElement myArrayElement, EntryPoints myEntrypoints) {
+  public OnFlyCallGraph(PAG pag, boolean appOnly, Scene myScene, ArrayElement myArrayElement, EntryPoints myEntrypoints, PhaseOptions myPhaseOptions, VirtualCalls virtualCalls, EntryPoints myEntryPoints, ThrowableSet.Manager throwManager, InteractionHandler myInteractionHandler, Options myOptions, PhaseDumper constantFactory, ConstantFactory myPackManager, PackManager myPhaseDumper, Jimple myJimple, ThrowAnalysis throwAnalysis) {
     this.pag = pag;
     this.myScene = myScene;
     this.myArrayElement = myArrayElement;
@@ -81,7 +91,7 @@ public class OnFlyCallGraph {
     this.myScene.setCallGraph(callGraph);
     ContextManager cm = CallGraphBuilder.makeContextManager(callGraph);
     reachableMethods = this.myScene.getReachableMethods();
-    ofcgb = new OnFlyCallGraphBuilder(cm, reachableMethods, appOnly);
+    ofcgb = new OnFlyCallGraphBuilder(cm, reachableMethods, appOnly, myPhaseOptions, myScene, virtualCalls, myEntryPoints, throwManager, myInteractionHandler, myOptions, constantFactory, myPackManager, myPhaseDumper, myJimple, throwAnalysis);
     reachablesReader = reachableMethods.listener();
     callEdges = cm.callGraph().listener();
   }
@@ -96,7 +106,7 @@ public class OnFlyCallGraph {
     reachableMethods.update();
     while (reachablesReader.hasNext()) {
       MethodOrMethodContext m = reachablesReader.next();
-      MethodPAG mpag = MethodPAG.v(pag, m.method(),myScene,myEntrypoints);
+      MethodPAG mpag = MethodPAG.v(pag, m.method(),myScene,myEntrypoints, myArrayElement, constantFactory);
       mpag.build();
       mpag.addToPAG(m.context());
     }
@@ -105,7 +115,7 @@ public class OnFlyCallGraph {
   private void processCallEdges() {
     while (callEdges.hasNext()) {
       Edge e = callEdges.next();
-      MethodPAG amp = MethodPAG.v(pag, e.tgt(),myScene,myEntrypoints);
+      MethodPAG amp = MethodPAG.v(pag, e.tgt(),myScene,myEntrypoints, myArrayElement, constantFactory);
       amp.build();
       amp.addToPAG(e.tgtCtxt());
       pag.addCallTarget(e);

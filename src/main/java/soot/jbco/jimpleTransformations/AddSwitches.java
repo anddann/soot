@@ -47,8 +47,6 @@ import soot.jbco.IJbcoTransform;
 import soot.jbco.util.Rand;
 import soot.jimple.IdentityStmt;
 import soot.jimple.IfStmt;
-import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
 import soot.toolkits.graph.BriefUnitGraph;
 
 /**
@@ -97,7 +95,7 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
       return;
     }
 
-    New2InitFlowAnalysis fa = new New2InitFlowAnalysis(new BriefUnitGraph(b));
+    New2InitFlowAnalysis fa = new New2InitFlowAnalysis(new BriefUnitGraph(b, myPhaseDumper));
 
     Vector<Unit> zeroheight = new Vector<Unit>();
     PatchingChain<Unit> units = b.getUnits();

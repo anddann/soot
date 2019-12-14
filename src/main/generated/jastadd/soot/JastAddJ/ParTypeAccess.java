@@ -4,12 +4,28 @@ package soot.JastAddJ;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production ParTypeAccess : {@link Access} ::= <span class="component">TypeAccess:{@link Access}</span> <span class="component">TypeArgument:{@link Access}*</span>;
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Generics.ast:16
  */
 public class ParTypeAccess extends Access implements Cloneable {
+  //FIXME: AD
+  private Options myOptions;
+  private PackageNamer myPackageNamer;
+  private ConstantFactory constantFactory;
+  private SootResolver mySootResolver;
+  private PhaseOptions myPhaseOptions;
+
   /**
    * @apilevel low-level
    */
@@ -131,7 +147,7 @@ public class ParTypeAccess extends Access implements Cloneable {
    * @ast method 
    * 
    */
-  public ParTypeAccess() {
+  public ParTypeAccess(Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) {
     super(myScene, primTypeCollector, myJimple);
 
 
@@ -152,7 +168,7 @@ public class ParTypeAccess extends Access implements Cloneable {
    * @ast method 
    * 
    */
-  public ParTypeAccess(Access p0, List<Access> p1) {
+  public ParTypeAccess(Access p0, List<Access> p1,Scene myScene, PrimTypeCollector primTypeCollector, Jimple myJimple) {
       super(myScene, primTypeCollector, myJimple);
       setChild(p0, 0);
     setChild(p1, 1);
@@ -418,7 +434,7 @@ public class ParTypeAccess extends Access implements Cloneable {
 			substArgs.add(arg.substituted(original, substitution));
 		return new ParTypeAccess(
 				getTypeAccess().substituted(original, substitution),
-				substArgs);
+				substArgs,myScene,primTypeCollector,myJimple);
 	}
     finally {
     }

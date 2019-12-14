@@ -55,25 +55,29 @@ public class JIfStmt extends AbstractStmt implements IfStmt {
   final UnitBox targetBox;
 
   final List<UnitBox> targetBoxes;
+  private Jimple myJimple;
+  private Baf myBaf;
 
-  public JIfStmt(Value condition, Unit target) {
-    this(condition, myJimple.newStmtBox(target));
+  public JIfStmt(Value condition, Unit target, Jimple myJimple, Baf myBaf) {
+    this(condition, myJimple.newStmtBox(target), myJimple, myBaf);
   }
 
-  public JIfStmt(Value condition, UnitBox target) {
-    this(myJimple.newConditionExprBox(condition), target);
+  public JIfStmt(Value condition, UnitBox target, Jimple myJimple, Baf myBaf) {
+    this(myJimple.newConditionExprBox(condition), target, myJimple, myBaf);
   }
 
-  protected JIfStmt(ValueBox conditionBox, UnitBox targetBox) {
+  protected JIfStmt(ValueBox conditionBox, UnitBox targetBox, Jimple myJimple, Baf myBaf) {
     this.conditionBox = conditionBox;
     this.targetBox = targetBox;
 
     targetBoxes = Collections.singletonList(targetBox);
+    this.myJimple = myJimple;
+    this.myBaf = myBaf;
   }
 
   @Override
   public Object clone() {
-    return new JIfStmt(Jimple.cloneIfNecessary(getCondition()), getTarget());
+    return new JIfStmt(Jimple.cloneIfNecessary(getCondition()), getTarget(), myJimple, myBaf);
   }
 
   @Override

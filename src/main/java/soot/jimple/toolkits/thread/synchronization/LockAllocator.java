@@ -448,7 +448,7 @@ public class LockAllocator extends SceneTransformer {
 
         // Get list of objects (FieldRef or Local) to be locked (lockset analysis)
         logger.debug("[wjtp.tn] * " + tn.name + " *");
-        LockableReferenceAnalysis la = new LockableReferenceAnalysis(new BriefUnitGraph(tn.method.retrieveActiveBody()));
+        LockableReferenceAnalysis la = new LockableReferenceAnalysis(new BriefUnitGraph(tn.method.retrieveActiveBody(), myPhaseDumper));
         tn.lockset = la.getLocksetOf(tasea, tn.group.rwSet, tn);
 
         // Determine if list is suitable for the selected locking scheme

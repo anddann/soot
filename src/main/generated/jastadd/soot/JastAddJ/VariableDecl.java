@@ -1,12 +1,31 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production VariableDecl : {@link ASTNode} ::= <span class="component">&lt;ID:String&gt;</span> <span class="component">{@link Dims}*</span> <span class="component">[Init:{@link Expr}]</span>;
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:85
  */
 public class VariableDecl extends ASTNode<ASTNode> implements Cloneable {
+  //FIXME:AD
+  private Scene myScene;
+  private PackageNamer packageNamer;
+  private Jimple myJimple;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
+  private SootResolver sootResolver;
+  private Options myOptions;
+  private PhaseOptions myPhaseOptions;
+
   /**
    * @apilevel low-level
    */
@@ -94,7 +113,7 @@ public class VariableDecl extends ASTNode<ASTNode> implements Cloneable {
       type.addArrayDims(getDimsList()),
       getID(),
       getInitOpt(),
-            myScene, myPackageNamer, primTypeCollector, myJimple, constantFactory, mySootResolver, myPhaseOptions);
+            myScene, myOptions, packageNamer, myJimple, primTypeCollector, constantFactory, sootResolver, myPhaseOptions);
     decl.setStart(start); // copy location information
     decl.setEnd(end); // copy location information
     decl.IDstart = IDstart;
@@ -120,7 +139,7 @@ public class VariableDecl extends ASTNode<ASTNode> implements Cloneable {
    */
   public void init$Children() {
     children = new ASTNode[2];
-    setChild(new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), 0);
+    setChild(new List(myScene, myOptions, packageNamer, myJimple,  primTypeCollector, constantFactory, sootResolver,myPhaseOptions), 0);
     setChild(new Opt(), 1);
   }
   /**

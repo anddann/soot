@@ -81,7 +81,7 @@ public class CallGraphBuilder {
   }
 
   protected OnFlyCallGraphBuilder createCGBuilder(ContextManager cm, ReachableMethods reachables2) {
-    return new OnFlyCallGraphBuilder(cm, reachables, myPhaseOptions);
+    return new OnFlyCallGraphBuilder(cm, reachables, myPhaseOptions, myEntryPoints);
   }
 
   /**
@@ -99,7 +99,7 @@ public class CallGraphBuilder {
     entryPoints.addAll(myEntryPoints.implicit());
     reachables = new ReachableMethods(cg, entryPoints);
     ContextManager cm = new ContextInsensitiveContextManager(cg);
-    ofcgb = new OnFlyCallGraphBuilder(cm, reachables, true);
+    ofcgb = new OnFlyCallGraphBuilder(cm, reachables, true, myEntryPoints);
   }
 
   public void build() {

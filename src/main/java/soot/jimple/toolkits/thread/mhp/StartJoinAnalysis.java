@@ -37,7 +37,6 @@ import soot.Hierarchy;
 import soot.Local;
 import soot.MethodOrMethodContext;
 import soot.RefType;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Value;
@@ -95,7 +94,7 @@ public class StartJoinAnalysis extends ForwardFlowAnalysis {
 
     if (!startStatements.isEmpty()) {
       // Get supporting info and analyses
-      MHGPostDominatorsFinder pd = new MHGPostDominatorsFinder(new BriefUnitGraph(sm.getActiveBody()));
+      MHGPostDominatorsFinder pd = new MHGPostDominatorsFinder(new BriefUnitGraph(sm.getActiveBody(), myPhaseDumper));
       // EqualUsesAnalysis lif = new EqualUsesAnalysis(g);
       LocalMustAliasAnalysis lma = new LocalMustAliasAnalysis(g);
       TransitiveTargets runMethodTargets = new TransitiveTargets(callGraph, new Filter(new RunMethodsPred()));

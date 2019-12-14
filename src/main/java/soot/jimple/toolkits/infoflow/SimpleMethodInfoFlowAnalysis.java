@@ -109,7 +109,7 @@ public class SimpleMethodInfoFlowAnalysis
 
     // Add every field of this class
     for (SootField sf : sm.getDeclaringClass().getFields()) {
-      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf);
+      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, myJimple);
       if (!infoFlowGraph.containsNode(fieldRefEqVal)) {
         infoFlowGraph.addNode(fieldRefEqVal);
       }
@@ -123,7 +123,7 @@ public class SimpleMethodInfoFlowAnalysis
     while (superclass.hasSuperclass()) // we don't want to process Object
     {
       for (SootField scField : superclass.getFields()) {
-        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField);
+        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, myJimple);
         if (!infoFlowGraph.containsNode(fieldRefEqVal)) {
           infoFlowGraph.addNode(fieldRefEqVal);
         }

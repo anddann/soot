@@ -38,6 +38,7 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Type;
 import soot.Unit;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Stmt;
 import soot.jimple.spark.builder.MethodNodeFactory;
 import soot.jimple.spark.internal.SparkLibraryHelper;
@@ -59,11 +60,11 @@ public final class MethodPAG {
     return pag;
   }
 
-  protected MethodPAG(PAG pag, EntryPoints myEntryPoints, SootMethod m, Scene myScene) {
+  protected MethodPAG(PAG pag, EntryPoints myEntryPoints, SootMethod m, Scene myScene, ArrayElement myArrayElement, ConstantFactory constantFactory) {
     this.pag = pag;
     this.myEntryPoints = myEntryPoints;
     this.method = m;
-    this.nodeFactory = new MethodNodeFactory(pag, this);
+    this.nodeFactory = new MethodNodeFactory(myScene, myArrayElement, constantFactory, pag, this);
     this.myScene = myScene;
   }
 
@@ -165,10 +166,10 @@ public final class MethodPAG {
     return nodeFactory;
   }
 
-  public static MethodPAG v(PAG pag, SootMethod m, Scene myScene, EntryPoints myEntryPoints) {
+  public static MethodPAG v(PAG pag, SootMethod m, Scene myScene, EntryPoints myEntryPoints, ArrayElement myArrayElement, ConstantFactory constantFactory) {
     MethodPAG ret = G.v().MethodPAG_methodToPag.get(m);
     if (ret == null) {
-      ret = new MethodPAG(pag, myEntryPoints, m, myScene);
+      ret = new MethodPAG(pag, myEntryPoints, m, myScene, myArrayElement, constantFactory);
       G.v().MethodPAG_methodToPag.put(m, ret);
     }
     return ret;

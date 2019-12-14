@@ -42,12 +42,10 @@ import soot.jimple.AssignStmt;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.InvokeStmt;
-import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.NewExpr;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
-import soot.options.Options;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
@@ -266,7 +264,7 @@ public class JimpleConstructorFolder extends BodyTransformer {
       logger.debug("[" + body.getMethod().getName() + "] Folding Jimple constructors...");
     }
 
-    Analysis analysis = new Analysis(new BriefUnitGraph(body));
+    Analysis analysis = new Analysis(new BriefUnitGraph(body, myPhaseDumper));
 
     Chain<Unit> units = body.getUnits();
     List<Unit> stmtList = new ArrayList<Unit>();

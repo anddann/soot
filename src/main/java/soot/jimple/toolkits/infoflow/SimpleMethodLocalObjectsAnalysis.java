@@ -66,7 +66,7 @@ public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalys
     }
 
     for (SootField sf : cloa.getSharedFields()) {
-      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, sf);
+      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, sf, myJimple);
       addToEntryInitialFlow(sharedDataSource, fieldRefEqVal.getValue());
       addToNewInitialFlow(sharedDataSource, fieldRefEqVal.getValue());
     }

@@ -44,6 +44,7 @@ import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
+import soot.jimple.Jimple;
 import soot.jimple.ParameterRef;
 import soot.jimple.Ref;
 import soot.jimple.StaticFieldRef;
@@ -51,8 +52,12 @@ import soot.jimple.StaticInvokeExpr;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Edge;
 import soot.jimple.toolkits.callgraph.ReachableMethods;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.MutableDirectedGraph;
 import soot.toolkits.scalar.Pair;
+import soot.util.PhaseDumper;
 
 // LocalObjectsAnalysis written by Richard L. Halpert, 2007-02-24
 // Constructs data flow tables for each method of every application class.  Ignores indirect flow.
@@ -65,7 +70,7 @@ import soot.toolkits.scalar.Pair;
 
 public class LocalObjectsAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(LocalObjectsAnalysis.class);
-  private final Scene myScene;
+  protected final Scene myScene;
   public InfoFlowAnalysis dfa;
   UseFinder uf;
   CallGraph cg;
@@ -73,11 +78,17 @@ public class LocalObjectsAnalysis {
   Map<SootClass, ClassLocalObjectsAnalysis> classToClassLocalObjectsAnalysis;
 
   Map<SootMethod, SmartMethodLocalObjectsAnalysis> mloaCache;
+  //FIXME: AD intia
+  protected Jimple myJimple;
+  private ThrowAnalysis throwAnalysis;
+  private Options myOptions;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
   public LocalObjectsAnalysis(Scene myScene, InfoFlowAnalysis dfa) {
     this.myScene = myScene;
     this.dfa = dfa;
-    this.uf = new UseFinder();
+    this.uf = new UseFinder(myScene);
     this.cg = this.myScene.getCallGraph();
 
     classToClassLocalObjectsAnalysis = new HashMap<SootClass, ClassLocalObjectsAnalysis>();
@@ -86,7 +97,7 @@ public class LocalObjectsAnalysis {
 
   public ClassLocalObjectsAnalysis getClassLocalObjectsAnalysis(SootClass sc) {
     if (!classToClassLocalObjectsAnalysis.containsKey(sc)) {
-      ClassLocalObjectsAnalysis cloa = newClassLocalObjectsAnalysis(this, dfa, uf, sc);
+      ClassLocalObjectsAnalysis cloa = newClassLocalObjectsAnalysis(this, dfa, uf, sc, myJimple, throwAnalysis, myOptions, myManager, myPhaseDumper);
       classToClassLocalObjectsAnalysis.put(sc, cloa);
     }
     return classToClassLocalObjectsAnalysis.get(sc);
@@ -94,8 +105,8 @@ public class LocalObjectsAnalysis {
 
   // meant to be overridden by specialty local objects analyses
   protected ClassLocalObjectsAnalysis newClassLocalObjectsAnalysis(LocalObjectsAnalysis loa, InfoFlowAnalysis dfa,
-      UseFinder uf, SootClass sc) {
-    return new ClassLocalObjectsAnalysis(loa, dfa, uf, sc);
+                                                                   UseFinder uf, SootClass sc, Jimple myJimple, ThrowAnalysis throwAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
+    return new ClassLocalObjectsAnalysis(loa, dfa, uf, sc, myJimple, myScene, throwAnalysis, myOptions, myManager, myPhaseDumper);
   }
 
   public boolean isObjectLocalToParent(Value localOrRef, SootMethod sm) {
@@ -181,7 +192,7 @@ public class LocalObjectsAnalysis {
         /* Couldn't get thisLocal */ }
 
       if (ifr.getBase() == thisLocal) {
-        boolean isLocal = mergedContext.isFieldLocal(InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField()));
+        boolean isLocal = mergedContext.isFieldLocal(InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField(), myJimple));
         if (dfa.printDebug()) {
           if (isLocal) {
             logger.debug("      LOCAL  (this  .localField  from " + context.getDeclaringClass().getShortName() + "."

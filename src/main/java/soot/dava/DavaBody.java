@@ -152,6 +152,7 @@ import soot.options.Options;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.TrapUnitGraph;
 import soot.util.IterableSet;
+import soot.util.PhaseDumper;
 import soot.util.Switchable;
 
 /*
@@ -341,7 +342,7 @@ public class DavaBody extends Body {
            ThrowNullConverter myThrowNullConverter, SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder,
            CycleFinder myCycleFinder, IfFinder myIfFinder, SwitchFinder mySwitchFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constancFactory) {
+           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constancFactory, PhaseDumper myPhaseDumper) {
     this(body.getMethod(), myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
         myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myDava, myClosestAbruptTargetFinder, constancFactory);
@@ -360,7 +361,7 @@ public class DavaBody extends Body {
     // DEBUG=false;
 
     // prime the analysis
-    AugmentedStmtGraph asg = new AugmentedStmtGraph(new BriefUnitGraph(this), new TrapUnitGraph(this, myPhaseDumper));
+    AugmentedStmtGraph asg = new AugmentedStmtGraph(new BriefUnitGraph(this, myPhaseDumper), new TrapUnitGraph(this, myPhaseDumper));
     // System.out.println(asg.toString());
 
     this.myExceptionFinder.preprocess(this, asg);

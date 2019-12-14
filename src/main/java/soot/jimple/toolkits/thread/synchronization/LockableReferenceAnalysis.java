@@ -49,7 +49,6 @@ import soot.jimple.IdentityStmt;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
-import soot.jimple.Jimple;
 import soot.jimple.ParameterRef;
 import soot.jimple.Ref;
 import soot.jimple.StaticFieldRef;
@@ -514,7 +513,7 @@ public class LockableReferenceAnalysis extends BackwardFlowAnalysis<Unit, Lockse
               // find and add this callsite's uses
               if (!analyzing.contains(called)) {
                 LockableReferenceAnalysis la
-                    = new LockableReferenceAnalysis(new BriefUnitGraph(called.retrieveActiveBody()));
+                    = new LockableReferenceAnalysis(new BriefUnitGraph(called.retrieveActiveBody(), myPhaseDumper));
                 List<EquivalentValue> innerLockset = la.getLocksetOf(tasea, stmtRW, null);
 
                 if (innerLockset == null || innerLockset.size() <= 0) {

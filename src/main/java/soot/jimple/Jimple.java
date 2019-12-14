@@ -46,6 +46,7 @@ import soot.UnitBox;
 import soot.UnknownType;
 import soot.Value;
 import soot.ValueBox;
+import soot.baf.Baf;
 import soot.jimple.internal.ConditionExprBox;
 import soot.jimple.internal.IdentityRefBox;
 import soot.jimple.internal.ImmediateBox;
@@ -120,12 +121,14 @@ import soot.options.Options;
 public class Jimple {
   private Options myOptions;
   private Printer myPrinter;
+    private Baf myBaf;
 
-  @Inject
-  public Jimple(Options myOptions, Printer myPrinter) {
+    @Inject
+  public Jimple(Options myOptions, Printer myPrinter, Baf myBaf) {
     this.myOptions = myOptions;
     this.myPrinter = myPrinter;
-  }
+        this.myBaf = myBaf;
+    }
 
 
   public final static String NEWARRAY = "newarray";
@@ -581,14 +584,14 @@ public class Jimple {
    * Constructs a IfStmt(Condition, Stmt) grammar chunk.
    */
   public IfStmt newIfStmt(Value condition, Unit target) {
-    return new JIfStmt(condition, target);
+    return new JIfStmt(condition, target, this,myBaf);
   }
 
   /**
    * Constructs a IfStmt(Condition, UnitBox) grammar chunk.
    */
   public IfStmt newIfStmt(Value condition, UnitBox target) {
-    return new JIfStmt(condition, target);
+    return new JIfStmt(condition, target, this,myBaf);
   }
 
   /**

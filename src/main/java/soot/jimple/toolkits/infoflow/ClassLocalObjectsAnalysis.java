@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import soot.Body;
 import soot.EquivalentValue;
 import soot.RefLikeType;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootFieldRef;
@@ -46,6 +47,7 @@ import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
+import soot.jimple.Jimple;
 import soot.jimple.ParameterRef;
 import soot.jimple.Ref;
 import soot.jimple.StaticFieldRef;
@@ -53,11 +55,15 @@ import soot.jimple.Stmt;
 import soot.jimple.ThisRef;
 import soot.jimple.toolkits.callgraph.Edge;
 import soot.jimple.toolkits.callgraph.ReachableMethods;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.MutableDirectedGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.Pair;
+import soot.util.PhaseDumper;
 
 // ClassLocalObjectsAnalysis written by Richard L. Halpert, 2007-02-23
 // Finds objects that are local to the given scope.
@@ -95,19 +101,31 @@ public class ClassLocalObjectsAnalysis {
   ArrayList<SootField> sharedFields;
   ArrayList<SootField> localInnerFields;
   ArrayList<SootField> sharedInnerFields;
+  private Jimple myJimple;
+  private Scene myScene;
+  private ThrowAnalysis throwAnalysis;
+  private Options myOptions;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
-  public ClassLocalObjectsAnalysis(LocalObjectsAnalysis loa, InfoFlowAnalysis dfa, UseFinder uf, SootClass sootClass) {
-    this(loa, dfa, null, uf, sootClass, null);
+  public ClassLocalObjectsAnalysis(LocalObjectsAnalysis loa, InfoFlowAnalysis dfa, UseFinder uf, SootClass sootClass, Jimple myJimple, Scene myScene, ThrowAnalysis throwAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
+    this(loa, dfa, null, uf, sootClass, null, myJimple, myScene, throwAnalysis, myOptions, myManager, myPhaseDumper);
   }
 
   public ClassLocalObjectsAnalysis(LocalObjectsAnalysis loa, InfoFlowAnalysis dfa, InfoFlowAnalysis primitiveDfa,
-      UseFinder uf, SootClass sootClass, List<SootMethod> entryMethods) {
+                                   UseFinder uf, SootClass sootClass, List<SootMethod> entryMethods, Jimple myJimple, Scene myScene, ThrowAnalysis throwAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
     printdfgs = dfa.printDebug();
     this.loa = loa;
     this.dfa = dfa;
     this.primitiveDfa = primitiveDfa;
     this.uf = uf;
     this.sootClass = sootClass;
+    this.myJimple = myJimple;
+    this.myScene = myScene;
+    this.throwAnalysis = throwAnalysis;
+    this.myOptions = myOptions;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
 
     this.methodToMethodLocalObjectsAnalysis = new HashMap<SootMethod, SmartMethodLocalObjectsAnalysis>();
     this.methodToContext = null;
@@ -154,7 +172,7 @@ public class ClassLocalObjectsAnalysis {
 
   private void prepare() {
     // Get list of all methods
-    allMethods = getAllReachableMethods(sootClass);
+    allMethods = getAllReachableMethods(sootClass, myScene);
 
     // Get list of external methods
     externalMethods = uf.getExtMethods(sootClass);
@@ -204,7 +222,7 @@ public class ClassLocalObjectsAnalysis {
   }
 
   // Returns a list of reachable methods in class sc and its superclasses
-  public static List<SootMethod> getAllReachableMethods(SootClass sc) {
+  public static List<SootMethod> getAllReachableMethods(SootClass sc, Scene myScene) {
     ReachableMethods rm = myScene.getReachableMethods();
 
     // Get list of reachable methods declared in this class
@@ -359,7 +377,7 @@ public class ClassLocalObjectsAnalysis {
             dataFlowSummary = dfa.getMethodInfoFlowSummary(method);
           }
 
-          EquivalentValue node = InfoFlowAnalysis.getNodeForFieldRef(method, localField);
+          EquivalentValue node = InfoFlowAnalysis.getNodeForFieldRef(method, localField, myJimple);
           if (dataFlowSummary.containsNode(node)) {
             sourcesAndSinks.addAll(dataFlowSummary.getSuccsOf(node));
             sourcesAndSinks.addAll(dataFlowSummary.getPredsOf(node));
@@ -420,7 +438,7 @@ public class ClassLocalObjectsAnalysis {
             dataFlowSummary = dfa.getMethodInfoFlowSummary(method);
           }
 
-          EquivalentValue node = InfoFlowAnalysis.getNodeForFieldRef(method, localInnerField);
+          EquivalentValue node = InfoFlowAnalysis.getNodeForFieldRef(method, localInnerField, myJimple);
           if (dataFlowSummary.containsNode(node)) {
             sourcesAndSinks.addAll(dataFlowSummary.getSuccsOf(node));
             sourcesAndSinks.addAll(dataFlowSummary.getPredsOf(node));
@@ -617,7 +635,7 @@ public class ClassLocalObjectsAnalysis {
             Ref r = (Ref) rEqVal.getValue();
             if (r instanceof InstanceFieldRef) {
               EquivalentValue newRefEqVal
-                  = InfoFlowAnalysis.getNodeForFieldRef(callingMethod, ((FieldRef) r).getFieldRef().resolve());
+                  = InfoFlowAnalysis.getNodeForFieldRef(callingMethod, ((FieldRef) r).getFieldRef().resolve(), myJimple);
               if (callingContext.containsField(newRefEqVal)) {
                 callingContext.setFieldLocal(newRefEqVal); // must make a new eqval for the method getting called
               }
@@ -684,12 +702,12 @@ public class ClassLocalObjectsAnalysis {
     }
 
     for (SootField sf : getLocalFields()) {
-      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf);
+      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, myJimple);
       context.setFieldLocal(fieldRefEqVal);
     }
 
     for (SootField sf : getSharedFields()) {
-      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf);
+      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, myJimple);
       context.setFieldShared(fieldRefEqVal);
     }
     return context;
@@ -747,13 +765,13 @@ public class ClassLocalObjectsAnalysis {
       boolean includePrimitiveDataFlowIfAvailable) {
     if (includePrimitiveDataFlowIfAvailable && primitiveDfa != null) {
       Body b = sm.retrieveActiveBody();
-      UnitGraph g = new ExceptionalUnitGraph(b, myManager);
-      return new SmartMethodLocalObjectsAnalysis(g, primitiveDfa);
+      UnitGraph g = new ExceptionalUnitGraph(b, throwAnalysis,myOptions.omit_excepting_unit_edges(),myManager,myPhaseDumper);
+      return new SmartMethodLocalObjectsAnalysis(g, primitiveDfa, myJimple);
     } else if (!methodToMethodLocalObjectsAnalysis.containsKey(sm)) {
       // Analyze this method
       Body b = sm.retrieveActiveBody();
-      UnitGraph g = new ExceptionalUnitGraph(b, myManager);
-      SmartMethodLocalObjectsAnalysis smloa = new SmartMethodLocalObjectsAnalysis(g, dfa);
+      UnitGraph g = new ExceptionalUnitGraph(b, throwAnalysis,myOptions.omit_excepting_unit_edges(),myManager,myPhaseDumper);
+      SmartMethodLocalObjectsAnalysis smloa = new SmartMethodLocalObjectsAnalysis(g, dfa, myJimple);
       methodToMethodLocalObjectsAnalysis.put(sm, smloa);
     }
     return methodToMethodLocalObjectsAnalysis.get(sm);

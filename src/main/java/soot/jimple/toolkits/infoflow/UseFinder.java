@@ -51,6 +51,7 @@ import soot.util.Chain;
 // application classes by using the call graph.
 
 public class UseFinder {
+  private final Scene myScene;
   ReachableMethods rm;
 
   Map<SootClass, List> classToExtFieldAccesses; // each field access is a Pair <containing method, stmt>
@@ -59,18 +60,20 @@ public class UseFinder {
   Map<SootClass, List> classToExtCalls; // each call is a Pair <containing method, stmt>
   Map<SootClass, ArrayList> classToIntCalls;
 
-  public UseFinder() {
+  public UseFinder(Scene myScene) {
+    this.myScene = myScene;
     classToExtFieldAccesses = new HashMap<SootClass, List>();
     classToIntFieldAccesses = new HashMap<SootClass, ArrayList>();
     classToExtCalls = new HashMap<SootClass, List>();
     classToIntCalls = new HashMap<SootClass, ArrayList>();
 
-    rm = myScene.getReachableMethods();
+    rm = this.myScene.getReachableMethods();
 
     doAnalysis();
   }
 
-  public UseFinder(ReachableMethods rm) {
+  public UseFinder(Scene myScene, ReachableMethods rm) {
+    this.myScene = myScene;
     classToExtFieldAccesses = new HashMap<SootClass, List>();
     classToIntFieldAccesses = new HashMap<SootClass, ArrayList>();
     classToExtCalls = new HashMap<SootClass, List>();

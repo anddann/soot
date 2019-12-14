@@ -318,7 +318,7 @@ public class Signatures extends java.lang.Object {
         new TypeAccess(packageName.toString(), typeName,myScene,primTypeCollector,myJimple) :
         new BytecodeTypeAccess(packageName.toString(), typeName);
       if(next("<")) { // type arguments of top level type
-        a = new ParTypeAccess(a, typeArguments());
+        a = new ParTypeAccess(a, typeArguments(),myScene,primTypeCollector,myJimple);
       }
       while(next(".")) { // inner classes
         a = a.qualifiesAccess(classTypeSignatureSuffix());
@@ -335,7 +335,7 @@ public class Signatures extends java.lang.Object {
       Access a = id.indexOf('$') == -1 ?
         new TypeAccess(id,myScene,primTypeCollector,myJimple) : new BytecodeTypeAccess("", id);
       if(next("<")) {
-        a = new ParTypeAccess(a, typeArguments());
+        a = new ParTypeAccess(a, typeArguments(),myScene,primTypeCollector,myJimple);
       }
       return a;
     }

@@ -59,6 +59,7 @@ import soot.dava.toolkits.base.misc.ThrowNullConverter;
 import soot.jimple.ConstantFactory;
 import soot.options.Options;
 import soot.util.IterableSet;
+import soot.util.PhaseDumper;
 
 public class Dava {
   private static final Logger logger = LoggerFactory.getLogger(Dava.class);
@@ -79,13 +80,14 @@ public class Dava {
   private Options myOptions;
   private Printer myPrinter;
   private ConstantFactory constancFactory;
+  private PhaseDumper myPhaseDumper;
 
   @Inject
   public Dava(Dava myJimple, ExceptionFinder myExceptionFinder, CycleFinder myCycleFinder, IfFinder myIfFinder,
               SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder, SequenceFinder mySequenceFinder,
               LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder, MonitorConverter myMonitorConverter,
               ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-              ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter, ConstantFactory constancFactory) {
+              ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter, ConstantFactory constancFactory, PhaseDumper myPhaseDumper) {
     this.myJimple = myJimple;
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -103,6 +105,7 @@ public class Dava {
     this.myOptions = myOptions;
     this.myPrinter = myPrinter;
     this.constancFactory = constancFactory;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
 
@@ -141,7 +144,7 @@ public class Dava {
   public DavaBody newBody(Body b) {
     return new DavaBody(b, myOptions, myPrinter, myMonitorConverter, myExceptionFinder, mySynchronizedBlockFinder,
         myThrowNullConverter, mySequenceFinder, myLabeledBlockFinder, myCycleFinder, myIfFinder, mySwitchFinder,
-        myAbruptEdgeFinder, myUselessTryRemover, myPhaseOptions, myClosestAbruptTargetFinder, this, constancFactory);
+        myAbruptEdgeFinder, myUselessTryRemover, myPhaseOptions, myClosestAbruptTargetFinder, this, constancFactory, myPhaseDumper);
 
   }
 

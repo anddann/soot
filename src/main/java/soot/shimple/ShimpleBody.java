@@ -98,7 +98,7 @@ public class ShimpleBody extends StmtBody {
     isExtendedSSA = this.options.extended();
 
     unitChain = new SPatchingChain(this, new HashChain());
-    sbb = new ShimpleBodyBuilder(this.myNopEliminator, this, this.myDeadAssignmentEliminator, this.myUnreachableCodeEliminator, this.myUnconditionalBranchFolder, this.myAggregator, this.myUnusedLocalEliminator, this.myLocalNameStandardizer);
+    sbb = new ShimpleBodyBuilder(this.myNopEliminator, myShimple, myJimple, myCopyPropagator, this, this.myDeadAssignmentEliminator, this.myUnreachableCodeEliminator, this.myUnconditionalBranchFolder, this.myAggregator, this.myUnusedLocalEliminator, this.myLocalNameStandardizer);
   }
 
   /**
@@ -134,7 +134,7 @@ public class ShimpleBody extends StmtBody {
     importBodyContentsFrom(body);
 
     /* Shimplise body */
-    sbb = new ShimpleBodyBuilder(this.myNopEliminator, this, this.myDeadAssignmentEliminator, this.myUnreachableCodeEliminator, this.myUnconditionalBranchFolder, this.myAggregator, this.myUnusedLocalEliminator, this.myLocalNameStandardizer);
+    sbb = new ShimpleBodyBuilder(this.myNopEliminator, myShimple, myJimple, myCopyPropagator, this, this.myDeadAssignmentEliminator, this.myUnreachableCodeEliminator, this.myUnconditionalBranchFolder, this.myAggregator, this.myUnusedLocalEliminator, this.myLocalNameStandardizer);
 
     if (body instanceof ShimpleBody) {
       rebuild(true);

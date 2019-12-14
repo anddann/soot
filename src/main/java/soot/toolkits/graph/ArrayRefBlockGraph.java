@@ -52,7 +52,7 @@ public class ArrayRefBlockGraph extends BlockGraph {
    *          Body instance from which the graph is built.
    */
   public ArrayRefBlockGraph(Body body) {
-    this(new BriefUnitGraph(body));
+    this(new BriefUnitGraph(body, myPhaseDumper));
   }
 
   /**

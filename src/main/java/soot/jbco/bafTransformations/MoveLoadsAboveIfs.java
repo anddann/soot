@@ -36,7 +36,6 @@ import soot.PatchingChain;
 import soot.RefType;
 import soot.Type;
 import soot.Unit;
-import soot.baf.Baf;
 import soot.baf.IfNonNullInst;
 import soot.baf.IfNullInst;
 import soot.baf.OpTypeArgInst;
@@ -78,7 +77,7 @@ public class MoveLoadsAboveIfs extends BodyTransformer implements IJbcoTransform
       return;
     }
 
-    BriefUnitGraph bug = new BriefUnitGraph(b);
+    BriefUnitGraph bug = new BriefUnitGraph(b, myPhaseDumper);
 
     List<Unit> candidates = new ArrayList<Unit>();
     List<Unit> visited = new ArrayList<Unit>();
@@ -178,7 +177,7 @@ public class MoveLoadsAboveIfs extends BodyTransformer implements IJbcoTransform
       }
 
       if (i < candidates.size() - 1) {
-        bug = new BriefUnitGraph(b);
+        bug = new BriefUnitGraph(b, myPhaseDumper);
       }
 
       changed = true;

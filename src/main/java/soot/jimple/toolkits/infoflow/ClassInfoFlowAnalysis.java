@@ -34,26 +34,30 @@ import soot.Body;
 import soot.EquivalentValue;
 import soot.Local;
 import soot.RefLikeType;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
-import soot.VoidType;
 import soot.jimple.FieldRef;
 import soot.jimple.IdentityRef;
 import soot.jimple.IdentityStmt;
 import soot.jimple.InstanceFieldRef;
+import soot.jimple.Jimple;
 import soot.jimple.ParameterRef;
 import soot.jimple.Ref;
 import soot.jimple.StaticFieldRef;
 import soot.jimple.Stmt;
 import soot.jimple.ThisRef;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.HashMutableDirectedGraph;
 import soot.toolkits.graph.MemoryEfficientGraph;
 import soot.toolkits.graph.MutableDirectedGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.util.PhaseDumper;
 
 // ClassInfoFlowAnalysis written by Richard L. Halpert, 2007-02-22
 // Constructs data flow tables for each method of a class.  Ignores indirect flow.
@@ -72,6 +76,13 @@ public class ClassInfoFlowAnalysis {
   Map<SootMethod, HashMutableDirectedGraph<EquivalentValue>> methodToInfoFlowSummary;
 
   public static int methodCount = 0;
+
+  //FIXME: AD
+  private ThrowableSet.Manager myManager;
+  private Options myOptions;
+  private PhaseDumper myPhaseDumper;
+  private Scene myScene;
+  private Jimple myJimple;
 
   public ClassInfoFlowAnalysis(SootClass sootClass, InfoFlowAnalysis dfa) {
     this.sootClass = sootClass;
@@ -97,8 +108,8 @@ public class ClassInfoFlowAnalysis {
       // Then do smart version that does follow invoke expressions, if possible
       if (method.isConcrete()) {
         Body b = method.retrieveActiveBody();
-        UnitGraph g = new ExceptionalUnitGraph(b, myManager);
-        SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(g, dfa);
+        UnitGraph g = new ExceptionalUnitGraph(b, myManager,myOptions.omit_excepting_unit_edges(),myPhaseDumper, myScene );
+        SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(myJimple, primTypeCollector, g, dfa);
 
         methodToInfoFlowAnalysis.put(method, smdfa);
         methodToInfoFlowSummary.remove(method);
@@ -130,8 +141,8 @@ public class ClassInfoFlowAnalysis {
       if (method.isConcrete() && doFullAnalysis)// && method.getDeclaringClass().isApplicationClass())
       {
         Body b = method.retrieveActiveBody();
-        UnitGraph g = new ExceptionalUnitGraph(b, myManager);
-        SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(g, dfa);
+        UnitGraph g = new ExceptionalUnitGraph(b, myManager,myOptions.omit_excepting_unit_edges(),myPhaseDumper, myScene);
+        SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(myJimple, primTypeCollector, g, dfa);
 
         methodToInfoFlowAnalysis.put(method, smdfa);
         methodToInfoFlowSummary.remove(method);
@@ -186,7 +197,7 @@ public class ClassInfoFlowAnalysis {
     }
 
     Body b = sm.retrieveActiveBody();
-    UnitGraph g = new ExceptionalUnitGraph(b, myManager);
+    UnitGraph g = new ExceptionalUnitGraph(b, myManager,myOptions.omit_excepting_unit_edges(),myPhaseDumper, myScene);
     HashSet<EquivalentValue> fieldsStaticsParamsAccessed = new HashSet<EquivalentValue>();
 
     // Get list of fields, globals, and parameters that are accessed
@@ -206,7 +217,7 @@ public class ClassInfoFlowAnalysis {
           // This should be added to the list of fields accessed
           // static fields "belong to everyone"
           StaticFieldRef sfr = (StaticFieldRef) ref;
-          fieldsStaticsParamsAccessed.add(InfoFlowAnalysis.getNodeForFieldRef(sm, sfr.getField()));
+          fieldsStaticsParamsAccessed.add(InfoFlowAnalysis.getNodeForFieldRef(sm, sfr.getField(), myJimple));
         } else if (ref instanceof InstanceFieldRef) {
           // If this field is a field of this class,
           // then this should be added to the list of fields accessed
@@ -214,7 +225,7 @@ public class ClassInfoFlowAnalysis {
           Value base = ifr.getBase();
           if (base instanceof Local) {
             if (dfa.includesInnerFields() || ((!sm.isStatic()) && base.equivTo(b.getThisLocal()))) {
-              fieldsStaticsParamsAccessed.add(InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField()));
+              fieldsStaticsParamsAccessed.add(InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField(), myJimple));
             }
           }
         }
@@ -241,7 +252,7 @@ public class ClassInfoFlowAnalysis {
     // Add every relevant field of this class (static methods don't get non-static fields)
     for (SootField sf : sm.getDeclaringClass().getFields()) {
       if (sf.isStatic() || !sm.isStatic()) {
-        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf);
+        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, myJimple);
         if (!dataFlowGraph.containsNode(fieldRefEqVal)) {
           dataFlowGraph.addNode(fieldRefEqVal);
         }
@@ -257,7 +268,7 @@ public class ClassInfoFlowAnalysis {
     {
       for (SootField scField : superclass.getFields()) {
         if (scField.isStatic() || !sm.isStatic()) {
-          EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField);
+          EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, myJimple);
           if (!dataFlowGraph.containsNode(fieldRefEqVal)) {
             dataFlowGraph.addNode(fieldRefEqVal);
           }
@@ -268,7 +279,7 @@ public class ClassInfoFlowAnalysis {
 
     // The return value also becomes a node in the graph
     ParameterRef returnValueRef = null;
-    if (sm.getReturnType() != VoidType.v()) {
+    if (sm.getReturnType() != myScene.getPrimTypeCollector().getVoidType()) {
       returnValueRef = new ParameterRef(sm.getReturnType(), -1);
       dataFlowGraph.addNode(InfoFlowAnalysis.getNodeForReturnRef(sm));
     }
@@ -326,7 +337,7 @@ public class ClassInfoFlowAnalysis {
     for (Iterator<SootField> it = sm.getDeclaringClass().getFields().iterator(); it.hasNext();) {
       SootField sf = it.next();
       if (sf.isStatic() || !sm.isStatic()) {
-        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf);
+        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, myJimple);
         fieldsStaticsParamsAccessed.add(fieldRefEqVal);
       }
     }
@@ -342,7 +353,7 @@ public class ClassInfoFlowAnalysis {
       while (scFieldsIt.hasNext()) {
         SootField scField = scFieldsIt.next();
         if (scField.isStatic() || !sm.isStatic()) {
-          EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField);
+          EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, myJimple);
           fieldsStaticsParamsAccessed.add(fieldRefEqVal);
         }
       }
@@ -361,7 +372,7 @@ public class ClassInfoFlowAnalysis {
 
     // The return value also becomes a node in the graph
     ParameterRef returnValueRef = null;
-    if (sm.getReturnType() != VoidType.v()) {
+    if (sm.getReturnType() != myScene.getPrimTypeCollector().getVoidType()) {
       returnValueRef = new ParameterRef(sm.getReturnType(), -1);
       dataFlowGraph.addNode(InfoFlowAnalysis.getNodeForReturnRef(sm));
     }

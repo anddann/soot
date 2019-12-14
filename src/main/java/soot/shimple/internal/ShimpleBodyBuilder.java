@@ -36,8 +36,10 @@ import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
 import soot.jimple.DefinitionStmt;
+import soot.jimple.Jimple;
 import soot.jimple.internal.JimpleLocal;
 import soot.jimple.toolkits.base.Aggregator;
+import soot.jimple.toolkits.scalar.CopyPropagator;
 import soot.jimple.toolkits.scalar.DeadAssignmentEliminator;
 import soot.jimple.toolkits.scalar.LocalNameStandardizer;
 import soot.jimple.toolkits.scalar.NopEliminator;
@@ -80,6 +82,9 @@ import soot.toolkits.scalar.UnusedLocalEliminator;
  **/
 public class ShimpleBodyBuilder {
   private final NopEliminator myNopEliminator;
+  private final Shimple myShimple;
+  private final Jimple myJimple;
+  private final CopyPropagator myCopyPropagator;
   protected ShimpleBody body;
   protected ShimpleFactory sf;
   protected DominatorTree<Block> dt;
@@ -104,8 +109,11 @@ public class ShimpleBodyBuilder {
   /**
    * Transforms the provided body to pure SSA form.
    **/
-  public ShimpleBodyBuilder(NopEliminator myNopEliminator, ShimpleBody body, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer) {
+  public ShimpleBodyBuilder(NopEliminator myNopEliminator, Shimple myShimple, Jimple myJimple, CopyPropagator myCopyPropagator, ShimpleBody body, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer) {
     this.myNopEliminator = myNopEliminator;
+    this.myShimple = myShimple;
+    this.myJimple = myJimple;
+    this.myCopyPropagator = myCopyPropagator;
     this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
     this.myUnreachableCodeEliminator = myUnreachableCodeEliminator;
     this.myUnconditionalBranchFolder = myUnconditionalBranchFolder;
@@ -122,8 +130,8 @@ public class ShimpleBodyBuilder {
     this.body = body;
     sf = new DefaultShimpleFactory(body);
     sf.clearCache();
-    phi = new PhiNodeManager(body, sf);
-    pi = new PiNodeManager(body, false, sf);
+    phi = new PhiNodeManager(body, sf, this.myShimple, this.myJimple);
+    pi = new PiNodeManager(body, false, sf, this.myShimple, this.myJimple, myDeadAssignmentEliminator, this.myCopyPropagator);
     options = body.getOptions();
     makeUniqueLocalNames();
   }

@@ -211,7 +211,7 @@ public class ParInterfaceDecl extends InterfaceDecl implements Cloneable, ParTyp
         myPhaseOptions);
     for (int i = 0; i < getNumArgument(); i++)
       list.add(getArgument(i).type().substitute(parTypeDecl));
-    return new ParTypeAccess(genericDecl().createQualifiedAccess(), list);
+    return new ParTypeAccess(genericDecl().createQualifiedAccess(), list,myScene,primTypeCollector,myJimple);
   }
 
   /**
@@ -235,13 +235,13 @@ public class ParInterfaceDecl extends InterfaceDecl implements Cloneable, ParTyp
             .qualifiesAccess(new TypeAccess("", getID(), myScene, primTypeCollector, myJimple));
       else
         return enclosingType().createQualifiedAccess().qualifiesAccess(
-            new ParTypeAccess(new TypeAccess("", getID(), myScene, primTypeCollector, myJimple), typeArgumentList));
+            new ParTypeAccess(new TypeAccess("", getID(), myScene, primTypeCollector, myJimple), typeArgumentList,myScene,primTypeCollector,myJimple));
     } else {
       if (isRawType())
         return new TypeAccess(packageName(), getID(), myScene, primTypeCollector, myJimple);
       else
         return new ParTypeAccess(new TypeAccess(packageName(), getID(), myScene, primTypeCollector, myJimple),
-            typeArgumentList);
+            typeArgumentList,myScene,primTypeCollector,myJimple);
     }
   }
 

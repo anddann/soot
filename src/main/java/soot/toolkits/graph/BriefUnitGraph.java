@@ -26,9 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import soot.Body;
-import soot.Timers;
 import soot.Unit;
-import soot.options.Options;
+import soot.util.PhaseDumper;
 
 /**
  * Represents a CFG where the nodes are Unit instances, and where no edges are included to account for control flow
@@ -39,19 +38,23 @@ import soot.options.Options;
  */
 public class BriefUnitGraph extends UnitGraph {
 
+  private final PhaseDumper myPhaseDumper;
+
   /**
    * Constructs a BriefUnitGraph given a Body instance.
    *
    * @param body
    *          The underlying body we want to make a graph for.
+   * @param myPhaseDumper
    */
-  public BriefUnitGraph(Body body) {
+  public BriefUnitGraph(Body body, PhaseDumper myPhaseDumper) {
     super(body);
+    this.myPhaseDumper = myPhaseDumper;
     int size = unitChain.size();
 
-    if (myOptions.time()) {
-      myTimers.graphTimer.start();
-    }
+//    if (myOptions.time()) {
+//      myTimers.graphTimer.start();
+//    }
 
     unitToSuccs = new HashMap<Unit, List<Unit>>(size * 2 + 1, 0.7f);
     unitToPreds = new HashMap<Unit, List<Unit>>(size * 2 + 1, 0.7f);
@@ -59,11 +62,11 @@ public class BriefUnitGraph extends UnitGraph {
 
     buildHeadsAndTails();
 
-    if (myOptions.time()) {
-      myTimers.graphTimer.end();
-    }
+//    if (myOptions.time()) {
+//      myTimers.graphTimer.end();
+//    }
 
-    soot.util.myPhaseDumper.dumpGraph(this, body);
+    this.myPhaseDumper.dumpGraph(this, body);
   }
 
 }

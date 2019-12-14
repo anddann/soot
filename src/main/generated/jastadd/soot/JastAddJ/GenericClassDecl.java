@@ -1138,7 +1138,7 @@ public class GenericClassDecl extends ClassDecl implements Cloneable, GenericTyp
 
 		ParTypeAccess returnType = new ParTypeAccess(
 				createQualifiedAccess(),
-				typeArgs);
+				typeArgs,myScene,primTypeCollector,myJimple);
 
 		for (Iterator iter = constructors().iterator(); iter.hasNext(); ) {
 			ConstructorDecl decl = (ConstructorDecl)iter.next();

@@ -54,7 +54,7 @@ public class ZonedBlockGraph extends BlockGraph {
    *          The <tt>Body</tt> for which to produce a <tt>ZonedBlockGraph</tt>.
    */
   public ZonedBlockGraph(Body body) {
-    this(new BriefUnitGraph(body));
+    this(new BriefUnitGraph(body, myPhaseDumper));
   }
 
   /**

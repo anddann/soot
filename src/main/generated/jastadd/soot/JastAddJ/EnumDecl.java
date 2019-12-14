@@ -963,9 +963,12 @@ public class EnumDecl extends ClassDecl implements Cloneable {
    * @apilevel internal
    */
   private Opt getSuperClassAccessOpt_compute() {
-    return new Opt(new ParTypeAccess(new TypeAccess("java.lang", "Enum",myScene,primTypeCollector,myJimple),
-        new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions)
-            .add(createQualifiedAccess())));
+    TypeAccess anEnum = new TypeAccess("java.lang", "Enum", myScene, primTypeCollector, myJimple);
+    List list = new List(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
+    ParTypeAccess astNodes = new ParTypeAccess(anEnum,
+            list
+                    .add(createQualifiedAccess()),myScene, primTypeCollector, myJimple);
+    return new Opt(astNodes);
   }
 
   /**

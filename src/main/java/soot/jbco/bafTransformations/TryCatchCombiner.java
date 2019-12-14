@@ -46,16 +46,12 @@ import soot.StmtAddressType;
 import soot.Trap;
 import soot.Type;
 import soot.Unit;
-import soot.baf.Baf;
 import soot.baf.GotoInst;
 import soot.baf.IdentityInst;
 import soot.baf.JSRInst;
 import soot.baf.TargetArgInst;
 import soot.jbco.IJbcoTransform;
-import soot.jbco.jimpleTransformations.FieldRenamer;
 import soot.jbco.util.Rand;
-import soot.jimple.IntConstant;
-import soot.jimple.NullConstant;
 import soot.toolkits.graph.BriefUnitGraph;
 
 public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform {
@@ -186,7 +182,7 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
       units.insertBeforeNoRedirect((Unit) pushZero.clone(), first);
       units.insertBeforeNoRedirect((Unit) storZero.clone(), first);
 
-      BriefUnitGraph graph = new BriefUnitGraph(b);
+      BriefUnitGraph graph = new BriefUnitGraph(b, myPhaseDumper);
       List<Unit> l = graph.getPredsOf(begUnit);
 
       // add initializer seq for try - sets local to zero and loads null exc

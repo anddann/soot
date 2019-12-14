@@ -69,15 +69,17 @@ public class InfoFlowAnalysis {
   boolean printDebug;
 
   Map<SootClass, ClassInfoFlowAnalysis> classToClassInfoFlowAnalysis;
+  private Scene myScene;
 
-  public InfoFlowAnalysis(boolean includePrimitiveDataFlow, boolean includeInnerFields) {
-    this(includePrimitiveDataFlow, includeInnerFields, false);
+  public InfoFlowAnalysis(boolean includePrimitiveDataFlow, boolean includeInnerFields, Scene myScene) {
+    this(includePrimitiveDataFlow, includeInnerFields, false, myScene);
   }
 
-  public InfoFlowAnalysis(boolean includePrimitiveDataFlow, boolean includeInnerFields, boolean printDebug) {
+  public InfoFlowAnalysis(boolean includePrimitiveDataFlow, boolean includeInnerFields, boolean printDebug, Scene myScene) {
     this.includePrimitiveInfoFlow = includePrimitiveDataFlow;
     this.includeInnerFields = includeInnerFields;
     this.printDebug = printDebug;
+    this.myScene = myScene;
     classToClassInfoFlowAnalysis = new HashMap<SootClass, ClassInfoFlowAnalysis>();
   }
 
@@ -154,11 +156,11 @@ public class InfoFlowAnalysis {
    */
   // Returns an EquivalentValue wrapped Ref based on sfr
   // that is suitable for comparison to the nodes of a Data Flow Graph
-  public static EquivalentValue getNodeForFieldRef(SootMethod sm, SootField sf) {
-    return getNodeForFieldRef(sm, sf, null);
+  public static EquivalentValue getNodeForFieldRef(SootMethod sm, SootField sf, Jimple myJimple) {
+    return getNodeForFieldRef(sm, sf, null, myJimple);
   }
 
-  public static EquivalentValue getNodeForFieldRef(SootMethod sm, SootField sf, Local realLocal) {
+  public static EquivalentValue getNodeForFieldRef(SootMethod sm, SootField sf, Local realLocal, Jimple myJimple) {
     if (sf.isStatic()) {
       return new CachedEquivalentValue(myJimple.newStaticFieldRef(sf.makeRef()));
     } else {

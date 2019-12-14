@@ -44,6 +44,7 @@ import soot.tagkit.StringTag;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.scalar.LiveLocals;
 import soot.toolkits.scalar.SimpleLiveLocals;
+import soot.util.PhaseDumper;
 
 /**
  * A body transformer that records parity analysis information in tags.
@@ -51,10 +52,12 @@ import soot.toolkits.scalar.SimpleLiveLocals;
 public class ParityTagger extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ParityTagger.class);
   private Options myOptions;
+  private PhaseDumper myPhaseDumper;
 
   @Inject
-  public ParityTagger(Options myOptions) {
+  public ParityTagger(Options myOptions, PhaseDumper myPhaseDumper) {
     this.myOptions = myOptions;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
 
@@ -66,12 +69,12 @@ public class ParityTagger extends BodyTransformer {
     ParityAnalysis a;
 
     if (isInteractive) {
-      LiveLocals sll = new SimpleLiveLocals(new BriefUnitGraph(b));
+      LiveLocals sll = new SimpleLiveLocals(new BriefUnitGraph(b, myPhaseDumper));
       myOptions.set_interactive_mode(isInteractive);
 
-      a = new ParityAnalysis(new BriefUnitGraph(b), sll);
+      a = new ParityAnalysis(new BriefUnitGraph(b, myPhaseDumper), sll);
     } else {
-      a = new ParityAnalysis(new BriefUnitGraph(b));
+      a = new ParityAnalysis(new BriefUnitGraph(b, myPhaseDumper));
     }
 
     Iterator sIt = b.getUnits().iterator();

@@ -44,7 +44,6 @@ import soot.Trap;
 import soot.Type;
 import soot.Unit;
 import soot.UnitBox;
-import soot.baf.Baf;
 import soot.baf.DupInst;
 import soot.baf.FieldArgInst;
 import soot.baf.IdentityInst;
@@ -71,7 +70,6 @@ import soot.jimple.Constant;
 import soot.jimple.DoubleConstant;
 import soot.jimple.FloatConstant;
 import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
 import soot.jimple.LongConstant;
 import soot.jimple.NullConstant;
 import soot.jimple.StringConstant;
@@ -123,7 +121,7 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
     List<Unit> seenUnits = new ArrayList<Unit>();
     List<Unit> workList = new ArrayList<Unit>();
     PatchingChain<Unit> units = b.getUnits();
-    BriefUnitGraph bug = new BriefUnitGraph(b);
+    BriefUnitGraph bug = new BriefUnitGraph(b, myPhaseDumper);
     workList.addAll(bug.getHeads());
     while (workList.size() > 0) {
       Unit u = workList.remove(0);

@@ -27,14 +27,16 @@ import java.util.Map;
 import com.google.inject.Inject;
 import soot.Body;
 import soot.BodyTransformer;
-import soot.G;
-import soot.Singletons;
 import soot.toolkits.graph.BriefUnitGraph;
+import soot.util.PhaseDumper;
 
 /** A body transformer that simply calls the CastCheckEliminator analysis. */
 public class CastCheckEliminatorDumper extends BodyTransformer {
+  private PhaseDumper myPhaseDumper;
+
   @Inject
-  public CastCheckEliminatorDumper() {
+  public CastCheckEliminatorDumper(PhaseDumper myPhaseDumper) {
+    this.myPhaseDumper = myPhaseDumper;
   }
 
 
@@ -43,6 +45,6 @@ public class CastCheckEliminatorDumper extends BodyTransformer {
   }
 
   protected void internalTransform(Body b, String phaseName, Map options) {
-    CastCheckEliminator cce = new CastCheckEliminator(new BriefUnitGraph(b));
+    CastCheckEliminator cce = new CastCheckEliminator(new BriefUnitGraph(b, myPhaseDumper));
   }
 }

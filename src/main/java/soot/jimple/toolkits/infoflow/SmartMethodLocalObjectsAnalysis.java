@@ -34,6 +34,7 @@ import soot.Value;
 import soot.jimple.Constant;
 import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
+import soot.jimple.Jimple;
 import soot.jimple.Ref;
 import soot.toolkits.graph.UnitGraph;
 
@@ -49,18 +50,20 @@ public class SmartMethodLocalObjectsAnalysis {
   SootMethod method;
   InfoFlowAnalysis dfa;
   SmartMethodInfoFlowAnalysis smdfa;
+  private Jimple myJimple;
 
-  public SmartMethodLocalObjectsAnalysis(SootMethod method, InfoFlowAnalysis dfa) {
+  public SmartMethodLocalObjectsAnalysis(SootMethod method, InfoFlowAnalysis dfa, Jimple myJimple) {
     this.method = method;
     this.dfa = dfa;
+    this.myJimple = myJimple;
     this.smdfa = dfa.getMethodInfoFlowAnalysis(method);
 
     printMessages = dfa.printDebug();
     counter++;
   }
 
-  public SmartMethodLocalObjectsAnalysis(UnitGraph g, InfoFlowAnalysis dfa) {
-    this(g.getBody().getMethod(), dfa);
+  public SmartMethodLocalObjectsAnalysis(UnitGraph g, InfoFlowAnalysis dfa, Jimple myJimple) {
+    this(g.getBody().getMethod(), dfa, myJimple);
   }
 
   public Value getThisLocal() {
@@ -73,7 +76,7 @@ public class SmartMethodLocalObjectsAnalysis {
   {
     EquivalentValue localEqVal;
     if (local instanceof InstanceFieldRef) {
-      localEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, ((FieldRef) local).getField());
+      localEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, ((FieldRef) local).getField(), myJimple);
     } else {
       localEqVal = new CachedEquivalentValue(local);
     }
@@ -102,12 +105,12 @@ public class SmartMethodLocalObjectsAnalysis {
     return true;
   }
 
-  public static boolean isObjectLocal(InfoFlowAnalysis dfa, SootMethod method, CallLocalityContext context, Value local) {
+  public static boolean isObjectLocal(InfoFlowAnalysis dfa, SootMethod method, CallLocalityContext context, Value local, Jimple myJimple) {
     SmartMethodInfoFlowAnalysis smdfa = dfa.getMethodInfoFlowAnalysis(method);
 
     EquivalentValue localEqVal;
     if (local instanceof InstanceFieldRef) {
-      localEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, ((FieldRef) local).getField());
+      localEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, ((FieldRef) local).getField(), myJimple);
     } else {
       localEqVal = new CachedEquivalentValue(local);
     }

@@ -69,10 +69,14 @@ public class PhiNodeManager {
   protected DominanceFrontier<Block> df;
   protected BlockGraph cfg;
   protected GuaranteedDefs gd;
+  private Shimple myShimple;
+  private Jimple myJimple;
 
-  public PhiNodeManager(ShimpleBody body, ShimpleFactory sf) {
+  public PhiNodeManager(ShimpleBody body, ShimpleFactory sf, Shimple myShimple, Jimple myJimple) {
     this.body = body;
     this.sf = sf;
+    this.myShimple = myShimple;
+    this.myJimple = myJimple;
   }
 
   public void update() {

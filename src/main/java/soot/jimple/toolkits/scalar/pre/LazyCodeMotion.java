@@ -55,6 +55,7 @@ import soot.toolkits.scalar.CollectionFlowUniverse;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.FlowUniverse;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 import soot.util.UnitMap;
 
 /**
@@ -78,14 +79,16 @@ public class LazyCodeMotion extends BodyTransformer {
   private BodyTransformer myCriticalEdgeRemover;
   private Scene myScene;
   private Jimple myJimple;
+  private PhaseDumper myPhaseDumper;
 
   @Inject
-  public LazyCodeMotion(Options myOptions, BodyTransformer myCriticalEdgeRemover, Scene myScene, Jimple myJimple) {
+  public LazyCodeMotion(Options myOptions, BodyTransformer myCriticalEdgeRemover, Scene myScene, Jimple myJimple, PhaseDumper myPhaseDumper) {
 
     this.myOptions = myOptions;
     this.myCriticalEdgeRemover = myCriticalEdgeRemover;
     this.myScene = myScene;
     this.myJimple = myJimple;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
   private static final String PREFIX = "$lcm";
@@ -108,7 +111,7 @@ public class LazyCodeMotion extends BodyTransformer {
 
     myCriticalEdgeRemover.transform(b, phaseName + ".cer");
 
-    UnitGraph graph = new BriefUnitGraph(b);
+    UnitGraph graph = new BriefUnitGraph(b, myPhaseDumper);
 
     /* map each unit to its RHS. only take binary expressions */
     Map<Unit, EquivalentValue> unitToEquivRhs = new UnitMap<EquivalentValue>(b, graph.size() + 1, 0.7f) {

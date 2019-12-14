@@ -595,7 +595,7 @@ public class StackTypeHeightCalculator {
     }
 
     Map<Unit, Stack<Type>> results = new HashMap<Unit, Stack<Type>>();
-    bug = new BriefUnitGraph(b);
+    bug = new BriefUnitGraph(b, myPhaseDumper);
     List<Unit> heads = bug.getHeads();
     for (int i = 0; i < heads.size(); i++) {
       Unit h = heads.get(i);
