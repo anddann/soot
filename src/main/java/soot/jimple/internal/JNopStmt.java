@@ -53,7 +53,7 @@ public class JNopStmt extends AbstractStmt implements NopStmt {
     ((StmtSwitch) sw).caseNopStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     Unit u = myBaf.newNopInst();
     u.addAllTagsOf(this);
     out.add(u);

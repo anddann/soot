@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BAndInst extends AbstractOpTypeInst implements AndInst {
   public BAndInst(Type opType) {
-    super(myRefType, opType);
+    super(myRefType, opType, myBaf);
   }
 
   public int getInCount() {

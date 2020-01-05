@@ -39,12 +39,9 @@ import soot.Body;
 import soot.Local;
 import soot.PatchingChain;
 import soot.RefType;
-import soot.Scene;
 import soot.SootMethodRef;
 import soot.Unit;
 import soot.dexpler.DexBody;
-import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
 import soot.jimple.internal.JArrayRef;
 import soot.jimple.internal.JAssignStmt;
 import soot.jimple.internal.JNewArrayExpr;
@@ -53,7 +50,7 @@ import soot.jimple.internal.JimpleLocal;
 public class InvokePolymorphicInstruction extends MethodInvocationInstruction {
 
   public InvokePolymorphicInstruction(Instruction instruction, int codeAddress) {
-    super(instruction, codeAddress);
+    super(instruction, codeAddress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
   }
 
   /* Instruction Format for invoke-polymorphic

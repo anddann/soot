@@ -55,7 +55,7 @@ public class StrongLocalMustAliasAnalysis extends LocalMustAliasAnalysis {
   protected Set<Integer> invalidInstanceKeys;
 
   public StrongLocalMustAliasAnalysis(UnitGraph g) {
-    super(g);
+    super(g, myScene, myInteractionHandler, interaticveMode);
     invalidInstanceKeys = new HashSet<Integer>();
     /*
      * Find all SCCs, then invalidate all instance keys for variable defined within an SCC.

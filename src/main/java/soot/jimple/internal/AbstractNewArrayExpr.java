@@ -130,8 +130,8 @@ public abstract class AbstractNewArrayExpr implements NewArrayExpr, ConvertToBaf
     ((ExprSwitch) sw).caseNewArrayExpr(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    ((ConvertToBaf) (getSize())).convertToBaf(context, out);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+    ((ConvertToBaf) (getSize())).convertToBaf(context, out, myBaf);
 
     Unit u = myBaf.newNewArrayInst(getBaseType());
     out.add(u);

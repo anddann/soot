@@ -45,6 +45,7 @@ import soot.dava.internal.SET.SETUnconditionalWhileNode;
 import soot.dava.internal.SET.SETWhileNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.asg.AugmentedStmtGraph;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.misc.ConditionFlipper;
 import soot.grimp.internal.GAssignStmt;
 import soot.grimp.internal.GTableSwitchStmt;
@@ -65,13 +66,15 @@ public class CycleFinder implements FactFinder {
   private static final Logger logger = LoggerFactory.getLogger(CycleFinder.class);
   private Dava myDava;
   private ConstantFactory constancFactory;
+    private TryContentsFinder myTryContentsFinder;
 
 
-  @Inject
-  public CycleFinder(Dava myDava, ConstantFactory constancFactory) {
+    @Inject
+  public CycleFinder(Dava myDava, ConstantFactory constancFactory, TryContentsFinder myTryContentsFinder) {
     this.myDava = myDava;
     this.constancFactory = constancFactory;
-  }
+        this.myTryContentsFinder = myTryContentsFinder;
+    }
 
 
   public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
@@ -177,7 +180,7 @@ public class CycleFinder implements FactFinder {
           }
 
           if (characterizing_stmt == entry_point) {
-            newNode = new SETWhileNode(asg.get_AugStmt(characterizing_stmt.get_Stmt()), cycle_body);
+            newNode = new SETWhileNode(asg.get_AugStmt(characterizing_stmt.get_Stmt()), cycle_body, myTryContentsFinder);
           } else {
             newNode = new SETDoWhileNode(asg.get_AugStmt(characterizing_stmt.get_Stmt()),
                 asg.get_AugStmt(entry_point.get_Stmt()), cycle_body);

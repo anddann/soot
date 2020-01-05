@@ -32,7 +32,7 @@ import soot.util.Switch;
 
 public class JXorExpr extends AbstractJimpleIntLongBinopExpr implements XorExpr {
   public JXorExpr(Value op1, Value op2) {
-    super(op1, op2);
+    super(op1, op2, primTypeCollector, jimple);
   }
 
   public final String getSymbol() {
@@ -43,7 +43,7 @@ public class JXorExpr extends AbstractJimpleIntLongBinopExpr implements XorExpr 
     ((ExprSwitch) sw).caseXorExpr(this);
   }
 
-  Object makeBafInst(Type opType) {
+  Object makeBafInst(Type opType, Baf myBaf) {
     return myBaf.newXorInst(this.getOp1().getType());
   }
 

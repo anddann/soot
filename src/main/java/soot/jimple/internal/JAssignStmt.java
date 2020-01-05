@@ -25,7 +25,6 @@ package soot.jimple.internal;
 import java.util.List;
 
 import soot.Immediate;
-import soot.IntType;
 import soot.Local;
 import soot.Unit;
 import soot.UnitBox;
@@ -242,7 +241,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
     ((StmtSwitch) sw).caseAssignStmt(this);
   }
 
-  public void convertToBaf(final JimpleToBafContext context, final List<Unit> out) {
+  public void convertToBaf(final JimpleToBafContext context, final List<Unit> out, Baf myBaf) {
     final Value lvalue = this.getLeftOp();
     final Value rvalue = this.getRightOp();
 
@@ -283,9 +282,9 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
 
     lvalue.apply(new AbstractJimpleValueSwitch() {
       public void caseArrayRef(ArrayRef v) {
-        ((ConvertToBaf) (v.getBase())).convertToBaf(context, out);
-        ((ConvertToBaf) (v.getIndex())).convertToBaf(context, out);
-        ((ConvertToBaf) rvalue).convertToBaf(context, out);
+        ((ConvertToBaf) (v.getBase())).convertToBaf(context, out, myBaf);
+        ((ConvertToBaf) (v.getIndex())).convertToBaf(context, out, myBaf);
+        ((ConvertToBaf) rvalue).convertToBaf(context, out, myBaf);
 
         Unit u = myBaf.newArrayWriteInst(v.getType());
         u.addAllTagsOf(JAssignStmt.this);
@@ -294,8 +293,8 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
       }
 
       public void caseInstanceFieldRef(InstanceFieldRef v) {
-        ((ConvertToBaf) (v.getBase())).convertToBaf(context, out);
-        ((ConvertToBaf) rvalue).convertToBaf(context, out);
+        ((ConvertToBaf) (v.getBase())).convertToBaf(context, out, myBaf);
+        ((ConvertToBaf) rvalue).convertToBaf(context, out, myBaf);
 
         Unit u = myBaf.newFieldPutInst(v.getFieldRef());
         u.addAllTagsOf(JAssignStmt.this);
@@ -304,7 +303,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
       }
 
       public void caseLocal(final Local v) {
-        ((ConvertToBaf) rvalue).convertToBaf(context, out);
+        ((ConvertToBaf) rvalue).convertToBaf(context, out, myBaf);
 
         /*
          * Add the tags to the statement that COMPUTES the value, NOT to the statement that stores it.
@@ -323,7 +322,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
       }
 
       public void caseStaticFieldRef(StaticFieldRef v) {
-        ((ConvertToBaf) rvalue).convertToBaf(context, out);
+        ((ConvertToBaf) rvalue).convertToBaf(context, out, myBaf);
 
         Unit u = myBaf.newStaticPutInst(v.getFieldRef());
         u.addAllTagsOf(JAssignStmt.this);

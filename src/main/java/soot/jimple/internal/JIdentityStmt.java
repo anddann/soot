@@ -41,16 +41,19 @@ import soot.jimple.ThisRef;
 import soot.util.Switch;
 
 public class JIdentityStmt extends AbstractDefinitionStmt implements IdentityStmt {
-  public JIdentityStmt(Value local, Value identityValue) {
-    this(myJimple.newLocalBox(local), myJimple.newIdentityRefBox(identityValue));
+  private final Jimple myJimple;
+
+  public JIdentityStmt(Value local, Value identityValue, Jimple myJimple) {
+    this(myJimple.newLocalBox(local), myJimple.newIdentityRefBox(identityValue), myJimple);
   }
 
-  protected JIdentityStmt(ValueBox localBox, ValueBox identityValueBox) {
+  protected JIdentityStmt(ValueBox localBox, ValueBox identityValueBox, Jimple myJimple) {
     super(localBox, identityValueBox);
+    this.myJimple = myJimple;
   }
 
   public Object clone() {
-    return new JIdentityStmt(Jimple.cloneIfNecessary(getLeftOp()), Jimple.cloneIfNecessary(getRightOp()));
+    return new JIdentityStmt(Jimple.cloneIfNecessary(getLeftOp()), Jimple.cloneIfNecessary(getRightOp()), myJimple);
   }
 
   public String toString() {
@@ -75,7 +78,7 @@ public class JIdentityStmt extends AbstractDefinitionStmt implements IdentityStm
     ((StmtSwitch) sw).caseIdentityStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     Value currentRhs = getRightOp();
     Value newRhs;
 
@@ -84,7 +87,8 @@ public class JIdentityStmt extends AbstractDefinitionStmt implements IdentityStm
     } else if (currentRhs instanceof ParameterRef) {
       newRhs = myBaf.newParameterRef(((ParameterRef) currentRhs).getType(), ((ParameterRef) currentRhs).getIndex());
     } else if (currentRhs instanceof CaughtExceptionRef) {
-      Unit u = myBaf.newStoreInst(RefType.v(), context.getBafLocalOfJimpleLocal((Local) getLeftOp()));
+      Unit u = myBaf.newStoreInst(myBaf.getPrimTypeCollector().getRefType(),
+          context.getBafLocalOfJimpleLocal((Local) getLeftOp()));
       u.addAllTagsOf(this);
       out.add(u);
       return;

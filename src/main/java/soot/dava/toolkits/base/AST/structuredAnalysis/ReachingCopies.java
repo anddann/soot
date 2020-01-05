@@ -113,11 +113,11 @@ public class ReachingCopies extends StructuredAnalysis {
     super();
     // the input to the process method is an empty DavaFlow Set meaning
     // out(start) ={}
-    DavaFlowSet temp = (DavaFlowSet) process(analyze, new DavaFlowSet());
+    DavaFlowSet temp = (DavaFlowSet) process(analyze, new DavaFlowSet(myClosestAbruptTargetFinder));
   }
 
   public DavaFlowSet emptyFlowSet() {
-    return new DavaFlowSet();
+    return new DavaFlowSet(myClosestAbruptTargetFinder);
   }
 
   public void setMergeType() {
@@ -126,7 +126,7 @@ public class ReachingCopies extends StructuredAnalysis {
 
   @Override
   public DavaFlowSet newInitialFlow() {
-    return new DavaFlowSet();
+    return new DavaFlowSet(myClosestAbruptTargetFinder);
   }
 
   @Override

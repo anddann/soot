@@ -29,12 +29,12 @@ import soot.baf.InstSwitch;
 import soot.util.Switch;
 
 public class BGotoInst extends AbstractBranchInst implements GotoInst {
-  public BGotoInst(Unit target) {
-    super(myBaf.newInstBox(target));
+  public BGotoInst(Unit target, Baf myBaf) {
+    super(myBaf.newInstBox(target), myBaf);
   }
 
   public Object clone() {
-    return new BGotoInst(getTarget());
+    return new BGotoInst(getTarget(), myBaf);
   }
 
   public int getInMachineCount() {

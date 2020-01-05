@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import soot.Local;
-import soot.Scene;
 import soot.Type;
 import soot.Unit;
 import soot.UnitPrinter;
@@ -124,7 +123,7 @@ public class JimpleLocal implements Local, ConvertToBaf {
   }
 
   @Override
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     Unit u = myBaf.newLoadInst(getType(), context.getBafLocalOfJimpleLocal(this));
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);

@@ -158,10 +158,10 @@ public class JLookupSwitchStmt extends AbstractSwitchStmt implements LookupSwitc
     ((StmtSwitch) sw).caseLookupSwitchStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     List<PlaceholderInst> targetPlaceholders = new ArrayList<PlaceholderInst>();
 
-    ((ConvertToBaf) getKey()).convertToBaf(context, out);
+    ((ConvertToBaf) getKey()).convertToBaf(context, out, myBaf);
 
     for (Unit target : getTargets()) {
       targetPlaceholders.add(myBaf.newPlaceholderInst(target));

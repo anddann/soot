@@ -43,9 +43,7 @@ import soot.Body;
 import soot.FastHierarchy;
 import soot.Local;
 import soot.NullType;
-import soot.PackManager;
 import soot.RefType;
-import soot.Scene;
 import soot.SceneTransformer;
 import soot.SootClass;
 import soot.SootMethod;
@@ -59,7 +57,6 @@ import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
 import soot.jimple.VirtualInvokeExpr;
 import soot.jimple.toolkits.pointer.LocalMustNotAliasAnalysis;
-import soot.options.Options;
 
 /**
  * This is an implementation of AbstractJimpleBasedICFG that computes the ICFG on-the-fly. In other words, it can be used
@@ -83,7 +80,7 @@ public class OnTheFlyJimpleBasedICFG extends AbstractJimpleBasedICFG {
       = IDESolver.DEFAULT_CACHE_BUILDER.build(new CacheLoader<Body, LocalMustNotAliasAnalysis>() {
         @Override
         public LocalMustNotAliasAnalysis load(Body body) throws Exception {
-          return new LocalMustNotAliasAnalysis(getOrCreateUnitGraph(body), body);
+          return new LocalMustNotAliasAnalysis(getOrCreateUnitGraph(body), body, isInteraticveMode(), getMyInteractionHandler());
         }
       });
 

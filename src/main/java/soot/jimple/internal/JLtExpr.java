@@ -31,7 +31,7 @@ import soot.util.Switch;
 
 public class JLtExpr extends AbstractJimpleIntBinopExpr implements LtExpr {
   public JLtExpr(Value op1, Value op2) {
-    super(op1, op2);
+    super(op1, op2, primTypeCollector);
   }
 
   public final String getSymbol() {

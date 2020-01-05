@@ -63,8 +63,8 @@ public class JReturnStmt extends AbstractOpStmt implements ReturnStmt {
     ((StmtSwitch) sw).caseReturnStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    ((ConvertToBaf) (getOp())).convertToBaf(context, out);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf);
 
     Unit u = myBaf.newReturnInst(getOp().getType());
     u.addAllTagsOf(this);

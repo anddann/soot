@@ -23,14 +23,16 @@ package soot.baf.internal;
  */
 
 import soot.AbstractJasminClass;
+import soot.PrimTypeCollector;
 import soot.Type;
+import soot.baf.Baf;
 import soot.baf.InstSwitch;
 import soot.baf.XorInst;
 import soot.util.Switch;
 
 public class BXorInst extends AbstractOpTypeInst implements XorInst {
-  public BXorInst(Type opType) {
-    super(myRefType, opType);
+  public BXorInst(Type opType, PrimTypeCollector primTypeCollector, Baf myBaf) {
+    super(opType, myBaf, primTypeCollector);
   }
 
   public int getInCount() {
@@ -42,7 +44,7 @@ public class BXorInst extends AbstractOpTypeInst implements XorInst {
   }
 
   public Object clone() {
-    return new BXorInst(getOpType());
+    return new BXorInst(getOpType(), primTypeCollector, myBaf);
   }
 
   public int getInMachineCount() {

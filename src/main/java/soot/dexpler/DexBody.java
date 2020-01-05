@@ -191,6 +191,7 @@ public class DexBody {
   private PhaseDumper myPhaseDumper;
   private InteractionHandler myInteractionHandler;
   private PedanticThrowAnalysis myPedanticThrowAnalysis;
+  private ConstantFactory constantFactory;
 
   PseudoInstruction isAddressInData(int a) {
     for (PseudoInstruction pi : pseudoInstructionData) {
@@ -275,7 +276,7 @@ public class DexBody {
   protected void extractDexInstructions(MethodImplementation code) {
     int address = 0;
     for (Instruction instruction : code.getInstructions()) {
-      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address, myJimple, constancFactory, dalivkTyper, primTypeCollector, myScene, myJimple, myOptions);
+      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address, myJimple, constancFactory, dalivkTyper, primTypeCollector, myScene, myJimple, myOptions, myDalvikTyper, constantFactory);
       instructions.add(dexInstruction);
       instructionAtAddress.put(address, dexInstruction);
       address += instruction.getCodeUnits();

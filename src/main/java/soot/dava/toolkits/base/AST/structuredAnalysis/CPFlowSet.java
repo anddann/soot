@@ -36,7 +36,7 @@ import soot.toolkits.scalar.FlowSet;
 public class CPFlowSet extends DavaFlowSet<CPTuple> {
 
   public CPFlowSet() {
-    super();
+    super(myClosestAbruptTargetFinder);
   }
 
   /*
@@ -49,7 +49,8 @@ public class CPFlowSet extends DavaFlowSet<CPTuple> {
    */
   public CPFlowSet(CPFlowSet other) {
 
-    numElements = other.numElements;
+      super(myClosestAbruptTargetFinder);
+      numElements = other.numElements;
     maxElements = other.maxElements;
 
     elements = new CPTuple[other.getElementCount()];

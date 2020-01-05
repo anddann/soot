@@ -51,10 +51,14 @@ import soot.jimple.toolkits.thread.AbstractRuntimeThread;
 import soot.jimple.toolkits.thread.mhp.findobject.AllocNodesFinder;
 import soot.jimple.toolkits.thread.mhp.findobject.MultiRunStatementsFinder;
 import soot.jimple.toolkits.thread.mhp.pegcallgraph.PegCallGraph;
+import soot.options.Options;
 import soot.options.SparkOptions;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.CompleteUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.FlowSet;
+import soot.util.PhaseDumper;
 
 /**
  * UnsynchronizedMhpAnalysis written by Richard L. Halpert 2006-12-09 Calculates May-Happen-in-Parallel (MHP) information as
@@ -77,9 +81,17 @@ public class SynchObliviousMhpAnalysis implements MhpTester, Runnable {
 
   Thread self;
   private Scene myScene;
+  private ThrowAnalysis throwAnalysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
+  private Options myOptions;
 
-  public SynchObliviousMhpAnalysis(Scene myScene) {
+  public SynchObliviousMhpAnalysis(Scene myScene, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Options myOptions) {
     this.myScene = myScene;
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myOptions = myOptions;
     threadList = new ArrayList<AbstractRuntimeThread>();
     optionPrintDebug = false;
 
@@ -223,7 +235,7 @@ public class SynchObliviousMhpAnalysis implements MhpTester, Runnable {
       if (!mayBeRunMultipleTimes) {
         UnitGraph graph = new CompleteUnitGraph(startStmtMethod.getActiveBody());
         MultiRunStatementsFinder finder
-            = new MultiRunStatementsFinder(graph, startStmtMethod, multiCalledMethods, callGraph);
+            = new MultiRunStatementsFinder(graph, startStmtMethod, multiCalledMethods, callGraph, getMyInteractionHandler(), isInteraticveMode());
         FlowSet multiRunStatements = finder.getMultiRunStatements(); // list of all units that may be run more than once in
                                                                      // this method
         if (multiRunStatements.contains(startStmt)) {

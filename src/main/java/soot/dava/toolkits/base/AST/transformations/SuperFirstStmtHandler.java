@@ -441,7 +441,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
       tempArgList.add(arg);
 
       DVirtualInvokeExpr tempInvokeExpr
-          = new DVirtualInvokeExpr(jimpleLocal, getMethodRef, tempArgList, new HashSet<Object>());
+          = new DVirtualInvokeExpr(jimpleLocal, getMethodRef, tempArgList, new HashSet<Object>(), myGrimp, myBaf);
 
       // NECESASARY CASTING OR RETRIEVAL OF PRIM TYPES TO BE DONE HERE
       Value toAddExpr = getProperCasting(tempType, tempInvokeExpr);
@@ -459,7 +459,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     // expr constructor
 
     DVirtualInvokeExpr virtualInvoke = new DVirtualInvokeExpr(originalConstructorExpr.getBase(), superConstructor.makeRef(),
-        argsForConstructor, new HashSet<Object>());
+        argsForConstructor, new HashSet<Object>(), myGrimp, myBaf);
 
     // set the constructors constructorExpr
     newConstructorDavaBody.set_ConstructorExpr(virtualInvoke);
@@ -490,7 +490,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         tempMethod.setDeclaringClass(new SootClass("java.lang.Boolean", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
-        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
+        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>(), myGrimp, myBaf);
       } else if (t == ByteType.v()) {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Byte"));
         // byteValue
@@ -499,7 +499,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         tempMethod.setDeclaringClass(new SootClass("java.lang.Byte", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
-        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
+        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>(), myGrimp, myBaf);
       } else if (t == CharType.v()) {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Character"));
         // charValue
@@ -508,7 +508,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         tempMethod.setDeclaringClass(new SootClass("java.lang.Character", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
-        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
+        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>(), myGrimp, myBaf);
       } else if (t == DoubleType.v()) {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Double"));
         // doubleValue
@@ -517,7 +517,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         tempMethod.setDeclaringClass(new SootClass("java.lang.Double", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
-        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
+        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>(), myGrimp, myBaf);
       } else if (t == FloatType.v()) {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Float"));
         // floatValue
@@ -526,7 +526,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         tempMethod.setDeclaringClass(new SootClass("java.lang.Float", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
-        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
+        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>(), myGrimp, myBaf);
       } else if (t == IntType.v()) {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Integer"));
         // intValue
@@ -535,7 +535,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         tempMethod.setDeclaringClass(new SootClass("java.lang.Integer", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
-        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
+        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>(), myGrimp, myBaf);
       } else if (t == LongType.v()) {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Long"));
         // longValue
@@ -544,7 +544,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         tempMethod.setDeclaringClass(new SootClass("java.lang.Long", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
-        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
+        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>(), myGrimp, myBaf);
       } else if (t == ShortType.v()) {
         Value tempExpr = new GCastExpr(tempInvokeExpr, RefType.v("java.lang.Short"));
         // shortValue
@@ -553,7 +553,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         tempMethod.setDeclaringClass(new SootClass("java.lang.Short", myScene, myOptions, myPackageNamer));
 
         SootMethodRef tempMethodRef = tempMethod.makeRef();
-        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>());
+        return new DVirtualInvokeExpr(tempExpr, tempMethodRef, new ArrayList(), new HashSet<Object>(), myGrimp, myBaf);
       } else {
         throw new DecompilationException("Unhandle primType:" + tempType);
       }
@@ -681,7 +681,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         tempArgList.add(arg);
 
         DVirtualInvokeExpr tempInvokeExpr
-            = new DVirtualInvokeExpr(jimpleLocal, getMethodRef, tempArgList, new HashSet<Object>());
+            = new DVirtualInvokeExpr(jimpleLocal, getMethodRef, tempArgList, new HashSet<Object>(), myGrimp, myBaf);
 
         // NECESASARY CASTING OR RETRIEVAL OF PRIM TYPES TO BE DONE HERE
         Value toAddExpr = getProperCasting(tempType, tempInvokeExpr);
@@ -1389,7 +1389,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     ArrayList tempArgList = new ArrayList();
     tempArgList.add(tempVal);
 
-    DVirtualInvokeExpr tempInvokeExpr = new DVirtualInvokeExpr(newLocal, getMethodRef, tempArgList, new HashSet<Object>());
+    DVirtualInvokeExpr tempInvokeExpr = new DVirtualInvokeExpr(newLocal, getMethodRef, tempArgList, new HashSet<Object>(), myGrimp, myBaf);
 
     // create Invoke Stmt with virtualInvoke as the expression
     GInvokeStmt s = new GInvokeStmt(tempInvokeExpr);

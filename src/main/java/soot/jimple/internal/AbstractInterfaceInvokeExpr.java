@@ -143,12 +143,12 @@ public abstract class AbstractInterfaceInvokeExpr extends AbstractInstanceInvoke
     return argCount;
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    ((ConvertToBaf) getBase()).convertToBaf(context, out);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+    ((ConvertToBaf) getBase()).convertToBaf(context, out, myBaf);
 
     if (argBoxes != null) {
       for (ValueBox element : argBoxes) {
-        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out);
+        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, myBaf);
       }
     }
 

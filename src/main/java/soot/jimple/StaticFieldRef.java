@@ -95,7 +95,7 @@ public class StaticFieldRef implements FieldRef, ConvertToBaf {
     return getField().equivHashCode();
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     Unit u = context.getBafBody().getMyBaf().newStaticGetInst(fieldRef);
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);

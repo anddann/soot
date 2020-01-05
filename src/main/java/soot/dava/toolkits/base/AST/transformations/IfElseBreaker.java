@@ -35,6 +35,7 @@ import soot.dava.internal.AST.ASTStatementSequenceNode;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DAbruptStmt;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.jimple.Stmt;
 
 /*
@@ -68,8 +69,10 @@ PATTERN 2:
 public class IfElseBreaker {
   ASTIfNode newIfNode;
   List<Object> remainingBody;
+  private TryContentsFinder myTryContentsFinder;
 
-  public IfElseBreaker() {
+  public IfElseBreaker(TryContentsFinder myTryContentsFinder) {
+    this.myTryContentsFinder = myTryContentsFinder;
     newIfNode = null;
     remainingBody = null;
   }

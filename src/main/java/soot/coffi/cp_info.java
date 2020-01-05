@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Value;
+import soot.jimple.ConstantFactory;
 
 /**
  * Base abstract class for constant pool entries; includes some utility methods.
@@ -299,5 +300,5 @@ abstract class cp_info {
    * Creates an appropriate jimple representation of this constant. Field and method constants are assumed to point to static
    * fields/methods.
    */
-  public abstract Value createJimpleConstantValue(cp_info[] constant_pool);
+  public abstract Value createJimpleConstantValue(cp_info[] constant_pool, ConstantFactory constantFactory);
 }

@@ -239,7 +239,7 @@ public class CONSTANT_Utf8_info extends cp_info {
     return "utf8";
   }
 
-  public Value createJimpleConstantValue(cp_info[] constant_pool) {
+  public Value createJimpleConstantValue(cp_info[] constant_pool, ConstantFactory constantFactory) {
     return constancFactory.createStringConstant(convert());
   }
 }

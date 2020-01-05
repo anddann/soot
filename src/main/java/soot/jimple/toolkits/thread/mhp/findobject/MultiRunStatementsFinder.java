@@ -40,6 +40,7 @@ import soot.jimple.Stmt;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.thread.mhp.TargetMethodsFinder;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
@@ -62,8 +63,8 @@ public class MultiRunStatementsFinder extends ForwardFlowAnalysis<Unit, BitSet> 
   protected int lastIndex = 0;
 
   // add soot method here just for debug
-  public MultiRunStatementsFinder(UnitGraph g, SootMethod sm, Set<SootMethod> multiCalledMethods, CallGraph cg) {
-    super(g);
+  public MultiRunStatementsFinder(UnitGraph g, SootMethod sm, Set<SootMethod> multiCalledMethods, CallGraph cg, InteractionHandler myInteractionHandler, boolean interaticveMode) {
+    super(g, interaticveMode, myInteractionHandler);
 
     nodeToIndex = new HashMap<Object, Integer>();
 

@@ -36,8 +36,8 @@ public class JLengthExpr extends AbstractLengthExpr implements ConvertToBaf {
     super(myJimple.newImmediateBox(op));
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    ((ConvertToBaf) (getOp())).convertToBaf(context, out);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf);
 
     Unit u = myBaf.newArrayLengthInst();
     u.addAllTagsOf(context.getCurrentUnit());

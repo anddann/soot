@@ -24,9 +24,16 @@ package soot.baf.internal;
 
 import soot.AbstractUnit;
 import soot.UnitPrinter;
+import soot.baf.Baf;
 import soot.baf.Inst;
 
 public abstract class AbstractInst extends AbstractUnit implements Inst {
+
+  protected Baf myBaf;
+
+  public AbstractInst(Baf myBaf) {
+    this.myBaf = myBaf;
+  }
 
   public String toString() {
     return getName() + getParameters();

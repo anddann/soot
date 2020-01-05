@@ -1,5 +1,7 @@
 package soot.JastAddJ;
 
+import soot.jimple.ConstantFactory;
+
 /**
   * @ast class
  * 
@@ -7,12 +9,13 @@ package soot.JastAddJ;
 public class CONSTANT_Utf8_Info extends CONSTANT_Info {
 
     public String string;
+    private ConstantFactory constantFactory;
 
 
-
-    public CONSTANT_Utf8_Info(BytecodeParser parser) {
+    public CONSTANT_Utf8_Info(BytecodeParser parser, ConstantFactory constantFactory) {
       super(parser);
-      string = p.readUTF();
+        this.constantFactory = constantFactory;
+        string = p.readUTF();
     }
 
 

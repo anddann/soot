@@ -41,6 +41,7 @@ import soot.Body;
 import soot.CompilationDeathException;
 import soot.Local;
 import soot.PhaseOptions;
+import soot.PrimTypeCollector;
 import soot.Printer;
 import soot.SootMethod;
 import soot.Type;
@@ -83,13 +84,14 @@ public class Dava {
   private ConstantFactory constancFactory;
   private PhaseDumper myPhaseDumper;
   private Grimp myGrimp;
+  private PrimTypeCollector primTypeCollector;
 
   @Inject
   public Dava(Dava myJimple, ExceptionFinder myExceptionFinder, CycleFinder myCycleFinder, IfFinder myIfFinder,
               SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder, SequenceFinder mySequenceFinder,
               LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder, MonitorConverter myMonitorConverter,
               ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-              ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp) {
+              ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
     this.myJimple = myJimple;
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -109,6 +111,7 @@ public class Dava {
     this.constancFactory = constancFactory;
     this.myPhaseDumper = myPhaseDumper;
     this.myGrimp = myGrimp;
+    this.primTypeCollector = primTypeCollector;
   }
 
 

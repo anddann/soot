@@ -23,7 +23,7 @@ package soot.coffi;
  */
 
 import soot.Value;
-import soot.jimple.DoubleConstant;
+import soot.jimple.ConstantFactory;
 
 /**
  * A constant pool entry of type CONSTANT_Double.
@@ -96,7 +96,7 @@ class CONSTANT_Double_info extends cp_info {
     return ((d > 0.0) ? 1 : ((d < 0.0) ? -1 : 0));
   }
 
-  public Value createJimpleConstantValue(cp_info[] constant_pool) {
+  public Value createJimpleConstantValue(cp_info[] constant_pool, ConstantFactory constantFactory) {
     return constancFactory.createDoubleConstant(convert());
   }
 }

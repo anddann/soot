@@ -23,7 +23,7 @@ package soot.coffi;
  */
 
 import soot.Value;
-import soot.jimple.StringConstant;
+import soot.jimple.ConstantFactory;
 
 /**
  * A constant pool entry of type CONSTANT_String.
@@ -92,7 +92,7 @@ class CONSTANT_String_info extends cp_info {
     return ((CONSTANT_Utf8_info) (constant_pool[string_index])).compareTo(cp_constant_pool[cu.string_index]);
   }
 
-  public Value createJimpleConstantValue(cp_info[] constant_pool) {
+  public Value createJimpleConstantValue(cp_info[] constant_pool, ConstantFactory constantFactory) {
     CONSTANT_Utf8_info ci = (CONSTANT_Utf8_info) (constant_pool[string_index]);
     return constancFactory.createStringConstant(ci.convert());
   }

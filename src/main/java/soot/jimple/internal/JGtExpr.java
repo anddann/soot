@@ -31,7 +31,7 @@ import soot.util.Switch;
 
 public class JGtExpr extends AbstractJimpleIntBinopExpr implements GtExpr {
   public JGtExpr(Value op1, Value op2) {
-    super(op1, op2);
+    super(op1, op2, primTypeCollector);
   }
 
   public final String getSymbol() {

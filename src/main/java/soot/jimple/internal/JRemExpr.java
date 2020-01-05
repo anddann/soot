@@ -22,6 +22,7 @@ package soot.jimple.internal;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Value;
 import soot.baf.Baf;
@@ -31,8 +32,11 @@ import soot.jimple.RemExpr;
 import soot.util.Switch;
 
 public class JRemExpr extends AbstractJimpleFloatBinopExpr implements RemExpr {
-  public JRemExpr(Value op1, Value op2) {
-    super(op1, op2);
+  private Jimple myJimple;
+
+  public JRemExpr(Value op1, Value op2, PrimTypeCollector primTypeCollector, Jimple myJimple) {
+    super(op1, op2, myJimple, primTypeCollector);
+    this.myJimple = myJimple;
   }
 
   public String getSymbol() {
@@ -43,12 +47,12 @@ public class JRemExpr extends AbstractJimpleFloatBinopExpr implements RemExpr {
     ((ExprSwitch) sw).caseRemExpr(this);
   }
 
-  Object makeBafInst(Type opType) {
+  Object makeBafInst(Type opType, Baf myBaf) {
     return myBaf.newRemInst(this.getOp1().getType());
   }
 
   public Object clone() {
-    return new JRemExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()));
+    return new JRemExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()), primTypeCollector, myJimple);
   }
 
 }

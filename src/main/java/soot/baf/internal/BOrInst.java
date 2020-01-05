@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BOrInst extends AbstractOpTypeInst implements OrInst {
   public BOrInst(Type opType) {
-    super(myRefType, opType);
+    super(myRefType, opType, myBaf);
   }
 
   public int getInCount() {

@@ -24,7 +24,6 @@ package soot.jimple.internal;
 
 import soot.Type;
 import soot.Value;
-import soot.baf.Baf;
 import soot.jimple.CmpExpr;
 import soot.jimple.ExprSwitch;
 import soot.jimple.Jimple;
@@ -32,7 +31,7 @@ import soot.util.Switch;
 
 public class JCmpExpr extends AbstractJimpleIntBinopExpr implements CmpExpr {
   public JCmpExpr(Value op1, Value op2) {
-    super(op1, op2);
+    super(op1, op2, primTypeCollector);
   }
 
   public final String getSymbol() {

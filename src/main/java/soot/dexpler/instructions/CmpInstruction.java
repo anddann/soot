@@ -43,17 +43,15 @@ import soot.dexpler.IDalvikTyper;
 import soot.dexpler.tags.DoubleOpTag;
 import soot.dexpler.tags.FloatOpTag;
 import soot.dexpler.tags.LongOpTag;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.BinopExpr;
 import soot.jimple.Expr;
-import soot.jimple.Jimple;
 import soot.jimple.internal.JAssignStmt;
 
 public class CmpInstruction extends TaggedInstruction {
 
   public CmpInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override

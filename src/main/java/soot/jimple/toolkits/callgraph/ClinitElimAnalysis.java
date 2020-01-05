@@ -27,6 +27,7 @@ import java.util.Iterator;
 import soot.Scene;
 import soot.jimple.Stmt;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
@@ -34,9 +35,10 @@ import soot.toolkits.scalar.ForwardFlowAnalysis;
 public class ClinitElimAnalysis extends ForwardFlowAnalysis {
 
   private UnitGraph g;
+  private Scene myScene;
 
-  public ClinitElimAnalysis(UnitGraph g) {
-    super(g);
+  public ClinitElimAnalysis(UnitGraph g, InteractionHandler myInteractionHandler, boolean interaticveMode) {
+    super(g, interaticveMode, myInteractionHandler);
     this.g = g;
 
     doAnalysis();

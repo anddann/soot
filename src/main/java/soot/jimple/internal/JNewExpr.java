@@ -35,7 +35,7 @@ public class JNewExpr extends AbstractNewExpr implements ConvertToBaf {
     this.type = type;
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     Unit u = myBaf.newNewInst(getBaseType());
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);

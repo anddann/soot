@@ -23,14 +23,13 @@ package soot.baf.internal;
  */
 
 import soot.Unit;
-import soot.baf.Baf;
 import soot.baf.IfNullInst;
 import soot.baf.InstSwitch;
 import soot.util.Switch;
 
 public class BIfNullInst extends AbstractBranchInst implements IfNullInst {
   public BIfNullInst(Unit target) {
-    super(myBaf.newInstBox(target));
+    super(myBaf.newInstBox(target), myBaf);
   }
 
   public int getInCount() {

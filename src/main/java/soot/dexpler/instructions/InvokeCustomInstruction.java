@@ -73,7 +73,7 @@ public class InvokeCustomInstruction extends MethodInvocationInstruction {
   private Scene myScene;
 
   public InvokeCustomInstruction(Instruction instruction, int codeAddress, ConstantFactory constancFactory, Jimple myJimple, Scene myScene) {
-    super(instruction, codeAddress);
+    super(instruction, codeAddress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
     this.constancFactory = constancFactory;
     this.myJimple = myJimple;
     this.myScene = myScene;

@@ -33,7 +33,7 @@ import soot.dexpler.DexBody;
 public class InvokeSpecialInstruction extends MethodInvocationInstruction {
 
   public InvokeSpecialInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
   }
 
   public void jimplify(DexBody body) {

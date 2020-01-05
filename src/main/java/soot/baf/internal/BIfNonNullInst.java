@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BIfNonNullInst extends AbstractBranchInst implements IfNonNullInst {
   public BIfNonNullInst(Unit target, Baf myBaf) {
-    super(myBaf.newInstBox(target));
+    super(myBaf.newInstBox(target), myBaf);
   }
 
   public int getInCount() {

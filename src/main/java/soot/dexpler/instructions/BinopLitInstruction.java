@@ -39,13 +39,20 @@ import soot.Value;
 import soot.dexpler.DexBody;
 import soot.dexpler.tags.IntOpTag;
 import soot.jimple.AssignStmt;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
+import soot.options.Options;
 
 public class BinopLitInstruction extends TaggedInstruction {
 
-  public BinopLitInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+  private ConstantFactory constantFactory;
+  private Jimple myJimple;
+
+  public BinopLitInstruction(Instruction instruction, int codeAdress, ConstantFactory constantFactory, Jimple myJimple, Options myOptions) {
+    super(instruction, codeAdress, myOptions);
+    this.constantFactory = constantFactory;
+    this.myJimple = myJimple;
   }
 
   @Override
@@ -60,7 +67,7 @@ public class BinopLitInstruction extends TaggedInstruction {
 
     Local source1 = body.getRegisterLocal(source);
 
-    IntConstant constant = constancFactory.createIntConstant(binOpLitInstr.getNarrowLiteral());
+    IntConstant constant = constantFactory.createIntConstant(binOpLitInstr.getNarrowLiteral());
 
     Value expr = getExpression(source1, constant);
 

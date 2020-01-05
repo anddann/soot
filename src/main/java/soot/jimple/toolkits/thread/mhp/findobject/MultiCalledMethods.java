@@ -29,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import soot.Scene;
 import soot.SootMethod;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.thread.mhp.pegcallgraph.PegCallGraph;
@@ -70,7 +69,7 @@ public class MultiCalledMethods {
       SootMethod sm = (SootMethod) it.next();
       UnitGraph graph = new CompleteUnitGraph(sm.getActiveBody());
       CallGraph callGraph = myScene.getCallGraph();
-      MultiRunStatementsFinder finder = new MultiRunStatementsFinder(graph, sm, multiCalledMethods, callGraph);
+      MultiRunStatementsFinder finder = new MultiRunStatementsFinder(graph, sm, multiCalledMethods, callGraph, getMyInteractionHandler(), isInteraticveMode());
       FlowSet fs = finder.getMultiRunStatements();
     }
 

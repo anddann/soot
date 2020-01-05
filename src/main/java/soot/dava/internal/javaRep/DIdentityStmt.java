@@ -24,11 +24,12 @@ package soot.dava.internal.javaRep;
 
 import soot.UnitPrinter;
 import soot.Value;
+import soot.grimp.Grimp;
 import soot.grimp.internal.GIdentityStmt;
 
 public class DIdentityStmt extends GIdentityStmt {
-  public DIdentityStmt(Value local, Value identityValue) {
-    super(local, identityValue);
+  public DIdentityStmt(Value local, Value identityValue, Grimp myGrimp) {
+    super(local, identityValue, myGrimp);
   }
 
   public void toString(UnitPrinter up) {

@@ -64,8 +64,8 @@ public class JThrowStmt extends AbstractOpStmt implements ThrowStmt {
     ((StmtSwitch) sw).caseThrowStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    ((ConvertToBaf) getOp()).convertToBaf(context, out);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+    ((ConvertToBaf) getOp()).convertToBaf(context, out, myBaf);
 
     Unit u = myBaf.newThrowInst();
     u.addAllTagsOf(this);

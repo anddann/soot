@@ -32,7 +32,7 @@ import soot.util.Switch;
 
 public class JDivExpr extends AbstractJimpleFloatBinopExpr implements DivExpr {
   public JDivExpr(Value op1, Value op2) {
-    super(op1, op2);
+    super(op1, op2, myJimple);
   }
 
   public final String getSymbol() {
@@ -43,7 +43,7 @@ public class JDivExpr extends AbstractJimpleFloatBinopExpr implements DivExpr {
     ((ExprSwitch) sw).caseDivExpr(this);
   }
 
-  Object makeBafInst(Type opType) {
+  Object makeBafInst(Type opType, Baf myBaf) {
     return myBaf.newDivInst(this.getOp1().getType());
   }
 

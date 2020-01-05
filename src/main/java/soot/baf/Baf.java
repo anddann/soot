@@ -208,7 +208,7 @@ public class Baf {
   }
 
   public GotoInst newGotoInst(Unit unit) {
-    return new BGotoInst(unit);
+    return new BGotoInst(unit, this);
   }
 
   public JSRInst newJSRInst(Unit unit) {
@@ -216,7 +216,7 @@ public class Baf {
   }
 
   public PlaceholderInst newPlaceholderInst(Unit source) {
-    return new PlaceholderInst(source);
+    return new PlaceholderInst(source, myBaf);
   }
 
   public UnitBox newInstBox(Unit unit) {
@@ -268,7 +268,7 @@ public class Baf {
   }
 
   public ArrayReadInst newArrayReadInst(Type opType) {
-    return new BArrayReadInst(opType);
+    return new BArrayReadInst(opType, myBaf, primTypeCollector);
   }
 
   public StaticGetInst newStaticGetInst(SootFieldRef fieldRef) {
@@ -312,7 +312,7 @@ public class Baf {
   }
 
   public ArrayLengthInst newArrayLengthInst() {
-    return new BArrayLengthInst();
+    return new BArrayLengthInst(myBaf);
   }
 
   public NegInst newNegInst(Type opType) {
@@ -336,11 +336,11 @@ public class Baf {
   }
 
   public UshrInst newUshrInst(Type opType) {
-    return new BUshrInst(opType);
+    return new BUshrInst(opType, myBaf, primTypeCollector);
   }
 
   public XorInst newXorInst(Type opType) {
-    return new BXorInst(opType);
+    return new BXorInst(opType, primTypeCollector, myBaf);
   }
 
   public InstanceCastInst newInstanceCastInst(Type opType) {
@@ -389,7 +389,7 @@ public class Baf {
   }
 
   public ReturnInst newReturnInst(Type opType) {
-    return new BReturnInst(opType);
+    return new BReturnInst(opType,  this, primTypeCollector);
   }
 
   public IfCmpEqInst newIfCmpEqInst(Type opType, Unit unit) {
@@ -401,7 +401,7 @@ public class Baf {
   }
 
   public IfCmpGtInst newIfCmpGtInst(Type opType, Unit unit) {
-    return new BIfCmpGtInst(opType, unit);
+    return new BIfCmpGtInst(opType, unit, primTypeCollector, myBaf);
   }
 
   public IfCmpLeInst newIfCmpLeInst(Type opType, Unit unit) {
@@ -505,7 +505,7 @@ public class Baf {
   }
 
   public TableSwitchInst newTableSwitchInst(Unit defaultTarget, int lowIndex, int highIndex, List targets) {
-    return new BTableSwitchInst(defaultTarget, lowIndex, highIndex, targets);
+    return new BTableSwitchInst(defaultTarget, lowIndex, highIndex, targets, myBaf);
   }
 
   public static String bafDescriptorOf(Type type) {

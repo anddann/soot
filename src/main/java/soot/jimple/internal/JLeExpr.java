@@ -22,6 +22,7 @@ package soot.jimple.internal;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Value;
 import soot.jimple.ExprSwitch;
@@ -30,8 +31,8 @@ import soot.jimple.LeExpr;
 import soot.util.Switch;
 
 public class JLeExpr extends AbstractJimpleIntBinopExpr implements LeExpr {
-  public JLeExpr(Value op1, Value op2) {
-    super(op1, op2);
+  public JLeExpr(Value op1, Value op2, PrimTypeCollector primTypeCollector) {
+    super(op1, op2, primTypeCollector);
   }
 
   public final String getSymbol() {
@@ -48,7 +49,7 @@ public class JLeExpr extends AbstractJimpleIntBinopExpr implements LeExpr {
   // Object makeBafInst(Type opType) { return myBaf.newLeInst(this.getOp1().getType()); }
 
   public Object clone() {
-    return new JLeExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()));
+    return new JLeExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()), primTypeCollector);
   }
 
 }

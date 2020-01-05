@@ -77,18 +77,20 @@ public abstract class AbstractInterproceduralAnalysis<S> {
   protected final Map<SootMethod, S> data; // SootMethod -> summary
   protected final Map<SootMethod, Integer> order; // SootMethod -> topo order
   protected final Map<SootMethod, S> unanalysed; // SootMethod -> summary
+  private SourceLocator mySourceLocator;
 
   /**
    * The constructor performs some preprocessing, but you have to call doAnalysis to preform the real stuff.
-   *
-   * @param cg
+   *  @param cg
    * @param filter
-   * @param verbose
    * @param heads
+   * @param verbose
+   * @param mySourceLocator
    */
   public AbstractInterproceduralAnalysis(CallGraph cg, SootMethodFilter filter, Iterator<SootMethod> heads,
-      boolean verbose) {
+                                         boolean verbose, SourceLocator mySourceLocator) {
     this.cg = cg;
+    this.mySourceLocator = mySourceLocator;
 
     this.dg = new DirectedCallGraph(cg, filter, heads, verbose);
     this.data = new HashMap<SootMethod, S>();

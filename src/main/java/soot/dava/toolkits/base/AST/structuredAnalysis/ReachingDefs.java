@@ -73,12 +73,12 @@ public class ReachingDefs extends StructuredAnalysis<Stmt> {
   public ReachingDefs(Object analyze) {
     super();
     toAnalyze = analyze;
-    process(analyze, new DavaFlowSet<Stmt>());
+    process(analyze, new DavaFlowSet<Stmt>(myClosestAbruptTargetFinder));
   }
 
   @Override
   public DavaFlowSet<Stmt> emptyFlowSet() {
-    return new DavaFlowSet<Stmt>();
+    return new DavaFlowSet<Stmt>(myClosestAbruptTargetFinder);
   }
 
   /*
@@ -86,7 +86,7 @@ public class ReachingDefs extends StructuredAnalysis<Stmt> {
    */
   @Override
   public DavaFlowSet<Stmt> newInitialFlow() {
-    DavaFlowSet<Stmt> initial = new DavaFlowSet<Stmt>();
+    DavaFlowSet<Stmt> initial = new DavaFlowSet<Stmt>(myClosestAbruptTargetFinder);
     // find all definitions in the program
     AllDefinitionsFinder defFinder = new AllDefinitionsFinder();
     ((ASTNode) toAnalyze).apply(defFinder);

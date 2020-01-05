@@ -51,6 +51,7 @@ public class InstanceKey {
   protected final SootMethod owner;
   protected final int hashCode;
   protected final PointsToSet pts;
+  private Scene myScene;
 
   /**
    * Creates a new instance key representing the value stored in local, just before stmt. The identity of the key is defined
@@ -66,8 +67,9 @@ public class InstanceKey {
    *          a {@link LocalMustAliasAnalysis}
    * @param lmna
    *          a {@link LocalMustNotAliasAnalysis}
+   * @param myScene
    */
-  public InstanceKey(Local local, Stmt stmt, SootMethod owner, LocalMustAliasAnalysis lmaa, LocalMustNotAliasAnalysis lmna) {
+  public InstanceKey(Local local, Stmt stmt, SootMethod owner, LocalMustAliasAnalysis lmaa, LocalMustNotAliasAnalysis lmna, Scene myScene) {
     this.assignedLocal = local;
     this.owner = owner;
     this.stmtAfterAssignStmt = stmt;

@@ -30,8 +30,12 @@ import org.slf4j.LoggerFactory;
 
 import soot.Scene;
 import soot.SceneTransformer;
+import soot.SourceLocator;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.options.PurityOptions;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
+import soot.util.PhaseDumper;
 
 /**
  * Purity analysis phase.
@@ -42,12 +46,22 @@ import soot.options.PurityOptions;
 public class PurityAnalysis extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(PurityAnalysis.class);
   private Scene myScene;
+  private SourceLocator mySourceLocator;
+  private ThrowAnalysis throwAnalysis;
+  private boolean omitExceptingUnitEdges;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
 
   @Inject
-  public PurityAnalysis(Scene myScene) {
+  public PurityAnalysis(Scene myScene, SourceLocator mySourceLocator, ThrowAnalysis throwAnalysis, boolean omitExceptingUnitEdges, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
 
     this.myScene = myScene;
+    this.mySourceLocator = mySourceLocator;
+    this.throwAnalysis = throwAnalysis;
+    this.omitExceptingUnitEdges = omitExceptingUnitEdges;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
 
@@ -60,6 +74,6 @@ public class PurityAnalysis extends SceneTransformer {
     CallGraph cg = myScene.getCallGraph();
 
     // launch the analysis
-    new PurityInterproceduralAnalysis(cg, myScene.getEntryPoints().iterator(), opts);
+    new PurityInterproceduralAnalysis(cg, myScene.getEntryPoints().iterator(), opts, mySourceLocator, throwAnalysis, omitExceptingUnitEdges, myManager, myPhaseDumper);
   }
 }

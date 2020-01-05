@@ -33,7 +33,7 @@ import soot.dexpler.DexBody;
 public class InvokeStaticInstruction extends MethodInvocationInstruction {
 
   public InvokeStaticInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
   }
 
   // // use Nop as begin marker

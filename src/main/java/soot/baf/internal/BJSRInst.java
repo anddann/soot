@@ -23,14 +23,13 @@ package soot.baf.internal;
  */
 
 import soot.Unit;
-import soot.baf.Baf;
 import soot.baf.InstSwitch;
 import soot.baf.JSRInst;
 import soot.util.Switch;
 
 public class BJSRInst extends AbstractBranchInst implements JSRInst {
   public BJSRInst(Unit target) {
-    super(myBaf.newInstBox(target));
+    super(myBaf.newInstBox(target), myBaf);
   }
 
   public Object clone() {

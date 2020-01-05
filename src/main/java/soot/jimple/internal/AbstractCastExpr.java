@@ -130,20 +130,20 @@ abstract public class AbstractCastExpr implements CastExpr, ConvertToBaf {
     ((ExprSwitch) sw).caseCastExpr(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     final Type toType = getCastType();
     final Type fromType = getOp().getType();
 
-    ((ConvertToBaf) getOp()).convertToBaf(context, out);
+    ((ConvertToBaf) getOp()).convertToBaf(context, out, this.myBaf);
 
     Unit u;
     if (toType instanceof ArrayType || toType instanceof RefType) {
-      u = myBaf.newInstanceCastInst(toType);
+      u = this.myBaf.newInstanceCastInst(toType);
     } else {
       if (!fromType.equals(toType)) {
-        u = myBaf.newPrimitiveCastInst(fromType, toType);
+        u = this.myBaf.newPrimitiveCastInst(fromType, toType);
       } else {
-        u = myBaf.newNopInst();
+        u = this.myBaf.newNopInst();
       }
     }
 

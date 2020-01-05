@@ -36,8 +36,8 @@ public class JNegExpr extends AbstractNegExpr implements ConvertToBaf {
     super(myJimple.newImmediateBox(op));
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    ((ConvertToBaf) (getOp())).convertToBaf(context, out);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf);
     Unit u = myBaf.newNegInst(getType());
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);

@@ -85,14 +85,14 @@ public class MustMayInitialize extends StructuredAnalysis {
     setMergeType();
     // the input to the process method is an empty DavaFlow Set meaning
     // out(start) ={} (no var initialized)
-    finalResult = (DavaFlowSet) process(analyze, new DavaFlowSet());
+    finalResult = (DavaFlowSet) process(analyze, new DavaFlowSet(myClosestAbruptTargetFinder));
 
     // finalResult contains the flowSet of having processed the whole of the
     // method
   }
 
   public DavaFlowSet emptyFlowSet() {
-    return new DavaFlowSet();
+    return new DavaFlowSet(myClosestAbruptTargetFinder);
   }
 
   public void setMergeType() {
@@ -113,7 +113,7 @@ public class MustMayInitialize extends StructuredAnalysis {
    */
   @Override
   public DavaFlowSet newInitialFlow() {
-    return new DavaFlowSet();
+    return new DavaFlowSet(myClosestAbruptTargetFinder);
   }
 
   @Override

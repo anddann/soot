@@ -95,7 +95,7 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
       return;
     }
 
-    New2InitFlowAnalysis fa = new New2InitFlowAnalysis(new BriefUnitGraph(b, myPhaseDumper));
+    New2InitFlowAnalysis fa = new New2InitFlowAnalysis(new BriefUnitGraph(b, myPhaseDumper), isInteraticveMode(), getMyInteractionHandler());
 
     Vector<Unit> zeroheight = new Vector<Unit>();
     PatchingChain<Unit> units = b.getUnits();

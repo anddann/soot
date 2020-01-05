@@ -23,11 +23,16 @@ package soot.jimple.toolkits.thread.mhp;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.Map;
 
-import com.google.inject.Inject;
 import soot.Scene;
 import soot.SceneTransformer;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
+import soot.util.PhaseDumper;
 
 /**
  *
@@ -35,10 +40,19 @@ import soot.SceneTransformer;
 
 public class MhpTransformer extends SceneTransformer {
   private Scene myScene;
+  private ThrowAnalysis throwAnalysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
+  private Options myOptions;
 
   @Inject
-  public MhpTransformer(Scene myScene) {
+  public MhpTransformer(Scene myScene, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager,
+      PhaseDumper myPhaseDumper, Options myOptions) {
     this.myScene = myScene;
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myOptions = myOptions;
   }
 
   MhpTester mhpTester;
@@ -49,7 +63,7 @@ public class MhpTransformer extends SceneTransformer {
 
   public MhpTester getMhpTester() {
     if (mhpTester == null) {
-      mhpTester = new SynchObliviousMhpAnalysis(myScene);
+      mhpTester = new SynchObliviousMhpAnalysis(myScene, throwAnalysis, myManager, myPhaseDumper, myOptions);
     }
     return mhpTester;
   }

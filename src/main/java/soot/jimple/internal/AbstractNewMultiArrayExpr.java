@@ -158,11 +158,11 @@ public abstract class AbstractNewMultiArrayExpr implements NewMultiArrayExpr, Co
     ((ExprSwitch) sw).caseNewMultiArrayExpr(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     List<Value> sizes = getSizes();
 
     for (int i = 0; i < sizes.size(); i++) {
-      ((ConvertToBaf) (sizes.get(i))).convertToBaf(context, out);
+      ((ConvertToBaf) (sizes.get(i))).convertToBaf(context, out, myBaf);
     }
 
     Unit u = myBaf.newNewMultiArrayInst(getBaseType(), sizes.size());

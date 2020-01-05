@@ -44,13 +44,14 @@ package soot.dexpler.instructions;
 
 import org.jf.dexlib2.iface.instruction.Instruction;
 
+import soot.options.Options;
 import soot.tagkit.Tag;
 
 public abstract class TaggedInstruction extends DexlibAbstractInstruction {
 
   private Tag instructionTag = null;
 
-  public TaggedInstruction(Instruction instruction, int codeAddress) {
+  public TaggedInstruction(Instruction instruction, int codeAddress, Options myOptions) {
     super(instruction, codeAddress, myOptions);
   }
 

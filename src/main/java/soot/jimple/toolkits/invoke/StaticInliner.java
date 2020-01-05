@@ -43,6 +43,8 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
 import soot.JastAddJ.Options;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.Stmt;
 import soot.jimple.toolkits.callgraph.CallGraph;
@@ -50,6 +52,7 @@ import soot.jimple.toolkits.callgraph.ExplicitEdgesPred;
 import soot.jimple.toolkits.callgraph.Filter;
 import soot.jimple.toolkits.callgraph.Targets;
 import soot.jimple.toolkits.callgraph.TopologicalOrderer;
+import soot.jimple.toolkits.scalar.LocalNameStandardizer;
 import soot.tagkit.Host;
 
 /** Uses the Scene's currently-active InvokeGraph to inline monomorphic call sites. */
@@ -58,12 +61,20 @@ public class StaticInliner extends SceneTransformer {
   private Options myOptions;
   private Scene myScene;
   private PackManager myPackManager;
+  private Jimple myJimple;
+  private ConstantFactory constantFactory;
+  private SynchronizerManager mySynchronizerManager;
+  private LocalNameStandardizer myLocalNameStandardizer;
 
   @Inject
-  public StaticInliner(Options myOptions, Scene myScene, PackManager myPackManager) {
+  public StaticInliner(Options myOptions, Scene myScene, PackManager myPackManager, Jimple myJimple, ConstantFactory constantFactory, SynchronizerManager mySynchronizerManager, LocalNameStandardizer myLocalNameStandardizer) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myPackManager = myPackManager;
+    this.myJimple = myJimple;
+    this.constantFactory = constantFactory;
+    this.mySynchronizerManager = mySynchronizerManager;
+    this.myLocalNameStandardizer = myLocalNameStandardizer;
   }
 
   protected void internalTransform(String phaseName, Map options) {

@@ -45,9 +45,9 @@ public class JInstanceOfExpr extends AbstractInstanceOfExpr implements ConvertTo
     this.primTypeCollector = primTypeCollector;
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    ((ConvertToBaf) (getOp())).convertToBaf(context, out);
-    Unit u = myBaf.newInstanceOfInst(getCheckType());
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+    ((ConvertToBaf) (getOp())).convertToBaf(context, out, this.myBaf);
+    Unit u = this.myBaf.newInstanceOfInst(getCheckType());
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);
   }

@@ -54,6 +54,7 @@ import soot.options.Options;
 import soot.shimple.internal.SPhiExpr;
 import soot.shimple.internal.SPiExpr;
 import soot.toolkits.graph.Block;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.UnusedLocalEliminator;
 import soot.toolkits.scalar.ValueUnitPair;
 import soot.util.Chain;
@@ -93,16 +94,18 @@ public class Shimple {
   private LocalNameStandardizer myLocalNameStandardizer;
     private Jimple myJimple;
     private CopyPropagator myCopyPropagator;
+  private InteractionHandler myInteractionHander;
 
 
-    @Inject
-  public Shimple(PhaseOptions myPhaseOptions, Printer myPrinter, Options myOptions, Jimple myShimple, NopEliminator myNopEliminator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer, Jimple myJimple, CopyPropagator myCopyPropagator) {
+  @Inject
+  public Shimple(PhaseOptions myPhaseOptions, Printer myPrinter, Options myOptions, Jimple myShimple, NopEliminator myNopEliminator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer, Jimple myJimple, CopyPropagator myCopyPropagator, InteractionHandler myInteractionHander) {
     this.myPhaseOptions = myPhaseOptions;
     this.myPrinter = myPrinter;
     this.myOptions = myOptions;
         this.myJimple = myJimple;
         this.myCopyPropagator = myCopyPropagator;
-        this.myShimple = this;
+    this.myInteractionHander = myInteractionHander;
+    this.myShimple = this;
     this.myNopEliminator = myNopEliminator;
     this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
     this.myUnreachableCodeEliminator = myUnreachableCodeEliminator;

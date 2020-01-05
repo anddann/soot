@@ -23,7 +23,7 @@ package soot.coffi;
  */
 
 import soot.Value;
-import soot.jimple.LongConstant;
+import soot.jimple.ConstantFactory;
 
 /**
  * A constant pool entry of type CONSTANT_Long
@@ -96,7 +96,7 @@ class CONSTANT_Long_info extends cp_info {
     return ((d > 0) ? 1 : ((d < 0) ? -1 : 0));
   }
 
-  public Value createJimpleConstantValue(cp_info[] constant_pool) {
+  public Value createJimpleConstantValue(cp_info[] constant_pool, ConstantFactory constantFactory) {
     return constancFactory.createLongConstant(convert());
   }
 }

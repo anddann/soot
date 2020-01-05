@@ -28,6 +28,7 @@ import java.util.List;
 import soot.Unit;
 import soot.UnitBox;
 import soot.UnitPrinter;
+import soot.baf.Baf;
 import soot.util.Switch;
 
 public abstract class AbstractBranchInst extends AbstractInst {
@@ -35,7 +36,8 @@ public abstract class AbstractBranchInst extends AbstractInst {
 
   final List<UnitBox> targetBoxes;
 
-  AbstractBranchInst(UnitBox targetBox) {
+  AbstractBranchInst(UnitBox targetBox, Baf myBaf) {
+    super(myBaf);
     this.targetBox = targetBox;
 
     targetBoxes = Collections.singletonList(targetBox);

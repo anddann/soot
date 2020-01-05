@@ -30,6 +30,7 @@ import soot.NullType;
 import soot.SootMethodRef;
 import soot.UnitPrinter;
 import soot.Value;
+import soot.baf.Baf;
 import soot.grimp.Grimp;
 import soot.grimp.Precedence;
 import soot.grimp.PrecedenceTest;
@@ -38,7 +39,7 @@ import soot.grimp.internal.GVirtualInvokeExpr;
 public class DVirtualInvokeExpr extends GVirtualInvokeExpr {
   private HashSet<Object> thisLocals;
 
-  public DVirtualInvokeExpr(Value base, SootMethodRef methodRef, java.util.List args, HashSet<Object> thisLocals) {
+  public DVirtualInvokeExpr(Value base, SootMethodRef methodRef, java.util.List args, HashSet<Object> thisLocals, Grimp myGrimp, Baf myBaf) {
     super(base, methodRef, args, myBaf, myGrimp);
 
     this.thisLocals = thisLocals;
@@ -126,6 +127,6 @@ public class DVirtualInvokeExpr extends GVirtualInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DVirtualInvokeExpr(Grimp.cloneIfNecessary(getBase()), methodRef, clonedArgs, thisLocals);
+    return new DVirtualInvokeExpr(Grimp.cloneIfNecessary(getBase()), methodRef, clonedArgs, thisLocals, myGrimp, myBaf);
   }
 }

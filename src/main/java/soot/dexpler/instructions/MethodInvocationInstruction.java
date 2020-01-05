@@ -46,27 +46,40 @@ import org.jf.dexlib2.iface.reference.MethodReference;
 import soot.Local;
 import soot.Modifier;
 import soot.RefType;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootFieldRef;
 import soot.SootMethodRef;
+import soot.SootResolver;
 import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.InvokeStmt;
+import soot.jimple.Jimple;
 import soot.jimple.MethodHandle.Kind;
+import soot.options.Options;
 
 public abstract class MethodInvocationInstruction extends DexlibAbstractInstruction implements DanglingInstruction {
 
   // stores the dangling InvokeExpr
   protected InvokeExpr invocation;
   protected AssignStmt assign = null;
+  private Jimple myJimple;
+  private DalvikTyper myDalvikTyper;
+  private Scene myScene;
+  private SootResolver mySootResolver;
 
-  public MethodInvocationInstruction(Instruction instruction, int codeAddress) {
+  public MethodInvocationInstruction(Instruction instruction, int codeAddress, Options myOptions, Jimple myJimple, DalvikTyper myDalvikTyper, Scene myScene, SootResolver mySootResolver) {
     super(instruction, codeAddress, myOptions);
+    this.myJimple = myJimple;
+    this.myDalvikTyper = myDalvikTyper;
+    this.myScene = myScene;
+    this.mySootResolver = mySootResolver;
   }
 
   @Override
@@ -96,15 +109,15 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
 
       if (invocation instanceof InstanceInvokeExpr) {
         Type t = invocation.getMethodRef().declaringClass().getType();
-        myDalvikTyper().setType(((InstanceInvokeExpr) invocation).getBaseBox(), t, true);
+        myDalvikTyper.setType(((InstanceInvokeExpr) invocation).getBaseBox(), t, true);
         // myDalvikTyper().setObjectType(assign.getLeftOpBox());
       }
       int i = 0;
       for (Type pt : invocation.getMethodRef().parameterTypes()) {
-        myDalvikTyper().setType(invocation.getArgBox(i++), pt, true);
+        myDalvikTyper.setType(invocation.getArgBox(i++), pt, true);
       }
       if (assign != null) {
-        myDalvikTyper().setType(assign.getLeftOpBox(), invocation.getType(), false);
+        myDalvikTyper.setType(assign.getLeftOpBox(), invocation.getType(), false);
       }
 
     }

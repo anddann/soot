@@ -127,8 +127,8 @@ public abstract class AbstractInstanceFieldRef implements InstanceFieldRef, Conv
     return getField().equivHashCode() * 101 + baseBox.getValue().equivHashCode() + 17;
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    ((ConvertToBaf) getBase()).convertToBaf(context, out);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+    ((ConvertToBaf) getBase()).convertToBaf(context, out, myBaf);
     Unit u;
     out.add(u = myBaf.newFieldGetInst(fieldRef));
 

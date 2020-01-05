@@ -32,7 +32,7 @@ public class BIfGtInst extends AbstractBranchInst implements IfGtInst {
   private Baf myBaf;
 
   public BIfGtInst(Unit target, Baf myBaf) {
-    super(myBaf.newInstBox(target));
+    super(myBaf.newInstBox(target), myBaf);
     this.myBaf = myBaf;
   }
 

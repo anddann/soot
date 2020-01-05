@@ -32,7 +32,7 @@ import soot.util.Switch;
 
 public class JMulExpr extends AbstractJimpleFloatBinopExpr implements MulExpr {
   public JMulExpr(Value op1, Value op2) {
-    super(op1, op2);
+    super(op1, op2, myJimple);
   }
 
   public final String getSymbol() {
@@ -43,7 +43,7 @@ public class JMulExpr extends AbstractJimpleFloatBinopExpr implements MulExpr {
     ((ExprSwitch) sw).caseMulExpr(this);
   }
 
-  Object makeBafInst(Type opType) {
+  Object makeBafInst(Type opType, Baf myBaf) {
     return myBaf.newMulInst(this.getOp1().getType());
   }
 

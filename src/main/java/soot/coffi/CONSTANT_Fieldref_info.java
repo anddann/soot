@@ -22,10 +22,9 @@ package soot.coffi;
  * #L%
  */
 
-import soot.Scene;
 import soot.Type;
 import soot.Value;
-import soot.jimple.Jimple;
+import soot.jimple.ConstantFactory;
 
 /**
  * A constant pool entry of type CONSTANT_Fieldref.
@@ -107,7 +106,7 @@ class CONSTANT_Fieldref_info extends cp_info {
         cp_constant_pool);
   }
 
-  public Value createJimpleConstantValue(cp_info[] constant_pool) {
+  public Value createJimpleConstantValue(cp_info[] constant_pool, ConstantFactory constantFactory) {
     CONSTANT_Class_info cc = (CONSTANT_Class_info) (constant_pool[class_index]);
     CONSTANT_NameAndType_info cn = (CONSTANT_NameAndType_info) (constant_pool[name_and_type_index]);
     String className = cc.toString(constant_pool);

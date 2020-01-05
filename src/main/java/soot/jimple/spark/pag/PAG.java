@@ -66,6 +66,7 @@ import soot.jimple.spark.builder.MethodNodeFactory;
 import soot.jimple.spark.internal.ClientAccessibilityOracle;
 import soot.jimple.spark.internal.SparkLibraryHelper;
 import soot.jimple.spark.internal.TypeManager;
+import soot.jimple.spark.sets.AllSharedListNodes;
 import soot.jimple.spark.sets.BitPointsToSet;
 import soot.jimple.spark.sets.DoublePointsToSet;
 import soot.jimple.spark.sets.EmptyPointsToSet;
@@ -102,14 +103,16 @@ public class PAG implements PointsToAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(PAG.class);
   private final PhaseOptions myPhaseOptions;
   private final Scene myScene;
+  private final AllSharedListNodes myAllSharedListNodes;
   private ArrayElement myArrayElement;
   private ConstantFactory constantFactory;
   private EntryPoints myEntrypoints;
 
-  public PAG(PhaseOptions myPhaseOptions, Scene myScene, ArrayElement myArrayElement, ConstantFactory constantFactory, EntryPoints myEntrypoints, final SparkOptions opts) {
+  public PAG(PhaseOptions myPhaseOptions, Scene myScene, AllSharedListNodes myAllSharedListNodes, ArrayElement myArrayElement, ConstantFactory constantFactory, EntryPoints myEntrypoints, final SparkOptions opts) {
         this.myPhaseOptions = myPhaseOptions;
         this.myScene = myScene;
-        this.myArrayElement = myArrayElement;
+    this.myAllSharedListNodes = myAllSharedListNodes;
+    this.myArrayElement = myArrayElement;
     this.constantFactory = constantFactory;
     this.myEntrypoints = myEntrypoints;
     this.opts = opts;
@@ -138,7 +141,7 @@ public class PAG implements PointsToAnalysis {
         setFactory = SharedHybridSet.getFactory();
         break;
       case SparkOptions.set_impl_sharedlist:
-        setFactory = SharedListSet.getFactory();
+        setFactory = SharedListSet.getFactory(this.myAllSharedListNodes);
         break;
       case SparkOptions.set_impl_array:
         setFactory = SortedArraySet.getFactory();
@@ -160,7 +163,7 @@ public class PAG implements PointsToAnalysis {
             oldF = SharedHybridSet.getFactory();
             break;
           case SparkOptions.double_set_old_sharedlist:
-            oldF = SharedListSet.getFactory();
+            oldF = SharedListSet.getFactory(this.myAllSharedListNodes);
             break;
           case SparkOptions.double_set_old_array:
             oldF = SortedArraySet.getFactory();
@@ -182,7 +185,7 @@ public class PAG implements PointsToAnalysis {
             newF = SharedHybridSet.getFactory();
             break;
           case SparkOptions.double_set_new_sharedlist:
-            newF = SharedListSet.getFactory();
+            newF = SharedListSet.getFactory(this.myAllSharedListNodes);
             break;
           case SparkOptions.double_set_new_array:
             newF = SortedArraySet.getFactory();
@@ -720,7 +723,7 @@ public class PAG implements PointsToAnalysis {
           SootField sf = (SootField) value;
 
           if (accessibilityOracle.isAccessible(sf)) {
-            type.apply(new SparkLibraryHelper(this, ret, null));
+            type.apply(new SparkLibraryHelper(this, ret, null, myArrayElement));
           }
         }
       }
@@ -840,7 +843,7 @@ public class PAG implements PointsToAnalysis {
         SootField sf = (SootField) field;
         Type type = sf.getType();
         if (accessibilityOracle.isAccessible(sf)) {
-          type.apply(new SparkLibraryHelper(this, ret, method));
+          type.apply(new SparkLibraryHelper(this, ret, method, myArrayElement));
         }
       }
     }

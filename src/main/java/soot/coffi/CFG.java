@@ -65,7 +65,6 @@ import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.LookupSwitchStmt;
-import soot.jimple.NullConstant;
 import soot.jimple.StaticFieldRef;
 import soot.jimple.Stmt;
 import soot.jimple.TableSwitchStmt;
@@ -3844,7 +3843,7 @@ public class CFG {
             // logger.debug("Soot does not currently support static arguments to bootstrap methods. They will be stripped.");
             for (short bsmArgIndex : bsmArgIndices) {
               cp_info cpEntry = constant_pool[bsmArgIndex];
-              Value val = cpEntry.createJimpleConstantValue(constant_pool);
+              Value val = cpEntry.createJimpleConstantValue(constant_pool, constantFactory);
               bootstrapArgs.add(val);
             }
           }

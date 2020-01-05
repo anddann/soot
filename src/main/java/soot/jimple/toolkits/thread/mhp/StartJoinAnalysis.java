@@ -96,7 +96,7 @@ public class StartJoinAnalysis extends ForwardFlowAnalysis {
       // Get supporting info and analyses
       MHGPostDominatorsFinder pd = new MHGPostDominatorsFinder(new BriefUnitGraph(sm.getActiveBody(), myPhaseDumper));
       // EqualUsesAnalysis lif = new EqualUsesAnalysis(g);
-      LocalMustAliasAnalysis lma = new LocalMustAliasAnalysis(g);
+      LocalMustAliasAnalysis lma = new LocalMustAliasAnalysis(g, myScene, myInteractionHandler, interaticveMode);
       TransitiveTargets runMethodTargets = new TransitiveTargets(callGraph, new Filter(new RunMethodsPred()));
 
       // Build a map from start stmt to possible run methods,

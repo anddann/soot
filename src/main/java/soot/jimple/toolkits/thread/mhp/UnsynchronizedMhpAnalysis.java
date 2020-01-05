@@ -23,6 +23,10 @@ package soot.jimple.toolkits.thread.mhp;
  */
 
 import soot.Scene;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
+import soot.util.PhaseDumper;
 
 /**
  * @deprecated This class has been added to maintain compatibility while it is being renamed to
@@ -31,7 +35,8 @@ import soot.Scene;
 @Deprecated
 public class UnsynchronizedMhpAnalysis extends SynchObliviousMhpAnalysis {
 
-    public UnsynchronizedMhpAnalysis(Scene myScene) {
-        super(myScene);
-    }
+  public UnsynchronizedMhpAnalysis(Scene myScene, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager,
+      PhaseDumper myPhaseDumper, Options myOptions) {
+    super(myScene, throwAnalysis, myManager, myPhaseDumper, myOptions);
+  }
 }

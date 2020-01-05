@@ -40,12 +40,11 @@ import soot.dexpler.tags.FloatOpTag;
 import soot.dexpler.tags.IntOpTag;
 import soot.dexpler.tags.LongOpTag;
 import soot.jimple.AssignStmt;
-import soot.jimple.Jimple;
 
 public class BinopInstruction extends TaggedInstruction {
 
   public BinopInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override

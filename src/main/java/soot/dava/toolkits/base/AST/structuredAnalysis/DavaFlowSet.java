@@ -65,6 +65,7 @@ public class DavaFlowSet<T> extends AbstractFlowSet<T> {
   // breaks
   // targetting it
   HashMap<Serializable, List<DavaFlowSet<T>>> implicitContinues; // map a node
+  private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
   // and all
   // the
   // dataflowsets
@@ -74,7 +75,8 @@ public class DavaFlowSet<T> extends AbstractFlowSet<T> {
   // targetting
   // it
 
-  public DavaFlowSet() {
+  public DavaFlowSet(ClosestAbruptTargetFinder myClosestAbruptTargetFinder) {
+    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     maxElements = DEFAULT_SIZE;
     elements = (T[]) new Object[DEFAULT_SIZE];
     numElements = 0;
@@ -84,7 +86,7 @@ public class DavaFlowSet<T> extends AbstractFlowSet<T> {
     implicitContinues = new HashMap<Serializable, List<DavaFlowSet<T>>>();
   }
 
-  public DavaFlowSet(DavaFlowSet<T> other) {
+  public DavaFlowSet(DavaFlowSet<T> other, ClosestAbruptTargetFinder myClosestAbruptTargetFinder) {
     numElements = other.numElements;
     maxElements = other.maxElements;
     elements = other.elements.clone();
@@ -92,6 +94,7 @@ public class DavaFlowSet<T> extends AbstractFlowSet<T> {
     continueList = (HashMap<Serializable, List<DavaFlowSet<T>>>) other.continueList.clone();
     implicitBreaks = (HashMap<Serializable, List<DavaFlowSet<T>>>) other.implicitBreaks.clone();
     implicitContinues = (HashMap<Serializable, List<DavaFlowSet<T>>>) other.implicitContinues.clone();
+    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
   }
 
   /** Returns true if flowSet is the same type of flow set as this. */
@@ -100,11 +103,11 @@ public class DavaFlowSet<T> extends AbstractFlowSet<T> {
   }
 
   public DavaFlowSet<T> clone() {
-    return new DavaFlowSet<T>(this);
+    return new DavaFlowSet<T>(this, myClosestAbruptTargetFinder);
   }
 
   public FlowSet<T> emptySet() {
-    return new DavaFlowSet<T>();
+    return new DavaFlowSet<T>(myClosestAbruptTargetFinder);
   }
 
   public void clear() {
@@ -212,7 +215,7 @@ public class DavaFlowSet<T> extends AbstractFlowSet<T> {
       DavaFlowSet<T> workingSet;
 
       if (dest == other || dest == this) {
-        workingSet = new DavaFlowSet<T>();
+        workingSet = new DavaFlowSet<T>(myClosestAbruptTargetFinder);
       } else {
         workingSet = dest;
         workingSet.clear();
@@ -239,7 +242,7 @@ public class DavaFlowSet<T> extends AbstractFlowSet<T> {
       DavaFlowSet<T> workingSet;
 
       if (dest == other || dest == this) {
-        workingSet = new DavaFlowSet<T>();
+        workingSet = new DavaFlowSet<T>(myClosestAbruptTargetFinder);
       } else {
         workingSet = dest;
         workingSet.clear();

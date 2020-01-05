@@ -256,14 +256,14 @@ public class Jimple {
    * Constructs a ShlExpr(Immediate, Immediate) grammar chunk.
    */
   public ShlExpr newShlExpr(Value op1, Value op2) {
-    return new JShlExpr(op1, op2);
+    return new JShlExpr(op1, op2, primTypeCollector, jimple);
   }
 
   /**
    * Constructs a RemExpr(Immediate, Immediate) grammar chunk.
    */
   public RemExpr newRemExpr(Value op1, Value op2) {
-    return new JRemExpr(op1, op2);
+    return new JRemExpr(op1, op2, primTypeCollector, this);
   }
 
   /**
@@ -291,7 +291,7 @@ public class Jimple {
    * Constructs a LeExpr(Immediate, Immediate) grammar chunk.
    */
   public LeExpr newLeExpr(Value op1, Value op2) {
-    return new JLeExpr(op1, op2);
+    return new JLeExpr(op1, op2, primTypeCollector);
   }
 
   /**
@@ -498,7 +498,7 @@ public class Jimple {
    * Constructs a NewInterfaceInvokeExpr(Local base, SootMethodRef method, List of Immediate) grammar chunk.
    */
   public InterfaceInvokeExpr newInterfaceInvokeExpr(Local base, SootMethodRef method, List<? extends Value> args) {
-    return new JInterfaceInvokeExpr(base, method, args);
+    return new JInterfaceInvokeExpr(base, method, args,this);
   }
 
   /**
@@ -534,7 +534,7 @@ public class Jimple {
    * Constructs a EnterMonitorStmt(Immediate) grammar chunk.
    */
   public EnterMonitorStmt newEnterMonitorStmt(Value op) {
-    return new JEnterMonitorStmt(op);
+    return new JEnterMonitorStmt(op, this);
   }
 
   /**
@@ -601,7 +601,7 @@ public class Jimple {
    * Constructs a IdentityStmt(Local, IdentityRef) grammar chunk.
    */
   public IdentityStmt newIdentityStmt(Value local, Value identityRef) {
-    return new JIdentityStmt(local, identityRef);
+    return new JIdentityStmt(local, identityRef,this);
   }
 
   /**

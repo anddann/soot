@@ -87,7 +87,7 @@ public class JGotoStmt extends AbstractStmt implements GotoStmt {
     ((StmtSwitch) sw).caseGotoStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     Unit u = myBaf.newGotoInst(myBaf.newPlaceholderInst(getTarget()));
     u.addAllTagsOf(this);
     out.add(u);

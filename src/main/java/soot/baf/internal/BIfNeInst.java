@@ -32,7 +32,7 @@ public class BIfNeInst extends AbstractBranchInst implements IfNeInst {
   private final Baf myBaf;
 
   public BIfNeInst(Unit target, Baf myBaf) {
-    super(myBaf.newInstBox(target));
+    super(myBaf.newInstBox(target), myBaf);
     this.myBaf = myBaf;
   }
 

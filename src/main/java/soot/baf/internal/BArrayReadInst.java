@@ -22,14 +22,16 @@ package soot.baf.internal;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.baf.ArrayReadInst;
+import soot.baf.Baf;
 import soot.baf.InstSwitch;
 import soot.util.Switch;
 
 public class BArrayReadInst extends AbstractOpTypeInst implements ArrayReadInst {
-  public BArrayReadInst(Type opType) {
-    super(myRefType, opType);
+  public BArrayReadInst(Type opType, Baf myBaf, PrimTypeCollector primTypeCollector) {
+    super(opType, myBaf, primTypeCollector);
   }
 
   public int getInCount() {
@@ -37,7 +39,7 @@ public class BArrayReadInst extends AbstractOpTypeInst implements ArrayReadInst 
   }
 
   public Object clone() {
-    return new BArrayReadInst(getOpType());
+    return new BArrayReadInst(getOpType(), myBaf, primTypeCollector);
   }
 
   public int getInMachineCount() {

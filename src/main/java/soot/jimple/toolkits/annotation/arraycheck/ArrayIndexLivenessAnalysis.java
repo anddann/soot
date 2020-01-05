@@ -59,9 +59,9 @@ import soot.jimple.Stmt;
 import soot.jimple.SubExpr;
 import soot.jimple.internal.JAddExpr;
 import soot.jimple.internal.JSubExpr;
-import soot.options.Options;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.BackwardFlowAnalysis;
 
 class ArrayIndexLivenessAnalysis extends BackwardFlowAnalysis {
@@ -100,17 +100,15 @@ class ArrayIndexLivenessAnalysis extends BackwardFlowAnalysis {
   HashSet<Local> multiarraylocals;
 
   public ArrayIndexLivenessAnalysis(DirectedGraph dg, boolean takeFieldRef, boolean takeArrayRef, boolean takeCSE,
-      boolean takeRectArray) {
-    super(dg);
+      boolean takeRectArray, InteractionHandler myInteractionHandler, boolean interaticveMode) {
+    super(dg, interaticveMode, myInteractionHandler);
 
     fieldin = takeFieldRef;
     arrayin = takeArrayRef;
     csin = takeCSE;
     rectarray = takeRectArray;
 
-    if (myOptions.debug()) {
-      logger.debug("Enter ArrayIndexLivenessAnalysis");
-    }
+    logger.debug("Enter ArrayIndexLivenessAnalysis");
 
     eug = (ExceptionalUnitGraph) dg;
     retrieveAllArrayLocals(eug.getBody(), fullSet);
@@ -150,9 +148,8 @@ class ArrayIndexLivenessAnalysis extends BackwardFlowAnalysis {
 
     doAnalysis();
 
-    if (myOptions.debug()) {
-      logger.debug("Leave ArrayIndexLivenessAnalysis");
-    }
+    logger.debug("Leave ArrayIndexLivenessAnalysis");
+
   }
 
   public HashMap<Object, HashSet<Value>> getLocalToFieldRef() {

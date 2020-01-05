@@ -30,6 +30,7 @@ import soot.Unit;
 import soot.UnitPrinter;
 import soot.Value;
 import soot.ValueBox;
+import soot.baf.Baf;
 
 @SuppressWarnings("serial")
 public abstract class Constant implements Value, ConvertToBaf, Immediate {
@@ -39,7 +40,7 @@ public abstract class Constant implements Value, ConvertToBaf, Immediate {
   }
 
   /** Adds a Baf instruction pushing this constant to the stack onto <code>out</code>. */
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     Unit u = context.getBafBody().getMyBaf().newPushInst(this);
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);

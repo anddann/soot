@@ -690,7 +690,7 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
           constantPool[i] = new CONSTANT_NameAndType_Info(this);
           break;
         case CONSTANT_Utf8:
-          constantPool[i] = new CONSTANT_Utf8_Info(this);
+          constantPool[i] = new CONSTANT_Utf8_Info(this, constantFactory);
           break;
         default:
           println("Unknown entry: " + tag);

@@ -23,7 +23,7 @@ package soot.coffi;
  */
 
 import soot.Value;
-import soot.jimple.IntConstant;
+import soot.jimple.ConstantFactory;
 
 /**
  * A constant pool entry of type CONSTANT_Integer
@@ -87,7 +87,7 @@ class CONSTANT_Integer_info extends cp_info {
     return ((int) bytes) - (int) cu.bytes;
   }
 
-  public Value createJimpleConstantValue(cp_info[] constant_pool) {
+  public Value createJimpleConstantValue(cp_info[] constant_pool, ConstantFactory constantFactory) {
     return constancFactory.createIntConstant((int) bytes);
   }
 }

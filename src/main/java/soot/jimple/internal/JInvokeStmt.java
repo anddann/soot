@@ -91,12 +91,12 @@ public class JInvokeStmt extends AbstractStmt implements InvokeStmt {
     ((StmtSwitch) sw).caseInvokeStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     InvokeExpr ie = getInvokeExpr();
 
     context.setCurrentUnit(this);
 
-    ((ConvertToBaf) ie).convertToBaf(context, out);
+    ((ConvertToBaf) ie).convertToBaf(context, out, myBaf);
     if (!ie.getMethodRef().returnType().equals(VoidType.v())) {
       Unit u = myBaf.newPopInst(ie.getMethodRef().returnType());
       u.addAllTagsOf(this);

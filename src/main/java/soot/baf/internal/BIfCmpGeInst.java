@@ -25,14 +25,13 @@ package soot.baf.internal;
 import soot.AbstractJasminClass;
 import soot.Type;
 import soot.Unit;
-import soot.baf.Baf;
 import soot.baf.IfCmpGeInst;
 import soot.baf.InstSwitch;
 import soot.util.Switch;
 
 public class BIfCmpGeInst extends AbstractOpTypeBranchInst implements IfCmpGeInst {
   public BIfCmpGeInst(Type opType, Unit target) {
-    super(opType, myBaf.newInstBox(target));
+    super(opType, myBaf.newInstBox(target), myBaf, primTypeCollector);
   }
 
   public int getInCount() {

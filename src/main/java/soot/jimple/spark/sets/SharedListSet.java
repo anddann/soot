@@ -70,17 +70,20 @@ add: O(n), and might add things to other lists too
  * Implementation of a points-to set as a sorted list of elements, but where similar lists share parts of their data.
  */
 public class SharedListSet extends PointsToSetInternal {
-  public SharedListSet(Type type, PAG pag) {
+  private AllSharedListNodes myAllSharedListNodes;
+
+  public SharedListSet(Type type, AllSharedListNodes myAllSharedListNodes, PAG pag) {
     super(type);
+    this.myAllSharedListNodes = myAllSharedListNodes;
     this.pag = pag;
   }
 
   // Ripped from the other points-to sets - returns a factory that can be
   // used to construct SharedHybridSets
-  public final static P2SetFactory getFactory() {
+  public final static P2SetFactory getFactory(final AllSharedListNodes myAllSharedListNodes) {
     return new P2SetFactory() {
       public final PointsToSetInternal newSet(Type type, PAG pag) {
-        return new SharedListSet(type, pag);
+        return new SharedListSet(type, myAllSharedListNodes, pag);
       }
     };
   }

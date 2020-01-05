@@ -23,6 +23,7 @@ package soot.coffi;
  */
 
 import soot.Value;
+import soot.jimple.ConstantFactory;
 
 /**
  * A constant pool entry of type CONSTANT_InvokeDynamic
@@ -93,7 +94,7 @@ class CONSTANT_InvokeDynamic_info extends cp_info {
     return i;
   }
 
-  public Value createJimpleConstantValue(cp_info[] constant_pool) {
+  public Value createJimpleConstantValue(cp_info[] constant_pool, ConstantFactory constantFactory) {
     throw new UnsupportedOperationException("cannot convert to Jimple: " + typeName());
   }
 }

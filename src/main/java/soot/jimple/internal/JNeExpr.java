@@ -31,7 +31,7 @@ import soot.util.Switch;
 
 public class JNeExpr extends AbstractJimpleIntBinopExpr implements NeExpr {
   public JNeExpr(Value op1, Value op2) {
-    super(op1, op2);
+    super(op1, op2, primTypeCollector);
   }
 
   public final String getSymbol() {

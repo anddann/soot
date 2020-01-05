@@ -23,6 +23,7 @@ package soot.coffi;
  */
 
 import soot.Value;
+import soot.jimple.ConstantFactory;
 
 /**
  * A constant pool entry of type CONSTANT_MethodHandle
@@ -89,8 +90,8 @@ class CONSTANT_MethodHandle_info extends cp_info {
     return kind - cu.kind;
   }
 
-  public Value createJimpleConstantValue(cp_info[] constant_pool) {
+  public Value createJimpleConstantValue(cp_info[] constant_pool, ConstantFactory constantFactory) {
     // FIXME may need to determine static-ness based on "kind" field
-    return constant_pool[target_index].createJimpleConstantValue(constant_pool);
+    return constant_pool[target_index].createJimpleConstantValue(constant_pool, constantFactory);
   }
 }

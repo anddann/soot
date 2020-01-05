@@ -29,6 +29,7 @@ import soot.ValueBox;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.NewExpr;
 import soot.toolkits.graph.DirectedGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.BackwardFlowAnalysis;
 import soot.toolkits.scalar.FlowSet;
@@ -42,9 +43,8 @@ public class New2InitFlowAnalysis extends BackwardFlowAnalysis<Unit, FlowSet> {
 
   FlowSet emptySet = new ArraySparseSet();
 
-  public New2InitFlowAnalysis(DirectedGraph<Unit> graph) {
-    super(graph);
-
+  public New2InitFlowAnalysis(DirectedGraph<Unit> graph, boolean interaticveMode, InteractionHandler myInteractionHandler) {
+    super(graph, interaticveMode, myInteractionHandler);
     doAnalysis();
   }
 

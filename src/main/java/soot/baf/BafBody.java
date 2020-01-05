@@ -115,7 +115,7 @@ public class BafBody extends Body {
         List<Unit> conversionList = new ArrayList<Unit>();
 
         context.setCurrentUnit(s);
-        ((ConvertToBaf) s).convertToBaf(context, conversionList);
+        ((ConvertToBaf) s).convertToBaf(context, conversionList, myBaf);
 
         stmtToFirstInstruction.put(s, conversionList.get(0));
         getUnits().addAll(conversionList);

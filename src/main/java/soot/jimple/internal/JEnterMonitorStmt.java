@@ -37,7 +37,9 @@ import soot.jimple.StmtSwitch;
 import soot.util.Switch;
 
 public class JEnterMonitorStmt extends AbstractOpStmt implements EnterMonitorStmt {
-  public JEnterMonitorStmt(Value op) {
+    private Jimple myJimple;
+
+    public JEnterMonitorStmt(Value op, Jimple myJimple) {
     this(myJimple.newImmediateBox(op));
   }
 
@@ -46,7 +48,7 @@ public class JEnterMonitorStmt extends AbstractOpStmt implements EnterMonitorStm
   }
 
   public Object clone() {
-    return new JEnterMonitorStmt(Jimple.cloneIfNecessary(getOp()));
+    return new JEnterMonitorStmt(Jimple.cloneIfNecessary(getOp()), myJimple);
   }
 
   public String toString() {
@@ -64,8 +66,8 @@ public class JEnterMonitorStmt extends AbstractOpStmt implements EnterMonitorStm
 
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    ((ConvertToBaf) (getOp())).convertToBaf(context, out);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf);
     Unit u = myBaf.newEnterMonitorInst();
     u.addAllTagsOf(this);
     out.add(u);

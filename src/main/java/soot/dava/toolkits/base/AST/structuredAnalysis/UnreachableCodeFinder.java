@@ -72,7 +72,11 @@ public class UnreachableCodeFinder extends StructuredAnalysis {
 
   public class UnreachableCodeFlowSet extends DavaFlowSet {
 
-    public UnreachableCodeFlowSet clone() {
+      public UnreachableCodeFlowSet() {
+          super(myClosestAbruptTargetFinder);
+      }
+
+      public UnreachableCodeFlowSet clone() {
       if (this.size() != 1) {
         throw new DecompilationException("unreachableCodeFlow set size should always be 1");
       }

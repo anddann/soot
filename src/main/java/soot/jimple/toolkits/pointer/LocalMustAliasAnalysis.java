@@ -51,6 +51,7 @@ import soot.jimple.ThisRef;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.ReachableMethods;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
 
 /**
@@ -97,12 +98,13 @@ public class LocalMustAliasAnalysis extends ForwardFlowAnalysis<Unit, HashMap<Va
 
   /** the containing method */
   protected SootMethod container;
+  private Scene myScene;
 
   /**
    * Creates a new {@link LocalMustAliasAnalysis} tracking local variables.
    */
-  public LocalMustAliasAnalysis(UnitGraph g) {
-    this(g, false);
+  public LocalMustAliasAnalysis(UnitGraph g, Scene myScene, InteractionHandler myInteractionHandler, boolean interaticveMode) {
+    this(g, false, myInteractionHandler, myScene, interaticveMode);
   }
 
   /**
@@ -110,9 +112,10 @@ public class LocalMustAliasAnalysis extends ForwardFlowAnalysis<Unit, HashMap<Va
    * analysis to determine which fields are (transitively) written to by this method. All fields which that are not written
    * to are tracked just as local variables. This semantics is sound for single-threaded programs.
    */
-  public LocalMustAliasAnalysis(UnitGraph g, boolean tryTrackFieldAssignments) {
-    super(g);
+  public LocalMustAliasAnalysis(UnitGraph g, boolean tryTrackFieldAssignments, InteractionHandler myInteractionHandler, Scene myScene, boolean interaticveMode) {
+    super(g, interaticveMode, myInteractionHandler);
     this.container = g.getBody().getMethod();
+    this.myScene = myScene;
     this.localsAndFieldRefs = new HashSet<Value>();
 
     // add all locals

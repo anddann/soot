@@ -231,7 +231,7 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
         if (libOption != CGOptions.library_disabled && (accessibilityOracle.isAccessible(method))) {
           if (rightOp instanceof IdentityRef) {
             Type rt = rightOp.getType();
-            rt.apply(new SparkLibraryHelper(pag, src, method));
+            rt.apply(new SparkLibraryHelper(pag, src, method, myArrayElement));
           }
         }
 

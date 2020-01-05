@@ -43,15 +43,15 @@ public class ClassHierarchy {
   @Inject
   public ClassHierarchy(PrimTypeCollector primTypeCollector) {
     this.primTypeCollector = primTypeCollector;
-    BOOLEAN = new TypeNode(0, primTypeCollector.getBooleanType(), myClassHierarchy);
-    BYTE = new TypeNode(1, primTypeCollector.getByteType(), myClassHierarchy);
-    SHORT = new TypeNode(2, primTypeCollector.getShortType(), myClassHierarchy);
-    CHAR = new TypeNode(3, primTypeCollector.getCharType(), myClassHierarchy);
-    INT = new TypeNode(4, primTypeCollector.getIntType(), myClassHierarchy);
-    TOP = new TypeNode(5, null, myClassHierarchy);
-    R0_1 = new TypeNode(6, null, myClassHierarchy);
-    R0_127 = new TypeNode(7, null, myClassHierarchy);
-    R0_32767 = new TypeNode(8, null, myClassHierarchy);
+    BOOLEAN = new TypeNode(0, primTypeCollector.getBooleanType(), this);
+    BYTE = new TypeNode(1, primTypeCollector.getByteType(), this);
+    SHORT = new TypeNode(2, primTypeCollector.getShortType(), this);
+    CHAR = new TypeNode(3, primTypeCollector.getCharType(), this);
+    INT = new TypeNode(4, primTypeCollector.getIntType(), this);
+    TOP = new TypeNode(5, null, this);
+    R0_1 = new TypeNode(6, null, this);
+    R0_127 = new TypeNode(7, null, this);
+    R0_32767 = new TypeNode(8, null, this);
     lca_1 = new TypeNode[][]{ { BOOLEAN, TOP, TOP, TOP, TOP, TOP, BOOLEAN, TOP, TOP, },
         { TOP, BYTE, SHORT, INT, INT, TOP, BYTE, BYTE, SHORT, }, { TOP, SHORT, SHORT, INT, INT, TOP, SHORT, SHORT, SHORT, },
         { TOP, INT, INT, CHAR, INT, TOP, CHAR, CHAR, CHAR, }, { TOP, INT, INT, INT, INT, TOP, INT, INT, INT, },

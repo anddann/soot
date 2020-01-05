@@ -37,7 +37,7 @@ import soot.jimple.Stmt;
 
 @SuppressWarnings("serial")
 public abstract class AbstractStmt extends AbstractUnit implements Stmt, ConvertToBaf {
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     Unit u = context.getBafBody().getMyBaf().newNopInst();
     out.add(u);
     u.addAllTagsOf(this);

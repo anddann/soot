@@ -54,9 +54,11 @@ public class InstructionFactory {
    * @param myScene
    * @param myJimple
    * @param myOptions
+   * @param myDalvikTyper
+   * @param constantFactory
    */
-  public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress, Jimple jimple, ConstantFactory constancFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Jimple myJimple, Options myOptions) {
-    return fromOpcode(instruction.getOpcode(), instruction, codeAddress, constancFactory, jimple, dalivkTyper, primTypeCollector,  myScene, myOptions, myJimple);
+  public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress, Jimple jimple, ConstantFactory constancFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Jimple myJimple, Options myOptions, DalvikTyper myDalvikTyper, ConstantFactory constantFactory) {
+    return fromOpcode(instruction.getOpcode(), instruction, codeAddress, constancFactory, jimple, dalivkTyper, primTypeCollector,  myScene, myOptions, myJimple, myDalvikTyper, constantFactory);
   }
 
   /**
@@ -73,8 +75,10 @@ public class InstructionFactory {
    * @param myScene
    * @param myOptions
    * @param myJimple
+   * @param myDalvikTyper
+   * @param constantFactory
    */
-  public static DexlibAbstractInstruction fromOpcode(Opcode op, Instruction instruction, int codeAddress, ConstantFactory constancFactory, Jimple jimple, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, Jimple myJimple) {
+  public static DexlibAbstractInstruction fromOpcode(Opcode op, Instruction instruction, int codeAddress, ConstantFactory constancFactory, Jimple jimple, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, Jimple myJimple, DalvikTyper myDalvikTyper, ConstantFactory constantFactory) {
     switch (op) {
 
       case SPARSE_SWITCH_PAYLOAD:
@@ -391,7 +395,7 @@ public class InstructionFactory {
       case SHL_INT_LIT8:
       case SHR_INT_LIT8:
       case USHR_INT_LIT8:
-        return new BinopLitInstruction(instruction, codeAddress);
+        return new BinopLitInstruction(instruction, codeAddress, constantFactory, myJimple, myOptions);
 
       default:
         throw new IllegalArgumentException("Opcode: " + op + " @ 0x" + Integer.toHexString(codeAddress));

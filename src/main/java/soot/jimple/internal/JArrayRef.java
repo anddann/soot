@@ -32,7 +32,6 @@ import soot.NullType;
 import soot.Type;
 import soot.Unit;
 import soot.UnitPrinter;
-import soot.UnknownType;
 import soot.Value;
 import soot.ValueBox;
 import soot.baf.Baf;
@@ -152,9 +151,9 @@ public class JArrayRef implements ArrayRef, ConvertToBaf {
     ((RefSwitch) sw).caseArrayRef(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    ((ConvertToBaf) getBase()).convertToBaf(context, out);
-    ((ConvertToBaf) getIndex()).convertToBaf(context, out);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+    ((ConvertToBaf) getBase()).convertToBaf(context, out, myBaf);
+    ((ConvertToBaf) getIndex()).convertToBaf(context, out, myBaf);
 
     Unit currentUnit = context.getCurrentUnit();
 

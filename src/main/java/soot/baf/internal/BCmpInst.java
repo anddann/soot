@@ -29,7 +29,7 @@ import soot.util.Switch;
 
 public class BCmpInst extends AbstractOpTypeInst implements CmpInst {
   public BCmpInst(Type opType) {
-    super(myRefType, opType);
+    super(myRefType, opType, myBaf);
 
   }
 

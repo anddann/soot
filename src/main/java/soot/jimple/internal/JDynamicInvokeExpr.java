@@ -220,10 +220,10 @@ public class JDynamicInvokeExpr extends AbstractInvokeExpr implements DynamicInv
     ((ExprSwitch) sw).caseDynamicInvokeExpr(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
     if (argBoxes != null) {
       for (ValueBox element : argBoxes) {
-        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out);
+        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, myBaf);
       }
     }
 

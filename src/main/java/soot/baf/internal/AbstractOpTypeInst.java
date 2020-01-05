@@ -25,19 +25,21 @@ package soot.baf.internal;
 import soot.AbstractJasminClass;
 import soot.ArrayType;
 import soot.NullType;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Type;
 import soot.UnitPrinter;
 import soot.baf.Baf;
 
 public abstract class AbstractOpTypeInst extends AbstractInst {
-  private final RefType myRefType;
+  protected final PrimTypeCollector primTypeCollector;
   protected Type opType;
 
-  protected AbstractOpTypeInst(RefType myRefType, Type opType) {
-    this.myRefType = myRefType;
+  protected AbstractOpTypeInst(Type opType, Baf myBaf, PrimTypeCollector primTypeCollector) {
+    super(myBaf);
+    this.primTypeCollector = primTypeCollector;
     if (opType instanceof NullType || opType instanceof ArrayType || opType instanceof RefType) {
-      opType = this.myRefType;
+      opType = this.primTypeCollector.getRefType();
     }
 
     this.opType = opType;
@@ -50,7 +52,7 @@ public abstract class AbstractOpTypeInst extends AbstractInst {
   public void setOpType(Type t) {
     opType = t;
     if (opType instanceof NullType || opType instanceof ArrayType || opType instanceof RefType) {
-      opType = myRefType;
+      opType =  this.primTypeCollector.getRefType();
     }
   }
 

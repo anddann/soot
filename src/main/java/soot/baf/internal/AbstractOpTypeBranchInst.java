@@ -24,6 +24,7 @@ package soot.baf.internal;
 
 import soot.ArrayType;
 import soot.NullType;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Type;
 import soot.UnitBox;
@@ -31,12 +32,14 @@ import soot.UnitPrinter;
 import soot.baf.Baf;
 
 public abstract class AbstractOpTypeBranchInst extends AbstractBranchInst {
+  protected final PrimTypeCollector primTypeCollector;
   protected Type opType;
 
-  AbstractOpTypeBranchInst(Type opType, UnitBox targetBox) {
-    super(targetBox);
+  AbstractOpTypeBranchInst(Type opType, UnitBox targetBox, Baf myBaf, PrimTypeCollector primTypeCollector) {
+    super(targetBox, myBaf);
+    this.primTypeCollector = primTypeCollector;
     if (opType instanceof NullType || opType instanceof ArrayType || opType instanceof RefType) {
-      opType = RefType.v();
+      opType = this.primTypeCollector.getRefType();
     }
 
     this.opType = opType;
@@ -57,7 +60,7 @@ public abstract class AbstractOpTypeBranchInst extends AbstractBranchInst {
   public void setOpType(Type t) {
     opType = t;
     if (opType instanceof NullType || opType instanceof ArrayType || opType instanceof RefType) {
-      opType = RefType.v();
+      opType = primTypeCollector.getRefType();
     }
   }
 

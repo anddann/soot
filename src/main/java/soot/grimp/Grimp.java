@@ -553,11 +553,11 @@ public class Grimp {
    */
 
   public IdentityStmt newIdentityStmt(Value local, Value identityRef) {
-    return new GIdentityStmt(local, identityRef);
+    return new GIdentityStmt(local, identityRef, myGrimp);
   }
 
   public IdentityStmt newIdentityStmt(IdentityStmt s) {
-    return new GIdentityStmt(s.getLeftOp(), s.getRightOp());
+    return new GIdentityStmt(s.getLeftOp(), s.getRightOp(), myGrimp);
   }
 
   /**

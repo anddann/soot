@@ -39,6 +39,7 @@ import soot.jimple.Stmt;
 import soot.jimple.internal.AbstractNewExpr;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
 
 /**
@@ -68,12 +69,12 @@ public class LocalMustNotAliasAnalysis extends ForwardFlowAnalysis<Unit, HashMap
 
   protected Set<Local> locals;
 
-  public LocalMustNotAliasAnalysis(UnitGraph g) {
-    this(g, g.getBody());
+  public LocalMustNotAliasAnalysis(UnitGraph g, boolean interaticveMode, InteractionHandler myInteractionHandler) {
+    this(g, g.getBody(), interaticveMode, myInteractionHandler);
   }
 
-  public LocalMustNotAliasAnalysis(DirectedGraph<Unit> directedGraph, Body b) {
-    super(directedGraph);
+  public LocalMustNotAliasAnalysis(DirectedGraph<Unit> directedGraph, Body b, boolean interaticveMode, InteractionHandler myInteractionHandler) {
+    super(directedGraph, interaticveMode, myInteractionHandler);
     locals = new HashSet<Local>();
     locals.addAll(b.getLocals());
 

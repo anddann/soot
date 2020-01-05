@@ -123,16 +123,16 @@ public abstract class AbstractVirtualInvokeExpr extends AbstractInstanceInvokeEx
     up.literal(")");
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    ((ConvertToBaf) (getBase())).convertToBaf(context, out);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+    ((ConvertToBaf) (getBase())).convertToBaf(context, out, this.myBaf);
 
     if (argBoxes != null) {
       for (ValueBox element : argBoxes) {
-        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out);
+        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, this.myBaf);
       }
     }
 
-    Unit u = myBaf.newVirtualInvokeInst(methodRef);
+    Unit u = this.myBaf.newVirtualInvokeInst(methodRef);
     out.add(u);
     u.addAllTagsOf(context.getCurrentUnit());
   }

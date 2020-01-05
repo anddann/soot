@@ -64,8 +64,8 @@ public class JExitMonitorStmt extends AbstractOpStmt implements ExitMonitorStmt 
 
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out) {
-    ((ConvertToBaf) (getOp())).convertToBaf(context, out);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf);
 
     Unit u = myBaf.newExitMonitorInst();
     u.addAllTagsOf(this);

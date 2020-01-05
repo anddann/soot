@@ -1186,7 +1186,7 @@ public class DavaBody extends Body {
 
       if (ie instanceof VirtualInvokeExpr) {
         VirtualInvokeExpr vie = (VirtualInvokeExpr) ie;
-        vb.setValue(new DVirtualInvokeExpr(vie.getBase(), vie.getMethodRef(), vie.getArgs(), thisLocals));
+        vb.setValue(new DVirtualInvokeExpr(vie.getBase(), vie.getMethodRef(), vie.getArgs(), thisLocals, myGrimp, myBaf));
       }
 
       else if (ie instanceof SpecialInvokeExpr) {

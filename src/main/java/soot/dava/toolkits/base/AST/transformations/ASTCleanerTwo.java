@@ -98,7 +98,7 @@ public class ASTCleanerTwo extends DepthFirstAdapter {
       while (it.hasNext()) {
         ASTNode temp = (ASTNode) it.next();
         if (temp instanceof ASTIfElseNode) {
-          IfElseBreaker breaker = new IfElseBreaker();
+          IfElseBreaker breaker = new IfElseBreaker(myTryContentsFinder);
           boolean success = false;
           if (breaker.isIfElseBreakingPossiblePatternOne((ASTIfElseNode) temp)) {
             success = true;
@@ -202,7 +202,7 @@ public class ASTCleanerTwo extends DepthFirstAdapter {
       ASTNode temp = (ASTNode) it.next();
       if (temp instanceof ASTIfElseNode) {
 
-        IfElseBreaker breaker = new IfElseBreaker();
+        IfElseBreaker breaker = new IfElseBreaker(myTryContentsFinder);
         boolean success = false;
         if (breaker.isIfElseBreakingPossiblePatternOne((ASTIfElseNode) temp)) {
           success = true;
@@ -259,7 +259,7 @@ public class ASTCleanerTwo extends DepthFirstAdapter {
       while (itBody.hasNext()) {
         ASTNode temp = (ASTNode) itBody.next();
         if (temp instanceof ASTIfElseNode) {
-          IfElseBreaker breaker = new IfElseBreaker();
+          IfElseBreaker breaker = new IfElseBreaker(myTryContentsFinder);
           boolean success = false;
           if (breaker.isIfElseBreakingPossiblePatternOne((ASTIfElseNode) temp)) {
             success = true;
@@ -310,7 +310,7 @@ public class ASTCleanerTwo extends DepthFirstAdapter {
         while (itBody.hasNext()) {
           ASTNode temp = (ASTNode) itBody.next();
           if (temp instanceof ASTIfElseNode) {
-            IfElseBreaker breaker = new IfElseBreaker();
+            IfElseBreaker breaker = new IfElseBreaker(myTryContentsFinder);
             boolean success = false;
             if (breaker.isIfElseBreakingPossiblePatternOne((ASTIfElseNode) temp)) {
               success = true;

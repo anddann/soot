@@ -55,17 +55,20 @@ import soot.util.queue.QueueReader;
 public final class MethodPAG {
   private PAG pag;
   private EntryPoints myEntryPoints;
+  private ArrayElement myArrayElement;
 
   public PAG pag() {
     return pag;
   }
 
-  protected MethodPAG(PAG pag, EntryPoints myEntryPoints, SootMethod m, Scene myScene, ArrayElement myArrayElement, ConstantFactory constantFactory) {
+  protected MethodPAG(PAG pag, EntryPoints myEntryPoints, SootMethod m, Scene myScene, ArrayElement myArrayElement,
+      ConstantFactory constantFactory) {
     this.pag = pag;
     this.myEntryPoints = myEntryPoints;
     this.method = m;
     this.nodeFactory = new MethodNodeFactory(myScene, myArrayElement, constantFactory, pag, this);
     this.myScene = myScene;
+    this.myArrayElement = myArrayElement;
   }
 
   private Set<Context> addedContexts;
@@ -166,7 +169,8 @@ public final class MethodPAG {
     return nodeFactory;
   }
 
-  public static MethodPAG v(PAG pag, SootMethod m, Scene myScene, EntryPoints myEntryPoints, ArrayElement myArrayElement, ConstantFactory constantFactory) {
+  public static MethodPAG v(PAG pag, SootMethod m, Scene myScene, EntryPoints myEntryPoints, ArrayElement myArrayElement,
+      ConstantFactory constantFactory) {
     MethodPAG ret = G.v().MethodPAG_methodToPag.get(m);
     if (ret == null) {
       ret = new MethodPAG(pag, myEntryPoints, m, myScene, myArrayElement, constantFactory);
@@ -242,7 +246,7 @@ public final class MethodPAG {
       if (pag.getCGOpts().library() != CGOptions.library_disabled) {
         Type retType = method.getReturnType();
 
-        retType.apply(new SparkLibraryHelper(pag, retNode, method));
+        retType.apply(new SparkLibraryHelper(pag, retNode, method, myArrayElement));
       }
     }
     ValNode[] args = new ValNode[method.getParameterCount()];
@@ -256,8 +260,9 @@ public final class MethodPAG {
   }
 
   private Scene myScene;
-  private final  String mainSubSignature = SootMethod.getSubSignature("main",
-      Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String",myScene), 1,myScene)), myScene.getPrimTypeCollector().getVoidType(),myScene);
+  private final String mainSubSignature = SootMethod.getSubSignature("main",
+      Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String", myScene), 1, myScene)),
+      myScene.getPrimTypeCollector().getVoidType(), myScene);
 
   protected void addMiscEdges() {
     // Add node for parameter (String[]) in main method

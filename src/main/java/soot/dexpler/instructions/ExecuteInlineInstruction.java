@@ -42,7 +42,7 @@ public class ExecuteInlineInstruction extends MethodInvocationInstruction implem
   private Method targetMethod = null;
 
   public ExecuteInlineInstruction(Instruction instruction, int codeAddress) {
-    super(instruction, codeAddress);
+    super(instruction, codeAddress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
   }
 
   @Override
