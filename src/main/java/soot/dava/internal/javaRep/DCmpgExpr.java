@@ -23,6 +23,7 @@ package soot.dava.internal.javaRep;
  */
 
 import soot.IntType;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Value;
 import soot.grimp.Grimp;
@@ -32,8 +33,11 @@ import soot.jimple.ExprSwitch;
 import soot.util.Switch;
 
 public class DCmpgExpr extends AbstractGrimpIntBinopExpr implements CmpgExpr {
-  public DCmpgExpr(Value op1, Value op2) {
-    super(op1, op2);
+  private final Grimp myGrimp;
+
+  public DCmpgExpr(Value op1, Value op2, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
+    super(op1, op2, myGrimp,primTypeCollector);
+    this.myGrimp = myGrimp;
   }
 
   public final String getSymbol() {
@@ -49,7 +53,7 @@ public class DCmpgExpr extends AbstractGrimpIntBinopExpr implements CmpgExpr {
   }
 
   public Object clone() {
-    return new DCmpgExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()));
+    return new DCmpgExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()), myGrimp,primTypeCollector);
   }
 
   public Type getType() {
@@ -57,6 +61,6 @@ public class DCmpgExpr extends AbstractGrimpIntBinopExpr implements CmpgExpr {
       return getOp1().getType();
     }
 
-    return IntType.v();
+    return primTypeCollector.getIntType();
   }
 }

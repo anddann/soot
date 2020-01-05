@@ -46,7 +46,7 @@ import soot.jimple.Stmt;
 public class PackedSwitchInstruction extends SwitchInstruction {
 
   public PackedSwitchInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress, myJimple);
+    super(instruction, codeAdress, myJimple, myOptions);
   }
 
   @Override

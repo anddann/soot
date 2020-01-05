@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BArrayWriteInst extends AbstractOpTypeInst implements ArrayWriteInst {
   public BArrayWriteInst(Type opType) {
-    super(opType);
+    super(myRefType, opType);
   }
 
   public int getInCount() {

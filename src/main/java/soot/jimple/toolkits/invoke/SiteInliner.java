@@ -22,6 +22,8 @@ package soot.jimple.toolkits.invoke;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +46,7 @@ import soot.Value;
 import soot.ValueBox;
 import soot.jimple.AssignStmt;
 import soot.jimple.CaughtExceptionRef;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IdentityRef;
 import soot.jimple.IdentityStmt;
 import soot.jimple.IfStmt;
@@ -52,7 +55,6 @@ import soot.jimple.InvokeExpr;
 import soot.jimple.InvokeStmt;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
-import soot.jimple.NullConstant;
 import soot.jimple.ParameterRef;
 import soot.jimple.ReturnStmt;
 import soot.jimple.ReturnVoidStmt;
@@ -63,19 +65,35 @@ import soot.util.Chain;
 
 /** Provides methods to inline a given invoke site. */
 public class SiteInliner {
-  public String getDefaultOptions() {
-    return "insert-null-checks insert-redundant-casts";
+  // FIXME: make singleton
+  private Jimple myJimple;
+  private Scene myScene;
+  private ConstantFactory constantFactory;
+  private SynchronizerManager mySynchronizerManager;
+  private LocalNameStandardizer myLocalNameStandardizer;
+
+  @Inject
+  public SiteInliner(Jimple myJimple, Scene myScene, ConstantFactory constantFactory,
+                     SynchronizerManager mySynchronizerManager, LocalNameStandardizer myLocalNameStandardizer) {
+    this.myJimple = myJimple;
+    this.myScene = myScene;
+    this.constantFactory = constantFactory;
+    this.mySynchronizerManager = mySynchronizerManager;
+    this.myLocalNameStandardizer = myLocalNameStandardizer;
   }
 
-  public static void inlineSites(List sites) {
-    inlineSites(sites, new HashMap());
+  /**
+   * Inlines the method <code>inlinee</code> into the <code>container</code> at the point <code>toInline</code>.
+   */
+  public void inlineSite(SootMethod inlinee, Stmt toInline, SootMethod container) {
+    this.inlineSite(inlinee, toInline, container, new HashMap());
   }
 
   /**
    * Iterates over a list of sites, inlining them in order. Each site is given as a 3-element list (inlinee, toInline,
    * container).
    */
-  public static void inlineSites(List sites, Map options) {
+  public void inlineSites(List sites, Map options) {
     Iterator it = sites.iterator();
     while (it.hasNext()) {
       List l = (List) it.next();
@@ -83,15 +101,12 @@ public class SiteInliner {
       Stmt toInline = (Stmt) l.get(1);
       SootMethod container = (SootMethod) l.get(2);
 
-      inlineSite(inlinee, toInline, container, options);
+      this.inlineSite(inlinee, toInline, container, options);
     }
   }
 
-  /**
-   * Inlines the method <code>inlinee</code> into the <code>container</code> at the point <code>toInline</code>.
-   */
-  public static void inlineSite(SootMethod inlinee, Stmt toInline, SootMethod container) {
-    inlineSite(inlinee, toInline, container, new HashMap());
+  public void inlineSites(List sites) {
+    inlineSites(sites, new HashMap());
   }
 
   /**
@@ -99,7 +114,7 @@ public class SiteInliner {
    * special invokes) for it to be inlined. That functionality is handled by the InlinerSafetyManager.
    *
    */
-  public static List inlineSite(SootMethod inlinee, Stmt toInline, SootMethod container, Map options) {
+  public List inlineSite(SootMethod inlinee, Stmt toInline, SootMethod container, Map options) {
 
     boolean enableNullPointerCheckInsertion = PhaseOptions.getBoolean(options, "insert-null-checks");
     boolean enableRedundantCastInsertion = PhaseOptions.getBoolean(options, "insert-redundant-casts");
@@ -148,16 +163,16 @@ public class SiteInliner {
     // (If enabled), add a null pointer check.
     {
       if (enableNullPointerCheckInsertion && ie instanceof InstanceInvokeExpr) {
-        boolean caught = TrapManager.isExceptionCaughtAt(myScene.getSootClass("java.lang.NullPointerException"), toInline,
-            containerB);
+        boolean caught
+            = TrapManager.isExceptionCaughtAt(myScene.getSootClass("java.lang.NullPointerException"), toInline, containerB);
 
         /* Ah ha. Caught again! */
+        Value value = constantFactory.getNullConstant();
         if (caught) {
           /*
            * In this case, we don't use throwPoint; instead, put the code right there.
            */
-          Stmt insertee
-              = myJimple.newIfStmt(myJimple.newNeExpr(((InstanceInvokeExpr) ie).getBase(), myNullConstant), toInline);
+          Stmt insertee = myJimple.newIfStmt(myJimple.newNeExpr(((InstanceInvokeExpr) ie).getBase(), value), toInline);
 
           containerB.getUnits().insertBefore(insertee, toInline);
 
@@ -168,8 +183,7 @@ public class SiteInliner {
         } else {
           Stmt throwPoint = ThrowManager.getNullPointerExceptionThrower(containerB);
           containerB.getUnits().insertBefore(
-              myJimple.newIfStmt(myJimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), myNullConstant), throwPoint),
-              toInline);
+              myJimple.newIfStmt(myJimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), value), throwPoint), toInline);
         }
       }
     }
@@ -340,4 +354,9 @@ public class SiteInliner {
 
     return newStmts;
   }
+
+  public String getDefaultOptions() {
+    return "insert-null-checks insert-redundant-casts";
+  }
+
 }

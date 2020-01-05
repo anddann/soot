@@ -437,7 +437,7 @@ public class Baf {
   }
 
   public IfGtInst newIfGtInst(Unit unit) {
-    return new BIfGtInst(unit);
+    return new BIfGtInst(unit, this);
   }
 
   public IfLeInst newIfLeInst(Unit unit) {
@@ -449,7 +449,7 @@ public class Baf {
   }
 
   public IfNeInst newIfNeInst(Unit unit) {
-    return new BIfNeInst(unit);
+    return new BIfNeInst(unit, this);
   }
 
   public IfNullInst newIfNullInst(Unit unit) {
@@ -457,7 +457,7 @@ public class Baf {
   }
 
   public IfNonNullInst newIfNonNullInst(Unit unit) {
-    return new BIfNonNullInst(unit);
+    return new BIfNonNullInst(unit, this);
   }
 
   public ThrowInst newThrowInst() {

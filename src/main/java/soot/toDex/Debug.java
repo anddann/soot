@@ -47,20 +47,20 @@ import soot.options.Options;
 public class Debug {
   public static boolean TODEX_DEBUG;
 
-  public static void printDbg(String s, Object... objects) {
-    TODEX_DEBUG = myOptions.verbose();
-    if (TODEX_DEBUG) {
-      for (Object o : objects) {
-        s += o.toString();
-      }
-      System.out.println(s);
-    }
-
-  }
-
-  public static void printDbg(boolean c, String s, Object... objects) {
-    if (c) {
-      printDbg(s, objects);
-    }
-  }
+//  public static void printDbg(String s, Object... objects) {
+//    TODEX_DEBUG = myOptions.verbose();
+//    if (TODEX_DEBUG) {
+//      for (Object o : objects) {
+//        s += o.toString();
+//      }
+//      System.out.println(s);
+//    }
+//
+//  }
+//
+//  public static void printDbg(boolean c, String s, Object... objects) {
+//    if (c) {
+//      printDbg(s, objects);
+//    }
+//  }
 }

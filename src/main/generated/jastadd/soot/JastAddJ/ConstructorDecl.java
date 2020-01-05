@@ -32,14 +32,14 @@ import soot.options.Options;
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/java.ast:75
  */
 public class ConstructorDecl extends BodyDecl implements Cloneable {
-	private Scene myScene;
-	private Options myOptions;
-	private PackageNamer myPackageNamer;
-	private Jimple myJimple;
-	private PrimTypeCollector primTypeCollector;
-	private ConstantFactory constantFactory;
-	private SootResolver mySootResolver;
-	private PhaseOptions myPhaseOptions;
+	protected Scene myScene;
+	protected Options myOptions;
+	protected PackageNamer myPackageNamer;
+	protected Jimple myJimple;
+	protected PrimTypeCollector primTypeCollector;
+	protected ConstantFactory constantFactory;
+	protected SootResolver mySootResolver;
+	protected PhaseOptions myPhaseOptions;
 
 	/**
 	 * @apilevel low-level
@@ -310,7 +310,7 @@ public class ConstructorDecl extends BodyDecl implements Cloneable {
 	public BodyDecl substitutedBodyDecl(Parameterization parTypeDecl) {
 		ConstructorDecl c = new ConstructorDeclSubstituted((Modifiers) getModifiers().fullCopy(), getID(),
 				getParameterList().substitute(parTypeDecl), getExceptionList().substitute(parTypeDecl), new Opt(),
-				new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), this, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector);
+				new Block(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions), this, myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 		return c;
 	}
 

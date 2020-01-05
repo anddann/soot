@@ -113,9 +113,9 @@ public class JasminClass extends AbstractJasminClass {
     // Call the graph colorer.
     FastColorer.assignColorsToLocals(body, localToGroup, localToColor, groupToColorCount);
 
-    if (myOptions.time()) {
-      myTimers.packTimer.end();
-    }
+//    if (myOptions.time()) {
+//      myTimers.packTimer.end();
+//    }
 
   }
 
@@ -1668,7 +1668,7 @@ public class JasminClass extends AbstractJasminClass {
             private void emitIntToTypeCast() {
               if (toType.equals(ByteType.v())) {
                 emit("i2b", 0);
-              } else if (toType.equals(CharType.v())) {
+              } else if (toType.equals(primTypeCollector.getCharType())) {
                 emit("i2c", 0);
               } else if (toType.equals(ShortType.v())) {
                 emit("i2s", 0);
@@ -1700,7 +1700,7 @@ public class JasminClass extends AbstractJasminClass {
               } else if (toType.equals(ShortType.v())) {
                 emit("l2i", -1);
                 emitIntToTypeCast();
-              } else if (toType.equals(CharType.v())) {
+              } else if (toType.equals(primTypeCollector.getCharType())) {
                 emit("l2i", -1);
                 emitIntToTypeCast();
               } else if (toType.equals(BooleanType.v())) {

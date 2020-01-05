@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BSubInst extends AbstractOpTypeInst implements SubInst {
   public BSubInst(Type opType) {
-    super(opType);
+    super(myRefType, opType);
   }
 
   public int getInCount() {

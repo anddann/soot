@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BReturnInst extends AbstractOpTypeInst implements ReturnInst {
   public BReturnInst(Type opType) {
-    super(opType);
+    super(myRefType, opType);
   }
 
   public int getInCount() {

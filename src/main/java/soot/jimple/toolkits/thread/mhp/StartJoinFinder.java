@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import soot.Body;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.jimple.Stmt;
@@ -37,7 +38,11 @@ import soot.jimple.spark.pag.AllocNode;
 import soot.jimple.spark.pag.PAG;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Edge;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.util.PhaseDumper;
 
 // StartJoinFinder written by Richard L. Halpert, 2006-12-04
 // This can be used as an alternative to PegGraph and PegChain
@@ -52,7 +57,7 @@ public class StartJoinFinder {
   Map<Stmt, Stmt> startToJoin;
   Map<Stmt, SootMethod> startToContainingMethod;
 
-  public StartJoinFinder(CallGraph callGraph, PAG pag) {
+  public StartJoinFinder(CallGraph callGraph, PAG pag, Scene myScene, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Options myOptions) {
     startStatements = new HashSet<Stmt>();
     joinStatements = new HashSet<Stmt>();
 
@@ -82,7 +87,8 @@ public class StartJoinFinder {
           Body b = method.retrieveActiveBody();
 
           // run the intraprocedural analysis
-          StartJoinAnalysis sja = new StartJoinAnalysis(new ExceptionalUnitGraph(b, myManager), method, callGraph, pag);
+          boolean omitExceptingUnitEdges = myOptions.omit_excepting_unit_edges();
+          StartJoinAnalysis sja = new StartJoinAnalysis(new ExceptionalUnitGraph(b, throwAnalysis, omitExceptingUnitEdges, myManager, myPhaseDumper), method, callGraph, pag);
 
           // Add to interprocedural results
           startStatements.addAll(sja.getStartStatements());

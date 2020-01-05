@@ -32,23 +32,29 @@ import org.jf.dexlib2.iface.instruction.Instruction;
 import org.jf.dexlib2.iface.instruction.OneRegisterInstruction;
 import org.jf.dexlib2.iface.instruction.formats.Instruction23x;
 
-import soot.IntType;
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
 import soot.dexpler.InvalidDalvikBytecodeException;
 import soot.dexpler.tags.ObjectOpTag;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
 import soot.jimple.Jimple;
+import soot.options.Options;
 
 public class AgetInstruction extends DexlibAbstractInstruction {
 
   private Jimple myJimple;
+  private DalvikTyper myDalvikTyper;
+  private PrimTypeCollector primTypeCollector;
 
-  public AgetInstruction(Instruction instruction, int codeAdress, Jimple myJimple) {
+  public AgetInstruction(Instruction instruction, int codeAdress, Jimple myJimple, Options myOptions, DalvikTyper myDalvikTyper, PrimTypeCollector primTypeCollector) {
     super(instruction, codeAdress, myOptions);
     this.myJimple = myJimple;
+    this.myDalvikTyper = myDalvikTyper;
+    this.primTypeCollector = primTypeCollector;
   }
 
   @Override
@@ -76,8 +82,8 @@ public class AgetInstruction extends DexlibAbstractInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
-      myDalvikTyper().setType(arrayRef.getIndexBox(), IntType.v(), true);
+      myDalvikTyper.addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
+      myDalvikTyper.setType(arrayRef.getIndexBox(), primTypeCollector.getIntType(), true);
     }
   }
 

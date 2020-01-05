@@ -22,7 +22,7 @@ package soot.jimple.internal;
  * #L%
  */
 
-import soot.IntType;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.UnitPrinter;
 import soot.ValueBox;
@@ -33,8 +33,8 @@ import soot.util.Switch;
 
 @SuppressWarnings("serial")
 public abstract class AbstractLengthExpr extends AbstractUnopExpr implements LengthExpr {
-  protected AbstractLengthExpr(ValueBox opBox) {
-    super(opBox);
+  protected AbstractLengthExpr(ValueBox opBox, PrimTypeCollector primTypeCollector) {
+    super(opBox, primTypeCollector);
   }
 
   public boolean equivTo(Object o) {
@@ -62,7 +62,7 @@ public abstract class AbstractLengthExpr extends AbstractUnopExpr implements Len
   }
 
   public Type getType() {
-    return IntType.v();
+    return primTypeCollector.getIntType();
   }
 
   public void apply(Switch sw) {

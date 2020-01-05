@@ -39,7 +39,7 @@ public class DVirtualInvokeExpr extends GVirtualInvokeExpr {
   private HashSet<Object> thisLocals;
 
   public DVirtualInvokeExpr(Value base, SootMethodRef methodRef, java.util.List args, HashSet<Object> thisLocals) {
-    super(base, methodRef, args);
+    super(base, methodRef, args, myBaf, myGrimp);
 
     this.thisLocals = thisLocals;
   }

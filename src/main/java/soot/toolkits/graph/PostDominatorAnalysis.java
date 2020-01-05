@@ -27,6 +27,7 @@ import java.util.List;
 
 import soot.Unit;
 import soot.jimple.Stmt;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.BackwardFlowAnalysis;
 import soot.toolkits.scalar.FlowSet;
@@ -50,8 +51,8 @@ public class PostDominatorAnalysis extends BackwardFlowAnalysis<Unit, FlowSet<Un
   private UnitGraph g;
   private FlowSet<Unit> allNodes;
 
-  public PostDominatorAnalysis(UnitGraph g) {
-    super(g);
+  public PostDominatorAnalysis(UnitGraph g,boolean interaticveMode, InteractionHandler myInteractionHandler) {
+    super(g,interaticveMode,myInteractionHandler);
     this.g = g;
 
     initAllNodes();

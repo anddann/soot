@@ -36,12 +36,13 @@ import soot.Unit;
 import soot.dexpler.DexBody;
 import soot.jimple.Jimple;
 import soot.jimple.Stmt;
+import soot.options.Options;
 
 public abstract class SwitchInstruction extends PseudoInstruction implements DeferableInstruction {
   protected Unit markerUnit;
   protected Jimple myJimple;
 
-  public SwitchInstruction(Instruction instruction, int codeAdress, Jimple myJimple) {
+  public SwitchInstruction(Instruction instruction, int codeAdress, Jimple myJimple, Options myOptions) {
     super(instruction, codeAdress, myOptions);
     this.myJimple = myJimple;
   }

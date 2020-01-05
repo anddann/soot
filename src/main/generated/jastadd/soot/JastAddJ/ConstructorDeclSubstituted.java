@@ -2,9 +2,12 @@
 package soot.JastAddJ;
 
 import beaver.Symbol;
+import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.Scene;
+import soot.SootResolver;
 import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.options.Options;
 
@@ -94,13 +97,15 @@ public class ConstructorDeclSubstituted extends ConstructorDecl implements Clone
   }
   /**
    * @ast method 
-   *
-   * @param myScene
+   *@param myScene
    * @param myOptions
    * @param myPackageNamer
    * @param myJimple
-   * @param primTypeCollector   */
-  public ConstructorDeclSubstituted(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+   * @param primTypeCollector
+   * @param constantFactory
+   * @param mySootResolver
+   * @param myPhaseOptions            */
+  public ConstructorDeclSubstituted(Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
     super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
 
 
@@ -123,7 +128,7 @@ public class ConstructorDeclSubstituted extends ConstructorDecl implements Clone
    * @ast method 
    * 
    */
-  public ConstructorDeclSubstituted(Modifiers p0, String p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4, Block p5, ConstructorDecl p6, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+  public ConstructorDeclSubstituted(Modifiers p0, String p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4, Block p5, ConstructorDecl p6, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
       super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);
@@ -137,7 +142,7 @@ public class ConstructorDeclSubstituted extends ConstructorDecl implements Clone
    * @ast method 
    * 
    */
-  public ConstructorDeclSubstituted(Modifiers p0, Symbol p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4, Block p5, ConstructorDecl p6, Scene myScene, PackageNamer myPackageNamer, Options myOptions, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+  public ConstructorDeclSubstituted(Modifiers p0, Symbol p1, List<ParameterDeclaration> p2, List<Access> p3, Opt<Stmt> p4, Block p5, ConstructorDecl p6, Scene myScene, PackageNamer myPackageNamer, Options myOptions, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, SootResolver mySootResolver, PhaseOptions myPhaseOptions) {
       super(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
       setChild(p0, 0);
     setID(p1);

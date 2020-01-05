@@ -96,6 +96,7 @@ public class Main {
           "jtp.jbco_adss", "jtp.jbco_cae2bo", "bb.jbco_cb2ji", "bb.jbco_dcc", "bb.jbco_rds", "bb.jbco_riitcb", "bb.jbco_iii",
           "bb.jbco_plvb", "bb.jbco_rlaii", "bb.jbco_ctbcb", "bb.jbco_ecvf", "bb.jbco_ptss" } };
 
+/* FIXME
   public static void main(String[] argv) {
     int rcount = 0;
     Vector<String> transformsToAdd = new Vector<String>();
@@ -334,6 +335,7 @@ public class Main {
       logger.debug("\n***** END SUMMARY *****\n");
     }
   }
+*/
 
   private static String[] checkWhole(String argv[], boolean add) {
     for (int i = 0; i < argv.length; i++) {
@@ -370,6 +372,8 @@ public class Main {
     return t;
   }
 
+  //FIXME: return inject?
+/*
   private static IJbcoTransform getTransform(String name) {
     if (name.startsWith("bb.jbco_rrps")) {
       return new RemoveRedundantPushStores();
@@ -396,7 +400,7 @@ public class Main {
       return new FindDuplicateSequences();
     }
     if (name.equals("bb.jbco_plvb")) {
-      return new LocalsToBitField();
+      return myLocalToBitField;
     }
     if (name.equals("bb.jbco_rlaii")) {
       return new MoveLoadsAboveIfs();
@@ -449,6 +453,7 @@ public class Main {
 
     return null;
   }
+*/
 
   private static int getWeight(String phasename) {
     int weight = 9;

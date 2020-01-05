@@ -27,29 +27,35 @@ import soot.ByteType;
 import soot.CharType;
 import soot.IntType;
 import soot.LongType;
+import soot.PrimTypeCollector;
 import soot.ShortType;
 import soot.Type;
 import soot.UnknownType;
 import soot.Value;
+import soot.ValueBox;
 
 @SuppressWarnings("serial")
 abstract public class AbstractIntLongBinopExpr extends AbstractBinopExpr {
 
-  public static boolean isIntLikeType(Type t) {
-    return t.equals(IntType.v()) || t.equals(ByteType.v()) || t.equals(ShortType.v()) || t.equals(CharType.v())
-        || t.equals(BooleanType.v());
+  public AbstractIntLongBinopExpr(ValueBox op1Box, ValueBox op2Box, PrimTypeCollector primTypeCollector) {
+    super(op1Box, op2Box, primTypeCollector);
+  }
+
+  public static boolean isIntLikeType(Type t, PrimTypeCollector primTypeCollector) {
+    return t.equals(primTypeCollector.getIntType()) || t.equals(primTypeCollector.getByteType()) || t.equals(primTypeCollector.getShortType()) || t.equals(primTypeCollector.getCharType())
+        || t.equals(primTypeCollector.getBooleanType());
   }
 
   public Type getType() {
     Value op1 = op1Box.getValue();
     Value op2 = op2Box.getValue();
 
-    if (isIntLikeType(op1.getType()) && isIntLikeType(op2.getType())) {
-      return IntType.v();
-    } else if (op1.getType().equals(LongType.v()) && op2.getType().equals(LongType.v())) {
-      return LongType.v();
+    if (isIntLikeType(op1.getType(),primTypeCollector) && isIntLikeType(op2.getType(),primTypeCollector)) {
+      return primTypeCollector.getIntType();
+    } else if (op1.getType().equals(primTypeCollector.getLongType()) && op2.getType().equals(primTypeCollector.getLongType())) {
+      return primTypeCollector.getLongType();
     } else {
-      return UnknownType.v();
+      return primTypeCollector.getUnknownType();
     }
   }
 }

@@ -55,17 +55,17 @@ public class JUshrExpr extends AbstractJimpleIntLongBinopExpr implements UshrExp
     Value op2 = op2Box.getValue();
 
     if (!isIntLikeType(op2.getType())) {
-      return UnknownType.v();
+      return primTypeCollector.getUnknownType();
     }
 
     if (isIntLikeType(op1.getType())) {
-      return IntType.v();
+      return primTypeCollector.getIntType();
     }
-    if (op1.getType().equals(LongType.v())) {
-      return LongType.v();
+    if (op1.getType().equals(primTypeCollector.getLongType())) {
+      return primTypeCollector.getLongType();
     }
 
-    return UnknownType.v();
+    return primTypeCollector.getUnknownType();
   }
 
   public Object clone() {

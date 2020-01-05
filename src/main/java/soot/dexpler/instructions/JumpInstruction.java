@@ -32,12 +32,13 @@ import org.jf.dexlib2.iface.instruction.OffsetInstruction;
 
 import soot.Unit;
 import soot.dexpler.DexBody;
+import soot.options.Options;
 
 public abstract class JumpInstruction extends DexlibAbstractInstruction {
   protected DexlibAbstractInstruction targetInstruction;
   protected Unit markerUnit;
 
-  public JumpInstruction(Instruction instruction, int codeAdress) {
+  public JumpInstruction(Instruction instruction, int codeAdress, Options myOptions) {
     super(instruction, codeAdress, myOptions);
   }
 

@@ -410,7 +410,7 @@ public class EnumInstanceExpr extends ClassInstanceExpr implements Cloneable {
     if(idx == -1)
       throw new Error("internal: cannot determine numeric value of enum constant");
     List<Expr> argList = new List<Expr>(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, mySootResolver, myPhaseOptions);
-    argList.add(Literal.buildStringLiteral(ec.name()));
+    argList.add(Literal.buildStringLiteral(ec.name(), constantFactory));
     argList.add(Literal.buildIntegerLiteral(idx));
     for(Expr arg : ec.getArgs())
       argList.add((Expr)arg.fullCopy());

@@ -53,6 +53,7 @@ import soot.jimple.spark.pag.PAG;
 import soot.jimple.spark.pag.PAG2HTML;
 import soot.jimple.spark.pag.PAGDumper;
 import soot.jimple.spark.pag.VarNode;
+import soot.jimple.spark.sets.EmptyPointsToSet;
 import soot.jimple.spark.sets.P2SetVisitor;
 import soot.jimple.spark.sets.PointsToSetInternal;
 import soot.jimple.spark.solver.EBBCollapser;
@@ -78,11 +79,13 @@ public class SparkTransformer extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(SparkTransformer.class);
   private SourceLocator mySourceLocator;
   private Scene myScene;
+  private EmptyPointsToSet myEmptyPointsToSet;
 
   @Inject
-  public SparkTransformer(SourceLocator mySourceLocator, Scene myScene) {
+  public SparkTransformer(SourceLocator mySourceLocator, Scene myScene, EmptyPointsToSet myEmptyPointsToSet) {
     this.mySourceLocator = mySourceLocator;
     this.myScene = myScene;
+    this.myEmptyPointsToSet = myEmptyPointsToSet;
   }
 
 

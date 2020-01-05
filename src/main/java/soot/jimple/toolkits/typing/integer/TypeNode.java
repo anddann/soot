@@ -36,10 +36,12 @@ class TypeNode {
 
   private final int id;
   private final Type type;
+  private ClassHierarchy myClassHierarchy;
 
-  public TypeNode(int id, Type type) {
+  public TypeNode(int id, Type type, ClassHierarchy myClassHierarchy) {
     this.id = id;
     this.type = type;
+    this.myClassHierarchy = myClassHierarchy;
 
     if (DEBUG) {
       logger.debug("creating node " + this);

@@ -24,21 +24,29 @@ package soot.javaToJimple;
 
 import java.util.Iterator;
 
+import soot.Scene;
+import soot.Type;
+import soot.jimple.Jimple;
+
 public class PrivateFieldSetMethodSource implements soot.MethodSource {
 
   private final soot.Type fieldType;
   private final String fieldName;
   private final boolean isStatic;
+  private Jimple myJimple;
+  private Scene myScene;
 
-  public PrivateFieldSetMethodSource(soot.Type fieldType, String fieldName, boolean isStatic) {
+  public PrivateFieldSetMethodSource(Type fieldType, String fieldName, boolean isStatic, Jimple myJimple, Scene myScene) {
     this.fieldType = fieldType;
     this.fieldName = fieldName;
     this.isStatic = isStatic;
+    this.myJimple = myJimple;
+    this.myScene = myScene;
   }
 
   public soot.Body getBody(soot.SootMethod sootMethod, String phaseName) {
 
-    soot.Body body = soot.jimple.myJimple.newBody(sootMethod);
+    soot.Body body = myJimple.newBody(sootMethod);
     LocalGenerator lg = new LocalGenerator(body);
 
     soot.Local fieldBase = null;
@@ -50,8 +58,8 @@ public class PrivateFieldSetMethodSource implements soot.MethodSource {
       soot.Type sootType = (soot.Type) paramIt.next();
       soot.Local paramLocal = lg.generateLocal(sootType);
 
-      soot.jimple.ParameterRef paramRef = soot.jimple.myJimple.newParameterRef(sootType, paramCounter);
-      soot.jimple.Stmt stmt = soot.jimple.myJimple.newIdentityStmt(paramLocal, paramRef);
+      soot.jimple.ParameterRef paramRef = myJimple.newParameterRef(sootType, paramCounter);
+      soot.jimple.Stmt stmt = myJimple.newIdentityStmt(paramLocal, paramRef);
       body.getUnits().add(stmt);
 
       if (paramCounter == 0) {
@@ -64,19 +72,19 @@ public class PrivateFieldSetMethodSource implements soot.MethodSource {
     // create field type local
     // soot.Local fieldLocal = lg.generateLocal(fieldType);
     // assign local to fieldRef
-    soot.SootFieldRef field = soot.myScene.makeFieldRef(sootMethod.getDeclaringClass(), fieldName, fieldType, isStatic);
+    soot.SootFieldRef field = myScene.makeFieldRef(sootMethod.getDeclaringClass(), fieldName, fieldType, isStatic);
 
     soot.jimple.FieldRef fieldRef = null;
     if (isStatic) {
-      fieldRef = soot.jimple.myJimple.newStaticFieldRef(field);
+      fieldRef = myJimple.newStaticFieldRef(field);
     } else {
-      fieldRef = soot.jimple.myJimple.newInstanceFieldRef(fieldBase, field);
+      fieldRef = myJimple.newInstanceFieldRef(fieldBase, field);
     }
-    soot.jimple.AssignStmt assign = soot.jimple.myJimple.newAssignStmt(fieldRef, assignLocal);
+    soot.jimple.AssignStmt assign = myJimple.newAssignStmt(fieldRef, assignLocal);
     body.getUnits().add(assign);
 
     // return local
-    soot.jimple.Stmt retStmt = soot.jimple.myJimple.newReturnStmt(assignLocal);
+    soot.jimple.Stmt retStmt = myJimple.newReturnStmt(assignLocal);
     body.getUnits().add(retStmt);
 
     return body;

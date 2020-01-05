@@ -41,6 +41,7 @@ import soot.Value;
 import soot.ValueBox;
 import soot.jimple.AssignStmt;
 import soot.jimple.Jimple;
+import soot.options.Options;
 import soot.shimple.PhiExpr;
 import soot.shimple.Shimple;
 import soot.shimple.ShimpleBody;
@@ -50,6 +51,7 @@ import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.DominanceFrontier;
 import soot.toolkits.graph.DominatorNode;
 import soot.toolkits.graph.DominatorTree;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.GuaranteedDefs;
 import soot.toolkits.scalar.ValueUnitPair;
 import soot.util.Chain;
@@ -71,12 +73,16 @@ public class PhiNodeManager {
   protected GuaranteedDefs gd;
   private Shimple myShimple;
   private Jimple myJimple;
+  private InteractionHandler myInteractionHander;
+  private Options myOptions;
 
-  public PhiNodeManager(ShimpleBody body, ShimpleFactory sf, Shimple myShimple, Jimple myJimple) {
+  public PhiNodeManager(ShimpleBody body, ShimpleFactory sf, Shimple myShimple, Jimple myJimple, InteractionHandler myInteractionHander, Options myOptions) {
     this.body = body;
     this.sf = sf;
     this.myShimple = myShimple;
     this.myJimple = myJimple;
+    this.myInteractionHander = myInteractionHander;
+    this.myOptions = myOptions;
   }
 
   public void update() {

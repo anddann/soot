@@ -32,7 +32,10 @@ import soot.EquivalentValue;
 import soot.SootField;
 import soot.SootMethod;
 import soot.Value;
+import soot.jimple.Jimple;
+import soot.options.Options;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 
 // SimpleMethodLocalObjectsAnalysis written by Richard L. Halpert, 2007-02-23
 // Finds objects that are local to the scope of the LocalObjectsScopeAnalysis
@@ -44,8 +47,8 @@ public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalys
   private static final Logger logger = LoggerFactory.getLogger(SimpleMethodLocalObjectsAnalysis.class);
   public static int mlocounter = 0;
 
-  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, ClassLocalObjectsAnalysis cloa, InfoFlowAnalysis dfa) {
-    super(g, dfa, true, true); // special version doesn't run analysis yet
+  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, ClassLocalObjectsAnalysis cloa, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler, Jimple myJimple) {
+    super(g, dfa, true, true, myOptions,myInteractionHandler, myJimple); // special version doesn't run analysis yet
 
     mlocounter++;
 
@@ -80,8 +83,8 @@ public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalys
     }
   }
 
-  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, CallLocalityContext context, InfoFlowAnalysis dfa) {
-    super(g, dfa, true, true); // special version doesn't run analysis yet
+  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, CallLocalityContext context, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler, Jimple myJimple) {
+    super(g, dfa, true, true,  myOptions,myInteractionHandler, myJimple); // special version doesn't run analysis yet
 
     mlocounter++;
 

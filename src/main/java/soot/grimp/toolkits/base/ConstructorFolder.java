@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.JastAddJ.Options;
 import soot.Local;
 import soot.Unit;
 import soot.Value;
@@ -45,19 +44,32 @@ import soot.jimple.InvokeStmt;
 import soot.jimple.NewExpr;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LocalUses;
 import soot.toolkits.scalar.UnitValueBoxPair;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 public class ConstructorFolder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ConstructorFolder.class);
   private Options myOptions;
   private Grimp myGrimp;
+  private InteractionHandler myInteractionHandler;
+  private ThrowAnalysis throwAnalysis;
+  private PhaseDumper myPhaseDumper;
+  private ThrowableSet.Manager myManager;
 
   @Inject
-  public ConstructorFolder(Options myOptions, Grimp myGrimp) {
+  public ConstructorFolder(Options myOptions, Grimp myGrimp, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, PhaseDumper myPhaseDumper, ThrowableSet.Manager myManager) {
     this.myOptions = myOptions;
     this.myGrimp = myGrimp;
+    this.myInteractionHandler = myInteractionHandler;
+    this.throwAnalysis = throwAnalysis;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myManager = myManager;
   }
 
 
@@ -75,7 +87,7 @@ public class ConstructorFolder extends BodyTransformer {
 
     Iterator<Unit> it = stmtList.iterator();
 
-    LocalUses localUses = LocalUses.Factory.newLocalUses(b, myManager);
+    LocalUses localUses = LocalUses.Factory.newLocalUses(b,myOptions,myInteractionHandler,throwAnalysis, myManager,myPhaseDumper);
 
     /* fold in NewExpr's with specialinvoke's */
     while (it.hasNext()) {

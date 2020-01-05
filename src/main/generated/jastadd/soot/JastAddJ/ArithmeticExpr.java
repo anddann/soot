@@ -50,8 +50,8 @@ public abstract class ArithmeticExpr extends Binary implements Cloneable {
    * @ast method 
    * 
    */
-  public ArithmeticExpr() {
-    super();
+  public ArithmeticExpr(PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
+    super(primTypeCollector, myJimple, myScene);
 
 
   }
@@ -70,7 +70,8 @@ public abstract class ArithmeticExpr extends Binary implements Cloneable {
    * @ast method 
    * 
    */
-  public ArithmeticExpr(Expr p0, Expr p1) {
+  public ArithmeticExpr(Expr p0, Expr p1,PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
+    super(primTypeCollector, myJimple, myScene);
     setChild(p0, 0);
     setChild(p1, 1);
   }

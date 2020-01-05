@@ -22,17 +22,9 @@ package soot.jimple.internal;
  * #L%
  */
 
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
-import soot.LongType;
-import soot.ShortType;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.UnitPrinter;
-import soot.UnknownType;
 import soot.Value;
 import soot.ValueBox;
 import soot.jimple.ExprSwitch;
@@ -42,8 +34,8 @@ import soot.util.Switch;
 
 @SuppressWarnings("serial")
 public abstract class AbstractNegExpr extends AbstractUnopExpr implements NegExpr {
-  protected AbstractNegExpr(ValueBox opBox) {
-    super(opBox);
+  protected AbstractNegExpr(ValueBox opBox, PrimTypeCollector primTypeCollector) {
+    super(opBox, primTypeCollector);
   }
 
   /** Compares the specified object with this one for structural equality. */
@@ -74,17 +66,17 @@ public abstract class AbstractNegExpr extends AbstractUnopExpr implements NegExp
   public Type getType() {
     Value op = opBox.getValue();
 
-    if (op.getType().equals(IntType.v()) || op.getType().equals(ByteType.v()) || op.getType().equals(ShortType.v())
-        || op.getType().equals(BooleanType.v()) || op.getType().equals(CharType.v())) {
-      return IntType.v();
-    } else if (op.getType().equals(LongType.v())) {
-      return LongType.v();
-    } else if (op.getType().equals(DoubleType.v())) {
-      return DoubleType.v();
-    } else if (op.getType().equals(FloatType.v())) {
-      return FloatType.v();
+    if (op.getType().equals(primTypeCollector.getIntType()) || op.getType().equals(primTypeCollector.getByteType()) || op.getType().equals(primTypeCollector.getShortType())
+        || op.getType().equals(primTypeCollector.getBooleanType()) || op.getType().equals(primTypeCollector.getCharType())) {
+      return primTypeCollector.getIntType();
+    } else if (op.getType().equals(primTypeCollector.getLongType())) {
+      return primTypeCollector.getLongType();
+    } else if (op.getType().equals(primTypeCollector.getDoubleType())) {
+      return primTypeCollector.getDoubleType();
+    } else if (op.getType().equals(primTypeCollector.getFloatType())) {
+      return primTypeCollector.getFloatType();
     } else {
-      return UnknownType.v();
+      return primTypeCollector.getUnknownType();
     }
   }
 

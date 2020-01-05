@@ -41,7 +41,7 @@ import soot.PhaseOptions;
 import soot.Scene;
 import soot.Trap;
 import soot.Unit;
-import soot.JastAddJ.Options;
+import soot.options.Options;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.DirectedGraph;
@@ -60,7 +60,7 @@ public class UnreachableCodeEliminator extends BodyTransformer {
 
   @Inject
   public UnreachableCodeEliminator(ThrowAnalysis ta, Options myOptions, ThrowAnalysis myPedanticThrowAnalysis,
-      PhaseDumper myPhaseDumper) {
+                                   PhaseDumper myPhaseDumper) {
     this.throwAnalysis = ta;
     this.myOptions = myOptions;
     this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;

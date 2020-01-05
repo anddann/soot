@@ -253,7 +253,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
       Value op1 = expr.getOp1();
       Value op2 = expr.getOp2();
 
-      if (l.getType().equals(IntType.v())) {
+      if (l.getType().equals(primTypeCollector.getIntType())) {
         boolean isValidCase = false;
         int x = 0;
 

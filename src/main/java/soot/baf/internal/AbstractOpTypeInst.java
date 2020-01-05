@@ -31,11 +31,13 @@ import soot.UnitPrinter;
 import soot.baf.Baf;
 
 public abstract class AbstractOpTypeInst extends AbstractInst {
+  private final RefType myRefType;
   protected Type opType;
 
-  protected AbstractOpTypeInst(Type opType) {
+  protected AbstractOpTypeInst(RefType myRefType, Type opType) {
+    this.myRefType = myRefType;
     if (opType instanceof NullType || opType instanceof ArrayType || opType instanceof RefType) {
-      opType = RefType.v();
+      opType = this.myRefType;
     }
 
     this.opType = opType;
@@ -48,7 +50,7 @@ public abstract class AbstractOpTypeInst extends AbstractInst {
   public void setOpType(Type t) {
     opType = t;
     if (opType instanceof NullType || opType instanceof ArrayType || opType instanceof RefType) {
-      opType = RefType.v();
+      opType = myRefType;
     }
   }
 

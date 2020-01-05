@@ -481,7 +481,7 @@ public class Walker extends DepthFirstAdapter {
   }
 
   public void outACharBaseTypeNoName(ACharBaseTypeNoName node) {
-    mProductions.addLast(CharType.v());
+    mProductions.addLast(primTypeCollector.getCharType());
   }
 
   public void outAShortBaseTypeNoName(AShortBaseTypeNoName node) {
@@ -522,7 +522,7 @@ public class Walker extends DepthFirstAdapter {
   }
 
   public void outACharBaseType(ACharBaseType node) {
-    mProductions.addLast(CharType.v());
+    mProductions.addLast(primTypeCollector.getCharType());
   }
 
   public void outAShortBaseType(AShortBaseType node) {

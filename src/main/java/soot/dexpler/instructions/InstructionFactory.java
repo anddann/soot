@@ -34,6 +34,7 @@ import soot.Scene;
 import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
+import soot.options.Options;
 
 /**
  * Factory that returns an appropriate Instruction instances for given dexlib instructions and opcodes.
@@ -51,9 +52,11 @@ public class InstructionFactory {
    * @param dalivkTyper
    * @param primTypeCollector
    * @param myScene
+   * @param myJimple
+   * @param myOptions
    */
-  public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress, Jimple jimple, ConstantFactory constancFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene) {
-    return fromOpcode(instruction.getOpcode(), instruction, codeAddress, constancFactory, jimple, dalivkTyper, primTypeCollector,  myScene);
+  public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress, Jimple jimple, ConstantFactory constancFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Jimple myJimple, Options myOptions) {
+    return fromOpcode(instruction.getOpcode(), instruction, codeAddress, constancFactory, jimple, dalivkTyper, primTypeCollector,  myScene, myOptions, myJimple);
   }
 
   /**
@@ -67,10 +70,11 @@ public class InstructionFactory {
    * @param jimple
    * @param dalivkTyper
    * @param primTypeCollector
-   * @param myJimple
    * @param myScene
+   * @param myOptions
+   * @param myJimple
    */
-  public static DexlibAbstractInstruction fromOpcode(Opcode op, Instruction instruction, int codeAddress, ConstantFactory constancFactory, Jimple jimple, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector,  Scene myScene) {
+  public static DexlibAbstractInstruction fromOpcode(Opcode op, Instruction instruction, int codeAddress, ConstantFactory constancFactory, Jimple jimple, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, Jimple myJimple) {
     switch (op) {
 
       case SPARSE_SWITCH_PAYLOAD:
@@ -161,14 +165,14 @@ public class InstructionFactory {
       case GOTO:
       case GOTO_16:
       case GOTO_32:
-        return new GotoInstruction(instruction, codeAddress);
+        return new GotoInstruction(instruction, codeAddress, myOptions, myJimple);
 
       case PACKED_SWITCH:
         // case PACKED_SWITCH_PAYLOAD:
         return new PackedSwitchInstruction(instruction, codeAddress);
       case SPARSE_SWITCH:
         // case SPARSE_SWITCH_PAYLOAD:
-        return new SparseSwitchInstruction(instruction, codeAddress,jimple,constancFactory,dalivkTyper,primTypeCollector);
+        return new SparseSwitchInstruction(instruction, codeAddress,jimple,constancFactory,dalivkTyper,primTypeCollector, myOptions);
 
       case CMPL_FLOAT:
       case CMPG_FLOAT:
@@ -200,7 +204,7 @@ public class InstructionFactory {
       case AGET_CHAR:
       case AGET_SHORT:
       case AGET_WIDE:
-        return new AgetInstruction(instruction, codeAddress, jimple);
+        return new AgetInstruction(instruction, codeAddress, jimple, myOptions, myDalvikTyper, primTypeCollector);
 
       case APUT:
       case APUT_OBJECT:

@@ -1,22 +1,8 @@
 package soot.JastAddJ;
 
-import java.util.HashSet;
-import java.io.File;
-import java.util.*;
-import beaver.*;
-import java.util.ArrayList;
-import java.util.zip.*;
-import java.io.*;
-import java.io.FileNotFoundException;
-import java.util.Collection;
 import soot.*;
-import soot.util.*;
 import soot.jimple.*;
-import soot.coffi.ClassFile;
-import soot.coffi.method_info;
-import soot.coffi.CONSTANT_Utf8_info;
-import soot.tagkit.SourceFileTag;
-import soot.coffi.CoffiMethodSource;
+
 /**
   * @ast class
  * 
@@ -24,12 +10,17 @@ import soot.coffi.CoffiMethodSource;
 public class CONSTANT_Class_Info extends CONSTANT_Info {
 
     public int name_index;
+    private Scene myScene;
+    private Jimple myJimple;
+    private PrimTypeCollector primeTypeCollector;
 
 
-
-    public CONSTANT_Class_Info(BytecodeParser parser) {
+    public CONSTANT_Class_Info(BytecodeParser parser, Scene myScene, Jimple myJimple, PrimTypeCollector primeTypeCollector) {
       super(parser);
-      name_index = p.u2();
+        this.myScene = myScene;
+        this.myJimple = myJimple;
+        this.primeTypeCollector = primeTypeCollector;
+        name_index = p.u2();
     }
 
 
@@ -77,7 +68,7 @@ public class CONSTANT_Class_Info extends CONSTANT_Info {
       if(typeName.indexOf('$') != -1)
         return new BytecodeTypeAccess(packageName, typeName);
       else
-        return new TypeAccess(packageName, typeName);
+        return new TypeAccess(packageName, typeName,myScene, primeTypeCollector,myJimple);
     }
 
 

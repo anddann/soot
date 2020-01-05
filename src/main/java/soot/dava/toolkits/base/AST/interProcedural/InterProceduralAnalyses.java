@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import soot.PhaseOptions;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.dava.DavaBody;
@@ -112,7 +111,7 @@ public class InterProceduralAnalyses {
         AST.apply(new SimplifyExpressions());
 
         // SimplifyConditions.DEBUG=true;
-        AST.apply(new SimplifyConditions());
+        AST.apply(new SimplifyConditions(constancFactory, primTypeCollector));
 
         // condition elimination
         // EliminateConditions.DEBUG=true;

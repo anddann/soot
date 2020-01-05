@@ -22,7 +22,9 @@ package soot.jimple.spark.pag;
  * #L%
  */
 
+import soot.PhaseOptions;
 import soot.RefType;
+import soot.Scene;
 import soot.jimple.ClassConstant;
 
 /**
@@ -41,7 +43,7 @@ public class ClassConstantNode extends AllocNode {
 
   /* End of public methods. */
 
-  ClassConstantNode(PAG pag, ClassConstant cc) {
-    super(pag, cc, RefType.v("java.lang.Class"), myPhaseOptions, null);
+  ClassConstantNode(PAG pag, ClassConstant cc, Scene myScene, PhaseOptions myPhaseOptions) {
+    super(pag, cc, RefType.v("java.lang.Class",myScene), myPhaseOptions, null);
   }
 }

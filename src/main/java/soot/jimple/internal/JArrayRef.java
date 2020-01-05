@@ -124,8 +124,8 @@ public class JArrayRef implements ArrayRef, ConvertToBaf {
     Value base = baseBox.getValue();
     Type type = base.getType();
 
-    if (type.equals(UnknownType.v())) {
-      return UnknownType.v();
+    if (type.equals(primTypeCollector.getUnknownType())) {
+      return primTypeCollector.getUnknownType();
     } else if (type.equals(NullType.v())) {
       return NullType.v();
     } else {

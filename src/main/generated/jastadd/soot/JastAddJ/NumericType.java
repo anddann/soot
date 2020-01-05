@@ -1,6 +1,15 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production NumericType : {@link PrimitiveType};
  * @ast node
@@ -63,10 +72,18 @@ public abstract class NumericType extends PrimitiveType implements Cloneable {
   }
   /**
    * @ast method 
-   * 
+   *
+   * @param myScene
+   * @param myJimple
+   * @param mySootResolver
+   * @param myOptions
+   * @param primTypeCollector
+   * @param myPackageNamer
+   * @param constantFactory
+   * @param myPhaseOptions
    */
-  public NumericType() {
-    super();
+  public NumericType(Scene myScene, Jimple myJimple, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, PackageNamer myPackageNamer, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer,myOptions, primTypeCollector,  constantFactory, myPhaseOptions);
 
 
   }
@@ -87,7 +104,9 @@ public abstract class NumericType extends PrimitiveType implements Cloneable {
    * @ast method 
    * 
    */
-  public NumericType(Modifiers p0, String p1, Opt<Access> p2, List<BodyDecl> p3) {
+  public NumericType(Modifiers p0, String p1, Opt<Access> p2, List<BodyDecl> p3, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
+
     setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
@@ -97,7 +116,9 @@ public abstract class NumericType extends PrimitiveType implements Cloneable {
    * @ast method 
    * 
    */
-  public NumericType(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<BodyDecl> p3) {
+  public NumericType(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<BodyDecl> p3, Scene myScene, Jimple myJimple, SootResolver mySootResolver, PackageNamer myPackageNamer, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+    super(myScene, myJimple, mySootResolver, myPackageNamer, myOptions, primTypeCollector, constantFactory, myPhaseOptions);
+
     setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);

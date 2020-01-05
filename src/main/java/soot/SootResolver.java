@@ -92,7 +92,7 @@ public class SootResolver {
       program = new Program(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, this, myPhaseOptions);
       program.state().reset();
 
-      program.initBytecodeReader(new BytecodeParser());
+      program.initBytecodeReader(new BytecodeParser(myScene, myPhaseOptions, myPackageNamer));
       program.initJavaParser(new JavaParser() {
         @Override
         public CompilationUnit parse(InputStream is, String fileName) throws IOException, beaver.Parser.Exception {

@@ -25,6 +25,7 @@ package soot.jimple.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import soot.PrimTypeCollector;
 import soot.Value;
 import soot.ValueBox;
 import soot.jimple.UnopExpr;
@@ -32,9 +33,10 @@ import soot.jimple.UnopExpr;
 @SuppressWarnings("serial")
 abstract public class AbstractUnopExpr implements UnopExpr {
   final ValueBox opBox;
-
-  protected AbstractUnopExpr(ValueBox opBox) {
+  protected final PrimTypeCollector primTypeCollector;
+  protected AbstractUnopExpr(ValueBox opBox, PrimTypeCollector primTypeCollector) {
     this.opBox = opBox;
+    this.primTypeCollector = primTypeCollector;
   }
 
   public abstract Object clone();

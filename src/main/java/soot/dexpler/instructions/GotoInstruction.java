@@ -32,10 +32,14 @@ import org.jf.dexlib2.iface.instruction.Instruction;
 import soot.dexpler.DexBody;
 import soot.jimple.GotoStmt;
 import soot.jimple.Jimple;
+import soot.options.Options;
 
 public class GotoInstruction extends JumpInstruction implements DeferableInstruction {
-  public GotoInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+  private Jimple myJimple;
+
+  public GotoInstruction(Instruction instruction, int codeAdress, Options myOptions, Jimple myJimple) {
+    super(instruction, codeAdress, myOptions);
+    this.myJimple = myJimple;
   }
 
   public void jimplify(DexBody body) {

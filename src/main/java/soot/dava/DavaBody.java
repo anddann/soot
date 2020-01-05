@@ -36,6 +36,7 @@ import soot.G;
 import soot.Local;
 import soot.PatchingChain;
 import soot.PhaseOptions;
+import soot.PrimTypeCollector;
 import soot.Printer;
 import soot.RefType;
 import soot.SootFieldRef;
@@ -104,6 +105,7 @@ import soot.dava.toolkits.base.finders.SwitchFinder;
 import soot.dava.toolkits.base.finders.SynchronizedBlockFinder;
 import soot.dava.toolkits.base.misc.MonitorConverter;
 import soot.dava.toolkits.base.misc.ThrowNullConverter;
+import soot.grimp.Grimp;
 import soot.grimp.GrimpBody;
 import soot.grimp.NewInvokeExpr;
 import soot.jimple.ArrayRef;
@@ -222,6 +224,8 @@ public class DavaBody extends Body {
   private Dava myDava;
   private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
   private ConstantFactory constancFactory;
+  private Grimp myGrimp;
+  private PrimTypeCollector primTypeCollector;
 
   /**
    * Construct an empty DavaBody
@@ -231,7 +235,7 @@ public class DavaBody extends Body {
            IfFinder myIfFinder, SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder,
            SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            MonitorConverter myMonitorConverter, ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover,
-           PhaseOptions myPhaseOptions, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constancFactory) {
+           PhaseOptions myPhaseOptions, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constancFactory, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
     super(m, myOptions, myPrinter);
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -248,6 +252,8 @@ public class DavaBody extends Body {
     this.myDava = myDava;
     this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     this.constancFactory = constancFactory;
+    this.myGrimp = myGrimp;
+    this.primTypeCollector = primTypeCollector;
 
     pMap = new HashMap<Integer, Value>();
     consumedConditions = new HashSet<Object>();
@@ -342,10 +348,10 @@ public class DavaBody extends Body {
            ThrowNullConverter myThrowNullConverter, SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder,
            CycleFinder myCycleFinder, IfFinder myIfFinder, SwitchFinder mySwitchFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constancFactory, PhaseDumper myPhaseDumper) {
+           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
     this(body.getMethod(), myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myDava, myClosestAbruptTargetFinder, constancFactory);
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myDava, myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector);
     debug("DavaBody", "creating DavaBody for" + body.getMethod().toString());
     this.myDava.log("\nstart method " + body.getMethod().toString());
 
@@ -1107,9 +1113,9 @@ public class DavaBody extends Body {
     if (boe instanceof CmpExpr) {
       vb.setValue(new DCmpExpr(leftOp, rightOp));
     } else if (boe instanceof CmplExpr) {
-      vb.setValue(new DCmplExpr(leftOp, rightOp));
+      vb.setValue(new DCmplExpr(leftOp, rightOp,myGrimp,primTypeCollector));
     } else if (boe instanceof CmpgExpr) {
-      vb.setValue(new DCmpgExpr(leftOp, rightOp));
+      vb.setValue(new DCmpgExpr(leftOp, rightOp, myGrimp,primTypeCollector));
     }
   }
 
@@ -1218,7 +1224,7 @@ public class DavaBody extends Body {
         }
 
         addToImportList(className);
-        vb.setValue(new DNewInvokeExpr((RefType) nie.getType(), nie.getMethodRef(), nie.getArgs()));
+        vb.setValue(new DNewInvokeExpr((RefType) nie.getType(), nie.getMethodRef(), nie.getArgs(), myGrimp));
       } else {
         SootMethodRef methodRef = sie.getMethodRef();
         className = methodRef.declaringClass().toString();

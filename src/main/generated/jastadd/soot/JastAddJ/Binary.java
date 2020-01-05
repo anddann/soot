@@ -1,6 +1,10 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.jimple.Jimple;
+
 /**
  * @production Binary : {@link Expr} ::= <span class="component">LeftOperand:{@link Expr}</span> <span class="component">RightOperand:{@link Expr}</span>;
  * @ast node
@@ -101,7 +105,7 @@ public abstract class Binary extends Expr implements Cloneable {
    * @ast method 
    * 
    */
-  public Binary() {
+  public Binary(PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
     super(primTypeCollector, myJimple, myScene);
 
 
@@ -121,7 +125,7 @@ public abstract class Binary extends Expr implements Cloneable {
    * @ast method 
    * 
    */
-  public Binary(Expr p0, Expr p1) {
+  public Binary(Expr p0, Expr p1,PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
       super(primTypeCollector, myJimple, myScene);
       setChild(p0, 0);
     setChild(p1, 1);

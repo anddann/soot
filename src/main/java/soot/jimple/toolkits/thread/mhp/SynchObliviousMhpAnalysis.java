@@ -134,7 +134,7 @@ public class SynchObliviousMhpAnalysis implements MhpTester, Runnable {
 
     // Find Thread.start() and Thread.join() statements (in live code)
     // logger.debug(" MHP: StartJoinFinder");
-    StartJoinFinder sjf = new StartJoinFinder(callGraph, (PAG) pta); // does analysis
+    StartJoinFinder sjf = new StartJoinFinder(callGraph, (PAG) pta, myScene, throwAnalysis, myManager, myPhaseDumper, myOptions); // does analysis
     Map<Stmt, List<AllocNode>> startToAllocNodes = sjf.getStartToAllocNodes();
     Map<Stmt, List<SootMethod>> startToRunMethods = sjf.getStartToRunMethods();
     Map<Stmt, SootMethod> startToContainingMethod = sjf.getStartToContainingMethod();

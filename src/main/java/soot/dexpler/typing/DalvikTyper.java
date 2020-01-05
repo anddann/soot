@@ -115,6 +115,7 @@ import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.SimpleLocalDefs;
 import soot.toolkits.scalar.SimpleLocalUses;
 import soot.toolkits.scalar.UnitValueBoxPair;
@@ -137,14 +138,18 @@ public class DalvikTyper implements IDalvikTyper {
   private ConstantFactory constantFactory;
   private ThrowAnalysis myThrowAnalysis;
   private PhaseDumper myPhaseDumper;
+  private InteractionHandler myInteractionHandler;
 
   @Inject
-  private DalvikTyper(Scene myScene, PrimTypeCollector primTypeCollector, ThrowableSet.Manager myManager, Options myOptions, ConstantFactory constantFactory) {
+  private DalvikTyper(Scene myScene, PrimTypeCollector primTypeCollector, ThrowableSet.Manager myManager, Options myOptions, ConstantFactory constantFactory, ThrowAnalysis myThrowAnalysis, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
     this.myScene = myScene;
     this.primTypeCollector = primTypeCollector;
     this.myManager = myManager;
     this.myOptions = myOptions;
     this.constantFactory = constantFactory;
+    this.myThrowAnalysis = myThrowAnalysis;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
   public void clear() {

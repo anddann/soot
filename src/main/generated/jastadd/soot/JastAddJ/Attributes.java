@@ -386,7 +386,7 @@ public class Attributes extends java.lang.Object {
     					  try{
     						  is = classPath.getInputStream(inner_class_name);
     						  if(is != null) {
-        						  BytecodeParser p = new BytecodeParser(is, this.p.name);
+        						  BytecodeParser p = new BytecodeParser(myScene, myPackageNamer, myPhaseOptions, is, this.p.name);
         						  p.parse(typeDecl, outer_class_name, classPath, (inner_class_access_flags & Flags.ACC_STATIC) == 0);
         					  } else {
         						  p.println("Error: ClassFile " + inner_class_name

@@ -50,6 +50,7 @@ import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InstanceOfExpr;
 import soot.jimple.InvokeExpr;
+import soot.jimple.Jimple;
 import soot.jimple.ParameterRef;
 import soot.jimple.Ref;
 import soot.jimple.ReturnStmt;
@@ -58,9 +59,11 @@ import soot.jimple.Stmt;
 import soot.jimple.ThisRef;
 import soot.jimple.UnopExpr;
 import soot.jimple.internal.JCaughtExceptionRef;
+import soot.options.Options;
 import soot.toolkits.graph.MemoryEfficientGraph;
 import soot.toolkits.graph.MutableDirectedGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
@@ -77,6 +80,7 @@ import soot.toolkits.scalar.Pair;
 public class SimpleMethodInfoFlowAnalysis
     extends ForwardFlowAnalysis<Unit, FlowSet<Pair<EquivalentValue, EquivalentValue>>> {
   private static final Logger logger = LoggerFactory.getLogger(SimpleMethodInfoFlowAnalysis.class);
+  private final Jimple myJimple;
   SootMethod sm;
   Value thisLocal;
   InfoFlowAnalysis dfa;
@@ -92,8 +96,8 @@ public class SimpleMethodInfoFlowAnalysis
 
   public static int counter = 0;
 
-  public SimpleMethodInfoFlowAnalysis(UnitGraph g, InfoFlowAnalysis dfa, boolean ignoreNonRefTypeFlow) {
-    this(g, dfa, ignoreNonRefTypeFlow, true);
+  public SimpleMethodInfoFlowAnalysis(UnitGraph g, InfoFlowAnalysis dfa, boolean ignoreNonRefTypeFlow, Jimple myJimple, Options myOptions, InteractionHandler myInteractionHandler) {
+    this(g, dfa, ignoreNonRefTypeFlow,true, myOptions,myInteractionHandler, myJimple);
 
     counter++;
 
@@ -109,7 +113,7 @@ public class SimpleMethodInfoFlowAnalysis
 
     // Add every field of this class
     for (SootField sf : sm.getDeclaringClass().getFields()) {
-      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, myJimple);
+      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, this.myJimple);
       if (!infoFlowGraph.containsNode(fieldRefEqVal)) {
         infoFlowGraph.addNode(fieldRefEqVal);
       }
@@ -123,7 +127,7 @@ public class SimpleMethodInfoFlowAnalysis
     while (superclass.hasSuperclass()) // we don't want to process Object
     {
       for (SootField scField : superclass.getFields()) {
-        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, myJimple);
+        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, this.myJimple);
         if (!infoFlowGraph.containsNode(fieldRefEqVal)) {
           infoFlowGraph.addNode(fieldRefEqVal);
         }
@@ -154,9 +158,10 @@ public class SimpleMethodInfoFlowAnalysis
 
   /** A constructor that doesn't run the analysis */
   protected SimpleMethodInfoFlowAnalysis(UnitGraph g, InfoFlowAnalysis dfa, boolean ignoreNonRefTypeFlow,
-      boolean dummyDontRunAnalysisYet) {
-    super(g);
+                                         boolean dummyDontRunAnalysisYet, Options myOptions, InteractionHandler myInteractionHandler, Jimple myJimple) {
+    super(g,myOptions.interactive_mode(),  myInteractionHandler);
     this.sm = g.getBody().getMethod();
+    this.myJimple = myJimple;
     if (sm.isStatic()) {
       this.thisLocal = null;
     } else {

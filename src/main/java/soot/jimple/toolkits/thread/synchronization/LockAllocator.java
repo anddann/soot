@@ -43,6 +43,7 @@ import soot.EquivalentValue;
 import soot.Local;
 import soot.PhaseOptions;
 import soot.PointsToAnalysis;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Scene;
 import soot.SceneTransformer;
@@ -65,6 +66,7 @@ import soot.jimple.toolkits.callgraph.ReachableMethods;
 import soot.jimple.toolkits.infoflow.ClassInfoFlowAnalysis;
 import soot.jimple.toolkits.infoflow.FakeJimpleLocal;
 import soot.jimple.toolkits.infoflow.SmartMethodInfoFlowAnalysis;
+import soot.jimple.toolkits.pointer.FullObjectSet;
 import soot.jimple.toolkits.pointer.RWSet;
 import soot.jimple.toolkits.thread.ThreadLocalObjectsAnalysis;
 import soot.jimple.toolkits.thread.mhp.MhpTester;
@@ -91,10 +93,14 @@ public class LockAllocator extends SceneTransformer {
   private PhaseDumper myPhaseDumer;
   private FullObjectFactory fullObjectFactory;
   private PhaseDumper myPhaseDumper;
-    private InteractionHandler myInteractionHandler;
+  private InteractionHandler myInteractionHandler;
+  private PrimTypeCollector primTypeCollector;
+    private FullObjectSet myFullObjectSet;
 
     @Inject
-  public LockAllocator(Scene myScene, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumer, FullObjectFactory fullObjectFactory, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
+  public LockAllocator(Scene myScene, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, Options myOptions,
+                       PhaseDumper myPhaseDumer, FullObjectFactory fullObjectFactory, PhaseDumper myPhaseDumper,
+                       InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollector, FullObjectSet myFullObjectSet) {
     this.myScene = myScene;
     this.myThrowAnalysis = myThrowAnalysis;
     this.myManager = myManager;
@@ -102,7 +108,9 @@ public class LockAllocator extends SceneTransformer {
     this.myPhaseDumer = myPhaseDumer;
     this.fullObjectFactory = fullObjectFactory;
     this.myPhaseDumper = myPhaseDumper;
-        this.myInteractionHandler = myInteractionHandler;
+    this.myInteractionHandler = myInteractionHandler;
+      this.primTypeCollector = primTypeCollector;
+        this.myFullObjectSet = myFullObjectSet;
     }
 
   List<CriticalSection> criticalSections = null;
@@ -234,11 +242,14 @@ public class LockAllocator extends SceneTransformer {
         SootMethod method = methodsIt.next();
         if (method.isConcrete()) {
           Body b = method.retrieveActiveBody();
-          ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b, myThrowAnalysis,myOptions.omit_excepting_unit_edges(), myManager, myPhaseDumer);
+          ExceptionalUnitGraph eug
+              = new ExceptionalUnitGraph(b, myThrowAnalysis, myOptions.omit_excepting_unit_edges(), myManager, myPhaseDumer);
           methodToExcUnitGraph.put(method, eug);
 
           // run the intraprocedural analysis
-          SynchronizedRegionFinder ta = new SynchronizedRegionFinder(eug, b, optionPrintDebug, optionOpenNesting, tlo);
+          SynchronizedRegionFinder ta = new SynchronizedRegionFinder(myThrowAnalysis, myManager, myPhaseDumper,
+              primTypeCollector, myScene, fullObjectFactory, eug, b, optionPrintDebug, optionOpenNesting, tlo, myOptions,
+              myInteractionHandler, myFullObjectSet);
           Chain<Unit> units = b.getUnits();
           Unit lastUnit = units.getLast();
           FlowSet fs = (FlowSet) ta.getFlowBefore(lastUnit);
@@ -272,8 +283,8 @@ public class LockAllocator extends SceneTransformer {
     logger.debug("[wjtp.tn] *** Find Transitive Read/Write Sets *** " + (new Date()));
     PointsToAnalysis pta = myScene.getPointsToAnalysis();
     CriticalSectionAwareSideEffectAnalysis tasea = null;
-    tasea = new CriticalSectionAwareSideEffectAnalysis(fullObjectFactory, myPhaseDumper, pta, myScene.getCallGraph(),
-        (optionOpenNesting ? criticalSections : null), tlo, myScene);
+    tasea = new CriticalSectionAwareSideEffectAnalysis(fullObjectFactory, myPhaseDumper, primTypeCollector, pta,
+        myScene.getCallGraph(), (optionOpenNesting ? criticalSections : null), tlo, myScene);
     Iterator<CriticalSection> tnIt = criticalSections.iterator();
     while (tnIt.hasNext()) {
       CriticalSection tn = tnIt.next();
@@ -322,7 +333,7 @@ public class LockAllocator extends SceneTransformer {
     // Search for data dependencies between transactions, and split them into disjoint sets
     logger.debug("[wjtp.tn] *** Calculate Locking Groups *** " + (new Date()));
     CriticalSectionInterferenceGraph ig = new CriticalSectionInterferenceGraph(criticalSections, mhp, optionOneGlobalLock,
-        optionLeaveOriginalLocks, optionIncludeEmptyPossibleEdges,myScene, fullObjectFactory);
+        optionLeaveOriginalLocks, optionIncludeEmptyPossibleEdges, myScene, fullObjectFactory);
     interferenceGraph = ig; // save in field for later retrieval
 
     // *** Detect the Possibility of Deadlock ***
@@ -448,7 +459,8 @@ public class LockAllocator extends SceneTransformer {
 
         // Get list of objects (FieldRef or Local) to be locked (lockset analysis)
         logger.debug("[wjtp.tn] * " + tn.name + " *");
-        LockableReferenceAnalysis la = new LockableReferenceAnalysis(new BriefUnitGraph(tn.method.retrieveActiveBody(), myPhaseDumper));
+        LockableReferenceAnalysis la
+            = new LockableReferenceAnalysis(new BriefUnitGraph(tn.method.retrieveActiveBody(), myPhaseDumper));
         tn.lockset = la.getLocksetOf(tasea, tn.group.rwSet, tn);
 
         // Determine if list is suitable for the selected locking scheme
@@ -628,7 +640,8 @@ public class LockAllocator extends SceneTransformer {
       if (tn.setNumber <= 0) {
         continue;
       }
-      LocalDefs ld = LocalDefs.Factory.newLocalDefs(tn.method.retrieveActiveBody(), myThrowAnalysis, myManager, myOptions, myPhaseDumer, myInteractionHandler);
+      LocalDefs ld = LocalDefs.Factory.newLocalDefs(tn.method.retrieveActiveBody(), myThrowAnalysis, myManager, myOptions,
+          myPhaseDumer, myInteractionHandler);
 
       if (tn.origLock == null || !(tn.origLock instanceof Local)) {
         continue;

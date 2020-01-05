@@ -30,15 +30,18 @@ import soot.SootMethodRef;
 import soot.UnitPrinter;
 import soot.Value;
 import soot.ValueBox;
+import soot.baf.Baf;
 import soot.grimp.Grimp;
 import soot.grimp.Precedence;
 import soot.grimp.PrecedenceTest;
 import soot.jimple.internal.AbstractVirtualInvokeExpr;
 
 public class GVirtualInvokeExpr extends AbstractVirtualInvokeExpr implements Precedence {
-  public GVirtualInvokeExpr(Value base, SootMethodRef methodRef, List args) {
-    super(myGrimp.newObjExprBox(base), methodRef, new ValueBox[args.size()]);
+  private Grimp myGrimp;
 
+  public GVirtualInvokeExpr(Value base, SootMethodRef methodRef, List args, Baf myBaf, Grimp myGrimp) {
+    super(myGrimp.newObjExprBox(base), methodRef, new ValueBox[args.size()], myBaf);
+    this.myGrimp = myGrimp;
     for (int i = 0; i < args.size(); i++) {
       this.argBoxes[i] = myGrimp.newExprBox((Value) args.get(i));
     }
@@ -109,7 +112,7 @@ public class GVirtualInvokeExpr extends AbstractVirtualInvokeExpr implements Pre
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new GVirtualInvokeExpr(Grimp.cloneIfNecessary(getBase()), methodRef, clonedArgs);
+    return new GVirtualInvokeExpr(Grimp.cloneIfNecessary(getBase()), methodRef, clonedArgs, myBaf, myGrimp);
   }
 
 }

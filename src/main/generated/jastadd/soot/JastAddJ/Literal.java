@@ -1,6 +1,11 @@
 /* This file was generated with JastAdd2 (http://jastadd.org) version R20130212 (r1031) */
 package soot.JastAddJ;
 
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+
 /**
  * The abstract base class for all literals.
  * @production Literal : {@link PrimaryExpr} ::= <span class="component">&lt;LITERAL:String&gt;</span>;
@@ -47,7 +52,7 @@ public abstract class Literal extends PrimaryExpr implements Cloneable {
    * @aspect BytecodeCONSTANT
    * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.4Frontend/BytecodeCONSTANT.jrag:79
    */
-  public static Literal buildStringLiteral(String value) {
+  public static Literal buildStringLiteral(String value, ConstantFactory constantFactory) {
     return new StringLiteral(value, constantFactory);
   }
   /**
@@ -102,8 +107,8 @@ public abstract class Literal extends PrimaryExpr implements Cloneable {
    * @ast method 
    * 
    */
-  public Literal() {
-    super();
+  public Literal(PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
+    super(primTypeCollector,myJimple,myScene);
 
 
   }
@@ -121,14 +126,16 @@ public abstract class Literal extends PrimaryExpr implements Cloneable {
    * @ast method 
    * 
    */
-  public Literal(String p0) {
+  public Literal(String p0,PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
+    super(primTypeCollector,myJimple,myScene);
     setLITERAL(p0);
   }
   /**
    * @ast method 
    * 
    */
-  public Literal(beaver.Symbol p0) {
+  public Literal(beaver.Symbol p0,PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
+    super(primTypeCollector,myJimple,myScene);
     setLITERAL(p0);
   }
   /**

@@ -34,7 +34,7 @@ public abstract class IntegralType extends NumericType implements Cloneable {
    * 
    */
   public IntegralType() {
-    super();
+    super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
 
 
   }
@@ -56,7 +56,8 @@ public abstract class IntegralType extends NumericType implements Cloneable {
    * 
    */
   public IntegralType(Modifiers p0, String p1, Opt<Access> p2, List<BodyDecl> p3) {
-    setChild(p0, 0);
+      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);
@@ -66,7 +67,8 @@ public abstract class IntegralType extends NumericType implements Cloneable {
    * 
    */
   public IntegralType(Modifiers p0, beaver.Symbol p1, Opt<Access> p2, List<BodyDecl> p3) {
-    setChild(p0, 0);
+      super(myScene, myJimple, mySootResolver, myOptions, primTypeCollector, myPackageNamer, constantFactory, myPhaseOptions);
+      setChild(p0, 0);
     setID(p1);
     setChild(p2, 1);
     setChild(p3, 2);

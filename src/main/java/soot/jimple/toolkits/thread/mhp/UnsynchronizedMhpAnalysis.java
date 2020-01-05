@@ -22,6 +22,8 @@ package soot.jimple.toolkits.thread.mhp;
  * #L%
  */
 
+import soot.Scene;
+
 /**
  * @deprecated This class has been added to maintain compatibility while it is being renamed to
  *             {@link SynchObliviousMhpAnalysis}. Use that instead!
@@ -29,7 +31,7 @@ package soot.jimple.toolkits.thread.mhp;
 @Deprecated
 public class UnsynchronizedMhpAnalysis extends SynchObliviousMhpAnalysis {
 
-    public UnsynchronizedMhpAnalysis() {
+    public UnsynchronizedMhpAnalysis(Scene myScene) {
         super(myScene);
     }
 }

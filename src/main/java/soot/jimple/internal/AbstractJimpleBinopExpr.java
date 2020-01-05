@@ -22,13 +22,13 @@ package soot.jimple.internal;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.Value;
 import soot.jimple.Jimple;
 
 @SuppressWarnings("serial")
 abstract public class AbstractJimpleBinopExpr extends AbstractBinopExpr {
-  protected AbstractJimpleBinopExpr(Value op1, Value op2) {
-    op1Box = myJimple.newArgBox(op1);
-    op2Box = myJimple.newArgBox(op2);
+  protected AbstractJimpleBinopExpr(Value op1, Value op2, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+    super(myJimple.newArgBox(op1), myJimple.newArgBox(op2), primTypeCollector);
   }
 }

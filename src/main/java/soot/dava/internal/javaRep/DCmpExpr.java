@@ -36,7 +36,7 @@ import soot.util.Switch;
  */
 public class DCmpExpr extends AbstractGrimpIntBinopExpr implements CmpExpr {
   public DCmpExpr(Value op1, Value op2) {
-    super(op1, op2);
+    super(op1, op2, myGrimp);
   }
 
   public final String getSymbol() {

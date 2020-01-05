@@ -1071,7 +1071,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
 
     // create RHS
     DNewInvokeExpr invokeExpr
-        = new DNewInvokeExpr(RefType.v(sootClass), makeMethodRef("DavaSuperHandler", new ArrayList()), new ArrayList());
+        = new DNewInvokeExpr(RefType.v(sootClass), makeMethodRef("DavaSuperHandler", new ArrayList()), new ArrayList(), myGrimp);
 
     // create LHS
     GAssignStmt initialization = new GAssignStmt(newLocal, invokeExpr);
@@ -1179,7 +1179,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         typeList.add(IntType.v());
 
         DNewInvokeExpr argForStore
-            = new DNewInvokeExpr(RefType.v("java.lang.Boolean"), makeMethodRef("Boolean", typeList), argList);
+            = new DNewInvokeExpr(RefType.v("java.lang.Boolean"), makeMethodRef("Boolean", typeList), argList, myGrimp);
 
         return createAugmentedStmtToAdd(newLocal, getMethodRef, argForStore);
       } else if (t == ByteType.v()) {
@@ -1188,7 +1188,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         typeList.add(ByteType.v());
 
         DNewInvokeExpr argForStore
-            = new DNewInvokeExpr(RefType.v("java.lang.Byte"), makeMethodRef("Byte", typeList), argList);
+            = new DNewInvokeExpr(RefType.v("java.lang.Byte"), makeMethodRef("Byte", typeList), argList, myGrimp);
 
         return createAugmentedStmtToAdd(newLocal, getMethodRef, argForStore);
       } else if (t == CharType.v()) {
@@ -1197,7 +1197,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         typeList.add(CharType.v());
 
         DNewInvokeExpr argForStore
-            = new DNewInvokeExpr(RefType.v("java.lang.Character"), makeMethodRef("Character", typeList), argList);
+            = new DNewInvokeExpr(RefType.v("java.lang.Character"), makeMethodRef("Character", typeList), argList, myGrimp);
 
         return createAugmentedStmtToAdd(newLocal, getMethodRef, argForStore);
       } else if (t == DoubleType.v()) {
@@ -1206,7 +1206,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         typeList.add(DoubleType.v());
 
         DNewInvokeExpr argForStore
-            = new DNewInvokeExpr(RefType.v("java.lang.Double"), makeMethodRef("Double", typeList), argList);
+            = new DNewInvokeExpr(RefType.v("java.lang.Double"), makeMethodRef("Double", typeList), argList, myGrimp);
 
         return createAugmentedStmtToAdd(newLocal, getMethodRef, argForStore);
       } else if (t == FloatType.v()) {
@@ -1215,7 +1215,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         typeList.add(FloatType.v());
 
         DNewInvokeExpr argForStore
-            = new DNewInvokeExpr(RefType.v("java.lang.Float"), makeMethodRef("Float", typeList), argList);
+            = new DNewInvokeExpr(RefType.v("java.lang.Float"), makeMethodRef("Float", typeList), argList, myGrimp);
 
         return createAugmentedStmtToAdd(newLocal, getMethodRef, argForStore);
       } else if (t == IntType.v()) {
@@ -1224,7 +1224,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         typeList.add(IntType.v());
 
         DNewInvokeExpr argForStore
-            = new DNewInvokeExpr(RefType.v("java.lang.Integer"), makeMethodRef("Integer", typeList), argList);
+            = new DNewInvokeExpr(RefType.v("java.lang.Integer"), makeMethodRef("Integer", typeList), argList, myGrimp);
 
         return createAugmentedStmtToAdd(newLocal, getMethodRef, argForStore);
       } else if (t == LongType.v()) {
@@ -1233,7 +1233,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         typeList.add(LongType.v());
 
         DNewInvokeExpr argForStore
-            = new DNewInvokeExpr(RefType.v("java.lang.Long"), makeMethodRef("Long", typeList), argList);
+            = new DNewInvokeExpr(RefType.v("java.lang.Long"), makeMethodRef("Long", typeList), argList, myGrimp);
 
         return createAugmentedStmtToAdd(newLocal, getMethodRef, argForStore);
       } else if (t == ShortType.v()) {
@@ -1242,7 +1242,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         typeList.add(ShortType.v());
 
         DNewInvokeExpr argForStore
-            = new DNewInvokeExpr(RefType.v("java.lang.Short"), makeMethodRef("Short", typeList), argList);
+            = new DNewInvokeExpr(RefType.v("java.lang.Short"), makeMethodRef("Short", typeList), argList, myGrimp);
 
         return createAugmentedStmtToAdd(newLocal, getMethodRef, argForStore);
       } else {

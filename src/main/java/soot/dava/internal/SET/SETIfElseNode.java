@@ -28,6 +28,7 @@ import soot.dava.internal.AST.ASTIfElseNode;
 import soot.dava.internal.AST.ASTIfNode;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.asg.AugmentedStmt;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.misc.ConditionFlipper;
 import soot.jimple.ConditionExpr;
 import soot.jimple.IfStmt;
@@ -35,12 +36,14 @@ import soot.util.IterableSet;
 
 public class SETIfElseNode extends SETDagNode {
   private IterableSet ifBody, elseBody;
+  private TryContentsFinder myTryContentsFinder;
 
-  public SETIfElseNode(AugmentedStmt characterizingStmt, IterableSet body, IterableSet ifBody, IterableSet elseBody) {
+  public SETIfElseNode(AugmentedStmt characterizingStmt, IterableSet body, IterableSet ifBody, IterableSet elseBody, TryContentsFinder myTryContentsFinder) {
     super(characterizingStmt, body);
 
     this.ifBody = ifBody;
     this.elseBody = elseBody;
+    this.myTryContentsFinder = myTryContentsFinder;
 
     add_SubBody(ifBody);
     add_SubBody(elseBody);

@@ -263,7 +263,7 @@ public class AugEvalFunction implements IEvalFunction {
       } else if (value >= -32768 && value < -128) {
         return ShortType.v();
       } else if (value >= 32768 && value < 65536) {
-        return CharType.v();
+        return primTypeCollector.getCharType();
       } else {
         return IntType.v();
       }

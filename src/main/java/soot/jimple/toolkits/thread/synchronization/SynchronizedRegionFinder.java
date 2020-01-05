@@ -33,11 +33,14 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.G;
+import soot.PrimTypeCollector;
+import soot.Scene;
 import soot.SootMethod;
 import soot.Unit;
 import soot.jimple.AssignStmt;
 import soot.jimple.EnterMonitorStmt;
 import soot.jimple.ExitMonitorStmt;
+import soot.jimple.FullObjectFactory;
 import soot.jimple.GotoStmt;
 import soot.jimple.JimpleBody;
 import soot.jimple.ReturnStmt;
@@ -45,11 +48,14 @@ import soot.jimple.ReturnVoidStmt;
 import soot.jimple.Stmt;
 import soot.jimple.ThrowStmt;
 import soot.jimple.internal.JNopStmt;
+import soot.jimple.toolkits.pointer.FullObjectSet;
 import soot.jimple.toolkits.pointer.RWSet;
 import soot.jimple.toolkits.pointer.Union;
 import soot.jimple.toolkits.pointer.UnionFactory;
 import soot.jimple.toolkits.thread.ThreadLocalObjectsAnalysis;
 import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.graph.interaction.InteractionHandler;
@@ -60,12 +66,19 @@ import soot.toolkits.scalar.LocalUses;
 import soot.toolkits.scalar.Pair;
 import soot.toolkits.scalar.UnitValueBoxPair;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 /**
  * @author Richard L. Halpert Finds Synchronized Regions and creates a set of CriticalSection objects from them.
  */
 public class SynchronizedRegionFinder extends ForwardFlowAnalysis<Unit, FlowSet<SynchronizedRegionFlowPair>> {
   private static final Logger logger = LoggerFactory.getLogger(SynchronizedRegionFinder.class);
+  private final ThrowAnalysis throwAnalysis;
+  private final ThrowableSet.Manager myManager;
+  private final PhaseDumper myPhaseDumper;
+  private final PrimTypeCollector primTypeCollector;
+  private final Scene myScene;
+  private final FullObjectFactory fullObjectFactory;
   FlowSet<SynchronizedRegionFlowPair> emptySet = new ArraySparseSet<SynchronizedRegionFlowPair>();
 
   Map unitToGenerateSet;
@@ -84,22 +97,30 @@ public class SynchronizedRegionFinder extends ForwardFlowAnalysis<Unit, FlowSet<
 
   public boolean optionPrintDebug = false;
   public boolean optionOpenNesting = true;
+  private FullObjectSet myFullObjectSet;
 
-  SynchronizedRegionFinder(UnitGraph graph, Body b, boolean optionPrintDebug, boolean optionOpenNesting,
-                           ThreadLocalObjectsAnalysis tlo, Options myOptions, InteractionHandler myInteractionHandler) {
+  SynchronizedRegionFinder(ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, PrimTypeCollector primTypeCollector, Scene myScene, FullObjectFactory fullObjectFactory, UnitGraph graph, Body b, boolean optionPrintDebug, boolean optionOpenNesting,
+                           ThreadLocalObjectsAnalysis tlo, Options myOptions, InteractionHandler myInteractionHandler, FullObjectSet myFullObjectSet) {
     super(graph,myOptions.interactive_mode(),myInteractionHandler);
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
+    this.primTypeCollector = primTypeCollector;
+    this.myScene = myScene;
+    this.fullObjectFactory = fullObjectFactory;
 
     this.optionPrintDebug = optionPrintDebug;
     this.optionOpenNesting = optionOpenNesting;
 
     body = b;
     units = b.getUnits();
+    this.myFullObjectSet = myFullObjectSet;
     method = body.getMethod();
 
     if (graph instanceof ExceptionalUnitGraph) {
       egraph = (ExceptionalUnitGraph) graph;
     } else {
-      egraph = new ExceptionalUnitGraph(b, myManager);
+      egraph = new ExceptionalUnitGraph(b, this.throwAnalysis,  myOptions.omit_excepting_unit_edges(), this.myManager, this.myPhaseDumper);
     }
 
     slu = LocalUses.Factory.newLocalUses(egraph, myOptions, myInteractionHandler);
@@ -107,19 +128,19 @@ public class SynchronizedRegionFinder extends ForwardFlowAnalysis<Unit, FlowSet<
     if (G.v().Union_factory == null) {
       G.v().Union_factory = new UnionFactory() {
         public Union newUnion() {
-          return myFullObjectSet;
+          return SynchronizedRegionFinder.this.myFullObjectSet;
         }
       };
     }
 
-    tasea = new CriticalSectionAwareSideEffectAnalysis(fullObjectFactory, myPhaseDumper, myScene.getPointsToAnalysis(), myScene.getCallGraph(), null, tlo, myScene);
+    tasea = new CriticalSectionAwareSideEffectAnalysis(this.fullObjectFactory, this.myPhaseDumper, this.primTypeCollector, this.myScene.getPointsToAnalysis(), this.myScene.getCallGraph(), null, tlo, this.myScene);
 
     prepUnits = new ArrayList<Object>();
 
     methodTn = null;
     if (method.isSynchronized()) {
       // Entire method is transactional
-      methodTn = new CriticalSection(true, method, 1, fullObjectFactory, myScene);
+      methodTn = new CriticalSection(true, method, 1, this.fullObjectFactory, this.myScene);
       methodTn.beginning = ((JimpleBody) body).getFirstNonIdentityStmt();
     }
     doAnalysis();

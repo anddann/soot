@@ -22,6 +22,7 @@ package soot.grimp.internal;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.Value;
 import soot.grimp.Grimp;
 import soot.jimple.ExprSwitch;
@@ -29,8 +30,11 @@ import soot.jimple.GeExpr;
 import soot.util.Switch;
 
 public class GGeExpr extends AbstractGrimpIntBinopExpr implements GeExpr {
-  public GGeExpr(Value op1, Value op2) {
-    super(op1, op2);
+  private final Grimp myGrimp;
+
+  public GGeExpr(Value op1, Value op2, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
+    super(op1, op2, myGrimp,primTypeCollector);
+    this.myGrimp = myGrimp;
   }
 
   public final String getSymbol() {
@@ -46,6 +50,6 @@ public class GGeExpr extends AbstractGrimpIntBinopExpr implements GeExpr {
   }
 
   public Object clone() {
-    return new GGeExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()));
+    return new GGeExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()),myGrimp,primTypeCollector);
   }
 }

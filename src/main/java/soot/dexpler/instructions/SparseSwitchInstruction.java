@@ -45,6 +45,7 @@ import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
 import soot.jimple.LookupSwitchStmt;
 import soot.jimple.Stmt;
+import soot.options.Options;
 
 public class SparseSwitchInstruction extends SwitchInstruction {
 
@@ -52,8 +53,8 @@ public class SparseSwitchInstruction extends SwitchInstruction {
   private DalvikTyper myDalvikTyper;
   private PrimTypeCollector primTypeCollector;
 
-  public SparseSwitchInstruction(Instruction instruction, int codeAdress, Jimple myJimple, ConstantFactory constancFactory, DalvikTyper myDalvikTyper, PrimTypeCollector primTypeCollector) {
-    super(instruction, codeAdress, myJimple);
+  public SparseSwitchInstruction(Instruction instruction, int codeAdress, Jimple myJimple, ConstantFactory constancFactory, DalvikTyper myDalvikTyper, PrimTypeCollector primTypeCollector, Options myOptions) {
+    super(instruction, codeAdress, myJimple, myOptions);
     this.constancFactory = constancFactory;
     this.myDalvikTyper = myDalvikTyper;
     this.primTypeCollector = primTypeCollector;

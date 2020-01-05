@@ -45,16 +45,18 @@ import soot.util.Switch;
 abstract public class AbstractCastExpr implements CastExpr, ConvertToBaf {
   final ValueBox opBox;
   Type type;
+  private Baf myBaf;
 
-  AbstractCastExpr(Value op, Type type) {
-    this(myJimple.newImmediateBox(op), type);
+  AbstractCastExpr(Value op, Type type, Jimple myJimple, Baf myBaf) {
+    this(myJimple.newImmediateBox(op), type, myBaf);
   }
 
   public abstract Object clone();
 
-  protected AbstractCastExpr(ValueBox opBox, Type type) {
+  protected AbstractCastExpr(ValueBox opBox, Type type, Baf myBaf) {
     this.opBox = opBox;
     this.type = type;
+    this.myBaf = myBaf;
   }
 
   public boolean equivTo(Object o) {

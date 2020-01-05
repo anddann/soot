@@ -28,7 +28,7 @@ import soot.jimple.Jimple;
 
 public class JCastExpr extends AbstractCastExpr {
   public JCastExpr(Value op, Type type) {
-    super(myJimple.newImmediateBox(op), type);
+    super(myJimple.newImmediateBox(op), type, myBaf);
   }
 
   public Object clone() {

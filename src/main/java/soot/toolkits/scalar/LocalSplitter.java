@@ -72,16 +72,14 @@ public class LocalSplitter extends BodyTransformer {
   protected ThrowAnalysis throwAnalysis;
   protected boolean omitExceptingUnitEdges;
   private Options myOptions;
-  private Timers myTimers;
   private Scene myScene;
   private ThrowableSet.Manager myManager;
   private PhaseDumper myPhaseDumper;
   private InteractionHandler myInteractionHandler;
 
   @Inject
-  public LocalSplitter(Options myOptions, Timers myTimers, Scene myScene, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
+  public LocalSplitter(Options myOptions,  Scene myScene, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
     this.myOptions = myOptions;
-    this.myTimers = myTimers;
     this.myScene = myScene;
     this.myManager = myManager;
     this.myPhaseDumper = myPhaseDumper;
@@ -97,13 +95,13 @@ public class LocalSplitter extends BodyTransformer {
       logger.debug("[" + body.getMethod().getName() + "] Splitting locals...");
     }
 
-    if (myOptions.time()) {
-      myTimers.splitTimer.start();
-    }
+//    if (myOptions.time()) {
+//      myTimers.splitTimer.start();
+//    }
 
-    if (myOptions.time()) {
-      myTimers.splitPhase1Timer.start();
-    }
+//    if (myOptions.time()) {
+//      myTimers.splitPhase1Timer.start();
+//    }
 
     if (throwAnalysis == null) {
       throwAnalysis = myScene.getDefaultThrowAnalysis();
@@ -125,12 +123,12 @@ public class LocalSplitter extends BodyTransformer {
     final LocalDefs defs = LocalDefs.Factory.newLocalDefs(graph, true, myOptions, myInteractionHandler);
     final LocalUses uses = LocalUses.Factory.newLocalUses(graph, defs);
 
-    if (myOptions.time()) {
-      myTimers.splitPhase1Timer.end();
-    }
-    if (myOptions.time()) {
-      myTimers.splitPhase2Timer.start();
-    }
+//    if (myOptions.time()) {
+//      myTimers.splitPhase1Timer.end();
+//    }
+//    if (myOptions.time()) {
+//      myTimers.splitPhase2Timer.start();
+//    }
 
     Set<Unit> visited = new HashSet<Unit>();
 
@@ -223,12 +221,12 @@ public class LocalSplitter extends BodyTransformer {
     // Restore the original local numbering
     localPacker.unpack();
 
-    if (myOptions.time()) {
-      myTimers.splitPhase2Timer.end();
-    }
-
-    if (myOptions.time()) {
-      myTimers.splitTimer.end();
-    }
+//    if (myOptions.time()) {
+//      myTimers.splitPhase2Timer.end();
+//    }
+//
+//    if (myOptions.time()) {
+//      myTimers.splitTimer.end();
+//    }
   }
 }

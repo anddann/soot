@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BMulInst extends AbstractOpTypeInst implements MulInst {
   public BMulInst(Type opType) {
-    super(opType);
+    super(myRefType, opType);
   }
 
   public int getInCount() {

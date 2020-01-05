@@ -58,7 +58,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.BodyTransformer;
 import soot.DoubleType;
 import soot.Local;
 import soot.LongType;
@@ -72,7 +71,6 @@ import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
-import soot.Timers;
 import soot.Trap;
 import soot.Type;
 import soot.Unit;
@@ -277,7 +275,7 @@ public class DexBody {
   protected void extractDexInstructions(MethodImplementation code) {
     int address = 0;
     for (Instruction instruction : code.getInstructions()) {
-      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address, myJimple, constancFactory, dalivkTyper, primTypeCollector, myScene);
+      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address, myJimple, constancFactory, dalivkTyper, primTypeCollector, myScene, myJimple, myOptions);
       instructions.add(dexInstruction);
       instructionAtAddress.put(address, dexInstruction);
       address += instruction.getCodeUnits();
@@ -927,7 +925,7 @@ public class DexBody {
 
   protected LocalSplitter getLocalSplitter() {
     if (this.localSplitter == null) {
-      this.localSplitter = new LocalSplitter(myOptions, myTimmer, myScene, myManager, myPhaseDumper, myInteractionHandler);
+      this.localSplitter = new LocalSplitter(myOptions,  myScene, myManager, myPhaseDumper, myInteractionHandler);
     }
     return this.localSplitter;
   }
@@ -936,7 +934,7 @@ public class DexBody {
 
   protected UnreachableCodeEliminator getUnreachableCodeEliminator() {
     if (this.unreachableCodeEliminator == null) {
-      this.unreachableCodeEliminator = new UnreachableCodeEliminator(myDalvikThrowAnalysis, myPedanticThrowAnalysis, myPhaseDumper);
+      this.unreachableCodeEliminator = new UnreachableCodeEliminator(myDalvikThrowAnalysis,myOptions, myPedanticThrowAnalysis, myPhaseDumper);
     }
     return this.unreachableCodeEliminator;
   }
@@ -945,7 +943,7 @@ public class DexBody {
 
   protected CopyPropagator getCopyPopagator() {
     if (this.copyPropagator == null) {
-      this.copyPropagator = new CopyPropagator(myDalvikThrowAnalysis, false, myManager);
+      this.copyPropagator = new CopyPropagator(myDalvikThrowAnalysis, false, myOptions,   myScene,  myPhaseDumper,  myManager,  constancFactory,  myInteractionHandler);
     }
     return this.copyPropagator;
   }

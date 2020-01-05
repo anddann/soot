@@ -29,31 +29,37 @@ import soot.DoubleType;
 import soot.FloatType;
 import soot.IntType;
 import soot.LongType;
+import soot.PrimTypeCollector;
 import soot.ShortType;
 import soot.Type;
 import soot.UnknownType;
 import soot.Value;
+import soot.ValueBox;
 
 @SuppressWarnings("serial")
 public abstract class AbstractFloatBinopExpr extends AbstractBinopExpr {
+  public AbstractFloatBinopExpr(ValueBox op1Box, ValueBox op2Box, PrimTypeCollector primTypeCollector) {
+    super(op1Box, op2Box, primTypeCollector);
+  }
+
   public Type getType() {
     Value op1 = op1Box.getValue();
     Value op2 = op2Box.getValue();
     Type op1t = op1.getType();
     Type op2t = op2.getType();
-    if ((op1t.equals(IntType.v()) || op1t.equals(ByteType.v()) || op1t.equals(ShortType.v()) || op1t.equals(CharType.v())
-        || op1t.equals(BooleanType.v()))
-        && (op2t.equals(IntType.v()) || op2t.equals(ByteType.v()) || op2t.equals(ShortType.v()) || op2t.equals(CharType.v())
-            || op2t.equals(BooleanType.v()))) {
-      return IntType.v();
-    } else if (op1t.equals(LongType.v()) || op2t.equals(LongType.v())) {
-      return LongType.v();
-    } else if (op1t.equals(DoubleType.v()) || op2t.equals(DoubleType.v())) {
-      return DoubleType.v();
-    } else if (op1t.equals(FloatType.v()) || op2t.equals(FloatType.v())) {
-      return FloatType.v();
+    if ((op1t.equals(primTypeCollector.getIntType()) || op1t.equals(primTypeCollector.getByteType()) || op1t.equals(primTypeCollector.getShortType()) || op1t.equals(primTypeCollector.getCharType())
+        || op1t.equals(primTypeCollector.getBooleanType()))
+        && (op2t.equals(primTypeCollector.getIntType()) || op2t.equals(primTypeCollector.getByteType()) || op2t.equals(primTypeCollector.getShortType()) || op2t.equals(primTypeCollector.getCharType())
+            || op2t.equals(primTypeCollector.getBooleanType()))) {
+      return primTypeCollector.getIntType();
+    } else if (op1t.equals(primTypeCollector.getLongType()) || op2t.equals(primTypeCollector.getLongType())) {
+      return primTypeCollector.getLongType();
+    } else if (op1t.equals(primTypeCollector.getDoubleType()) || op2t.equals(primTypeCollector.getDoubleType())) {
+      return primTypeCollector.getDoubleType();
+    } else if (op1t.equals(primTypeCollector.getFloatType()) || op2t.equals(primTypeCollector.getFloatType())) {
+      return primTypeCollector.getFloatType();
     } else {
-      return UnknownType.v();
+      return primTypeCollector.getUnknownType();
     }
   }
 }

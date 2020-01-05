@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BXorInst extends AbstractOpTypeInst implements XorInst {
   public BXorInst(Type opType) {
-    super(opType);
+    super(myRefType, opType);
   }
 
   public int getInCount() {

@@ -29,8 +29,11 @@ import soot.baf.InstSwitch;
 import soot.util.Switch;
 
 public class BIfNeInst extends AbstractBranchInst implements IfNeInst {
-  public BIfNeInst(Unit target) {
+  private final Baf myBaf;
+
+  public BIfNeInst(Unit target, Baf myBaf) {
     super(myBaf.newInstBox(target));
+    this.myBaf = myBaf;
   }
 
   public int getInCount() {
@@ -38,7 +41,7 @@ public class BIfNeInst extends AbstractBranchInst implements IfNeInst {
   }
 
   public Object clone() {
-    return new BIfNeInst(getTarget());
+    return new BIfNeInst(getTarget(), myBaf);
   }
 
   public int getInMachineCount() {

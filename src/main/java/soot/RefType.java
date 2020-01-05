@@ -49,8 +49,6 @@ public class RefType extends RefLikeType implements Comparable<RefType> {
     className = "";
   }
 
-  // FIXME:???
-  private static RefType instance;
 
   /** the class name that parameterizes this RefType */
   private String className;

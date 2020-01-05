@@ -122,7 +122,7 @@ public class G extends Singletons {
 
   public DalvikThrowAnalysis interproceduralDalvikThrowAnalysis() {
     if (this.interproceduralDalvikThrowAnalysis == null) {
-      this.interproceduralDalvikThrowAnalysis = new DalvikThrowAnalysis(g, true);
+      this.interproceduralDalvikThrowAnalysis = new DalvikThrowAnalysis(g, true, primeTypeCollector, constancFactory);
     }
     return this.interproceduralDalvikThrowAnalysis;
   }

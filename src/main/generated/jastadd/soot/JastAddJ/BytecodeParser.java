@@ -29,7 +29,7 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
     private PhaseOptions myPhaseOptions;
 
     public CompilationUnit read(InputStream is, String fullName, Program p) throws FileNotFoundException, IOException {
-      return new BytecodeParser(is, fullName).parse(null, null, p);
+      return new BytecodeParser(myScene, myPackageNamer, myPhaseOptions, is, fullName).parse(null, null, p);
     }
 
 
@@ -51,28 +51,37 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
 
 
 
-    public BytecodeParser(byte[] buffer, int size, String name) {
-      //this.is = new DataInputStream(new DummyInputStream(buffer, size));
+    public BytecodeParser(Scene myScene, PackageNamer myPackageNamer, PhaseOptions myPhaseOptions, byte[] buffer, int size, String name) {
+        this.myScene = myScene;
+        this.myPackageNamer = myPackageNamer;
+        this.myPhaseOptions = myPhaseOptions;
+        //this.is = new DataInputStream(new DummyInputStream(buffer, size));
       this.is = new DataInputStream(new ByteArrayInputStream(buffer, 0, size));
       this.name = name;
     }
 
 
-    public BytecodeParser(InputStream in, String name) {
-      //this.is = new DataInputStream(new DummyInputStream(buffer, size));
+    public BytecodeParser(Scene myScene, PackageNamer myPackageNamer, PhaseOptions myPhaseOptions, InputStream in, String name) {
+        this.myScene = myScene;
+        this.myPackageNamer = myPackageNamer;
+        this.myPhaseOptions = myPhaseOptions;
+        //this.is = new DataInputStream(new DummyInputStream(buffer, size));
       this.is = new DataInputStream(new DummyInputStream(in));
       this.name = name;
     }
 
 
 
-    public BytecodeParser() {
-      this("");
+    public BytecodeParser(Scene myScene, PhaseOptions myPhaseOptions, PackageNamer myPackageNamer) {
+      this(myScene, myPackageNamer, myPhaseOptions, "");
     }
 
 
-    public BytecodeParser(String name) {
-      if (!name.endsWith(".class")) {
+    public BytecodeParser(Scene myScene, PackageNamer myPackageNamer, PhaseOptions myPhaseOptions, String name) {
+        this.myScene = myScene;
+        this.myPackageNamer = myPackageNamer;
+        this.myPhaseOptions = myPhaseOptions;
+        if (!name.endsWith(".class")) {
         //name = name.replaceAll("\\.", "/") + ".class";
         name = name.replace('.', '/') + ".class";
       }
@@ -651,7 +660,7 @@ public class BytecodeParser extends java.lang.Object implements Flags, BytecodeR
       int tag = u1();
       switch (tag) {
         case CONSTANT_Class:
-          constantPool[i] = new CONSTANT_Class_Info(this);
+          constantPool[i] = new CONSTANT_Class_Info(this, myScene, myJimple, primTypeCollector);
           break;
         case CONSTANT_FieldRef:
           constantPool[i] = new CONSTANT_Fieldref_Info(this);

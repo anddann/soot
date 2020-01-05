@@ -40,8 +40,11 @@ import soot.util.Switch;
 @SuppressWarnings("serial")
 public abstract class AbstractVirtualInvokeExpr extends AbstractInstanceInvokeExpr
     implements VirtualInvokeExpr, ConvertToBaf {
-  protected AbstractVirtualInvokeExpr(ValueBox baseBox, SootMethodRef methodRef, ValueBox[] argBoxes) {
+  protected Baf myBaf;
+
+  protected AbstractVirtualInvokeExpr(ValueBox baseBox, SootMethodRef methodRef, ValueBox[] argBoxes, Baf myBaf) {
     super(methodRef, baseBox, argBoxes);
+    this.myBaf = myBaf;
     if (methodRef.isStatic()) {
       throw new RuntimeException("wrong static-ness");
     }

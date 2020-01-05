@@ -4,12 +4,31 @@ package soot.JastAddJ;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
+import soot.SootResolver;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
+
 /**
  * @production ElementArrayValue : {@link ElementValue} ::= <span class="component">{@link ElementValue}*</span>;
  * @ast node
  * @declaredat /Users/eric/Documents/workspaces/clara-soot/JastAddJ/Java1.5Frontend/Annotations.ast:13
  */
 public class ElementArrayValue extends ElementValue implements Cloneable {
+  //FIXME: const
+  private Scene myScene;
+  private PackageNamer myPackageNamer;
+  private Options myOptions;
+  private Jimple myJimple;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
+  private SootResolver mySootResolver;
+  private PhaseOptions myPhaseOptions;
+
   /**
    * @apilevel low-level
    */

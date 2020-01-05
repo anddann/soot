@@ -28,6 +28,7 @@ import soot.BooleanType;
 import soot.ByteType;
 import soot.CharType;
 import soot.IntType;
+import soot.PrimTypeCollector;
 import soot.ShortType;
 import soot.Type;
 
@@ -39,23 +40,61 @@ import soot.Type;
  **/
 public class ClassHierarchy {
 
-
   @Inject
-  public ClassHierarchy() {
+  public ClassHierarchy(PrimTypeCollector primTypeCollector) {
+    this.primTypeCollector = primTypeCollector;
+    BOOLEAN = new TypeNode(0, primTypeCollector.getBooleanType(), myClassHierarchy);
+    BYTE = new TypeNode(1, primTypeCollector.getByteType(), myClassHierarchy);
+    SHORT = new TypeNode(2, primTypeCollector.getShortType(), myClassHierarchy);
+    CHAR = new TypeNode(3, primTypeCollector.getCharType(), myClassHierarchy);
+    INT = new TypeNode(4, primTypeCollector.getIntType(), myClassHierarchy);
+    TOP = new TypeNode(5, null, myClassHierarchy);
+    R0_1 = new TypeNode(6, null, myClassHierarchy);
+    R0_127 = new TypeNode(7, null, myClassHierarchy);
+    R0_32767 = new TypeNode(8, null, myClassHierarchy);
+    lca_1 = new TypeNode[][]{ { BOOLEAN, TOP, TOP, TOP, TOP, TOP, BOOLEAN, TOP, TOP, },
+        { TOP, BYTE, SHORT, INT, INT, TOP, BYTE, BYTE, SHORT, }, { TOP, SHORT, SHORT, INT, INT, TOP, SHORT, SHORT, SHORT, },
+        { TOP, INT, INT, CHAR, INT, TOP, CHAR, CHAR, CHAR, }, { TOP, INT, INT, INT, INT, TOP, INT, INT, INT, },
+        { TOP, TOP, TOP, TOP, TOP, TOP, TOP, TOP, TOP, }, { BOOLEAN, BYTE, SHORT, CHAR, INT, TOP, R0_1, R0_127, R0_32767, },
+        { TOP, BYTE, SHORT, CHAR, INT, TOP, R0_127, R0_127, R0_32767, },
+        { TOP, SHORT, SHORT, CHAR, INT, TOP, R0_32767, R0_32767, R0_32767, }, };
+    lca_2 = new TypeNode[][]{ { BOOLEAN, BYTE, SHORT, CHAR, INT, null, null, R0_127, R0_32767, },
+        { BYTE, BYTE, SHORT, INT, INT, null, null, BYTE, SHORT, },
+        { SHORT, SHORT, SHORT, INT, INT, null, null, SHORT, SHORT, }, { CHAR, INT, INT, CHAR, INT, null, null, CHAR, CHAR, },
+        { INT, INT, INT, INT, INT, null, null, INT, INT, }, {}, {},
+        { R0_127, BYTE, SHORT, CHAR, INT, null, null, R0_127, R0_32767, },
+        { R0_32767, SHORT, SHORT, CHAR, INT, null, null, R0_32767, R0_32767, }, };
+    gcd_1 = new TypeNode[][]{ { BOOLEAN, R0_1, R0_1, R0_1, R0_1, BOOLEAN, R0_1, R0_1, R0_1, },
+        { R0_1, BYTE, BYTE, R0_127, BYTE, BYTE, R0_1, R0_127, R0_127, },
+        { R0_1, BYTE, SHORT, R0_32767, SHORT, SHORT, R0_1, R0_127, R0_32767, },
+        { R0_1, R0_127, R0_32767, CHAR, CHAR, CHAR, R0_1, R0_127, R0_32767, },
+        { R0_1, BYTE, SHORT, CHAR, INT, INT, R0_1, R0_127, R0_32767, },
+        { BOOLEAN, BYTE, SHORT, CHAR, INT, TOP, R0_1, R0_127, R0_32767, },
+        { R0_1, R0_1, R0_1, R0_1, R0_1, R0_1, R0_1, R0_1, R0_1, },
+        { R0_1, R0_127, R0_127, R0_127, R0_127, R0_127, R0_1, R0_127, R0_127, },
+        { R0_1, R0_127, R0_32767, R0_32767, R0_32767, R0_32767, R0_1, R0_127, R0_32767, }, };
+    gcd_2 = new TypeNode[][]{ { BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN, null, null, BOOLEAN, BOOLEAN, },
+        { BOOLEAN, BYTE, BYTE, R0_127, BYTE, null, null, R0_127, R0_127, },
+        { BOOLEAN, BYTE, SHORT, R0_32767, SHORT, null, null, R0_127, R0_32767, },
+        { BOOLEAN, R0_127, R0_32767, CHAR, CHAR, null, null, R0_127, R0_32767, },
+        { BOOLEAN, BYTE, SHORT, CHAR, INT, null, null, R0_127, R0_32767, }, {}, {},
+        { BOOLEAN, R0_127, R0_127, R0_127, R0_127, null, null, R0_127, R0_127, },
+        { BOOLEAN, R0_127, R0_32767, R0_32767, R0_32767, null, null, R0_127, R0_32767, }, };
   }
 
-
-  public final TypeNode BOOLEAN = new TypeNode(0, BooleanType.v());
-  public final TypeNode BYTE = new TypeNode(1, ByteType.v());
-  public final TypeNode SHORT = new TypeNode(2, ShortType.v());
-  public final TypeNode CHAR = new TypeNode(3, CharType.v());
-  public final TypeNode INT = new TypeNode(4, IntType.v());
-  public final TypeNode TOP = new TypeNode(5, null);
-  public final TypeNode R0_1 = new TypeNode(6, null); // eventually becomes
+  private final PrimTypeCollector primTypeCollector;
+  public final TypeNode BOOLEAN;
+  public final TypeNode BYTE;
+  public final TypeNode SHORT;
+  public final TypeNode CHAR;
+  public final TypeNode INT;
+  public final TypeNode TOP;
+  public final TypeNode R0_1; // eventually becomes
   // boolean
-  public final TypeNode R0_127 = new TypeNode(7, null); // eventually becomes
+  public final TypeNode R0_127; // eventually becomes
   // byte
-  public final TypeNode R0_32767 = new TypeNode(8, null); // eventually
+  public final TypeNode R0_32767; // eventually
+
   // becomes short
 
   private final boolean[][] ancestors_1 = { { false, false, false, false, false, true, false, false, false, },
@@ -94,56 +133,27 @@ public class ClassHierarchy {
       { true, false, false, false, false, false, false, false, false, },
       { true, false, false, false, false, false, false, true, false, }, };
 
-  private final TypeNode[][] lca_1 = { { BOOLEAN, TOP, TOP, TOP, TOP, TOP, BOOLEAN, TOP, TOP, },
-      { TOP, BYTE, SHORT, INT, INT, TOP, BYTE, BYTE, SHORT, }, { TOP, SHORT, SHORT, INT, INT, TOP, SHORT, SHORT, SHORT, },
-      { TOP, INT, INT, CHAR, INT, TOP, CHAR, CHAR, CHAR, }, { TOP, INT, INT, INT, INT, TOP, INT, INT, INT, },
-      { TOP, TOP, TOP, TOP, TOP, TOP, TOP, TOP, TOP, }, { BOOLEAN, BYTE, SHORT, CHAR, INT, TOP, R0_1, R0_127, R0_32767, },
-      { TOP, BYTE, SHORT, CHAR, INT, TOP, R0_127, R0_127, R0_32767, },
-      { TOP, SHORT, SHORT, CHAR, INT, TOP, R0_32767, R0_32767, R0_32767, }, };
+  private final TypeNode[][] lca_1;
 
-  private final TypeNode[][] lca_2 = { { BOOLEAN, BYTE, SHORT, CHAR, INT, null, null, R0_127, R0_32767, },
-      { BYTE, BYTE, SHORT, INT, INT, null, null, BYTE, SHORT, },
-      { SHORT, SHORT, SHORT, INT, INT, null, null, SHORT, SHORT, }, { CHAR, INT, INT, CHAR, INT, null, null, CHAR, CHAR, },
-      { INT, INT, INT, INT, INT, null, null, INT, INT, }, {}, {},
-      { R0_127, BYTE, SHORT, CHAR, INT, null, null, R0_127, R0_32767, },
-      { R0_32767, SHORT, SHORT, CHAR, INT, null, null, R0_32767, R0_32767, }, };
+  private final TypeNode[][] lca_2;
 
-  private final TypeNode[][] gcd_1 = { { BOOLEAN, R0_1, R0_1, R0_1, R0_1, BOOLEAN, R0_1, R0_1, R0_1, },
-      { R0_1, BYTE, BYTE, R0_127, BYTE, BYTE, R0_1, R0_127, R0_127, },
-      { R0_1, BYTE, SHORT, R0_32767, SHORT, SHORT, R0_1, R0_127, R0_32767, },
-      { R0_1, R0_127, R0_32767, CHAR, CHAR, CHAR, R0_1, R0_127, R0_32767, },
-      { R0_1, BYTE, SHORT, CHAR, INT, INT, R0_1, R0_127, R0_32767, },
-      { BOOLEAN, BYTE, SHORT, CHAR, INT, TOP, R0_1, R0_127, R0_32767, },
-      { R0_1, R0_1, R0_1, R0_1, R0_1, R0_1, R0_1, R0_1, R0_1, },
-      { R0_1, R0_127, R0_127, R0_127, R0_127, R0_127, R0_1, R0_127, R0_127, },
-      { R0_1, R0_127, R0_32767, R0_32767, R0_32767, R0_32767, R0_1, R0_127, R0_32767, }, };
+  private final TypeNode[][] gcd_1;
 
-  private final TypeNode[][] gcd_2 = { { BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN, null, null, BOOLEAN, BOOLEAN, },
-      { BOOLEAN, BYTE, BYTE, R0_127, BYTE, null, null, R0_127, R0_127, },
-      { BOOLEAN, BYTE, SHORT, R0_32767, SHORT, null, null, R0_127, R0_32767, },
-      { BOOLEAN, R0_127, R0_32767, CHAR, CHAR, null, null, R0_127, R0_32767, },
-      { BOOLEAN, BYTE, SHORT, CHAR, INT, null, null, R0_127, R0_32767, }, {}, {},
-      { BOOLEAN, R0_127, R0_127, R0_127, R0_127, null, null, R0_127, R0_127, },
-      { BOOLEAN, R0_127, R0_32767, R0_32767, R0_32767, null, null, R0_127, R0_32767, }, };
+  private final TypeNode[][] gcd_2;
 
   /** Get the type node for the given type. **/
   public TypeNode typeNode(Type type) {
     if (type instanceof IntType) {
       return INT;
-    }
-    else if (type instanceof BooleanType) {
+    } else if (type instanceof BooleanType) {
       return BOOLEAN;
-    }
-    else if (type instanceof ByteType) {
+    } else if (type instanceof ByteType) {
       return BYTE;
-    }
-    else if (type instanceof ShortType) {
+    } else if (type instanceof ShortType) {
       return SHORT;
-    }
-    else if (type instanceof CharType) {
+    } else if (type instanceof CharType) {
       return CHAR;
-    }
-    else {
+    } else {
       throw new InternalTypingException(type);
     }
   }

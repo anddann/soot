@@ -31,6 +31,7 @@ import soot.ArrayType;
 import soot.Body;
 import soot.Local;
 import soot.PackManager;
+import soot.PrimTypeCollector;
 import soot.Printer;
 import soot.RefType;
 import soot.SootClass;
@@ -43,6 +44,7 @@ import soot.Unit;
 import soot.UnitBox;
 import soot.Value;
 import soot.ValueBox;
+import soot.baf.Baf;
 import soot.grimp.internal.ExprBox;
 import soot.grimp.internal.GAddExpr;
 import soot.grimp.internal.GAndExpr;
@@ -162,11 +164,15 @@ import soot.options.Options;
 public class Grimp {
   private Jimple myJimple;
   private ConstantFactory constancFactory;
+  private PrimTypeCollector primTypeCollector;
+  private Baf myBaf;
 
   @Inject
-  public Grimp(Jimple myJimple, ConstantFactory constancFactory) {
+  public Grimp(Jimple myJimple, ConstantFactory constancFactory, PrimTypeCollector primTypeCollector, Baf myBaf) {
     this.myJimple = myJimple;
     this.constancFactory = constancFactory;
+    this.primTypeCollector = primTypeCollector;
+    this.myBaf = myBaf;
   }
 
 
@@ -247,7 +253,7 @@ public class Grimp {
    */
 
   public LeExpr newLeExpr(Value op1, Value op2) {
-    return new GLeExpr(op1, op2);
+    return new GLeExpr(op1, op2,this,primTypeCollector);
   }
 
   /**
@@ -255,7 +261,7 @@ public class Grimp {
    */
 
   public GeExpr newGeExpr(Value op1, Value op2) {
-    return new GGeExpr(op1, op2);
+    return new GGeExpr(op1, op2,this,primTypeCollector);
   }
 
   /**
@@ -263,7 +269,7 @@ public class Grimp {
    */
 
   public EqExpr newEqExpr(Value op1, Value op2) {
-    return new GEqExpr(op1, op2);
+    return new GEqExpr(op1, op2,this,primTypeCollector);
   }
 
   /**
@@ -271,7 +277,7 @@ public class Grimp {
    */
 
   public DivExpr newDivExpr(Value op1, Value op2) {
-    return new GDivExpr(op1, op2);
+    return new GDivExpr(op1, op2,this,primTypeCollector);
   }
 
   /**
@@ -279,7 +285,7 @@ public class Grimp {
    */
 
   public CmplExpr newCmplExpr(Value op1, Value op2) {
-    return new GCmplExpr(op1, op2);
+    return new GCmplExpr(op1, op2,this,primTypeCollector);
   }
 
   /**
@@ -287,7 +293,7 @@ public class Grimp {
    */
 
   public CmpgExpr newCmpgExpr(Value op1, Value op2) {
-    return new GCmpgExpr(op1, op2);
+    return new GCmpgExpr(op1, op2,this,primTypeCollector);
   }
 
   /**
@@ -295,7 +301,7 @@ public class Grimp {
    */
 
   public CmpExpr newCmpExpr(Value op1, Value op2) {
-    return new GCmpExpr(op1, op2);
+    return new GCmpExpr(op1, op2,this,primTypeCollector);
   }
 
   /**
@@ -303,7 +309,7 @@ public class Grimp {
    */
 
   public GtExpr newGtExpr(Value op1, Value op2) {
-    return new GGtExpr(op1, op2);
+    return new GGtExpr(op1, op2,this,primTypeCollector);
   }
 
   /**
@@ -311,7 +317,7 @@ public class Grimp {
    */
 
   public LtExpr newLtExpr(Value op1, Value op2) {
-    return new GLtExpr(op1, op2);
+    return new GLtExpr(op1, op2,this,primTypeCollector);
   }
 
   /**
@@ -319,7 +325,7 @@ public class Grimp {
    */
 
   public AddExpr newAddExpr(Value op1, Value op2) {
-    return new GAddExpr(op1, op2);
+    return new GAddExpr(op1, op2,this,primTypeCollector);
   }
 
   /**
@@ -327,7 +333,7 @@ public class Grimp {
    */
 
   public AndExpr newAndExpr(Value op1, Value op2) {
-    return new GAndExpr(op1, op2);
+    return new GAndExpr(op1, op2,this,primTypeCollector);
   }
 
   /**
@@ -335,7 +341,7 @@ public class Grimp {
    */
 
   public NegExpr newNegExpr(Value op) {
-    return new GNegExpr(op);
+    return new GNegExpr(op,this,primTypeCollector);
   }
 
   /**
@@ -391,7 +397,7 @@ public class Grimp {
    */
 
   public NewInvokeExpr newNewInvokeExpr(RefType base, SootMethodRef method, List args) {
-    return new GNewInvokeExpr(base, method, args, myGrimp);
+    return new GNewInvokeExpr(base, method, args, this);
   }
 
   /**
@@ -415,7 +421,7 @@ public class Grimp {
    */
 
   public VirtualInvokeExpr newVirtualInvokeExpr(Local base, SootMethodRef method, List args) {
-    return new GVirtualInvokeExpr(base, method, args);
+    return new GVirtualInvokeExpr(base, method, args, myBaf, this);
   }
 
   /**

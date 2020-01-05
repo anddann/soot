@@ -22,17 +22,22 @@ package soot.grimp.internal;
  * #L%
  */
 
+import soot.PrimType;
+import soot.PrimTypeCollector;
 import soot.Value;
 import soot.grimp.Grimp;
 import soot.jimple.internal.AbstractNegExpr;
 
 public class GNegExpr extends AbstractNegExpr {
-  public GNegExpr(Value op) {
-    super(myGrimp.newExprBox(op));
+  private final Grimp myGrimp;
+
+  public GNegExpr(Value op, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
+    super(myGrimp.newExprBox(op),primTypeCollector);
+    this.myGrimp = myGrimp;
   }
 
   public Object clone() {
-    return new GNegExpr(Grimp.cloneIfNecessary(getOp()));
+    return new GNegExpr(Grimp.cloneIfNecessary(getOp()),myGrimp,primTypeCollector);
   }
 
 }

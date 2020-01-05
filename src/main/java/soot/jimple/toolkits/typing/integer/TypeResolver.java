@@ -37,12 +37,10 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.BooleanType;
-import soot.ByteType;
 import soot.IntegerType;
 import soot.Local;
 import soot.PatchingChain;
-import soot.ShortType;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Unit;
 import soot.jimple.JimpleBody;
@@ -61,6 +59,7 @@ public class TypeResolver {
 
   private final JimpleBody stmtBody;
 
+  private ClassHierarchy myClassHierarchy;
   final TypeVariable BOOLEAN = typeVariable(myClassHierarchy.BOOLEAN);
   final TypeVariable BYTE = typeVariable(myClassHierarchy.BYTE);
   final TypeVariable SHORT = typeVariable(myClassHierarchy.SHORT);
@@ -77,6 +76,7 @@ public class TypeResolver {
   // categories for type variables (solved = hard, unsolved = soft)
   private Collection<TypeVariable> unsolved;
   private Collection<TypeVariable> solved;
+  private PrimTypeCollector primTypeCollector;
 
   /** Get type variable for the given local. **/
   TypeVariable typeVariable(Local local) {
@@ -133,17 +133,19 @@ public class TypeResolver {
     return result;
   }
 
-  private TypeResolver(JimpleBody stmtBody) {
+  private TypeResolver(JimpleBody stmtBody, ClassHierarchy myClassHierarchy, PrimTypeCollector primTypeCollector) {
     this.stmtBody = stmtBody;
+    this.myClassHierarchy = myClassHierarchy;
+    this.primTypeCollector = primTypeCollector;
   }
 
-  public static void resolve(JimpleBody stmtBody) {
+  public static void resolve(JimpleBody stmtBody, ClassHierarchy myClassHierarchy, PrimTypeCollector primTypeCollector) {
     if (DEBUG) {
       logger.debug("" + stmtBody.getMethod());
     }
 
     try {
-      TypeResolver resolver = new TypeResolver(stmtBody);
+      TypeResolver resolver = new TypeResolver(stmtBody, myClassHierarchy, primTypeCollector);
       resolver.resolve_step_1();
     } catch (TypeException e1) {
       if (DEBUG) {
@@ -151,7 +153,7 @@ public class TypeResolver {
       }
 
       try {
-        TypeResolver resolver = new TypeResolver(stmtBody);
+        TypeResolver resolver = new TypeResolver(stmtBody, myClassHierarchy, primTypeCollector);
         resolver.resolve_step_2();
       } catch (TypeException e2) {
         StringWriter st = new StringWriter();
@@ -442,11 +444,11 @@ public class TypeResolver {
         } else if (var.approx().type() != null) {
           local.setType(var.approx().type());
         } else if (var.approx() == myClassHierarchy.R0_1) {
-          local.setType(BooleanType.v());
+          local.setType(primTypeCollector.getBooleanType());
         } else if (var.approx() == myClassHierarchy.R0_127) {
-          local.setType(ByteType.v());
+          local.setType(primTypeCollector.getByteType());
         } else {
-          local.setType(ShortType.v());
+          local.setType(primTypeCollector.getShortType());
         }
       }
     }

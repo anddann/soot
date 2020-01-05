@@ -26,6 +26,7 @@ import soot.FastHierarchy;
 import soot.G;
 import soot.NullType;
 import soot.PrimType;
+import soot.PrimTypeCollector;
 import soot.RefLikeType;
 import soot.Scene;
 import soot.Singletons;
@@ -37,6 +38,7 @@ import soot.baf.ReturnVoidInst;
 import soot.jimple.AssignStmt;
 import soot.jimple.CastExpr;
 import soot.jimple.ClassConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.EnterMonitorStmt;
 import soot.jimple.StringConstant;
 import soot.toolkits.exceptions.ThrowableSet;
@@ -158,14 +160,15 @@ public class DalvikThrowAnalysis extends UnitThrowAnalysis {
 
   /**
    * Constructs a <code>DalvikThrowAnalysis</code> for inclusion in Soot's global variable manager, {@link G}.
-   *
    * @param g
    *          guarantees that the constructor may only be called from {@link Singletons}.
    * @param myScene1
+   * @param primeTypeCollector
+   * @param constantFactory
    */
   @Inject
-  public DalvikThrowAnalysis(ThrowableSet.Manager mgr, Scene myScene) {
-    super(mgr,myScene, primeTypeCollector, constancFactory);
+  public DalvikThrowAnalysis(ThrowableSet.Manager mgr, Scene myScene, PrimTypeCollector primeTypeCollector, ConstantFactory constantFactory) {
+    super(mgr,myScene, primeTypeCollector, constantFactory);
     this.myScene = myScene;
   }
 

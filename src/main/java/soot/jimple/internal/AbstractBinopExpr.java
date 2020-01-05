@@ -25,6 +25,7 @@ package soot.jimple.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import soot.PrimTypeCollector;
 import soot.UnitPrinter;
 import soot.Value;
 import soot.ValueBox;
@@ -35,6 +36,13 @@ import soot.jimple.Expr;
 public abstract class AbstractBinopExpr implements Expr {
   protected ValueBox op1Box;
   protected ValueBox op2Box;
+  protected final PrimTypeCollector primTypeCollector;
+
+  public AbstractBinopExpr(ValueBox op1Box, ValueBox op2Box, PrimTypeCollector primTypeCollector) {
+    this.op1Box = op1Box;
+    this.op2Box = op2Box;
+    this.primTypeCollector = primTypeCollector;
+  }
 
   public Value getOp1() {
     return op1Box.getValue();

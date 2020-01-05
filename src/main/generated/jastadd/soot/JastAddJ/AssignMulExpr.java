@@ -94,8 +94,8 @@ public class AssignMulExpr extends AssignMultiplicativeExpr implements Cloneable
    * @ast method 
    * 
    */
-  public AssignMulExpr() {
-    super();
+  public AssignMulExpr(PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
+    super(primTypeCollector, myJimple, myScene);
 
 
   }
@@ -114,7 +114,9 @@ public class AssignMulExpr extends AssignMultiplicativeExpr implements Cloneable
    * @ast method 
    * 
    */
-  public AssignMulExpr(Expr p0, Expr p1) {
+  public AssignMulExpr(Expr p0, Expr p1,PrimTypeCollector primTypeCollector, Jimple myJimple, Scene myScene) {
+    super(primTypeCollector, myJimple, myScene);
+
     setChild(p0, 0);
     setChild(p1, 1);
   }

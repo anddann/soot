@@ -3130,7 +3130,7 @@ class Events extends Parser.Events {
 					final Symbol PLUS = _symbols[offset + 2];
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final Expr e2 = (Expr) _symbol_e2.value;
-					 return new AddExpr(e1, e2);
+					 return new AddExpr(e1, e2, constantFactory);
 			}
 			case 288: // additive_expression = additive_expression.e1 MINUS.MINUS multiplicative_expression.e2
 			{
@@ -5702,7 +5702,7 @@ class Events extends Parser.Events {
 					final Symbol PLUS = _symbols[offset + 2];
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final Expr e2 = (Expr) _symbol_e2.value;
-					 return new AddExpr(e1, e2);
+					 return new AddExpr(e1, e2, constantFactory);
 			}
 			case 562: // additive_expression_nn = additive_expression_nn.e1 PLUS.PLUS multiplicative_expression.e2
 			{
@@ -5711,7 +5711,7 @@ class Events extends Parser.Events {
 					final Symbol PLUS = _symbols[offset + 2];
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final Expr e2 = (Expr) _symbol_e2.value;
-					 return new AddExpr(e1, e2);
+					 return new AddExpr(e1, e2, constantFactory);
 			}
 			case 563: // additive_expression_nn = name.e1 MINUS.MINUS multiplicative_expression.e2
 			{

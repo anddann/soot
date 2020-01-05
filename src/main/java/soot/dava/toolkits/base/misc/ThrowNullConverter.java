@@ -35,12 +35,16 @@ import soot.Value;
 import soot.ValueBox;
 import soot.dava.DavaBody;
 import soot.dava.internal.javaRep.DNewInvokeExpr;
+import soot.grimp.Grimp;
 import soot.jimple.ThrowStmt;
 
 public class ThrowNullConverter {
 
+  private Grimp myGrimp;
+
   @Inject
-  public ThrowNullConverter(Scene myScene) {
+  public ThrowNullConverter(Grimp myGrimp, Scene myScene) {
+    this.myGrimp = myGrimp;
     this.myScene = myScene;
   }
 
@@ -57,7 +61,7 @@ public class ThrowNullConverter {
         Value op = opBox.getValue();
 
         if (op.getType() instanceof NullType) {
-          opBox.setValue(new DNewInvokeExpr(npeRef, null, new ArrayList()));
+          opBox.setValue(new DNewInvokeExpr(npeRef, null, new ArrayList(), myGrimp));
         }
       }
     }

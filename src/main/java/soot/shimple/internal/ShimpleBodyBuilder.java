@@ -45,6 +45,7 @@ import soot.jimple.toolkits.scalar.LocalNameStandardizer;
 import soot.jimple.toolkits.scalar.NopEliminator;
 import soot.jimple.toolkits.scalar.UnconditionalBranchFolder;
 import soot.jimple.toolkits.scalar.UnreachableCodeEliminator;
+import soot.options.Options;
 import soot.options.ShimpleOptions;
 import soot.shimple.DefaultShimpleFactory;
 import soot.shimple.PhiExpr;
@@ -55,6 +56,7 @@ import soot.toolkits.graph.Block;
 import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.DominatorNode;
 import soot.toolkits.graph.DominatorTree;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.UnusedLocalEliminator;
 
 /**
@@ -85,6 +87,8 @@ public class ShimpleBodyBuilder {
   private final Shimple myShimple;
   private final Jimple myJimple;
   private final CopyPropagator myCopyPropagator;
+  private final InteractionHandler myInteractionHander;
+  private final Options myOptions;
   protected ShimpleBody body;
   protected ShimpleFactory sf;
   protected DominatorTree<Block> dt;
@@ -109,11 +113,13 @@ public class ShimpleBodyBuilder {
   /**
    * Transforms the provided body to pure SSA form.
    **/
-  public ShimpleBodyBuilder(NopEliminator myNopEliminator, Shimple myShimple, Jimple myJimple, CopyPropagator myCopyPropagator, ShimpleBody body, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer) {
+  public ShimpleBodyBuilder(NopEliminator myNopEliminator, Shimple myShimple, Jimple myJimple, CopyPropagator myCopyPropagator, InteractionHandler myInteractionHander, Options myOptions, ShimpleBody body, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer) {
     this.myNopEliminator = myNopEliminator;
     this.myShimple = myShimple;
     this.myJimple = myJimple;
     this.myCopyPropagator = myCopyPropagator;
+    this.myInteractionHander = myInteractionHander;
+    this.myOptions = myOptions;
     this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
     this.myUnreachableCodeEliminator = myUnreachableCodeEliminator;
     this.myUnconditionalBranchFolder = myUnconditionalBranchFolder;
@@ -130,7 +136,7 @@ public class ShimpleBodyBuilder {
     this.body = body;
     sf = new DefaultShimpleFactory(body);
     sf.clearCache();
-    phi = new PhiNodeManager(body, sf, this.myShimple, this.myJimple);
+    phi = new PhiNodeManager(body, sf, this.myShimple, this.myJimple, this.myInteractionHander, this.myOptions);
     pi = new PiNodeManager(body, false, sf, this.myShimple, this.myJimple, myDeadAssignmentEliminator, this.myCopyPropagator);
     options = body.getOptions();
     makeUniqueLocalNames();

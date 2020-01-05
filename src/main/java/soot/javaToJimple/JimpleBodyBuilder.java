@@ -34,7 +34,6 @@ import polyglot.ast.Try;
 import polyglot.util.IdentityKey;
 
 import soot.Local;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.Trap;
@@ -2156,7 +2155,7 @@ public class JimpleBodyBuilder extends AbstractJimpleBodyBuilder {
      */
     soot.SootMethod meth = myScene.makeSootMethod(name, paramTypes, retType, soot.Modifier.STATIC);
     PrivateFieldSetMethodSource pfsms
-        = new PrivateFieldSetMethodSource(Util.getSootType(field.type()), field.name(), field.flags().isStatic());
+        = new PrivateFieldSetMethodSource(Util.getSootType(field.type()), field.name(), field.flags().isStatic(), myJimple, myScene);
 
     conClass.addMethod(meth);
     meth.setActiveBody(pfsms.getBody(meth, null));

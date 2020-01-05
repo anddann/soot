@@ -24,6 +24,7 @@ package soot.dava.internal.javaRep;
  */
 
 import java.util.ArrayList;
+import java.util.List;
 
 import soot.RefType;
 import soot.SootMethodRef;
@@ -31,8 +32,11 @@ import soot.grimp.Grimp;
 import soot.grimp.internal.GNewInvokeExpr;
 
 public class DNewInvokeExpr extends GNewInvokeExpr {
-  public DNewInvokeExpr(RefType type, SootMethodRef methodRef, java.util.List args) {
+  private final Grimp myGrimp;
+
+  public DNewInvokeExpr(RefType type, SootMethodRef methodRef, List args, Grimp myGrimp) {
     super(type, methodRef, args, myGrimp);
+    this.myGrimp = myGrimp;
   }
 
   public Object clone() {
@@ -42,6 +46,6 @@ public class DNewInvokeExpr extends GNewInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DNewInvokeExpr((RefType) getType(), methodRef, clonedArgs);
+    return new DNewInvokeExpr((RefType) getType(), methodRef, clonedArgs, myGrimp);
   }
 }

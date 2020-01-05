@@ -76,11 +76,10 @@ public class CopyPropagator extends BodyTransformer {
 
 
   @Inject
-  public CopyPropagator(ThrowAnalysis ta, boolean forceOmitExceptingUnitEdges, Options myOptions, Timers myTimers, Scene myScene, PhaseDumper myPhaseDumper, ThrowableSet.Manager myManager, ConstantFactory myConstantfactory, InteractionHandler myInteractionHandler) {
+  public CopyPropagator(ThrowAnalysis ta, boolean forceOmitExceptingUnitEdges, Options myOptions,  Scene myScene, PhaseDumper myPhaseDumper, ThrowableSet.Manager myManager, ConstantFactory myConstantfactory, InteractionHandler myInteractionHandler) {
     this.throwAnalysis = ta;
     this.forceOmitExceptingUnitEdges = forceOmitExceptingUnitEdges;
     this.myOptions = myOptions;
-    this.myTimers = myTimers;
     this.myScene = myScene;
     this.myPhaseDumper = myPhaseDumper;
     this.myManager = myManager;

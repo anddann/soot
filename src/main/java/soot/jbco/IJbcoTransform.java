@@ -33,17 +33,9 @@ import soot.G;
  */
 public interface IJbcoTransform {
 
-  @Deprecated
-  PrintStream out = soot.G.v().out;
 
-  /**
-   * @deprecated Use soot.jbco.IJbcoTransform#isVerbose() instead
-   */
-  @Deprecated
-  boolean output = G.v().soot_options_Options().verbose() || soot.jbco.Main.jbcoVerbose;
 
-  @Deprecated
-  boolean debug = soot.jbco.Main.jbcoDebug;
+
 
   /**
    * Gets the code name of {@link IJbcoTransform jbco transformer} implementation.
@@ -70,7 +62,10 @@ public interface IJbcoTransform {
    * @return {@code true} when {@link IJbcoTransform jbco transformer} can log extra information; {@code false} otherwise
    */
   default boolean isVerbose() {
-    return G.v().soot_options_Options().verbose() || soot.jbco.Main.jbcoVerbose;
+    return false;
+    //FIXME
+
+//    return G.v().soot_options_Options().verbose() || soot.jbco.Main.jbcoVerbose;
   }
 
   /**

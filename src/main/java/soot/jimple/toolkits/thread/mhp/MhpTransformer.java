@@ -26,6 +26,7 @@ package soot.jimple.toolkits.thread.mhp;
 import java.util.Map;
 
 import com.google.inject.Inject;
+import soot.Scene;
 import soot.SceneTransformer;
 
 /**
@@ -33,8 +34,11 @@ import soot.SceneTransformer;
  */
 
 public class MhpTransformer extends SceneTransformer {
+  private Scene myScene;
+
   @Inject
-  public MhpTransformer() {
+  public MhpTransformer(Scene myScene) {
+    this.myScene = myScene;
   }
 
   MhpTester mhpTester;

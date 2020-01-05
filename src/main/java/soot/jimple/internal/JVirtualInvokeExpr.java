@@ -31,13 +31,11 @@ import soot.SootMethod;
 import soot.SootMethodRef;
 import soot.Value;
 import soot.ValueBox;
-import soot.jimple.Jimple;
-import soot.options.Options;
 import soot.tagkit.SourceFileTag;
 
 public class JVirtualInvokeExpr extends AbstractVirtualInvokeExpr {
   public JVirtualInvokeExpr(Value base, SootMethodRef methodRef, List<? extends Value> args) {
-    super(myJimple.newLocalBox(base), methodRef, new ValueBox[args.size()]);
+    super(myJimple.newLocalBox(base), methodRef, new ValueBox[args.size()], myBaf);
 
     if (!myOptions.ignore_resolution_errors()) {
       // Check that the method's class is resolved enough

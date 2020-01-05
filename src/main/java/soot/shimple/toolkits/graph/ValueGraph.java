@@ -462,20 +462,20 @@ public class ValueGraph {
 
     return tmp.toString();
   }
-
-  // testing
-  public static void main(String[] args) {
-    // assumes 2 args: Class + Method
-
-    myScene.loadClassAndSupport(args[0]);
-    SootClass sc = myScene.getSootClass(args[0]);
-    SootMethod sm = sc.getMethod(args[1]);
-    Body b = sm.retrieveActiveBody();
-    ShimpleBody sb = myShimple.newBody(b);
-    CompleteBlockGraph cfg = new CompleteBlockGraph(sb);
-    ValueGraph vg = new ValueGraph(cfg);
-    System.out.println(vg);
-  }
+//FIXME
+//  // testing
+//  public static void main(String[] args) {
+//    // assumes 2 args: Class + Method
+//
+//    myScene.loadClassAndSupport(args[0]);
+//    SootClass sc = myScene.getSootClass(args[0]);
+//    SootMethod sm = sc.getMethod(args[1]);
+//    Body b = sm.retrieveActiveBody();
+//    ShimpleBody sb = myShimple.newBody(b);
+//    CompleteBlockGraph cfg = new CompleteBlockGraph(sb);
+//    ValueGraph vg = new ValueGraph(cfg);
+//    System.out.println(vg);
+//  }
 
   public class Node {
     protected int nodeNumber;

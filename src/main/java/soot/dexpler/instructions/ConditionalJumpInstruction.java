@@ -35,13 +35,11 @@ import soot.Local;
 import soot.dexpler.DexBody;
 import soot.jimple.ConditionExpr;
 import soot.jimple.IfStmt;
-import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
 
 public abstract class ConditionalJumpInstruction extends JumpInstruction implements DeferableInstruction {
 
   public ConditionalJumpInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   /**
