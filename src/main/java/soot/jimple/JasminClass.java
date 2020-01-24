@@ -111,7 +111,7 @@ public class JasminClass extends AbstractJasminClass {
     super.assignColorsToLocals(body);
 
     // Call the graph colorer.
-    FastColorer.assignColorsToLocals(body, localToGroup, localToColor, groupToColorCount);
+    FastColorer.assignColorsToLocals(body, localToGroup, localToColor, groupToColorCount, myPedanticThrowAnalysis, myOptions, myManager, myPhaseDumper);
 
 //    if (myOptions.time()) {
 //      myTimers.packTimer.end();

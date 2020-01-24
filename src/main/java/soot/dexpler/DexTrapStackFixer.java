@@ -32,7 +32,6 @@ import soot.Unit;
 import soot.javaToJimple.LocalGenerator;
 import soot.jimple.CaughtExceptionRef;
 import soot.jimple.IdentityStmt;
-import soot.jimple.Jimple;
 import soot.jimple.Stmt;
 
 /**
@@ -62,7 +61,7 @@ public class DexTrapStackFixer extends BodyTransformer {
       }
 
       // Add the exception reference
-      Local l = new LocalGenerator(b).generateLocal(t.getException().getType());
+      Local l = new LocalGenerator(b, primeTypeCollector, myJimple).generateLocal(t.getException().getType());
       Stmt caughtStmt = myJimple.newIdentityStmt(l, myJimple.newCaughtExceptionRef());
       b.getUnits().add(caughtStmt);
       b.getUnits().add(myJimple.newGotoStmt(t.getHandlerUnit()));

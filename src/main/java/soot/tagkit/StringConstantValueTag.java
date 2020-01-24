@@ -23,13 +23,16 @@ package soot.tagkit;
  */
 
 import soot.coffi.CONSTANT_Utf8_info;
+import soot.jimple.ConstantFactory;
 import soot.jimple.StringConstant;
 
 public class StringConstantValueTag extends ConstantValueTag {
   private final String value;
+  private ConstantFactory constancFactory;
 
-  public StringConstantValueTag(String value) {
+  public StringConstantValueTag(String value, ConstantFactory constancFactory) {
     this.value = value;
+    this.constancFactory = constancFactory;
     this.bytes = CONSTANT_Utf8_info.toUtf8(value);
   }
 

@@ -39,11 +39,8 @@ import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
-import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
 import soot.jimple.NewArrayExpr;
 
 public class FilledNewArrayInstruction extends FilledArrayInstruction {
@@ -101,7 +98,7 @@ public class FilledNewArrayInstruction extends FilledArrayInstruction {
   boolean isUsedAsFloatingPoint(DexBody body, int register) {
     Instruction35c i = (Instruction35c) instruction;
     Type arrayType = DexType.toSoot((TypeReference) i.getReference());
-    return isRegisterUsed(register) && isFloatLike(arrayType);
+    return isRegisterUsed(register) && isFloatLike(arrayType, myScene);
   }
 
   /**

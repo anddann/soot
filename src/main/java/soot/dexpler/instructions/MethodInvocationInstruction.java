@@ -167,7 +167,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
         continue;
       }
 
-      if (regs.get(i) == register && isFloatLike(DexType.toSoot(paramTypes.get(j).toString()))) {
+      if (regs.get(i) == register && isFloatLike(DexType.toSoot(paramTypes.get(j).toString()), myScene)) {
         return true;
       }
       if (DexType.isWide(paramTypes.get(j).toString())) {
@@ -317,7 +317,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
     if (name.startsWith("[")) {
       name = "java.lang.Object";
     } else {
-      name = dottedClassName(name);
+      name = dottedClassName(name, myScene);
     }
     
     SootClass sc = mySootResolver.makeClassRef(name);

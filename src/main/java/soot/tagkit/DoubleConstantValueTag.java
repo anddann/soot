@@ -22,17 +22,20 @@ package soot.tagkit;
  * #L%
  */
 
+import soot.jimple.ConstantFactory;
 import soot.jimple.DoubleConstant;
 
 public class DoubleConstantValueTag extends ConstantValueTag {
   private final double value;
+  private ConstantFactory constancFactory;
 
   public double getDoubleValue() {
     return value;
   }
 
-  public DoubleConstantValueTag(double val) {
+  public DoubleConstantValueTag(double val, ConstantFactory constancFactory) {
     this.value = val;
+    this.constancFactory = constancFactory;
   }
 
   public String toString() {

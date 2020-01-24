@@ -77,7 +77,7 @@ public class AllocNodesFinder {
     Iterator it = pcg.iterator();
     while (it.hasNext()) {
       SootMethod sm = (SootMethod) it.next();
-      UnitGraph graph = new CompleteUnitGraph(sm.getActiveBody());
+      UnitGraph graph = new CompleteUnitGraph(sm.getActiveBody(), myManager, myPhaseDumper);
       Iterator iterator = graph.iterator();
       if (multiCalledMethods.contains(sm)) {
         while (iterator.hasNext()) {

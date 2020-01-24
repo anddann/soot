@@ -30,16 +30,19 @@ import soot.jimple.Jimple;
 
 public class JTrap extends AbstractTrap {
 
-  public JTrap(SootClass exception, Unit beginStmt, Unit endStmt, Unit handlerStmt) {
-    super(exception, myJimple.newStmtBox(beginStmt), myJimple.newStmtBox(endStmt), myJimple.newStmtBox(handlerStmt));
+  private Jimple myJimple;
+
+  public JTrap(SootClass exception, Unit beginStmt, Unit endStmt, Unit handlerStmt, Jimple myJimple) {
+    super(exception, myJimple.newStmtBox(beginStmt), myJimple.newStmtBox(endStmt), myJimple.newStmtBox(handlerStmt), myScene);
   }
 
-  public JTrap(SootClass exception, UnitBox beginStmt, UnitBox endStmt, UnitBox handlerStmt) {
-    super(exception, beginStmt, endStmt, handlerStmt);
+  public JTrap(SootClass exception, UnitBox beginStmt, UnitBox endStmt, UnitBox handlerStmt, Jimple myJimple) {
+    super(exception, beginStmt, endStmt, handlerStmt, myScene);
+    this.myJimple = myJimple;
   }
 
   public Object clone() {
-    return new JTrap(exception, getBeginUnit(), getEndUnit(), getHandlerUnit());
+    return new JTrap(exception, getBeginUnit(), getEndUnit(), getHandlerUnit(),myJimple);
   }
 
   public String toString() {

@@ -67,7 +67,7 @@ public class MultiCalledMethods {
     Iterator it = pcg.iterator();
     while (it.hasNext()) {
       SootMethod sm = (SootMethod) it.next();
-      UnitGraph graph = new CompleteUnitGraph(sm.getActiveBody());
+      UnitGraph graph = new CompleteUnitGraph(sm.getActiveBody(), myManager, myPhaseDumper);
       CallGraph callGraph = myScene.getCallGraph();
       MultiRunStatementsFinder finder = new MultiRunStatementsFinder(graph, sm, multiCalledMethods, callGraph, getMyInteractionHandler(), isInteraticveMode());
       FlowSet fs = finder.getMultiRunStatements();

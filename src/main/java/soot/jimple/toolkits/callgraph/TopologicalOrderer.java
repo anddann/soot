@@ -34,10 +34,12 @@ import soot.util.NumberedSet;
 public class TopologicalOrderer {
   CallGraph cg;
   List<SootMethod> order = new ArrayList<SootMethod>();
+  private Scene myScene;
   NumberedSet<SootMethod> visited = new NumberedSet<SootMethod>(myScene.getMethodNumberer());
 
-  public TopologicalOrderer(CallGraph cg) {
+  public TopologicalOrderer(CallGraph cg, Scene myScene) {
     this.cg = cg;
+    this.myScene = myScene;
   }
 
   public void go() {

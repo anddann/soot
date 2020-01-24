@@ -30,9 +30,14 @@ import soot.SootMethodRef;
 import soot.Type;
 import soot.UnitPrinter;
 import soot.VoidType;
+import soot.baf.Baf;
 
 abstract class AbstractInvokeInst extends AbstractInst {
   SootMethodRef methodRef;
+
+  public AbstractInvokeInst(Baf myBaf) {
+    super(myBaf);
+  }
 
   public SootMethodRef getMethodRef() {
     return methodRef;

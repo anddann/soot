@@ -2,7 +2,6 @@ package soot;
 
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scope;
 import com.google.inject.Scopes;
 
 /*-
@@ -53,7 +52,6 @@ public class Singletons extends AbstractModule{
             bind(soot.jimple.toolkits.pointer.representations.TypeConstants.class).in(Scopes.SINGLETON);
             bind(soot.coffi.Util.class).in(Scopes.SINGLETON);
             bind(soot.SourceLocator.class).in(Scopes.SINGLETON);
-            bind(soot.coffi.CONSTANT_Utf8_collector.class).in(Scopes.SINGLETON);
             bind(soot.dava.toolkits.base.finders.AbruptEdgeFinder.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.base.Aggregator.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.annotation.arraycheck.ArrayBoundsChecker.class).in(Scopes.SINGLETON);
@@ -80,7 +78,6 @@ public class Singletons extends AbstractModule{
             bind(soot.Printer.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.scalar.DeadAssignmentEliminator.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.pointer.DependenceTagAggregator.class).in(Scopes.SINGLETON);
-            bind(soot.coffi.Double2ndHalfType.class).in(Scopes.SINGLETON);
             bind(soot.DoubleType.class).in(Scopes.SINGLETON);
             bind(soot.baf.DoubleWordType.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.pointer.DumbPointerAnalysis.class).in(Scopes.SINGLETON);
@@ -104,7 +101,6 @@ public class Singletons extends AbstractModule{
             bind(soot.jimple.toolkits.scalar.LocalNameStandardizer.class).in(Scopes.SINGLETON);
             bind(soot.toolkits.scalar.LocalPacker.class).in(Scopes.SINGLETON);
             bind(soot.toolkits.scalar.LocalSplitter.class).in(Scopes.SINGLETON);
-            bind(soot.coffi.Long2ndHalfType.class).in(Scopes.SINGLETON);
             bind(soot.LongType.class).in(Scopes.SINGLETON);
             bind(soot.dava.toolkits.base.misc.MonitorConverter.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.scalar.NopEliminator.class).in(Scopes.SINGLETON);
@@ -144,7 +140,6 @@ public class Singletons extends AbstractModule{
             bind(soot.UnknownType.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.scalar.UnreachableCodeEliminator.class).in(Scopes.SINGLETON);
             bind(soot.toolkits.scalar.UnusedLocalEliminator.class).in(Scopes.SINGLETON);
-            bind(soot.coffi.UnusuableType.class).in(Scopes.SINGLETON);
             bind(soot.dava.toolkits.base.AST.UselessTryRemover.class).in(Scopes.SINGLETON);
             bind(soot.VoidType.class).in(Scopes.SINGLETON);
             bind(soot.baf.WordType.class).in(Scopes.SINGLETON);
@@ -175,7 +170,6 @@ public class Singletons extends AbstractModule{
             bind(soot.toolkits.exceptions.DuplicateCatchAllTrapRemover.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.annotation.callgraph.CallGraphGrapher.class).in(Scopes.SINGLETON);
             bind(soot.SootResolver.class).in(Scopes.SINGLETON);
-            bind(soot.javaToJimple.InitialResolver.class).in(Scopes.SINGLETON);
             bind(soot.jimple.paddle.PaddleHook.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.annotation.DominatorsTagger.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.annotation.purity.PurityAnalysis.class).in(Scopes.SINGLETON);
@@ -187,7 +181,6 @@ public class Singletons extends AbstractModule{
             bind(soot.jimple.spark.sets.AllSharedHybridNodes.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.thread.synchronization.LockAllocator.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.thread.mhp.MhpTransformer.class).in(Scopes.SINGLETON);
-            bind(soot.JastAddInitialResolver.class).in(Scopes.SINGLETON);
             bind(soot.jimple.toolkits.annotation.j5anno.AnnotationGenerator.class).in(Scopes.SINGLETON);
             bind(soot.sootify.TemplatePrinter.class).in(Scopes.SINGLETON);
             bind(soot.dexpler.DexResolver.class).in(Scopes.SINGLETON);

@@ -43,14 +43,9 @@ import org.slf4j.LoggerFactory;
 import soot.Body;
 import soot.MethodSource;
 import soot.Modifier;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
-import soot.SootResolver;
 import soot.Type;
-import soot.jimple.Jimple;
-import soot.jimple.toolkits.typing.TypeAssigner;
-import soot.options.Options;
 
 /**
  * DexMethod is a container for all methods that are declared in a class. It holds information about its name, the class it
@@ -120,10 +115,10 @@ public class DexMethod {
         } catch (InvalidDalvikBytecodeException e) {
           String msg = "Warning: Invalid bytecode in method " + m + ": " + e;
           logger.debug("" + msg);
-          Util.emptyBody(b);
+          Util.emptyBody(b, primeTypeCollector, myJimple, constancFactory);
           Util.addExceptionAfterUnit(b, "java.lang.RuntimeException", b.getUnits().getLast(),
               "Soot has detected that this method contains invalid Dalvik bytecode,"
-                  + " which would have throw an exception at runtime. [" + msg + "]");
+                  + " which would have throw an exception at runtime. [" + msg + "]", myScene, myJimple, constancFactory);
           TypemyAssigner.transform(b);
         }
         m.setActiveBody(b);
@@ -164,7 +159,7 @@ public class DexMethod {
             if (evSub instanceof TypeEncodedValue) {
               TypeEncodedValue valueType = (TypeEncodedValue) evSub;
               String exceptionName = valueType.getValue();
-              String dottedName = Util.dottedClassName(exceptionName);
+              String dottedName = Util.dottedClassName(exceptionName, myScene);
               thrownExceptions.add(mySootResolver.makeClassRef(dottedName));
             }
           }

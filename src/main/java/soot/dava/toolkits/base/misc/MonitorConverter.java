@@ -34,10 +34,12 @@ import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
+import soot.baf.Baf;
 import soot.dava.DavaBody;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DStaticInvokeExpr;
 import soot.dava.internal.javaRep.DVirtualInvokeExpr;
+import soot.grimp.Grimp;
 import soot.grimp.internal.GInvokeStmt;
 import soot.jimple.EnterMonitorStmt;
 import soot.jimple.MonitorStmt;
@@ -48,13 +50,17 @@ public class MonitorConverter {
   private final Scene myScene;
   private final PackageNamer myPackageNamer;
   private final Options myOptions;
+  private Grimp myGrimp;
+  private Baf myBaf;
 
   @Inject
   public MonitorConverter(Scene myScene, PackageNamer myPackageNamer, Options myOptions,
-      PrimTypeCollector primTypeCollector) {
+                          Grimp myGrimp, Baf myBaf, PrimTypeCollector primTypeCollector) {
     this.myScene = myScene;
     this.myPackageNamer = myPackageNamer;
     this.myOptions = myOptions;
+    this.myGrimp = myGrimp;
+    this.myBaf = myBaf;
     SootClass davaMonitor = new SootClass("soot.dava.toolkits.base.DavaMonitor.DavaMonitor", this.myOptions, Modifier.PUBLIC,
         this.myScene, this.myPackageNamer);
     davaMonitor.setSuperclass(this.myScene.loadClassAndSupport("java.lang.Object"));

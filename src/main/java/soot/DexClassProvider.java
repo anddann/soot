@@ -62,7 +62,7 @@ public class DexClassProvider implements ClassProvider {
   public static Set<String> classesOfDex(DexBackedDexFile dexFile) {
     Set<String> classes = new HashSet<String>();
     for (ClassDef c : dexFile.getClasses()) {
-      String name = Util.dottedClassName(c.getType());
+      String name = Util.dottedClassName(c.getType(), myScene);
       classes.add(name);
     }
     return classes;

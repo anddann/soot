@@ -71,12 +71,15 @@ import soot.jimple.toolkits.thread.mhp.stmt.StartStmt;
 import soot.jimple.toolkits.thread.mhp.stmt.WaitStmt;
 import soot.jimple.toolkits.thread.mhp.stmt.WaitingStmt;
 import soot.tagkit.StringTag;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.CompleteUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.FlowSet;
 import soot.util.Chain;
 import soot.util.HashChain;
+import soot.util.PhaseDumper;
 
 //add for add tag
 //import soot.util.cfgcmd.*;
@@ -119,11 +122,14 @@ public class PegChain extends HashChain {
   Map<SootMethod, String> synchObj;
   Set multiRunAllocNodes;
   Map<AllocNode, String> allocNodeToObj;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
+  private PedanticThrowAnalysis myPedanticThrowAnalysis;
 
   PegChain(CallGraph callGraph, Hierarchy hierarchy, PAG pag, Set threadAllocSites, Set methodsNeedingInlining,
-      Set allocNodes, List<List> inlineSites, Map<SootMethod, String> synchObj, Set multiRunAllocNodes,
-      Map<AllocNode, String> allocNodeToObj, Body unitBody, SootMethod sm, String threadName, boolean addBeginNode,
-      PegGraph pegGraph) {
+           Set allocNodes, List<List> inlineSites, Map<SootMethod, String> synchObj, Set multiRunAllocNodes,
+           Map<AllocNode, String> allocNodeToObj, Body unitBody, SootMethod sm, String threadName, boolean addBeginNode,
+           PegGraph pegGraph, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, PedanticThrowAnalysis myPedanticThrowAnalysis) {
     this.allocNodeToObj = allocNodeToObj;
     this.multiRunAllocNodes = multiRunAllocNodes;
     this.synchObj = synchObj;
@@ -137,6 +143,9 @@ public class PegChain extends HashChain {
     body = unitBody;
     pg = pegGraph;
     waitingNodes = pegGraph.getWaitingNodes();
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
     // Find exception handlers
     Iterator trapIt = unitBody.getTraps().iterator();
     Set<Unit> exceHandlers = pg.getExceHandlers();
@@ -147,7 +156,7 @@ public class PegChain extends HashChain {
     }
 
     // System.out.println("entering buildPegChain");
-    UnitGraph graph = new CompleteUnitGraph(unitBody);
+    UnitGraph graph = new CompleteUnitGraph(unitBody, myManager, myPhaseDumper, myPedanticThrowAnalysis);
 
     Iterator unitIt = graph.iterator();
     // HashMap unitToPeg = new HashMap((graph.size())*2+1,0.7f);
@@ -356,7 +365,7 @@ public class PegChain extends HashChain {
             // map caller ()-> start pegStmt
             pg.getThreadNameToStart().put(callerName, pegStmt);
             PegChain newChain = new PegChain(callGraph, hierarchy, pag, threadAllocSites, methodsNeedingInlining, allocNodes,
-                inlineSites, synchObj, multiRunAllocNodes, allocNodeToObj, mBody, sm, callerName, true, pg);
+                inlineSites, synchObj, multiRunAllocNodes, allocNodeToObj, mBody, sm, callerName, true, pg, myManager, myPhaseDumper, myPedanticThrowAnalysis);
 
             pg.getAllocNodeToThread().put(allocNode, newChain);
 
@@ -606,7 +615,7 @@ public class PegChain extends HashChain {
     addAndPut(unit, pegStmt);
 
     PegGraph pG = new PegGraph(callGraph, hierarchy, pag, methodsNeedingInlining, allocNodes, inlineSites, synchObj,
-        multiRunAllocNodes, allocNodeToObj, unitBody, threadName, targetMethod, true, false);
+        multiRunAllocNodes, allocNodeToObj, unitBody, threadName, targetMethod, true, false, myManager, myPhaseDumper, myPedanticThrowAnalysis);
     // pg.addPeg(pG, this); // RLH
     // PegToDotFile printer1 = new PegToDotFile(pG, false, targetMethod.getName());
     // System.out.println("NeedInlining for "+targetMethod +": "+pG.getNeedInlining());

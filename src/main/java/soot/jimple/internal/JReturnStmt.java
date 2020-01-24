@@ -37,16 +37,19 @@ import soot.jimple.StmtSwitch;
 import soot.util.Switch;
 
 public class JReturnStmt extends AbstractOpStmt implements ReturnStmt {
-  public JReturnStmt(Value returnValue) {
-    this(myJimple.newImmediateBox(returnValue));
+  private Jimple myJimple;
+
+  public JReturnStmt(Value returnValue, Jimple myJimple) {
+    this(myJimple.newImmediateBox(returnValue), myJimple);
   }
 
-  protected JReturnStmt(ValueBox returnValueBox) {
+  protected JReturnStmt(ValueBox returnValueBox, Jimple myJimple) {
     super(returnValueBox);
+    this.myJimple = myJimple;
   }
 
   public Object clone() {
-    return new JReturnStmt(Jimple.cloneIfNecessary(getOp()));
+    return new JReturnStmt(Jimple.cloneIfNecessary(getOp()),myJimple);
   }
 
   public String toString() {

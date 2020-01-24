@@ -39,15 +39,19 @@ import soot.Type;
  */
 public class SootASMClassWriter extends ClassWriter {
 
+  private Scene myScene;
+
   /**
    * Constructs a new {@link ClassWriter} object.
    *
    * @param flags
    *          option flags that can be used to modify the default behavior of this class. See {@link #COMPUTE_MAXS},
    *          {@link #COMPUTE_FRAMES}.
+   * @param myScene
    */
-  public SootASMClassWriter(int flags) {
+  public SootASMClassWriter(int flags, Scene myScene) {
     super(flags);
+    this.myScene = myScene;
   }
 
   /*

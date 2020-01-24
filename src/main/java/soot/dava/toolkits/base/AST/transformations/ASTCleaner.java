@@ -108,7 +108,7 @@ public class ASTCleaner extends DepthFirstAdapter {
           // check if there is an empty else body
           List<Object> elseBody = ((ASTIfElseNode) temp).getElseBody();
           if (elseBody.size() == 0) {
-            EmptyElseRemover.removeElseBody(node, (ASTIfElseNode) temp, subBodyNumber, nodeNumber);
+            EmptyElseRemover.removeElseBody(node, (ASTIfElseNode) temp, subBodyNumber, nodeNumber, myTryContentsFinder);
           }
         } else if (temp instanceof ASTIfNode) {
           // check if the next node in the subBody is also an ASTIfNode in which case invoke OrAggregatorThree
@@ -165,7 +165,7 @@ public class ASTCleaner extends DepthFirstAdapter {
         List<Object> elseBody = ((ASTIfElseNode) temp).getElseBody();
         if (elseBody.size() == 0) {
           // System.out.println("Empty else body found"+temp);
-          List<Object> newBody = EmptyElseRemover.createNewNodeBody(tryBody, nodeNumber, (ASTIfElseNode) temp);
+          List<Object> newBody = EmptyElseRemover.createNewNodeBody(tryBody, nodeNumber, (ASTIfElseNode) temp, myTryContentsFinder);
           if (newBody != null) {
             // something did not go wrong
             node.replaceTryBody(newBody);
@@ -250,7 +250,7 @@ public class ASTCleaner extends DepthFirstAdapter {
           List<Object> elseBody = ((ASTIfElseNode) temp).getElseBody();
           if (elseBody.size() == 0) {
             // System.out.println("Empty else body found"+temp);
-            List<Object> newBody = EmptyElseRemover.createNewNodeBody(body, nodeNumber, (ASTIfElseNode) temp);
+            List<Object> newBody = EmptyElseRemover.createNewNodeBody(body, nodeNumber, (ASTIfElseNode) temp, myTryContentsFinder);
             if (newBody != null) {
               // something did not go wrong
               catchBody.replaceBody(newBody);
@@ -330,7 +330,7 @@ public class ASTCleaner extends DepthFirstAdapter {
             List<Object> elseBody = ((ASTIfElseNode) temp).getElseBody();
             if (elseBody.size() == 0) {
               // System.out.println("Empty else body found"+temp);
-              List<Object> newBody = EmptyElseRemover.createNewNodeBody(body, nodeNumber, (ASTIfElseNode) temp);
+              List<Object> newBody = EmptyElseRemover.createNewNodeBody(body, nodeNumber, (ASTIfElseNode) temp, myTryContentsFinder);
               if (newBody != null) {
                 // something did not go wrong
 

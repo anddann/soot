@@ -85,7 +85,7 @@ public abstract class FieldInstruction extends DexlibAbstractInstruction {
    *          if the FieldRef should be static
    */
   private SootFieldRef getSootFieldRef(FieldReference fref, boolean isStatic) {
-    String className = dottedClassName(fref.getDefiningClass());
+    String className = dottedClassName(fref.getDefiningClass(), myScene);
     SootClass sc = mySootResolver.makeClassRef(className);
     return myScene.makeFieldRef(sc, fref.getName(), DexType.toSoot(fref.getType()), isStatic);
   }
@@ -115,7 +115,7 @@ public abstract class FieldInstruction extends DexlibAbstractInstruction {
 
   @Override
   boolean isUsedAsFloatingPoint(DexBody body, int register) {
-    return sourceRegister() == register && isFloatLike(getTargetType(body));
+    return sourceRegister() == register && isFloatLike(getTargetType(body), myScene);
   }
 
   /**

@@ -36,6 +36,9 @@ import soot.Transform;
 
 public class DumpNumAppReachableMethods extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(DumpNumAppReachableMethods.class);
+ //FIXME: unusesd?
+  private Scene myScene;
+
 
   protected void internalTransform(String phaseName, Map options) {
     int numAppMethods = 0;
@@ -56,13 +59,6 @@ public class DumpNumAppReachableMethods extends SceneTransformer {
     return !SootUtil.inLibrary(m.getDeclaringClass().getName());
   }
 
-  /**
-   * @param args
-   */
-  public static void main(String[] args) {
-    PackmyManager.getPack("wjtp").add(new Transform("wjtp.narm", new DumpNumAppReachableMethods()));
-    soot.Main.main(args);
 
-  }
 
 }

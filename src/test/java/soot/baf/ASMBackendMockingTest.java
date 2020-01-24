@@ -117,7 +117,7 @@ public class ASMBackendMockingTest {
 	@Test
 	public void testPop2Inst(){
 		Type type = mock(LongType.class);
-		PopInst inst = new BPopInst(type);
+		PopInst inst = new BPopInst(type, myBaf);
 		
 		sut.generateInstruction(mv, inst);
 		

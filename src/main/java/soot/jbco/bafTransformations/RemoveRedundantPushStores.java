@@ -34,8 +34,12 @@ import soot.Unit;
 import soot.baf.PushInst;
 import soot.baf.StoreInst;
 import soot.jbco.IJbcoTransform;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 /**
  * @author Michael Batchelder
@@ -45,6 +49,17 @@ import soot.util.Chain;
 public class RemoveRedundantPushStores extends BodyTransformer implements IJbcoTransform {
 
   public static String dependancies[] = new String[] { "bb.jbco_rrps" };
+  private ThrowableSet.Manager myManager;
+  private ThrowAnalysis myThrowAnalysis;
+  private Options myOptions;
+  private PhaseDumper myPhaseDumper;
+
+  public RemoveRedundantPushStores(ThrowableSet.Manager myManager, ThrowAnalysis myThrowAnalysis, Options myOptions, PhaseDumper myPhaseDumper) {
+    this.myManager = myManager;
+    this.myThrowAnalysis = myThrowAnalysis;
+    this.myOptions = myOptions;
+    this.myPhaseDumper = myPhaseDumper;
+  }
 
   public String[] getDependencies() {
     return dependancies;
@@ -66,7 +81,7 @@ public class RemoveRedundantPushStores extends BodyTransformer implements IJbcoT
     while (changed) {
       changed = false;
       Unit prevprevprev = null, prevprev = null, prev = null;
-      ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b, myManager);
+      ExceptionalUnitGraph eug = new ExceptionalUnitGraph(b,myThrowAnalysis, myOptions.omit_excepting_unit_edges(),myManager,myPhaseDumper);
       Iterator<Unit> it = units.snapshotIterator();
       while (it.hasNext()) {
         Unit u = it.next();

@@ -39,25 +39,36 @@ import org.jf.dexlib2.iface.instruction.formats.Instruction21c;
 import org.jf.dexlib2.iface.reference.TypeReference;
 
 import soot.RefType;
+import soot.Scene;
 import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
+import soot.jimple.Jimple;
 import soot.jimple.NewExpr;
+import soot.options.Options;
 
 public class NewInstanceInstruction extends DexlibAbstractInstruction {
 
-  public NewInstanceInstruction(Instruction instruction, int codeAdress) {
+  private Jimple myJimple;
+  private Scene myScene;
+  private DalvikTyper myDalvikTyper;
+
+  public NewInstanceInstruction(Instruction instruction, int codeAdress, Jimple myJimple, Options myOptions, Scene myScene, DalvikTyper myDalvikTyper) {
     super(instruction, codeAdress, myOptions);
+    this.myJimple = myJimple;
+    this.myScene = myScene;
+    this.myDalvikTyper = myDalvikTyper;
   }
 
   @Override
   public void jimplify(DexBody body) {
     Instruction21c i = (Instruction21c) instruction;
     int dest = i.getRegisterA();
-    String className = dottedClassName(((TypeReference) (i.getReference())).toString());
-    RefType type = RefType.v(className);
+    String className = dottedClassName(((TypeReference) (i.getReference())).toString(), myScene);
+    RefType type = RefType.v(className,myScene);
     NewExpr n = myJimple.newNewExpr(type);
     AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), n);
     setUnit(assign);
@@ -66,7 +77,7 @@ public class NewInstanceInstruction extends DexlibAbstractInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // myDalvikTyper().captureAssign((JAssignStmt)assign, op); // TODO: ref. type may be null!
-      myDalvikTyper().setType(assign.getLeftOpBox(), type, false);
+      myDalvikTyper.setType(assign.getLeftOpBox(), type, false);
     }
   }
 

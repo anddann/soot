@@ -42,7 +42,6 @@ import soot.SceneTransformer;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
-import soot.JastAddJ.Options;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
@@ -53,6 +52,7 @@ import soot.jimple.toolkits.callgraph.Filter;
 import soot.jimple.toolkits.callgraph.Targets;
 import soot.jimple.toolkits.callgraph.TopologicalOrderer;
 import soot.jimple.toolkits.scalar.LocalNameStandardizer;
+import soot.options.Options;
 import soot.tagkit.Host;
 
 /** Uses the Scene's currently-active InvokeGraph to inline monomorphic call sites. */
@@ -101,7 +101,7 @@ public class StaticInliner extends SceneTransformer {
     computeAverageMethodSizeAndSaveOriginalSizes();
     // Visit each potential site in reverse pseudo topological order.
     {
-      TopologicalOrderer orderer = new TopologicalOrderer(cg);
+      TopologicalOrderer orderer = new TopologicalOrderer(cg, myScene);
       orderer.go();
       List<SootMethod> order = orderer.order();
       ListIterator<SootMethod> it = order.listIterator(order.size());

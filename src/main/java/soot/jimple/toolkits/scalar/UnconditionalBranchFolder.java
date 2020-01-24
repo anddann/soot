@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.JastAddJ.Options;
+import soot.options.Options;
 import soot.Unit;
 import soot.jimple.GotoStmt;
 import soot.jimple.IfStmt;

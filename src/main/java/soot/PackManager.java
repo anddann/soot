@@ -719,7 +719,6 @@ public class PackManager {
 
     // if running coffi cfg metrics, print out results and exit
     if (soot.jbco.Main.metrics) {
-      coffiMetrics();
       System.exit(0);
     }
 
@@ -736,26 +735,6 @@ public class PackManager {
     handleInnerClasses();
   }
 
-  public void coffiMetrics() {
-    int tV = 0, tE = 0, hM = 0;
-    double aM = 0;
-    HashMap<SootMethod, int[]> hashVem = soot.coffi.CFG.methodsToVEM;
-    Iterator<SootMethod> it = hashVem.keySet().iterator();
-    while (it.hasNext()) {
-      int vem[] = hashVem.get(it.next());
-      tV += vem[0];
-      tE += vem[1];
-      aM += vem[2];
-      if (vem[2] > hM) {
-        hM = vem[2];
-      }
-    }
-    if (hashVem.size() > 0) {
-      aM /= hashVem.size();
-    }
-
-    logger.debug("Vertices, Edges, Avg Degree, Highest Deg:    " + tV + "  " + tE + "  " + aM + "  " + hM);
-  }
 
   public void runBodyPacks() {
     runBodyPacks(reachableClasses());

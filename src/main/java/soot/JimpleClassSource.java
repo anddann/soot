@@ -29,7 +29,7 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.JastAddJ.Options;
+import soot.options.Options;
 import soot.javaToJimple.IInitialResolver.Dependencies;
 import soot.jimple.JimpleMethodSource;
 import soot.jimple.parser.lexer.LexerException;

@@ -157,6 +157,7 @@ final class AsmMethodSource implements MethodSource {
   private final Set<LabelNode> inlineExceptionLabels = new HashSet<LabelNode>();
   private final Map<LabelNode, Unit> inlineExceptionHandlers = new HashMap<LabelNode, Unit>();
   private final CastAndReturnInliner castAndReturnInliner = new CastAndReturnInliner();
+  private final Util myCoffiUtil;
   /* -state fields- */
   private int nextLocal;
   private Map<Integer, Local> locals;
@@ -176,7 +177,6 @@ final class AsmMethodSource implements MethodSource {
     private LambdaMetaFactory myLambdaMetaFactory;
     private PackManager myPackManager;
     private PhaseOptions myPhaseOptions;
-    private Util myCoffiUtil;
 
     AsmMethodSource(int maxLocals, InsnList insns, List<LocalVariableNode> localVars, List<TryCatchBlockNode> tryCatchBlocks,
                     Scene myScene, Options myOptions, ConstantFactory constancFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, PhaseOptions myPhaseOptions, Util myCoffiUtil) {

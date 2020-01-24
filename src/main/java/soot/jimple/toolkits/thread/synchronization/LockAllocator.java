@@ -200,7 +200,7 @@ public class LockAllocator extends SceneTransformer {
     MhpTester mhp = null;
     if (optionDoMHP && myScene.getPointsToAnalysis() instanceof PAG) {
       logger.debug("[wjtp.tn] *** Build May-Happen-in-Parallel Info *** " + (new Date()));
-      mhp = new SynchObliviousMhpAnalysis(myScene, myThrowAnalysis, myManager, myPhaseDumper, myOptions);
+      mhp = new SynchObliviousMhpAnalysis(myScene, myThrowAnalysis, myManager, myPhaseDumper, myOptions, myPedanticThrowAnalysis, myInteractionHandler);
       if (optionPrintMhpSummary) {
         mhp.printMhpSummary();
       }
@@ -213,7 +213,7 @@ public class LockAllocator extends SceneTransformer {
       if (mhp != null) {
         tlo = new ThreadLocalObjectsAnalysis(mhp, myScene);
       } else {
-        tlo = new ThreadLocalObjectsAnalysis(new SynchObliviousMhpAnalysis(myScene, myThrowAnalysis, myManager, myPhaseDumper, myOptions), myScene);
+        tlo = new ThreadLocalObjectsAnalysis(new SynchObliviousMhpAnalysis(myScene, myThrowAnalysis, myManager, myPhaseDumper, myOptions, myPedanticThrowAnalysis, myInteractionHandler), myScene);
       }
       if (!optionOnFlyTLO) {
         tlo.precompute();
@@ -472,7 +472,7 @@ public class LockAllocator extends SceneTransformer {
             tn.group.useLocksets = false;
 
             // Create a lockset containing a single placeholder static lock for each tn in the group
-            Value newStaticLock = new NewStaticLock(tn.method.getDeclaringClass());
+            Value newStaticLock = new NewStaticLock(tn.method.getDeclaringClass(), primTypeCollector);
             EquivalentValue newStaticLockEqVal = new EquivalentValue(newStaticLock);
             for (CriticalSection groupTn : tn.group) {
               groupTn.lockset = new ArrayList<EquivalentValue>();

@@ -22,9 +22,9 @@ package soot.dava.toolkits.base.AST.structuredAnalysis;
  * #L%
  */
 
-import soot.BooleanType;
+import soot.PrimTypeCollector;
 import soot.Value;
-import soot.dava.internal.javaRep.DIntConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DoubleConstant;
 import soot.jimple.FloatConstant;
 import soot.jimple.IntConstant;
@@ -75,7 +75,7 @@ public class CPHelper {
     return value;
   }
 
-  public static Value createConstant(Object toConvert) {
+  public static Value createConstant(Object toConvert, ConstantFactory constancFactory, PrimTypeCollector primTypeCollector) {
     if (toConvert instanceof Long) {
       return constancFactory.createLongConstant(((Long) toConvert).longValue());
     } else if (toConvert instanceof Double) {
@@ -83,9 +83,9 @@ public class CPHelper {
     } else if (toConvert instanceof Boolean) {
       boolean val = ((Boolean) toConvert).booleanValue();
       if (val) {
-        return DconstancFactory.createIntConstant(1, BooleanType.v());
+        return constancFactory.createDIntConstant(1, primTypeCollector.getBooleanType());
       } else {
-        return DconstancFactory.createIntConstant(0, BooleanType.v());
+        return constancFactory.createDIntConstant(0, primTypeCollector.getBooleanType());
       }
     } else if (toConvert instanceof Float) {
       return constancFactory.createFloatConstant(((Float) toConvert).floatValue());

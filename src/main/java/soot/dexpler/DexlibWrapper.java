@@ -45,9 +45,7 @@ import org.jf.dexlib2.iface.DexFile;
 import soot.ArrayType;
 import soot.CompilationDeathException;
 import soot.PrimType;
-import soot.Scene;
 import soot.SootClass;
-import soot.SootResolver;
 import soot.Type;
 import soot.VoidType;
 import soot.javaToJimple.IInitialResolver.Dependencies;
@@ -118,7 +116,7 @@ public class DexlibWrapper {
     // resolve classes in dex files
     for (DexBackedDexFile dexFile : dexFiles) {
       for (ClassDef defItem : dexFile.getClasses()) {
-        String forClassName = Util.dottedClassName(defItem.getType());
+        String forClassName = Util.dottedClassName(defItem.getType(), myScene);
         classesToDefItems.put(forClassName, new ClassInformation(dexFile, defItem));
       }
     }
@@ -154,7 +152,7 @@ public class DexlibWrapper {
 
   public Dependencies makeSootClass(SootClass sc, String className) {
     if (Util.isByteCodeClassName(className)) {
-      className = Util.dottedClassName(className);
+      className = Util.dottedClassName(className, myScene);
     }
 
     ClassInformation defItem = classesToDefItems.get(className);

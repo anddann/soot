@@ -28,7 +28,7 @@ import soot.jimple.internal.JReturnStmt;
 
 public class GReturnStmt extends JReturnStmt {
   public GReturnStmt(Value returnValue) {
-    super(myGrimp.newExprBox(returnValue));
+    super(myGrimp.newExprBox(returnValue), myJimple);
   }
 
   public Object clone() {

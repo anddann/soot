@@ -97,22 +97,25 @@ public abstract class AbstractASMBackend {
   private final Map<SootMethod, BafBody> bafBodyCache = new HashMap<SootMethod, BafBody>();
   private Options myOptions;
   private PackManager myPackManager;
+    private Scene myScene;
 
-  /**
+    /**
    * Creates a new ASM backend
-   *  @param sc
-   *          The SootClass that is to be converted into bytecode
-   * @param javaVersion
-   *          A particular Java version enforced by the user, may be 0 for automatic detection, must not be lower than
-   * @param myOptions
-   * @param myPackManager
-   */
-  public AbstractASMBackend(SootClass sc, int javaVersion, Options myOptions, PackManager myPackManager) {
+     * @param sc
+     *          The SootClass that is to be converted into bytecode
+     * @param javaVersion
+     *          A particular Java version enforced by the user, may be 0 for automatic detection, must not be lower than
+     * @param myOptions
+     * @param myPackManager
+     * @param myScene
+     */
+  public AbstractASMBackend(SootClass sc, int javaVersion, Options myOptions, PackManager myPackManager, Scene myScene) {
     this.sc = sc;
     this.myOptions = myOptions;
     this.myPackManager = myPackManager;
+      this.myScene = myScene;
 
-    int minVersion = getMinJavaVersion(sc);
+      int minVersion = getMinJavaVersion(sc);
 
     if (javaVersion == 0) {
       javaVersion = Options.java_version_default;
@@ -261,7 +264,7 @@ public abstract class AbstractASMBackend {
    *          The OutputStream the class file is written to
    */
   public void generateClassFile(OutputStream os) {
-    ClassWriter cw = new SootASMClassWriter(ClassWriter.COMPUTE_FRAMES);
+    ClassWriter cw = new SootASMClassWriter(ClassWriter.COMPUTE_FRAMES, myScene);
     cv = cw;
     generateByteCode();
     try {

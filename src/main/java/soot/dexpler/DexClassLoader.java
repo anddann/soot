@@ -33,9 +33,7 @@ import soot.Modifier;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
-import soot.SootResolver;
 import soot.javaToJimple.IInitialResolver.Dependencies;
-import soot.options.Options;
 import soot.tagkit.InnerClassAttribute;
 import soot.tagkit.InnerClassTag;
 import soot.tagkit.SourceFileTag;
@@ -79,7 +77,7 @@ public class DexClassLoader {
 
     // super class for hierarchy level
     if (superClass != null) {
-      String superClassName = Util.dottedClassName(superClass);
+      String superClassName = Util.dottedClassName(superClass, myScene);
       SootClass sootSuperClass = mySootResolver.makeClassRef(superClassName);
       sc.setSuperclass(sootSuperClass);
       deps.typesToHierarchy.add(sootSuperClass.getType());
@@ -92,7 +90,7 @@ public class DexClassLoader {
     // Retrieve interface names
     if (defItem.getInterfaces() != null) {
       for (String interfaceName : defItem.getInterfaces()) {
-        String interfaceClassName = Util.dottedClassName(interfaceName);
+        String interfaceClassName = Util.dottedClassName(interfaceName, myScene);
         if (sc.implementsInterface(interfaceClassName)) {
           continue;
         }

@@ -183,7 +183,7 @@ public class CycleFinder implements FactFinder {
             newNode = new SETWhileNode(asg.get_AugStmt(characterizing_stmt.get_Stmt()), cycle_body, myTryContentsFinder);
           } else {
             newNode = new SETDoWhileNode(asg.get_AugStmt(characterizing_stmt.get_Stmt()),
-                asg.get_AugStmt(entry_point.get_Stmt()), cycle_body);
+                asg.get_AugStmt(entry_point.get_Stmt()), cycle_body, myTryContentsFinder);
           }
         }
 

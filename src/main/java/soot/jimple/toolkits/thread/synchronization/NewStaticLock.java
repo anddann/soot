@@ -26,7 +26,7 @@ package soot.jimple.toolkits.thread.synchronization;
 import java.util.Collections;
 import java.util.List;
 
-import soot.NullType;
+import soot.PrimTypeCollector;
 import soot.SootClass;
 import soot.Type;
 import soot.UnitPrinter;
@@ -43,9 +43,11 @@ public class NewStaticLock implements Value {
   SootClass sc; // The class to which to add a static lock.
   static int nextidnum = 1;
   int idnum;
+  private PrimTypeCollector primTypeCollector;
 
-  public NewStaticLock(SootClass sc) {
+  public NewStaticLock(SootClass sc, PrimTypeCollector primTypeCollector) {
     this.sc = sc;
+    this.primTypeCollector = primTypeCollector;
     this.idnum = nextidnum++;
   }
 
@@ -60,7 +62,7 @@ public class NewStaticLock implements Value {
 
   /** Clones the object. Not implemented here. */
   public Object clone() {
-    return new NewStaticLock(sc);
+    return new NewStaticLock(sc, primTypeCollector);
   }
 
   /**
@@ -91,7 +93,7 @@ public class NewStaticLock implements Value {
   }
 
   public Type getType() {
-    return NullType.v();
+    return primTypeCollector.getNullType();
   }
 
   public void apply(Switch sw) {

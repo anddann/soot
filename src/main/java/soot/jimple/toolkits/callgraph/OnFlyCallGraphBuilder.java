@@ -1290,7 +1290,7 @@ public class OnFlyCallGraphBuilder {
         // exc = new Error
         RefType runtimeExceptionType = RefType.v("java.lang.Error", myScene);
         NewExpr newExpr = myJimple.newNewExpr(runtimeExceptionType);
-        LocalGenerator lg = new LocalGenerator(body);
+        LocalGenerator lg = new LocalGenerator(body, myScene.getPrimTypeCollector(), myJimple);
         Local exceptionLocal = lg.generateLocal(runtimeExceptionType);
         AssignStmt assignStmt = myJimple.newAssignStmt(exceptionLocal, newExpr);
         body.getUnits().insertBefore(assignStmt, insertionPoint);

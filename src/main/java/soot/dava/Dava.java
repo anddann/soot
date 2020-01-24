@@ -45,6 +45,7 @@ import soot.PrimTypeCollector;
 import soot.Printer;
 import soot.SootMethod;
 import soot.Type;
+import soot.baf.Baf;
 import soot.dava.toolkits.base.AST.UselessTryRemover;
 import soot.dava.toolkits.base.AST.traversals.ClosestAbruptTargetFinder;
 import soot.dava.toolkits.base.finders.AbruptEdgeFinder;
@@ -85,13 +86,14 @@ public class Dava {
   private PhaseDumper myPhaseDumper;
   private Grimp myGrimp;
   private PrimTypeCollector primTypeCollector;
+    private Baf myBaf;
 
-  @Inject
+    @Inject
   public Dava(Dava myJimple, ExceptionFinder myExceptionFinder, CycleFinder myCycleFinder, IfFinder myIfFinder,
               SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder, SequenceFinder mySequenceFinder,
               LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder, MonitorConverter myMonitorConverter,
               ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-              ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
+              ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf) {
     this.myJimple = myJimple;
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -112,7 +114,8 @@ public class Dava {
     this.myPhaseDumper = myPhaseDumper;
     this.myGrimp = myGrimp;
     this.primTypeCollector = primTypeCollector;
-  }
+        this.myBaf = myBaf;
+    }
 
 
 
@@ -142,7 +145,7 @@ public class Dava {
   public DavaBody newBody(SootMethod m) {
     DavaBody davaBody = new DavaBody(m, myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, this, myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector);
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, this, myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector, myBaf);
     return davaBody;
   }
 
@@ -150,7 +153,7 @@ public class Dava {
   public DavaBody newBody(Body b) {
     return new DavaBody(b, myOptions, myPrinter, myMonitorConverter, myExceptionFinder, mySynchronizedBlockFinder,
         myThrowNullConverter, mySequenceFinder, myLabeledBlockFinder, myCycleFinder, myIfFinder, mySwitchFinder,
-        myAbruptEdgeFinder, myUselessTryRemover, myPhaseOptions, myClosestAbruptTargetFinder, this, constancFactory, myPhaseDumper, myGrimp, primTypeCollector);
+        myAbruptEdgeFinder, myUselessTryRemover, myPhaseOptions, myClosestAbruptTargetFinder, this, constancFactory, myPhaseDumper, myGrimp, primTypeCollector, myBaf);
 
   }
 

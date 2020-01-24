@@ -109,7 +109,7 @@ public class CPApplication extends DepthFirstAdapter {
         // System.out.println("switch key Local "+useLocal+"is present in before set with value"+value);
         // create constant value for the value and replace this local
         // use with the constant value use
-        Value newValue = CPHelper.createConstant(value);
+        Value newValue = CPHelper.createConstant(value, constancFactory, primTypeCollector);
         if (newValue != null) {
           // System.out.println("Substituted the switch key local use with the constant value"+newValue);
           node.set_Key(newValue);
@@ -126,7 +126,7 @@ public class CPApplication extends DepthFirstAdapter {
         // System.out.println("FieldRef "+usedSootField+"is present in before set with value"+value);
         // create constant value for the value and replace this local
         // use with the constant value use
-        Value newValue = CPHelper.createConstant(value);
+        Value newValue = CPHelper.createConstant(value, constancFactory, primTypeCollector);
         if (newValue != null) {
           // System.out.println("Substituted the constant field ref use with the constant value"+newValue);
           node.set_Key(newValue);
@@ -311,7 +311,7 @@ public class CPApplication extends DepthFirstAdapter {
           // System.out.println("if Condition Local "+((Local)val)+"is present in before set with value"+value);
           // create constant value for the value and replace this
           // local use with the constant value use
-          Value newValue = CPHelper.createConstant(value);
+          Value newValue = CPHelper.createConstant(value, constancFactory, primTypeCollector);
           if (newValue != null) {
             // System.out.println("Substituted the local use with the constant value"+newValue);
             ((ASTUnaryCondition) cond).setValue(newValue);
@@ -327,7 +327,7 @@ public class CPApplication extends DepthFirstAdapter {
           // System.out.println("if condition FieldRef "+usedSootField+"is present in before set with value"+value);
           // create constant value for the value and replace this
           // field use with the constant value use
-          Value newValue = CPHelper.createConstant(value);
+          Value newValue = CPHelper.createConstant(value, constancFactory, primTypeCollector);
           if (newValue != null) {
             // System.out.println("Substituted the constant field ref use with the constant value"+newValue);
             ((ASTUnaryCondition) cond).setValue(newValue);
@@ -394,7 +394,7 @@ public class CPApplication extends DepthFirstAdapter {
           // System.out.println("Local "+useLocal+"is present in before set with value"+value);
           // create constant value for the value and replace this
           // local use with the constant value use
-          Value newValue = CPHelper.createConstant(value);
+          Value newValue = CPHelper.createConstant(value, constancFactory, primTypeCollector);
           if (newValue != null) {
             // System.out.println("Substituted the local use with the constant value"+newValue);
             ((ValueBox) useObj).setValue(newValue);
@@ -411,7 +411,7 @@ public class CPApplication extends DepthFirstAdapter {
           // System.out.println("FieldRef "+usedSootField+"is present in before set with value"+value);
           // create constant value for the value and replace this
           // local use with the constant value use
-          Value newValue = CPHelper.createConstant(value);
+          Value newValue = CPHelper.createConstant(value, constancFactory, primTypeCollector);
           if (newValue != null) {
             // System.out.println("Substituted the constant field ref use with the constant value"+newValue);
             ((ValueBox) useObj).setValue(newValue);

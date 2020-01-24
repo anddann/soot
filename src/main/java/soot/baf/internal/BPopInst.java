@@ -24,6 +24,7 @@ package soot.baf.internal;
 
 import soot.AbstractJasminClass;
 import soot.Type;
+import soot.baf.Baf;
 import soot.baf.InstSwitch;
 import soot.baf.PopInst;
 import soot.util.Switch;
@@ -32,7 +33,8 @@ public class BPopInst extends AbstractInst implements PopInst {
 
   protected Type mType;
 
-  public BPopInst(Type aType) {
+  public BPopInst(Type aType, Baf myBaf) {
+    super(myBaf);
     mType = aType;
   }
 
@@ -47,7 +49,7 @@ public class BPopInst extends AbstractInst implements PopInst {
   }
 
   public Object clone() {
-    return new BPopInst(mType);
+    return new BPopInst(mType, myBaf);
   }
 
   final public String getName() {

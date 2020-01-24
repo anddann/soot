@@ -306,7 +306,7 @@ public class TypeResolver {
   }
 
   private void collect_constraints_1_2() {
-    ConstraintCollector collector = new ConstraintCollector(this, true);
+    ConstraintCollector collector = new ConstraintCollector(this, true, myScene);
 
     for (Iterator<Unit> stmtIt = stmtBody.getUnits().iterator(); stmtIt.hasNext();) {
 
@@ -322,7 +322,7 @@ public class TypeResolver {
   }
 
   private void collect_constraints_3() {
-    ConstraintCollector collector = new ConstraintCollector(this, false);
+    ConstraintCollector collector = new ConstraintCollector(this, false, myScene);
 
     for (Iterator<Unit> stmtIt = stmtBody.getUnits().iterator(); stmtIt.hasNext();) {
 

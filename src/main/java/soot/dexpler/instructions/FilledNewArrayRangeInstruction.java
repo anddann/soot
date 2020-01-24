@@ -39,11 +39,8 @@ import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
-import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
-import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
 import soot.jimple.NewArrayExpr;
 
 public class FilledNewArrayRangeInstruction extends FilledArrayInstruction {
@@ -103,7 +100,7 @@ public class FilledNewArrayRangeInstruction extends FilledArrayInstruction {
     int startRegister = i.getStartRegister();
     int endRegister = startRegister + i.getRegisterCount();
 
-    return register >= startRegister && register <= endRegister && isFloatLike(arrayType);
+    return register >= startRegister && register <= endRegister && isFloatLike(arrayType, myScene);
   }
 
 }

@@ -148,9 +148,9 @@ public class SootClassBuilder extends ClassVisitor {
     } else if (value instanceof Long) {
       tag = new LongConstantValueTag((Long) value);
     } else if (value instanceof Double) {
-      tag = new DoubleConstantValueTag((Double) value);
+      tag = new DoubleConstantValueTag((Double) value, constancFactory);
     } else if (value instanceof String) {
-      tag = new StringConstantValueTag(value.toString());
+      tag = new StringConstantValueTag(value.toString(), constancFactory);
     } else {
       tag = null;
     }

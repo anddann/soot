@@ -4,8 +4,7 @@ import com.google.inject.Inject;
 
 import soot.baf.DoubleWordType;
 import soot.baf.WordType;
-import soot.coffi.Double2ndHalfType;
-import soot.coffi.Long2ndHalfType;
+
 import soot.jimple.toolkits.typing.fast.Integer127Type;
 import soot.jimple.toolkits.typing.fast.Integer1Type;
 import soot.jimple.toolkits.typing.fast.Integer32767Type;
@@ -19,8 +18,6 @@ public class PrimTypeCollector {
   private WordType wordType;
   private DoubleWordType doubleWordType;
   private RefType refType;
-  private Double2ndHalfType double2ndHalfType;
-  private Long2ndHalfType long2ndHalftType;
 
   public VoidType getVoidType() {
     return voidType;
@@ -79,7 +76,7 @@ public class PrimTypeCollector {
   @Inject
   public PrimTypeCollector(FloatType floatType, NullType nullType, ErroneousType errorneousType,
       StmtAddressType stmtAddressType, WordType wordType, DoubleWordType doubleWordType, RefType refType,
-      Double2ndHalfType double2ndHalfType, Long2ndHalfType long2ndHalftType, BooleanType booleanType, VoidType voidType,
+      BooleanType booleanType, VoidType voidType,
       IntType intType, ShortType shortType, CharType charType, ByteType byteType, Integer1Type integer1Type,
       Integer32767Type integer32767Type, Integer127Type integer127Type, DoubleType doubleType, LongType longType,
       UnknownType unknownType) {
@@ -90,8 +87,7 @@ public class PrimTypeCollector {
     this.wordType = wordType;
     this.doubleWordType = doubleWordType;
     this.refType = refType;
-    this.double2ndHalfType = double2ndHalfType;
-    this.long2ndHalftType = long2ndHalftType;
+
 
     this.booleanType = booleanType;
     this.voidType = voidType;
@@ -143,11 +139,5 @@ public class PrimTypeCollector {
     return refType;
   }
 
-  public Double2ndHalfType getDouble2ndHalfType() {
-    return double2ndHalfType;
-  }
 
-  public Long2ndHalfType getLong2ndHalfType() {
-    return long2ndHalftType;
-  }
 }

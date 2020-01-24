@@ -27,13 +27,19 @@ import java.util.Set;
 
 import soot.Body;
 import soot.Local;
+import soot.PrimTypeCollector;
+import soot.jimple.Jimple;
 
 public class LocalGenerator {
 
   protected final soot.Body body;
+  private PrimTypeCollector primeTypeCollector;
+  private Jimple myJimple;
 
-  public LocalGenerator(Body b) {
+  public LocalGenerator(Body b, PrimTypeCollector primeTypeCollector, Jimple myJimple) {
     body = b;
+    this.primeTypeCollector = primeTypeCollector;
+    this.myJimple = myJimple;
   }
 
   protected transient Set<String> localNames = null;
@@ -100,7 +106,7 @@ public class LocalGenerator {
           break;
         }
       }
-      type = soot.CharType.v();
+      type = primeTypeCollector.getCharType();
     } else if (type instanceof soot.DoubleType) {
       while (true) {
         name = nextDoubleName();
@@ -214,7 +220,7 @@ public class LocalGenerator {
 
   // this should be used for generated locals only
   protected soot.Local createLocal(String name, soot.Type sootType) {
-    soot.Local sootLocal = soot.jimple.myJimple.newLocal(name, sootType);
+    soot.Local sootLocal = myJimple.newLocal(name, sootType);
     body.getLocals().add(sootLocal);
     return sootLocal;
   }

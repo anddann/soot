@@ -24,16 +24,17 @@ package soot.toolkits.graph.pdg;
 
 import soot.Body;
 import soot.toolkits.graph.BlockGraph;
+import soot.util.PhaseDumper;
 
 public class EnhancedBlockGraph extends BlockGraph {
 
-  public EnhancedBlockGraph(Body body) {
-    this(new EnhancedUnitGraph(body));
+  public EnhancedBlockGraph(Body body, PhaseDumper myPhaseDumper) {
+    this(new EnhancedUnitGraph(body), myPhaseDumper);
   }
 
-  public EnhancedBlockGraph(EnhancedUnitGraph unitGraph) {
+  public EnhancedBlockGraph(EnhancedUnitGraph unitGraph, PhaseDumper myPhaseDumper) {
     super(unitGraph);
 
-    soot.util.myPhaseDumper.dumpGraph(this, mBody);
+   myPhaseDumper.dumpGraph(this, mBody);
   }
 }

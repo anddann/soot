@@ -25,6 +25,7 @@ package soot.baf.internal;
 import soot.ArrayType;
 import soot.RefType;
 import soot.Type;
+import soot.baf.Baf;
 import soot.baf.InstSwitch;
 import soot.baf.InstanceOfInst;
 import soot.util.Switch;
@@ -33,7 +34,8 @@ public class BInstanceOfInst extends AbstractInst implements InstanceOfInst {
 
   protected Type checkType;
 
-  public BInstanceOfInst(Type opType) {
+  public BInstanceOfInst(Type opType, Baf myBaf) {
+    super(myBaf);
     if (!(opType instanceof RefType) && !(opType instanceof ArrayType)) {
       throw new RuntimeException("invalid InstanceOfInst: " + opType);
     }
@@ -74,7 +76,7 @@ public class BInstanceOfInst extends AbstractInst implements InstanceOfInst {
   }
 
   public Object clone() {
-    return new BInstanceOfInst(checkType);
+    return new BInstanceOfInst(checkType, myBaf);
   }
 
 }

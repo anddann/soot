@@ -88,7 +88,7 @@ public class InstructionFactory {
                 // PackedSwitchDataPseudoInstruction,
                 // SparseSwitchDataPseudoInstruction and
                 // ArrayDataPseudoInstruction
-        return new NopInstruction(instruction, codeAddress);
+        return new NopInstruction(instruction, codeAddress, myJimple, myOptions);
 
       case MOVE:
       case MOVE_FROM16:
@@ -131,13 +131,13 @@ public class InstructionFactory {
         return new ConstStringInstruction(instruction, codeAddress);
 
       case CONST_CLASS:
-        return new ConstClassInstruction(instruction, codeAddress);
+        return new ConstClassInstruction(instruction, codeAddress, myOptions, constancFactory, myJimple, myDalvikTyper);
 
       case MONITOR_ENTER:
         return new MonitorEnterInstruction(instruction, codeAddress);
 
       case MONITOR_EXIT:
-        return new MonitorExitInstruction(instruction, codeAddress);
+        return new MonitorExitInstruction(instruction, codeAddress, myOptions, myJimple, myDalvikTyper, myScene);
 
       case CHECK_CAST:
         return new CheckCastInstruction(instruction, codeAddress);
@@ -149,7 +149,7 @@ public class InstructionFactory {
         return new ArrayLengthInstruction(instruction, codeAddress);
 
       case NEW_INSTANCE:
-        return new NewInstanceInstruction(instruction, codeAddress);
+        return new NewInstanceInstruction(instruction, codeAddress, myJimple, myOptions, myScene, myDalvikTyper);
 
       case NEW_ARRAY:
         return new NewArrayInstruction(instruction, codeAddress);
@@ -289,7 +289,7 @@ public class InstructionFactory {
       case NEG_LONG:
       case NOT_LONG:
       case NEG_DOUBLE:
-        return new UnopInstruction(instruction, codeAddress);
+        return new UnopInstruction(instruction, codeAddress, myOptions, myJimple, constancFactory);
 
       case INT_TO_LONG:
       case INT_TO_DOUBLE:

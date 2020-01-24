@@ -36,11 +36,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.JastAddJ.BytecodeParser;
-import soot.JastAddJ.CompilationUnit;
-import soot.JastAddJ.JastAddJavaParser;
-import soot.JastAddJ.JavaParser;
-import soot.JastAddJ.Program;
+
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.javaToJimple.IInitialResolver.Dependencies;
 import soot.jimple.ConstantFactory;
@@ -62,7 +58,6 @@ public class SootResolver {
   @SuppressWarnings("unchecked")
   private final Deque<SootClass>[] worklist = new Deque[4];
 
-  private Program program = null;
   private Options myOptions;
   private Scene myScene;
   private PackageNamer myPackageNamer;
@@ -88,30 +83,7 @@ public class SootResolver {
   }
 
   protected void initializeProgram() {
-    if (myOptions.src_prec() != Options.src_prec_apk_c_j) {
-      program = new Program(myScene, myOptions, myPackageNamer, myJimple, primTypeCollector, constantFactory, this, myPhaseOptions);
-      program.state().reset();
-
-      program.initBytecodeReader(new BytecodeParser(myScene, myPhaseOptions, myPackageNamer));
-      program.initJavaParser(new JavaParser() {
-        @Override
-        public CompilationUnit parse(InputStream is, String fileName) throws IOException, beaver.Parser.Exception {
-          return new JastAddJavaParser().parse(is, fileName);
-        }
-      });
-
-      program.options().initOptions();
-      program.options().addKeyValueOption("-classpath");
-      program.options().setValueForOption(myScene.getSootClassPath(), "-classpath");
-      if (myOptions.src_prec() == Options.src_prec_java) {
-        program.setSrcPrec(Program.SRC_PREC_JAVA);
-      } else if (myOptions.src_prec() == Options.src_prec_class) {
-        program.setSrcPrec(Program.SRC_PREC_CLASS);
-      } else if (myOptions.src_prec() == Options.src_prec_only_class) {
-        program.setSrcPrec(Program.SRC_PREC_CLASS);
-      }
-      program.initPaths();
-    }
+    //FIXME:
   }
 
 
@@ -385,13 +357,6 @@ public class SootResolver {
 
   public void reResolve(SootClass cl) {
     reResolve(cl, SootClass.HIERARCHY);
-  }
-
-  public Program getProgram() {
-    if (program == null) {
-      initializeProgram();
-    }
-    return program;
   }
 
   public class SootClassNotFoundException extends RuntimeException {

@@ -24,6 +24,7 @@ package soot.jimple.spark.internal;
 
 import soot.G;
 import soot.RefType;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -40,9 +41,13 @@ import soot.toolkits.scalar.Pair;
 
 public class SparkNativeHelper extends NativeHelper {
   protected PAG pag;
+  private ArrayElement myArrayElement;
+  private Scene myScene;
 
-  public SparkNativeHelper(PAG pag) {
+  public SparkNativeHelper(PAG pag, ArrayElement myArrayElement, Scene myScene) {
     this.pag = pag;
+    this.myArrayElement = myArrayElement;
+    this.myScene = myScene;
   }
 
   protected void assignImpl(ReferenceVariable lhs, ReferenceVariable rhs) {
@@ -88,23 +93,23 @@ public class SparkNativeHelper extends NativeHelper {
   }
 
   protected ReferenceVariable staticFieldImpl(String className, String fieldName) {
-    SootClass c = RefType.v(className).getSootClass();
+    SootClass c = RefType.v(className,myScene).getSootClass();
     SootField f = c.getFieldByName(fieldName);
     return pag.makeGlobalVarNode(f, f.getType());
   }
 
   protected ReferenceVariable tempFieldImpl(String fieldsig) {
-    return pag.makeGlobalVarNode(new Pair("tempField", fieldsig), RefType.v("java.lang.Object"));
+    return pag.makeGlobalVarNode(new Pair("tempField", fieldsig), RefType.v("java.lang.Object",myScene));
   }
 
   protected ReferenceVariable tempVariableImpl() {
     return pag.makeGlobalVarNode(new Pair("TempVar", new Integer(++G.v().SparkNativeHelper_tempVar)),
-        RefType.v("java.lang.Object"));
+        RefType.v("java.lang.Object",myScene));
   }
 
   protected ReferenceVariable tempLocalVariableImpl(SootMethod method) {
     return pag.makeLocalVarNode(new Pair("TempVar", new Integer(++G.v().SparkNativeHelper_tempVar)),
-        RefType.v("java.lang.Object"), method);
+        RefType.v("java.lang.Object",myScene), method);
   }
 
 }

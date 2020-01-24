@@ -32,10 +32,10 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.JastAddJ.Options;
 import soot.Trap;
 import soot.Unit;
 import soot.jimple.NopStmt;
+import soot.options.Options;
 import soot.util.Chain;
 
 public class NopEliminator extends BodyTransformer {

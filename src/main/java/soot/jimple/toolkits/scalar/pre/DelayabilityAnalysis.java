@@ -26,8 +26,10 @@ import java.util.Map;
 
 import soot.EquivalentValue;
 import soot.Unit;
+import soot.options.Options;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArrayPackedSet;
 import soot.toolkits.scalar.BoundedFlowSet;
 import soot.toolkits.scalar.CollectionFlowUniverse;
@@ -48,9 +50,9 @@ public class DelayabilityAnalysis extends ForwardFlowAnalysis<Unit, FlowSet<Equi
   /**
    * this constructor should not be used, and will throw a runtime-exception!
    */
-  public DelayabilityAnalysis(DirectedGraph<Unit> dg) {
+  public DelayabilityAnalysis(DirectedGraph<Unit> dg, Options myOptions, InteractionHandler myInteractionHandler) {
     /* we have to add super(dg). otherwise Javac complains. */
-    super(dg);
+    super(dg, myOptions.interactive_mode(), myInteractionHandler);
     throw new RuntimeException("Don't use this Constructor!");
   }
 
@@ -65,11 +67,13 @@ public class DelayabilityAnalysis extends ForwardFlowAnalysis<Unit, FlowSet<Equi
    *          the earliest-computation of the <b>same</b> graph.
    * @param equivRhsMap
    *          the rhs of each unit (if assignment-stmt).
+   * @param myInteractionHandler
+   * @param myOptions
    */
   public DelayabilityAnalysis(DirectedGraph<Unit> dg, EarliestnessComputation earliest,
-      Map<Unit, EquivalentValue> equivRhsMap) {
+                              Map<Unit, EquivalentValue> equivRhsMap, InteractionHandler myInteractionHandler, Options myOptions) {
     this(dg, earliest, equivRhsMap,
-        new ArrayPackedSet<EquivalentValue>(new CollectionFlowUniverse<EquivalentValue>(equivRhsMap.values())));
+        new ArrayPackedSet<EquivalentValue>(new CollectionFlowUniverse<EquivalentValue>(equivRhsMap.values())), myInteractionHandler, myOptions);
   }
 
   /**
@@ -87,10 +91,12 @@ public class DelayabilityAnalysis extends ForwardFlowAnalysis<Unit, FlowSet<Equi
    *          the rhs of each unit (if assignment-stmt).
    * @param set
    *          the shared set.
+   * @param myInteractionHandler
+   * @param myOptions
    */
   public DelayabilityAnalysis(DirectedGraph<Unit> dg, EarliestnessComputation earliest,
-      Map<Unit, EquivalentValue> equivRhsMap, BoundedFlowSet<EquivalentValue> set) {
-    super(dg);
+                              Map<Unit, EquivalentValue> equivRhsMap, BoundedFlowSet<EquivalentValue> set, InteractionHandler myInteractionHandler, Options myOptions) {
+    super(dg, myOptions.interactive_mode(), myInteractionHandler);
     UnitGraph g = (UnitGraph) dg;
     this.set = set;
     unitToKillValue = equivRhsMap;

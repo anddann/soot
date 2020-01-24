@@ -43,7 +43,10 @@ import soot.Unit;
 import soot.ValueBox;
 import soot.jimple.GroupIntPair;
 import soot.options.Options;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.util.DeterministicHashMap;
+import soot.util.PhaseDumper;
 
 /**
  * A BodyTransformer that attemps to minimize the number of local variables used in Body by 'reusing' them when possible.
@@ -64,11 +67,17 @@ import soot.util.DeterministicHashMap;
 public class LocalPacker extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(LocalPacker.class);
   private Options myOptions;
+    private PedanticThrowAnalysis myPedanticThrowAnalysis;
+    private ThrowableSet.Manager myManager;
+    private PhaseDumper myPhaseDumper;
 
-  @Inject
-  public LocalPacker(Options myOptions) {
+    @Inject
+  public LocalPacker(Options myOptions, PedanticThrowAnalysis myPedanticThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
     this.myOptions = myOptions;
-  }
+        this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
+        this.myManager = myManager;
+        this.myPhaseDumper = myPhaseDumper;
+    }
 
 
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
@@ -121,9 +130,9 @@ public class LocalPacker extends BodyTransformer {
 
     // Call the graph colorer.
     if (isUnsplit) {
-      FastColorer.unsplitAssignColorsToLocals(body, localToGroup, localToColor, groupToColorCount);
+      FastColorer.unsplitAssignColorsToLocals(body, localToGroup, localToColor, groupToColorCount, myPedanticThrowAnalysis, myOptions, myManager, myPhaseDumper);
     } else {
-      FastColorer.assignColorsToLocals(body, localToGroup, localToColor, groupToColorCount);
+      FastColorer.assignColorsToLocals(body, localToGroup, localToColor, groupToColorCount, myPedanticThrowAnalysis, myOptions, myManager, myPhaseDumper);
     }
 
     // Map each local to a new local.

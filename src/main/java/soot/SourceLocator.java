@@ -47,9 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import soot.JavaClassProvider.JarException;
 import soot.asm.AsmClassProvider;
-import soot.coffi.Util;
 import soot.dexpler.DexFileProvider;
-import soot.javaToJimple.InitialResolver;
 import soot.options.Options;
 
 /**
@@ -124,18 +122,14 @@ public class SourceLocator {
   private Options myOptions;
   private Scene myScene;
   private DexFileProvider myDexFileProvider;
-  private InitialResolver myInitialResolver;
-  private Util myCoffiUtil;
   private SootResolver mySootResolver;
 
   @Inject
   public SourceLocator(Options myOptions, Scene myScene, DexFileProvider myDexFileProvider,
-      InitialResolver myInitialResolver, Util myCoffiUtil, SootResolver mySootResolver) {
+     SootResolver mySootResolver) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myDexFileProvider = myDexFileProvider;
-    this.myInitialResolver = myInitialResolver;
-    this.myCoffiUtil = myCoffiUtil;
     this.mySootResolver = mySootResolver;
   }
 
@@ -199,19 +193,21 @@ public class SourceLocator {
     }
     for (final ClassLoader cl : additionalClassLoaders) {
       try {
-        ClassSource ret = new ClassProvider() {
-
-          @Override
-          public ClassSource find(String className, Scene myScene, Options myOptions, SootResolver mySootResolver) {
-            String fileName = className.replace('.', '/') + ".class";
-            InputStream stream = cl.getResourceAsStream(fileName);
-            if (stream == null) {
-              return null;
-            }
-            return new CoffiClassSource(className, stream, fileName, myCoffiUtil);
-          }
-
-        }.find(className, myScene, myOptions, mySootResolver);
+        // FIXME: AD
+        ClassSource ret = null;
+        // ClassSource ret = new ClassProvider() {
+        //
+        // @Override
+        // public ClassSource find(String className, Scene myScene, Options myOptions, SootResolver mySootResolver) {
+        // String fileName = className.replace('.', '/') + ".class";
+        // InputStream stream = cl.getResourceAsStream(fileName);
+        // if (stream == null) {
+        // return null;
+        // }
+        // return new CoffiClassSource(className, stream, fileName, myCoffiUtil);
+        // }
+        //
+        // }.find(className, myScene, myOptions, mySootResolver);
         if (ret != null) {
           return ret;
         }
@@ -230,7 +226,9 @@ public class SourceLocator {
       }
       InputStream stream = cl.getResourceAsStream(fileName);
       if (stream != null) {
-        return new CoffiClassSource(className, stream, fileName, myCoffiUtil);
+        // return new CoffiClassSource(className, stream, fileName, myCoffiUtil);
+        // FIXME
+        return null;
       }
     }
     return null;
@@ -242,31 +240,30 @@ public class SourceLocator {
 
   protected void setupClassProviders() {
     classProviders = new LinkedList<ClassProvider>();
-    ClassProvider classFileClassProvider
-        = myOptions.coffi() ? new CoffiClassProvider(this, myCoffiUtil) : new AsmClassProvider(this);
+    ClassProvider classFileClassProvider = new AsmClassProvider(this);
     switch (myOptions.src_prec()) {
       case Options.src_prec_class:
         classProviders.add(classFileClassProvider);
         classProviders.add(new JimpleClassProvider(this, myOptions));
-        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
+        //classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
         break;
       case Options.src_prec_only_class:
         classProviders.add(classFileClassProvider);
         break;
       case Options.src_prec_java:
-        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
+//        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
         classProviders.add(classFileClassProvider);
         classProviders.add(new JimpleClassProvider(this, myOptions));
         break;
       case Options.src_prec_jimple:
         classProviders.add(new JimpleClassProvider(this, myOptions));
         classProviders.add(classFileClassProvider);
-        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
+//        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
         break;
       case Options.src_prec_apk:
         classProviders.add(new DexClassProvider(this, myOptions, myDexFileProvider));
         classProviders.add(classFileClassProvider);
-        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
+//        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
         classProviders.add(new JimpleClassProvider(this, myOptions));
         break;
       case Options.src_prec_apk_c_j:
@@ -566,7 +563,7 @@ public class SourceLocator {
   }
 
   /**
-   * If {@link Options#v()#output_jar()} is set, returns the name of the jar file to which the output will be written. The
+   * If {@link Options#output_jar()} is set, returns the name of the jar file to which the output will be written. The
    * name of the jar file can be given with the -output-dir option or a default will be used. Also ensures that all
    * directories in the path exist.
    *

@@ -27,7 +27,7 @@ import soot.SootClass;
 
 public class DeadlockAvoidanceEdge extends NewStaticLock {
   public DeadlockAvoidanceEdge(SootClass sc) {
-    super(sc);
+    super(sc, primTypeCollector);
   }
 
   /** Clones the object. */

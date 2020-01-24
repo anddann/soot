@@ -249,14 +249,14 @@ public class Jimple {
    * Constructs a ShrExpr(Immediate, Immediate) grammar chunk.
    */
   public ShrExpr newShrExpr(Value op1, Value op2) {
-    return new JShrExpr(op1, op2);
+    return new JShrExpr(op1, op2, this, primTypeCollector);
   }
 
   /**
    * Constructs a ShlExpr(Immediate, Immediate) grammar chunk.
    */
   public ShlExpr newShlExpr(Value op1, Value op2) {
-    return new JShlExpr(op1, op2, primTypeCollector, jimple);
+    return new JShlExpr(op1, op2, primTypeCollector, this);
   }
 
   /**
@@ -298,7 +298,7 @@ public class Jimple {
    * Constructs a GeExpr(Immediate, Immediate) grammar chunk.
    */
   public GeExpr newGeExpr(Value op1, Value op2) {
-    return new JGeExpr(op1, op2);
+    return new JGeExpr(op1, op2, primTypeCollector);
   }
 
   /**
@@ -573,14 +573,14 @@ public class Jimple {
    * Constructs a ReturnStmt(Immediate) grammar chunk.
    */
   public ReturnStmt newReturnStmt(Value op) {
-    return new JReturnStmt(op);
+    return new JReturnStmt(op, this);
   }
 
   /**
    * Constructs a RetStmt(Local) grammar chunk.
    */
   public RetStmt newRetStmt(Value stmtAddress) {
-    return new JRetStmt(stmtAddress);
+    return new JRetStmt(stmtAddress, this);
   }
 
   /**
@@ -655,11 +655,11 @@ public class Jimple {
    * Constructs a new JTrap for the given exception on the given Stmt range with the given Stmt handler.
    */
   public Trap newTrap(SootClass exception, Unit beginStmt, Unit endStmt, Unit handlerStmt) {
-    return new JTrap(exception, beginStmt, endStmt, handlerStmt);
+    return new JTrap(exception, beginStmt, endStmt, handlerStmt, this);
   }
 
   public Trap newTrap(SootClass exception, UnitBox beginStmt, UnitBox endStmt, UnitBox handlerStmt) {
-    return new JTrap(exception, beginStmt, endStmt, handlerStmt);
+    return new JTrap(exception, beginStmt, endStmt, handlerStmt, this);
   }
 
   /**

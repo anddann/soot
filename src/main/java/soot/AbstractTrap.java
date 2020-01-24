@@ -49,6 +49,7 @@ public class AbstractTrap implements Trap, Serializable {
 
   /** The list of unitBoxes referred to in this Trap (begin, end and handler. */
   protected List<UnitBox> unitBoxes;
+  private Scene myScene;
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
@@ -61,11 +62,12 @@ public class AbstractTrap implements Trap, Serializable {
   }
 
   /** Creates an AbstractTrap with the given exception, handler, begin and end units. */
-  protected AbstractTrap(SootClass exception, UnitBox beginUnitBox, UnitBox endUnitBox, UnitBox handlerUnitBox) {
+  protected AbstractTrap(SootClass exception, UnitBox beginUnitBox, UnitBox endUnitBox, UnitBox handlerUnitBox, Scene myScene) {
     this.exception = exception;
     this.beginUnitBox = beginUnitBox;
     this.endUnitBox = endUnitBox;
     this.handlerUnitBox = handlerUnitBox;
+    this.myScene = myScene;
     this.unitBoxes = Collections.unmodifiableList(Arrays.asList(beginUnitBox, endUnitBox, handlerUnitBox));
   }
 

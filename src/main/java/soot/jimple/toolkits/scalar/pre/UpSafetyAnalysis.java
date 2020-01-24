@@ -32,7 +32,9 @@ import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
 import soot.jimple.FieldRef;
+import soot.options.Options;
 import soot.toolkits.graph.DirectedGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArrayPackedSet;
 import soot.toolkits.scalar.BoundedFlowSet;
 import soot.toolkits.scalar.CollectionFlowUniverse;
@@ -53,9 +55,9 @@ public class UpSafetyAnalysis extends ForwardFlowAnalysis<Unit, FlowSet<Equivale
   /**
    * This constructor should not be used, and will throw a runtime-exception!
    */
-  public UpSafetyAnalysis(DirectedGraph<Unit> dg) {
+  public UpSafetyAnalysis(DirectedGraph<Unit> dg, Options myOptions, InteractionHandler myInteractionHandler) {
     /* we have to add super(dg). otherwise Javac complains. */
-    super(dg);
+    super(dg, myOptions.interactive_mode(), myInteractionHandler);
     throw new RuntimeException("Don't use this Constructor!");
   }
 
@@ -69,10 +71,12 @@ public class UpSafetyAnalysis extends ForwardFlowAnalysis<Unit, FlowSet<Equivale
    *          the EquivalentValue of each unit.
    * @param sideEffect
    *          the SideEffectTester that will be used to perform kills.
+   * @param myInteractionHandler
+   * @param myOptions
    */
-  public UpSafetyAnalysis(DirectedGraph<Unit> dg, Map<Unit, EquivalentValue> unitToGen, SideEffectTester sideEffect) {
+  public UpSafetyAnalysis(DirectedGraph<Unit> dg, Map<Unit, EquivalentValue> unitToGen, SideEffectTester sideEffect, InteractionHandler myInteractionHandler, Options myOptions) {
     this(dg, unitToGen, sideEffect,
-        new ArrayPackedSet<EquivalentValue>(new CollectionFlowUniverse<EquivalentValue>(unitToGen.values())));
+        new ArrayPackedSet<EquivalentValue>(new CollectionFlowUniverse<EquivalentValue>(unitToGen.values())), myInteractionHandler, myOptions);
   }
 
   /**
@@ -88,10 +92,12 @@ public class UpSafetyAnalysis extends ForwardFlowAnalysis<Unit, FlowSet<Equivale
    *          the SideEffectTester that will be used to perform kills.
    * @param set
    *          a bounded flow-set.
+   * @param myInteractionHandler
+   * @param myOptions
    */
   public UpSafetyAnalysis(DirectedGraph<Unit> dg, Map<Unit, EquivalentValue> unitToGen, SideEffectTester sideEffect,
-      BoundedFlowSet<EquivalentValue> set) {
-    super(dg);
+                          BoundedFlowSet<EquivalentValue> set, InteractionHandler myInteractionHandler, Options myOptions) {
+    super(dg, myOptions.interactive_mode(), myInteractionHandler);
     this.sideEffect = sideEffect;
     this.set = set;
     this.unitToGenerateMap = unitToGen;

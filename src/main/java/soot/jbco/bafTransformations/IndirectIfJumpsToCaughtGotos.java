@@ -32,11 +32,10 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.ByteType;
-import soot.IntType;
 import soot.IntegerType;
 import soot.Local;
 import soot.PatchingChain;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.SootField;
 import soot.SootMethod;
@@ -50,9 +49,11 @@ import soot.baf.JSRInst;
 import soot.baf.TargetArgInst;
 import soot.baf.ThrowInst;
 import soot.jbco.IJbcoTransform;
+import soot.jbco.jimpleTransformations.FieldRenamer;
 import soot.jbco.util.BodyBuilder;
 import soot.jbco.util.Rand;
 import soot.jbco.util.ThrowSet;
+import soot.jimple.ConstantFactory;
 import soot.util.Chain;
 
 /**
@@ -68,6 +69,17 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
   int count = 0;
 
   public static String dependancies[] = new String[] { "bb.jbco_iii", "bb.jbco_ful", "bb.lp" };
+  private Baf myBaf;
+  private FieldRenamer myFieldRenamer;
+  private ConstantFactory constancFactory;
+  private PrimTypeCollector primTypeCollector;
+
+  public IndirectIfJumpsToCaughtGotos(Baf myBaf, FieldRenamer myFieldRenamer, ConstantFactory constancFactory, PrimTypeCollector primTypeCollector) {
+    this.myBaf = myBaf;
+    this.myFieldRenamer = myFieldRenamer;
+    this.constancFactory = constancFactory;
+    this.primTypeCollector = primTypeCollector;
+  }
 
   public String[] getDependencies() {
     return dependancies;
@@ -80,7 +92,7 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
   }
 
   public void outputSummary() {
-    out.println("Indirected Ifs through Traps: " + count);
+    logger.info("Indirected Ifs through Traps: " + count);
   }
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
@@ -136,7 +148,7 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
     ArrayList<Unit> toinsert = new ArrayList<Unit>();
     SootField field = null;
     try {
-      field = soot.jbco.jimpleTransformations.myFieldRenamer.getRandomOpaques()[Rand.getInt(2)];
+      field = myFieldRenamer.getRandomOpaques()[Rand.getInt(2)];
     } catch (NullPointerException npe) {
       logger.debug(npe.getMessage(), npe);
     }
@@ -151,10 +163,10 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
         toinsert.add(myBaf.newIfGeInst((Unit) units.getSuccOf(nonTrap)));
       }
     } else {
-      toinsert.add(myBaf.newPushInst(soot.jimple.constancFactory.createIntConstant(BodyBuilder.getIntegerNine())));
-      toinsert.add(myBaf.newPrimitiveCastInst(IntType.v(), ByteType.v()));
-      toinsert.add(myBaf.newPushInst(soot.jimple.constancFactory.createIntConstant(Rand.getInt() % 2 == 0 ? 9 : 3)));
-      toinsert.add(myBaf.newRemInst(ByteType.v()));
+      toinsert.add(myBaf.newPushInst(constancFactory.createIntConstant(BodyBuilder.getIntegerNine())));
+      toinsert.add(myBaf.newPrimitiveCastInst(primTypeCollector.getIntType(), primTypeCollector.getByteType()));
+      toinsert.add(myBaf.newPushInst(constancFactory.createIntConstant(Rand.getInt() % 2 == 0 ? 9 : 3)));
+      toinsert.add(myBaf.newRemInst(primTypeCollector.getByteType()));
 
       /*
        * toinsert.add(myBaf.newDup1Inst(ByteType.v()));
@@ -170,7 +182,7 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
     while (stack.size() > 0) {
       toinserttry.add(myBaf.newPopInst(stack.pop()));
     }
-    toinserttry.add(myBaf.newPushInst(soot.jimple.myNullConstant));
+    toinserttry.add(myBaf.newPushInst(constancFactory.getNullConstant()));
 
     Unit handler = myBaf.newThrowInst();
     int rand = Rand.getInt(toinserttry.size());
@@ -190,7 +202,8 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
     b.getTraps().add(myBaf.newTrap(ThrowSet.getRandomThrowable(), addedUnits.get(0), nop, handler));
 
     count += addedUnits.size();
-    if (addedUnits.size() > 0 && debug) {
+    // fixme debug??
+    if (addedUnits.size() > 0 && true) {
       StackTypeHeightCalculator.calculateStackHeights(b);
       // StackTypeHeightCalculator.printStack(units, StackTypeHeightCalculator.calculateStackHeights(b), false);
     }

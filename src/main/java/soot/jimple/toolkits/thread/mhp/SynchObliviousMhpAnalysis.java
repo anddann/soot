@@ -53,10 +53,12 @@ import soot.jimple.toolkits.thread.mhp.findobject.MultiRunStatementsFinder;
 import soot.jimple.toolkits.thread.mhp.pegcallgraph.PegCallGraph;
 import soot.options.Options;
 import soot.options.SparkOptions;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.CompleteUnitGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.FlowSet;
 import soot.util.PhaseDumper;
 
@@ -85,14 +87,18 @@ public class SynchObliviousMhpAnalysis implements MhpTester, Runnable {
   private ThrowableSet.Manager myManager;
   private PhaseDumper myPhaseDumper;
   private Options myOptions;
+    private PedanticThrowAnalysis myPedanticThrowAnalysis;
+    private InteractionHandler myInteractionHandler;
 
-  public SynchObliviousMhpAnalysis(Scene myScene, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Options myOptions) {
+    public SynchObliviousMhpAnalysis(Scene myScene, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Options myOptions, PedanticThrowAnalysis myPedanticThrowAnalysis, InteractionHandler myInteractionHandler) {
     this.myScene = myScene;
     this.throwAnalysis = throwAnalysis;
     this.myManager = myManager;
     this.myPhaseDumper = myPhaseDumper;
     this.myOptions = myOptions;
-    threadList = new ArrayList<AbstractRuntimeThread>();
+        this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
+        this.myInteractionHandler = myInteractionHandler;
+        threadList = new ArrayList<AbstractRuntimeThread>();
     optionPrintDebug = false;
 
     self = null;
@@ -233,9 +239,9 @@ public class SynchObliviousMhpAnalysis implements MhpTester, Runnable {
       thread.setStartStmtMethod(startStmtMethod);
       boolean mayBeRunMultipleTimes = multiCalledMethods.contains(startStmtMethod); // if method is called more than once...
       if (!mayBeRunMultipleTimes) {
-        UnitGraph graph = new CompleteUnitGraph(startStmtMethod.getActiveBody());
+        UnitGraph graph = new CompleteUnitGraph(startStmtMethod.getActiveBody(), myManager, myPhaseDumper,myPedanticThrowAnalysis);
         MultiRunStatementsFinder finder
-            = new MultiRunStatementsFinder(graph, startStmtMethod, multiCalledMethods, callGraph, getMyInteractionHandler(), isInteraticveMode());
+            = new MultiRunStatementsFinder(graph, startStmtMethod, multiCalledMethods, callGraph, myInteractionHandler, myOptions.interactive_mode());
         FlowSet multiRunStatements = finder.getMultiRunStatements(); // list of all units that may be run more than once in
                                                                      // this method
         if (multiRunStatements.contains(startStmt)) {

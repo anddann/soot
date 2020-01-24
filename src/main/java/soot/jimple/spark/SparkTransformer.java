@@ -180,7 +180,7 @@ public class SparkTransformer extends SceneTransformer {
     }
 
     if (opts.dump_answer()) {
-      new ReachingTypeDumper(pag, output_dir).dump();
+      new ReachingTypeDumper(myScene, pag, output_dir).dump();
     }
     if (opts.dump_solution()) {
       dumper.dumpPointsToSets();

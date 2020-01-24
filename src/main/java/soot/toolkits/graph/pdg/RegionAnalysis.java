@@ -35,7 +35,6 @@ import soot.G;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
-import soot.options.Options;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.BriefBlockGraph;
@@ -103,7 +102,7 @@ public class RegionAnalysis {
     if (this.m_cfg instanceof ExceptionalUnitGraph) {
       this.m_blockCFG = new ExceptionalBlockGraph((ExceptionalUnitGraph) this.m_cfg);
     } else if (this.m_cfg instanceof EnhancedUnitGraph) {
-      this.m_blockCFG = new EnhancedBlockGraph((EnhancedUnitGraph) this.m_cfg);
+      this.m_blockCFG = new EnhancedBlockGraph((EnhancedUnitGraph) this.m_cfg, myPhaseDumper);
     } else if (this.m_cfg instanceof BriefUnitGraph) {
       this.m_blockCFG = new BriefBlockGraph((BriefUnitGraph) this.m_cfg);
     } else {

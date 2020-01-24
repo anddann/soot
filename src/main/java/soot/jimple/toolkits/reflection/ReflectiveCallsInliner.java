@@ -53,12 +53,10 @@ import soot.VoidType;
 import soot.javaToJimple.LocalGenerator;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
-import soot.jimple.ClassConstant;
 import soot.jimple.FieldRef;
 import soot.jimple.GotoStmt;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceInvokeExpr;
-import soot.jimple.IntConstant;
 import soot.jimple.InterfaceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.InvokeStmt;
@@ -67,7 +65,6 @@ import soot.jimple.NopStmt;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.StaticInvokeExpr;
 import soot.jimple.Stmt;
-import soot.jimple.StringConstant;
 import soot.jimple.VirtualInvokeExpr;
 import soot.jimple.toolkits.reflection.ReflectionTraceInfo.Kind;
 import soot.options.CGOptions;
@@ -213,7 +210,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
     SootMethod clinit = reflCallsClass.getMethodByName(SootMethod.staticInitializerName);
     Body body = clinit.retrieveActiveBody();
     PatchingChain<Unit> units = body.getUnits();
-    LocalGenerator localGen = new LocalGenerator(body);
+    LocalGenerator localGen = new LocalGenerator(body, primeTypeCollector, myJimple);
     Chain<Unit> newUnits = new HashChain<Unit>();
     SootClass setClass = myScene.getSootClass("java.util.Set");
     SootMethodRef addMethodRef = setClass.getMethodByName("add").makeRef();
@@ -324,7 +321,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
 
     SootMethod m = reflCallsClass.getMethodByName(methodName);
     JimpleBody body = (JimpleBody) m.retrieveActiveBody();
-    LocalGenerator localGen = new LocalGenerator(body);
+    LocalGenerator localGen = new LocalGenerator(body, primeTypeCollector, myJimple);
     Unit firstStmt = body.getFirstNonIdentityStmt();
     firstStmt = body.getUnits().getPredOf(firstStmt);
 
@@ -366,7 +363,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
     Body b = m.getActiveBody();
     PatchingChain<Unit> units = b.getUnits();
     Iterator<Unit> iter = units.snapshotIterator();
-    LocalGenerator localGen = new LocalGenerator(b);
+    LocalGenerator localGen = new LocalGenerator(b, primeTypeCollector, myJimple);
 
     // for all units
     while (iter.hasNext()) {
@@ -572,7 +569,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
 
     PatchingChain<Unit> newUnits = newBody.getUnits();
 
-    LocalGenerator localGen = new LocalGenerator(newBody);
+    LocalGenerator localGen = new LocalGenerator(newBody, primeTypeCollector, myJimple);
 
     Local freshLocal;
     Value replacement = null;

@@ -42,11 +42,11 @@ public class FixedMethods {
    * code cannot possible overwrite the called method. This is trivially true for InvokeStatic and InvokeSpecial, but can
    * also hold for virtual invokes if all possible call targets in the library cannot be overwritten.
    *
-   * @see #clientOverwriteableOverwrites(SootMethod)
+   * @see #clientOverwriteableOverwrites(SootMethod, Scene)
    */
-  public static boolean isFixed(InvokeExpr ie) {
+  public static boolean isFixed(InvokeExpr ie, Scene myScene) {
     return ie instanceof StaticInvokeExpr || ie instanceof SpecialInvokeExpr
-        || !clientOverwriteableOverwrites(ie.getMethod());
+        || !clientOverwriteableOverwrites(ie.getMethod(), myScene);
   }
 
   /**
@@ -55,7 +55,7 @@ public class FixedMethods {
    *
    * @see #clientOverwriteable(SootMethod)
    */
-  private static boolean clientOverwriteableOverwrites(SootMethod m) {
+  private static boolean clientOverwriteableOverwrites(SootMethod m, Scene myScene) {
     if (clientOverwriteable(m)) {
       return true;
     }

@@ -40,13 +40,24 @@ import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.Constant;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 public class ConstClassInstruction extends DexlibAbstractInstruction {
 
-  public ConstClassInstruction(Instruction instruction, int codeAdress) {
+  private ConstantFactory constancFactory;
+  private Jimple myJimple;
+  private DalvikTyper myDalvikTyper;
+
+  public ConstClassInstruction(Instruction instruction, int codeAdress, Options myOptions, ConstantFactory constancFactory, Jimple myJimple, DalvikTyper myDalvikTyper) {
     super(instruction, codeAdress, myOptions);
+    this.constancFactory = constancFactory;
+    this.myJimple = myJimple;
+    this.myDalvikTyper = myDalvikTyper;
   }
 
   @Override
@@ -69,7 +80,7 @@ public class ConstClassInstruction extends DexlibAbstractInstruction {
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // myDalvikTyper().captureAssign((JAssignStmt)assign, op); //TODO:
       // classtype could be null!
-      myDalvikTyper().setType(assign.getLeftOpBox(), cst.getType(), false);
+      myDalvikTyper.setType(assign.getLeftOpBox(), cst.getType(), false);
     }
   }
 

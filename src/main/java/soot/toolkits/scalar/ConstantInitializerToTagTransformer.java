@@ -44,6 +44,7 @@ import soot.SootMethod;
 import soot.Unit;
 import soot.jimple.AssignStmt;
 import soot.jimple.Constant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DoubleConstant;
 import soot.jimple.FieldRef;
 import soot.jimple.FloatConstant;
@@ -68,11 +69,13 @@ import soot.tagkit.Tag;
  */
 public class ConstantInitializerToTagTransformer extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ConstantInitializerToTagTransformer.class);
-  private static final ConstantInitializerToTagTransformer INSTANCE = new ConstantInitializerToTagTransformer();
   private Scene myScene;
+  private ConstantFactory constancFactory;
 
   @Inject
-  public ConstantInitializerToTagTransformer() {
+  public ConstantInitializerToTagTransformer(Scene myScene, ConstantFactory constancFactory) {
+    this.myScene = myScene;
+    this.constancFactory = constancFactory;
   }
 
   @Override
@@ -228,7 +231,7 @@ public class ConstantInitializerToTagTransformer extends SceneTransformer {
 
   private ConstantValueTag createConstantTagFromValue(Constant rightOp) {
     if (rightOp instanceof DoubleConstant) {
-      return new DoubleConstantValueTag(((DoubleConstant) rightOp).value);
+      return new DoubleConstantValueTag(((DoubleConstant) rightOp).value, constancFactory);
     } else if (rightOp instanceof FloatConstant) {
       return new FloatConstantValueTag(((FloatConstant) rightOp).value);
     } else if (rightOp instanceof IntConstant) {
@@ -236,7 +239,7 @@ public class ConstantInitializerToTagTransformer extends SceneTransformer {
     } else if (rightOp instanceof LongConstant) {
       return new LongConstantValueTag(((LongConstant) rightOp).value);
     } else if (rightOp instanceof StringConstant) {
-      return new StringConstantValueTag(((StringConstant) rightOp).value);
+      return new StringConstantValueTag(((StringConstant) rightOp).value, constancFactory);
     } else {
       return null;
     }

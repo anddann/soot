@@ -52,14 +52,13 @@ import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
-import soot.VoidType;
 import soot.jbco.IJbcoTransform;
 import soot.jbco.name.JunkNameGenerator;
 import soot.jbco.name.NameGenerator;
 import soot.jbco.util.BodyBuilder;
 import soot.jbco.util.Rand;
+import soot.jimple.ConstantFactory;
 import soot.jimple.FieldRef;
-import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
 import soot.tagkit.SignatureTag;
 
@@ -94,22 +93,24 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
   private final Object fieldNamesLock = new Object();
   private Scene myScene;
   private Jimple myJimple;
+  private ConstantFactory constancFactory;
 
   /**
    * Singleton constructor.
    *
-   * @param global
    *          the singletons container. Must not be {@code null}
    * @param myScene
    * @param myJimple
+   * @param constancFactory
    * @throws NullPointerException
    *           when {@code global} argument is {@code null}
    */
 
   @Inject
-  public FieldRenamer(Scene myScene, Jimple myJimple) {
+  public FieldRenamer(Scene myScene, Jimple myJimple, ConstantFactory constancFactory) {
     this.myScene = myScene;
     this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
 
 
     this.nameGenerator = new JunkNameGenerator();
@@ -193,7 +194,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
 
       // add one opaque predicate for true and one for false to each class
       String opaquePredicate = getOrAddNewName(null);
-      Type type = Rand.getInt() % 2 == 0 ? BooleanType.v() : booleanWrapperRefType;
+      Type type = Rand.getInt() % 2 == 0 ? myScene.getPrimTypeCollector().getBooleanType() : booleanWrapperRefType;
       SootField opaquePredicateField = myScene.makeSootField(opaquePredicate, type, Modifier.PUBLIC | Modifier.STATIC);
       renameField(applicationClass, opaquePredicateField);
       opaquePredicate1ByClass.put(applicationClass, opaquePredicateField);
@@ -202,7 +203,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
       setBooleanTo(applicationClass, opaquePredicateField, true);
 
       opaquePredicate = getOrAddNewName(null);
-      type = type == BooleanType.v() ? booleanWrapperRefType : BooleanType.v();
+      type = type ==  myScene.getPrimTypeCollector().getBooleanType() ? booleanWrapperRefType :  myScene.getPrimTypeCollector().getBooleanType();
       opaquePredicateField = myScene.makeSootField(opaquePredicate, type, Modifier.PUBLIC | Modifier.STATIC);
       renameField(applicationClass, opaquePredicateField);
       opaquePredicate2ByClass.put(applicationClass, opaquePredicateField);
@@ -290,7 +291,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
     final Body body;
     if (addStaticInitializer) {
       final SootMethod staticInitializerMethod = myScene.makeSootMethod(SootMethod.staticInitializerName,
-          Collections.emptyList(), VoidType.v(), Modifier.STATIC);
+          Collections.emptyList(),  myScene.getPrimTypeCollector().getVoidType(), Modifier.STATIC);
       sootClass.addMethod(staticInitializerMethod);
       body = myJimple.newBody(staticInitializerMethod);
       staticInitializerMethod.setActiveBody(body);

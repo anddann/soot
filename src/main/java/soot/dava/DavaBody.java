@@ -48,6 +48,7 @@ import soot.Unit;
 import soot.UnitBox;
 import soot.Value;
 import soot.ValueBox;
+import soot.baf.Baf;
 import soot.dava.internal.AST.ASTMethodNode;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.SET.SETNode;
@@ -226,6 +227,7 @@ public class DavaBody extends Body {
   private ConstantFactory constancFactory;
   private Grimp myGrimp;
   private PrimTypeCollector primTypeCollector;
+  private Baf myBaf;
 
   /**
    * Construct an empty DavaBody
@@ -235,7 +237,7 @@ public class DavaBody extends Body {
            IfFinder myIfFinder, SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder,
            SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            MonitorConverter myMonitorConverter, ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover,
-           PhaseOptions myPhaseOptions, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constancFactory, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
+           PhaseOptions myPhaseOptions, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constancFactory, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf) {
     super(m, myOptions, myPrinter);
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -254,6 +256,7 @@ public class DavaBody extends Body {
     this.constancFactory = constancFactory;
     this.myGrimp = myGrimp;
     this.primTypeCollector = primTypeCollector;
+    this.myBaf = myBaf;
 
     pMap = new HashMap<Integer, Value>();
     consumedConditions = new HashSet<Object>();
@@ -348,10 +351,10 @@ public class DavaBody extends Body {
            ThrowNullConverter myThrowNullConverter, SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder,
            CycleFinder myCycleFinder, IfFinder myIfFinder, SwitchFinder mySwitchFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
+           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf) {
     this(body.getMethod(), myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myDava, myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector);
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myDava, myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector, myBaf);
     debug("DavaBody", "creating DavaBody for" + body.getMethod().toString());
     this.myDava.log("\nstart method " + body.getMethod().toString());
 
@@ -371,7 +374,7 @@ public class DavaBody extends Body {
     // System.out.println(asg.toString());
 
     this.myExceptionFinder.preprocess(this, asg);
-    SETNode SET = new SETTopNode(asg.get_ChainView());
+    SETNode SET = new SETTopNode(asg.get_ChainView(), myTryContentsFinder, myASTWalker);
 
     while (true) {
       try {
@@ -384,7 +387,7 @@ public class DavaBody extends Body {
         this.myLabeledBlockFinder.find(this, asg, SET);
         this.myAbruptEdgeFinder.find(this, asg, SET);
       } catch (RetriggerAnalysisException rae) {
-        SET = new SETTopNode(asg.get_ChainView());
+        SET = new SETTopNode(asg.get_ChainView(), myTryContentsFinder, myASTWalker);
         consumedConditions = new HashSet<Object>();
         continue;
       }
@@ -558,7 +561,7 @@ public class DavaBody extends Body {
          * Pattern two carried out in OrAggregatorTwo restricts some patterns in for loop creation. Pattern two was
          * implemented to give loopStrengthening a better chance SEE IfElseBreaker
          */
-        AST.apply(new ASTCleanerTwo());
+        AST.apply(new ASTCleanerTwo(myTryContentsFinder));
         debug("applyASTAnalyses", "after ASTCleanerTwo" + G.v().ASTTransformations_modified);
 
         AST.apply(new ForLoopCreator());

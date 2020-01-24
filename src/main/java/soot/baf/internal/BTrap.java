@@ -25,11 +25,10 @@ package soot.baf.internal;
 import soot.AbstractTrap;
 import soot.SootClass;
 import soot.Unit;
-import soot.baf.Baf;
 
 public class BTrap extends AbstractTrap {
   public BTrap(SootClass exception, Unit beginStmt, Unit endStmt, Unit handlerStmt) {
-    super(exception, myBaf.newInstBox(beginStmt), myBaf.newInstBox(endStmt), myBaf.newInstBox(handlerStmt));
+    super(exception, myBaf.newInstBox(beginStmt), myBaf.newInstBox(endStmt), myBaf.newInstBox(handlerStmt), myScene);
   }
 
   public Object clone() {

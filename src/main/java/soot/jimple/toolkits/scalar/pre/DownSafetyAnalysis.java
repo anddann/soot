@@ -32,7 +32,9 @@ import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
 import soot.jimple.FieldRef;
+import soot.options.Options;
 import soot.toolkits.graph.DirectedGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArrayPackedSet;
 import soot.toolkits.scalar.BackwardFlowAnalysis;
 import soot.toolkits.scalar.BoundedFlowSet;
@@ -53,9 +55,9 @@ public class DownSafetyAnalysis extends BackwardFlowAnalysis<Unit, FlowSet<Equiv
   /**
    * This constructor should not be used, and will throw a runtime-exception!
    */
-  public DownSafetyAnalysis(DirectedGraph<Unit> dg) {
+  public DownSafetyAnalysis(DirectedGraph<Unit> dg, InteractionHandler myInteractionHandler, Options myOptions) {
     /* we have to add super(dg). otherwise Javac complains. */
-    super(dg);
+    super(dg, myOptions.interactive_mode(), myInteractionHandler);
     throw new RuntimeException("Don't use this Constructor!");
   }
 
@@ -69,10 +71,12 @@ public class DownSafetyAnalysis extends BackwardFlowAnalysis<Unit, FlowSet<Equiv
    *          the equivalentValue of each unit.
    * @param sideEffect
    *          the SideEffectTester that performs kills.
+   * @param myOptions
+   * @param myInteractionHandler
    */
-  public DownSafetyAnalysis(DirectedGraph<Unit> dg, Map<Unit, EquivalentValue> unitToGen, SideEffectTester sideEffect) {
+  public DownSafetyAnalysis(DirectedGraph<Unit> dg, Map<Unit, EquivalentValue> unitToGen, SideEffectTester sideEffect, Options myOptions, InteractionHandler myInteractionHandler) {
     this(dg, unitToGen, sideEffect,
-        new ArrayPackedSet<EquivalentValue>(new CollectionFlowUniverse<EquivalentValue>(unitToGen.values())));
+        new ArrayPackedSet<EquivalentValue>(new CollectionFlowUniverse<EquivalentValue>(unitToGen.values())), myOptions, myInteractionHandler);
   }
 
   /**
@@ -81,6 +85,8 @@ public class DownSafetyAnalysis extends BackwardFlowAnalysis<Unit, FlowSet<Equiv
    * as sets-operations are usually more efficient, if the original set comes from the same source, this allows to share
    * sets.
    *
+   * @param myOptions
+   * @param myInteractionHandler
    * @param dg
    *          a ExceptionalUnitGraph.
    * @param unitToGen
@@ -91,8 +97,8 @@ public class DownSafetyAnalysis extends BackwardFlowAnalysis<Unit, FlowSet<Equiv
    *          the shared set.
    */
   public DownSafetyAnalysis(DirectedGraph<Unit> dg, Map<Unit, EquivalentValue> unitToGen, SideEffectTester sideEffect,
-      BoundedFlowSet<EquivalentValue> set) {
-    super(dg);
+                            BoundedFlowSet<EquivalentValue> set, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(dg, myOptions.interactive_mode(), myInteractionHandler);
     this.sideEffect = sideEffect;
     this.set = set;
     this.unitToGenerateMap = unitToGen;

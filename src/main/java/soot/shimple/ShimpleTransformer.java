@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.JastAddJ.Options;
+import soot.options.Options;
 import soot.MethodSource;
 import soot.Scene;
 import soot.SceneTransformer;

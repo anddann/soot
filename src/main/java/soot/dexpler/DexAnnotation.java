@@ -62,7 +62,6 @@ import soot.ArrayType;
 import soot.RefType;
 import soot.SootClass;
 import soot.SootMethod;
-import soot.SootResolver;
 import soot.Type;
 import soot.javaToJimple.IInitialResolver.Dependencies;
 import soot.tagkit.AnnotationAnnotationElem;
@@ -270,7 +269,7 @@ public class DexAnnotation {
         break;
       case 'e': // enum
         AnnotationEnumElem enumElem = (AnnotationEnumElem) e;
-        annotationType = Util.getType(enumElem.getTypeName());
+        annotationType = Util.getType(enumElem.getTypeName(), myScene);
         ;
         break;
 
@@ -284,7 +283,7 @@ public class DexAnnotation {
       case 'C':
       case 'V':
       case 'Z':
-        annotationType = Util.getType(String.valueOf(e.getKind()));
+        annotationType = Util.getType(String.valueOf(e.getKind()), myScene);
         break;
       default:
         annotationType = null;
@@ -485,7 +484,7 @@ public class DexAnnotation {
         }
         for (AnnotationElement elem : a.getElements()) {
           String outerClass = ((TypeEncodedValue) elem.getValue()).getValue();
-          outerClass = Util.dottedClassName(outerClass);
+          outerClass = Util.dottedClassName(outerClass, myScene);
 
           // If this APK specifies an invalid outer class, we try to
           // repair it
@@ -583,7 +582,7 @@ public class DexAnnotation {
             outerClass == null ? null : DexType.toSootICAT(outerClass), name, accessFlags);
         tags.add(innerTag);
         if (outerClass != null && !clazz.hasOuterClass()) {
-          String sootOuterClass = Util.dottedClassName(outerClass);
+          String sootOuterClass = Util.dottedClassName(outerClass, myScene);
           deps.typesToSignature.add(RefType.v(sootOuterClass));
           clazz.setOuterClass(mySootResolver.makeClassRef(sootOuterClass));
           assert clazz.getOuterClass() != clazz;

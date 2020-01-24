@@ -39,7 +39,6 @@ import org.jf.dexlib2.iface.value.LongEncodedValue;
 import org.jf.dexlib2.iface.value.ShortEncodedValue;
 import org.jf.dexlib2.iface.value.StringEncodedValue;
 
-import soot.Scene;
 import soot.SootField;
 import soot.Type;
 import soot.tagkit.DoubleConstantValueTag;
@@ -74,7 +73,7 @@ public class DexField {
     } else if (ev instanceof CharEncodedValue) {
       tag = new IntegerConstantValueTag(((CharEncodedValue) ev).getValue());
     } else if (ev instanceof DoubleEncodedValue) {
-      tag = new DoubleConstantValueTag(((DoubleEncodedValue) ev).getValue());
+      tag = new DoubleConstantValueTag(((DoubleEncodedValue) ev).getValue(), constancFactory);
     } else if (ev instanceof FloatEncodedValue) {
       tag = new FloatConstantValueTag(((FloatEncodedValue) ev).getValue());
     } else if (ev instanceof IntEncodedValue) {
@@ -84,7 +83,7 @@ public class DexField {
     } else if (ev instanceof ShortEncodedValue) {
       tag = new IntegerConstantValueTag(((ShortEncodedValue) ev).getValue());
     } else if (ev instanceof StringEncodedValue) {
-      tag = new StringConstantValueTag(((StringEncodedValue) ev).getValue());
+      tag = new StringConstantValueTag(((StringEncodedValue) ev).getValue(), constancFactory);
     }
 
     if (tag != null) {

@@ -43,6 +43,7 @@ import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.util.PhaseDumper;
 import soot.validation.BodyValidator;
 import soot.validation.ValidationException;
 
@@ -59,10 +60,12 @@ public class NewValidator implements BodyValidator {
       = "There is a path from '%s' to the usage '%s' where <init> does not get called in between.";
 
   public static boolean MUST_CALL_CONSTRUCTOR_BEFORE_RETURN = false;
+  private PhaseDumper myPhaseDumper;
 
   @Inject
-  public NewValidator(){
+  public NewValidator(PhaseDumper myPhaseDumper){
 
+    this.myPhaseDumper = myPhaseDumper;
   }
 
   /**

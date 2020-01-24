@@ -149,7 +149,6 @@
   <class>soot.jimple.spark.sets.AllSharedHybridNodes</class>
   <class>soot.jimple.toolkits.thread.synchronization.LockAllocator</class>
   <class>soot.jimple.toolkits.thread.mhp.MhpTransformer</class>
-  <class>soot.JastAddInitialResolver</class>
   <class>soot.jimple.toolkits.annotation.j5anno.AnnotationGenerator</class>
   <class>soot.sootify.TemplatePrinter</class>
   <class>soot.dexpler.DexResolver</class>

@@ -41,11 +41,19 @@ import soot.dexpler.tags.FloatOpTag;
 import soot.dexpler.tags.IntOpTag;
 import soot.dexpler.tags.LongOpTag;
 import soot.jimple.AssignStmt;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 public class UnopInstruction extends TaggedInstruction {
 
-  public UnopInstruction(Instruction instruction, int codeAdress) {
+  private Jimple myJimple;
+  private ConstantFactory constancFactory;
+
+  public UnopInstruction(Instruction instruction, int codeAdress, Options myOptions, Jimple myJimple, ConstantFactory constancFactory) {
     super(instruction, codeAdress, myOptions);
+    this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
   }
 
   @Override

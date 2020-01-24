@@ -63,7 +63,7 @@ public class MhpTransformer extends SceneTransformer {
 
   public MhpTester getMhpTester() {
     if (mhpTester == null) {
-      mhpTester = new SynchObliviousMhpAnalysis(myScene, throwAnalysis, myManager, myPhaseDumper, myOptions);
+      mhpTester = new SynchObliviousMhpAnalysis(myScene, throwAnalysis, myManager, myPhaseDumper, myOptions, myPedanticThrowAnalysis, myInteractionHandler);
     }
     return mhpTester;
   }

@@ -26,7 +26,6 @@ import java.util.Map;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.PackManager;
 import soot.Transform;
 import soot.Unit;
 import soot.jimple.InvokeExpr;
@@ -47,7 +46,7 @@ public class Main {
           Stmt s = (Stmt) u;
           if (s.containsInvokeExpr()) {
             InvokeExpr ie = s.getInvokeExpr();
-            if (FixedMethods.isFixed(ie)) {
+            if (FixedMethods.isFixed(ie, myScene)) {
               System.err.println("+++ " + ie);
               yes++;
             } else {

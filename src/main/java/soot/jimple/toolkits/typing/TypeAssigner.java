@@ -51,15 +51,17 @@ import soot.Type;
 import soot.Unit;
 import soot.UnknownType;
 import soot.ValueBox;
-import soot.JastAddJ.Options;
 import soot.jimple.ArrayRef;
+import soot.jimple.ConstantFactory;
 import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
+import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.Stmt;
 import soot.options.JBTROptions;
+import soot.options.Options;
 
 /**
  * This transformer assigns types to local variables.
@@ -76,16 +78,20 @@ public class TypeAssigner extends BodyTransformer {
   private BodyTransformer myDeadAssignmentEliminator;
   private BodyTransformer myUnusedLocalEliminator;
   private PhaseOptions myPhaseOptions;
+  private Jimple myJimple;
+  private ConstantFactory constancFactory;
 
   @Inject
   public TypeAssigner(Options myOptions, Scene myScene, BodyTransformer myConstantPropagatorAndFolder,
-                      BodyTransformer myDeadAssignmentEliminator, BodyTransformer myUnusedLocalEliminator, PhaseOptions myPhaseOptions) {
+                      BodyTransformer myDeadAssignmentEliminator, BodyTransformer myUnusedLocalEliminator, PhaseOptions myPhaseOptions, Jimple myJimple, ConstantFactory constancFactory) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myConstantPropagatorAndFolder = myConstantPropagatorAndFolder;
     this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
     this.myUnusedLocalEliminator = myUnusedLocalEliminator;
     this.myPhaseOptions = myPhaseOptions;
+    this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
   }
 
 
@@ -222,7 +228,7 @@ public class TypeAssigner extends BodyTransformer {
 
     for (Unit u : unitToReplaceByException) {
       soot.dexpler.Util.addExceptionAfterUnit(b, "java.lang.NullPointerException", u,
-          "This statement would have triggered an Exception: " + u);
+          "This statement would have triggered an Exception: " + u, myScene, myJimple, constancFactory);
       b.getUnits().remove(u);
     }
 

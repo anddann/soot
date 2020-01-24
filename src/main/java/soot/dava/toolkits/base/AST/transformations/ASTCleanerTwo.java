@@ -43,6 +43,7 @@ import soot.dava.internal.AST.ASTSynchronizedBlockNode;
 import soot.dava.internal.AST.ASTTryNode;
 import soot.dava.internal.AST.ASTUnconditionalLoopNode;
 import soot.dava.internal.AST.ASTWhileNode;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 
 /*
@@ -64,11 +65,15 @@ import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 
 public class ASTCleanerTwo extends DepthFirstAdapter {
 
-  public ASTCleanerTwo() {
+  private TryContentsFinder myTryContentsFinder;
+
+  public ASTCleanerTwo(TryContentsFinder myTryContentsFinder) {
+    this.myTryContentsFinder = myTryContentsFinder;
   }
 
-  public ASTCleanerTwo(boolean verbose) {
+  public ASTCleanerTwo(boolean verbose, TryContentsFinder myTryContentsFinder) {
     super(verbose);
+    this.myTryContentsFinder = myTryContentsFinder;
   }
 
   public void caseASTStatementSequenceNode(ASTStatementSequenceNode node) {

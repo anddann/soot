@@ -322,7 +322,7 @@ public class SootMethodRefImpl implements SootMethodRef {
     JimpleBody body = myJimple.newBody(m);
     m.setActiveBody(body);
 
-    final LocalGenerator lg = new LocalGenerator(body);
+    final LocalGenerator lg = new LocalGenerator(body, myScene.getPrimTypeCollector(), myJimple);
 
     // For producing valid Jimple code, we need to access all parameters.
     // Otherwise, methods like "getThisLocal()" will fail.

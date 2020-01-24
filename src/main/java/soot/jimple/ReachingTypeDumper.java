@@ -46,13 +46,16 @@ import soot.Type;
  * @author Ondrej Lhotak
  */
 public class ReachingTypeDumper {
+  private Scene myScene;
+
   private static class StringComparator<T> implements Comparator<T> {
     public int compare(T o1, T o2) {
       return o1.toString().compareTo(o2.toString());
     }
   }
 
-  public ReachingTypeDumper(PointsToAnalysis pa, String output_dir) {
+  public ReachingTypeDumper(Scene myScene, PointsToAnalysis pa, String output_dir) {
+    this.myScene = myScene;
     this.pa = pa;
     this.output_dir = output_dir;
   }

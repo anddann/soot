@@ -45,12 +45,15 @@ import soot.jimple.toolkits.thread.mhp.stmt.JPegStmt;
 import soot.jimple.toolkits.thread.mhp.stmt.StartStmt;
 import soot.tagkit.StringTag;
 import soot.tagkit.Tag;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.CompleteUnitGraph;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.FlowSet;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 //add for add tag
 
@@ -120,6 +123,9 @@ public class PegGraph implements DirectedGraph
    * Constructs a graph for the units found in the provided Body instance. Each node in the graph corresponds to a unit. The
    * edges are derived from the control flow.
    *
+   * @param myManager
+   * @param myPhaseDumper
+   * @param myPedanticThrowAnalysis
    * @param Body
    *          The underlying body of main thread
    * @param addExceptionEdges
@@ -131,9 +137,9 @@ public class PegGraph implements DirectedGraph
    */
 
   public PegGraph(CallGraph callGraph, Hierarchy hierarchy, PAG pag, Set<Object> methodsNeedingInlining,
-      Set<AllocNode> allocNodes, List inlineSites, Map synchObj, Set<AllocNode> multiRunAllocNodes, Map allocNodeToObj,
-      Body unitBody, SootMethod sm, boolean addExceptionEdges,
-      boolean dontAddEdgeFromStmtBeforeAreaOfProtectionToCatchBlock) {
+                  Set<AllocNode> allocNodes, List inlineSites, Map synchObj, Set<AllocNode> multiRunAllocNodes, Map allocNodeToObj,
+                  Body unitBody, SootMethod sm, boolean addExceptionEdges,
+                  boolean dontAddEdgeFromStmtBeforeAreaOfProtectionToCatchBlock, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, PedanticThrowAnalysis myPedanticThrowAnalysis) {
 
     /*
      * public PegGraph( Body unitBody, Hierarchy hierarchy, boolean addExceptionEdges, boolean
@@ -141,7 +147,7 @@ public class PegGraph implements DirectedGraph
      */
 
     this(callGraph, hierarchy, pag, methodsNeedingInlining, allocNodes, inlineSites, synchObj, multiRunAllocNodes,
-        allocNodeToObj, unitBody, "main", sm, addExceptionEdges, dontAddEdgeFromStmtBeforeAreaOfProtectionToCatchBlock);
+        allocNodeToObj, unitBody, "main", sm, addExceptionEdges, dontAddEdgeFromStmtBeforeAreaOfProtectionToCatchBlock, myManager, myPhaseDumper, myPedanticThrowAnalysis);
   }
 
   /**
@@ -155,15 +161,18 @@ public class PegGraph implements DirectedGraph
    * @param dontAddEdgeFromStmtBeforeAreaOfProtectionToCatchBlock
    *          This was added for Dava. If true, edges are not added from statement before area of protection to catch. If
    *          false, edges ARE added. For Dava, it should be true. For flow analyses, it should be false.
+   * @param myManager
+   * @param myPhaseDumper
+   * @param myPedanticThrowAnalysis
    * @param Hierarchy
    *          Using class hierarchy analysis to find the run method of started thread
    * @param PointsToAnalysis
    *          Using point to analysis (SPARK package) to improve the precision of results
    */
   public PegGraph(CallGraph callGraph, Hierarchy hierarchy, PAG pag, Set methodsNeedingInlining, Set allocNodes,
-      List<List> inlineSites, Map<SootMethod, String> synchObj, Set multiRunAllocNodes,
-      Map<AllocNode, String> allocNodeToObj, Body unitBody, String threadName, SootMethod sm, boolean addExceEdge,
-      boolean dontAddEdgeFromStmtBeforeAreaOfProtectionToCatchBlock) {
+                  List<List> inlineSites, Map<SootMethod, String> synchObj, Set multiRunAllocNodes,
+                  Map<AllocNode, String> allocNodeToObj, Body unitBody, String threadName, SootMethod sm, boolean addExceEdge,
+                  boolean dontAddEdgeFromStmtBeforeAreaOfProtectionToCatchBlock, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, PedanticThrowAnalysis myPedanticThrowAnalysis) {
     this.allocNodeToObj = allocNodeToObj;
     this.multiRunAllocNodes = multiRunAllocNodes;
     this.synchObj = synchObj;
@@ -217,10 +226,10 @@ public class PegGraph implements DirectedGraph
      */
     // end make a peg
 
-    UnitGraph mainUnitGraph = new CompleteUnitGraph(body);
+    UnitGraph mainUnitGraph = new CompleteUnitGraph(body, myManager, myPhaseDumper, myPedanticThrowAnalysis);
     // mainPegChain = new HashChain();
     mainPegChain = new PegChain(callGraph, hierarchy, pag, threadAllocSites, methodsNeedingInlining, allocNodes, inlineSites,
-        synchObj, multiRunAllocNodes, allocNodeToObj, body, sm, threadName, true, this);
+        synchObj, multiRunAllocNodes, allocNodeToObj, body, sm, threadName, true, this, myManager, myPhaseDumper, myPedanticThrowAnalysis);
 
     // testPegChain();
 

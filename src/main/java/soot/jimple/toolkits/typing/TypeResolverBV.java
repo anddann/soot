@@ -307,7 +307,7 @@ public class TypeResolverBV {
   }
 
   private void collect_constraints_1_2() {
-    ConstraintCollectorBV collector = new ConstraintCollectorBV(this, true);
+    ConstraintCollectorBV collector = new ConstraintCollectorBV(this, true, primTypeCollector, myScene);
 
     for (Iterator<Unit> stmtIt = stmtBody.getUnits().iterator(); stmtIt.hasNext();) {
 
@@ -323,7 +323,7 @@ public class TypeResolverBV {
   }
 
   private void collect_constraints_3() {
-    ConstraintCollectorBV collector = new ConstraintCollectorBV(this, false);
+    ConstraintCollectorBV collector = new ConstraintCollectorBV(this, false, primTypeCollector, myScene);
 
     for (Iterator<Unit> stmtIt = stmtBody.getUnits().iterator(); stmtIt.hasNext();) {
 

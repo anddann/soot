@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.JastAddJ.Options;
+import soot.options.Options;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.IfStmt;
@@ -38,6 +38,7 @@ import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
 import soot.jimple.Stmt;
 import soot.jimple.StmtBody;
+import soot.options.Options;
 import soot.util.Chain;
 
 public class ConditionalBranchFolder extends BodyTransformer {

@@ -25,17 +25,20 @@ package soot.dava.internal.SET;
 import soot.dava.internal.AST.ASTDoWhileNode;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.asg.AugmentedStmt;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.jimple.ConditionExpr;
 import soot.jimple.IfStmt;
 import soot.util.IterableSet;
 
 public class SETDoWhileNode extends SETCycleNode {
   private AugmentedStmt entryPoint;
+  private TryContentsFinder myTryContentsFinder;
 
-  public SETDoWhileNode(AugmentedStmt characterizingStmt, AugmentedStmt entryPoint, IterableSet body) {
+  public SETDoWhileNode(AugmentedStmt characterizingStmt, AugmentedStmt entryPoint, IterableSet body, TryContentsFinder myTryContentsFinder) {
     super(characterizingStmt, body);
 
     this.entryPoint = entryPoint;
+    this.myTryContentsFinder = myTryContentsFinder;
 
     IterableSet subBody = (IterableSet) body.clone();
     subBody.remove(characterizingStmt);

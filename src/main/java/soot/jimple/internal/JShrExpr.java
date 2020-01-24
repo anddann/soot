@@ -22,6 +22,7 @@ package soot.jimple.internal;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Value;
 import soot.baf.Baf;
@@ -31,7 +32,8 @@ import soot.jimple.ShrExpr;
 import soot.util.Switch;
 
 public class JShrExpr extends AbstractJimpleIntLongBinopExpr implements ShrExpr {
-  public JShrExpr(Value op1, Value op2) {
+
+  public JShrExpr(Value op1, Value op2, Jimple jimple, PrimTypeCollector primTypeCollector) {
     super(op1, op2, primTypeCollector, jimple);
   }
 
@@ -51,11 +53,11 @@ public class JShrExpr extends AbstractJimpleIntLongBinopExpr implements ShrExpr 
     Value op1 = op1Box.getValue();
     Value op2 = op2Box.getValue();
 
-    if (!isIntLikeType(op2.getType())) {
+    if (!isIntLikeType(op2.getType(),primTypeCollector)) {
       return primTypeCollector.getUnknownType();
     }
 
-    if (isIntLikeType(op1.getType())) {
+    if (isIntLikeType(op1.getType(),primTypeCollector)) {
       return primTypeCollector.getIntType();
     }
     if (op1.getType().equals(primTypeCollector.getLongType())) {
@@ -66,7 +68,7 @@ public class JShrExpr extends AbstractJimpleIntLongBinopExpr implements ShrExpr 
   }
 
   public Object clone() {
-    return new JShrExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()));
+    return new JShrExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()), myJimple, primTypeCollector);
   }
 
 }

@@ -31,7 +31,6 @@ import soot.ClassMember;
 import soot.Hierarchy;
 import soot.Local;
 import soot.Modifier;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -45,7 +44,6 @@ import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
-import soot.jimple.Jimple;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.StaticInvokeExpr;
 import soot.jimple.Stmt;
@@ -247,7 +245,7 @@ public class AccessManager {
 
     Body accessorBody = myJimple.newBody();
     soot.util.Chain accStmts = accessorBody.getUnits();
-    LocalGenerator lg = new LocalGenerator(accessorBody);
+    LocalGenerator lg = new LocalGenerator(accessorBody, primeTypeCollector, myJimple);
 
     Body containerBody = container.getActiveBody();
     soot.util.Chain containerStmts = containerBody.getUnits();
@@ -296,7 +294,7 @@ public class AccessManager {
 
     Body accessorBody = myJimple.newBody();
     soot.util.Chain accStmts = accessorBody.getUnits();
-    LocalGenerator lg = new LocalGenerator(accessorBody);
+    LocalGenerator lg = new LocalGenerator(accessorBody, primeTypeCollector, myJimple);
 
     Body containerBody = container.getActiveBody();
     soot.util.Chain containerStmts = containerBody.getUnits();
@@ -353,7 +351,7 @@ public class AccessManager {
 
     Body accessorBody = myJimple.newBody();
     soot.util.Chain accStmts = accessorBody.getUnits();
-    LocalGenerator lg = new LocalGenerator(accessorBody);
+    LocalGenerator lg = new LocalGenerator(accessorBody, primeTypeCollector, myJimple);
 
     Body containerBody = container.getActiveBody();
     soot.util.Chain containerStmts = containerBody.getUnits();

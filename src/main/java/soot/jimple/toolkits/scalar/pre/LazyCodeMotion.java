@@ -39,7 +39,6 @@ import soot.Scene;
 import soot.SideEffectTester;
 import soot.Unit;
 import soot.Value;
-import soot.JastAddJ.Options;
 import soot.jimple.AssignStmt;
 import soot.jimple.Jimple;
 import soot.jimple.NaiveSideEffectTester;
@@ -47,6 +46,7 @@ import soot.jimple.toolkits.graph.LoopConditionUnroller;
 import soot.jimple.toolkits.pointer.PASideEffectTester;
 import soot.jimple.toolkits.scalar.LocalCreation;
 import soot.options.LCMOptions;
+import soot.options.Options;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.ArrayPackedSet;
@@ -153,15 +153,15 @@ public class LazyCodeMotion extends BodyTransformer {
     LatestComputation latest;
 
     if (options.safety() == LCMOptions.safety_safe) {
-      upSafe = new UpSafetyAnalysis(graph, unitToNoExceptionEquivRhs, sideEffect, set);
+      upSafe = new UpSafetyAnalysis(graph, unitToNoExceptionEquivRhs, sideEffect, set, getMyInteractionHandler(), myOptions);
     } else {
-      upSafe = new UpSafetyAnalysis(graph, unitToEquivRhs, sideEffect, set);
+      upSafe = new UpSafetyAnalysis(graph, unitToEquivRhs, sideEffect, set, getMyInteractionHandler(), myOptions);
     }
 
     if (options.safety() == LCMOptions.safety_unsafe) {
-      downSafe = new DownSafetyAnalysis(graph, unitToEquivRhs, sideEffect, set);
+      downSafe = new DownSafetyAnalysis(graph, unitToEquivRhs, sideEffect, set, myOptions, getMyInteractionHandler());
     } else {
-      downSafe = new DownSafetyAnalysis(graph, unitToNoExceptionEquivRhs, sideEffect, set);
+      downSafe = new DownSafetyAnalysis(graph, unitToNoExceptionEquivRhs, sideEffect, set, myOptions, getMyInteractionHandler());
       /* we include the exception-throwing expressions at their uses */
       Iterator<Unit> unitIt = unitChain.iterator();
       while (unitIt.hasNext()) {
@@ -174,7 +174,7 @@ public class LazyCodeMotion extends BodyTransformer {
     }
 
     earliest = new EarliestnessComputation(graph, upSafe, downSafe, sideEffect, set);
-    delay = new DelayabilityAnalysis(graph, earliest, unitToEquivRhs, set);
+    delay = new DelayabilityAnalysis(graph, earliest, unitToEquivRhs, set, getMyInteractionHandler(), myOptions);
     latest = new LatestComputation(graph, delay, unitToEquivRhs, set);
     notIsolated = new NotIsolatedAnalysis(graph, latest, unitToEquivRhs, set);
 

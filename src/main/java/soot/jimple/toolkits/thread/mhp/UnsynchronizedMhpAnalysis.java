@@ -37,6 +37,6 @@ public class UnsynchronizedMhpAnalysis extends SynchObliviousMhpAnalysis {
 
   public UnsynchronizedMhpAnalysis(Scene myScene, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager,
       PhaseDumper myPhaseDumper, Options myOptions) {
-    super(myScene, throwAnalysis, myManager, myPhaseDumper, myOptions);
+    super(myScene, throwAnalysis, myManager, myPhaseDumper, myOptions, myPedanticThrowAnalysis, myInteractionHandler);
   }
 }

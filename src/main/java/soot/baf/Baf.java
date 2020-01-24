@@ -216,7 +216,7 @@ public class Baf {
   }
 
   public PlaceholderInst newPlaceholderInst(Unit source) {
-    return new PlaceholderInst(source, myBaf);
+    return new PlaceholderInst(source, this);
   }
 
   public UnitBox newInstBox(Unit unit) {
@@ -268,7 +268,7 @@ public class Baf {
   }
 
   public ArrayReadInst newArrayReadInst(Type opType) {
-    return new BArrayReadInst(opType, myBaf, primTypeCollector);
+    return new BArrayReadInst(opType, this, primTypeCollector);
   }
 
   public StaticGetInst newStaticGetInst(SootFieldRef fieldRef) {
@@ -292,7 +292,7 @@ public class Baf {
   }
 
   public PopInst newPopInst(Type aType) {
-    return new BPopInst(aType);
+    return new BPopInst(aType, this);
   }
 
   public SubInst newSubInst(Type opType) {
@@ -312,7 +312,7 @@ public class Baf {
   }
 
   public ArrayLengthInst newArrayLengthInst() {
-    return new BArrayLengthInst(myBaf);
+    return new BArrayLengthInst(this);
   }
 
   public NegInst newNegInst(Type opType) {
@@ -336,11 +336,11 @@ public class Baf {
   }
 
   public UshrInst newUshrInst(Type opType) {
-    return new BUshrInst(opType, myBaf, primTypeCollector);
+    return new BUshrInst(opType, this, primTypeCollector);
   }
 
   public XorInst newXorInst(Type opType) {
-    return new BXorInst(opType, primTypeCollector, myBaf);
+    return new BXorInst(opType, primTypeCollector, this);
   }
 
   public InstanceCastInst newInstanceCastInst(Type opType) {
@@ -348,7 +348,7 @@ public class Baf {
   }
 
   public InstanceOfInst newInstanceOfInst(Type opType) {
-    return new BInstanceOfInst(opType);
+    return new BInstanceOfInst(opType, myBaf);
   }
 
   public PrimitiveCastInst newPrimitiveCastInst(Type fromType, Type toType) {
@@ -401,7 +401,7 @@ public class Baf {
   }
 
   public IfCmpGtInst newIfCmpGtInst(Type opType, Unit unit) {
-    return new BIfCmpGtInst(opType, unit, primTypeCollector, myBaf);
+    return new BIfCmpGtInst(opType, unit, primTypeCollector, this);
   }
 
   public IfCmpLeInst newIfCmpLeInst(Type opType, Unit unit) {
@@ -505,7 +505,7 @@ public class Baf {
   }
 
   public TableSwitchInst newTableSwitchInst(Unit defaultTarget, int lowIndex, int highIndex, List targets) {
-    return new BTableSwitchInst(defaultTarget, lowIndex, highIndex, targets, myBaf);
+    return new BTableSwitchInst(defaultTarget, lowIndex, highIndex, targets, this);
   }
 
   public static String bafDescriptorOf(Type type) {

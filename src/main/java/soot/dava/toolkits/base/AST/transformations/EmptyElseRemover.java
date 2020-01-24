@@ -36,6 +36,7 @@ import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.AST.ASTSynchronizedBlockNode;
 import soot.dava.internal.AST.ASTUnconditionalLoopNode;
 import soot.dava.internal.AST.ASTWhileNode;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 
 /*
   Nomair A. Naeem 21-FEB-2005
@@ -44,7 +45,7 @@ import soot.dava.internal.AST.ASTWhileNode;
 
 public class EmptyElseRemover {
 
-  public static void removeElseBody(ASTNode node, ASTIfElseNode ifElseNode, int subBodyNumber, int nodeNumber) {
+  public static void removeElseBody(ASTNode node, ASTIfElseNode ifElseNode, int subBodyNumber, int nodeNumber, TryContentsFinder myTryContentsFinder) {
     if (!(node instanceof ASTIfElseNode)) {
       // these are the nodes which always have one subBody
       List<Object> subBodies = node.get_SubBodies();
@@ -58,7 +59,7 @@ public class EmptyElseRemover {
        * The onlySubBody contains the ASTIfElseNode whose elsebody has to be removed at location given by the nodeNumber
        * variable
        */
-      List<Object> newBody = createNewNodeBody(onlySubBody, nodeNumber, ifElseNode);
+      List<Object> newBody = createNewNodeBody(onlySubBody, nodeNumber, ifElseNode, myTryContentsFinder);
       if (newBody == null) {
         // something went wrong
         return;
@@ -114,7 +115,7 @@ public class EmptyElseRemover {
       /*
        * The toModifySubBody contains the ASTIfElseNode to be removed at location given by the nodeNumber variable
        */
-      List<Object> newBody = createNewNodeBody(toModifySubBody, nodeNumber, ifElseNode);
+      List<Object> newBody = createNewNodeBody(toModifySubBody, nodeNumber, ifElseNode, myTryContentsFinder);
       if (newBody == null) {
         // something went wrong
         return;
@@ -139,7 +140,7 @@ public class EmptyElseRemover {
     } // end of ASTIfElseNode
   }
 
-  public static List<Object> createNewNodeBody(List<Object> oldSubBody, int nodeNumber, ASTIfElseNode ifElseNode) {
+  public static List<Object> createNewNodeBody(List<Object> oldSubBody, int nodeNumber, ASTIfElseNode ifElseNode, TryContentsFinder myTryContentsFinder) {
     // create a new SubBody
     List<Object> newSubBody = new ArrayList<Object>();
 

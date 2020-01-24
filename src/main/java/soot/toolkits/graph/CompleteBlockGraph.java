@@ -41,6 +41,6 @@ import soot.Trap;
  */
 public class CompleteBlockGraph extends ExceptionalBlockGraph {
   public CompleteBlockGraph(Body b) {
-    super(new CompleteUnitGraph(b));
+    super(new CompleteUnitGraph(b, myManager, myPhaseDumper));
   }
 }

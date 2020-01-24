@@ -37,8 +37,8 @@ import soot.Body;
 import soot.BodyTransformer;
 import soot.Unit;
 import soot.UnitBox;
-import soot.JastAddJ.Options;
 import soot.jimple.Jimple;
+import soot.options.Options;
 import soot.util.Chain;
 
 /**

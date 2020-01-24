@@ -155,7 +155,7 @@ public class DexType {
         type = DoubleType.v();
         break;
       case 'L': // object
-        type = RefType.v(Util.dottedClassName(typeDescriptor));
+        type = RefType.v(Util.dottedClassName(typeDescriptor, myScene));
         break;
       case 'V': // void
         type = VoidType.v();

@@ -23,6 +23,9 @@ package soot.toolkits.graph;
  */
 
 import soot.Body;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
+import soot.util.PhaseDumper;
 
 /**
  * <p>
@@ -55,7 +58,7 @@ import soot.Body;
  * </p>
  */
 public class CompleteUnitGraph extends ExceptionalUnitGraph {
-  public CompleteUnitGraph(Body b) {
+  public CompleteUnitGraph(Body b, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, PedanticThrowAnalysis myPedanticThrowAnalysis) {
     super(b, myPedanticThrowAnalysis, false, myManager, myPhaseDumper);
   }
 }

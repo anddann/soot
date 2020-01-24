@@ -38,7 +38,11 @@ public class Obj_full_extractor extends PtSensVisitor<IntervalContextVar> {
   private List<IntervalContextVar> backupList = new ArrayList<IntervalContextVar>();
   private IntervalContextVar tmp_icv = new IntervalContextVar();
 
-  @Override
+    public Obj_full_extractor() {
+        super(myScene);
+    }
+
+    @Override
   public boolean visit(Node var, long L, long R, int sm_int) {
     if (readyToUse) {
       return false;

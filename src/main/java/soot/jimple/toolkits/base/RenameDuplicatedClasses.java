@@ -35,11 +35,11 @@ import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.JastAddJ.Options;
 import soot.PhaseOptions;
 import soot.Scene;
 import soot.SceneTransformer;
 import soot.SootClass;
+import soot.options.Options;
 import soot.util.Chain;
 
 /**

@@ -22,8 +22,6 @@ package soot;
  * #L%
  */
 
-import soot.javaToJimple.InitialResolver;
-import soot.jimple.Jimple;
 import soot.options.Options;
 
 /**
@@ -32,12 +30,10 @@ import soot.options.Options;
  */
 public class JavaClassProvider implements ClassProvider {
   private Options myOptions;
-  private InitialResolver myInitialResolver;
   private SourceLocator mySourceLocator;
 
-  public JavaClassProvider(Options myOptions, InitialResolver myInitialResolver,SourceLocator mySourceLocator) {
+  public JavaClassProvider(Options myOptions, SourceLocator mySourceLocator) {
     this.myOptions = myOptions;
-    this.myInitialResolver = myInitialResolver;
     this.mySourceLocator = mySourceLocator;
   }
 
@@ -57,10 +53,7 @@ public class JavaClassProvider implements ClassProvider {
    */
   public ClassSource find(String className, Scene myScene,  Options myOptions, SootResolver mySootResolver) {
 
-    if (this.myOptions.polyglot() && myInitialResolver.hasASTForSootName(className)) {
-      myInitialResolver.setASTForSootName(className);
-      return new JavaClassSource(className);
-    } else { // jastAdd; or polyglot AST not yet produced
+    // jastAdd; or polyglot AST not yet produced
       /*
        * 04.04.2006 mbatch if there is a $ in the name, we need to check if it's a real file, not just inner class
        */
@@ -97,7 +90,7 @@ public class JavaClassProvider implements ClassProvider {
           file.close();
         }
       }
-    }
+
 
   }
 }

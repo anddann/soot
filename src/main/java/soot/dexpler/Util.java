@@ -42,6 +42,7 @@ import soot.FloatType;
 import soot.IntType;
 import soot.Local;
 import soot.LongType;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Scene;
 import soot.ShortType;
@@ -50,15 +51,10 @@ import soot.Unit;
 import soot.VoidType;
 import soot.javaToJimple.LocalGenerator;
 import soot.jimple.AssignStmt;
-import soot.jimple.DoubleConstant;
-import soot.jimple.FloatConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IdentityStmt;
-import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
-import soot.jimple.LongConstant;
-import soot.jimple.NullConstant;
 import soot.jimple.ParameterRef;
-import soot.jimple.StringConstant;
 import soot.jimple.ThisRef;
 import soot.jimple.toolkits.scalar.LocalCreation;
 
@@ -69,7 +65,7 @@ public class Util {
    * @raises IllegalArgumentException if classname is not of the form Lpath; or [Lpath;
    * @return the dotted name.
    */
-  public static String dottedClassName(String typeDescriptor) {
+  public static String dottedClassName(String typeDescriptor, Scene myScene) {
     if (!isByteCodeClassName(typeDescriptor)) {
       // typeDescriptor may not be a class but something like "[[[[[[[[J"
       String t = typeDescriptor;
@@ -80,8 +76,8 @@ public class Util {
       String c = t.substring(idx);
       if (c.length() == 1 && (c.startsWith("I") || c.startsWith("B") || c.startsWith("C") || c.startsWith("S")
           || c.startsWith("J") || c.startsWith("D") || c.startsWith("F") || c.startsWith("Z"))) {
-        Type ty = getType(t);
-        return ty == null ? "" : getType(t).toString();
+        Type ty = getType(t, myScene);
+        return ty == null ? "" : getType(t, myScene).toString();
       }
       throw new IllegalArgumentException("typeDescriptor is not a class typedescriptor: '" + typeDescriptor + "'");
     }
@@ -102,7 +98,7 @@ public class Util {
     return className;
   }
 
-  public static Type getType(String type) {
+  public static Type getType(String type, Scene myScene) {
     int idx = 0;
     int arraySize = 0;
     Type returnType = null;
@@ -119,52 +115,52 @@ public class Util {
 
         case 'L':
           String objectName = type.replaceAll("^[^L]*L", "").replaceAll(";$", "");
-          returnType = RefType.v(objectName.replace("/", "."));
+          returnType = RefType.v(objectName.replace("/", "."),myScene);
           notFound = false;
           break;
 
         case 'J':
-          returnType = LongType.v();
+          returnType = myScene.getPrimTypeCollector().getLongType();
           notFound = false;
           break;
 
         case 'S':
-          returnType = ShortType.v();
+          returnType = myScene.getPrimTypeCollector().getShortType();
           notFound = false;
           break;
 
         case 'D':
-          returnType = DoubleType.v();
+          returnType = myScene.getPrimTypeCollector().getDoubleType();
           notFound = false;
           break;
 
         case 'I':
-          returnType = IntType.v();
+          returnType = myScene.getPrimTypeCollector().getIntType();
           notFound = false;
           break;
 
         case 'F':
-          returnType = FloatType.v();
+          returnType = myScene.getPrimTypeCollector().getFloatType();
           notFound = false;
           break;
 
         case 'B':
-          returnType = ByteType.v();
+          returnType = myScene.getPrimTypeCollector().getByteType();
           notFound = false;
           break;
 
         case 'C':
-          returnType = CharType.v();
+          returnType = myScene.getPrimTypeCollector().getCharType();
           notFound = false;
           break;
 
         case 'V':
-          returnType = VoidType.v();
+          returnType = myScene.getPrimTypeCollector().getVoidType();
           notFound = false;
           break;
 
         case 'Z':
-          returnType = BooleanType.v();
+          returnType = myScene.getPrimTypeCollector().getBooleanType();
           notFound = false;
           break;
 
@@ -174,7 +170,7 @@ public class Util {
       idx++;
     }
     if (returnType != null && arraySize > 0) {
-      returnType = ArrayType.v(returnType, arraySize);
+      returnType = ArrayType.v(returnType, arraySize,myScene);
     }
     return returnType;
   }
@@ -209,19 +205,22 @@ public class Util {
    *
    * @param t
    *          the type to test
+   * @param myScene
    */
-  public static boolean isFloatLike(Type t) {
-    return t.equals(FloatType.v()) || t.equals(DoubleType.v()) || t.equals(RefType.v("java.lang.Float"))
-        || t.equals(RefType.v("java.lang.Double"));
+  public static boolean isFloatLike(Type t, Scene myScene) {
+    return t.equals(myScene.getPrimTypeCollector().getFloatType()) || t.equals(myScene.getPrimTypeCollector().getDoubleType()) || t.equals(RefType.v("java.lang.Float",myScene))
+        || t.equals(RefType.v("java.lang.Double",myScene));
   }
 
   /**
    * Remove all statements except from IdentityStatements for parameters. Return default value (null or zero or nothing
    * depending on the return type).
-   *
    * @param jBody
+   * @param primeTypeCollector
+   * @param myJimple
+   * @param constancFactory
    */
-  public static void emptyBody(Body jBody) {
+  public static void emptyBody(Body jBody, PrimTypeCollector primeTypeCollector, Jimple myJimple, ConstantFactory constancFactory) {
     // identity statements
     List<Unit> idStmts = new ArrayList<Unit>();
     List<Local> idLocals = new ArrayList<Local>();
@@ -239,7 +238,7 @@ public class Util {
     jBody.getLocals().clear();
     jBody.getTraps().clear();
 
-    final LocalGenerator lg = new LocalGenerator(jBody);
+    final LocalGenerator lg = new LocalGenerator(jBody, primeTypeCollector, myJimple);
 
     for (Unit u : idStmts) {
       jBody.getUnits().add(u);
@@ -260,7 +259,7 @@ public class Util {
 
       AssignStmt ass = null;
       if (t instanceof RefType || t instanceof ArrayType) {
-        ass = myJimple.newAssignStmt(l, myNullConstant);
+        ass = myJimple.newAssignStmt(l, constancFactory.getNullConstant());
       } else if (t instanceof LongType) {
         ass = myJimple.newAssignStmt(l, constancFactory.createLongConstant(0));
       } else if (t instanceof FloatType) {
@@ -284,17 +283,17 @@ public class Util {
    * Insert a runtime exception before unit u of body b. Useful to analyze broken code (which make reference to inexisting
    * class for instance) exceptionType: e.g., "java.lang.RuntimeException"
    */
-  public static void addExceptionAfterUnit(Body b, String exceptionType, Unit u, String m) {
+  public static void addExceptionAfterUnit(Body b, String exceptionType, Unit u, String m, Scene myScene, Jimple myJimple, ConstantFactory constancFactory) {
     LocalCreation lc = new LocalCreation(b.getLocals());
-    Local l = lc.newLocal(RefType.v(exceptionType));
+    Local l = lc.newLocal(RefType.v(exceptionType,myScene));
 
     List<Unit> newUnits = new ArrayList<Unit>();
-    Unit u1 = myJimple.newAssignStmt(l, myJimple.newNewExpr(RefType.v(exceptionType)));
+    Unit u1 = myJimple.newAssignStmt(l, myJimple.newNewExpr(RefType.v(exceptionType,myScene)));
     Unit u2
         = myJimple
             .newInvokeStmt(myJimple.newSpecialInvokeExpr(l,
                 myScene.makeMethodRef(myScene.getSootClass(exceptionType), "<init>",
-                    Collections.singletonList((Type) RefType.v("java.lang.String")), VoidType.v(), false),
+                    Collections.singletonList((Type) RefType.v("java.lang.String",myScene)), myScene.getPrimTypeCollector().getVoidType(), false),
                 constancFactory.createStringConstant(m)));
     Unit u3 = myJimple.newThrowStmt(l);
     newUnits.add(u1);

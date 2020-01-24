@@ -124,7 +124,7 @@ public class BafASMBackend extends AbstractASMBackend {
    */
   public BafASMBackend(SootClass sc, int javaVersion, Scene myScene, Options myOptions,
       PrimTypeCollector primTypeCollector) {
-    super(sc, javaVersion, myOptions, myOptions.getPackManager());
+    super(sc, javaVersion, myOptions, myOptions.getPackManager(), myScene);
     this.myOptions = myOptions;
     this.primTypeCollector = primTypeCollector;
   }

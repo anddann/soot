@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.EquivalentValue;
-import soot.JastAddJ.Options;
+import soot.options.Options;
 import soot.Local;
 import soot.Scene;
 import soot.SideEffectTester;
@@ -132,8 +132,8 @@ public class BusyCodeMotion extends BodyTransformer {
       sideEffect = new NaiveSideEffectTester();
     }
     sideEffect.newMethod(b.getMethod());
-    UpSafetyAnalysis upSafe = new UpSafetyAnalysis(graph, unitToEquivRhs, sideEffect);
-    DownSafetyAnalysis downSafe = new DownSafetyAnalysis(graph, unitToNoExceptionEquivRhs, sideEffect);
+    UpSafetyAnalysis upSafe = new UpSafetyAnalysis(graph, unitToEquivRhs, sideEffect, getMyInteractionHandler(), myOptions);
+    DownSafetyAnalysis downSafe = new DownSafetyAnalysis(graph, unitToNoExceptionEquivRhs, sideEffect, myOptions, getMyInteractionHandler());
     EarliestnessComputation earliest = new EarliestnessComputation(graph, upSafe, downSafe, sideEffect);
 
     LocalCreation localCreation = new LocalCreation(b.getLocals(), PREFIX);

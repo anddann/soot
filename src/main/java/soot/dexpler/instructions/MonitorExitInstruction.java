@@ -32,14 +32,25 @@ import org.jf.dexlib2.iface.instruction.OneRegisterInstruction;
 
 import soot.Local;
 import soot.RefType;
+import soot.Scene;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ExitMonitorStmt;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 public class MonitorExitInstruction extends DexlibAbstractInstruction {
 
-  public MonitorExitInstruction(Instruction instruction, int codeAdress) {
+  private Jimple myJimple;
+  private DalvikTyper myDalvikTyper;
+  private Scene myScene;
+
+  public MonitorExitInstruction(Instruction instruction, int codeAdress, Options myOptions, Jimple myJimple, DalvikTyper myDalvikTyper, Scene myScene) {
     super(instruction, codeAdress, myOptions);
+    this.myJimple = myJimple;
+    this.myDalvikTyper = myDalvikTyper;
+    this.myScene = myScene;
   }
 
   @Override
@@ -53,7 +64,7 @@ public class MonitorExitInstruction extends DexlibAbstractInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // Debug.printDbg(IDalvikTyper.DEBUG, "constraint: "+ exitMonitorStmt);
-      myDalvikTyper().setType(exitMonitorStmt.getOpBox(), RefType.v("java.lang.Object"), true);
+      myDalvikTyper.setType(exitMonitorStmt.getOpBox(), RefType.v("java.lang.Object",myScene), true);
     }
   }
 }

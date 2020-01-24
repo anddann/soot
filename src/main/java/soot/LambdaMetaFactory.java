@@ -362,7 +362,7 @@ public final class LambdaMetaFactory {
      */
     private void getInitBody(SootClass tclass, JimpleBody jb) {
       PatchingChain<Unit> us = jb.getUnits();
-      LocalGenerator lc = new LocalGenerator(jb);
+      LocalGenerator lc = new LocalGenerator(jb, primeTypeCollector, myJimple);
 
       // @this
       Local l = lc.generateLocal(tclass.getType());
@@ -395,7 +395,7 @@ public final class LambdaMetaFactory {
 
     private void getBootstrapBody(SootClass tclass, JimpleBody jb) {
       PatchingChain<Unit> us = jb.getUnits();
-      LocalGenerator lc = new LocalGenerator(jb);
+      LocalGenerator lc = new LocalGenerator(jb, primeTypeCollector, myJimple);
 
       List<Value> capValues = new ArrayList<Value>();
       List<Type> capTypes = new ArrayList<Type>();
@@ -425,7 +425,7 @@ public final class LambdaMetaFactory {
      */
     private void getInvokeBody(SootClass tclass, JimpleBody jb) {
       PatchingChain<Unit> us = jb.getUnits();
-      LocalGenerator lc = new LocalGenerator(jb);
+      LocalGenerator lc = new LocalGenerator(jb, primeTypeCollector, myJimple);
 
       // @this
       Local this_ = lc.generateLocal(tclass.getType());

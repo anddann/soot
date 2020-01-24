@@ -38,8 +38,12 @@ import soot.Local;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
+import soot.options.Options;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.util.ArraySet;
+import soot.util.PhaseDumper;
 
 /**
  * Provides methods for register coloring. Jimple uses these methods to assign the local slots appropriately.
@@ -50,7 +54,7 @@ public class FastColorer {
    * the original Jimple.
    */
   public static void unsplitAssignColorsToLocals(Body unitBody, Map<Local, Object> localToGroup,
-      Map<Local, Integer> localToColor, Map<Object, Integer> groupToColorCount) {
+                                                 Map<Local, Integer> localToColor, Map<Object, Integer> groupToColorCount, PedanticThrowAnalysis myPedanticThrowAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
     // To understand why a pedantic throw analysis is required, see comment
     // in assignColorsToLocals method
     ExceptionalUnitGraph unitGraph
@@ -164,7 +168,7 @@ public class FastColorer {
    * Provides an economical coloring for the locals of <code>unitBody</code>.
    */
   public static void assignColorsToLocals(Body unitBody, Map<Local, Object> localToGroup, Map<Local, Integer> localToColor,
-      Map<Object, Integer> groupToColorCount) {
+                                          Map<Object, Integer> groupToColorCount, PedanticThrowAnalysis myPedanticThrowAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
     // Build a CFG using a pedantic throw analysis to prevent JVM
     // "java.lang.VerifyError: Incompatible argument to function" errors.
     ExceptionalUnitGraph unitGraph
