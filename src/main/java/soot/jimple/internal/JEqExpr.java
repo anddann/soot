@@ -22,6 +22,7 @@ package soot.jimple.internal;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Value;
 import soot.jimple.EqExpr;
@@ -30,7 +31,7 @@ import soot.jimple.Jimple;
 import soot.util.Switch;
 
 public class JEqExpr extends AbstractJimpleIntBinopExpr implements EqExpr {
-  public JEqExpr(Value op1, Value op2) {
+  public JEqExpr(Value op1, Value op2, PrimTypeCollector primTypeCollector) {
     super(op1, op2, primTypeCollector);
   }
 
@@ -48,7 +49,7 @@ public class JEqExpr extends AbstractJimpleIntBinopExpr implements EqExpr {
   // return myBaf.newEqInst(this.getOp1().getType()); }
 
   public Object clone() {
-    return new JEqExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()));
+    return new JEqExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()), primTypeCollector);
   }
 
 }

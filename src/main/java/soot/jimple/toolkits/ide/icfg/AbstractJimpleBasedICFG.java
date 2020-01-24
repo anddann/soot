@@ -45,9 +45,13 @@ import soot.Unit;
 import soot.UnitBox;
 import soot.Value;
 import soot.jimple.Stmt;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.util.PhaseDumper;
 
 public abstract class AbstractJimpleBasedICFG implements BiDiInterproceduralCFG<Unit, SootMethod> {
 
@@ -82,17 +86,22 @@ public abstract class AbstractJimpleBasedICFG implements BiDiInterproceduralCFG<
           return getCallsFromWithinMethod(m);
         }
       });
+  private ThrowAnalysis throwAnalysis;
+  private Options myOptions;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
-  public AbstractJimpleBasedICFG() {
-    this(true);
+  public AbstractJimpleBasedICFG(ThrowAnalysis throwAnalysis) {
+    this(true, throwAnalysis);
   }
 
   protected Map<Unit, Body> createUnitToOwnerMap() {
     return new HashMap<Unit, Body>();
   }
 
-  public AbstractJimpleBasedICFG(boolean enableExceptions) {
+  public AbstractJimpleBasedICFG(boolean enableExceptions, ThrowAnalysis throwAnalysis) {
     this.enableExceptions = enableExceptions;
+    this.throwAnalysis = throwAnalysis;
   }
 
   public Body getBodyOf(Unit u) {
@@ -127,7 +136,7 @@ public abstract class AbstractJimpleBasedICFG implements BiDiInterproceduralCFG<
   }
 
   protected DirectedGraph<Unit> makeGraph(Body body) {
-    return enableExceptions ? new ExceptionalUnitGraph(body, myManager) : new BriefUnitGraph(body, myPhaseDumper);
+    return enableExceptions ? new ExceptionalUnitGraph(body,  throwAnalysis, myOptions.omit_excepting_unit_edges(), myManager, myPhaseDumper) : new BriefUnitGraph(body, myPhaseDumper);
   }
 
   protected Set<Unit> getCallsFromWithinMethod(SootMethod m) {

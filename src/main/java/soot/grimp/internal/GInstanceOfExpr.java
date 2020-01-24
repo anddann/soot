@@ -22,17 +22,21 @@ package soot.grimp.internal;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Value;
 import soot.grimp.Grimp;
 import soot.jimple.internal.AbstractInstanceOfExpr;
 
 public class GInstanceOfExpr extends AbstractInstanceOfExpr {
-  public GInstanceOfExpr(Value op, Type checkType) {
+  private Grimp myGrimp;
+
+  public GInstanceOfExpr(Value op, Type checkType, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
     super(myGrimp.newObjExprBox(op), checkType, primTypeCollector);
+    this.myGrimp = myGrimp;
   }
 
   public Object clone() {
-    return new GInstanceOfExpr(Grimp.cloneIfNecessary(getOp()), getCheckType());
+    return new GInstanceOfExpr(Grimp.cloneIfNecessary(getOp()), getCheckType(), myGrimp, primTypeCollector);
   }
 }

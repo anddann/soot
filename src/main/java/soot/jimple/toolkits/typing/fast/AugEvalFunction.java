@@ -30,7 +30,6 @@ import java.util.Collections;
 import soot.ArrayType;
 import soot.BooleanType;
 import soot.ByteType;
-import soot.CharType;
 import soot.DoubleType;
 import soot.FloatType;
 import soot.IntType;
@@ -39,7 +38,6 @@ import soot.Local;
 import soot.LongType;
 import soot.NullType;
 import soot.RefType;
-import soot.Scene;
 import soot.ShortType;
 import soot.TrapManager;
 import soot.Type;
@@ -151,7 +149,7 @@ public class AugEvalFunction implements IEvalFunction {
           } else if (tr instanceof BooleanType) {
             return tl;
           } else {
-            Collection<Type> rs = AugHierarchy.lcas_(tl, tr);
+            Collection<Type> rs = AugHierarchy.lcas_(tl, tr, myScene);
             // AugHierarchy.lcas_ is single-valued
             for (Type r : rs) {
               return r;

@@ -40,13 +40,21 @@ import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.CastExpr;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 public class CheckCastInstruction extends DexlibAbstractInstruction {
 
-  public CheckCastInstruction(Instruction instruction, int codeAdress) {
+  private Jimple myJimple;
+  private DalvikTyper myDalvikTyper;
+
+  public CheckCastInstruction(Instruction instruction, int codeAdress, Options myOptions, Jimple myJimple, DalvikTyper myDalvikTyper) {
     super(instruction, codeAdress, myOptions);
+    this.myJimple = myJimple;
+    this.myDalvikTyper = myDalvikTyper;
   }
 
   @Override
@@ -71,7 +79,7 @@ public class CheckCastInstruction extends DexlibAbstractInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(assign.getLeftOpBox(), checkCastType, false);
+      myDalvikTyper.setType(assign.getLeftOpBox(), checkCastType, false);
     }
 
   }

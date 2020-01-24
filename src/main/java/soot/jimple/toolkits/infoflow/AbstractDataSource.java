@@ -25,7 +25,7 @@ package soot.jimple.toolkits.infoflow;
 import java.util.Collections;
 import java.util.List;
 
-import soot.NullType;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.UnitPrinter;
 import soot.Value;
@@ -36,9 +36,11 @@ import soot.util.Switch;
 
 public class AbstractDataSource implements Value {
   Object sourcename;
+  private PrimTypeCollector primeTypeCollector;
 
-  public AbstractDataSource(Object sourcename) {
+  public AbstractDataSource(Object sourcename, PrimTypeCollector primeTypeCollector) {
     this.sourcename = sourcename;
+    this.primeTypeCollector = primeTypeCollector;
   }
 
   @Override
@@ -48,7 +50,7 @@ public class AbstractDataSource implements Value {
 
   /** Clones the object. Not implemented here. */
   public Object clone() {
-    return new AbstractDataSource(sourcename);
+    return new AbstractDataSource(sourcename, primeTypeCollector);
   }
 
   /**
@@ -78,7 +80,7 @@ public class AbstractDataSource implements Value {
   }
 
   public Type getType() {
-    return NullType.v();
+    return primeTypeCollector.getNullType();
   }
 
   public void apply(Switch sw) {

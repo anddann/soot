@@ -45,6 +45,7 @@ import soot.ErroneousType;
 import soot.Local;
 import soot.NullType;
 import soot.PhaseOptions;
+import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.ShortType;
 import soot.Type;
@@ -60,8 +61,10 @@ import soot.jimple.InvokeExpr;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.Stmt;
+import soot.jimple.toolkits.typing.integer.ClassHierarchy;
 import soot.options.JBTROptions;
 import soot.options.Options;
+import soot.toolkits.graph.interaction.InteractionHandler;
 
 /**
  * This transformer assigns types to local variables.
@@ -80,10 +83,13 @@ public class TypeAssigner extends BodyTransformer {
   private PhaseOptions myPhaseOptions;
   private Jimple myJimple;
   private ConstantFactory constancFactory;
+  private ClassHierarchy myClassHierachy;
+  private PrimTypeCollector primeTypeCollector;
+  private InteractionHandler myInteractionHandler;
 
   @Inject
   public TypeAssigner(Options myOptions, Scene myScene, BodyTransformer myConstantPropagatorAndFolder,
-                      BodyTransformer myDeadAssignmentEliminator, BodyTransformer myUnusedLocalEliminator, PhaseOptions myPhaseOptions, Jimple myJimple, ConstantFactory constancFactory) {
+                      BodyTransformer myDeadAssignmentEliminator, BodyTransformer myUnusedLocalEliminator, PhaseOptions myPhaseOptions, Jimple myJimple, ConstantFactory constancFactory, ClassHierarchy myClassHierachy, PrimTypeCollector primeTypeCollector, InteractionHandler myInteractionHandler) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myConstantPropagatorAndFolder = myConstantPropagatorAndFolder;
@@ -92,6 +98,9 @@ public class TypeAssigner extends BodyTransformer {
     this.myPhaseOptions = myPhaseOptions;
     this.myJimple = myJimple;
     this.constancFactory = constancFactory;
+    this.myClassHierachy = myClassHierachy;
+    this.primeTypeCollector = primeTypeCollector;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
 
@@ -131,7 +140,7 @@ public class TypeAssigner extends BodyTransformer {
       compareTypeAssigners(b, opt.use_older_type_assigner());
     } else {
       if (opt.use_older_type_assigner()) {
-        TypeResolver.resolve((JimpleBody) b, myScene, myOptions, myClassHierachy, primeTypeCollector, TypeResolver.myInteractionHandler);
+        TypeResolver.resolve((JimpleBody) b, myScene, myOptions, myClassHierachy, primeTypeCollector, myInteractionHandler, TypeResolver.throwAnalysis, TypeResolver.myManager, TypeResolver.phaseDumper, TypeResolver.myJimple);
       } else {
         (new soot.jimple.toolkits.typing.fast.TypeResolver((JimpleBody) b)).inferTypes();
       }
@@ -249,14 +258,14 @@ public class TypeAssigner extends BodyTransformer {
       (new soot.jimple.toolkits.typing.fast.TypeResolver(newJb)).inferTypes();
       newTime = System.currentTimeMillis() - newTime;
       oldTime = System.currentTimeMillis();
-      TypeResolver.resolve(jb, myScene, myOptions, myClassHierachy, primeTypeCollector, TypeResolver.myInteractionHandler);
+      TypeResolver.resolve(jb, myScene, myOptions, myClassHierachy, primeTypeCollector, myInteractionHandler, TypeResolver.throwAnalysis, TypeResolver.myManager, TypeResolver.phaseDumper, TypeResolver.myJimple);
       oldTime = System.currentTimeMillis() - oldTime;
       oldJb = jb;
     } else {
       // Use new type assigner last
       oldJb = (JimpleBody) jb.clone();
       oldTime = System.currentTimeMillis();
-      TypeResolver.resolve(oldJb, myScene, myOptions, myClassHierachy, primeTypeCollector, TypeResolver.myInteractionHandler);
+      TypeResolver.resolve(oldJb, myScene, myOptions, myClassHierachy, primeTypeCollector, myInteractionHandler, TypeResolver.throwAnalysis, TypeResolver.myManager, TypeResolver.phaseDumper, TypeResolver.myJimple);
       oldTime = System.currentTimeMillis() - oldTime;
       newTime = System.currentTimeMillis();
       (new soot.jimple.toolkits.typing.fast.TypeResolver(jb)).inferTypes();
@@ -270,7 +279,7 @@ public class TypeAssigner extends BodyTransformer {
     } else if (newJb.getLocals().size() > oldJb.getLocals().size()) {
       cmp = -2;
     } else {
-      cmp = compareTypings(oldJb, newJb);
+      cmp = compareTypings(oldJb, newJb, myScene);
     }
 
     logger.debug("cmp;" + jb.getMethod() + ";" + size + ";" + oldTime + ";" + newTime + ";" + cmp);
@@ -296,7 +305,7 @@ public class TypeAssigner extends BodyTransformer {
   }
 
   /* Returns -1 if a < b, +1 if b < a, 0 if a = b and 3 otherwise. */
-  private static int compareTypings(JimpleBody a, JimpleBody b) {
+  private static int compareTypings(JimpleBody a, JimpleBody b, Scene myScene) {
     int r = 0;
 
     Iterator<Local> ib = b.getLocals().iterator();
@@ -308,13 +317,13 @@ public class TypeAssigner extends BodyTransformer {
       } else if (true && ((ta instanceof CharType && (tb instanceof ByteType || tb instanceof ShortType))
           || (tb instanceof CharType && (ta instanceof ByteType || ta instanceof ShortType)))) {
         continue;
-      } else if (soot.jimple.toolkits.typing.fast.AugHierarchy.ancestor_(ta, tb)) {
+      } else if (soot.jimple.toolkits.typing.fast.AugHierarchy.ancestor_(ta, tb, myScene)) {
         if (r == -1) {
           return 3;
         } else {
           r = 1;
         }
-      } else if (soot.jimple.toolkits.typing.fast.AugHierarchy.ancestor_(tb, ta)) {
+      } else if (soot.jimple.toolkits.typing.fast.AugHierarchy.ancestor_(tb, ta, myScene)) {
         if (r == 1) {
           return 3;
         } else {

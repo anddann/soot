@@ -39,7 +39,7 @@ import soot.util.Switch;
 public abstract class AbstractInstanceOfExpr implements InstanceOfExpr {
   final ValueBox opBox;
   Type checkType;
-  private PrimTypeCollector primTypeCollector;
+  protected PrimTypeCollector primTypeCollector;
 
   protected AbstractInstanceOfExpr(ValueBox opBox, Type checkType, PrimTypeCollector primTypeCollector) {
     this.opBox = opBox;

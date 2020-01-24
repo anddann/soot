@@ -53,13 +53,17 @@ import soot.Type;
 import soot.Unit;
 import soot.jimple.AssignStmt;
 import soot.jimple.InvokeStmt;
+import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.NewExpr;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
 import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LocalDefs;
+import soot.util.PhaseDumper;
 
 /**
  * This class resolves the type of local variables.
@@ -101,6 +105,10 @@ public class TypeResolver {
   private Scene scene;
   private Options myOptions;
   private InteractionHandler myInteractionHandler;
+  private ThrowAnalysis throwAnalysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper phaseDumper;
+  private Jimple myJimple;
 
   public ClassHierarchy hierarchy() {
     return hierarchy;
@@ -170,10 +178,14 @@ public class TypeResolver {
     return result;
   }
 
-  private TypeResolver(JimpleBody stmtBody, Scene scene, Options myOptions,  InteractionHandler myInteractionHandler) {
+  private TypeResolver(JimpleBody stmtBody, Scene scene, Options myOptions, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, Jimple myJimple) {
     this.stmtBody = stmtBody;
     this.myOptions = myOptions;
     this.myInteractionHandler = myInteractionHandler;
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
+    this.phaseDumper = phaseDumper;
+    this.myJimple = myJimple;
     hierarchy = ClassHierarchy.classHierarchy(scene, myOptions);
     this.scene = scene;
     OBJECT = hierarchy.OBJECT;
@@ -188,13 +200,13 @@ public class TypeResolver {
     }
   }
 
-  public static void resolve(JimpleBody stmtBody, Scene scene, Options myOptions, soot.jimple.toolkits.typing.integer.ClassHierarchy myClassHierachy, PrimTypeCollector primeTypeCollector, InteractionHandler myInteractionHandler) {
+  public static void resolve(JimpleBody stmtBody, Scene scene, Options myOptions, soot.jimple.toolkits.typing.integer.ClassHierarchy myClassHierachy, PrimTypeCollector primeTypeCollector, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, Jimple myJimple) {
     if (DEBUG) {
       logger.debug("" + stmtBody.getMethod());
     }
 
     try {
-      TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler);
+      TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myJimple);
       resolver.resolve_step_1();
     } catch (TypeException e1) {
       if (DEBUG) {
@@ -203,7 +215,7 @@ public class TypeResolver {
       }
 
       try {
-        TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler);
+        TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myJimple);
         resolver.resolve_step_2();
       } catch (TypeException e2) {
         if (DEBUG) {
@@ -212,7 +224,7 @@ public class TypeResolver {
         }
 
         try {
-          TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler);
+          TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myJimple);
           resolver.resolve_step_3();
         } catch (TypeException e3) {
           StringWriter st = new StringWriter();
@@ -841,7 +853,7 @@ public class TypeResolver {
   }
 
   private void split_new() {
-    LocalDefs defs = LocalDefs.Factory.newLocalDefs(stmtBody, myOptions, myInteractionHandler);
+    LocalDefs defs = LocalDefs.Factory.newLocalDefs(stmtBody,throwAnalysis,myManager, myOptions,phaseDumper, myInteractionHandler);
     PatchingChain<Unit> units = stmtBody.getUnits();
     Stmt[] stmts = new Stmt[units.size()];
 

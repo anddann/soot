@@ -29,17 +29,18 @@ import java.util.Map;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.DoubleType;
 import soot.IntType;
 import soot.Local;
 import soot.LongType;
 import soot.PatchingChain;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.jbco.IJbcoTransform;
 import soot.jbco.util.Rand;
 import soot.jimple.AssignStmt;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DivExpr;
 import soot.jimple.DoubleConstant;
 import soot.jimple.Expr;
@@ -71,6 +72,15 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
 
   public static String dependancies[] = new String[] { "jtp.jbco_cae2bo" };
   public static String name = "jtp.jbco_cae2bo";
+  private Jimple myJimple;
+  private ConstantFactory constancFactory;
+  private PrimTypeCollector primeTypeCollector;
+
+  public ArithmeticTransformer(Jimple myJimple, ConstantFactory constancFactory, PrimTypeCollector primeTypeCollector) {
+    this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
+    this.primeTypeCollector = primeTypeCollector;
+  }
 
   public String[] getDependencies() {
     return dependancies;
@@ -90,9 +100,10 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
 
     int localCount = 0;
     Chain<Local> locals = b.getLocals();
-    if (output) {
-      out.println("*** Performing Arithmetic Transformation on " + b.getMethod().getSignature());
-    }
+    //FIXME:
+//    if (output) {
+//      out.println("*** Performing Arithmetic Transformation on " + b.getMethod().getSignature());
+//    }
 
     Iterator<Unit> it = units.snapshotIterator();
     while (it.hasNext()) {
@@ -116,9 +127,10 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
           }
 
           if (nc != null) {
-            if (output) {
-              out.println("Considering: " + as + "\r");
-            }
+            //FIXME
+//            if (output) {
+//              out.println("Considering: " + as + "\r");
+//            }
 
             Type opType = op.getType();
             int max = opType instanceof IntType ? 32 : opType instanceof LongType ? 64 : 0;
@@ -158,10 +170,10 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
                     }
 
                     if (nc instanceof DoubleConstant) {
-                      tmp2 = myJimple.newLocal("__tmp_shft_lcl" + localCount++, DoubleType.v());
+                      tmp2 = myJimple.newLocal("__tmp_shft_lcl" + localCount++, primeTypeCollector.getDoubleType());
                       locals.add(tmp2);
 
-                      newU = myJimple.newAssignStmt(tmp2, myJimple.newCastExpr(op, DoubleType.v()));
+                      newU = myJimple.newAssignStmt(tmp2, myJimple.newCastExpr(op, primeTypeCollector.getDoubleType()));
                       unitsBuilt.add(newU);
                       units.insertBefore(newU, u);
 
@@ -273,24 +285,26 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
   }
 
   private void printOutput(List<Unit> unitsBuilt) {
-    if (!output) {
-      return;
-    }
-
-    out.println(" after as: ");
-    for (Unit uu : unitsBuilt) {
-      out.println(
-          "\t" + uu + "\ttype : " + (uu instanceof AssignStmt ? ((AssignStmt) uu).getLeftOp().getType().toString() : ""));
-    }
+    //FIXME
+//    if (!output) {
+//      return;
+//    }
+//
+//    out.println(" after as: ");
+//    for (Unit uu : unitsBuilt) {
+//      out.println(
+//          "\t" + uu + "\ttype : " + (uu instanceof AssignStmt ? ((AssignStmt) uu).getLeftOp().getType().toString() : ""));
+//    }
   }
 
   public void outputSummary() {
-    if (!output) {
-      return;
-    }
-
-    out.println("Replaced mul/div expressions: " + (divPerformed + mulPerformed));
-    out.println("Total mul/div expressions: " + total);
+    //FIXME
+//    if (!output) {
+//      return;
+//    }
+//
+//    out.println("Replaced mul/div expressions: " + (divPerformed + mulPerformed));
+//    out.println("Total mul/div expressions: " + total);
   }
 
   private Object[] checkNumericValue(NumericConstant nc) {

@@ -308,7 +308,7 @@ public class Jimple {
    * Constructs a EqExpr(Immediate, Immediate) grammar chunk.
    */
   public EqExpr newEqExpr(Value op1, Value op2) {
-    return new JEqExpr(op1, op2);
+    return new JEqExpr(op1, op2, primTypeCollector);
   }
 
   /**

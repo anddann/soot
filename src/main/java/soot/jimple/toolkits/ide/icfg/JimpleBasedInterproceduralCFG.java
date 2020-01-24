@@ -140,7 +140,7 @@ public class JimpleBasedInterproceduralCFG extends AbstractJimpleBasedICFG {
   }
 
   public JimpleBasedInterproceduralCFG(boolean enableExceptions, boolean includeReflectiveCalls) {
-    super(enableExceptions);
+    super(enableExceptions, throwAnalysis);
     this.includeReflectiveCalls = includeReflectiveCalls;
 
     cg = myScene.getCallGraph();

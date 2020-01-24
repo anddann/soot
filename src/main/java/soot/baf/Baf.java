@@ -228,7 +228,7 @@ public class Baf {
   }
 
   public IdentityInst newIdentityInst(Value local, Value identityRef) {
-    return new BIdentityInst(local, identityRef);
+    return new BIdentityInst(local, identityRef, myBaf);
   }
 
   public ValueBox newLocalBox(Value value) {
@@ -272,7 +272,7 @@ public class Baf {
   }
 
   public StaticGetInst newStaticGetInst(SootFieldRef fieldRef) {
-    return new BStaticGetInst(fieldRef, myBaf);
+    return new BStaticGetInst(fieldRef, this);
   }
 
   public StaticPutInst newStaticPutInst(SootFieldRef fieldRef) {
@@ -300,7 +300,7 @@ public class Baf {
   }
 
   public MulInst newMulInst(Type opType) {
-    return new BMulInst(opType, myBaf, primTypeCollector);
+    return new BMulInst(opType, this, primTypeCollector);
   }
 
   public DivInst newDivInst(Type opType) {

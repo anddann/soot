@@ -56,7 +56,7 @@ public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalys
 
     SootMethod method = g.getBody().getMethod();
 
-    AbstractDataSource sharedDataSource = new AbstractDataSource(new String("SHARED"));
+    AbstractDataSource sharedDataSource = new AbstractDataSource(new String("SHARED"), primeTypeCollector);
 
     // Add a source for every parameter that is shared
     for (int i = 0; i < method.getParameterCount(); i++) // no need to worry about return value...
@@ -92,7 +92,7 @@ public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalys
 
     SootMethod method = g.getBody().getMethod();
 
-    AbstractDataSource sharedDataSource = new AbstractDataSource(new String("SHARED"));
+    AbstractDataSource sharedDataSource = new AbstractDataSource(new String("SHARED"), primeTypeCollector);
 
     List<Object> sharedRefs = context.getSharedRefs();
     Iterator<Object> sharedRefEqValIt = sharedRefs.iterator(); // returns a list of (correctly structured) EquivalentValue
@@ -128,7 +128,7 @@ public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalys
   //
   public boolean isObjectLocal(Value local) // to this analysis of this method (which depends on context)
   {
-    EquivalentValue source = new CachedEquivalentValue(new AbstractDataSource(new String("SHARED")));
+    EquivalentValue source = new CachedEquivalentValue(new AbstractDataSource(new String("SHARED"), primeTypeCollector));
     if (infoFlowGraph.containsNode(source)) {
       List sinks = infoFlowGraph.getSuccsOf(source);
       if (printMessages) {

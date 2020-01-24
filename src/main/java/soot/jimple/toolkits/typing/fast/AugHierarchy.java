@@ -32,6 +32,7 @@ import soot.ByteType;
 import soot.CharType;
 import soot.IntType;
 import soot.IntegerType;
+import soot.Scene;
 import soot.ShortType;
 import soot.Type;
 
@@ -39,11 +40,17 @@ import soot.Type;
  * @author Ben Bellamy
  */
 public class AugHierarchy implements IHierarchy {
-  public Collection<Type> lcas(Type a, Type b) {
-    return lcas_(a, b);
+  private Scene myScene;
+
+  public AugHierarchy(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public static Collection<Type> lcas_(Type a, Type b) {
+  public Collection<Type> lcas(Type a, Type b, Scene myScene) {
+    return lcas_(a, b, myScene);
+  }
+
+  public static Collection<Type> lcas_(Type a, Type b, Scene myScene) {
     if (TypeResolver.typesEqual(a, b)) {
       return Collections.<Type>singletonList(a);
     } else if (a instanceof BottomType) {
@@ -59,11 +66,11 @@ public class AugHierarchy implements IHierarchy {
         return Collections.<Type>emptyList();
       } else if ((a instanceof ByteType && b instanceof Integer32767Type)
           || (b instanceof ByteType && a instanceof Integer32767Type)) {
-        return Collections.<Type>singletonList(ShortType.v());
+        return Collections.<Type>singletonList(myScene.getPrimTypeCollector().getShortType());
       } else if ((a instanceof CharType && (b instanceof ShortType || b instanceof ByteType))
           || (b instanceof CharType && (a instanceof ShortType || a instanceof ByteType))) {
-        return Collections.<Type>singletonList(IntType.v());
-      } else if (ancestor_(a, b)) {
+        return Collections.<Type>singletonList(myScene.getPrimTypeCollector().getIntType());
+      } else if (ancestor_(a, b, myScene)) {
         return Collections.<Type>singletonList(a);
       } else {
         return Collections.<Type>singletonList(b);
@@ -71,15 +78,15 @@ public class AugHierarchy implements IHierarchy {
     } else if (a instanceof IntegerType || b instanceof IntegerType) {
       return Collections.<Type>emptyList();
     } else {
-      return BytecodeHierarchy.lcas_(a, b);
+      return BytecodeHierarchy.lcas_(a, b, myScene);
     }
   }
 
   public boolean ancestor(Type ancestor, Type child) {
-    return ancestor_(ancestor, child);
+    return ancestor_(ancestor, child, myScene);
   }
 
-  public static boolean ancestor_(Type ancestor, Type child) {
+  public static boolean ancestor_(Type ancestor, Type child, Scene myScene) {
     if (TypeResolver.typesEqual(ancestor, child)) {
       return true;
     } else if (ancestor instanceof Integer1Type) {
@@ -131,7 +138,7 @@ public class AugHierarchy implements IHierarchy {
     } else if (child instanceof IntegerType) {
       return false;
     } else {
-      return BytecodeHierarchy.ancestor_(ancestor, child);
+      return BytecodeHierarchy.ancestor_(ancestor, child, myScene);
     }
   }
 }

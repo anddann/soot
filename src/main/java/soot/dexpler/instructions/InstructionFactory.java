@@ -140,7 +140,7 @@ public class InstructionFactory {
         return new MonitorExitInstruction(instruction, codeAddress, myOptions, myJimple, myDalvikTyper, myScene);
 
       case CHECK_CAST:
-        return new CheckCastInstruction(instruction, codeAddress);
+        return new CheckCastInstruction(instruction, codeAddress, myOptions, myJimple, myDalvikTyper);
 
       case INSTANCE_OF:
         return new InstanceOfInstruction(instruction, codeAddress);
@@ -281,7 +281,7 @@ public class InstructionFactory {
  
       case INVOKE_CUSTOM:
       case INVOKE_CUSTOM_RANGE:
-        return new InvokeCustomInstruction(instruction, codeAddress, constancFactory, jimple, myScene);
+        return new InvokeCustomInstruction(instruction, codeAddress, constancFactory, jimple, myScene, myOptions, myDalvikTyper, mySootResolver);
 
       case NEG_INT:
       case NOT_INT:

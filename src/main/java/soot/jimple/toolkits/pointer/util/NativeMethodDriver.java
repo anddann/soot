@@ -100,7 +100,7 @@ public class NativeMethodDriver {
 
     cnameToSim.put("java.io.FileInputStream", new JavaIoFileInputStreamNative(helper));
     cnameToSim.put("java.io.FileOutputStream", new JavaIoFileOutputStreamNative(helper));
-    cnameToSim.put("java.io.ObjectInputStream", new JavaIoObjectInputStreamNative(helper));
+    cnameToSim.put("java.io.ObjectInputStream", new JavaIoObjectInputStreamNative(helper, myEnvironment));
     cnameToSim.put("java.io.ObjectOutputStream", new JavaIoObjectOutputStreamNative(helper));
     cnameToSim.put("java.io.ObjectStreamClass", new JavaIoObjectStreamClassNative(helper));
     cnameToSim.put("java.io.FileSystem", new JavaIoFileSystemNative(helper));

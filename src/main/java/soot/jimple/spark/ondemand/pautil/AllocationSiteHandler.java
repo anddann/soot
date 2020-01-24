@@ -153,19 +153,25 @@ public interface AllocationSiteHandler {
     public NumberedString methodStr;
 
     public Set<SootMethod> possibleMethods = new HashSet<SootMethod>();
+    private VirtualCalls myVirtualCalls;
+    private Scene myScene;
 
     /**
-     * @param pag
-     * @param receiverType
      * @param methodName
      * @param parameterTypes
      * @param returnType
+     * @param pag
+     * @param receiverType
+     * @param myVirtualCalls
+     * @param myScene
      */
-    public VirtualCallHandler(PAG pag, Type receiverType, NumberedString methodStr) {
+    public VirtualCallHandler(PAG pag, Type receiverType, NumberedString methodStr, VirtualCalls myVirtualCalls, Scene myScene) {
       super();
       this.pag = pag;
       this.receiverType = receiverType;
       this.methodStr = methodStr;
+      this.myVirtualCalls = myVirtualCalls;
+      this.myScene = myScene;
     }
 
     /*

@@ -43,6 +43,7 @@ import soot.Local;
 import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.Printer;
+import soot.Scene;
 import soot.SootMethod;
 import soot.Type;
 import soot.baf.Baf;
@@ -88,16 +89,19 @@ public class Dava {
   private PhaseDumper myPhaseDumper;
   private Grimp myGrimp;
   private PrimTypeCollector primTypeCollector;
-    private Baf myBaf;
-    private TryContentsFinder myTryContentsFinder;
-    private ASTWalker myASTWalker;
+  private Baf myBaf;
+  private TryContentsFinder myTryContentsFinder;
+  private ASTWalker myASTWalker;
+  private Scene myScene;
 
-    @Inject
+  @Inject
   public Dava(Dava myJimple, ExceptionFinder myExceptionFinder, CycleFinder myCycleFinder, IfFinder myIfFinder,
-              SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder, SequenceFinder mySequenceFinder,
-              LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder, MonitorConverter myMonitorConverter,
-              ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-              ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker) {
+      SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder, SequenceFinder mySequenceFinder,
+      LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder, MonitorConverter myMonitorConverter,
+      ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
+      ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter,
+      ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector,
+      Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene) {
     this.myJimple = myJimple;
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -118,12 +122,11 @@ public class Dava {
     this.myPhaseDumper = myPhaseDumper;
     this.myGrimp = myGrimp;
     this.primTypeCollector = primTypeCollector;
-        this.myBaf = myBaf;
-        this.myTryContentsFinder = myTryContentsFinder;
-        this.myASTWalker = myASTWalker;
-    }
-
-
+    this.myBaf = myBaf;
+    this.myTryContentsFinder = myTryContentsFinder;
+    this.myASTWalker = myASTWalker;
+    this.myScene = myScene;
+  }
 
   private static final String LOG_TO_FILE = null;
   private static final PrintStream LOG_TO_SCREEN = null;
@@ -151,7 +154,8 @@ public class Dava {
   public DavaBody newBody(SootMethod m) {
     DavaBody davaBody = new DavaBody(m, myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, this, myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector, myBaf, myScene);
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, this,
+        myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector, myBaf, myScene);
     return davaBody;
   }
 
@@ -159,7 +163,8 @@ public class Dava {
   public DavaBody newBody(Body b) {
     return new DavaBody(b, myOptions, myPrinter, myMonitorConverter, myExceptionFinder, mySynchronizedBlockFinder,
         myThrowNullConverter, mySequenceFinder, myLabeledBlockFinder, myCycleFinder, myIfFinder, mySwitchFinder,
-        myAbruptEdgeFinder, myUselessTryRemover, myPhaseOptions, myClosestAbruptTargetFinder, this, constancFactory, myPhaseDumper, myGrimp, primTypeCollector, myBaf, myTryContentsFinder, myScene);
+        myAbruptEdgeFinder, myUselessTryRemover, myPhaseOptions, myClosestAbruptTargetFinder, this, constancFactory,
+        myPhaseDumper, myGrimp, primTypeCollector, myBaf, myTryContentsFinder, myASTWalker, myScene);
 
   }
 

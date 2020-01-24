@@ -58,13 +58,16 @@ import soot.Local;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethodRef;
+import soot.SootResolver;
 import soot.Value;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.jimple.MethodHandle;
 import soot.jimple.MethodHandle.Kind;
+import soot.options.Options;
 
 public class InvokeCustomInstruction extends MethodInvocationInstruction {
 
@@ -72,7 +75,7 @@ public class InvokeCustomInstruction extends MethodInvocationInstruction {
   private Jimple myJimple;
   private Scene myScene;
 
-  public InvokeCustomInstruction(Instruction instruction, int codeAddress, ConstantFactory constancFactory, Jimple myJimple, Scene myScene) {
+  public InvokeCustomInstruction(Instruction instruction, int codeAddress, ConstantFactory constancFactory, Jimple myJimple, Scene myScene, Options myOptions, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
     super(instruction, codeAddress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
     this.constancFactory = constancFactory;
     this.myJimple = myJimple;

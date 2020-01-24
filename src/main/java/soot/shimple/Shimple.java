@@ -121,14 +121,14 @@ public class Shimple {
    **/
   public ShimpleBody newBody(SootMethod m) {
     Map<String, String> options = myPhaseOptions.getPhaseOptions(PHASE);
-    return new ShimpleBody(m, options, myPrinter, myOptions, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myJimple, myCopyPropagator, myInteractionHander, myShimple);
+    return new ShimpleBody(m, options, myPrinter, myOptions, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myJimple, myCopyPropagator, myInteractionHander, myScene, myShimple);
   }
 
   /**
    * Returns an empty ShimpleBody associated with method m, using provided option map.
    **/
   public ShimpleBody newBody(SootMethod m, Map<String, String> options) {
-    return new ShimpleBody(m, options, myPrinter, myOptions, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myJimple, myCopyPropagator, myInteractionHander, myShimple);
+    return new ShimpleBody(m, options, myPrinter, myOptions, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myJimple, myCopyPropagator, myInteractionHander, myScene, myShimple);
   }
 
   /**
@@ -136,14 +136,14 @@ public class Shimple {
    **/
   public ShimpleBody newBody(Body b) {
     Map<String, String> options = myPhaseOptions.getPhaseOptions(PHASE);
-    return new ShimpleBody(b, options, myOptions, myPrinter, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myJimple, myCopyPropagator, myInteractionHander, myShimple);
+    return new ShimpleBody(b, options, myOptions, myPrinter, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myJimple, myCopyPropagator, myInteractionHander, myScene, myShimple);
   }
 
   /**
    * Returns a ShimpleBody constructed from b, using provided option Map.
    **/
   public ShimpleBody newBody(Body b, Map<String, String> options) {
-    return new ShimpleBody(b, options, myOptions, myPrinter, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myJimple, myCopyPropagator, myInteractionHander, myShimple);
+    return new ShimpleBody(b, options, myOptions, myPrinter, myNopEliminator, myDeadAssignmentEliminator, myUnreachableCodeEliminator, myUnconditionalBranchFolder, myAggregator, myUnusedLocalEliminator, myLocalNameStandardizer, myJimple, myCopyPropagator, myInteractionHander, myScene, myShimple);
   }
 
   /**

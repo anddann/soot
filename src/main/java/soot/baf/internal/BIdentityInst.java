@@ -86,11 +86,12 @@ public class BIdentityInst extends AbstractInst implements IdentityInst {
     return list;
   }
 
-  public BIdentityInst(Value local, Value identityValue) {
-    this(myBaf.newLocalBox(local), myBaf.newIdentityRefBox(identityValue));
+  public BIdentityInst(Value local, Value identityValue, Baf myBaf) {
+    this(myBaf.newLocalBox(local), myBaf.newIdentityRefBox(identityValue), myBaf);
   }
 
-  protected BIdentityInst(ValueBox localBox, ValueBox identityValueBox) {
+  protected BIdentityInst(ValueBox localBox, ValueBox identityValueBox, Baf myBaf) {
+    super(myBaf);
     this.leftBox = localBox;
     this.rightBox = identityValueBox;
 
@@ -98,7 +99,7 @@ public class BIdentityInst extends AbstractInst implements IdentityInst {
   }
 
   public Object clone() {
-    return new BIdentityInst(getLeftOp(), getRightOp());
+    return new BIdentityInst(getLeftOp(), getRightOp(), myBaf);
   }
 
   public String toString() {

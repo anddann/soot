@@ -44,6 +44,7 @@ import soot.FastHierarchy;
 import soot.Local;
 import soot.NullType;
 import soot.RefType;
+import soot.Scene;
 import soot.SceneTransformer;
 import soot.SootClass;
 import soot.SootMethod;
@@ -57,6 +58,9 @@ import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
 import soot.jimple.VirtualInvokeExpr;
 import soot.jimple.toolkits.pointer.LocalMustNotAliasAnalysis;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.graph.interaction.InteractionHandler;
 
 /**
  * This is an implementation of AbstractJimpleBasedICFG that computes the ICFG on-the-fly. In other words, it can be used
@@ -76,13 +80,7 @@ import soot.jimple.toolkits.pointer.LocalMustNotAliasAnalysis;
 public class OnTheFlyJimpleBasedICFG extends AbstractJimpleBasedICFG {
 
   @SynchronizedBy("by use of synchronized LoadingCache class")
-  protected final LoadingCache<Body, LocalMustNotAliasAnalysis> bodyToLMNAA
-      = IDESolver.DEFAULT_CACHE_BUILDER.build(new CacheLoader<Body, LocalMustNotAliasAnalysis>() {
-        @Override
-        public LocalMustNotAliasAnalysis load(Body body) throws Exception {
-          return new LocalMustNotAliasAnalysis(getOrCreateUnitGraph(body), body, isInteraticveMode(), getMyInteractionHandler());
-        }
-      });
+  protected final LoadingCache<Body, LocalMustNotAliasAnalysis> bodyToLMNAA;
 
   @SynchronizedBy("by use of synchronized LoadingCache class")
   protected final LoadingCache<Unit, Set<SootMethod>> unitToCallees
@@ -132,15 +130,31 @@ public class OnTheFlyJimpleBasedICFG extends AbstractJimpleBasedICFG {
 
   @SynchronizedBy("explicit lock on data structure")
   protected Map<SootMethod, Set<Unit>> methodToCallers = new HashMap<SootMethod, Set<Unit>>();
+  private InteractionHandler myInteractionHandler;
+  private Scene myScene;
+    private Options myOptions;
 
-  public OnTheFlyJimpleBasedICFG(SootMethod... entryPoints) {
-    this(Arrays.asList(entryPoints));
+    public OnTheFlyJimpleBasedICFG(final Options myOptions, InteractionHandler myInteractionHandler,
+      ThrowAnalysis throwAnalysis, SootMethod... entryPoints) {
+    this(Arrays.asList(entryPoints), throwAnalysis, myOptions, myInteractionHandler);
+
   }
 
-  public OnTheFlyJimpleBasedICFG(Collection<SootMethod> entryPoints) {
+  public OnTheFlyJimpleBasedICFG(Collection<SootMethod> entryPoints, ThrowAnalysis throwAnalysis, final Options myOptions,
+      InteractionHandler myInteractionHandler) {
+    super(throwAnalysis);
+    this.myInteractionHandler = myInteractionHandler;
     for (SootMethod m : entryPoints) {
       initForMethod(m);
     }
+    bodyToLMNAA = IDESolver.DEFAULT_CACHE_BUILDER.build(new CacheLoader<Body, LocalMustNotAliasAnalysis>() {
+      @Override
+      public LocalMustNotAliasAnalysis load(Body body) throws Exception {
+        return new LocalMustNotAliasAnalysis(getOrCreateUnitGraph(body), body, myOptions.interactive_mode(),
+            OnTheFlyJimpleBasedICFG.this.myInteractionHandler);
+      }
+    });
+    ;
   }
 
   protected Body initForMethod(SootMethod m) {
@@ -204,68 +218,8 @@ public class OnTheFlyJimpleBasedICFG extends AbstractJimpleBasedICFG {
     // throw new UnsupportedOperationException("This class is not suited for unbalanced problems");
   }
 
-  public static void loadAllClassesOnClassPathToSignatures() {
-    for (String path : SourceLocator.explodeClassPath(myScene.getSootClassPath())) {
-      for (String cl : mySourceLocator.getClassesUnder(path)) {
-        myScene.forceResolve(cl, SootClass.SIGNATURES);
-      }
-    }
-  }
 
-  public static void main(String[] args) {
-    PackmyManager.getPack("wjtp").add(new Transform("wjtp.onflyicfg", new SceneTransformer() {
 
-      @Override
-      protected void internalTransform(String phaseName, Map<String, String> options) {
-        if (myScene.hasCallGraph()) {
-          throw new RuntimeException("call graph present!");
-        }
 
-        loadAllClassesOnClassPathToSignatures();
-
-        SootMethod mainMethod = myScene.getMainMethod();
-        OnTheFlyJimpleBasedICFG icfg = new OnTheFlyJimpleBasedICFG(mainMethod);
-        Set<SootMethod> worklist = new LinkedHashSet<SootMethod>();
-        Set<SootMethod> visited = new HashSet<SootMethod>();
-        worklist.add(mainMethod);
-        int monomorphic = 0, polymorphic = 0;
-        while (!worklist.isEmpty()) {
-          Iterator<SootMethod> iter = worklist.iterator();
-          SootMethod currMethod = iter.next();
-          iter.remove();
-          visited.add(currMethod);
-          System.err.println(currMethod);
-          // MUST call this method to initialize ICFG for every method
-          Body body = currMethod.getActiveBody();
-          if (body == null) {
-            continue;
-          }
-          for (Unit u : body.getUnits()) {
-            Stmt s = (Stmt) u;
-            if (s.containsInvokeExpr()) {
-              Set<SootMethod> calleesOfCallAt = icfg.getCalleesOfCallAt(s);
-              if (s.getInvokeExpr() instanceof VirtualInvokeExpr || s.getInvokeExpr() instanceof InterfaceInvokeExpr) {
-                if (calleesOfCallAt.size() <= 1) {
-                  monomorphic++;
-                } else {
-                  polymorphic++;
-                }
-                System.err.println("mono: " + monomorphic + "   poly: " + polymorphic);
-              }
-              for (SootMethod callee : calleesOfCallAt) {
-                if (!visited.contains(callee)) {
-                  System.err.println(callee);
-                  // worklist.add(callee);
-                }
-              }
-            }
-          }
-        }
-      }
-
-    }));
-    myOptions.set_on_the_fly(true);
-    soot.Main.main(args);
-  }
 
 }

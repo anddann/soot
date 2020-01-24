@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.Printer;
+import soot.Scene;
 import soot.SootMethod;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
@@ -73,6 +74,7 @@ public class ShimpleBody extends StmtBody {
   private final Jimple myJimple;
   private final CopyPropagator myCopyPropagator;
   private final InteractionHandler myInteractionHander;
+  private final Scene myScene;
   /**
    * Holds our options map...
    **/
@@ -86,7 +88,7 @@ public class ShimpleBody extends StmtBody {
   /**
    * Construct an empty ShimpleBody associated with m.
    **/
-  ShimpleBody(SootMethod m, Map options, Printer myPrinter, Options myOptions, NopEliminator myNopEliminator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer, Jimple myJimple, CopyPropagator myCopyPropagator, InteractionHandler myInteractionHander, Shimple myShimple) {
+  ShimpleBody(SootMethod m, Map options, Printer myPrinter, Options myOptions, NopEliminator myNopEliminator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer, Jimple myJimple, CopyPropagator myCopyPropagator, InteractionHandler myInteractionHander, Scene myScene, Shimple myShimple) {
     super(m, myOptions, myPrinter);
 
     // must happen before SPatchingChain gets created
@@ -101,12 +103,13 @@ public class ShimpleBody extends StmtBody {
     this.myJimple = myJimple;
     this.myCopyPropagator = myCopyPropagator;
     this.myInteractionHander = myInteractionHander;
+    this.myScene = myScene;
     this.myShimple = myShimple;
     setSSA(true);
     isExtendedSSA = this.options.extended();
 
     unitChain = new SPatchingChain(this, new HashChain());
-    sbb = new ShimpleBodyBuilder(this.myNopEliminator, myShimple, this.myJimple, this.myCopyPropagator, this.myInteractionHander, myOptions, this, this.myDeadAssignmentEliminator, this.myUnreachableCodeEliminator, this.myUnconditionalBranchFolder, this.myAggregator, this.myUnusedLocalEliminator, this.myLocalNameStandardizer, myScene);
+    sbb = new ShimpleBodyBuilder(this.myNopEliminator, myShimple, this.myJimple, this.myCopyPropagator, this.myInteractionHander, myOptions, this, this.myDeadAssignmentEliminator, this.myUnreachableCodeEliminator, this.myUnconditionalBranchFolder, this.myAggregator, this.myUnusedLocalEliminator, this.myLocalNameStandardizer, this.myScene);
   }
 
   /**
@@ -116,7 +119,7 @@ public class ShimpleBody extends StmtBody {
    * Currently available option is "naive-phi-elimination", typically in the "shimple" phase (eg, -p shimple
    * naive-phi-elimination) which can be useful for understanding the effect of analyses.
    **/
-  ShimpleBody(Body body, Map options, Options myOptions, Printer myPrinter, NopEliminator myNopEliminator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer, Jimple myJimple, CopyPropagator myCopyPropagator, InteractionHandler myInteractionHander, Shimple myShimple) {
+  ShimpleBody(Body body, Map options, Options myOptions, Printer myPrinter, NopEliminator myNopEliminator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer, Jimple myJimple, CopyPropagator myCopyPropagator, InteractionHandler myInteractionHander, Scene myScene, Shimple myShimple) {
     super(body.getMethod(), myOptions, myPrinter);
     this.myNopEliminator = myNopEliminator;
     this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
@@ -128,6 +131,7 @@ public class ShimpleBody extends StmtBody {
     this.myJimple = myJimple;
     this.myCopyPropagator = myCopyPropagator;
     this.myInteractionHander = myInteractionHander;
+    this.myScene = myScene;
     this.myShimple = myShimple;
 
     if (!(body instanceof JimpleBody || body instanceof ShimpleBody)) {
@@ -145,7 +149,7 @@ public class ShimpleBody extends StmtBody {
     importBodyContentsFrom(body);
 
     /* Shimplise body */
-    sbb = new ShimpleBodyBuilder(this.myNopEliminator, myShimple, this.myJimple, this.myCopyPropagator, this.myInteractionHander, myOptions, this, this.myDeadAssignmentEliminator, this.myUnreachableCodeEliminator, this.myUnconditionalBranchFolder, this.myAggregator, this.myUnusedLocalEliminator, this.myLocalNameStandardizer, myScene);
+    sbb = new ShimpleBodyBuilder(this.myNopEliminator, myShimple, this.myJimple, this.myCopyPropagator, this.myInteractionHander, myOptions, this, this.myDeadAssignmentEliminator, this.myUnreachableCodeEliminator, this.myUnconditionalBranchFolder, this.myAggregator, this.myUnusedLocalEliminator, this.myLocalNameStandardizer, this.myScene);
 
     if (body instanceof ShimpleBody) {
       rebuild(true);

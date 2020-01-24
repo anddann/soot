@@ -9,7 +9,6 @@ import java.util.ListIterator;
 
 import soot.ArrayType;
 import soot.FloatType;
-import soot.IntType;
 import soot.IntegerType;
 import soot.NullType;
 import soot.PrimType;
@@ -46,10 +45,16 @@ import soot.Type;
  * @author Ben Bellamy
  */
 public class BytecodeHierarchy implements IHierarchy {
+  private Scene myScene;
+
+  public BytecodeHierarchy(Scene myScene) {
+    this.myScene = myScene;
+  }
+
   /*
    * Returns a collection of nodes, each with type Object, each at the leaf end of a different path from root to Object.
    */
-  private static Collection<AncestryTreeNode> buildAncestryTree(RefType root) {
+  private static Collection<AncestryTreeNode> buildAncestryTree(RefType root, Scene myScene) {
     if (root.getSootClass().isPhantom()) {
       return Collections.emptyList();
     }
@@ -58,7 +63,7 @@ public class BytecodeHierarchy implements IHierarchy {
     leafs.add(new AncestryTreeNode(null, root));
 
     LinkedList<AncestryTreeNode> r = new LinkedList<AncestryTreeNode>();
-    final RefType objectType = RefType.v("java.lang.Object");
+    final RefType objectType = RefType.v("java.lang.Object", myScene);
     while (!leafs.isEmpty()) {
       AncestryTreeNode node = leafs.remove();
       if (TypeResolver.typesEqual(node.type, objectType)) {
@@ -91,7 +96,7 @@ public class BytecodeHierarchy implements IHierarchy {
     return r;
   }
 
-  public static Collection<Type> lcas_(Type a, Type b) {
+  public static Collection<Type> lcas_(Type a, Type b, Scene myScene) {
     if (TypeResolver.typesEqual(a, b)) {
       return Collections.<Type>singletonList(a);
     } else if (a instanceof BottomType) {
@@ -99,11 +104,11 @@ public class BytecodeHierarchy implements IHierarchy {
     } else if (b instanceof BottomType) {
       return Collections.<Type>singletonList(a);
     } else if (a instanceof IntegerType && b instanceof IntegerType) {
-      return Collections.<Type>singletonList(IntType.v());
+      return Collections.<Type>singletonList(myScene.getPrimTypeCollector().getIntType());
     } else if (a instanceof IntegerType && b instanceof FloatType) {
-      return Collections.<Type>singletonList(FloatType.v());
+      return Collections.<Type>singletonList(myScene.getPrimTypeCollector().getFloatType());
     } else if (b instanceof IntegerType && a instanceof FloatType) {
-      return Collections.<Type>singletonList(FloatType.v());
+      return Collections.<Type>singletonList(myScene.getPrimTypeCollector().getFloatType());
     } else if (a instanceof PrimType || b instanceof PrimType) {
       return Collections.<Type>emptyList();
     } else if (a instanceof NullType) {
@@ -118,15 +123,15 @@ public class BytecodeHierarchy implements IHierarchy {
       if (eta instanceof PrimType || etb instanceof PrimType) {
         ts = Collections.<Type>emptyList();
       } else {
-        ts = lcas_(eta, etb);
+        ts = lcas_(eta, etb, myScene);
       }
 
       LinkedList<Type> r = new LinkedList<Type>();
       if (ts.isEmpty()) {
         // From Java Language Spec 2nd ed., Chapter 10, Arrays
-        r.add(RefType.v("java.lang.Object"));
-        r.add(RefType.v("java.io.Serializable"));
-        r.add(RefType.v("java.lang.Cloneable"));
+        r.add(RefType.v("java.lang.Object", myScene));
+        r.add(RefType.v("java.io.Serializable", myScene));
+        r.add(RefType.v("java.lang.Cloneable", myScene));
       } else {
         for (Type t : ts) {
           r.add(t.makeArrayType());
@@ -151,23 +156,23 @@ public class BytecodeHierarchy implements IHierarchy {
        * Do not consider Object to be a subtype of Serializable or Cloneable (it can appear this way if phantom-refs is
        * enabled and rt.jar is not available) otherwise an infinite loop can result.
        */
-      if (!TypeResolver.typesEqual(RefType.v("java.lang.Object"), rt)) {
-        if (ancestor_(RefType.v("java.io.Serializable"), rt)) {
-          r.add(RefType.v("java.io.Serializable"));
+      if (!TypeResolver.typesEqual(RefType.v("java.lang.Object", myScene), rt)) {
+        if (ancestor_(RefType.v("java.io.Serializable", myScene), rt, myScene)) {
+          r.add(RefType.v("java.io.Serializable", myScene));
         }
-        if (ancestor_(RefType.v("java.lang.Cloneable"), rt)) {
-          r.add(RefType.v("java.lang.Cloneable"));
+        if (ancestor_(RefType.v("java.lang.Cloneable", myScene), rt, myScene)) {
+          r.add(RefType.v("java.lang.Cloneable", myScene));
         }
       }
 
       if (r.isEmpty()) {
-        r.add(RefType.v("java.lang.Object"));
+        r.add(RefType.v("java.lang.Object", myScene));
       }
       return r;
     }
     // a and b are both RefType
     else {
-      Collection<AncestryTreeNode> treea = buildAncestryTree((RefType) a), treeb = buildAncestryTree((RefType) b);
+      Collection<AncestryTreeNode> treea = buildAncestryTree((RefType) a, myScene), treeb = buildAncestryTree((RefType) b, myScene);
 
       LinkedList<Type> r = new LinkedList<Type>();
       for (AncestryTreeNode nodea : treea) {
@@ -178,12 +183,12 @@ public class BytecodeHierarchy implements IHierarchy {
           for (ListIterator<Type> i = r.listIterator(); i.hasNext();) {
             Type t_ = i.next();
 
-            if (ancestor_(t, t_)) {
+            if (ancestor_(t, t_, myScene)) {
               least = false;
               break;
             }
 
-            if (ancestor_(t_, t)) {
+            if (ancestor_(t_, t, myScene)) {
               i.remove();
             }
           }
@@ -199,13 +204,13 @@ public class BytecodeHierarchy implements IHierarchy {
       // kludge on a kludge on a kludge...
       // syed - 05/06/2009
       if (r.isEmpty()) {
-        r.add(RefType.v("java.lang.Object"));
+        r.add(RefType.v("java.lang.Object", myScene));
       }
       return r;
     }
   }
 
-  public static boolean ancestor_(Type ancestor, Type child) {
+  public static boolean ancestor_(Type ancestor, Type child, Scene myScene) {
     if (TypeResolver.typesEqual(ancestor, child)) {
       return true;
     } else if (child instanceof BottomType) {
@@ -284,12 +289,12 @@ public class BytecodeHierarchy implements IHierarchy {
     return r;
   }
 
-  public Collection<Type> lcas(Type a, Type b) {
-    return lcas_(a, b);
+  public Collection<Type> lcas(Type a, Type b, Scene myScene) {
+    return lcas_(a, b, this.myScene);
   }
 
   public boolean ancestor(Type ancestor, Type child) {
-    return ancestor_(ancestor, child);
+    return ancestor_(ancestor, child, myScene);
   }
 
   private static class AncestryTreeNode {

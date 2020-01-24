@@ -37,8 +37,12 @@ import soot.options.Options;
 
 public class AbstractSootFieldRef implements SootFieldRef {
   private static final Logger logger = LoggerFactory.getLogger(AbstractSootFieldRef.class);
+  private Scene myScene;
+  private Options myOptions;
 
-  public AbstractSootFieldRef(SootClass declaringClass, String name, Type type, boolean isStatic) {
+  public AbstractSootFieldRef(Scene myScene, Options myOptions, SootClass declaringClass, String name, Type type, boolean isStatic) {
+    this.myScene = myScene;
+    this.myOptions = myOptions;
     this.declaringClass = declaringClass;
     this.name = name;
     this.type = type;
@@ -81,7 +85,7 @@ public class AbstractSootFieldRef implements SootFieldRef {
 
   @Override
   public String getSignature() {
-    return SootField.getSignature(declaringClass, name, type);
+    return SootField.getSignature(declaringClass, name, type,myScene);
   }
 
   public class FieldResolutionFailedException extends ResolutionFailedException {

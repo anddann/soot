@@ -140,7 +140,7 @@ public class TypeResolver {
 
   public void inferTypes() {
     AugEvalFunction ef = new AugEvalFunction(this.jb);
-    BytecodeHierarchy bh = new BytecodeHierarchy();
+    BytecodeHierarchy bh = new BytecodeHierarchy(myScene);
     Collection<Typing> sigma = this.applyAssignmentConstraints(new Typing(this.jb.getLocals()), ef, bh);
 
     // If there is nothing to type, we can quit
@@ -340,7 +340,7 @@ public class TypeResolver {
 
       Type t = AugEvalFunction.eval_(this.tg, op, stmt, this.jb);
 
-      if (!AugHierarchy.ancestor_(useType, t)) {
+      if (!AugHierarchy.ancestor_(useType, t, myScene)) {
         this.fail = true;
       } else if (op instanceof Local
           && (t instanceof Integer1Type || t instanceof Integer127Type || t instanceof Integer32767Type)) {
@@ -370,7 +370,7 @@ public class TypeResolver {
     boolean conversionDone;
     do {
       AugEvalFunction ef = new AugEvalFunction(this.jb);
-      AugHierarchy h = new AugHierarchy();
+      AugHierarchy h = new AugHierarchy(myScene);
       UseChecker uc = new UseChecker(this.jb);
       TypePromotionUseVisitor uv = new TypePromotionUseVisitor(jb, tg);
       do {
@@ -508,7 +508,7 @@ public class TypeResolver {
               && (stmt.getRightOp() instanceof CaughtExceptionRef)) {
             lcas = Collections.<Type>singleton(RefType.v("java.lang.Throwable"));
           } else {
-            lcas = h.lcas(told, t_);
+            lcas = h.lcas(told, t_, myScene);
           }
 
           for (Type t : lcas) {

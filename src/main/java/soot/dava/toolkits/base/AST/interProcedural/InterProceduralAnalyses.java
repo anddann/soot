@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import soot.PhaseOptions;
+import soot.PrimTypeCollector;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.dava.DavaBody;
@@ -42,6 +44,7 @@ import soot.dava.toolkits.base.AST.transformations.UselessLabelFinder;
 import soot.dava.toolkits.base.AST.transformations.VoidReturnRemover;
 import soot.dava.toolkits.base.renamer.Renamer;
 import soot.dava.toolkits.base.renamer.infoGatheringAnalysis;
+import soot.jimple.ConstantFactory;
 import soot.util.Chain;
 
 public class InterProceduralAnalyses {
@@ -52,7 +55,7 @@ public class InterProceduralAnalyses {
    *
    * All interproceduralAnalyses should be applied in here
    */
-  public static void applyInterProceduralAnalyses() {
+  public static void applyInterProceduralAnalyses(Scene myScene, PhaseOptions myPhaseOptions, ConstantFactory constancFactory, PrimTypeCollector primTypeCollector) {
     Chain classes = myScene.getApplicationClasses();
 
     if (DEBUG) {
@@ -90,7 +93,7 @@ public class InterProceduralAnalyses {
           continue;
         }
 
-        Map options = myPhaseOptions().getPhaseOptions("db.deobfuscate");
+        Map options = myPhaseOptions.getPhaseOptions("db.deobfuscate");
         boolean deobfuscate = PhaseOptions.getBoolean(options, "enabled");
         // System.out.println("force is "+force);
         if (deobfuscate) {
@@ -133,7 +136,7 @@ public class InterProceduralAnalyses {
         }
 
         // renaming should be applied as the last stage
-        options = myPhaseOptions().getPhaseOptions("db.renamer");
+        options = myPhaseOptions.getPhaseOptions("db.renamer");
         boolean renamer = PhaseOptions.getBoolean(options, "enabled");
         // System.out.println("renaming is"+renamer);
         if (renamer) {

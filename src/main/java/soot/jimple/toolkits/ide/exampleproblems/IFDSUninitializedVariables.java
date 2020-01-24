@@ -40,6 +40,8 @@ import java.util.Set;
 
 import soot.Local;
 import soot.NullType;
+import soot.PrimTypeCollector;
+import soot.Scene;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
@@ -54,6 +56,10 @@ import soot.jimple.toolkits.ide.DefaultJimpleIFDSTabulationProblem;
 
 public class IFDSUninitializedVariables
     extends DefaultJimpleIFDSTabulationProblem<Local, InterproceduralCFG<Unit, SootMethod>> {
+
+  //FIMXE
+  private Scene myScene;
+  private PrimTypeCollector primeTypeCollector;
 
   public IFDSUninitializedVariables(InterproceduralCFG<Unit, SootMethod> icfg) {
     super(icfg);
@@ -224,7 +230,7 @@ public class IFDSUninitializedVariables
 
   @Override
   public Local createZeroValue() {
-    return new JimpleLocal("<<zero>>", NullType.v(), myScene);
+    return new JimpleLocal("<<zero>>", primeTypeCollector.getNullType(), myScene);
   }
 
 }
