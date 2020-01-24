@@ -49,7 +49,7 @@ public class AbstractTrap implements Trap, Serializable {
 
   /** The list of unitBoxes referred to in this Trap (begin, end and handler. */
   protected List<UnitBox> unitBoxes;
-  private Scene myScene;
+  protected Scene myScene;
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();

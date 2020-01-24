@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import soot.Local;
+import soot.Scene;
 import soot.Type;
 import soot.Unit;
 import soot.UnitPrinter;
@@ -40,9 +41,11 @@ import soot.util.Switch;
 public class JimpleLocal implements Local, ConvertToBaf {
   protected String name;
   Type type;
+  private Scene myScene;
 
   /** Constructs a JimpleLocal of the given name and type. */
-  public JimpleLocal(String name, Type type) {
+  public JimpleLocal(String name, Type type, Scene myScene) {
+    this.myScene = myScene;
     setName(name);
     setType(type);
     Numberer<Local> numberer = myScene.getLocalNumberer();
@@ -73,7 +76,7 @@ public class JimpleLocal implements Local, ConvertToBaf {
   @Override
   public Object clone() {
     // do not intern the name again
-    JimpleLocal local = new JimpleLocal(null, type);
+    JimpleLocal local = new JimpleLocal(null, type, myScene);
     local.name = name;
     return local;
   }

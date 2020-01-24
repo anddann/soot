@@ -47,6 +47,14 @@ import soot.util.Chain;
 
 public class ThisInliner extends BodyTransformer {
 
+  private Jimple myJimple;
+  private LocalNameStandardizer myLocalNameStandardizer;
+
+  public ThisInliner(Jimple myJimple, LocalNameStandardizer myLocalNameStandardizer) {
+    this.myJimple = myJimple;
+    this.myLocalNameStandardizer = myLocalNameStandardizer;
+  }
+
   public void internalTransform(Body b, String phaseName, Map options) {
 
     // assure body is a constructor

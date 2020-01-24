@@ -39,14 +39,16 @@ class LocalTypeSet extends java.util.BitSet {
   private static final Logger logger = LoggerFactory.getLogger(LocalTypeSet.class);
   protected List<Local> locals;
   protected List<Type> types;
+  private Scene myScene;
 
   /**
    * Constructs a new empty set given a list of all locals and types that may ever be in the set.
    */
-  public LocalTypeSet(List<Local> locals, List<Type> types) {
+  public LocalTypeSet(List<Local> locals, List<Type> types, Scene myScene) {
     super(locals.size() * types.size());
     this.locals = locals;
     this.types = types;
+    this.myScene = myScene;
 
     // Make sure that we have a hierarchy
     myScene.getOrMakeFastHierarchy();

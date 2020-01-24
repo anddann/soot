@@ -30,10 +30,13 @@ import org.jf.dexlib2.iface.Field;
 import org.jf.dexlib2.iface.Method;
 
 import soot.Modifier;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
+import soot.SootResolver;
 import soot.javaToJimple.IInitialResolver.Dependencies;
+import soot.options.Options;
 import soot.tagkit.InnerClassAttribute;
 import soot.tagkit.InnerClassTag;
 import soot.tagkit.SourceFileTag;
@@ -43,6 +46,16 @@ import soot.tagkit.Tag;
  * Class for loading methods from dex files
  */
 public class DexClassLoader {
+
+  private Scene myScene;
+  private SootResolver mySootResolver;
+  private Options myOptions;
+
+  public DexClassLoader(Scene myScene, SootResolver mySootResolver, Options myOptions) {
+    this.myScene = myScene;
+    this.mySootResolver = mySootResolver;
+    this.myOptions = myOptions;
+  }
 
   /**
    * Loads a single method from a dex file
@@ -214,7 +227,7 @@ public class DexClassLoader {
    * @return
    */
   protected DexAnnotation createDexAnnotation(SootClass clazz, Dependencies deps) {
-    return new DexAnnotation(clazz, deps);
+    return new DexAnnotation(clazz, deps, myScene, mySootResolver);
   }
 
   /**

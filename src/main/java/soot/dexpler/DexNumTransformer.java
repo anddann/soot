@@ -48,9 +48,7 @@ import soot.jimple.BinopExpr;
 import soot.jimple.CastExpr;
 import soot.jimple.CmpExpr;
 import soot.jimple.DefinitionStmt;
-import soot.jimple.DoubleConstant;
 import soot.jimple.FieldRef;
-import soot.jimple.FloatConstant;
 import soot.jimple.IdentityStmt;
 import soot.jimple.IntConstant;
 import soot.jimple.InvokeExpr;
@@ -91,6 +89,10 @@ public class DexNumTransformer extends DexTransformer {
 
   private boolean usedAsFloatingPoint;
   boolean doBreak = false;
+
+  public DexNumTransformer() {
+    super(primeTypeCollector);
+  }
 
   public static DexNumTransformer v() {
     return new DexNumTransformer();

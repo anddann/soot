@@ -49,6 +49,7 @@ import soot.options.LCMOptions;
 import soot.options.Options;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArrayPackedSet;
 import soot.toolkits.scalar.BoundedFlowSet;
 import soot.toolkits.scalar.CollectionFlowUniverse;
@@ -80,15 +81,17 @@ public class LazyCodeMotion extends BodyTransformer {
   private Scene myScene;
   private Jimple myJimple;
   private PhaseDumper myPhaseDumper;
+  private InteractionHandler myInteractionHandler;
 
   @Inject
-  public LazyCodeMotion(Options myOptions, BodyTransformer myCriticalEdgeRemover, Scene myScene, Jimple myJimple, PhaseDumper myPhaseDumper) {
+  public LazyCodeMotion(Options myOptions, BodyTransformer myCriticalEdgeRemover, Scene myScene, Jimple myJimple, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
 
     this.myOptions = myOptions;
     this.myCriticalEdgeRemover = myCriticalEdgeRemover;
     this.myScene = myScene;
     this.myJimple = myJimple;
     this.myPhaseDumper = myPhaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
   private static final String PREFIX = "$lcm";
@@ -153,15 +156,15 @@ public class LazyCodeMotion extends BodyTransformer {
     LatestComputation latest;
 
     if (options.safety() == LCMOptions.safety_safe) {
-      upSafe = new UpSafetyAnalysis(graph, unitToNoExceptionEquivRhs, sideEffect, set, getMyInteractionHandler(), myOptions);
+      upSafe = new UpSafetyAnalysis(graph, unitToNoExceptionEquivRhs, sideEffect, set, myInteractionHandler, myOptions);
     } else {
-      upSafe = new UpSafetyAnalysis(graph, unitToEquivRhs, sideEffect, set, getMyInteractionHandler(), myOptions);
+      upSafe = new UpSafetyAnalysis(graph, unitToEquivRhs, sideEffect, set, myInteractionHandler, myOptions);
     }
 
     if (options.safety() == LCMOptions.safety_unsafe) {
-      downSafe = new DownSafetyAnalysis(graph, unitToEquivRhs, sideEffect, set, myOptions, getMyInteractionHandler());
+      downSafe = new DownSafetyAnalysis(graph, unitToEquivRhs, sideEffect, set, myOptions, myInteractionHandler);
     } else {
-      downSafe = new DownSafetyAnalysis(graph, unitToNoExceptionEquivRhs, sideEffect, set, myOptions, getMyInteractionHandler());
+      downSafe = new DownSafetyAnalysis(graph, unitToNoExceptionEquivRhs, sideEffect, set, myOptions, myInteractionHandler);
       /* we include the exception-throwing expressions at their uses */
       Iterator<Unit> unitIt = unitChain.iterator();
       while (unitIt.hasNext()) {
@@ -174,7 +177,7 @@ public class LazyCodeMotion extends BodyTransformer {
     }
 
     earliest = new EarliestnessComputation(graph, upSafe, downSafe, sideEffect, set);
-    delay = new DelayabilityAnalysis(graph, earliest, unitToEquivRhs, set, getMyInteractionHandler(), myOptions);
+    delay = new DelayabilityAnalysis(graph, earliest, unitToEquivRhs, set, myInteractionHandler, myOptions);
     latest = new LatestComputation(graph, delay, unitToEquivRhs, set);
     notIsolated = new NotIsolatedAnalysis(graph, latest, unitToEquivRhs, set);
 

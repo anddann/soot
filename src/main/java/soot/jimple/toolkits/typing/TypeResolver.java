@@ -45,6 +45,7 @@ import soot.Local;
 import soot.LongType;
 import soot.NullType;
 import soot.PatchingChain;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
@@ -56,6 +57,8 @@ import soot.jimple.JimpleBody;
 import soot.jimple.NewExpr;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
+import soot.options.Options;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LocalDefs;
 
 /**
@@ -95,6 +98,9 @@ public class TypeResolver {
   private List<TypeVariable> single_child_not_null;
   private List<TypeVariable> single_null_child;
   private List<TypeVariable> multiple_children;
+  private Scene scene;
+  private Options myOptions;
+  private InteractionHandler myInteractionHandler;
 
   public ClassHierarchy hierarchy() {
     return hierarchy;
@@ -112,7 +118,7 @@ public class TypeResolver {
       int id = typeVariableList.size();
       typeVariableList.add(null);
 
-      result = new TypeVariable(id, this);
+      result = new TypeVariable(id, this, myOptions);
 
       typeVariableList.set(id, result);
       typeVariableMap.put(local, result);
@@ -133,7 +139,7 @@ public class TypeResolver {
       int id = typeVariableList.size();
       typeVariableList.add(null);
 
-      result = new TypeVariable(id, this, typeNode);
+      result = new TypeVariable(id, this, typeNode, myOptions);
 
       typeVariableList.set(id, result);
       typeVariableMap.put(typeNode, result);
@@ -157,17 +163,19 @@ public class TypeResolver {
     int id = typeVariableList.size();
     typeVariableList.add(null);
 
-    TypeVariable result = new TypeVariable(id, this);
+    TypeVariable result = new TypeVariable(id, this, myOptions);
 
     typeVariableList.set(id, result);
 
     return result;
   }
 
-  private TypeResolver(JimpleBody stmtBody, Scene scene) {
+  private TypeResolver(JimpleBody stmtBody, Scene scene, Options myOptions,  InteractionHandler myInteractionHandler) {
     this.stmtBody = stmtBody;
-    hierarchy = ClassHierarchy.classHierarchy(scene);
-
+    this.myOptions = myOptions;
+    this.myInteractionHandler = myInteractionHandler;
+    hierarchy = ClassHierarchy.classHierarchy(scene, myOptions);
+    this.scene = scene;
     OBJECT = hierarchy.OBJECT;
     NULL = hierarchy.NULL;
     typeVariable(OBJECT);
@@ -180,13 +188,13 @@ public class TypeResolver {
     }
   }
 
-  public static void resolve(JimpleBody stmtBody, Scene scene) {
+  public static void resolve(JimpleBody stmtBody, Scene scene, Options myOptions, soot.jimple.toolkits.typing.integer.ClassHierarchy myClassHierachy, PrimTypeCollector primeTypeCollector, InteractionHandler myInteractionHandler) {
     if (DEBUG) {
       logger.debug("" + stmtBody.getMethod());
     }
 
     try {
-      TypeResolver resolver = new TypeResolver(stmtBody, scene);
+      TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler);
       resolver.resolve_step_1();
     } catch (TypeException e1) {
       if (DEBUG) {
@@ -195,7 +203,7 @@ public class TypeResolver {
       }
 
       try {
-        TypeResolver resolver = new TypeResolver(stmtBody, scene);
+        TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler);
         resolver.resolve_step_2();
       } catch (TypeException e2) {
         if (DEBUG) {
@@ -204,7 +212,7 @@ public class TypeResolver {
         }
 
         try {
-          TypeResolver resolver = new TypeResolver(stmtBody, scene);
+          TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler);
           resolver.resolve_step_3();
         } catch (TypeException e3) {
           StringWriter st = new StringWriter();
@@ -215,7 +223,7 @@ public class TypeResolver {
         }
       }
     }
-    soot.jimple.toolkits.typing.integer.TypeResolver.resolve(stmtBody);
+    soot.jimple.toolkits.typing.integer.TypeResolver.resolve(stmtBody, myClassHierachy, primeTypeCollector);
   }
 
   private void debug_vars(String message) {
@@ -306,7 +314,7 @@ public class TypeResolver {
   }
 
   private void collect_constraints_1_2() {
-    ConstraintCollector collector = new ConstraintCollector(this, true, myScene);
+    ConstraintCollector collector = new ConstraintCollector(this, true, scene);
 
     for (Iterator<Unit> stmtIt = stmtBody.getUnits().iterator(); stmtIt.hasNext();) {
 
@@ -322,7 +330,7 @@ public class TypeResolver {
   }
 
   private void collect_constraints_3() {
-    ConstraintCollector collector = new ConstraintCollector(this, false, myScene);
+    ConstraintCollector collector = new ConstraintCollector(this, false, scene);
 
     for (Iterator<Unit> stmtIt = stmtBody.getUnits().iterator(); stmtIt.hasNext();) {
 
@@ -362,8 +370,8 @@ public class TypeResolver {
     // hack for J2ME library, reported by Stephen Cheng
     if (max > 1) {
       if (!myOptions.j2me()) {
-        typeVariable(ArrayType.v(RefType.v("java.lang.Cloneable"), max - 1));
-        typeVariable(ArrayType.v(RefType.v("java.io.Serializable"), max - 1));
+        typeVariable(ArrayType.v(RefType.v("java.lang.Cloneable",scene), max - 1,scene));
+        typeVariable(ArrayType.v(RefType.v("java.io.Serializable",scene), max - 1,scene));
       }
     }
 
@@ -614,7 +622,7 @@ public class TypeResolver {
       TypeVariable var = typeVariable(local);
 
       if (var == null) {
-        local.setType(RefType.v("java.lang.Object"));
+        local.setType(RefType.v("java.lang.Object",scene));
       } else if (var.depth() == 0) {
         if (var.type() == null) {
           TypeVariable.error("Type Error(5):  Variable without type");
@@ -631,13 +639,13 @@ public class TypeResolver {
         if (element.type() == null) {
           TypeVariable.error("Type Error(6):  Array variable without base type");
         } else if (element.type().type() instanceof NullType) {
-          local.setType(NullType.v());
+          local.setType(scene.getPrimTypeCollector().getNullType());
         } else {
           Type t = element.type().type();
           if (t instanceof IntType) {
             local.setType(var.approx().type());
           } else {
-            local.setType(ArrayType.v(t, var.depth()));
+            local.setType(ArrayType.v(t, var.depth(),scene));
           }
         }
       }
@@ -657,7 +665,7 @@ public class TypeResolver {
       TypeVariable var = typeVariable(local);
 
       if (var == null || var.approx() == null || var.approx().type() == null) {
-        local.setType(RefType.v("java.lang.Object"));
+        local.setType(RefType.v("java.lang.Object",scene));
       } else {
         local.setType(var.approx().type());
       }
@@ -833,7 +841,7 @@ public class TypeResolver {
   }
 
   private void split_new() {
-    LocalDefs defs = LocalDefs.Factory.newLocalDefs(stmtBody, myManager, myInteractionHandler);
+    LocalDefs defs = LocalDefs.Factory.newLocalDefs(stmtBody, myOptions, myInteractionHandler);
     PatchingChain<Unit> units = stmtBody.getUnits();
     Stmt[] stmts = new Stmt[units.size()];
 

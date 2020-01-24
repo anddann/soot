@@ -29,7 +29,7 @@ import soot.util.Switch;
 
 public class BNewInst extends AbstractRefTypeInst implements NewInst {
   public BNewInst(RefType opType) {
-    super(opType);
+    super(opType, myBaf);
   }
 
   public int getInCount() {

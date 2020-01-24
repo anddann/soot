@@ -34,7 +34,6 @@ import soot.jimple.InstanceFieldRef;
 import soot.jimple.IntConstant;
 import soot.jimple.LongConstant;
 import soot.jimple.NeExpr;
-import soot.jimple.NullConstant;
 
 /**
  * Abstract base class for {@link DexNullTransformer} and {@link DexIfTransformer}.
@@ -42,6 +41,10 @@ import soot.jimple.NullConstant;
  * @author Steven Arzt
  */
 public abstract class AbstractNullTransformer extends DexTransformer {
+
+  public AbstractNullTransformer() {
+    super(primeTypeCollector);
+  }
 
   /**
    * Examine expr if it is a comparison with 0.

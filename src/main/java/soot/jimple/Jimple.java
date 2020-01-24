@@ -35,6 +35,7 @@ import soot.Local;
 import soot.PrimTypeCollector;
 import soot.Printer;
 import soot.RefType;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootFieldRef;
 import soot.SootMethod;
@@ -124,13 +125,15 @@ public class Jimple {
   private Printer myPrinter;
     private Baf myBaf;
     private PrimTypeCollector primTypeCollector;
+    private Scene myScene;
 
     @Inject
-  public Jimple(Options myOptions, Printer myPrinter, Baf myBaf, PrimTypeCollector primTypeCollector) {
+  public Jimple(Options myOptions, Printer myPrinter, Baf myBaf, PrimTypeCollector primTypeCollector, Scene myScene) {
     this.myOptions = myOptions;
     this.myPrinter = myPrinter;
         this.myBaf = myBaf;
         this.primTypeCollector = primTypeCollector;
+        this.myScene = myScene;
     }
 
 
@@ -648,18 +651,18 @@ public class Jimple {
    * Constructs a Local with the given name and type.
    */
   public Local newLocal(String name, Type t) {
-    return new JimpleLocal(name, t);
+    return new JimpleLocal(name, t, myScene);
   }
 
   /**
    * Constructs a new JTrap for the given exception on the given Stmt range with the given Stmt handler.
    */
   public Trap newTrap(SootClass exception, Unit beginStmt, Unit endStmt, Unit handlerStmt) {
-    return new JTrap(exception, beginStmt, endStmt, handlerStmt, this);
+    return new JTrap(exception, beginStmt, endStmt, handlerStmt, this, myScene);
   }
 
   public Trap newTrap(SootClass exception, UnitBox beginStmt, UnitBox endStmt, UnitBox handlerStmt) {
-    return new JTrap(exception, beginStmt, endStmt, handlerStmt, this);
+    return new JTrap(exception, beginStmt, endStmt, handlerStmt, this, myScene);
   }
 
   /**

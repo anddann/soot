@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import soot.Local;
+import soot.Scene;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
@@ -109,11 +110,12 @@ public class ShimpleBodyBuilder {
   private Aggregator myAggregator;
   private UnusedLocalEliminator myUnusedLocalEliminator;
   private LocalNameStandardizer myLocalNameStandardizer;
+    private Scene myScene;
 
-  /**
+    /**
    * Transforms the provided body to pure SSA form.
    **/
-  public ShimpleBodyBuilder(NopEliminator myNopEliminator, Shimple myShimple, Jimple myJimple, CopyPropagator myCopyPropagator, InteractionHandler myInteractionHander, Options myOptions, ShimpleBody body, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer) {
+  public ShimpleBodyBuilder(NopEliminator myNopEliminator, Shimple myShimple, Jimple myJimple, CopyPropagator myCopyPropagator, InteractionHandler myInteractionHander, Options myOptions, ShimpleBody body, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer, Scene myScene) {
     this.myNopEliminator = myNopEliminator;
     this.myShimple = myShimple;
     this.myJimple = myJimple;
@@ -126,7 +128,8 @@ public class ShimpleBodyBuilder {
     this.myAggregator = myAggregator;
     this.myUnusedLocalEliminator = myUnusedLocalEliminator;
     this.myLocalNameStandardizer = myLocalNameStandardizer;
-    // Must remove nops prior to building the CFG because NopStmt appearing
+      this.myScene = myScene;
+      // Must remove nops prior to building the CFG because NopStmt appearing
     // before the IdentityStmt in a trap handler that is itself protected
     // by a trap cause Phi nodes to be inserted before the NopStmt and
     // therefore before the IdentityStmt. This introduces a validation
@@ -429,7 +432,7 @@ public class ShimpleBodyBuilder {
     Local newLocal = newLocals.get(name);
 
     if (newLocal == null) {
-      newLocal = new JimpleLocal(name, oldLocal.getType());
+      newLocal = new JimpleLocal(name, oldLocal.getType(), myScene);
       newLocals.put(name, newLocal);
       newLocalsToOldLocal.put(newLocal, oldLocal);
 

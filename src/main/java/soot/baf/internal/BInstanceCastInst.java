@@ -25,6 +25,7 @@ package soot.baf.internal;
 import soot.ArrayType;
 import soot.RefType;
 import soot.Type;
+import soot.baf.Baf;
 import soot.baf.InstSwitch;
 import soot.baf.InstanceCastInst;
 import soot.util.Switch;
@@ -33,7 +34,8 @@ public class BInstanceCastInst extends AbstractInst implements InstanceCastInst 
 
   protected Type castType;
 
-  public BInstanceCastInst(Type opType) {
+  public BInstanceCastInst(Type opType, Baf myBaf) {
+    super(myBaf);
 
     if (!(opType instanceof RefType) && !(opType instanceof ArrayType)) {
       throw new RuntimeException("invalid InstanceCastInst: " + opType);
@@ -47,7 +49,7 @@ public class BInstanceCastInst extends AbstractInst implements InstanceCastInst 
 
   public Object clone() {
 
-    return new BInstanceCastInst(castType);
+    return new BInstanceCastInst(castType, myBaf);
 
   }
 

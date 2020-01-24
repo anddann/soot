@@ -48,14 +48,15 @@ public final class HierarchyUtils {
    *
    * @param sc
    *          class or interface to get all its interfaces
+   * @param myScene
    * @return all interfaces on {@code Scene} for class or interface
    */
-  public static List<SootClass> getAllInterfacesOf(SootClass sc) {
+  public static List<SootClass> getAllInterfacesOf(SootClass sc, Scene myScene) {
     Hierarchy hierarchy = myScene.getActiveHierarchy();
     Stream<SootClass> superClassInterfaces = sc.isInterface() ? Stream.empty()
-        : hierarchy.getSuperclassesOf(sc).stream().map(HierarchyUtils::getAllInterfacesOf).flatMap(Collection::stream);
+        : hierarchy.getSuperclassesOf(sc).stream().map(sc1 -> getAllInterfacesOf(sc1, myScene)).flatMap(Collection::stream);
     Stream<SootClass> directInterfaces = Stream.concat(sc.getInterfaces().stream(),
-        sc.getInterfaces().stream().map(HierarchyUtils::getAllInterfacesOf).flatMap(Collection::stream));
+        sc.getInterfaces().stream().map(sc1 -> getAllInterfacesOf(sc1, myScene)).flatMap(Collection::stream));
     return Stream.concat(superClassInterfaces, directInterfaces).collect(toList());
   }
 

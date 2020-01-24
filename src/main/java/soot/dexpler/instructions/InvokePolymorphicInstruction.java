@@ -108,7 +108,7 @@ public class InvokePolymorphicInstruction extends MethodInvocationInstruction {
       
       //Return type for invoke and invokeExact is Object and paramater type is Object[]
       RefType rf = myScene.getRefType("java.lang.Object");
-      Local newArrL = new JimpleLocal("$u" + (b.getLocalCount() + 1), ArrayType.v(rf, 1));
+      Local newArrL = new JimpleLocal("$u" + (b.getLocalCount() + 1), ArrayType.v(rf, 1), myScene);
       b.getLocals().add(newArrL);
       JAssignStmt newArr = new JAssignStmt(newArrL, new JNewArrayExpr(rf, constancFactory.createIntConstant(parms.size())));
       units.add(newArr);

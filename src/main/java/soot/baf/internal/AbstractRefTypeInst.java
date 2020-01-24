@@ -25,11 +25,13 @@ package soot.baf.internal;
 import soot.RefType;
 import soot.Type;
 import soot.UnitPrinter;
+import soot.baf.Baf;
 
 public abstract class AbstractRefTypeInst extends AbstractInst {
   Type opType;
 
-  protected AbstractRefTypeInst(RefType opType) {
+  protected AbstractRefTypeInst(RefType opType, Baf myBaf) {
+    super(myBaf);
     this.opType = opType;
   }
 

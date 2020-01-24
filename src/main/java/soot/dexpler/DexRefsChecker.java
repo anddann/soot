@@ -34,6 +34,7 @@ import java.util.Set;
 
 import soot.Body;
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
@@ -46,12 +47,13 @@ import soot.jimple.Stmt;
 
  */
 public class DexRefsChecker extends DexTransformer {
-  // Note: we need an instance variable for inner class access, treat this as
-  // a local variable (including initialization before use)
+  private Scene myScene;
 
-  public static DexRefsChecker v() {
-    return new DexRefsChecker();
+  public DexRefsChecker(Scene myScene, PrimTypeCollector primeTypeCollector) {
+    super(primeTypeCollector);
+    this.myScene = myScene;
   }
+
 
   Local l = null;
 

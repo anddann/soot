@@ -23,6 +23,7 @@ package soot.jimple.internal;
  */
 
 import soot.AbstractTrap;
+import soot.Scene;
 import soot.SootClass;
 import soot.Unit;
 import soot.UnitBox;
@@ -32,17 +33,17 @@ public class JTrap extends AbstractTrap {
 
   private Jimple myJimple;
 
-  public JTrap(SootClass exception, Unit beginStmt, Unit endStmt, Unit handlerStmt, Jimple myJimple) {
+  public JTrap(SootClass exception, Unit beginStmt, Unit endStmt, Unit handlerStmt, Jimple myJimple, Scene myScene) {
     super(exception, myJimple.newStmtBox(beginStmt), myJimple.newStmtBox(endStmt), myJimple.newStmtBox(handlerStmt), myScene);
   }
 
-  public JTrap(SootClass exception, UnitBox beginStmt, UnitBox endStmt, UnitBox handlerStmt, Jimple myJimple) {
+  public JTrap(SootClass exception, UnitBox beginStmt, UnitBox endStmt, UnitBox handlerStmt, Jimple myJimple, Scene myScene) {
     super(exception, beginStmt, endStmt, handlerStmt, myScene);
     this.myJimple = myJimple;
   }
 
   public Object clone() {
-    return new JTrap(exception, getBeginUnit(), getEndUnit(), getHandlerUnit(),myJimple);
+    return new JTrap(exception, getBeginUnit(), getEndUnit(), getHandlerUnit(),myJimple, myScene);
   }
 
   public String toString() {

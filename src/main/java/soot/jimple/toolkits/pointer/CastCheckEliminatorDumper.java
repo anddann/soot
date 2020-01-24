@@ -45,6 +45,6 @@ public class CastCheckEliminatorDumper extends BodyTransformer {
   }
 
   protected void internalTransform(Body b, String phaseName, Map options) {
-    CastCheckEliminator cce = new CastCheckEliminator(new BriefUnitGraph(b, myPhaseDumper));
+    CastCheckEliminator cce = new CastCheckEliminator(new BriefUnitGraph(b, myPhaseDumper), myOptions, getMyInteractionHandler());
   }
 }

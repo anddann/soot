@@ -45,7 +45,7 @@ public class FakeJimpleLocal extends JimpleLocal {
   }
 
   public FakeJimpleLocal(String name, Type t, Local realLocal, Object info) {
-    super(name, t);
+    super(name, t, myScene);
     this.realLocal = realLocal;
     this.info = info;
   }

@@ -103,7 +103,7 @@ public class LoopStrengthener extends DepthFirstAdapter {
           if (oneNode != null) {
             List<ASTNode> newNode = null;
             if (oneNode instanceof ASTIfNode) {
-              newNode = StrengthenByIf.getNewNode(temp, (ASTIfNode) oneNode);
+              newNode = StrengthenByIf.getNewNode(temp, (ASTIfNode) oneNode, myTryContentsFinder, myASTWalker);
             } else if (oneNode instanceof ASTIfElseNode) {
               newNode = StrengthenByIfElse.getNewNode(temp, (ASTIfElseNode) oneNode);
             }
@@ -141,7 +141,7 @@ public class LoopStrengthener extends DepthFirstAdapter {
         if (oneNode != null) {
           List<ASTNode> newNode = null;
           if (oneNode instanceof ASTIfNode) {
-            newNode = StrengthenByIf.getNewNode(temp, (ASTIfNode) oneNode);
+            newNode = StrengthenByIf.getNewNode(temp, (ASTIfNode) oneNode, myTryContentsFinder, myASTWalker);
           } else if (oneNode instanceof ASTIfElseNode) {
             newNode = StrengthenByIfElse.getNewNode(temp, (ASTIfElseNode) oneNode);
           }
@@ -201,7 +201,7 @@ public class LoopStrengthener extends DepthFirstAdapter {
           if (oneNode != null) {
             List<ASTNode> newNode = null;
             if (oneNode instanceof ASTIfNode) {
-              newNode = StrengthenByIf.getNewNode(temp, (ASTIfNode) oneNode);
+              newNode = StrengthenByIf.getNewNode(temp, (ASTIfNode) oneNode, myTryContentsFinder, myASTWalker);
             } else if (oneNode instanceof ASTIfElseNode) {
               newNode = StrengthenByIfElse.getNewNode(temp, (ASTIfElseNode) oneNode);
             }
@@ -255,7 +255,7 @@ public class LoopStrengthener extends DepthFirstAdapter {
             if (oneNode != null) {
               List<ASTNode> newNode = null;
               if (oneNode instanceof ASTIfNode) {
-                newNode = StrengthenByIf.getNewNode(temp, (ASTIfNode) oneNode);
+                newNode = StrengthenByIf.getNewNode(temp, (ASTIfNode) oneNode, myTryContentsFinder, myASTWalker);
               } else if (oneNode instanceof ASTIfElseNode) {
                 newNode = StrengthenByIfElse.getNewNode(temp, (ASTIfElseNode) oneNode);
               }

@@ -51,7 +51,7 @@ import soot.ArrayType;
 import soot.Body;
 import soot.BodyTransformer;
 import soot.Local;
-import soot.NullType;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
@@ -70,6 +70,12 @@ import soot.toolkits.scalar.LocalUses;
 import soot.toolkits.scalar.UnitValueBoxPair;
 
 public abstract class DexTransformer extends BodyTransformer {
+
+  private PrimTypeCollector primeTypeCollector;
+
+  protected DexTransformer(PrimTypeCollector primeTypeCollector) {
+    this.primeTypeCollector = primeTypeCollector;
+  }
 
   /**
    * Collect definitions of l in body including the definitions of aliases of l.
@@ -296,7 +302,7 @@ public abstract class DexTransformer extends BodyTransformer {
 
     if (depth == 0 && aType == null) {
       if (nullDefCount == defsOfaBaseList.size()) {
-        return NullType.v();
+        return primeTypeCollector.getNullType();
       } else {
         throw new RuntimeException("ERROR: could not find type of array from statement '" + arrayStmt + "'");
       }

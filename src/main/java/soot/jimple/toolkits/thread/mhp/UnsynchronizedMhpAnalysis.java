@@ -24,8 +24,10 @@ package soot.jimple.toolkits.thread.mhp;
 
 import soot.Scene;
 import soot.options.Options;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.util.PhaseDumper;
 
 /**
@@ -36,7 +38,7 @@ import soot.util.PhaseDumper;
 public class UnsynchronizedMhpAnalysis extends SynchObliviousMhpAnalysis {
 
   public UnsynchronizedMhpAnalysis(Scene myScene, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager,
-      PhaseDumper myPhaseDumper, Options myOptions) {
+                                   PhaseDumper myPhaseDumper, Options myOptions, PedanticThrowAnalysis myPedanticThrowAnalysis, InteractionHandler myInteractionHandler) {
     super(myScene, throwAnalysis, myManager, myPhaseDumper, myOptions, myPedanticThrowAnalysis, myInteractionHandler);
   }
 }

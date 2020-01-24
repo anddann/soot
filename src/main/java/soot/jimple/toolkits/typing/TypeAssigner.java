@@ -131,7 +131,7 @@ public class TypeAssigner extends BodyTransformer {
       compareTypeAssigners(b, opt.use_older_type_assigner());
     } else {
       if (opt.use_older_type_assigner()) {
-        TypeResolver.resolve((JimpleBody) b, myScene);
+        TypeResolver.resolve((JimpleBody) b, myScene, myOptions, myClassHierachy, primeTypeCollector, TypeResolver.myInteractionHandler);
       } else {
         (new soot.jimple.toolkits.typing.fast.TypeResolver((JimpleBody) b)).inferTypes();
       }
@@ -249,14 +249,14 @@ public class TypeAssigner extends BodyTransformer {
       (new soot.jimple.toolkits.typing.fast.TypeResolver(newJb)).inferTypes();
       newTime = System.currentTimeMillis() - newTime;
       oldTime = System.currentTimeMillis();
-      TypeResolver.resolve(jb, myScene);
+      TypeResolver.resolve(jb, myScene, myOptions, myClassHierachy, primeTypeCollector, TypeResolver.myInteractionHandler);
       oldTime = System.currentTimeMillis() - oldTime;
       oldJb = jb;
     } else {
       // Use new type assigner last
       oldJb = (JimpleBody) jb.clone();
       oldTime = System.currentTimeMillis();
-      TypeResolver.resolve(oldJb, myScene);
+      TypeResolver.resolve(oldJb, myScene, myOptions, myClassHierachy, primeTypeCollector, TypeResolver.myInteractionHandler);
       oldTime = System.currentTimeMillis() - oldTime;
       newTime = System.currentTimeMillis();
       (new soot.jimple.toolkits.typing.fast.TypeResolver(jb)).inferTypes();

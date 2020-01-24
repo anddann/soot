@@ -30,8 +30,10 @@ import java.util.Map;
 import soot.Scene;
 import soot.SceneTransformer;
 import soot.options.Options;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.util.PhaseDumper;
 
 /**
@@ -44,15 +46,19 @@ public class MhpTransformer extends SceneTransformer {
   private ThrowableSet.Manager myManager;
   private PhaseDumper myPhaseDumper;
   private Options myOptions;
+  private PedanticThrowAnalysis myPedanticThrowAnalysis;
+  private InteractionHandler myInteractionHandler;
 
   @Inject
   public MhpTransformer(Scene myScene, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager,
-      PhaseDumper myPhaseDumper, Options myOptions) {
+                        PhaseDumper myPhaseDumper, Options myOptions, PedanticThrowAnalysis myPedanticThrowAnalysis, InteractionHandler myInteractionHandler) {
     this.myScene = myScene;
     this.throwAnalysis = throwAnalysis;
     this.myManager = myManager;
     this.myPhaseDumper = myPhaseDumper;
     this.myOptions = myOptions;
+    this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
   MhpTester mhpTester;

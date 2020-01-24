@@ -51,7 +51,6 @@ import soot.dava.internal.AST.ASTStatementSequenceNode;
 import soot.dava.internal.AST.ASTTryNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DInstanceFieldRef;
-import soot.dava.internal.javaRep.DIntConstant;
 import soot.dava.internal.javaRep.DStaticFieldRef;
 import soot.dava.internal.javaRep.DVariableDeclarationStmt;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
@@ -59,10 +58,7 @@ import soot.dava.toolkits.base.AST.structuredAnalysis.MustMayInitialize;
 import soot.dava.toolkits.base.AST.traversals.AllVariableUses;
 import soot.grimp.internal.GAssignStmt;
 import soot.jimple.DefinitionStmt;
-import soot.jimple.DoubleConstant;
-import soot.jimple.FloatConstant;
 import soot.jimple.InvokeExpr;
-import soot.jimple.LongConstant;
 import soot.jimple.Stmt;
 import soot.jimple.internal.JimpleLocal;
 
@@ -276,7 +272,7 @@ public class FinalFieldDefinition {
       if (((SootField) field).isStatic()) {
         ref = new DStaticFieldRef(tempFieldRef, true);
       } else {
-        ref = new DInstanceFieldRef(new JimpleLocal("this", fieldType), tempFieldRef, new HashSet<Object>());
+        ref = new DInstanceFieldRef(new JimpleLocal("this", fieldType, myScene), tempFieldRef, new HashSet<Object>());
       }
 
     } else if (field instanceof Local) {
@@ -365,7 +361,7 @@ public class FinalFieldDefinition {
 
         // Creating STMT0
         Type localType = field.getType();
-        Local newLocal = new JimpleLocal("DavaTemp_" + field.getName(), localType);
+        Local newLocal = new JimpleLocal("DavaTemp_" + field.getName(), localType, myScene);
 
         DVariableDeclarationStmt varStmt = new DVariableDeclarationStmt(localType, davaBody);
 
@@ -439,7 +435,7 @@ public class FinalFieldDefinition {
         if (field.isStatic()) {
           ref = new DStaticFieldRef(tempFieldRef, true);
         } else {
-          ref = new DInstanceFieldRef(new JimpleLocal("this", field.getType()), tempFieldRef, new HashSet<Object>());
+          ref = new DInstanceFieldRef(new JimpleLocal("this", field.getType(), myScene), tempFieldRef, new HashSet<Object>());
           // throw new RuntimeException("STOPPED");
         }
 

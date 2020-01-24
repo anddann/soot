@@ -49,6 +49,7 @@ import soot.jimple.toolkits.scalar.LocalCreation;
 import soot.options.BCMOptions;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.util.Chain;
 import soot.util.PhaseDumper;
 import soot.util.UnitMap;
@@ -73,15 +74,17 @@ public class BusyCodeMotion extends BodyTransformer {
   private Scene myScene;
   private Jimple myJimple;
   private PhaseDumper myPhaseDumper;
+  private InteractionHandler myInteractionHandler;
 
 
   @Inject
-  public BusyCodeMotion(Options myOptions, CriticalEdgeRemover myCriticalEdgeRemover, Scene myScene, Jimple myJimple, PhaseDumper myPhaseDumper) {
+  public BusyCodeMotion(Options myOptions, CriticalEdgeRemover myCriticalEdgeRemover, Scene myScene, Jimple myJimple, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
     this.myOptions = myOptions;
     this.myCriticalEdgeRemover = myCriticalEdgeRemover;
     this.myScene = myScene;
     this.myJimple = myJimple;
     this.myPhaseDumper = myPhaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
 
@@ -132,8 +135,8 @@ public class BusyCodeMotion extends BodyTransformer {
       sideEffect = new NaiveSideEffectTester();
     }
     sideEffect.newMethod(b.getMethod());
-    UpSafetyAnalysis upSafe = new UpSafetyAnalysis(graph, unitToEquivRhs, sideEffect, getMyInteractionHandler(), myOptions);
-    DownSafetyAnalysis downSafe = new DownSafetyAnalysis(graph, unitToNoExceptionEquivRhs, sideEffect, myOptions, getMyInteractionHandler());
+    UpSafetyAnalysis upSafe = new UpSafetyAnalysis(graph, unitToEquivRhs, sideEffect, myInteractionHandler, myOptions);
+    DownSafetyAnalysis downSafe = new DownSafetyAnalysis(graph, unitToNoExceptionEquivRhs, sideEffect, myOptions, myInteractionHandler);
     EarliestnessComputation earliest = new EarliestnessComputation(graph, upSafe, downSafe, sideEffect);
 
     LocalCreation localCreation = new LocalCreation(b.getLocals(), PREFIX);

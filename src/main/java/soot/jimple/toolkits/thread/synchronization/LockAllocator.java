@@ -72,6 +72,7 @@ import soot.jimple.toolkits.thread.ThreadLocalObjectsAnalysis;
 import soot.jimple.toolkits.thread.mhp.MhpTester;
 import soot.jimple.toolkits.thread.mhp.SynchObliviousMhpAnalysis;
 import soot.options.Options;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.BriefUnitGraph;
@@ -96,11 +97,12 @@ public class LockAllocator extends SceneTransformer {
   private InteractionHandler myInteractionHandler;
   private PrimTypeCollector primTypeCollector;
     private FullObjectSet myFullObjectSet;
+  private PedanticThrowAnalysis myPedanticThrowAnalysis;
 
-    @Inject
+  @Inject
   public LockAllocator(Scene myScene, ThrowAnalysis myThrowAnalysis, ThrowableSet.Manager myManager, Options myOptions,
                        PhaseDumper myPhaseDumer, FullObjectFactory fullObjectFactory, PhaseDumper myPhaseDumper,
-                       InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollector, FullObjectSet myFullObjectSet) {
+                       InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollector, FullObjectSet myFullObjectSet, PedanticThrowAnalysis myPedanticThrowAnalysis) {
     this.myScene = myScene;
     this.myThrowAnalysis = myThrowAnalysis;
     this.myManager = myManager;
@@ -111,7 +113,8 @@ public class LockAllocator extends SceneTransformer {
     this.myInteractionHandler = myInteractionHandler;
       this.primTypeCollector = primTypeCollector;
         this.myFullObjectSet = myFullObjectSet;
-    }
+    this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
+  }
 
   List<CriticalSection> criticalSections = null;
   CriticalSectionInterferenceGraph interferenceGraph = null;

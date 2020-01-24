@@ -34,7 +34,8 @@ public class BSwapInst extends AbstractInst implements SwapInst {
 
   protected Type mFromType, mToType;
 
-  public BSwapInst(Type fromType, Type toType) {
+  public BSwapInst(Type fromType, Type toType, Baf myBaf) {
+    super(myBaf);
 
     if (fromType instanceof LongType || fromType instanceof DoubleType) {
       throw new RuntimeException("fromType is LongType or DoubleType !");

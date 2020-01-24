@@ -40,7 +40,6 @@ import java.util.Set;
 
 import soot.Local;
 import soot.NullType;
-import soot.Scene;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
@@ -225,7 +224,7 @@ public class IFDSUninitializedVariables
 
   @Override
   public Local createZeroValue() {
-    return new JimpleLocal("<<zero>>", NullType.v());
+    return new JimpleLocal("<<zero>>", NullType.v(), myScene);
   }
 
 }

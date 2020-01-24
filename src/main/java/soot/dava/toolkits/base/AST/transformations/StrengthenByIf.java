@@ -38,6 +38,8 @@ import soot.dava.internal.AST.ASTWhileNode;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DAbruptStmt;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.jimple.ReturnStmt;
 import soot.jimple.ReturnVoidStmt;
 import soot.jimple.Stmt;
@@ -46,7 +48,7 @@ public class StrengthenByIf {
   /*
    * We know this method is called when there is a while node which has a body consisting entirely of one ASTIfNode
    */
-  public static List<ASTNode> getNewNode(ASTNode loopNode, ASTIfNode ifNode) {
+  public static List<ASTNode> getNewNode(ASTNode loopNode, ASTIfNode ifNode, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker) {
     List<Object> ifBody = ifNode.getIfBody();
     String label = isItOnlyBreak(ifBody);
     if (label != null) {

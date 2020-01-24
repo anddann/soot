@@ -39,13 +39,11 @@ import java.util.Set;
 import soot.EquivalentValue;
 import soot.Local;
 import soot.NullType;
-import soot.Scene;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.InvokeExpr;
-import soot.jimple.Jimple;
 import soot.jimple.ReturnStmt;
 import soot.jimple.ReturnVoidStmt;
 import soot.jimple.Stmt;
@@ -183,7 +181,7 @@ public class IFDSReachingDefinitions
   }
 
   public Pair<Value, Set<DefinitionStmt>> createZeroValue() {
-    return new Pair<Value, Set<DefinitionStmt>>(new JimpleLocal("<<zero>>", NullType.v()),
+    return new Pair<Value, Set<DefinitionStmt>>(new JimpleLocal("<<zero>>", NullType.v(), myScene),
         Collections.<DefinitionStmt>emptySet());
   }
 

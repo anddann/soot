@@ -107,7 +107,7 @@ public class ASMBackendMockingTest {
 	public void testSwapInst(){
 		Type fromType =  mock(Type.class);
 		Type toType = mock(Type.class);
-		Inst inst = new BSwapInst(fromType, toType);
+		Inst inst = new BSwapInst(fromType, toType, myBaf);
 		
 		sut.generateInstruction(mv, inst);
 		

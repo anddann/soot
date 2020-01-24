@@ -60,8 +60,10 @@ import org.slf4j.LoggerFactory;
 
 import soot.ArrayType;
 import soot.RefType;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
+import soot.SootResolver;
 import soot.Type;
 import soot.javaToJimple.IInitialResolver.Dependencies;
 import soot.tagkit.AnnotationAnnotationElem;
@@ -108,13 +110,18 @@ public class DexAnnotation {
   public static final String DALVIK_ANNOTATION_ENCLOSINGMETHOD = "dalvik.annotation.EnclosingMethod";
   public static final String DALVIK_ANNOTATION_ENCLOSINGCLASS = "dalvik.annotation.EnclosingClass";
   public static final String DALVIK_ANNOTATION_DEFAULT = "dalvik.annotation.AnnotationDefault";
-  private final Type ARRAY_TYPE = RefType.v("Array");
+  private final Type ARRAY_TYPE;
   private final SootClass clazz;
   private final Dependencies deps;
+  private Scene myScene;
+  private SootResolver mySootResolver;
 
-  public DexAnnotation(SootClass clazz, Dependencies deps) {
+  public DexAnnotation(SootClass clazz, Dependencies deps, Scene myScene, SootResolver mySootResolver) {
     this.clazz = clazz;
     this.deps = deps;
+    ARRAY_TYPE = RefType.v("Array", myScene);
+    this.myScene = myScene;
+    this.mySootResolver = mySootResolver;
   }
 
   /**
@@ -258,14 +265,14 @@ public class DexAnnotation {
             return ARRAY_TYPE;
           }
 
-          return ArrayType.v(type, 1);
+          return ArrayType.v(type, 1,myScene);
         }
         break;
       case 's': // string
-        annotationType = RefType.v("java.lang.String");
+        annotationType = RefType.v("java.lang.String",myScene);
         break;
       case 'c': // class
-        annotationType = RefType.v("java.lang.Class");
+        annotationType = RefType.v("java.lang.Class",myScene);
         break;
       case 'e': // enum
         AnnotationEnumElem enumElem = (AnnotationEnumElem) e;
@@ -504,7 +511,7 @@ public class DexAnnotation {
             }
           }
 
-          deps.typesToSignature.add(RefType.v(outerClass));
+          deps.typesToSignature.add(RefType.v(outerClass,myScene));
           clazz.setOuterClass(mySootResolver.makeClassRef(outerClass));
           assert clazz.getOuterClass() != clazz;
         }
@@ -534,7 +541,7 @@ public class DexAnnotation {
         String methodSigString = "(" + parameters + ")" + returnType;
         t = new EnclosingMethodTag(classString, methodString, methodSigString);
         String outerClass = classString.replace("/", ".");
-        deps.typesToSignature.add(RefType.v(outerClass));
+        deps.typesToSignature.add(RefType.v(outerClass,myScene));
         clazz.setOuterClass(mySootResolver.makeClassRef(outerClass));
         assert clazz.getOuterClass() != clazz;
         break;
@@ -583,7 +590,7 @@ public class DexAnnotation {
         tags.add(innerTag);
         if (outerClass != null && !clazz.hasOuterClass()) {
           String sootOuterClass = Util.dottedClassName(outerClass, myScene);
-          deps.typesToSignature.add(RefType.v(sootOuterClass));
+          deps.typesToSignature.add(RefType.v(sootOuterClass,myScene));
           clazz.setOuterClass(mySootResolver.makeClassRef(sootOuterClass));
           assert clazz.getOuterClass() != clazz;
         }

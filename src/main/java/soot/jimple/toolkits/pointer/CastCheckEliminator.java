@@ -46,8 +46,10 @@ import soot.jimple.NeExpr;
 import soot.jimple.NewExpr;
 import soot.jimple.NullConstant;
 import soot.jimple.Stmt;
+import soot.options.Options;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ForwardBranchedFlowAnalysis;
 
 /** A flow analysis that detects redundant cast checks. */
@@ -57,8 +59,8 @@ public class CastCheckEliminator extends ForwardBranchedFlowAnalysis<LocalTypeSe
   Map unitToGenBranch = new HashMap();
   LocalTypeSet emptySet;
 
-  public CastCheckEliminator(BriefUnitGraph cfg) {
-    super(cfg);
+  public CastCheckEliminator(BriefUnitGraph cfg, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(cfg, myOptions.interactive_mode(), myInteractionHandler);
     makeInitialSet();
     doAnalysis();
     tagCasts();
@@ -120,7 +122,7 @@ public class CastCheckEliminator extends ForwardBranchedFlowAnalysis<LocalTypeSe
       }
     }
 
-    emptySet = new LocalTypeSet(refLocals, types);
+    emptySet = new LocalTypeSet(refLocals, types, myScene);
   }
 
   /** Returns a new, aggressive (local,type) set. */

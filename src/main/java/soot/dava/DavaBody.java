@@ -39,6 +39,7 @@ import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.Printer;
 import soot.RefType;
+import soot.Scene;
 import soot.SootFieldRef;
 import soot.SootMethod;
 import soot.SootMethodRef;
@@ -70,6 +71,8 @@ import soot.dava.internal.javaRep.DStaticFieldRef;
 import soot.dava.internal.javaRep.DStaticInvokeExpr;
 import soot.dava.internal.javaRep.DThisRef;
 import soot.dava.internal.javaRep.DVirtualInvokeExpr;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.UselessTryRemover;
 import soot.dava.toolkits.base.AST.transformations.ASTCleaner;
 import soot.dava.toolkits.base.AST.transformations.ASTCleanerTwo;
@@ -204,6 +207,8 @@ public class DavaBody extends Body {
   private final ThrowNullConverter myThrowNullConverter;
   private final UselessTryRemover myUselessTryRemover;
   private final PhaseOptions myPhaseOptions;
+  private final TryContentsFinder myTryContentsFinder;
+  private final ASTWalker myASTWalker;
   public boolean DEBUG = false;
   private Map<Integer, Value> pMap;
 
@@ -228,8 +233,9 @@ public class DavaBody extends Body {
   private Grimp myGrimp;
   private PrimTypeCollector primTypeCollector;
   private Baf myBaf;
+    private Scene myScene;
 
-  /**
+    /**
    * Construct an empty DavaBody
    */
 
@@ -237,7 +243,7 @@ public class DavaBody extends Body {
            IfFinder myIfFinder, SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder,
            SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            MonitorConverter myMonitorConverter, ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover,
-           PhaseOptions myPhaseOptions, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constancFactory, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf) {
+           PhaseOptions myPhaseOptions, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constancFactory, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf, Scene myScene) {
     super(m, myOptions, myPrinter);
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -251,14 +257,17 @@ public class DavaBody extends Body {
     this.myThrowNullConverter = myThrowNullConverter;
     this.myUselessTryRemover = myUselessTryRemover;
     this.myPhaseOptions = myPhaseOptions;
+    this.myTryContentsFinder = myTryContentsFinder;
+    this.myASTWalker = myASTWalker;
     this.myDava = myDava;
     this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     this.constancFactory = constancFactory;
     this.myGrimp = myGrimp;
     this.primTypeCollector = primTypeCollector;
     this.myBaf = myBaf;
+      this.myScene = myScene;
 
-    pMap = new HashMap<Integer, Value>();
+      pMap = new HashMap<Integer, Value>();
     consumedConditions = new HashSet<Object>();
     thisLocals = new HashSet<Object>();
     synchronizedBlockFacts = new IterableSet<ExceptionNode>();
@@ -306,7 +315,7 @@ public class DavaBody extends Body {
 
   public Local get_ControlLocal() {
     if (controlLocal == null) {
-      controlLocal = new JimpleLocal("controlLocal", controlLocal.getType().getMyScene().getPrimTypeCollector().getIntType());
+      controlLocal = new JimpleLocal("controlLocal", controlLocal.getType().getMyScene().getPrimTypeCollector().getIntType(), myScene);
       getLocals().add(controlLocal);
     }
 
@@ -351,10 +360,10 @@ public class DavaBody extends Body {
            ThrowNullConverter myThrowNullConverter, SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder,
            CycleFinder myCycleFinder, IfFinder myIfFinder, SwitchFinder mySwitchFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf) {
+           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene) {
     this(body.getMethod(), myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myDava, myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector, myBaf);
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myDava, myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector, myBaf, myScene);
     debug("DavaBody", "creating DavaBody for" + body.getMethod().toString());
     this.myDava.log("\nstart method " + body.getMethod().toString());
 
@@ -374,7 +383,7 @@ public class DavaBody extends Body {
     // System.out.println(asg.toString());
 
     this.myExceptionFinder.preprocess(this, asg);
-    SETNode SET = new SETTopNode(asg.get_ChainView(), myTryContentsFinder, myASTWalker);
+    SETNode SET = new SETTopNode(asg.get_ChainView(), this.myTryContentsFinder, this.myASTWalker);
 
     while (true) {
       try {
@@ -387,7 +396,7 @@ public class DavaBody extends Body {
         this.myLabeledBlockFinder.find(this, asg, SET);
         this.myAbruptEdgeFinder.find(this, asg, SET);
       } catch (RetriggerAnalysisException rae) {
-        SET = new SETTopNode(asg.get_ChainView(), myTryContentsFinder, myASTWalker);
+        SET = new SETTopNode(asg.get_ChainView(), this.myTryContentsFinder, this.myASTWalker);
         consumedConditions = new HashSet<Object>();
         continue;
       }

@@ -272,7 +272,7 @@ public class Baf {
   }
 
   public StaticGetInst newStaticGetInst(SootFieldRef fieldRef) {
-    return new BStaticGetInst(fieldRef);
+    return new BStaticGetInst(fieldRef, myBaf);
   }
 
   public StaticPutInst newStaticPutInst(SootFieldRef fieldRef) {
@@ -300,7 +300,7 @@ public class Baf {
   }
 
   public MulInst newMulInst(Type opType) {
-    return new BMulInst(opType);
+    return new BMulInst(opType, myBaf, primTypeCollector);
   }
 
   public DivInst newDivInst(Type opType) {
@@ -344,11 +344,11 @@ public class Baf {
   }
 
   public InstanceCastInst newInstanceCastInst(Type opType) {
-    return new BInstanceCastInst(opType);
+    return new BInstanceCastInst(opType, this);
   }
 
   public InstanceOfInst newInstanceOfInst(Type opType) {
-    return new BInstanceOfInst(opType, myBaf);
+    return new BInstanceOfInst(opType, this);
   }
 
   public PrimitiveCastInst newPrimitiveCastInst(Type fromType, Type toType) {
@@ -385,7 +385,7 @@ public class Baf {
   }
 
   public InterfaceInvokeInst newInterfaceInvokeInst(SootMethodRef methodRef, int argCount) {
-    return new BInterfaceInvokeInst(methodRef, argCount);
+    return new BInterfaceInvokeInst(methodRef, argCount, this);
   }
 
   public ReturnInst newReturnInst(Type opType) {
@@ -465,7 +465,7 @@ public class Baf {
   }
 
   public SwapInst newSwapInst(Type fromType, Type toType) {
-    return new BSwapInst(fromType, toType);
+    return new BSwapInst(fromType, toType, this);
   }
 
   /*

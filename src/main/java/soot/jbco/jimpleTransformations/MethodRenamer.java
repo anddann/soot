@@ -456,7 +456,7 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
 
   private List<SootClass> getParentsOfIncluding(SootClass applicationClass) {
     // result contains of interfaces that implements passed applicationClass
-    final List<SootClass> result = HierarchyUtils.getAllInterfacesOf(applicationClass);
+    final List<SootClass> result = HierarchyUtils.getAllInterfacesOf(applicationClass, myScene);
 
     // add implementing interfaces
     result.addAll(applicationClass.getInterfaces());

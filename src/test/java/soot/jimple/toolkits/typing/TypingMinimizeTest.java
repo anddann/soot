@@ -245,7 +245,7 @@ public class TypingMinimizeTest {
     List<Typing> typingList = new ArrayList<>();
     Type Type1 = serializableType;
     Type Type2 = comparableType;
-    Local x1 = new JimpleLocal("$x1", null);
+    Local x1 = new JimpleLocal("$x1", null, myScene);
     Typing resultTyping;
 
     Typing typing1 = new Typing(Arrays.asList(x1));
@@ -273,7 +273,7 @@ public class TypingMinimizeTest {
     Type Type1 = serializableType;
     Type Type2 = comparableType;
     Type Type3 = numberType;
-    Local x1 = new JimpleLocal("$x1", null);
+    Local x1 = new JimpleLocal("$x1", null, myScene);
 
     Typing typing1 = new Typing(Arrays.asList(x1));
     typing1.set(x1, Type1);
@@ -301,7 +301,7 @@ public class TypingMinimizeTest {
     Type Type2 = listType;
     Type Type3 = abstractListType;
     Type Type4 = objectType;
-    Local x1 = new JimpleLocal("$x1", null);
+    Local x1 = new JimpleLocal("$x1", null, myScene);
 
     Typing typing1 = new Typing(Arrays.asList(x1));
     typing1.set(x1, Type1);
@@ -334,7 +334,7 @@ public class TypingMinimizeTest {
     Type Type2 = serializableType;
     Type Type3 = abstractMapType;
 
-    Local x1 = new JimpleLocal("$x1", null);
+    Local x1 = new JimpleLocal("$x1", null, myScene);
 
     Typing typing1 = new Typing(Arrays.asList(x1));
     typing1.set(x1, Type1);
@@ -366,9 +366,9 @@ public class TypingMinimizeTest {
 
     Type Type1 = serializableType;
     Type Type2 = comparableType;
-    Local x1 = new JimpleLocal("$x1", null);
-    Local x2 = new JimpleLocal("$x2", null);
-    Local x3 = new JimpleLocal("$x3", null);
+    Local x1 = new JimpleLocal("$x1", null, myScene);
+    Local x2 = new JimpleLocal("$x2", null, myScene);
+    Local x3 = new JimpleLocal("$x3", null, myScene);
 
     Typing typing1 = new Typing(Arrays.asList(x1, x2, x3));
     typing1.set(x1, Type1);
@@ -429,7 +429,7 @@ public class TypingMinimizeTest {
 
     List<Typing> typingList = new ArrayList<>();
 
-    Local x1 = new JimpleLocal("$x1", null);
+    Local x1 = new JimpleLocal("$x1", null, myScene);
 
     Typing typing1 = new Typing(Arrays.asList(x1));
     typing1.set(x1, interfaceType);
@@ -455,7 +455,7 @@ public class TypingMinimizeTest {
     logger.debug("Starting Object Random Minimize");
 
     List<Typing> typingList = new ArrayList<>();
-    Local x1 = new JimpleLocal("$x1", null);
+    Local x1 = new JimpleLocal("$x1", null, myScene);
 
     Typing typing1 = new Typing(Arrays.asList(x1));
     typing1.set(x1, interfaceType);
@@ -480,7 +480,7 @@ public class TypingMinimizeTest {
 
     List<Typing> typingList = new ArrayList<>();
 
-    Local x1 = new JimpleLocal("$x1", null);
+    Local x1 = new JimpleLocal("$x1", null, myScene);
 
     Typing typing1 = new Typing(Arrays.asList(x1));
     typing1.set(x1, interfaceType);
@@ -505,7 +505,7 @@ public class TypingMinimizeTest {
 
     List<Typing> typingList = new ArrayList<>();
 
-    Local x1 = new JimpleLocal("$x1", null);
+    Local x1 = new JimpleLocal("$x1", null, myScene);
 
     Typing typing1 = new Typing(Arrays.asList(x1));
     typing1.set(x1, interfaceType);
@@ -535,7 +535,7 @@ public class TypingMinimizeTest {
   public void testAllRelatedClassesTyping() {
 
     List<Typing> typingList = new ArrayList<>();
-    Local x1 = new JimpleLocal("$x1", null);
+    Local x1 = new JimpleLocal("$x1", null, myScene);
 
     Typing typing1 = new Typing(Arrays.asList(x1));
     typing1.set(x1, objectType);
@@ -594,7 +594,7 @@ public class TypingMinimizeTest {
   public void testAllNonRelatedClassesTyping() {
 
     List<Typing> typingList = new ArrayList<>();
-    Local x1 = new JimpleLocal("$x1", null);
+    Local x1 = new JimpleLocal("$x1", null, myScene);
 
     Typing typing1 = new Typing(Arrays.asList(x1));
     typing1.set(x1, objectType);

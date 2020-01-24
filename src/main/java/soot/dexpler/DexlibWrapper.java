@@ -109,7 +109,7 @@ public class DexlibWrapper {
    * @return
    */
   protected DexClassLoader createDexClassLoader() {
-    return new DexClassLoader();
+    return new DexClassLoader(myScene, mySootResolver, myOptions);
   }
 
   public void initialize() {

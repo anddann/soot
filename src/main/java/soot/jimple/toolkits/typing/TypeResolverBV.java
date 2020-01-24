@@ -43,6 +43,7 @@ import soot.Local;
 import soot.LongType;
 import soot.NullType;
 import soot.PatchingChain;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
@@ -54,6 +55,8 @@ import soot.jimple.JimpleBody;
 import soot.jimple.NewExpr;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
+import soot.options.Options;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LocalDefs;
 import soot.util.BitSetIterator;
 import soot.util.BitVector;
@@ -96,8 +99,12 @@ public class TypeResolverBV {
   private BitVector single_child_not_null;
   private BitVector single_null_child;
   private BitVector multiple_children;
+  private PrimTypeCollector primTypeCollector;
+  private Options myOptions;
+  private Scene myScene;
+    private InteractionHandler myInteractionHandler;
 
-  public ClassHierarchy hierarchy() {
+    public ClassHierarchy hierarchy() {
     return hierarchy;
   }
 
@@ -113,7 +120,7 @@ public class TypeResolverBV {
       int id = typeVariableList.size();
       typeVariableList.add(null);
 
-      result = new TypeVariableBV(id, this);
+      result = new TypeVariableBV(id, this, myOptions, myScene);
 
       typeVariableList.set(id, result);
       typeVariableMap.put(local, result);
@@ -134,7 +141,7 @@ public class TypeResolverBV {
       int id = typeVariableList.size();
       typeVariableList.add(null);
 
-      result = new TypeVariableBV(id, this, typeNode);
+      result = new TypeVariableBV(id, this, typeNode,myOptions, myScene);
 
       typeVariableList.set(id, result);
       typeVariableMap.put(typeNode, result);
@@ -158,16 +165,20 @@ public class TypeResolverBV {
     int id = typeVariableList.size();
     typeVariableList.add(null);
 
-    TypeVariableBV result = new TypeVariableBV(id, this);
+    TypeVariableBV result = new TypeVariableBV(id, this, myOptions, myScene);
 
     typeVariableList.set(id, result);
 
     return result;
   }
 
-  private TypeResolverBV(JimpleBody stmtBody, Scene scene) {
+  private TypeResolverBV(JimpleBody stmtBody, Scene scene, Options myOptions, PrimTypeCollector primTypeCollector, Scene myScene, InteractionHandler myInteractionHandler) {
     this.stmtBody = stmtBody;
-    hierarchy = ClassHierarchy.classHierarchy(scene);
+    this.primTypeCollector = primTypeCollector;
+    this.myOptions = myOptions;
+    this.myScene = myScene;
+      this.myInteractionHandler = myInteractionHandler;
+      hierarchy = ClassHierarchy.classHierarchy(scene, myOptions);
 
     OBJECT = hierarchy.OBJECT;
     NULL = hierarchy.NULL;
@@ -181,13 +192,13 @@ public class TypeResolverBV {
     }
   }
 
-  public static void resolve(JimpleBody stmtBody, Scene scene) {
+  public static void resolve(JimpleBody stmtBody, Scene scene, Options myOptions, soot.jimple.toolkits.typing.integer.ClassHierarchy myClassHierarchy, PrimTypeCollector primTypeCollector, Scene myScene, InteractionHandler myInteractionHandler) {
     if (DEBUG) {
       logger.debug("" + stmtBody.getMethod());
     }
 
     try {
-      TypeResolverBV resolver = new TypeResolverBV(stmtBody, scene);
+      TypeResolverBV resolver = new TypeResolverBV(stmtBody, scene, myOptions, primTypeCollector, myScene, myInteractionHandler);
       resolver.resolve_step_1();
     } catch (TypeException e1) {
       if (DEBUG) {
@@ -196,7 +207,7 @@ public class TypeResolverBV {
       }
 
       try {
-        TypeResolverBV resolver = new TypeResolverBV(stmtBody, scene);
+        TypeResolverBV resolver = new TypeResolverBV(stmtBody, scene, myOptions, primTypeCollector,  myScene, myInteractionHandler);
         resolver.resolve_step_2();
       } catch (TypeException e2) {
         if (DEBUG) {
@@ -205,7 +216,7 @@ public class TypeResolverBV {
         }
 
         try {
-          TypeResolverBV resolver = new TypeResolverBV(stmtBody, scene);
+          TypeResolverBV resolver = new TypeResolverBV(stmtBody, scene, myOptions, primTypeCollector,  myScene, myInteractionHandler);
           resolver.resolve_step_3();
         } catch (TypeException e3) {
           StringWriter st = new StringWriter();
@@ -216,7 +227,7 @@ public class TypeResolverBV {
         }
       }
     }
-    soot.jimple.toolkits.typing.integer.TypeResolver.resolve(stmtBody);
+    soot.jimple.toolkits.typing.integer.TypeResolver.resolve(stmtBody, myClassHierarchy, primTypeCollector);
   }
 
   private void debug_vars(String message) {
@@ -363,8 +374,8 @@ public class TypeResolverBV {
     if (max > 1) {
       // hack for J2ME library, reported by Stephen Cheng
       if (!myOptions.j2me()) {
-        typeVariable(ArrayType.v(RefType.v("java.lang.Cloneable"), max - 1));
-        typeVariable(ArrayType.v(RefType.v("java.io.Serializable"), max - 1));
+        typeVariable(ArrayType.v(RefType.v("java.lang.Cloneable",myScene), max - 1,myScene));
+        typeVariable(ArrayType.v(RefType.v("java.io.Serializable",myScene), max - 1,myScene));
       }
     }
 
@@ -637,7 +648,7 @@ public class TypeResolverBV {
       TypeVariableBV var = typeVariable(local);
 
       if (var == null) {
-        local.setType(RefType.v("java.lang.Object"));
+        local.setType(RefType.v("java.lang.Object",myScene));
       } else if (var.depth() == 0) {
         if (var.type() == null) {
           TypeVariableBV.error("Type Error(5):  Variable without type");
@@ -654,13 +665,13 @@ public class TypeResolverBV {
         if (element.type() == null) {
           TypeVariableBV.error("Type Error(6):  Array variable without base type");
         } else if (element.type().type() instanceof NullType) {
-          local.setType(NullType.v());
+          local.setType(primTypeCollector.getNullType());
         } else {
           Type t = element.type().type();
           if (t instanceof IntType) {
             local.setType(var.approx().type());
           } else {
-            local.setType(ArrayType.v(t, var.depth()));
+            local.setType(ArrayType.v(t, var.depth(),myScene));
           }
         }
       }
@@ -680,7 +691,7 @@ public class TypeResolverBV {
       TypeVariableBV var = typeVariable(local);
 
       if (var == null || var.approx() == null || var.approx().type() == null) {
-        local.setType(RefType.v("java.lang.Object"));
+        local.setType(RefType.v("java.lang.Object",myScene));
       } else {
         local.setType(var.approx().type());
       }
@@ -854,7 +865,7 @@ public class TypeResolverBV {
   }
 
   private void split_new() {
-    LocalDefs defs = LocalDefs.Factory.newLocalDefs(stmtBody, myManager, myInteractionHandler);
+    LocalDefs defs = LocalDefs.Factory.newLocalDefs(stmtBody, myOptions, myInteractionHandler);
     PatchingChain<Unit> units = stmtBody.getUnits();
     Stmt[] stmts = new Stmt[units.size()];
 

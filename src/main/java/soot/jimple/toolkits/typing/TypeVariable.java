@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import soot.ArrayType;
 import soot.RefType;
+import soot.Scene;
 import soot.options.Options;
 import soot.util.BitVector;
 
@@ -59,17 +60,21 @@ class TypeVariable implements Comparable<Object> {
   private List<TypeVariable> children = Collections.emptyList();
   private BitVector ancestors;
   private BitVector indirectAncestors;
+  private Options myOptions;
+  private Scene myScene;
 
-  public TypeVariable(int id, TypeResolver resolver) {
+  public TypeVariable(int id, TypeResolver resolver, Options myOptions) {
     this.id = id;
     this.resolver = resolver;
+    this.myOptions = myOptions;
   }
 
-  public TypeVariable(int id, TypeResolver resolver, TypeNode type) {
+  public TypeVariable(int id, TypeResolver resolver, TypeNode type, Options myOptions) {
     this.id = id;
     this.resolver = resolver;
     this.type = type;
     approx = type;
+    this.myOptions = myOptions;
 
     for (Iterator<TypeNode> parentIt = type.parents().iterator(); parentIt.hasNext();) {
 
@@ -625,8 +630,8 @@ class TypeVariable implements Comparable<Object> {
         if (var.type() == null) {
           // hack for J2ME library, reported by Stephen Cheng
           if (!myOptions.j2me()) {
-            var.addChild(resolver.typeVariable(ArrayType.v(RefType.v("java.lang.Cloneable"), var.depth())));
-            var.addChild(resolver.typeVariable(ArrayType.v(RefType.v("java.io.Serializable"), var.depth())));
+            var.addChild(resolver.typeVariable(ArrayType.v(RefType.v("java.lang.Cloneable",myScene), var.depth(),myScene)));
+            var.addChild(resolver.typeVariable(ArrayType.v(RefType.v("java.io.Serializable",myScene), var.depth(),myScene)));
           }
         }
       }

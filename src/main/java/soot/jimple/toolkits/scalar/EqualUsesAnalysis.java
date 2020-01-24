@@ -82,7 +82,7 @@ public class EqualUsesAnalysis extends ForwardFlowAnalysis<Unit, FlowSet> {
 
     // analysis is done on-demand, not now
 
-    this.el = new EqualLocalsAnalysis(g); // also on-demand
+    this.el = new EqualLocalsAnalysis(g, myOptions, myInteractionHandler); // also on-demand
   }
 
   public boolean areEqualUses(Stmt firstStmt, Local firstLocal, Stmt secondStmt, Local secondLocal) {

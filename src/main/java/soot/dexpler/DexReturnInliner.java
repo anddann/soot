@@ -51,6 +51,10 @@ import soot.jimple.Stmt;
  */
 public class DexReturnInliner extends DexTransformer {
 
+  public DexReturnInliner() {
+    super(primeTypeCollector);
+  }
+
   public static DexReturnInliner v() {
     return new DexReturnInliner();
   }

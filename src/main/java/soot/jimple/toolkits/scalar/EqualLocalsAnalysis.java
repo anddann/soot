@@ -33,7 +33,9 @@ import soot.ValueBox;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.IdentityStmt;
 import soot.jimple.Stmt;
+import soot.options.Options;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
@@ -47,8 +49,8 @@ public class EqualLocalsAnalysis extends ForwardFlowAnalysis {
   Local l;
   Stmt s;
 
-  public EqualLocalsAnalysis(UnitGraph g) {
-    super(g);
+  public EqualLocalsAnalysis(UnitGraph g, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(g, myOptions.interactive_mode(), myInteractionHandler);
 
     l = null;
     s = null;

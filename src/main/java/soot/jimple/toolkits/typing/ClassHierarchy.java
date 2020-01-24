@@ -31,8 +31,6 @@ import soot.BooleanType;
 import soot.ByteType;
 import soot.CharType;
 import soot.G;
-import soot.IntType;
-import soot.NullType;
 import soot.RefType;
 import soot.Scene;
 import soot.ShortType;
@@ -64,10 +62,10 @@ public class ClassHierarchy {
   private final HashMap<Type, TypeNode> typeNodeMap = new HashMap<Type, TypeNode>();
 
   /** Used to transform boolean, byte, short and char to int **/
-  private final ToInt transform = new ToInt();
+  private final ToInt transform;
 
   /** Used to create TypeNode instances **/
-  private final ConstructorChooser make = new ConstructorChooser();
+  private final ConstructorChooser make;
   private final Options myOptions;
 
   private ClassHierarchy(Scene scene, Options myOptions) {
@@ -75,10 +73,11 @@ public class ClassHierarchy {
     if (scene == null) {
       throw new InternalTypingException();
     }
+    transform = new ToInt(scene);
 
     G.v().ClassHierarchy_classHierarchyMap.put(scene, this);
 
-    NULL = typeNode(NullType.v());
+    NULL = typeNode(scene.getPrimTypeCollector().getNullType());
     OBJECT = typeNode(RefType.v("java.lang.Object", scene));
 
     // hack for J2ME library which does not have Cloneable and Serializable
@@ -91,7 +90,8 @@ public class ClassHierarchy {
       SERIALIZABLE = null;
     }
 
-    INT = typeNode(IntType.v());
+    INT = typeNode(scene.getPrimTypeCollector().getIntType());
+      make = new ConstructorChooser(scene);
   }
 
   /** Get the class hierarchy for the given scene. **/
@@ -156,9 +156,10 @@ public class ClassHierarchy {
    **/
   private static class ToInt extends TypeSwitch {
     private Type result;
-    private final Type intType = IntType.v();
+    private final Type intType;
 
-    private ToInt() {
+    private ToInt(Scene myScene) {
+      intType = myScene.getPrimTypeCollector().getIntType();
     }
 
     /** Transform boolean, byte, short and char into int. **/
@@ -196,9 +197,11 @@ public class ClassHierarchy {
     private ClassHierarchy hierarchy;
 
     private TypeNode result;
+      private Scene myScene;
 
-    ConstructorChooser() {
-    }
+      ConstructorChooser(Scene myScene) {
+          this.myScene = myScene;
+      }
 
     /** Create a new TypeNode instance for the type parameter. **/
     TypeNode typeNode(int id, Type type, ClassHierarchy hierarchy) {
@@ -215,15 +218,15 @@ public class ClassHierarchy {
     }
 
     public void caseRefType(RefType type) {
-      result = new TypeNode(id, type, hierarchy);
+      result = new TypeNode(id, type, hierarchy, myScene);
     }
 
     public void caseArrayType(ArrayType type) {
-      result = new TypeNode(id, type, hierarchy);
+      result = new TypeNode(id, type, hierarchy, myScene);
     }
 
     public void defaultCase(Type type) {
-      result = new TypeNode(id, type, hierarchy);
+      result = new TypeNode(id, type, hierarchy, myScene);
     }
   }
 }
