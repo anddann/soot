@@ -64,7 +64,10 @@ import soot.jimple.Stmt;
 import soot.jimple.toolkits.typing.integer.ClassHierarchy;
 import soot.options.JBTROptions;
 import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.interaction.InteractionHandler;
+import soot.util.PhaseDumper;
 
 /**
  * This transformer assigns types to local variables.
@@ -86,10 +89,13 @@ public class TypeAssigner extends BodyTransformer {
   private ClassHierarchy myClassHierachy;
   private PrimTypeCollector primeTypeCollector;
   private InteractionHandler myInteractionHandler;
+  private ThrowAnalysis throwAnalysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper phaseDumper;
 
   @Inject
   public TypeAssigner(Options myOptions, Scene myScene, BodyTransformer myConstantPropagatorAndFolder,
-                      BodyTransformer myDeadAssignmentEliminator, BodyTransformer myUnusedLocalEliminator, PhaseOptions myPhaseOptions, Jimple myJimple, ConstantFactory constancFactory, ClassHierarchy myClassHierachy, PrimTypeCollector primeTypeCollector, InteractionHandler myInteractionHandler) {
+                      BodyTransformer myDeadAssignmentEliminator, BodyTransformer myUnusedLocalEliminator, PhaseOptions myPhaseOptions, Jimple myJimple, ConstantFactory constancFactory, ClassHierarchy myClassHierachy, PrimTypeCollector primeTypeCollector, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myConstantPropagatorAndFolder = myConstantPropagatorAndFolder;
@@ -101,6 +107,9 @@ public class TypeAssigner extends BodyTransformer {
     this.myClassHierachy = myClassHierachy;
     this.primeTypeCollector = primeTypeCollector;
     this.myInteractionHandler = myInteractionHandler;
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
+    this.phaseDumper = phaseDumper;
   }
 
 
@@ -140,7 +149,7 @@ public class TypeAssigner extends BodyTransformer {
       compareTypeAssigners(b, opt.use_older_type_assigner());
     } else {
       if (opt.use_older_type_assigner()) {
-        TypeResolver.resolve((JimpleBody) b, myScene, myOptions, myClassHierachy, primeTypeCollector, myInteractionHandler, TypeResolver.throwAnalysis, TypeResolver.myManager, TypeResolver.phaseDumper, TypeResolver.myJimple);
+        TypeResolver.resolve((JimpleBody) b, myScene, myOptions, myClassHierachy, primeTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myJimple);
       } else {
         (new soot.jimple.toolkits.typing.fast.TypeResolver((JimpleBody) b)).inferTypes();
       }
@@ -258,14 +267,14 @@ public class TypeAssigner extends BodyTransformer {
       (new soot.jimple.toolkits.typing.fast.TypeResolver(newJb)).inferTypes();
       newTime = System.currentTimeMillis() - newTime;
       oldTime = System.currentTimeMillis();
-      TypeResolver.resolve(jb, myScene, myOptions, myClassHierachy, primeTypeCollector, myInteractionHandler, TypeResolver.throwAnalysis, TypeResolver.myManager, TypeResolver.phaseDumper, TypeResolver.myJimple);
+      TypeResolver.resolve(jb, myScene, myOptions, myClassHierachy, primeTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myJimple);
       oldTime = System.currentTimeMillis() - oldTime;
       oldJb = jb;
     } else {
       // Use new type assigner last
       oldJb = (JimpleBody) jb.clone();
       oldTime = System.currentTimeMillis();
-      TypeResolver.resolve(oldJb, myScene, myOptions, myClassHierachy, primeTypeCollector, myInteractionHandler, TypeResolver.throwAnalysis, TypeResolver.myManager, TypeResolver.phaseDumper, TypeResolver.myJimple);
+      TypeResolver.resolve(oldJb, myScene, myOptions, myClassHierachy, primeTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myJimple);
       oldTime = System.currentTimeMillis() - oldTime;
       newTime = System.currentTimeMillis();
       (new soot.jimple.toolkits.typing.fast.TypeResolver(jb)).inferTypes();

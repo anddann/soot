@@ -157,7 +157,7 @@ public class TypeResolver {
     }
     this.insertCasts(tg, bh, false);
 
-    final IntType inttype = IntType.v();
+    final IntType inttype = primeTypeCollector.getIntType();
     final BottomType bottom = BottomType.v();
     for (Local v : this.jb.getLocals()) {
       Type t = tg.get(v);
@@ -285,7 +285,7 @@ public class TypeResolver {
     public boolean fail;
     public boolean typingChanged;
 
-    private final ByteType byteType = ByteType.v();
+    private final ByteType byteType = primeTypeCollector.getByteType();
     private final Integer32767Type integer32767Type = Integer32767Type.v();
     private final Integer127Type integer127Type = Integer127Type.v();
 
@@ -364,9 +364,9 @@ public class TypeResolver {
   }
 
   private Typing typePromotion(Typing tg) {
-    final BooleanType booleanType = BooleanType.v();
-    final ByteType byteType = ByteType.v();
-    final ShortType shortType = ShortType.v();
+    final BooleanType booleanType = primeTypeCollector.getBooleanType();
+    final ByteType byteType = primeTypeCollector.getByteType();
+    final ShortType shortType = primeTypeCollector.getShortType();
     boolean conversionDone;
     do {
       AugEvalFunction ef = new AugEvalFunction(this.jb);
@@ -506,7 +506,7 @@ public class TypeResolver {
           if (!typesEqual(told, t_) && told instanceof RefType && t_ instanceof RefType
               && (((RefType) told).getSootClass().isPhantom() || ((RefType) t_).getSootClass().isPhantom())
               && (stmt.getRightOp() instanceof CaughtExceptionRef)) {
-            lcas = Collections.<Type>singleton(RefType.v("java.lang.Throwable"));
+            lcas = Collections.<Type>singleton(RefType.v("java.lang.Throwable",myScene));
           } else {
             lcas = h.lcas(told, t_, myScene);
           }

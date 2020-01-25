@@ -26,6 +26,7 @@ import soot.AbstractJasminClass;
 import soot.SootField;
 import soot.SootFieldRef;
 import soot.UnitPrinter;
+import soot.baf.Baf;
 import soot.baf.FieldGetInst;
 import soot.baf.InstSwitch;
 import soot.util.Switch;
@@ -33,7 +34,8 @@ import soot.util.Switch;
 public class BFieldGetInst extends AbstractInst implements FieldGetInst {
   SootFieldRef fieldRef;
 
-  public BFieldGetInst(SootFieldRef fieldRef) {
+  public BFieldGetInst(SootFieldRef fieldRef, Baf myBaf) {
+    super(myBaf);
     if (fieldRef.isStatic()) {
       throw new RuntimeException("wrong static-ness");
     }
@@ -45,7 +47,7 @@ public class BFieldGetInst extends AbstractInst implements FieldGetInst {
   }
 
   public Object clone() {
-    return new BFieldGetInst(fieldRef);
+    return new BFieldGetInst(fieldRef, myBaf);
   }
 
   public int getInMachineCount() {

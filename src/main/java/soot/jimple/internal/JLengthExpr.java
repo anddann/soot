@@ -24,6 +24,7 @@ package soot.jimple.internal;
 
 import java.util.List;
 
+import soot.PrimTypeCollector;
 import soot.Unit;
 import soot.Value;
 import soot.baf.Baf;
@@ -32,8 +33,10 @@ import soot.jimple.Jimple;
 import soot.jimple.JimpleToBafContext;
 
 public class JLengthExpr extends AbstractLengthExpr implements ConvertToBaf {
-  public JLengthExpr(Value op) {
-    super(myJimple.newImmediateBox(op));
+ private Jimple myJimple;
+  public JLengthExpr(Value op, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+    super(myJimple.newImmediateBox(op), primTypeCollector);
+    this.myJimple = myJimple;
   }
 
   public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
@@ -45,7 +48,7 @@ public class JLengthExpr extends AbstractLengthExpr implements ConvertToBaf {
   }
 
   public Object clone() {
-    return new JLengthExpr(Jimple.cloneIfNecessary(getOp()));
+    return new JLengthExpr(Jimple.cloneIfNecessary(getOp()), myJimple, primTypeCollector);
   }
 
 }

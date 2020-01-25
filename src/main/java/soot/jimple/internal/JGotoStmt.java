@@ -38,18 +38,20 @@ import soot.util.Switch;
 public class JGotoStmt extends AbstractStmt implements GotoStmt {
   final UnitBox targetBox;
   final List<UnitBox> targetBoxes;
+  private Jimple myJimple;
 
-  public JGotoStmt(Unit target) {
-    this(myJimple.newStmtBox(target));
+  public JGotoStmt(Unit target, Jimple myJimple) {
+    this(myJimple.newStmtBox(target),myJimple);
   }
 
-  public JGotoStmt(UnitBox box) {
+  public JGotoStmt(UnitBox box,Jimple myJimple) {
     targetBox = box;
     targetBoxes = Collections.singletonList(box);
+    this.myJimple = myJimple;
   }
 
   public Object clone() {
-    return new JGotoStmt(getTarget());
+    return new JGotoStmt(getTarget(),myJimple);
   }
 
   public String toString() {

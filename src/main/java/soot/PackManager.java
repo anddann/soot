@@ -995,7 +995,7 @@ public class PackManager {
      * HAVE TO invoke this analysis since this invokes the renamer!!
      */
     if (transformations) {
-      InterProceduralAnalyses.applyInterProceduralAnalyses(myScene, myPhaseOptions, constancFactory, primTypeCollector);
+      InterProceduralAnalyses.applyInterProceduralAnalyses(myScene, myPhaseOptions, constancFactory, myScene.getPrimTypeCollector());
     }
   }
 
@@ -1041,11 +1041,11 @@ public class PackManager {
 
       logger.debug("Generating " + fileName + "... ");
 
-      G.v().out.flush();
+      //G.v().out.flush();
 
       myDavaPrinter.printTo(s, writerOut);
 
-      G.v().out.flush();
+     // G.v().out.flush();
 
       {
         try {
@@ -1091,7 +1091,7 @@ public class PackManager {
 
       // January 13th, 2006 SootMethodAddedByDava is set to false for
       // SuperFirstStmtHandler
-      G.v().SootMethodAddedByDava = false;
+     // FIXME G.v().SootMethodAddedByDava = false;
     } else {
       logger.debug("Transforming {}...", c.getName());
     }
@@ -1234,17 +1234,18 @@ public class PackManager {
        * January 13th, 2006 SuperFirstStmtHandler might have set SootMethodAddedByDava if it needs to create a new method.
        */
       // could use G to add new method...................
-      if (G.v().SootMethodAddedByDava) {
-        // System.out.println("PACKMANAGER SAYS:----------------Have to
-        // add the new method(s)");
-        ArrayList<SootMethod> sootMethodsAdded = G.v().SootMethodsAdded;
-        Iterator<SootMethod> it = sootMethodsAdded.iterator();
-        while (it.hasNext()) {
-          c.addMethod(it.next());
-        }
-        G.v().SootMethodsAdded = new ArrayList<SootMethod>();
-        G.v().SootMethodAddedByDava = false;
-      }
+      //FIXME
+//      if (G.v().SootMethodAddedByDava) {
+//        // System.out.println("PACKMANAGER SAYS:----------------Have to
+//        // add the new method(s)");
+//        ArrayList<SootMethod> sootMethodsAdded = G.v().SootMethodsAdded;
+//        Iterator<SootMethod> it = sootMethodsAdded.iterator();
+//        while (it.hasNext()) {
+//          c.addMethod(it.next());
+//        }
+//        G.v().SootMethodsAdded = new ArrayList<SootMethod>();
+//        G.v().SootMethodAddedByDava = false;
+//      }
 
     } // end if produceDava
   }

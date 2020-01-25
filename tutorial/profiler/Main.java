@@ -84,7 +84,7 @@ class GotoInstrumenter extends BodyTransformer
      
     private Local addTmpLong(Body body)
     {
-        Local tmpLong = Jimple.v().newLocal("tmpLong", LongType.v()); 
+        Local tmpLong = Jimple.v().newLocal("tmpLong", primeTypeCollector.getLongType());
         body.getLocals().add(tmpLong);
         return tmpLong;
     }
@@ -127,7 +127,7 @@ class GotoInstrumenter extends BodyTransformer
             else
             {
                 // Add gotoCounter field
-                gotoCounter = new SootField("gotoCount", LongType.v(), 
+                gotoCounter = new SootField("gotoCount", primeTypeCollector.getLongType(),
                                                 Modifier.STATIC);
                 Scene.v().getMainClass().addField(gotoCounter);
 
@@ -141,7 +141,7 @@ class GotoInstrumenter extends BodyTransformer
         {
             boolean isMainMethod = body.getMethod().getSubSignature().equals("void main(java.lang.String[])");
 
-            Local tmpLocal = Jimple.v().newLocal("tmp", LongType.v());
+            Local tmpLocal = Jimple.v().newLocal("tmp", primeTypeCollector.getLongType());
             body.getLocals().add(tmpLocal);
                 
             Iterator stmtIt = units.snapshotIterator();

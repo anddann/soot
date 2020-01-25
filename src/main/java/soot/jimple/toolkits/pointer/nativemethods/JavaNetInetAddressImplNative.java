@@ -28,8 +28,11 @@ import soot.jimple.toolkits.pointer.representations.ReferenceVariable;
 import soot.jimple.toolkits.pointer.util.NativeHelper;
 
 public class JavaNetInetAddressImplNative extends NativeMethodClass {
-  public JavaNetInetAddressImplNative(NativeHelper helper) {
+  private Environment myEnvironment;
+
+  public JavaNetInetAddressImplNative(NativeHelper helper, Environment myEnvironment) {
     super(helper);
+    this.myEnvironment = myEnvironment;
   }
 
   /**

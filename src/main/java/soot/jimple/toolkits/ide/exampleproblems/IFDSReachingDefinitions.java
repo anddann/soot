@@ -181,7 +181,7 @@ public class IFDSReachingDefinitions
   }
 
   public Pair<Value, Set<DefinitionStmt>> createZeroValue() {
-    return new Pair<Value, Set<DefinitionStmt>>(new JimpleLocal("<<zero>>", NullType.v(), myScene),
+    return new Pair<Value, Set<DefinitionStmt>>(new JimpleLocal("<<zero>>", primeTypeCollector.getNullType(), myScene),
         Collections.<DefinitionStmt>emptySet());
   }
 

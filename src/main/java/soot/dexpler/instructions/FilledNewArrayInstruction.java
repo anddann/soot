@@ -39,18 +39,20 @@ import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
+import soot.jimple.Jimple;
 import soot.jimple.NewArrayExpr;
 
 public class FilledNewArrayInstruction extends FilledArrayInstruction {
 
   public FilledNewArrayInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction35c)) {
       throw new IllegalArgumentException("Expected Instruction35c but got: " + instruction.getClass());
     }

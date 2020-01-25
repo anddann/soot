@@ -287,7 +287,7 @@ public class Jimple {
    * Constructs a MulExpr(Immediate, Immediate) grammar chunk.
    */
   public MulExpr newMulExpr(Value op1, Value op2) {
-    return new JMulExpr(op1, op2);
+    return new JMulExpr(op1, op2,this, primTypeCollector);
   }
 
   /**
@@ -378,7 +378,7 @@ public class Jimple {
    * Constructs a LengthExpr(Immediate) grammar chunk.
    */
   public LengthExpr newLengthExpr(Value op) {
-    return new JLengthExpr(op);
+    return new JLengthExpr(op, this, primTypeCollector);
   }
 
   /**
@@ -551,11 +551,11 @@ public class Jimple {
    * Constructs a GotoStmt(Stmt) grammar chunk.
    */
   public GotoStmt newGotoStmt(Unit target) {
-    return new JGotoStmt(target);
+    return new JGotoStmt(target,this);
   }
 
   public GotoStmt newGotoStmt(UnitBox stmtBox) {
-    return new JGotoStmt(stmtBox);
+    return new JGotoStmt(stmtBox,this);
   }
 
   /**
@@ -704,7 +704,7 @@ public class Jimple {
    * Constructs a ArrayRef(Local, Immediate) grammar chunk.
    */
   public ArrayRef newArrayRef(Value base, Value index) {
-    return new JArrayRef(base, index);
+    return new JArrayRef(base, index, this, primTypeCollector, myScene);
   }
 
   // Note: This is NOT used to create the variable box in JAssignStmt.

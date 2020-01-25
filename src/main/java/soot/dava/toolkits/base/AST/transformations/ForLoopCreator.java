@@ -105,7 +105,7 @@ public class ForLoopCreator extends DepthFirstAdapter {
               // a statement sequence node followed by a while node
 
               ForLoopCreationHelper helper
-                  = new ForLoopCreationHelper((ASTStatementSequenceNode) temp, (ASTWhileNode) temp1);
+                  = new ForLoopCreationHelper((ASTStatementSequenceNode) temp, (ASTWhileNode) temp1, myTryContentsFinder, myASTWalker);
 
               if (helper.checkPattern()) {
                 // pattern matched
@@ -209,7 +209,7 @@ public class ForLoopCreator extends DepthFirstAdapter {
           if (temp1 instanceof ASTWhileNode) {
             // a statement sequence node followed by a while node
 
-            ForLoopCreationHelper helper = new ForLoopCreationHelper((ASTStatementSequenceNode) temp, (ASTWhileNode) temp1);
+            ForLoopCreationHelper helper = new ForLoopCreationHelper((ASTStatementSequenceNode) temp, (ASTWhileNode) temp1, myTryContentsFinder, myASTWalker);
 
             if (helper.checkPattern()) {
               // pattern matched
@@ -270,7 +270,7 @@ public class ForLoopCreator extends DepthFirstAdapter {
               // a statement sequence node followed by a while node
 
               ForLoopCreationHelper helper
-                  = new ForLoopCreationHelper((ASTStatementSequenceNode) temp, (ASTWhileNode) temp1);
+                  = new ForLoopCreationHelper((ASTStatementSequenceNode) temp, (ASTWhileNode) temp1, myTryContentsFinder, myASTWalker);
 
               if (helper.checkPattern()) {
                 // pattern matched
@@ -326,7 +326,7 @@ public class ForLoopCreator extends DepthFirstAdapter {
                 // a statement sequence node followed by a while node
 
                 ForLoopCreationHelper helper
-                    = new ForLoopCreationHelper((ASTStatementSequenceNode) temp, (ASTWhileNode) temp1);
+                    = new ForLoopCreationHelper((ASTStatementSequenceNode) temp, (ASTWhileNode) temp1, myTryContentsFinder, myASTWalker);
 
                 if (helper.checkPattern()) {
                   // pattern matched

@@ -58,7 +58,7 @@ public class CheckCastInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction21c)) {
       throw new IllegalArgumentException("Expected Instruction21c but got: " + instruction.getClass());
     }
@@ -68,18 +68,18 @@ public class CheckCastInstruction extends DexlibAbstractInstruction {
     Local castValue = body.getRegisterLocal(checkCastInstr.getRegisterA());
     Type checkCastType = DexType.toSoot((TypeReference) checkCastInstr.getReference());
 
-    CastExpr castExpr = myJimple.newCastExpr(castValue, checkCastType);
+    CastExpr castExpr = this.myJimple.newCastExpr(castValue, checkCastType);
 
     // generate "x = (Type) x"
     // splitter will take care of the rest
-    AssignStmt assign = myJimple.newAssignStmt(castValue, castExpr);
+    AssignStmt assign = this.myJimple.newAssignStmt(castValue, castExpr);
 
     setUnit(assign);
     addTags(assign);
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper.setType(assign.getLeftOpBox(), checkCastType, false);
+      this.myDalvikTyper.setType(assign.getLeftOpBox(), checkCastType, false);
     }
 
   }

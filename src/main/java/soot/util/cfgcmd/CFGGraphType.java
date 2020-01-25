@@ -166,7 +166,7 @@ public abstract class CFGGraphType extends CFGOptionMatcher.CFGOption {
 
   public static final CFGGraphType BRIEF_BLOCK_GRAPH = new CFGGraphType("BriefBlockGraph") {
     public DirectedGraph buildGraph(Body b) {
-      return new BriefBlockGraph(b);
+      return new BriefBlockGraph(b, myPhaseDumper);
     }
 
     public DotGraph drawGraph(CFGToDotGraph drawer, DirectedGraph g, Body b) {

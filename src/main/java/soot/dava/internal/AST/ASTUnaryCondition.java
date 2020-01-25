@@ -62,7 +62,7 @@ public class ASTUnaryCondition extends ASTUnaryBinaryCondition {
     if (value instanceof DNotExpr) {
       this.value = ((DNotExpr) value).getOp();
     } else {
-      this.value = new DNotExpr(value);
+      this.value = new DNotExpr(value, myGrimp, primTypeCollector);
     }
   }
 

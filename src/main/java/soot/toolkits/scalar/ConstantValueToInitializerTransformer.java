@@ -170,7 +170,7 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
     // Create a static initializer if we don't already have one
     smInit = sc.getMethodByNameUnsafe(SootMethod.staticInitializerName);
     if (smInit == null) {
-      smInit = myScene.makeSootMethod(SootMethod.staticInitializerName, Collections.<Type>emptyList(), VoidType.v());
+      smInit = myScene.makeSootMethod(SootMethod.staticInitializerName, Collections.<Type>emptyList(), primeTypeCollector.getVoidType());
       smInit.setActiveBody(myJimple.newBody(smInit));
       sc.addMethod(smInit);
       smInit.setModifiers(Modifier.PUBLIC | Modifier.STATIC);

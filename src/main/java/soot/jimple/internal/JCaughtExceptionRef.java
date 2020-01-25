@@ -63,7 +63,7 @@ public class JCaughtExceptionRef implements CaughtExceptionRef {
   }
 
   public Type getType() {
-    return RefType.v("java.lang.Throwable");
+    return RefType.v("java.lang.Throwable",myScene);
   }
 
   public void apply(Switch sw) {

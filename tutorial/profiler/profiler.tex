@@ -127,7 +127,7 @@ Otherwise, we need to add it.
     else
     {
         // Add gotoCounter field
-        gotoCounter = new SootField("gotoCount", LongType.v(), 
+        gotoCounter = new SootField("gotoCount", primeTypeCollector.getLongType(),
                                         Modifier.STATIC);
         Scene.v().getMainClass().addField(gotoCounter);
 \end{verbatim}
@@ -165,7 +165,7 @@ is the main class, but we don't bother.
 
 Next, a local is added; we already know how to do this.
 \begin{verbatim}
-    Local tmpLocal = Jimple.v().newLocal("tmp", LongType.v());
+    Local tmpLocal = Jimple.v().newLocal("tmp", primeTypeCollector.getLongType());
     body.getLocals().add(tmpLocal);
 \end{verbatim}
 

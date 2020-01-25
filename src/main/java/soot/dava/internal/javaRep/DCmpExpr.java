@@ -60,6 +60,6 @@ public class DCmpExpr extends AbstractGrimpIntBinopExpr implements CmpExpr {
       return getOp1().getType();
     }
 
-    return IntType.v();
+    return primeTypeCollector.getIntType();
   }
 }

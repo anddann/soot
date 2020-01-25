@@ -131,34 +131,34 @@ public class DexType {
     // see https://code.google.com/p/smali/wiki/TypesMethodsAndFields
     switch (typeDesignator) {
       case 'Z': // boolean
-        type = BooleanType.v();
+        type = primeTypeCollector.getBooleanType();
         break;
       case 'B': // byte
-        type = ByteType.v();
+        type = primeTypeCollector.getByteType();
         break;
       case 'S': // short
-        type = ShortType.v();
+        type = primeTypeCollector.getShortType();
         break;
       case 'C': // char
-        type = CharType.v();
+        type = primeTypeCollector.getCharType();
         break;
       case 'I': // int
-        type = IntType.v();
+        type = primeTypeCollector.getIntType();
         break;
       case 'J': // long
-        type = LongType.v();
+        type = primeTypeCollector.getLongType();
         break;
       case 'F': // float
-        type = FloatType.v();
+        type = primeTypeCollector.getFloatType();
         break;
       case 'D': // double
-        type = DoubleType.v();
+        type = primeTypeCollector.getDoubleType();
         break;
       case 'L': // object
         type = RefType.v(Util.dottedClassName(typeDescriptor, myScene));
         break;
       case 'V': // void
-        type = VoidType.v();
+        type = primeTypeCollector.getVoidType();
         break;
       case '[': // array
         type = toSoot(typeDescriptor, pos + 1).makeArrayType();

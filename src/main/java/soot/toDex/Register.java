@@ -38,7 +38,7 @@ public class Register implements Cloneable {
 
   public static final int MAX_REG_NUM_BYTE = 15;
 
-  public static final Register EMPTY_REGISTER = new Register(IntType.v(), 0);
+  public static final Register EMPTY_REGISTER = new Register(primeTypeCollector.getIntType(), 0);
 
   private static boolean fitsInto(int regNumber, int maxNumber, boolean isWide) {
     if (isWide) {

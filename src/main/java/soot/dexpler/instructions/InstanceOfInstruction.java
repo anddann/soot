@@ -40,8 +40,10 @@ import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.InstanceOfExpr;
+import soot.jimple.Jimple;
 
 public class InstanceOfInstruction extends DexlibAbstractInstruction {
 
@@ -50,7 +52,7 @@ public class InstanceOfInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     Instruction22c i = (Instruction22c) instruction;
     int dest = i.getRegisterA();
     int source = i.getRegisterB();

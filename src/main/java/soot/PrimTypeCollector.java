@@ -73,6 +73,8 @@ public class PrimTypeCollector {
 
   private UnknownType unknownType;
 
+
+
   @Inject
   public PrimTypeCollector(FloatType floatType, NullType nullType, ErroneousType errorneousType,
       StmtAddressType stmtAddressType, WordType wordType, DoubleWordType doubleWordType, RefType refType,

@@ -104,7 +104,7 @@ public class RegionAnalysis {
     } else if (this.m_cfg instanceof EnhancedUnitGraph) {
       this.m_blockCFG = new EnhancedBlockGraph((EnhancedUnitGraph) this.m_cfg, myPhaseDumper);
     } else if (this.m_cfg instanceof BriefUnitGraph) {
-      this.m_blockCFG = new BriefBlockGraph((BriefUnitGraph) this.m_cfg);
+      this.m_blockCFG = new BriefBlockGraph((BriefUnitGraph) this.m_cfg, myPhaseDumper);
     } else {
       throw new RuntimeException("Unsupported CFG passed into the RegionAnalyis constructor!");
     }

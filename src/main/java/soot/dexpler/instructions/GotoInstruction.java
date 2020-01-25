@@ -30,6 +30,7 @@ package soot.dexpler.instructions;
 import org.jf.dexlib2.iface.instruction.Instruction;
 
 import soot.dexpler.DexBody;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.GotoStmt;
 import soot.jimple.Jimple;
 import soot.options.Options;
@@ -42,7 +43,7 @@ public class GotoInstruction extends JumpInstruction implements DeferableInstruc
     this.myJimple = myJimple;
   }
 
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     // check if target instruction has been jimplified
     if (getTargetInstruction(body).getUnit() != null) {
       body.add(gotoStatement());
@@ -50,7 +51,7 @@ public class GotoInstruction extends JumpInstruction implements DeferableInstruc
     }
     // set marker unit to swap real gotostmt with otherwise
     body.addDeferredJimplification(this);
-    markerUnit = myJimple.newNopStmt();
+    markerUnit = this.myJimple.newNopStmt();
     addTags(markerUnit);
     unit = markerUnit;
     body.add(markerUnit);

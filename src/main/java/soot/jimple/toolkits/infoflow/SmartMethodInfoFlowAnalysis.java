@@ -265,7 +265,7 @@ public class SmartMethodInfoFlowAnalysis {
     while (sinksIt.hasNext()) {
       EquivalentValue sink = sinksIt.next();
       if (!visitedSources.contains(sink)) {
-        EquivalentValue flowsToSourcesOf = new CachedEquivalentValue(new AbstractDataSource(sink.getValue(), primeTypeCollector));
+        EquivalentValue flowsToSourcesOf = new CachedEquivalentValue(new AbstractDataSource(sink.getValue(), primTypeCollector));
 
         if (abbreviatedInfoFlowGraph.getPredsOfAsSet(sink).contains(flowsToSourcesOf)) {
           ret.addAll(sourcesOf(flowsToSourcesOf, visitedSources, visitedSinks));
@@ -375,7 +375,7 @@ public class SmartMethodInfoFlowAnalysis {
 
   // for when data flows to the data structure pointed to by a local
   protected void handleFlowsToDataStructure(Value base, Value source) {
-    EquivalentValue sourcesOfBaseEqVal = new CachedEquivalentValue(new AbstractDataSource(base, primeTypeCollector));
+    EquivalentValue sourcesOfBaseEqVal = new CachedEquivalentValue(new AbstractDataSource(base, primTypeCollector));
     EquivalentValue baseEqVal = new CachedEquivalentValue(base);
 
     EquivalentValue sourceEqVal;

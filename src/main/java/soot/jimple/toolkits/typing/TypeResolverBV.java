@@ -711,7 +711,7 @@ public class TypeResolverBV {
   }
 
   private void check_constraints() throws TypeException {
-    ConstraintCheckerBV checker = new ConstraintCheckerBV(this, false);
+    ConstraintCheckerBV checker = new ConstraintCheckerBV(this, false, primeTypeCollector, myScene, myJimple);
     StringBuffer s = null;
 
     if (DEBUG) {
@@ -736,7 +736,7 @@ public class TypeResolverBV {
   }
 
   private void check_and_fix_constraints() throws TypeException {
-    ConstraintCheckerBV checker = new ConstraintCheckerBV(this, true);
+    ConstraintCheckerBV checker = new ConstraintCheckerBV(this, true, primeTypeCollector, myScene, myJimple);
     StringBuffer s = null;
     PatchingChain<Unit> units = stmtBody.getUnits();
     Stmt[] stmts = new Stmt[units.size()];

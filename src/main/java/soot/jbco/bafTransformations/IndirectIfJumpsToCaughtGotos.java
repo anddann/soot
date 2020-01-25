@@ -169,11 +169,11 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
       toinsert.add(myBaf.newRemInst(primTypeCollector.getByteType()));
 
       /*
-       * toinsert.add(myBaf.newDup1Inst(ByteType.v()));
-       * toinsert.add(myBaf.newPrimitiveCastInst(ByteType.v(),IntType.v()));
+       * toinsert.add(myBaf.newDup1Inst(primeTypeCollector.getByteType()));
+       * toinsert.add(myBaf.newPrimitiveCastInst(primeTypeCollector.getByteType(),primeTypeCollector.getIntType()));
        * toinsert.add(myBaf.newStaticGetInst(sys.getFieldByName("out").makeRef()));
-       * toinsert.add(myBaf.newSwapInst(IntType.v(),RefType.v())); ArrayList parms = new ArrayList();
-       * parms.add(IntType.v()); toinsert.add(myBaf.newVirtualInvokeInst(out.getMethod("println",parms).makeRef()));
+       * toinsert.add(myBaf.newSwapInst(primeTypeCollector.getIntType(),primeTypeCollector.getRefType())); ArrayList parms = new ArrayList();
+       * parms.add(primeTypeCollector.getIntType()); toinsert.add(myBaf.newVirtualInvokeInst(out.getMethod("println",parms).makeRef()));
        */
       toinsert.add(myBaf.newIfEqInst((Unit) units.getSuccOf(nonTrap)));
     }

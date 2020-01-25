@@ -43,9 +43,11 @@ import soot.dexpler.IDalvikTyper;
 import soot.dexpler.tags.DoubleOpTag;
 import soot.dexpler.tags.FloatOpTag;
 import soot.dexpler.tags.LongOpTag;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.BinopExpr;
 import soot.jimple.Expr;
+import soot.jimple.Jimple;
 import soot.jimple.internal.JAssignStmt;
 
 public class CmpInstruction extends TaggedInstruction {
@@ -55,7 +57,7 @@ public class CmpInstruction extends TaggedInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction23x)) {
       throw new IllegalArgumentException("Expected Instruction23x but got: " + instruction.getClass());
     }
@@ -74,27 +76,27 @@ public class CmpInstruction extends TaggedInstruction {
     switch (opcode) {
       case CMPL_DOUBLE:
         setTag(new DoubleOpTag());
-        type = DoubleType.v();
+        type = primeTypeCollector.getDoubleType();
         cmpExpr = myJimple.newCmplExpr(first, second);
         break;
       case CMPL_FLOAT:
         setTag(new FloatOpTag());
-        type = FloatType.v();
+        type = primeTypeCollector.getFloatType();
         cmpExpr = myJimple.newCmplExpr(first, second);
         break;
       case CMPG_DOUBLE:
         setTag(new DoubleOpTag());
-        type = DoubleType.v();
+        type = primeTypeCollector.getDoubleType();
         cmpExpr = myJimple.newCmpgExpr(first, second);
         break;
       case CMPG_FLOAT:
         setTag(new FloatOpTag());
-        type = FloatType.v();
+        type = primeTypeCollector.getFloatType();
         cmpExpr = myJimple.newCmpgExpr(first, second);
         break;
       case CMP_LONG:
         setTag(new LongOpTag());
-        type = LongType.v();
+        type = primeTypeCollector.getLongType();
         cmpExpr = myJimple.newCmpExpr(first, second);
         break;
       default:
@@ -113,7 +115,7 @@ public class CmpInstruction extends TaggedInstruction {
       BinopExpr bexpr = (BinopExpr) cmpExpr;
       myDalvikTyper().setType(bexpr.getOp1Box(), type, true);
       myDalvikTyper().setType(bexpr.getOp2Box(), type, true);
-      myDalvikTyper().setType(((JAssignStmt) assign).leftBox, IntType.v(), false);
+      myDalvikTyper().setType(((JAssignStmt) assign).leftBox, primeTypeCollector.getIntType(), false);
     }
   }
 

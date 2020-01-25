@@ -87,7 +87,7 @@ public class AllocNodesFinder {
             // Value rightOp = ((AssignStmt)unit).getRightOp();
 
             // Type type = ((NewExpr)rightOp).getType();
-            AllocNode allocNode = pag.makeAllocNode(PointsToAnalysis.STRING_NODE, RefType.v("java.lang.String"), null);
+            AllocNode allocNode = pag.makeAllocNode(PointsToAnalysis.STRING_NODE, RefType.v("java.lang.String",myScene), null);
             // AllocNode allocNode = pag.makeAllocNode((NewExpr)rightOp, type, sm);
             // System.out.println("make alloc node: "+allocNode);
             allocNodes.add(allocNode);
@@ -120,7 +120,7 @@ public class AllocNodesFinder {
           // System.out.println("unit: "+unit);
 
           if (clinitMethods.contains(sm) && unit instanceof AssignStmt) {
-            AllocNode allocNode = pag.makeAllocNode(PointsToAnalysis.STRING_NODE, RefType.v("java.lang.String"), null);
+            AllocNode allocNode = pag.makeAllocNode(PointsToAnalysis.STRING_NODE, RefType.v("java.lang.String",myScene), null);
             // AllocNode allocNode = pag.makeAllocNode((NewExpr)rightOp, type, sm);
             // System.out.println("make alloc node: "+allocNode);
             allocNodes.add(allocNode);

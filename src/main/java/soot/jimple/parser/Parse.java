@@ -35,7 +35,6 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.jimple.JimpleBody;
@@ -77,7 +76,7 @@ public class Parse {
 
     Walker w;
     if (sc == null) {
-      w = new Walker(null);
+      w = new Walker(constancFactory, null, myScene, myOptions, myPackageNamer, myJimple, constantFactory);
     } else {
       w = new BodyExtractorWalker(sc, null, new HashMap<SootMethod, JimpleBody>());
     }
@@ -135,7 +134,7 @@ public class Parse {
 
         Start tree = p.parse();
 
-        tree.apply(new Walker(null));
+        tree.apply(new Walker(constancFactory, null, myScene, myOptions, myPackageNamer, myJimple, constantFactory));
       }
     }
   } // main

@@ -33,8 +33,10 @@ import org.jf.dexlib2.iface.instruction.Instruction;
 import soot.Immediate;
 import soot.Local;
 import soot.dexpler.DexBody;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ConditionExpr;
 import soot.jimple.IfStmt;
+import soot.jimple.Jimple;
 
 public abstract class ConditionalJumpInstruction extends JumpInstruction implements DeferableInstruction {
 
@@ -47,7 +49,7 @@ public abstract class ConditionalJumpInstruction extends JumpInstruction impleme
    */
   protected abstract IfStmt ifStatement(DexBody body);
 
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     // check if target instruction has been jimplified
     if (getTargetInstruction(body).getUnit() != null) {
       IfStmt s = ifStatement(body);

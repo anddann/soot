@@ -68,8 +68,8 @@ public class MyMain
            
         // Create the method, public static void main(String[])
            method = new SootMethod("main",
-                Arrays.asList(new Type[] {ArrayType.v(RefType.v("java.lang.String"), 1)}),
-                VoidType.v(), Modifier.PUBLIC | Modifier.STATIC);
+                Arrays.asList(new Type[] {ArrayType.v(RefType.v("java.lang.String",myScene), 1)}),
+                primeTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC);
         
            sClass.addMethod(method);
            
@@ -83,7 +83,7 @@ public class MyMain
             Local arg, tmpRef;
             
             // Add some locals, java.lang.String l0
-                arg = Jimple.v().newLocal("l0", ArrayType.v(RefType.v("java.lang.String"), 1));
+                arg = Jimple.v().newLocal("l0", ArrayType.v(RefType.v("java.lang.String",myScene), 1));
                 body.getLocals().add(arg);
             
             // Add locals, java.io.printStream tmpRef
@@ -92,7 +92,7 @@ public class MyMain
                 
             // add "l0 = @parameter0"
                 units.add(Jimple.v().newIdentityStmt(arg, 
-                     Jimple.v().newParameterRef(ArrayType.v(RefType.v("java.lang.String"), 1), 0)));
+                     Jimple.v().newParameterRef(ArrayType.v(RefType.v("java.lang.String",myScene), 1), 0)));
             
             // add "tmpRef = java.lang.System.out"
                 units.add(Jimple.v().newAssignStmt(tmpRef, Jimple.v().newStaticFieldRef(

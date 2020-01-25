@@ -112,23 +112,23 @@ public class UnitThrowAnalysisTest {
 
 		List voidList = new ArrayList();
 		SootClass bogusClass = new SootClass("BogusClass", myScene, myOptions, myPackageNamer);
-		bogusClass.addMethod(myScene.makeSootMethod("floatFunction", voidList, FloatType.v()));
+		bogusClass.addMethod(myScene.makeSootMethod("floatFunction", voidList, primeTypeCollector.getFloatType()));
 		bogusClass.addMethod(myScene.makeSootMethod("floatFunction",
-				Arrays.asList(new Type[] { FloatType.v(), FloatType.v(), }), FloatType.v(), Modifier.STATIC));
+				Arrays.asList(new Type[] { primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), }), primeTypeCollector.getFloatType(), Modifier.STATIC));
 		SootFieldRef nanFieldRef = myScene.makeFieldRef(myScene.getSootClass("java.lang.Float"), "NaN",
-				FloatType.v(), true);
+				primeTypeCollector.getFloatType(), true);
 		floatStaticFieldRef = myGrimp.newStaticFieldRef(nanFieldRef);
-		floatLocal = myGrimp.newLocal("local", FloatType.v());
+		floatLocal = myGrimp.newLocal("local", primeTypeCollector.getFloatType());
 		floatConstant = FloatConstant.v(33.42f);
 		floatConstantLocal = myGrimp.newLocal("local", RefType.v("soot.jimple.FloatConstant"));
-		SootFieldRef valueFieldRef = myScene.makeFieldRef(bogusClass, "value", FloatType.v(), false);
+		SootFieldRef valueFieldRef = myScene.makeFieldRef(bogusClass, "value", primeTypeCollector.getFloatType(), false);
 		floatInstanceFieldRef = myGrimp.newInstanceFieldRef(floatConstantLocal, valueFieldRef);
-		floatArrayRef = myGrimp.newArrayRef(myJimple.newLocal("local1", FloatType.v()), IntConstant.v(0));
+		floatArrayRef = myGrimp.newArrayRef(myJimple.newLocal("local1", primeTypeCollector.getFloatType()), IntConstant.v(0));
 		floatVirtualInvoke = myGrimp.newVirtualInvokeExpr(floatConstantLocal,
-				myScene.makeMethodRef(bogusClass, "floatFunction", voidList, FloatType.v(), false), voidList);
+				myScene.makeMethodRef(bogusClass, "floatFunction", voidList, primeTypeCollector.getFloatType(), false), voidList);
 		floatStaticInvoke = myGrimp.newStaticInvokeExpr(
 				myScene.makeMethodRef(bogusClass, "floatFunction",
-						Arrays.asList(new Type[] { FloatType.v(), FloatType.v(), }), FloatType.v(), true),
+						Arrays.asList(new Type[] { primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), }), primeTypeCollector.getFloatType(), true),
 				Arrays.asList(new Value[] { floatStaticFieldRef, floatArrayRef, }));
 	}
 
@@ -153,9 +153,9 @@ public class UnitThrowAnalysisTest {
 	public void testJInvokeStmt() {
 		List voidList = new ArrayList();
 		Stmt s = myJimple.newInvokeStmt(
-				myJimple.newVirtualInvokeExpr(myJimple.newLocal("local1", RefType.v("java.lang.Object")),
+				myJimple.newVirtualInvokeExpr(myJimple.newLocal("local1", RefType.v("java.lang.Object",myScene)),
 						myScene.makeMethodRef(myScene.getSootClass("java.lang.Object"), "wait", voidList,
-								VoidType.v(), false),
+								primeTypeCollector.getVoidType(), false),
 						voidList));
 		ExceptionHashSet expectedRep = new ExceptionHashSet(utility.VM_AND_RESOLVE_METHOD_ERRORS_REP);
 		expectedRep.add(utility.NULL_POINTER_EXCEPTION);
@@ -171,9 +171,9 @@ public class UnitThrowAnalysisTest {
 		assertEquals(utility.ALL_TEST_THROWABLES, utility.catchableSubset(unitAnalysis.mightThrow(s)));
 
 		SootClass bogusClass = new SootClass("BogusClass", myScene, myOptions, myPackageNamer);
-		bogusClass.addMethod(myScene.makeSootMethod("emptyMethod", voidList, VoidType.v(), Modifier.STATIC));
+		bogusClass.addMethod(myScene.makeSootMethod("emptyMethod", voidList, primeTypeCollector.getVoidType(), Modifier.STATIC));
 		s = myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(
-				myScene.makeMethodRef(bogusClass, "emptyMethod", voidList, VoidType.v(), true), voidList));
+				myScene.makeMethodRef(bogusClass, "emptyMethod", voidList, primeTypeCollector.getVoidType(), true), voidList));
 		assertTrue(ExceptionTestUtility.sameMembers(utility.ALL_ERRORS_REP, Collections.EMPTY_SET,
 				immaculateAnalysis.mightThrow(s)));
 		assertEquals(utility.ALL_TEST_ERRORS_PLUS_SUPERTYPES,
@@ -188,9 +188,9 @@ public class UnitThrowAnalysisTest {
 	public void testGInvokeStmt() {
 		List voidList = new ArrayList();
 		Stmt s = myGrimp.newInvokeStmt(
-				myGrimp.newVirtualInvokeExpr(myGrimp.newLocal("local1", RefType.v("java.lang.Object")),
+				myGrimp.newVirtualInvokeExpr(myGrimp.newLocal("local1", RefType.v("java.lang.Object",myScene)),
 						myScene.makeMethodRef(myScene.getSootClass("java.lang.Object"), "wait", voidList,
-								VoidType.v(), false),
+								primeTypeCollector.getVoidType(), false),
 						voidList));
 		ExceptionHashSet expectedRep = new ExceptionHashSet(utility.VM_AND_RESOLVE_METHOD_ERRORS_REP);
 		expectedRep.add(utility.NULL_POINTER_EXCEPTION);
@@ -206,11 +206,11 @@ public class UnitThrowAnalysisTest {
 		assertEquals(utility.ALL_TEST_THROWABLES, utility.catchableSubset(unitAnalysis.mightThrow(s)));
 
 		SootClass bogusClass = new SootClass("BogusClass", myScene, myOptions, myPackageNamer);
-		bogusClass.addMethod(myScene.makeSootMethod("emptyMethod", voidList, VoidType.v(), Modifier.STATIC));
+		bogusClass.addMethod(myScene.makeSootMethod("emptyMethod", voidList, primeTypeCollector.getVoidType(), Modifier.STATIC));
 		s = myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(
-				myScene.makeMethodRef(bogusClass, "emptyMethod", voidList, VoidType.v(), true), voidList));
+				myScene.makeMethodRef(bogusClass, "emptyMethod", voidList, primeTypeCollector.getVoidType(), true), voidList));
 		s = myGrimp.newInvokeStmt(myGrimp.newStaticInvokeExpr(
-				myScene.makeMethodRef(bogusClass, "emptyMethod", voidList, VoidType.v(), true), voidList));
+				myScene.makeMethodRef(bogusClass, "emptyMethod", voidList, primeTypeCollector.getVoidType(), true), voidList));
 		assertTrue(ExceptionTestUtility.sameMembers(utility.ALL_ERRORS_REP, Collections.EMPTY_SET,
 				immaculateAnalysis.mightThrow(s)));
 		assertEquals(utility.ALL_TEST_ERRORS_PLUS_SUPERTYPES,
@@ -224,14 +224,14 @@ public class UnitThrowAnalysisTest {
 	public void testJAssignStmt() {
 
 		// local0 = 0
-		Stmt s = myJimple.newAssignStmt(myJimple.newLocal("local0", IntType.v()), IntConstant.v(0));
+		Stmt s = myJimple.newAssignStmt(myJimple.newLocal("local0", primeTypeCollector.getIntType()), IntConstant.v(0));
 		assertTrue(
 				ExceptionTestUtility.sameMembers(utility.VM_ERRORS, Collections.EMPTY_SET, unitAnalysis.mightThrow(s)));
 		assertEquals(utility.VM_ERRORS_PLUS_SUPERTYPES, utility.catchableSubset(unitAnalysis.mightThrow(s)));
 
 		ArrayRef arrayRef = myJimple.newArrayRef(
-				myJimple.newLocal("local1", ArrayType.v(RefType.v("java.lang.Object"), 1)), IntConstant.v(0));
-		Local scalarRef = myJimple.newLocal("local2", RefType.v("java.lang.Object"));
+				myJimple.newLocal("local1", ArrayType.v(RefType.v("java.lang.Object",myScene), 1)), IntConstant.v(0));
+		Local scalarRef = myJimple.newLocal("local2", RefType.v("java.lang.Object",myScene));
 
 		// local2 = local1[0]
 		s = myJimple.newAssignStmt(scalarRef, arrayRef);
@@ -262,14 +262,14 @@ public class UnitThrowAnalysisTest {
 	public void testGAssignStmt() {
 
 		// local0 = 0
-		Stmt s = myGrimp.newAssignStmt(myGrimp.newLocal("local0", IntType.v()), IntConstant.v(0));
+		Stmt s = myGrimp.newAssignStmt(myGrimp.newLocal("local0", primeTypeCollector.getIntType()), IntConstant.v(0));
 		assertTrue(
 				ExceptionTestUtility.sameMembers(utility.VM_ERRORS, Collections.EMPTY_SET, unitAnalysis.mightThrow(s)));
 		assertEquals(utility.VM_ERRORS_PLUS_SUPERTYPES, utility.catchableSubset(unitAnalysis.mightThrow(s)));
 
 		ArrayRef arrayRef = myGrimp.newArrayRef(
-				myGrimp.newLocal("local1", ArrayType.v(RefType.v("java.lang.Object"), 1)), IntConstant.v(0));
-		Local scalarRef = myGrimp.newLocal("local2", RefType.v("java.lang.Object"));
+				myGrimp.newLocal("local1", ArrayType.v(RefType.v("java.lang.Object",myScene), 1)), IntConstant.v(0));
+		Local scalarRef = myGrimp.newLocal("local2", RefType.v("java.lang.Object",myScene));
 
 		// local2 = local1[0]
 		s = myGrimp.newAssignStmt(scalarRef, arrayRef);
@@ -297,7 +297,7 @@ public class UnitThrowAnalysisTest {
 	@Test
 	public void testJIdentityStmt() {
 
-		Stmt s = myJimple.newIdentityStmt(myGrimp.newLocal("local0", IntType.v()),
+		Stmt s = myJimple.newIdentityStmt(myGrimp.newLocal("local0", primeTypeCollector.getIntType()),
 				myJimple.newCaughtExceptionRef());
 		assertTrue(
 				ExceptionTestUtility.sameMembers(utility.VM_ERRORS, Collections.EMPTY_SET, unitAnalysis.mightThrow(s)));
@@ -319,7 +319,7 @@ public class UnitThrowAnalysisTest {
 	@Test
 	public void testGIdentityStmt() {
 
-		Stmt s = myGrimp.newIdentityStmt(myGrimp.newLocal("local0", IntType.v()),
+		Stmt s = myGrimp.newIdentityStmt(myGrimp.newLocal("local0", primeTypeCollector.getIntType()),
 				myGrimp.newCaughtExceptionRef());
 		assertTrue(
 				ExceptionTestUtility.sameMembers(utility.VM_ERRORS, Collections.EMPTY_SET, unitAnalysis.mightThrow(s)));
@@ -442,7 +442,7 @@ public class UnitThrowAnalysisTest {
 
 	@Test
 	public void testJLookupSwitchStmt() {
-		Stmt target = myJimple.newAssignStmt(myJimple.newLocal("local0", IntType.v()), IntConstant.v(0));
+		Stmt target = myJimple.newAssignStmt(myJimple.newLocal("local0", primeTypeCollector.getIntType()), IntConstant.v(0));
 		Stmt s = myJimple.newLookupSwitchStmt(IntConstant.v(1), Collections.singletonList(IntConstant.v(1)),
 				Collections.singletonList(target), target);
 		assertTrue(
@@ -452,7 +452,7 @@ public class UnitThrowAnalysisTest {
 
 	@Test
 	public void testGLookupSwitchStmt() {
-		Stmt target = myGrimp.newAssignStmt(myGrimp.newLocal("local0", IntType.v()), IntConstant.v(0));
+		Stmt target = myGrimp.newAssignStmt(myGrimp.newLocal("local0", primeTypeCollector.getIntType()), IntConstant.v(0));
 		Stmt s = myGrimp.newLookupSwitchStmt(IntConstant.v(1), Arrays.asList(new Value[] { IntConstant.v(1) }),
 				Arrays.asList(new Unit[] { target }), target);
 		assertTrue(
@@ -540,7 +540,7 @@ public class UnitThrowAnalysisTest {
 
 	@Test
 	public void testJTableSwitchStmt() {
-		Stmt target = myJimple.newAssignStmt(myJimple.newLocal("local0", IntType.v()), IntConstant.v(0));
+		Stmt target = myJimple.newAssignStmt(myJimple.newLocal("local0", primeTypeCollector.getIntType()), IntConstant.v(0));
 		Stmt s = myJimple.newTableSwitchStmt(IntConstant.v(1), 0, 1, Arrays.asList(new Unit[] { target }), target);
 		assertTrue(
 				ExceptionTestUtility.sameMembers(utility.VM_ERRORS, Collections.EMPTY_SET, unitAnalysis.mightThrow(s)));
@@ -549,7 +549,7 @@ public class UnitThrowAnalysisTest {
 
 	@Test
 	public void testGTableSwitchStmt() {
-		Stmt target = myGrimp.newAssignStmt(myGrimp.newLocal("local0", IntType.v()), IntConstant.v(0));
+		Stmt target = myGrimp.newAssignStmt(myGrimp.newLocal("local0", primeTypeCollector.getIntType()), IntConstant.v(0));
 		Stmt s = myGrimp.newTableSwitchStmt(IntConstant.v(1), 0, 1, Arrays.asList(new Unit[] { target }), target);
 		assertTrue(
 				ExceptionTestUtility.sameMembers(utility.VM_ERRORS, Collections.EMPTY_SET, unitAnalysis.mightThrow(s)));
@@ -604,7 +604,7 @@ public class UnitThrowAnalysisTest {
 		// Now throw a new IncompatibleClassChangeError.
 		s = myGrimp.newThrowStmt(myGrimp.newNewInvokeExpr(utility.INCOMPATIBLE_CLASS_CHANGE_ERROR,
 				myScene.makeMethodRef(utility.INCOMPATIBLE_CLASS_CHANGE_ERROR.getSootClass(), "void <init>",
-						Collections.EMPTY_LIST, VoidType.v(), false),
+						Collections.EMPTY_LIST, primeTypeCollector.getVoidType(), false),
 				new ArrayList()));
 		assertTrue(ExceptionTestUtility.sameMembers(utility.THROW_PLUS_INCOMPATIBLE_CLASS_CHANGE, Collections.EMPTY_SET,
 				unitAnalysis.mightThrow(s)));
@@ -632,7 +632,7 @@ public class UnitThrowAnalysisTest {
 	@Test
 	public void testJArrayRef() {
 		ArrayRef arrayRef = myJimple.newArrayRef(
-				myJimple.newLocal("local1", ArrayType.v(RefType.v("java.lang.Object"), 1)), IntConstant.v(0));
+				myJimple.newLocal("local1", ArrayType.v(RefType.v("java.lang.Object",myScene), 1)), IntConstant.v(0));
 
 		Set expectedRep = new ExceptionHashSet(utility.VM_ERRORS);
 		expectedRep.add(utility.NULL_POINTER_EXCEPTION);
@@ -652,7 +652,7 @@ public class UnitThrowAnalysisTest {
 	@Test
 	public void testGArrayRef() {
 		ArrayRef arrayRef = myGrimp.newArrayRef(
-				myGrimp.newLocal("local1", ArrayType.v(RefType.v("java.lang.Object"), 1)), IntConstant.v(0));
+				myGrimp.newLocal("local1", ArrayType.v(RefType.v("java.lang.Object",myScene), 1)), IntConstant.v(0));
 
 		Set expectedRep = new ExceptionHashSet(utility.VM_ERRORS);
 		expectedRep.add(utility.NULL_POINTER_EXCEPTION);
@@ -678,10 +678,10 @@ public class UnitThrowAnalysisTest {
 		vmAndArithmeticAndSupertypes.add(utility.RUNTIME_EXCEPTION);
 		vmAndArithmeticAndSupertypes.add(utility.EXCEPTION);
 
-		Local intLocal = myJimple.newLocal("intLocal", IntType.v());
-		Local longLocal = myJimple.newLocal("longLocal", LongType.v());
-		Local floatLocal = myJimple.newLocal("floatLocal", FloatType.v());
-		Local doubleLocal = myJimple.newLocal("doubleLocal", DoubleType.v());
+		Local intLocal = myJimple.newLocal("intLocal", primeTypeCollector.getIntType());
+		Local longLocal = myJimple.newLocal("longLocal", primeTypeCollector.getLongType());
+		Local floatLocal = myJimple.newLocal("floatLocal", primeTypeCollector.getFloatType());
+		Local doubleLocal = myJimple.newLocal("doubleLocal", primeTypeCollector.getDoubleType());
 
 		DivExpr v = myJimple.newDivExpr(intLocal, IntConstant.v(0));
 		assertTrue(
@@ -773,10 +773,10 @@ public class UnitThrowAnalysisTest {
 		vmAndArithmeticAndSupertypes.add(utility.RUNTIME_EXCEPTION);
 		vmAndArithmeticAndSupertypes.add(utility.EXCEPTION);
 
-		Local intLocal = myGrimp.newLocal("intLocal", IntType.v());
-		Local longLocal = myGrimp.newLocal("longLocal", LongType.v());
-		Local floatLocal = myGrimp.newLocal("floatLocal", FloatType.v());
-		Local doubleLocal = myGrimp.newLocal("doubleLocal", DoubleType.v());
+		Local intLocal = myGrimp.newLocal("intLocal", primeTypeCollector.getIntType());
+		Local longLocal = myGrimp.newLocal("longLocal", primeTypeCollector.getLongType());
+		Local floatLocal = myGrimp.newLocal("floatLocal", primeTypeCollector.getFloatType());
+		Local doubleLocal = myGrimp.newLocal("doubleLocal", primeTypeCollector.getDoubleType());
 
 		DivExpr v = myGrimp.newDivExpr(intLocal, IntConstant.v(0));
 		assertTrue(
@@ -879,10 +879,10 @@ public class UnitThrowAnalysisTest {
 		vmAndArithmeticAndSupertypes.add(utility.RUNTIME_EXCEPTION);
 		vmAndArithmeticAndSupertypes.add(utility.EXCEPTION);
 
-		Local intLocal = myJimple.newLocal("intLocal", IntType.v());
-		Local longLocal = myJimple.newLocal("longLocal", LongType.v());
-		Local floatLocal = myJimple.newLocal("floatLocal", FloatType.v());
-		Local doubleLocal = myJimple.newLocal("doubleLocal", DoubleType.v());
+		Local intLocal = myJimple.newLocal("intLocal", primeTypeCollector.getIntType());
+		Local longLocal = myJimple.newLocal("longLocal", primeTypeCollector.getLongType());
+		Local floatLocal = myJimple.newLocal("floatLocal", primeTypeCollector.getFloatType());
+		Local doubleLocal = myJimple.newLocal("doubleLocal", primeTypeCollector.getDoubleType());
 
 		RemExpr v = myJimple.newRemExpr(intLocal, IntConstant.v(0));
 		assertTrue(
@@ -974,10 +974,10 @@ public class UnitThrowAnalysisTest {
 		vmAndArithmeticAndSupertypes.add(utility.RUNTIME_EXCEPTION);
 		vmAndArithmeticAndSupertypes.add(utility.EXCEPTION);
 
-		Local intLocal = myGrimp.newLocal("intLocal", IntType.v());
-		Local longLocal = myGrimp.newLocal("longLocal", LongType.v());
-		Local floatLocal = myGrimp.newLocal("floatLocal", FloatType.v());
-		Local doubleLocal = myGrimp.newLocal("doubleLocal", DoubleType.v());
+		Local intLocal = myGrimp.newLocal("intLocal", primeTypeCollector.getIntType());
+		Local longLocal = myGrimp.newLocal("longLocal", primeTypeCollector.getLongType());
+		Local floatLocal = myGrimp.newLocal("floatLocal", primeTypeCollector.getFloatType());
+		Local doubleLocal = myGrimp.newLocal("doubleLocal", primeTypeCollector.getDoubleType());
 
 		RemExpr v = myGrimp.newRemExpr(intLocal, IntConstant.v(0));
 		assertTrue(
@@ -1073,22 +1073,22 @@ public class UnitThrowAnalysisTest {
 
 	@Test
 	public void testJBinOpExp() {
-		Value v = myJimple.newAddExpr(IntConstant.v(456), myJimple.newLocal("local", IntType.v()));
+		Value v = myJimple.newAddExpr(IntConstant.v(456), myJimple.newLocal("local", primeTypeCollector.getIntType()));
 		assertTrue(
 				ExceptionTestUtility.sameMembers(utility.VM_ERRORS, Collections.EMPTY_SET, unitAnalysis.mightThrow(v)));
 		assertEquals(utility.VM_ERRORS_PLUS_SUPERTYPES, utility.catchableSubset(unitAnalysis.mightThrow(v)));
 
-		v = myJimple.newOrExpr(myJimple.newLocal("local", LongType.v()), LongConstant.v(33));
+		v = myJimple.newOrExpr(myJimple.newLocal("local", primeTypeCollector.getLongType()), LongConstant.v(33));
 		assertTrue(
 				ExceptionTestUtility.sameMembers(utility.VM_ERRORS, Collections.EMPTY_SET, unitAnalysis.mightThrow(v)));
 		assertEquals(utility.VM_ERRORS_PLUS_SUPERTYPES, utility.catchableSubset(unitAnalysis.mightThrow(v)));
 
-		v = myJimple.newLeExpr(myJimple.newLocal("local", FloatType.v()), FloatConstant.v(33.42f));
+		v = myJimple.newLeExpr(myJimple.newLocal("local", primeTypeCollector.getFloatType()), FloatConstant.v(33.42f));
 		assertTrue(
 				ExceptionTestUtility.sameMembers(utility.VM_ERRORS, Collections.EMPTY_SET, unitAnalysis.mightThrow(v)));
 		assertEquals(utility.VM_ERRORS_PLUS_SUPERTYPES, utility.catchableSubset(unitAnalysis.mightThrow(v)));
 
-		v = myJimple.newEqExpr(DoubleConstant.v(-33.45e-3), myJimple.newLocal("local", DoubleType.v()));
+		v = myJimple.newEqExpr(DoubleConstant.v(-33.45e-3), myJimple.newLocal("local", primeTypeCollector.getDoubleType()));
 		assertTrue(
 				ExceptionTestUtility.sameMembers(utility.VM_ERRORS, Collections.EMPTY_SET, unitAnalysis.mightThrow(v)));
 		assertEquals(utility.VM_ERRORS_PLUS_SUPERTYPES, utility.catchableSubset(unitAnalysis.mightThrow(v)));
@@ -1210,7 +1210,7 @@ public class UnitThrowAnalysisTest {
 		expectedCatch.add(utility.EXCEPTION);
 
 		Value v = myGrimp.newInstanceFieldRef(local, myScene.makeFieldRef(utility.THROWABLE.getSootClass(),
-				"detailMessage", RefType.v("java.lang.String"), false));
+				"detailMessage", RefType.v("java.lang.String",myScene), false));
 		assertTrue(ExceptionTestUtility.sameMembers(expectedRep, Collections.EMPTY_SET, unitAnalysis.mightThrow(v)));
 		assertEquals(expectedCatch, utility.catchableSubset(unitAnalysis.mightThrow(v)));
 	}
@@ -1241,7 +1241,7 @@ public class UnitThrowAnalysisTest {
 
 	@Test
 	public void testBAddInst() {
-		soot.baf.AddInst i = soot.baf.myBaf.newAddInst(IntType.v());
+		soot.baf.AddInst i = soot.baf.myBaf.newAddInst(primeTypeCollector.getIntType());
 		assertTrue(
 				ExceptionTestUtility.sameMembers(utility.VM_ERRORS, Collections.EMPTY_SET, unitAnalysis.mightThrow(i)));
 		assertEquals(utility.VM_ERRORS_PLUS_SUPERTYPES, utility.catchableSubset(unitAnalysis.mightThrow(i)));
@@ -1249,7 +1249,7 @@ public class UnitThrowAnalysisTest {
 
 	@Test
 	public void testBAndInst() {
-		soot.baf.AndInst i = soot.baf.myBaf.newAndInst(IntType.v());
+		soot.baf.AndInst i = soot.baf.myBaf.newAndInst(primeTypeCollector.getIntType());
 		assertTrue(
 				ExceptionTestUtility.sameMembers(utility.VM_ERRORS, Collections.EMPTY_SET, unitAnalysis.mightThrow(i)));
 		assertEquals(utility.VM_ERRORS_PLUS_SUPERTYPES, utility.catchableSubset(unitAnalysis.mightThrow(i)));

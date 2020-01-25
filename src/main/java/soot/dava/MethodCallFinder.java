@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import soot.RefType;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.SootMethodRef;
@@ -45,10 +46,14 @@ import soot.dava.internal.AST.ASTTryNode;
 import soot.dava.internal.AST.ASTUnconditionalLoopNode;
 import soot.dava.internal.AST.ASTWhileNode;
 import soot.dava.internal.asg.AugmentedStmt;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 import soot.dava.toolkits.base.AST.traversals.ASTParentNodeFinder;
+import soot.grimp.Grimp;
 import soot.grimp.internal.GNewInvokeExpr;
 import soot.grimp.internal.GThrowStmt;
+import soot.jimple.ConstantFactory;
 import soot.jimple.InvokeExpr;
 import soot.jimple.InvokeStmt;
 import soot.jimple.Stmt;
@@ -58,6 +63,12 @@ public class MethodCallFinder extends DepthFirstAdapter {
   ASTMethodNode underAnalysis;
 
   DavaStaticBlockCleaner cleaner;
+  //FIXME
+  private Scene myScene;
+  private ConstantFactory constantFactory;
+  private Grimp myGrimp;
+  private TryContentsFinder myTryContentsFinder;
+  private ASTWalker myASTWalker;
 
   public MethodCallFinder(DavaStaticBlockCleaner cleaner) {
     this.cleaner = cleaner;
@@ -127,8 +138,8 @@ public class MethodCallFinder extends DepthFirstAdapter {
           if (runtime.declaresMethod("void <init>(java.lang.String)")) {
             SootMethod sootMethod = runtime.getMethod("void <init>(java.lang.String)");
             SootMethodRef methodRef = sootMethod.makeRef();
-            RefType myRefType = RefType.v(runtime);
-            StringConstant tempString = constancFactory.createStringConstant("This method used to have a definition of a final variable. "
+            RefType myRefType = RefType.v(runtime,myScene);
+            StringConstant tempString = constantFactory.createStringConstant("This method used to have a definition of a final variable. "
                 + "Dava inlined the definition into the static initializer");
             List list = new ArrayList();
             list.add(tempString);

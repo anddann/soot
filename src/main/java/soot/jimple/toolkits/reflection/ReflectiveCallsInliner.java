@@ -120,7 +120,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
       reflectiveCallsClass.setApplicationClass();
 
       UNINTERPRETED_METHOD = myScene.makeMethodRef(myScene.getSootClass("soot.rtlib.tamiflex.OpaquePredicate"),
-          "getFalse", Collections.<Type>emptyList(), BooleanType.v(), true);
+          "getFalse", Collections.<Type>emptyList(), primeTypeCollector.getBooleanType(), true);
 
       if (useCaching) {
         addCaching();
@@ -281,11 +281,11 @@ public class ReflectiveCallsInliner extends SceneTransformer {
 
   private void addCaching() {
     SootClass method = myScene.getSootClass("java.lang.reflect.Method");
-    method.addField(myScene.makeSootField(ALREADY_CHECKED_FIELDNAME, BooleanType.v()));
+    method.addField(myScene.makeSootField(ALREADY_CHECKED_FIELDNAME, primeTypeCollector.getBooleanType()));
     SootClass constructor = myScene.getSootClass("java.lang.reflect.Constructor");
-    constructor.addField(myScene.makeSootField(ALREADY_CHECKED_FIELDNAME, BooleanType.v()));
+    constructor.addField(myScene.makeSootField(ALREADY_CHECKED_FIELDNAME, primeTypeCollector.getBooleanType()));
     SootClass clazz = myScene.getSootClass("java.lang.Class");
-    clazz.addField(myScene.makeSootField(ALREADY_CHECKED_FIELDNAME, BooleanType.v()));
+    clazz.addField(myScene.makeSootField(ALREADY_CHECKED_FIELDNAME, primeTypeCollector.getBooleanType()));
 
     for (Kind k : Kind.values()) {
       addCaching(k);
@@ -331,8 +331,8 @@ public class ReflectiveCallsInliner extends SceneTransformer {
 
     // alreadyCheckedLocal = m.alreadyChecked
     InstanceFieldRef fieldRef = myJimple.newInstanceFieldRef(body.getParameterLocal(m.getParameterCount() - 1),
-        myScene.makeFieldRef(c, ALREADY_CHECKED_FIELDNAME, BooleanType.v(), false));
-    Local alreadyCheckedLocal = localGen.generateLocal(BooleanType.v());
+        myScene.makeFieldRef(c, ALREADY_CHECKED_FIELDNAME, primeTypeCollector.getBooleanType(), false));
+    Local alreadyCheckedLocal = localGen.generateLocal(primeTypeCollector.getBooleanType());
     newUnits.add(myJimple.newAssignStmt(alreadyCheckedLocal, fieldRef));
 
     // if(!alreadyChecked) goto jumpTarget
@@ -346,7 +346,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
 
     // m.alreadyChecked = true
     InstanceFieldRef fieldRef2 = myJimple.newInstanceFieldRef(body.getParameterLocal(m.getParameterCount() - 1),
-        myScene.makeFieldRef(c, ALREADY_CHECKED_FIELDNAME, BooleanType.v(), false));
+        myScene.makeFieldRef(c, ALREADY_CHECKED_FIELDNAME, primeTypeCollector.getBooleanType(), false));
     newUnits.add(myJimple.newAssignStmt(fieldRef2, constancFactory.createIntConstant(1)));
 
     body.getUnits().insertAfter(newUnits, firstStmt);
@@ -462,7 +462,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
           NopStmt jumpTarget = myJimple.newNopStmt();
 
           // boolean predLocal = Opaque.getFalse();
-          Local predLocal = localGen.generateLocal(BooleanType.v());
+          Local predLocal = localGen.generateLocal(primeTypeCollector.getBooleanType());
           StaticInvokeExpr staticInvokeExpr = myJimple.newStaticInvokeExpr(UNINTERPRETED_METHOD);
           newUnits.add(myJimple.newAssignStmt(predLocal, staticInvokeExpr));
           // if predLocal == 0 goto <original reflective call>
@@ -534,27 +534,27 @@ public class ReflectiveCallsInliner extends SceneTransformer {
     Type returnType = null;
     switch (callKind) {
       case ClassForName:
-        returnType = RefType.v("java.lang.Class");
+        returnType = RefType.v("java.lang.Class",myScene);
         break;
       case ClassNewInstance:
-        returnType = RefType.v("java.lang.Object");
+        returnType = RefType.v("java.lang.Object",myScene);
         break;
       case ConstructorNewInstance:
-        parameterTypes.add(ArrayType.v(RefType.v("java.lang.Object"), 1));
-        returnType = RefType.v("java.lang.Object");
+        parameterTypes.add(ArrayType.v(RefType.v("java.lang.Object",myScene), 1));
+        returnType = RefType.v("java.lang.Object",myScene);
         break;
       case MethodInvoke:
-        parameterTypes.add(RefType.v("java.lang.Object"));
-        parameterTypes.add(ArrayType.v(RefType.v("java.lang.Object"), 1));
-        returnType = RefType.v("java.lang.Object");
+        parameterTypes.add(RefType.v("java.lang.Object",myScene));
+        parameterTypes.add(ArrayType.v(RefType.v("java.lang.Object",myScene), 1));
+        returnType = RefType.v("java.lang.Object",myScene);
         break;
       case FieldSet:
-        parameterTypes.add(RefType.v("java.lang.Object"));
+        parameterTypes.add(RefType.v("java.lang.Object",myScene));
         parameterTypes.add(fieldSetGetType);
-        returnType = VoidType.v();
+        returnType = primeTypeCollector.getVoidType();
         break;
       case FieldGet:
-        parameterTypes.add(RefType.v("java.lang.Object"));
+        parameterTypes.add(RefType.v("java.lang.Object",myScene));
         returnType = fieldSetGetType;
         break;
       default:
@@ -577,7 +577,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
     switch (callKind) {
       case ClassForName: {
         // replace by: <Class constant for <target>>
-        freshLocal = localGen.generateLocal(RefType.v("java.lang.Class"));
+        freshLocal = localGen.generateLocal(RefType.v("java.lang.Class",myScene));
         replacement = constancFactory.createClassConstant(target.replace('.', '/'));
         break;
       }
@@ -598,7 +598,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
         paramLocals = new Local[constructor.getParameterCount()];
         if (constructor.getParameterCount() > 0) {
           // argArrayLocal = @parameter-0
-          ArrayType arrayType = ArrayType.v(RefType.v("java.lang.Object"), 1);
+          ArrayType arrayType = ArrayType.v(RefType.v("java.lang.Object",myScene), 1);
           Local argArrayLocal = localGen.generateLocal(arrayType);
           newUnits.add(myJimple.newIdentityStmt(argArrayLocal, myJimple.newParameterRef(arrayType, 0)));
           int i = 0;
@@ -621,13 +621,13 @@ public class ReflectiveCallsInliner extends SceneTransformer {
          */
         SootMethod method = myScene.getMethod(target);
         // recvObject = @parameter-0
-        RefType objectType = RefType.v("java.lang.Object");
+        RefType objectType = RefType.v("java.lang.Object",myScene);
         Local recvObject = localGen.generateLocal(objectType);
         newUnits.add(myJimple.newIdentityStmt(recvObject, myJimple.newParameterRef(objectType, 0)));
         paramLocals = new Local[method.getParameterCount()];
         if (method.getParameterCount() > 0) {
           // argArrayLocal = @parameter-1
-          ArrayType arrayType = ArrayType.v(RefType.v("java.lang.Object"), 1);
+          ArrayType arrayType = ArrayType.v(RefType.v("java.lang.Object",myScene), 1);
           Local argArrayLocal = localGen.generateLocal(arrayType);
           newUnits.add(myJimple.newIdentityStmt(argArrayLocal, myJimple.newParameterRef(arrayType, 1)));
           int i = 0;
@@ -648,7 +648,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
         /*
          * replace f.set(o,v) by: Object obj = @parameter-0; T freshLocal = (T)obj;
          */
-        RefType objectType = RefType.v("java.lang.Object");
+        RefType objectType = RefType.v("java.lang.Object",myScene);
         Local recvObject = localGen.generateLocal(objectType);
         newUnits.add(myJimple.newIdentityStmt(recvObject, myJimple.newParameterRef(objectType, 0)));
 
@@ -677,7 +677,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
         // add: freshLocal.<init>()
         SootClass targetClass = myScene.getSootClass(target);
         SpecialInvokeExpr constrCallExpr = myJimple.newSpecialInvokeExpr(freshLocal, myScene.makeMethodRef(targetClass,
-            SootMethod.constructorName, Collections.<Type>emptyList(), VoidType.v(), false));
+            SootMethod.constructorName, Collections.<Type>emptyList(), primeTypeCollector.getVoidType(), false));
         InvokeStmt constrCallStmt2 = myJimple.newInvokeStmt(constrCallExpr);
         newUnits.add(constrCallStmt2);
         // add: retLocal = freshLocal
@@ -704,7 +704,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
         } else {
           invokeExpr = myJimple.newVirtualInvokeExpr(freshLocal, method.makeRef(), Arrays.<Value>asList(paramLocals));
         }
-        if (method.getReturnType().equals(VoidType.v())) {
+        if (method.getReturnType().equals(primeTypeCollector.getVoidType())) {
           // method returns null; simply invoke it and return null
           InvokeStmt invokeStmt = myJimple.newInvokeStmt(invokeExpr);
           newUnits.add(invokeStmt);
@@ -759,7 +759,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
       }
     }
 
-    if (!returnType.equals(VoidType.v())) {
+    if (!returnType.equals(primeTypeCollector.getVoidType())) {
       newUnits.add(myJimple.newReturnStmt(retLocal));
     }
 
@@ -828,7 +828,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
       RefType boxedType = primType.boxedType();
       SootMethodRef ref = myScene.makeMethodRef(boxedType.getSootClass(), paramType + "Value",
           Collections.<Type>emptyList(), paramType, false);
-      Local boxedLocal = localGen.generateLocal(RefType.v("java.lang.Object"));
+      Local boxedLocal = localGen.generateLocal(RefType.v("java.lang.Object",myScene));
       AssignStmt arrayLoad = myJimple.newAssignStmt(boxedLocal, arrayRef);
       newUnits.add(arrayLoad);
       Local castedLocal = localGen.generateLocal(boxedType);
@@ -837,7 +837,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
       VirtualInvokeExpr unboxInvokeExpr = myJimple.newVirtualInvokeExpr(castedLocal, ref);
       assignStmt = myJimple.newAssignStmt(paramLocals[paramIndex], unboxInvokeExpr);
     } else {
-      Local boxedLocal = localGen.generateLocal(RefType.v("java.lang.Object"));
+      Local boxedLocal = localGen.generateLocal(RefType.v("java.lang.Object",myScene));
       AssignStmt arrayLoad = myJimple.newAssignStmt(boxedLocal, arrayRef);
       newUnits.add(arrayLoad);
       Local castedLocal = localGen.generateLocal(paramType);

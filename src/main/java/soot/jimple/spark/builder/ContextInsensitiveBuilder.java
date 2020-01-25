@@ -79,7 +79,7 @@ public class ContextInsensitiveBuilder {
   public PAG setup(SparkOptions opts) {
     pag = opts.geom_pta() ? new GeomPointsTo(opts, myPhaseOptions, myScene, myEntrypoints, myArrayElement, myAllSharedListNodes) : new PAG(myPhaseOptions, myScene, myAllSharedListNodes, myArrayElement, constantFactory, myEntrypoints, opts);
     if (opts.simulate_natives()) {
-      pag.nativeMethodDriver = new NativeMethodDriver(new SparkNativeHelper(pag, myArrayElement, myScene));
+      pag.nativeMethodDriver = new NativeMethodDriver(new SparkNativeHelper(pag, myArrayElement, myScene), myEnvironment);
     }
     if (opts.on_fly_cg() && !opts.vta()) {
       ofcg = new OnFlyCallGraph(pag, opts.apponly(), myScene, myArrayElement, myEntrypoints, myPhaseOptions, virtualCalls, myEntryPoints, throwManager, myInteractionHandler, myOptions, constantFactory, myPackManager, myPhaseDumper, myJimple, throwAnalysis, constantFactory1);

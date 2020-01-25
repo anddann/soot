@@ -35,6 +35,7 @@ import org.jf.dexlib2.iface.instruction.WideLiteralInstruction;
 
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.dexpler.typing.UntypedConstant;
 import soot.jimple.AssignStmt;
 import soot.jimple.Constant;
@@ -53,11 +54,11 @@ public class ConstInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
 
     Constant cst = getConstant(dest, body);
-    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), cst);
+    AssignStmt assign = this.myJimple.newAssignStmt(body.getRegisterLocal(dest), cst);
     setUnit(assign);
     addTags(assign);
     body.add(assign);

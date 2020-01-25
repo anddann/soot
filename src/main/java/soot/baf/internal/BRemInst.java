@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BRemInst extends AbstractOpTypeInst implements RemInst {
   public BRemInst(Type opType) {
-    super(myRefType, opType, myBaf);
+    super(primeTypeCollector.getRefType(), opType, myBaf);
   }
 
   public int getInCount() {

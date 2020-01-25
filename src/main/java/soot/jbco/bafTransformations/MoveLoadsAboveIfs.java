@@ -121,10 +121,10 @@ public class MoveLoadsAboveIfs extends BodyTransformer implements IJbcoTransform
         }
 
         units.insertBefore(clone, u);
-        units.insertBefore(myBaf.newSwapInst(RefType.v(), clone.getOpType()), u);
+        units.insertBefore(myBaf.newSwapInst(primeTypeCollector.getRefType(), clone.getOpType()), u);
 
         // units.insertAfter(clone,p);
-        // units.insertAfter(myBaf.newSwapInst(RefType.v(),clone.getOpType()),clone);
+        // units.insertAfter(myBaf.newSwapInst(primeTypeCollector.getRefType(),clone.getOpType()),clone);
       } else if (u instanceof OpTypeArgInst) {
         Type t = ((OpTypeArgInst) u).getOpType();
         if (category(t) == 2 || Rand.getInt(10) > weight) {
@@ -152,10 +152,10 @@ public class MoveLoadsAboveIfs extends BodyTransformer implements IJbcoTransform
         }
 
         units.insertBefore(clone, u);
-        units.insertBefore(myBaf.newSwapInst(IntType.v(), clone.getOpType()), u);
+        units.insertBefore(myBaf.newSwapInst(primeTypeCollector.getIntType(), clone.getOpType()), u);
 
         // units.insertAfter(clone,p);
-        // units.insertAfter(myBaf.newSwapInst(IntType.v(),clone.getOpType()),clone);
+        // units.insertAfter(myBaf.newSwapInst(primeTypeCollector.getIntType(),clone.getOpType()),clone);
       }
 
       movedloads++;

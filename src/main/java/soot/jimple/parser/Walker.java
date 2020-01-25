@@ -34,19 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.ArrayType;
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
 import soot.Immediate;
-import soot.IntType;
 import soot.Local;
-import soot.LongType;
 import soot.Modifier;
-import soot.NullType;
 import soot.RefType;
-import soot.ShortType;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootFieldRef;
@@ -57,19 +49,15 @@ import soot.Trap;
 import soot.Type;
 import soot.Unit;
 import soot.UnitBox;
-import soot.UnknownType;
 import soot.Value;
-import soot.VoidType;
+import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.jimple.BinopExpr;
-import soot.jimple.ClassConstant;
-import soot.jimple.DoubleConstant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Expr;
-import soot.jimple.FloatConstant;
 import soot.jimple.IntConstant;
+import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
-import soot.jimple.LongConstant;
 import soot.jimple.Stmt;
-import soot.jimple.StringConstant;
 import soot.jimple.UnopExpr;
 import soot.jimple.parser.analysis.DepthFirstAdapter;
 import soot.jimple.parser.node.AAbstractModifier;
@@ -208,6 +196,7 @@ import soot.jimple.parser.node.TIntegerConstant;
 import soot.jimple.parser.node.TQuotedName;
 import soot.jimple.parser.node.TStringConstant;
 import soot.jimple.parser.node.Token;
+import soot.options.Options;
 import soot.util.StringTools;
 
 /*Modified By Marc Berndl 17th May */
@@ -218,7 +207,8 @@ public class Walker extends DepthFirstAdapter {
   LinkedList mProductions = new LinkedList();
   SootClass mSootClass = null;
   Map<String, Local> mLocals = null;
-  Value mValue = constancFactory.createIntConstant(1);
+  private ConstantFactory constancFactory;
+  Value mValue;
 
   Map<Object, Unit> mLabelToStmtMap; // maps a label to the stmt following it
   // in the jimple source
@@ -227,9 +217,20 @@ public class Walker extends DepthFirstAdapter {
   // lableX)
 
   protected final SootResolver mResolver;
+  private Scene myScene;
+  private Options myOptions;
+  private PackageNamer myPackageNamer;
+  private Jimple myJimple;
+  private ConstantFactory constantFactory;
 
-  public Walker(SootResolver resolver) {
+  public Walker(ConstantFactory constancFactory, SootResolver resolver, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, ConstantFactory constantFactory) {
+    this.constancFactory = constancFactory;
     mResolver = resolver;
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    this.constantFactory = constantFactory;
     if (debug) {
       mProductions = new LinkedList() {
         public Object removeLast() {
@@ -241,11 +242,19 @@ public class Walker extends DepthFirstAdapter {
         }
       };
     }
+    mValue = this.constancFactory.createIntConstant(1);
   }
 
-  public Walker(SootClass sc, SootResolver resolver) {
+  public Walker(SootClass sc, ConstantFactory constancFactory, SootResolver resolver, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Jimple myJimple, ConstantFactory constantFactory) {
     mSootClass = sc;
+    this.constancFactory = constancFactory;
     mResolver = resolver;
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myJimple = myJimple;
+    this.constantFactory = constantFactory;
+    mValue = this.constancFactory.createIntConstant(1);
   }
 
   public void outStart(Start node) {
@@ -420,7 +429,7 @@ public class Walker extends DepthFirstAdapter {
    */
 
   public void outAVoidType(AVoidType node) {
-    mProductions.addLast(VoidType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getVoidType());
   }
 
   /*
@@ -431,38 +440,38 @@ public class Walker extends DepthFirstAdapter {
     Type t = (Type) mProductions.removeLast();
     int dim = node.getArrayBrackets().size();
     if (dim > 0) {
-      t = ArrayType.v(t, dim);
+      t = ArrayType.v(t, dim,myScene);
     }
     mProductions.addLast(t);
   }
 
   public void outAQuotedNonvoidType(AQuotedNonvoidType node) {
     String typeName = (String) mProductions.removeLast();
-    Type t = RefType.v(typeName);
+    Type t = RefType.v(typeName,myScene);
 
     int dim = node.getArrayBrackets().size();
     if (dim > 0) {
-      t = ArrayType.v(t, dim);
+      t = ArrayType.v(t, dim,myScene);
     }
     mProductions.addLast(t);
   }
 
   public void outAIdentNonvoidType(AIdentNonvoidType node) {
     String typeName = (String) mProductions.removeLast();
-    Type t = RefType.v(typeName);
+    Type t = RefType.v(typeName,myScene);
     int dim = node.getArrayBrackets().size();
     if (dim > 0) {
-      t = ArrayType.v(t, dim);
+      t = ArrayType.v(t, dim,myScene);
     }
     mProductions.addLast(t);
   }
 
   public void outAFullIdentNonvoidType(AFullIdentNonvoidType node) {
     String typeName = (String) mProductions.removeLast();
-    Type t = RefType.v(typeName);
+    Type t = RefType.v(typeName,myScene);
     int dim = node.getArrayBrackets().size();
     if (dim > 0) {
-      t = ArrayType.v(t, dim);
+      t = ArrayType.v(t, dim,myScene);
     }
     mProductions.addLast(t);
   }
@@ -473,39 +482,39 @@ public class Walker extends DepthFirstAdapter {
    */
 
   public void outABooleanBaseTypeNoName(ABooleanBaseTypeNoName node) {
-    mProductions.addLast(BooleanType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getBooleanType());
   }
 
   public void outAByteBaseTypeNoName(AByteBaseTypeNoName node) {
-    mProductions.addLast(ByteType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getByteType());
   }
 
   public void outACharBaseTypeNoName(ACharBaseTypeNoName node) {
-    mProductions.addLast(primTypeCollector.getCharType());
+    mProductions.addLast(myScene.getPrimTypeCollector().getCharType());
   }
 
   public void outAShortBaseTypeNoName(AShortBaseTypeNoName node) {
-    mProductions.addLast(ShortType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getShortType());
   }
 
   public void outAIntBaseTypeNoName(AIntBaseTypeNoName node) {
-    mProductions.addLast(IntType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getIntType());
   }
 
   public void outALongBaseTypeNoName(ALongBaseTypeNoName node) {
-    mProductions.addLast(LongType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getLongType());
   }
 
   public void outAFloatBaseTypeNoName(AFloatBaseTypeNoName node) {
-    mProductions.addLast(FloatType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getFloatType());
   }
 
   public void outADoubleBaseTypeNoName(ADoubleBaseTypeNoName node) {
-    mProductions.addLast(DoubleType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getDoubleType());
   }
 
   public void outANullBaseTypeNoName(ANullBaseTypeNoName node) {
-    mProductions.addLast(NullType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getNullType());
   }
 
   /*
@@ -514,39 +523,39 @@ public class Walker extends DepthFirstAdapter {
    */
 
   public void outABooleanBaseType(ABooleanBaseType node) {
-    mProductions.addLast(BooleanType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getBooleanType());
   }
 
   public void outAByteBaseType(AByteBaseType node) {
-    mProductions.addLast(ByteType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getByteType());
   }
 
   public void outACharBaseType(ACharBaseType node) {
-    mProductions.addLast(primTypeCollector.getCharType());
+    mProductions.addLast(myScene.getPrimTypeCollector().getCharType());
   }
 
   public void outAShortBaseType(AShortBaseType node) {
-    mProductions.addLast(ShortType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getShortType());
   }
 
   public void outAIntBaseType(AIntBaseType node) {
-    mProductions.addLast(IntType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getIntType());
   }
 
   public void outALongBaseType(ALongBaseType node) {
-    mProductions.addLast(LongType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getLongType());
   }
 
   public void outAFloatBaseType(AFloatBaseType node) {
-    mProductions.addLast(FloatType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getFloatType());
   }
 
   public void outADoubleBaseType(ADoubleBaseType node) {
-    mProductions.addLast(DoubleType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getDoubleType());
   }
 
   public void outANullBaseType(ANullBaseType node) {
-    mProductions.addLast(NullType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getNullType());
   }
 
   public void outAClassNameBaseType(AClassNameBaseType node) {
@@ -554,7 +563,7 @@ public class Walker extends DepthFirstAdapter {
     if (type.equals("int")) {
       throw new RuntimeException();
     }
-    mProductions.addLast(RefType.v(type));
+    mProductions.addLast(RefType.v(type,myScene));
   }
 
   /*
@@ -739,7 +748,7 @@ public class Walker extends DepthFirstAdapter {
    * jimple_type = {unknown} unknown | {nonvoid} nonvoid_type;
    */
   public void outAUnknownJimpleType(AUnknownJimpleType node) {
-    mProductions.addLast(UnknownType.v());
+    mProductions.addLast(myScene.getPrimTypeCollector().getUnknownType());
   }
 
   /*
@@ -1030,7 +1039,7 @@ public class Walker extends DepthFirstAdapter {
    */
 
   public void outANullConstant(ANullConstant node) {
-    mProductions.addLast(myNullConstant);
+    mProductions.addLast(constantFactory.getNullConstant());
   }
 
   public void outAIntegerConstant(AIntegerConstant node) {
@@ -1521,7 +1530,7 @@ public class Walker extends DepthFirstAdapter {
     }
 
     Type type = (Type) mProductions.removeLast();
-    ArrayType arrayType = ArrayType.v(type, descCnt);
+    ArrayType arrayType = ArrayType.v(type, descCnt,myScene);
 
     mProductions.addLast(myJimple.newNewMultiArrayExpr(arrayType, sizes));
   }

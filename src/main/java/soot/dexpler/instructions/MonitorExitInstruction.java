@@ -54,17 +54,17 @@ public class MonitorExitInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     int reg = ((OneRegisterInstruction) instruction).getRegisterA();
     Local object = body.getRegisterLocal(reg);
-    ExitMonitorStmt exitMonitorStmt = myJimple.newExitMonitorStmt(object);
+    ExitMonitorStmt exitMonitorStmt = this.myJimple.newExitMonitorStmt(object);
     setUnit(exitMonitorStmt);
     addTags(exitMonitorStmt);
     body.add(exitMonitorStmt);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // Debug.printDbg(IDalvikTyper.DEBUG, "constraint: "+ exitMonitorStmt);
-      myDalvikTyper.setType(exitMonitorStmt.getOpBox(), RefType.v("java.lang.Object",myScene), true);
+      this.myDalvikTyper.setType(exitMonitorStmt.getOpBox(), RefType.v("java.lang.Object",myScene), true);
     }
   }
 }

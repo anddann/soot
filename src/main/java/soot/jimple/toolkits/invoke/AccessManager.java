@@ -322,7 +322,7 @@ public class AccessManager {
         accStmts.add(myJimple.newAssignStmt(myJimple.newStaticFieldRef(ref.getFieldRef()), l));
       }
       accStmts.addLast(myJimple.newReturnVoidStmt());
-      Type returnType = VoidType.v();
+      Type returnType = primeTypeCollector.getVoidType();
 
       accessor
           = myScene.makeSootMethod(name, parameterTypes, returnType, Modifier.PUBLIC | Modifier.STATIC, thrownExceptions);

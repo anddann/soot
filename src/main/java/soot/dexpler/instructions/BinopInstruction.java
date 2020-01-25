@@ -39,7 +39,9 @@ import soot.dexpler.tags.DoubleOpTag;
 import soot.dexpler.tags.FloatOpTag;
 import soot.dexpler.tags.IntOpTag;
 import soot.dexpler.tags.LongOpTag;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
+import soot.jimple.Jimple;
 
 public class BinopInstruction extends TaggedInstruction {
 
@@ -48,7 +50,7 @@ public class BinopInstruction extends TaggedInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction23x)) {
       throw new IllegalArgumentException("Expected Instruction23x but got: " + instruction.getClass());
     }

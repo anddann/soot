@@ -188,7 +188,7 @@ public class Baf {
    */
 
   public ExitMonitorInst newExitMonitorInst() {
-    return new BExitMonitorInst();
+    return new BExitMonitorInst(this);
   }
 
   /**
@@ -228,7 +228,7 @@ public class Baf {
   }
 
   public IdentityInst newIdentityInst(Value local, Value identityRef) {
-    return new BIdentityInst(local, identityRef, myBaf);
+    return new BIdentityInst(local, identityRef, this);
   }
 
   public ValueBox newLocalBox(Value value) {
@@ -280,7 +280,7 @@ public class Baf {
   }
 
   public FieldGetInst newFieldGetInst(SootFieldRef fieldRef) {
-    return new BFieldGetInst(fieldRef);
+    return new BFieldGetInst(fieldRef, this);
   }
 
   public FieldPutInst newFieldPutInst(SootFieldRef fieldRef) {
@@ -328,7 +328,7 @@ public class Baf {
   }
 
   public ShlInst newShlInst(Type opType) {
-    return new BShlInst(opType);
+    return new BShlInst(opType, myBaf, primTypeCollector);
   }
 
   public ShrInst newShrInst(Type opType) {
@@ -356,7 +356,7 @@ public class Baf {
   }
 
   public NewInst newNewInst(RefType opType) {
-    return new BNewInst(opType);
+    return new BNewInst(opType, myBaf);
   }
 
   public NewArrayInst newNewArrayInst(Type opType) {
@@ -377,7 +377,7 @@ public class Baf {
   }
 
   public SpecialInvokeInst newSpecialInvokeInst(SootMethodRef methodRef) {
-    return new BSpecialInvokeInst(methodRef);
+    return new BSpecialInvokeInst(methodRef, this);
   }
 
   public VirtualInvokeInst newVirtualInvokeInst(SootMethodRef methodRef) {
@@ -409,7 +409,7 @@ public class Baf {
   }
 
   public IfCmpLtInst newIfCmpLtInst(Type opType, Unit unit) {
-    return new BIfCmpLtInst(opType, unit);
+    return new BIfCmpLtInst(opType, unit, myBaf, primTypeCollector);
   }
 
   public IfCmpNeInst newIfCmpNeInst(Type opType, Unit unit) {

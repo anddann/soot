@@ -32,11 +32,10 @@ import java.util.Vector;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.BooleanType;
-import soot.IntType;
 import soot.Local;
 import soot.PatchingChain;
 import soot.PrimType;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.SootField;
 import soot.SootMethod;
@@ -45,9 +44,14 @@ import soot.Unit;
 import soot.Value;
 import soot.jbco.IJbcoTransform;
 import soot.jbco.util.Rand;
+import soot.jimple.ConstantFactory;
 import soot.jimple.IdentityStmt;
 import soot.jimple.IfStmt;
+import soot.jimple.Jimple;
+import soot.options.Options;
 import soot.toolkits.graph.BriefUnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
+import soot.util.PhaseDumper;
 
 /**
  * @author Michael Batchelder
@@ -57,9 +61,28 @@ import soot.toolkits.graph.BriefUnitGraph;
 public class AddSwitches extends BodyTransformer implements IJbcoTransform {
 
   int switchesadded = 0;
+  private InteractionHandler myInteractionHandler;
+  private PhaseDumper myPhaseDumper;
+  private Options myOptions;
+  private FieldRenamer myFieldRenamer;
+  private Jimple myJimple;
+  private PrimTypeCollector primeTypeCollector;
+  private ConstantFactory constancFactory;
+
+  public AddSwitches(InteractionHandler myInteractionHandler, PhaseDumper myPhaseDumper, Options myOptions,
+                     FieldRenamer myFieldRenamer, Jimple myJimple, PrimTypeCollector primeTypeCollector, ConstantFactory constancFactory) {
+    this.myInteractionHandler = myInteractionHandler;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myOptions = myOptions;
+    this.myFieldRenamer = myFieldRenamer;
+    this.myJimple = myJimple;
+    this.primeTypeCollector = primeTypeCollector;
+    this.constancFactory = constancFactory;
+  }
 
   public void outputSummary() {
-    out.println("Switches added: " + switchesadded);
+
+    // out.println("Switches added: " + switchesadded);
   }
 
   public static String dependancies[] = new String[] { "wjtp.jbco_fr", "jtp.jbco_adss", "bb.jbco_ful" };
@@ -95,7 +118,8 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
       return;
     }
 
-    New2InitFlowAnalysis fa = new New2InitFlowAnalysis(new BriefUnitGraph(b, myPhaseDumper), isInteraticveMode(), getMyInteractionHandler());
+    New2InitFlowAnalysis fa
+        = new New2InitFlowAnalysis(new BriefUnitGraph(b, myPhaseDumper), myOptions.interactive_mode(), myInteractionHandler);
 
     Vector<Unit> zeroheight = new Vector<Unit>();
     PatchingChain<Unit> units = b.getUnits();
@@ -152,9 +176,9 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
 
     SootField ops[] = myFieldRenamer.getRandomOpaques();
 
-    Local b1 = myJimple.newLocal("addswitchesbool1", BooleanType.v());
+    Local b1 = myJimple.newLocal("addswitchesbool1", primeTypeCollector.getBooleanType());
     locals.add(b1);
-    Local b2 = myJimple.newLocal("addswitchesbool2", BooleanType.v());
+    Local b2 = myJimple.newLocal("addswitchesbool2", primeTypeCollector.getBooleanType());
     locals.add(b2);
 
     if (ops[0].getType() instanceof PrimType) {
@@ -183,7 +207,7 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
     IfStmt ifstmt = myJimple.newIfStmt(myJimple.newNeExpr(b1, b2), u);
     units.insertBefore(ifstmt, u);
 
-    Local l = myJimple.newLocal("addswitchlocal", IntType.v());
+    Local l = myJimple.newLocal("addswitchlocal", primeTypeCollector.getIntType());
     locals.add(l);
     units.insertBeforeNoRedirect(myJimple.newAssignStmt(l, constancFactory.createIntConstant(0)), first);
     units.insertAfter(myJimple.newTableSwitchStmt(l, 1, zeroheight.size(), targs, u), ifstmt);
@@ -194,7 +218,8 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
     while (tit.hasNext()) {
       Unit nxt = (Unit) tit.next();
       if (Rand.getInt(5) < 4) {
-        units.insertBefore(myJimple.newAssignStmt(l, myJimple.newAddExpr(l, constancFactory.createIntConstant(Rand.getInt(3) + 1))), nxt);
+        units.insertBefore(
+            myJimple.newAssignStmt(l, myJimple.newAddExpr(l, constancFactory.createIntConstant(Rand.getInt(3) + 1))), nxt);
       }
     }
 

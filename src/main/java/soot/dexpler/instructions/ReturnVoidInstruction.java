@@ -30,6 +30,8 @@ package soot.dexpler.instructions;
 import org.jf.dexlib2.iface.instruction.Instruction;
 
 import soot.dexpler.DexBody;
+import soot.dexpler.typing.DalvikTyper;
+import soot.jimple.Jimple;
 import soot.jimple.ReturnVoidStmt;
 
 public class ReturnVoidInstruction extends DexlibAbstractInstruction {
@@ -38,7 +40,7 @@ public class ReturnVoidInstruction extends DexlibAbstractInstruction {
     super(instruction, codeAdress, myOptions);
   }
 
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     ReturnVoidStmt returnStmt = myJimple.newReturnVoidStmt();
     setUnit(returnStmt);
     addTags(returnStmt);

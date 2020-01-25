@@ -26,19 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import soot.ArrayType;
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
 import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
 import soot.LongType;
+import soot.PrimTypeCollector;
 import soot.RefLikeType;
 import soot.RefType;
-import soot.ShortType;
+import soot.Scene;
 import soot.SootClass;
 import soot.Type;
-import soot.VoidType;
 
 /**
  * Contains static utility methods.
@@ -67,9 +62,11 @@ public class AsmUtil {
    * 
    * @param internal
    *          internal name.
+   * @param myScene
+   * @param primeTypeCollector
    * @return type
    */
-  public static Type toBaseType(String internal) {
+  public static Type toBaseType(String internal, Scene myScene, PrimTypeCollector primeTypeCollector) {
     if (internal.charAt(0) == '[') {
       /* [Ljava/lang/Object; */
       internal = internal.substring(internal.lastIndexOf('[') + 1, internal.length());
@@ -86,28 +83,28 @@ public class AsmUtil {
         internal = internal.substring(1, internal.length());
       }
       internal = toQualifiedName(internal);
-      return RefType.v(internal);
+      return RefType.v(internal,myScene);
     }
     switch (internal.charAt(0)) {
       case 'Z':
-        return BooleanType.v();
+        return primeTypeCollector.getBooleanType();
       case 'B':
-        return ByteType.v();
+        return primeTypeCollector.getByteType();
       case 'C':
-        return CharType.v();
+        return primeTypeCollector.getCharType();
       case 'S':
-        return ShortType.v();
+        return primeTypeCollector.getShortType();
       case 'I':
-        return IntType.v();
+        return primeTypeCollector.getIntType();
       case 'F':
-        return FloatType.v();
+        return primeTypeCollector.getFloatType();
       case 'J':
-        return LongType.v();
+        return primeTypeCollector.getLongType();
       case 'D':
-        return DoubleType.v();
+        return primeTypeCollector.getDoubleType();
       default:
         internal = toQualifiedName(internal);
-        return RefType.v(internal);
+        return RefType.v(internal, myScene);
     }
   }
 
@@ -149,10 +146,12 @@ public class AsmUtil {
    * 
    * @param desc
    *          the descriptor.
+   * @param myScene
+   * @param primeTypeCollector
    * @return the reference type.
    */
-  public static Type toJimpleRefType(String desc) {
-    return desc.charAt(0) == '[' ? toJimpleType(desc) : RefType.v(toQualifiedName(desc));
+  public static Type toJimpleRefType(String desc, Scene myScene, PrimTypeCollector primeTypeCollector) {
+    return desc.charAt(0) == '[' ? toJimpleType(desc, primeTypeCollector, myScene) : RefType.v(toQualifiedName(desc), myScene);
   }
 
   /**
@@ -160,9 +159,11 @@ public class AsmUtil {
    * 
    * @param desc
    *          the descriptor.
+   * @param primeTypeCollector
+   * @param myScene
    * @return equivalent Jimple type.
    */
-  public static Type toJimpleType(String desc) {
+  public static Type toJimpleType(String desc, PrimTypeCollector primeTypeCollector, Scene myScene) {
     int idx = desc.lastIndexOf('[');
     int nrDims = idx + 1;
     if (nrDims > 0) {
@@ -174,28 +175,28 @@ public class AsmUtil {
     Type baseType;
     switch (desc.charAt(0)) {
       case 'Z':
-        baseType = BooleanType.v();
+        baseType = primeTypeCollector.getBooleanType();
         break;
       case 'B':
-        baseType = ByteType.v();
+        baseType = primeTypeCollector.getByteType();
         break;
       case 'C':
-        baseType = CharType.v();
+        baseType = primeTypeCollector.getCharType();
         break;
       case 'S':
-        baseType = ShortType.v();
+        baseType = primeTypeCollector.getShortType();
         break;
       case 'I':
-        baseType = IntType.v();
+        baseType = primeTypeCollector.getIntType();
         break;
       case 'F':
-        baseType = FloatType.v();
+        baseType = primeTypeCollector.getFloatType();
         break;
       case 'J':
-        baseType = LongType.v();
+        baseType = primeTypeCollector.getLongType();
         break;
       case 'D':
-        baseType = DoubleType.v();
+        baseType = primeTypeCollector.getDoubleType();
         break;
       case 'L':
         if (desc.charAt(desc.length() - 1) != ';') {
@@ -203,7 +204,7 @@ public class AsmUtil {
         }
         String name = desc.substring(1, desc.length() - 1);
         name = toQualifiedName(name);
-        baseType = RefType.v(name);
+        baseType = RefType.v(name, myScene);
         break;
       default:
         throw new AssertionError("Unknown descriptor: " + desc);
@@ -211,7 +212,7 @@ public class AsmUtil {
     if (!(baseType instanceof RefLikeType) && desc.length() > 1) {
       throw new AssertionError("Invalid primitive type descriptor: " + desc);
     }
-    return nrDims > 0 ? ArrayType.v(baseType, nrDims) : baseType;
+    return nrDims > 0 ? ArrayType.v(baseType, nrDims,myScene) : baseType;
   }
 
   /**
@@ -219,9 +220,11 @@ public class AsmUtil {
    * 
    * @param desc
    *          method signature.
+   * @param primeTypeCollector
+   * @param myScene
    * @return list of types.
    */
-  public static List<Type> toJimpleDesc(String desc) {
+  public static List<Type> toJimpleDesc(String desc, PrimTypeCollector primeTypeCollector, Scene myScene) {
     ArrayList<Type> types = new ArrayList<Type>(2);
     int len = desc.length();
     int idx = 0;
@@ -238,31 +241,31 @@ public class AsmUtil {
             ++nrDims;
             continue this_type;
           case 'Z':
-            baseType = BooleanType.v();
+            baseType = primeTypeCollector.getBooleanType();
             break this_type;
           case 'B':
-            baseType = ByteType.v();
+            baseType = primeTypeCollector.getByteType();
             break this_type;
           case 'C':
-            baseType = CharType.v();
+            baseType = primeTypeCollector.getCharType();
             break this_type;
           case 'S':
-            baseType = ShortType.v();
+            baseType = primeTypeCollector.getShortType();
             break this_type;
           case 'I':
-            baseType = IntType.v();
+            baseType = primeTypeCollector.getIntType();
             break this_type;
           case 'F':
-            baseType = FloatType.v();
+            baseType = primeTypeCollector.getFloatType();
             break this_type;
           case 'J':
-            baseType = LongType.v();
+            baseType = primeTypeCollector.getLongType();
             break this_type;
           case 'D':
-            baseType = DoubleType.v();
+            baseType = primeTypeCollector.getDoubleType();
             break this_type;
           case 'V':
-            baseType = VoidType.v();
+            baseType = primeTypeCollector.getVoidType();
             break this_type;
           case 'L':
             int begin = idx;
@@ -270,14 +273,14 @@ public class AsmUtil {
               ;
             }
             String cls = desc.substring(begin, idx++);
-            baseType = RefType.v(toQualifiedName(cls));
+            baseType = RefType.v(toQualifiedName(cls), myScene);
             break this_type;
           default:
             throw new AssertionError("Unknown type: " + c);
         }
       }
       if (baseType != null && nrDims > 0) {
-        types.add(ArrayType.v(baseType, nrDims));
+        types.add(ArrayType.v(baseType, nrDims, myScene));
       } else {
         types.add(baseType);
       }

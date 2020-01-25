@@ -119,13 +119,13 @@ public class AugEvalFunction implements IEvalFunction {
       Type tl = eval_(tg, opl, stmt, jb), tr = eval_(tg, opr, stmt, jb);
 
       if (expr instanceof CmpExpr || expr instanceof CmpgExpr || expr instanceof CmplExpr) {
-        return ByteType.v();
+        return primeTypeCollector.getByteType();
       } else if (expr instanceof GeExpr || expr instanceof GtExpr || expr instanceof LeExpr || expr instanceof LtExpr
           || expr instanceof EqExpr || expr instanceof NeExpr) {
-        return BooleanType.v();
+        return primeTypeCollector.getBooleanType();
       } else if (expr instanceof ShlExpr) {
         if (tl instanceof IntegerType) {
-          return IntType.v();
+          return primeTypeCollector.getIntType();
         } else {
           return tl;
         }
@@ -134,7 +134,7 @@ public class AugEvalFunction implements IEvalFunction {
       } else if (expr instanceof AddExpr || expr instanceof SubExpr || expr instanceof MulExpr || expr instanceof DivExpr
           || expr instanceof RemExpr) {
         if (tl instanceof IntegerType) {
-          return IntType.v();
+          return primeTypeCollector.getIntType();
         } else {
           return tl;
         }
@@ -142,7 +142,7 @@ public class AugEvalFunction implements IEvalFunction {
         if (tl instanceof IntegerType && tr instanceof IntegerType) {
           if (tl instanceof BooleanType) {
             if (tr instanceof BooleanType) {
-              return BooleanType.v();
+              return primeTypeCollector.getBooleanType();
             } else {
               return tr;
             }
@@ -170,11 +170,11 @@ public class AugEvalFunction implements IEvalFunction {
          * -(-128) is not! --BRB
          */
         if (t instanceof Integer1Type || t instanceof BooleanType || t instanceof Integer127Type || t instanceof ByteType) {
-          return ByteType.v();
+          return primeTypeCollector.getByteType();
         } else if (t instanceof ShortType || t instanceof Integer32767Type) {
-          return ShortType.v();
+          return primeTypeCollector.getShortType();
         } else {
-          return IntType.v();
+          return primeTypeCollector.getIntType();
         }
       } else {
         return t;
@@ -234,9 +234,9 @@ public class AugEvalFunction implements IEvalFunction {
     } else if (expr instanceof CastExpr) {
       return ((CastExpr) expr).getCastType();
     } else if (expr instanceof InstanceOfExpr) {
-      return BooleanType.v();
+      return primeTypeCollector.getBooleanType();
     } else if (expr instanceof LengthExpr) {
-      return IntType.v();
+      return primeTypeCollector.getIntType();
     } else if (expr instanceof InvokeExpr) {
       return ((InvokeExpr) expr).getMethodRef().returnType();
     } else if (expr instanceof NewExpr) {
@@ -244,9 +244,9 @@ public class AugEvalFunction implements IEvalFunction {
     } else if (expr instanceof FieldRef) {
       return ((FieldRef) expr).getType();
     } else if (expr instanceof DoubleConstant) {
-      return DoubleType.v();
+      return primeTypeCollector.getDoubleType();
     } else if (expr instanceof FloatConstant) {
-      return FloatType.v();
+      return primeTypeCollector.getFloatType();
     } else if (expr instanceof IntConstant) {
       int value = ((IntConstant) expr).value;
 
@@ -255,24 +255,24 @@ public class AugEvalFunction implements IEvalFunction {
       } else if (value >= 2 && value < 128) {
         return Integer127Type.v();
       } else if (value >= -128 && value < 0) {
-        return ByteType.v();
+        return primeTypeCollector.getByteType();
       } else if (value >= 128 && value < 32768) {
         return Integer32767Type.v();
       } else if (value >= -32768 && value < -128) {
-        return ShortType.v();
+        return primeTypeCollector.getShortType();
       } else if (value >= 32768 && value < 65536) {
         return primTypeCollector.getCharType();
       } else {
-        return IntType.v();
+        return primeTypeCollector.getIntType();
       }
     } else if (expr instanceof LongConstant) {
-      return LongType.v();
+      return primeTypeCollector.getLongType();
     } else if (expr instanceof NullConstant) {
-      return NullType.v();
+      return primeTypeCollector.getNullType();
     } else if (expr instanceof StringConstant) {
-      return RefType.v("java.lang.String");
+      return RefType.v("java.lang.String",myScene);
     } else if (expr instanceof ClassConstant) {
-      return RefType.v("java.lang.Class");
+      return RefType.v("java.lang.Class",myScene);
     } else if (expr instanceof MethodHandle) {
       return RefType.v("java.lang.invoke.MethodHandle");
     } else if (expr instanceof MethodType) {

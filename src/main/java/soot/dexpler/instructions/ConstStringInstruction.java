@@ -35,7 +35,9 @@ import org.jf.dexlib2.iface.reference.StringReference;
 
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
+import soot.jimple.Jimple;
 import soot.jimple.StringConstant;
 
 public class ConstStringInstruction extends DexlibAbstractInstruction {
@@ -45,7 +47,7 @@ public class ConstStringInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
     String s;
     if (instruction instanceof Instruction21c) {

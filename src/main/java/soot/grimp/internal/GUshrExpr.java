@@ -59,10 +59,10 @@ public class GUshrExpr extends AbstractGrimpIntLongBinopExpr implements UshrExpr
     }
 
     if (isIntLikeType(op1.getType())) {
-      return IntType.v();
+      return primeTypeCollector.getIntType();
     }
-    if (op1.getType().equals(LongType.v())) {
-      return LongType.v();
+    if (op1.getType().equals(primeTypeCollector.getLongType())) {
+      return primeTypeCollector.getLongType();
     }
 
     return UnknownType.v();

@@ -33,6 +33,8 @@ import org.jf.dexlib2.iface.instruction.formats.Instruction11x;
 import soot.RefType;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
+import soot.jimple.Jimple;
 import soot.jimple.ThrowStmt;
 
 public class ThrowInstruction extends DexlibAbstractInstruction {
@@ -42,7 +44,7 @@ public class ThrowInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     Instruction11x throwInstruction = (Instruction11x) instruction;
     ThrowStmt throwStmt = myJimple.newThrowStmt(body.getRegisterLocal(throwInstruction.getRegisterA()));
     setUnit(throwStmt);
@@ -50,7 +52,7 @@ public class ThrowInstruction extends DexlibAbstractInstruction {
     body.add(throwStmt);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(throwStmt.getOpBox(), RefType.v("java.lang.Throwable"), true);
+      myDalvikTyper().setType(throwStmt.getOpBox(), RefType.v("java.lang.Throwable",myScene), true);
     }
   }
 }

@@ -147,12 +147,12 @@ public class Util {
      * // Handle array case while(descriptor.startsWith("[")) { isArray = true; numDimensions++; descriptor =
      * descriptor.substring(1); }
      *
-     * // Determine base type if(descriptor.startsWith("B")) { baseType = ByteType.v(); descriptor = descriptor.substring(1); }
-     * else if(descriptor.startsWith("C")) { baseType = CharType.v(); descriptor = descriptor.substring(1); } else
-     * if(descriptor.startsWith("D")) { baseType = DoubleType.v(); descriptor = descriptor.substring(1); } else
-     * if(descriptor.startsWith("F")) { baseType = FloatType.v(); descriptor = descriptor.substring(1); } else
-     * if(descriptor.startsWith("I")) { baseType = IntType.v(); descriptor = descriptor.substring(1); } else
-     * if(descriptor.startsWith("J")) { baseType = LongType.v(); descriptor = descriptor.substring(1); } else
+     * // Determine base type if(descriptor.startsWith("B")) { baseType = primeTypeCollector.getByteType(); descriptor = descriptor.substring(1); }
+     * else if(descriptor.startsWith("C")) { baseType = primeTypeCollector.getCharType(); descriptor = descriptor.substring(1); } else
+     * if(descriptor.startsWith("D")) { baseType = primeTypeCollector.getDoubleType(); descriptor = descriptor.substring(1); } else
+     * if(descriptor.startsWith("F")) { baseType = primeTypeCollector.getFloatType(); descriptor = descriptor.substring(1); } else
+     * if(descriptor.startsWith("I")) { baseType = primeTypeCollector.getIntType(); descriptor = descriptor.substring(1); } else
+     * if(descriptor.startsWith("J")) { baseType = primeTypeCollector.getLongType(); descriptor = descriptor.substring(1); } else
      * if(descriptor.startsWith("L")) { int index = descriptor.indexOf(';');
      *
      * if(index == -1) throw new RuntimeException("Class reference has no ending ;" );
@@ -161,9 +161,9 @@ public class Util {
      *
      * baseType = RefType.v(className.replace('/', '.'));
      *
-     * descriptor = descriptor.substring(index + 1); } else if(descriptor.startsWith("S")) { baseType = ShortType.v();
-     * descriptor = descriptor.substring(1); } else if(descriptor.startsWith("Z")) { baseType = BooleanType.v(); descriptor =
-     * descriptor.substring(1); } else if(descriptor.startsWith("V")) { baseType = VoidType.v(); descriptor =
+     * descriptor = descriptor.substring(index + 1); } else if(descriptor.startsWith("S")) { baseType = primeTypeCollector.getShortType();
+     * descriptor = descriptor.substring(1); } else if(descriptor.startsWith("Z")) { baseType = primeTypeCollector.getBooleanType(); descriptor =
+     * descriptor.substring(1); } else if(descriptor.startsWith("V")) { baseType = primeTypeCollector.getVoidType(); descriptor =
      * descriptor.substring(1); } else throw new RuntimeException("Unknown field type!" );
      *
      * Type t;
@@ -434,17 +434,17 @@ public class Util {
      * void setLocalType(Local local, List locals, int localIndex, Type type) { if(local.getType().equals(UnknownType .v()) ||
      * local.getType().equals(type)) { local.setType(type);
      *
-     * if(local.getType().equals(DoubleType. v()) || local.getType().equals(LongType.v())) { // This means the next local
+     * if(local.getType().equals(DoubleType. v()) || local.getType().equals(primeTypeCollector.getLongType())) { // This means the next local
      * becomes voided, since these types occupy two // words.
      *
      * Local secondHalf = (Local) locals.get(localIndex + 1);
      *
-     * secondHalf.setType(VoidType.v()); }
+     * secondHalf.setType(primeTypeCollector.getVoidType()); }
      *
      * return; }
      *
-     * if(type.equals(IntType.v())) { if(local.getType().equals(BooleanType .v()) || local.getType().equals(CharType.v()) ||
-     * local.getType().equals(ShortType.v()) || local.getType().equals(ByteType.v())) { // Even though it's not the same, it's
+     * if(type.equals(primeTypeCollector.getIntType())) { if(local.getType().equals(BooleanType .v()) || local.getType().equals(primeTypeCollector.getCharType()) ||
+     * local.getType().equals(primeTypeCollector.getShortType()) || local.getType().equals(primeTypeCollector.getByteType())) { // Even though it's not the same, it's
      * ok, because booleans, chars, shorts, and // bytes are all sort of treated like integers by the JVM. return; }
      *
      * }

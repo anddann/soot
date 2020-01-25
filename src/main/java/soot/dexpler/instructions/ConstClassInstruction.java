@@ -61,7 +61,7 @@ public class ConstClassInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction21c)) {
       throw new IllegalArgumentException("Expected Instruction21c but got: " + instruction.getClass());
     }
@@ -72,7 +72,7 @@ public class ConstClassInstruction extends DexlibAbstractInstruction {
     Constant cst = constancFactory.createClassConstant(tidi.getType());
 
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
-    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), cst);
+    AssignStmt assign = this.myJimple.newAssignStmt(body.getRegisterLocal(dest), cst);
     setUnit(assign);
     addTags(assign);
     body.add(assign);
@@ -80,7 +80,7 @@ public class ConstClassInstruction extends DexlibAbstractInstruction {
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // myDalvikTyper().captureAssign((JAssignStmt)assign, op); //TODO:
       // classtype could be null!
-      myDalvikTyper.setType(assign.getLeftOpBox(), cst.getType(), false);
+      this.myDalvikTyper.setType(assign.getLeftOpBox(), cst.getType(), false);
     }
   }
 

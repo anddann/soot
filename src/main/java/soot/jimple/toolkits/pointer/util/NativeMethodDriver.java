@@ -70,12 +70,15 @@ import soot.jimple.toolkits.pointer.nativemethods.NativeMethodNotSupportedExcept
 import soot.jimple.toolkits.pointer.nativemethods.SunMiscSignalHandlerNative;
 import soot.jimple.toolkits.pointer.nativemethods.SunMiscSignalNative;
 import soot.jimple.toolkits.pointer.nativemethods.SunMiscUnsafeNative;
+import soot.jimple.toolkits.pointer.representations.Environment;
 import soot.jimple.toolkits.pointer.representations.ReferenceVariable;
 
 public class NativeMethodDriver {
   private static final Logger logger = LoggerFactory.getLogger(NativeMethodDriver.class);
+  private final Environment myEnvironment;
 
-  public NativeMethodDriver(NativeHelper helper) {
+  public NativeMethodDriver(NativeHelper helper, Environment myEnvironment) {
+    this.myEnvironment = myEnvironment;
     cnameToSim.put("java.lang.Object", new JavaLangObjectNative(helper));
     cnameToSim.put("java.lang.System", new JavaLangSystemNative(helper));
     cnameToSim.put("java.lang.Runtime", new JavaLangRuntimeNative(helper));
@@ -88,7 +91,7 @@ public class NativeMethodDriver {
     cnameToSim.put("java.lang.Class", new JavaLangClassNative(helper));
     cnameToSim.put("java.lang.Package", new JavaLangPackageNative(helper));
     cnameToSim.put("java.lang.Thread", new JavaLangThreadNative(helper));
-    cnameToSim.put("java.lang.ClassLoader", new JavaLangClassLoaderNative(helper));
+    cnameToSim.put("java.lang.ClassLoader", new JavaLangClassLoaderNative(helper, myEnvironment));
     cnameToSim.put("java.lang.ClassLoader$NativeLibrary", new JavaLangClassLoaderNativeLibraryNative(helper));
     cnameToSim.put("java.lang.SecurityManager", new JavaLangSecurityManagerNative(helper));
 
@@ -100,7 +103,7 @@ public class NativeMethodDriver {
 
     cnameToSim.put("java.io.FileInputStream", new JavaIoFileInputStreamNative(helper));
     cnameToSim.put("java.io.FileOutputStream", new JavaIoFileOutputStreamNative(helper));
-    cnameToSim.put("java.io.ObjectInputStream", new JavaIoObjectInputStreamNative(helper, myEnvironment));
+    cnameToSim.put("java.io.ObjectInputStream", new JavaIoObjectInputStreamNative(helper, this.myEnvironment));
     cnameToSim.put("java.io.ObjectOutputStream", new JavaIoObjectOutputStreamNative(helper));
     cnameToSim.put("java.io.ObjectStreamClass", new JavaIoObjectStreamClassNative(helper));
     cnameToSim.put("java.io.FileSystem", new JavaIoFileSystemNative(helper));
@@ -119,7 +122,7 @@ public class NativeMethodDriver {
     cnameToSim.put("java.security.AccessController", new JavaSecurityAccessControllerNative(helper));
 
     cnameToSim.put("java.net.InetAddress", new JavaNetInetAddressNative(helper));
-    cnameToSim.put("java.net.InetAddressImpl", new JavaNetInetAddressImplNative(helper));
+    cnameToSim.put("java.net.InetAddressImpl", new JavaNetInetAddressImplNative(helper, myEnvironment));
 
     cnameToSim.put("sun.misc.Signal", new SunMiscSignalNative(helper));
     cnameToSim.put("sun.misc.NativeSignalHandler", new SunMiscSignalHandlerNative(helper));

@@ -32,7 +32,9 @@ import org.jf.dexlib2.iface.instruction.OneRegisterInstruction;
 
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
+import soot.jimple.Jimple;
 import soot.jimple.internal.JAssignStmt;
 
 public class MoveResultInstruction extends DexlibAbstractInstruction {
@@ -44,7 +46,7 @@ public class MoveResultInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     // if (local != null && expr != null)
     // throw new RuntimeException("Both local and expr are set to move.");
 

@@ -31,21 +31,27 @@ import org.jf.dexlib2.iface.instruction.Instruction;
 import org.jf.dexlib2.iface.instruction.TwoRegisterInstruction;
 import org.jf.dexlib2.iface.instruction.formats.Instruction12x;
 
-import soot.IntType;
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
+import soot.jimple.Jimple;
 import soot.jimple.LengthExpr;
+import soot.options.Options;
 
 public class ArrayLengthInstruction extends DexlibAbstractInstruction {
 
-  public ArrayLengthInstruction(Instruction instruction, int codeAdress) {
+  private PrimTypeCollector primTypeCollector;
+
+  public ArrayLengthInstruction(Instruction instruction, int codeAdress, Options myOptions, PrimTypeCollector primTypeCollector) {
     super(instruction, codeAdress, myOptions);
+    this.primTypeCollector = primTypeCollector;
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction12x)) {
       throw new IllegalArgumentException("Expected Instruction12x but got: " + instruction.getClass());
     }
@@ -64,7 +70,7 @@ public class ArrayLengthInstruction extends DexlibAbstractInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(assign.getLeftOpBox(), IntType.v(), false);
+      myDalvikTyper.setType(assign.getLeftOpBox(), primTypeCollector.getIntType(), false);
     }
   }
 

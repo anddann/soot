@@ -28,6 +28,7 @@ import soot.FloatType;
 import soot.IntType;
 import soot.LongType;
 import soot.PrimType;
+import soot.PrimTypeCollector;
 import soot.ShortType;
 import soot.Type;
 import soot.Value;
@@ -41,13 +42,16 @@ import soot.jimple.Stmt;
 
 public class TypeCastingError extends DepthFirstAdapter {
   public boolean myDebug = false;
+  private PrimTypeCollector primeTypeCollector;
 
-  public TypeCastingError() {
+  public TypeCastingError(PrimTypeCollector primeTypeCollector) {
 
+    this.primeTypeCollector = primeTypeCollector;
   }
 
-  public TypeCastingError(boolean verbose) {
+  public TypeCastingError(boolean verbose, PrimTypeCollector primeTypeCollector) {
     super(verbose);
+    this.primeTypeCollector = primeTypeCollector;
   }
 
   public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
@@ -109,7 +113,7 @@ public class TypeCastingError extends DepthFirstAdapter {
           if (DEBUG) {
             System.out.println("Explicit casting to BYTE required");
           }
-          rightBox.setValue(new GCastExpr(right, ByteType.v()));
+          rightBox.setValue(new GCastExpr(right, primeTypeCollector.getByteType()));
           if (DEBUG) {
             System.out.println("New right expr is " + rightBox.getValue().toString());
           }
@@ -123,7 +127,7 @@ public class TypeCastingError extends DepthFirstAdapter {
           if (DEBUG) {
             System.out.println("Explicit casting to SHORT required");
           }
-          rightBox.setValue(new GCastExpr(right, ShortType.v()));
+          rightBox.setValue(new GCastExpr(right, primeTypeCollector.getShortType()));
           if (DEBUG) {
             System.out.println("New right expr is " + rightBox.getValue().toString());
           }
@@ -137,7 +141,7 @@ public class TypeCastingError extends DepthFirstAdapter {
           if (myDebug) {
             System.out.println("Explicit casting to INT required");
           }
-          rightBox.setValue(new GCastExpr(right, IntType.v()));
+          rightBox.setValue(new GCastExpr(right, primeTypeCollector.getIntType()));
           if (myDebug) {
             System.out.println("New right expr is " + rightBox.getValue().toString());
           }
@@ -150,7 +154,7 @@ public class TypeCastingError extends DepthFirstAdapter {
           if (DEBUG) {
             System.out.println("Explicit casting to LONG required");
           }
-          rightBox.setValue(new GCastExpr(right, LongType.v()));
+          rightBox.setValue(new GCastExpr(right, primeTypeCollector.getLongType()));
           if (DEBUG) {
             System.out.println("New right expr is " + rightBox.getValue().toString());
           }
@@ -163,7 +167,7 @@ public class TypeCastingError extends DepthFirstAdapter {
           if (DEBUG) {
             System.out.println("Explicit casting to FLOAT required");
           }
-          rightBox.setValue(new GCastExpr(right, FloatType.v()));
+          rightBox.setValue(new GCastExpr(right, primeTypeCollector.getFloatType()));
           if (DEBUG) {
             System.out.println("New right expr is " + rightBox.getValue().toString());
           }

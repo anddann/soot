@@ -36,15 +36,6 @@ import java.util.*;
 @javax.annotation.Generated(value = "Saxonica v3.0", comments = "from soot_options.xml")
 public class Options extends OptionsBase {
 
-        private final PackManager myPackManager;
-        @Inject
-        public Options(PackManager myPackManager){
-        this.myPackManager = myPackManager;
-        }
-
-        public  PackManager getPackManager(){
-        return myPackManager;
-        }
 
     public static final int src_prec_c = 1;
     public static final int src_prec_class = 1;
@@ -4568,4 +4559,17 @@ public class Options extends OptionsBase {
             G.v().out.println("Warning: Options exist for non-existent phase db.force-recompile");
         }
 
+    @Override
+    public PackManager getPackManager() {
+        //FIXME
+        return null;
+    }
+
+    @Override
+    public PhaseOptions getPhaseOptions() {
+        //FIXM
+        return null;
+    }
+
+    private PackManager myPackManager;
 }

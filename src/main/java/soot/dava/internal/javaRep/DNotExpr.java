@@ -29,6 +29,7 @@ import soot.DoubleType;
 import soot.FloatType;
 import soot.IntType;
 import soot.LongType;
+import soot.PrimTypeCollector;
 import soot.ShortType;
 import soot.Type;
 import soot.UnitPrinter;
@@ -41,12 +42,15 @@ import soot.util.Switch;
 //import soot.jimple.*;
 
 public class DNotExpr extends AbstractUnopExpr {
-  public DNotExpr(Value op) {
+  private Grimp myGrimp;
+
+  public DNotExpr(Value op, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
     super(myGrimp.newExprBox(op), primTypeCollector);
+    this.myGrimp = myGrimp;
   }
 
   public Object clone() {
-    return new DNotExpr(Grimp.cloneIfNecessary(getOpBox().getValue()));
+    return new DNotExpr(Grimp.cloneIfNecessary(getOpBox().getValue()), myGrimp, primTypeCollector);
   }
 
   public void toString(UnitPrinter up) {
@@ -62,17 +66,17 @@ public class DNotExpr extends AbstractUnopExpr {
   public Type getType() {
     Value op = getOpBox().getValue();
 
-    if (op.getType().equals(IntType.v()) || op.getType().equals(ByteType.v()) || op.getType().equals(ShortType.v())
-        || op.getType().equals(BooleanType.v()) || op.getType().equals(CharType.v())) {
-      return IntType.v();
-    } else if (op.getType().equals(LongType.v())) {
-      return LongType.v();
-    } else if (op.getType().equals(DoubleType.v())) {
-      return DoubleType.v();
-    } else if (op.getType().equals(FloatType.v())) {
-      return FloatType.v();
+    if (op.getType().equals(primTypeCollector.getIntType()) || op.getType().equals(primTypeCollector.getByteType()) || op.getType().equals(primTypeCollector.getShortType())
+        || op.getType().equals(primTypeCollector.getBooleanType()) || op.getType().equals(primTypeCollector.getCharType())) {
+      return primTypeCollector.getIntType();
+    } else if (op.getType().equals(primTypeCollector.getLongType())) {
+      return primTypeCollector.getLongType();
+    } else if (op.getType().equals(primTypeCollector.getDoubleType())) {
+      return primTypeCollector.getDoubleType();
+    } else if (op.getType().equals(primTypeCollector.getFloatType())) {
+      return primTypeCollector.getFloatType();
     } else {
-      return UnknownType.v();
+      return primTypeCollector.getUnknownType();
     }
   }
 

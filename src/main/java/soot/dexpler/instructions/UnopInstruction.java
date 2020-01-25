@@ -40,6 +40,7 @@ import soot.dexpler.tags.DoubleOpTag;
 import soot.dexpler.tags.FloatOpTag;
 import soot.dexpler.tags.IntOpTag;
 import soot.dexpler.tags.LongOpTag;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
@@ -57,7 +58,7 @@ public class UnopInstruction extends TaggedInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction12x)) {
       throw new IllegalArgumentException("Expected Instruction12x but got: " + instruction.getClass());
     }
@@ -68,7 +69,7 @@ public class UnopInstruction extends TaggedInstruction {
     Local source = body.getRegisterLocal(cmpInstr.getRegisterB());
     Value expr = getExpression(source);
 
-    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), expr);
+    AssignStmt assign = this.myJimple.newAssignStmt(body.getRegisterLocal(dest), expr);
     assign.addTag(getTag());
 
     setUnit(assign);

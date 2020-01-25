@@ -30,6 +30,7 @@ package soot.dexpler.instructions;
 import org.jf.dexlib2.iface.instruction.Instruction;
 
 import soot.dexpler.DexBody;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.Jimple;
 import soot.jimple.NopStmt;
 import soot.options.Options;
@@ -43,8 +44,8 @@ public class NopInstruction extends DexlibAbstractInstruction {
     this.myJimple = myJimple;
   }
 
-  public void jimplify(DexBody body) {
-    NopStmt nop = myJimple.newNopStmt();
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+    NopStmt nop = this.myJimple.newNopStmt();
     setUnit(nop);
     addTags(nop);
     body.add(nop);

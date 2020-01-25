@@ -39,7 +39,6 @@ import soot.jimple.parser.node.AFile;
 import soot.jimple.parser.node.AFullMethodBody;
 import soot.jimple.parser.node.AMethodMember;
 import soot.jimple.parser.node.PModifier;
-import soot.options.Options;
 
 /**
  * Walks a jimple AST and constructs the method bodies for all the methods of the SootClass associated with this walker (see
@@ -57,7 +56,7 @@ public class BodyExtractorWalker extends Walker {
    * Constructs a walker, and attaches it to the given SootClass, sending bodies to the given methodToParsedBodyMap.
    */
   public BodyExtractorWalker(SootClass sc, SootResolver resolver, Map<SootMethod, JimpleBody> methodToParsedBodyMap) {
-    super(sc, resolver);
+    super(sc, constancFactory, resolver, myScene, myOptions, myPackageNamer, myJimple, constantFactory);
     this.methodToParsedBodyMap = methodToParsedBodyMap;
   }
 

@@ -188,7 +188,7 @@ public class IFDSLiveVariables extends DefaultJimpleIFDSTabulationProblem<Value,
   }
 
   public Value createZeroValue() {
-    return new JimpleLocal("<<zero>>", NullType.v(), myScene);
+    return new JimpleLocal("<<zero>>", primeTypeCollector.getNullType(), myScene);
   }
 
 }

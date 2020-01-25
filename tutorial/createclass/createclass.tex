@@ -117,8 +117,8 @@ Now that we have a {\tt SootClass}, we need to add methods to it.
 \noindent
 \begin{verbatim}
     method = new SootMethod("main",                 
-        Arrays.asList(new Type[] {ArrayType.v(RefType.v("java.lang.String"), 1)}),
-        VoidType.v(), Modifier.PUBLIC | Modifier.STATIC); 
+        Arrays.asList(new Type[] {ArrayType.v(RefType.v("java.lang.String",myScene), 1)}),
+        primeTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC);
 \end{verbatim}
 
 We create a new {\tt public static} method, {\tt main}, declare that it takes
@@ -136,7 +136,7 @@ corresponding to the {\tt java.lang.String} class.
 instantiate the class, giving an object with a given type.  The two
 notions -- type and class -- are closely related, but distinct.  To
 get the type for the {\tt java.lang.String} class, by name, we call
-{\tt RefType.v("java.lang.String")}.  Given a {\tt SootClass} object
+{\tt RefType.v("java.lang.String",myScene)}.  Given a {\tt SootClass} object
 {\tt sc}, we could also call {\tt sc.getType()} to get the
 corresponding type.
 
@@ -181,7 +181,7 @@ with our method, and make it the active body for our method.
 \subsection{Adding a Local}
 
 \begin{verbatim}
-    arg = Jimple.v().newLocal("l0", ArrayType.v(RefType.v("java.lang.String"), 1));
+    arg = Jimple.v().newLocal("l0", ArrayType.v(RefType.v("java.lang.String",myScene), 1));
     body.getLocals().add(arg);
 \end{verbatim}
 
@@ -192,7 +192,7 @@ We create a few new Jimple {\tt Local}s and add them to our Body.
 \begin{verbatim}
     units.add(Jimple.v().newIdentityStmt(arg, 
           Jimple.v().newParameterRef(ArrayType.v
-            (RefType.v("java.lang.String"), 1), 0)));
+            (RefType.v("java.lang.String",myScene), 1), 0)));
 \end{verbatim}
 
 The {\tt SootMethod} declares that it has parameters, but these are not
@@ -366,8 +366,8 @@ public class Main
            
         // Create the method, public static void main(String[])
            method = new SootMethod("main",
-                Arrays.asList(new Type[] {ArrayType.v(RefType.v("java.lang.String"), 1)}),
-                VoidType.v(), Modifier.PUBLIC | Modifier.STATIC);
+                Arrays.asList(new Type[] {ArrayType.v(RefType.v("java.lang.String",myScene), 1)}),
+                primeTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC);
         
            sClass.addMethod(method);
            
@@ -381,7 +381,7 @@ public class Main
             Local arg, tmpRef;
             
             // Add some locals, java.lang.String l0
-                arg = Jimple.v().newLocal("l0", ArrayType.v(RefType.v("java.lang.String"), 1));
+                arg = Jimple.v().newLocal("l0", ArrayType.v(RefType.v("java.lang.String",myScene), 1));
                 body.getLocals().add(arg);
             
             // Add locals, java.io.printStream tmpRef
@@ -390,7 +390,7 @@ public class Main
                 
             // add "l0 = @parameter0"
                 units.add(Jimple.v().newIdentityStmt(arg, 
-                     Jimple.v().newParameterRef(ArrayType.v(RefType.v("java.lang.String"), 1), 0)));
+                     Jimple.v().newParameterRef(ArrayType.v(RefType.v("java.lang.String",myScene), 1), 0)));
             
             // add "tmpRef = java.lang.System.out"
                 units.add(Jimple.v().newAssignStmt(tmpRef, Jimple.v().newStaticFieldRef(

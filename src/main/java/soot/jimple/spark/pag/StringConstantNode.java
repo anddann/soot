@@ -22,7 +22,9 @@ package soot.jimple.spark.pag;
  * #L%
  */
 
+import soot.PhaseOptions;
 import soot.RefType;
+import soot.Scene;
 
 /**
  * Represents an allocation site node the represents a constant string.
@@ -40,7 +42,7 @@ public class StringConstantNode extends AllocNode {
 
   /* End of public methods. */
 
-  StringConstantNode(PAG pag, String sc) {
-    super(pag, sc, RefType.v("java.lang.String"), myPhaseOptions, null);
+  StringConstantNode(PAG pag, String sc, PhaseOptions myPhaseOptions, Scene myScene) {
+    super(pag, sc, RefType.v("java.lang.String", myScene), myPhaseOptions, null);
   }
 }

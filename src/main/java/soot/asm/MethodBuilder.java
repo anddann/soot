@@ -131,7 +131,7 @@ class MethodBuilder extends JSRInlinerAdapter {
   @Override
   public void visitTypeInsn(int op, String t) {
     super.visitTypeInsn(op, t);
-    Type rt = AsmUtil.toJimpleRefType(t);
+    Type rt = AsmUtil.toJimpleRefType(t, myScene, primeTypeCollector);
     if (rt instanceof ArrayType) {
       scb.addDep(((ArrayType) rt).baseType);
     } else {
@@ -142,7 +142,7 @@ class MethodBuilder extends JSRInlinerAdapter {
   @Override
   public void visitFieldInsn(int opcode, String owner, String name, String desc) {
     super.visitFieldInsn(opcode, owner, name, desc);
-    for (Type t : AsmUtil.toJimpleDesc(desc)) {
+    for (Type t : AsmUtil.toJimpleDesc(desc, primeTypeCollector, myScene)) {
       if (t instanceof RefType) {
         scb.addDep(t);
       }
@@ -154,11 +154,11 @@ class MethodBuilder extends JSRInlinerAdapter {
   @Override
   public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean isInterf) {
     super.visitMethodInsn(opcode, owner, name, desc, isInterf);
-    for (Type t : AsmUtil.toJimpleDesc(desc)) {
+    for (Type t : AsmUtil.toJimpleDesc(desc, primeTypeCollector, myScene)) {
       addDeps(t);
     }
 
-    scb.addDep(AsmUtil.toBaseType(owner));
+    scb.addDep(AsmUtil.toBaseType(owner, myScene, primeTypeCollector));
   }
 
   @Override
@@ -167,7 +167,7 @@ class MethodBuilder extends JSRInlinerAdapter {
 
     if (cst instanceof Handle) {
       Handle methodHandle = (Handle) cst;
-      scb.addDep(AsmUtil.toBaseType(methodHandle.getOwner()));
+      scb.addDep(AsmUtil.toBaseType(methodHandle.getOwner(), myScene, primeTypeCollector));
     }
   }
 

@@ -39,6 +39,8 @@ import org.jf.dexlib2.iface.instruction.RegisterRangeInstruction;
 import soot.Type;
 import soot.Unit;
 import soot.dexpler.DexBody;
+import soot.dexpler.typing.DalvikTyper;
+import soot.jimple.Jimple;
 import soot.options.Options;
 import soot.tagkit.BytecodeOffsetTag;
 import soot.tagkit.Host;
@@ -66,11 +68,12 @@ public abstract class DexlibAbstractInstruction {
 
   /**
    * Jimplify this instruction.
-   *
-   * @param body
+   *  @param body
    *          to jimplify into.
+   * @param myJimple
+   * @param myDalvikTyper
    */
-  public abstract void jimplify(DexBody body);
+  public abstract void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper);
 
   /**
    * Return the target register that is a copy of the given register. For instruction such as v0 = v3 (v0 gets the content of
@@ -217,32 +220,32 @@ public abstract class DexlibAbstractInstruction {
   // All uses for the array have been commented out.
   // Calling all v()s for all types make no sense if we do not use them
   /*
-   * protected Type [] opUnType = { IntType.v(), // 0x7B neg-int vx, vy IntType.v(), // 0x7C LongType.v(), // 0x7D
-   * LongType.v(), // 0x7E FloatType.v(), // 0x7F DoubleType.v(), // 0x80 IntType.v(), IntType.v(), IntType.v(),
-   * LongType.v(), LongType.v(), LongType.v(), FloatType.v(), FloatType.v(), FloatType.v(), DoubleType.v(), DoubleType.v(),
-   * DoubleType.v(), IntType.v(), IntType.v(), IntType.v() // 0x8F int-to-short vx, vy };
+   * protected Type [] opUnType = { primeTypeCollector.getIntType(), // 0x7B neg-int vx, vy primeTypeCollector.getIntType(), // 0x7C primeTypeCollector.getLongType(), // 0x7D
+   * primeTypeCollector.getLongType(), // 0x7E primeTypeCollector.getFloatType(), // 0x7F primeTypeCollector.getDoubleType(), // 0x80 primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(),
+   * primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(),
+   * primeTypeCollector.getDoubleType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType() // 0x8F int-to-short vx, vy };
    *
-   * protected Type [] resUnType = { IntType.v(), // 0x7B IntType.v(), LongType.v(), LongType.v(), FloatType.v(),
-   * DoubleType.v(), LongType.v(), FloatType.v(), DoubleType.v(), IntType.v(), FloatType.v(), DoubleType.v(), IntType.v(),
-   * LongType.v(), DoubleType.v(), IntType.v(), LongType.v(), FloatType.v(), IntType.v(), IntType.v(), IntType.v() // 0x8F };
+   * protected Type [] resUnType = { primeTypeCollector.getIntType(), // 0x7B primeTypeCollector.getIntType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getFloatType(),
+   * primeTypeCollector.getDoubleType(), primeTypeCollector.getLongType(), primeTypeCollector.getFloatType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getIntType(), primeTypeCollector.getFloatType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getIntType(),
+   * primeTypeCollector.getLongType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getIntType(), primeTypeCollector.getLongType(), primeTypeCollector.getFloatType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType() // 0x8F };
    *
-   * protected Type [] resBinType = { IntType.v(), IntType.v(), IntType.v(), IntType.v(), IntType.v(), IntType.v(),
-   * IntType.v(), IntType.v(), IntType.v(), IntType.v(), IntType.v(), LongType.v(), LongType.v(), LongType.v(), LongType.v(),
-   * LongType.v(), LongType.v(), LongType.v(), LongType.v(), LongType.v(), LongType.v(), LongType.v(), FloatType.v(),
-   * FloatType.v(), FloatType.v(), FloatType.v(), FloatType.v(), DoubleType.v(), DoubleType.v(), DoubleType.v(),
-   * DoubleType.v(), DoubleType.v() };
+   * protected Type [] resBinType = { primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(),
+   * primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(),
+   * primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getFloatType(),
+   * primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(),
+   * primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType() };
    *
-   * protected Type [] op1BinType = { IntType.v(), IntType.v(), IntType.v(), IntType.v(), IntType.v(), IntType.v(),
-   * IntType.v(), IntType.v(), IntType.v(), IntType.v(), IntType.v(), LongType.v(), LongType.v(), LongType.v(), LongType.v(),
-   * LongType.v(), LongType.v(), LongType.v(), LongType.v(), LongType.v(), LongType.v(), LongType.v(), FloatType.v(),
-   * FloatType.v(), FloatType.v(), FloatType.v(), FloatType.v(), DoubleType.v(), DoubleType.v(), DoubleType.v(),
-   * DoubleType.v(), DoubleType.v() };
+   * protected Type [] op1BinType = { primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(),
+   * primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(),
+   * primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getFloatType(),
+   * primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(),
+   * primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType() };
    *
-   * protected Type [] op2BinType = { IntType.v(), IntType.v(), IntType.v(), IntType.v(), IntType.v(), IntType.v(),
-   * IntType.v(), IntType.v(), IntType.v(), IntType.v(), IntType.v(), LongType.v(), LongType.v(), LongType.v(), LongType.v(),
-   * LongType.v(), LongType.v(), LongType.v(), LongType.v(), IntType.v(), IntType.v(), IntType.v(), FloatType.v(),
-   * FloatType.v(), FloatType.v(), FloatType.v(), FloatType.v(), DoubleType.v(), DoubleType.v(), DoubleType.v(),
-   * DoubleType.v(), DoubleType.v() };
+   * protected Type [] op2BinType = { primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(),
+   * primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(),
+   * primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getFloatType(),
+   * primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(),
+   * primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType() };
    */
 
   // public abstract void getConstraint(IDalvikTyper myDalvikTyper());

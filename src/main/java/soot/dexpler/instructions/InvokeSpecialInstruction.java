@@ -29,6 +29,8 @@ package soot.dexpler.instructions;
 
 import org.jf.dexlib2.iface.instruction.Instruction;
 import soot.dexpler.DexBody;
+import soot.dexpler.typing.DalvikTyper;
+import soot.jimple.Jimple;
 
 public class InvokeSpecialInstruction extends MethodInvocationInstruction {
 
@@ -36,7 +38,7 @@ public class InvokeSpecialInstruction extends MethodInvocationInstruction {
     super(instruction, codeAdress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
   }
 
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     jimplifySpecial(body);
   }
   

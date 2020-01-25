@@ -179,7 +179,7 @@ public class LazyCodeMotion extends BodyTransformer {
     earliest = new EarliestnessComputation(graph, upSafe, downSafe, sideEffect, set);
     delay = new DelayabilityAnalysis(graph, earliest, unitToEquivRhs, set, myInteractionHandler, myOptions);
     latest = new LatestComputation(graph, delay, unitToEquivRhs, set);
-    notIsolated = new NotIsolatedAnalysis(graph, latest, unitToEquivRhs, set);
+    notIsolated = new NotIsolatedAnalysis(graph, latest, unitToEquivRhs, set, myOptions, getMyInteractionHandler());
 
     LocalCreation localCreation = new LocalCreation(b.getLocals(), PREFIX);
 

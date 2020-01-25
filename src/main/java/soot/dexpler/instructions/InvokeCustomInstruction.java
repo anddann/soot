@@ -83,7 +83,7 @@ public class InvokeCustomInstruction extends MethodInvocationInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     CallSiteReference callSiteReference = (CallSiteReference) ((ReferenceInstruction) instruction).getReference();
     Reference bootstrapRef = callSiteReference.getMethodHandle().getMemberReference();
     
@@ -99,7 +99,7 @@ public class InvokeCustomInstruction extends MethodInvocationInstruction {
       // The method prototype only includes the method arguments and no invoking object so treat like static
       List<Local> methodArgs = buildParameters(body, callSiteReference.getMethodProto().getParameterTypes(), true);
       
-      invocation = myJimple.newDynamicInvokeExpr(bootstrapMethodRef, bootstrapValues, methodRef, bootStrapKind.getValue(),
+      invocation = this.myJimple.newDynamicInvokeExpr(bootstrapMethodRef, bootstrapValues, methodRef, bootStrapKind.getValue(),
           methodArgs);
       body.setDanglingInstruction(this);
     } else if (bootstrapRef instanceof FieldReference) {

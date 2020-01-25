@@ -71,6 +71,7 @@ import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
+import soot.SootResolver;
 import soot.Trap;
 import soot.Type;
 import soot.Unit;
@@ -161,7 +162,6 @@ public class DexBody {
 
   // detect array/instructions overlapping obfuscation
   protected List<PseudoInstruction> pseudoInstructionData = new ArrayList<PseudoInstruction>();
-  //FIXME: AD
   private Jimple myJimple;
   private ConstantFactory constancFactory;
   private DalvikTyper dalivkTyper;
@@ -192,6 +192,7 @@ public class DexBody {
   private InteractionHandler myInteractionHandler;
   private PedanticThrowAnalysis myPedanticThrowAnalysis;
   private ConstantFactory constantFactory;
+  private SootResolver mySootResolver;
 
   PseudoInstruction isAddressInData(int a) {
     for (PseudoInstruction pi : pseudoInstructionData) {
@@ -208,9 +209,70 @@ public class DexBody {
    * @param code
    *          the codeitem that is contained in this body
    * @param method
-   *          the method that is associated with this body
+   * @param myJimple
+   * @param constancFactory
+   * @param dalivkTyper
+   * @param primTypeCollector
+   * @param myScene
+   * @param myOptions
+   * @param myPhaseOptions
+   * @param myDalvikTyper
+   * @param myDeadAssignmentEliminator
+   * @param myUnusedLocalEliminator
+   * @param myTypeAssigner
+   * @param myLocalPacker
+   * @param myPackManager
+   * @param myFieldStaticnessCorrector
+   * @param myMethodStaticnessCorrector
+   * @param myTrapTightener
+   * @param myTrapMinimizer
+   * @param myAggregator
+   * @param myConditionalBranchFolder
+   * @param myConstantCastEliminator
+   * @param myIdentityCastEliminator
+   * @param myIdentityOperationEliminator
+   * @param myUnreachableCodeEliminator
+   * @param myNopEliminator
+   * @param myDalvikThrowAnalysis
+   * @param myManager
+   * @param myPhaseDumper
+   * @param myInteractionHandler
+   * @param myPedanticThrowAnalysis
+   * @param constantFactory
+   * @param mySootResolver
    */
-  protected DexBody(DexFile dexFile, Method method, RefType declaringClassType) {
+  protected DexBody(DexFile dexFile, Method method, RefType declaringClassType, Jimple myJimple, ConstantFactory constancFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, PhaseOptions myPhaseOptions, DalvikTyper myDalvikTyper, DeadAssignmentEliminator myDeadAssignmentEliminator, UnusedLocalEliminator myUnusedLocalEliminator, TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, PackManager myPackManager, FieldStaticnessCorrector myFieldStaticnessCorrector, MethodStaticnessCorrector myMethodStaticnessCorrector, TrapTightener myTrapTightener, TrapMinimizer myTrapMinimizer, Aggregator myAggregator, ConditionalBranchFolder myConditionalBranchFolder, ConstantCastEliminator myConstantCastEliminator, IdentityCastEliminator myIdentityCastEliminator, IdentityOperationEliminator myIdentityOperationEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator, DalvikThrowAnalysis myDalvikThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, PedanticThrowAnalysis myPedanticThrowAnalysis, ConstantFactory constantFactory, SootResolver mySootResolver) {
+    this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
+    this.dalivkTyper = dalivkTyper;
+    this.primTypeCollector = primTypeCollector;
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPhaseOptions = myPhaseOptions;
+    this.myDalvikTyper = myDalvikTyper;
+    this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
+    this.myUnusedLocalEliminator = myUnusedLocalEliminator;
+    this.myTypeAssigner = myTypeAssigner;
+    this.myLocalPacker = myLocalPacker;
+    this.myPackManager = myPackManager;
+    this.myFieldStaticnessCorrector = myFieldStaticnessCorrector;
+    this.myMethodStaticnessCorrector = myMethodStaticnessCorrector;
+    this.myTrapTightener = myTrapTightener;
+    this.myTrapMinimizer = myTrapMinimizer;
+    this.myAggregator = myAggregator;
+    this.myConditionalBranchFolder = myConditionalBranchFolder;
+    this.myConstantCastEliminator = myConstantCastEliminator;
+    this.myIdentityCastEliminator = myIdentityCastEliminator;
+    this.myIdentityOperationEliminator = myIdentityOperationEliminator;
+    this.myUnreachableCodeEliminator = myUnreachableCodeEliminator;
+    this.myNopEliminator = myNopEliminator;
+    this.myDalvikThrowAnalysis = myDalvikThrowAnalysis;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
+    this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
+    this.constantFactory = constantFactory;
+    this.mySootResolver = mySootResolver;
     MethodImplementation code = method.getImplementation();
     if (code == null) {
       throw new RuntimeException("error: no code for method " + method.getName());
@@ -276,7 +338,7 @@ public class DexBody {
   protected void extractDexInstructions(MethodImplementation code) {
     int address = 0;
     for (Instruction instruction : code.getInstructions()) {
-      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address, myJimple, constancFactory, dalivkTyper, primTypeCollector, myScene, myJimple, myOptions, myDalvikTyper, constantFactory);
+      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address, myJimple, constancFactory, dalivkTyper, primTypeCollector, myScene, myJimple, myOptions, myDalvikTyper, constantFactory, mySootResolver);
       instructions.add(dexInstruction);
       instructionAtAddress.put(address, dexInstruction);
       address += instruction.getCodeUnits();
@@ -559,7 +621,7 @@ public class DexBody {
         dangling.finalize(this, instruction);
         dangling = null;
       }
-      instruction.jimplify(this);
+      instruction.jimplify(this, myJimple, myDalvikTyper);
       if (instruction.getLineNumber() > 0) {
         prevLineNumber = instruction.getLineNumber();
       } else {

@@ -35,6 +35,7 @@ import soot.dava.internal.AST.ASTUnaryBinaryCondition;
 import soot.dava.internal.AST.ASTUnconditionalLoopNode;
 import soot.dava.internal.AST.ASTWhileNode;
 import soot.dava.toolkits.base.AST.traversals.AllDefinitionsFinder;
+import soot.dava.toolkits.base.AST.traversals.ClosestAbruptTargetFinder;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.Stmt;
 
@@ -68,12 +69,14 @@ import soot.jimple.Stmt;
  */
 
 public class ReachingDefs extends StructuredAnalysis<Stmt> {
+  private final ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
   Object toAnalyze;
 
-  public ReachingDefs(Object analyze) {
+  public ReachingDefs(ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Object analyze) {
     super();
+    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     toAnalyze = analyze;
-    process(analyze, new DavaFlowSet<Stmt>(myClosestAbruptTargetFinder));
+    process(analyze, new DavaFlowSet<Stmt>(this.myClosestAbruptTargetFinder));
   }
 
   @Override

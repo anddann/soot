@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BCmpgInst extends AbstractOpTypeInst implements CmpgInst {
   public BCmpgInst(Type opType) {
-    super(myRefType, opType, myBaf);
+    super(primeTypeCollector.getRefType(), opType, myBaf);
   }
 
   public int getInCount() {

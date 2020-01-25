@@ -40,8 +40,6 @@ import soot.Trap;
 import soot.Unit;
 import soot.jimple.GotoStmt;
 import soot.jimple.IfStmt;
-import soot.jimple.Jimple;
-import soot.options.Options;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.BriefBlockGraph;
@@ -86,7 +84,7 @@ public class LoopConditionUnroller extends BodyTransformer {
     this.body = body;
     this.maxSize = PhaseOptions.getInt(options, "maxSize");
 
-    BlockGraph bg = new BriefBlockGraph(body);
+    BlockGraph bg = new BriefBlockGraph(body, myPhaseDumper);
     for (Block b : bg.getHeads()) {
       unrollConditions(b);
     }

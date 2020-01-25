@@ -36,12 +36,14 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import soot.Modifier;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
 import soot.SootResolver;
+import soot.jimple.ConstantFactory;
 import soot.options.Options;
 import soot.tagkit.DoubleConstantValueTag;
 import soot.tagkit.EnclosingMethodTag;
@@ -68,23 +70,27 @@ public class SootClassBuilder extends ClassVisitor {
   private Scene myScene;
   private SootResolver mySootResolver;
   private Options myOptions;
+  private PrimTypeCollector primeTypeCollector;
+  private ConstantFactory constancFactory;
 
   /**
    * Constructs a new Soot class builder.
-   *
    * @param klass
    *          Soot class to build.
    * @param myScene
    * @param mySootResolver
-   * @param myJimple
    * @param myOptions
+   * @param primeTypeCollector
+   * @param constancFactory
    */
-  protected SootClassBuilder(SootClass klass, Scene myScene, SootResolver mySootResolver, Options myOptions) {
+  protected SootClassBuilder(SootClass klass, Scene myScene, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primeTypeCollector, ConstantFactory constancFactory) {
     super(Opcodes.ASM5);
     this.klass = klass;
     this.myScene = myScene;
     this.mySootResolver = mySootResolver;
     this.myOptions = myOptions;
+    this.primeTypeCollector = primeTypeCollector;
+    this.constancFactory = constancFactory;
     this.deps = new HashSet();
   }
 
@@ -137,14 +143,14 @@ public class SootClassBuilder extends ClassVisitor {
 
   @Override
   public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-    soot.Type type = AsmUtil.toJimpleType(desc);
+    soot.Type type = AsmUtil.toJimpleType(desc, primeTypeCollector, myScene);
     addDep(type);
     SootField field = myScene.makeSootField(name, type, access);
     Tag tag;
     if (value instanceof Integer) {
       tag = new IntegerConstantValueTag((Integer) value);
     } else if (value instanceof Float) {
-      tag = new FloatConstantValueTag((Float) value);
+      tag = new FloatConstantValueTag((Float) value, constancFactory);
     } else if (value instanceof Long) {
       tag = new LongConstantValueTag((Long) value);
     } else if (value instanceof Double) {
@@ -178,7 +184,7 @@ public class SootClassBuilder extends ClassVisitor {
         thrownExceptions.add(mySootResolver.makeClassRef(ex));
       }
     }
-    List<soot.Type> sigTypes = AsmUtil.toJimpleDesc(desc);
+    List<soot.Type> sigTypes = AsmUtil.toJimpleDesc(desc, primeTypeCollector, myScene);
     for (soot.Type type : sigTypes) {
       addDep(type);
     }

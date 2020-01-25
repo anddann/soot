@@ -26,7 +26,9 @@ import java.util.Map;
 
 import soot.EquivalentValue;
 import soot.Unit;
+import soot.options.Options;
 import soot.toolkits.graph.DirectedGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArrayPackedSet;
 import soot.toolkits.scalar.BackwardFlowAnalysis;
 import soot.toolkits.scalar.BoundedFlowSet;
@@ -58,10 +60,12 @@ public class NotIsolatedAnalysis extends BackwardFlowAnalysis<Unit, FlowSet<Equi
    *          the latest-computation of the same graph.
    * @param equivRhsMap
    *          the rhs of each unit (if assignment-stmt).
+   * @param myOptions
+   * @param myInteractionHandler
    */
-  public NotIsolatedAnalysis(DirectedGraph<Unit> dg, LatestComputation latest, Map<Unit, EquivalentValue> equivRhsMap) {
+  public NotIsolatedAnalysis(DirectedGraph<Unit> dg, LatestComputation latest, Map<Unit, EquivalentValue> equivRhsMap, Options myOptions, InteractionHandler myInteractionHandler) {
     this(dg, latest, equivRhsMap,
-        new ArrayPackedSet<EquivalentValue>(new CollectionFlowUniverse<EquivalentValue>(equivRhsMap.values())));
+        new ArrayPackedSet<EquivalentValue>(new CollectionFlowUniverse<EquivalentValue>(equivRhsMap.values())), myOptions, myInteractionHandler);
   }
 
   /**
@@ -78,10 +82,12 @@ public class NotIsolatedAnalysis extends BackwardFlowAnalysis<Unit, FlowSet<Equi
    *          the rhs of each unit (if assignment-stmt).
    * @param set
    *          the shared set.
+   * @param myOptions
+   * @param myInteractionHandler
    */
   public NotIsolatedAnalysis(DirectedGraph<Unit> dg, LatestComputation latest, Map<Unit, EquivalentValue> equivRhsMap,
-      BoundedFlowSet<EquivalentValue> set) {
-    super(dg);
+                             BoundedFlowSet<EquivalentValue> set, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(dg, myOptions.interactive_mode(), myInteractionHandler);
     this.set = set;
     unitToGen = equivRhsMap;
     unitToLatest = latest;

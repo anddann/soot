@@ -171,12 +171,12 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
       }
 
       // local to hold control flow flag (0=try, 1=catch)
-      Local controlLocal = myBaf.newLocal("controlLocal_tccomb" + trapCount, IntType.v());
+      Local controlLocal = myBaf.newLocal("controlLocal_tccomb" + trapCount, primeTypeCollector.getIntType());
       locs.add(controlLocal);
 
       // initialize local to 0=try
       Unit pushZero = myBaf.newPushInst(constancFactory.createIntConstant(0));
-      Unit storZero = myBaf.newStoreInst(IntType.v(), controlLocal);
+      Unit storZero = myBaf.newStoreInst(primeTypeCollector.getIntType(), controlLocal);
 
       // this is necessary even though it seems like it shouldn't be
       units.insertBeforeNoRedirect((Unit) pushZero.clone(), first);
@@ -228,10 +228,10 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
       }
 
       Unit handlerUnit = t.getHandlerUnit();
-      Unit newBeginUnit = myBaf.newLoadInst(IntType.v(), controlLocal);
+      Unit newBeginUnit = myBaf.newLoadInst(primeTypeCollector.getIntType(), controlLocal);
       units.insertBefore(newBeginUnit, begUnit);
       units.insertBefore(myBaf.newIfNeInst(handlerUnit), begUnit);
-      units.insertBefore(myBaf.newPopInst(RefType.v()), begUnit);
+      units.insertBefore(myBaf.newPopInst(primeTypeCollector.getRefType()), begUnit);
 
       while (varsToLoad.size() > 0) {
         Local varLocal = (Local) varsToLoad.pop();
@@ -244,7 +244,7 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
           loadBooleanValue(units, f[0], begUnit);
           loadBooleanValue(units, f[1], begUnit);
 
-          units.insertBeforeNoRedirect(myBaf.newIfCmpEqInst(BooleanType.v(), begUnit), begUnit);
+          units.insertBeforeNoRedirect(myBaf.newIfCmpEqInst(primeTypeCollector.getBooleanType(), begUnit), begUnit);
         }
       } catch (NullPointerException npe) {
         logger.debug(npe.getMessage(), npe);
@@ -253,7 +253,7 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
       // randomize the increment - sometimes store one, sometimes just set to 1
       if (Rand.getInt() % 2 == 0) {
         units.insertBeforeNoRedirect(myBaf.newPushInst(constancFactory.createIntConstant(Rand.getInt(3) + 1)), begUnit);
-        units.insertBeforeNoRedirect(myBaf.newStoreInst(IntType.v(), controlLocal), begUnit);
+        units.insertBeforeNoRedirect(myBaf.newStoreInst(primeTypeCollector.getIntType(), controlLocal), begUnit);
       } else {
         units.insertBeforeNoRedirect(myBaf.newIncInst(controlLocal, constancFactory.createIntConstant(Rand.getInt(3) + 1)), begUnit);
       }

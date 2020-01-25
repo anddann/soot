@@ -58,7 +58,7 @@ public class AgetInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) throws InvalidDalvikBytecodeException {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) throws InvalidDalvikBytecodeException {
     if (!(instruction instanceof Instruction23x)) {
       throw new IllegalArgumentException("Expected Instruction23x but got: " + instruction.getClass());
     }
@@ -69,10 +69,10 @@ public class AgetInstruction extends DexlibAbstractInstruction {
     Local arrayBase = body.getRegisterLocal(aGetInstr.getRegisterB());
     Local index = body.getRegisterLocal(aGetInstr.getRegisterC());
 
-    ArrayRef arrayRef = myJimple.newArrayRef(arrayBase, index);
+    ArrayRef arrayRef = this.myJimple.newArrayRef(arrayBase, index);
     Local l = body.getRegisterLocal(dest);
 
-    AssignStmt assign = myJimple.newAssignStmt(l, arrayRef);
+    AssignStmt assign = this.myJimple.newAssignStmt(l, arrayRef);
     if (aGetInstr.getOpcode() == Opcode.AGET_OBJECT) {
       assign.addTag(new ObjectOpTag());
     }
@@ -82,8 +82,8 @@ public class AgetInstruction extends DexlibAbstractInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper.addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
-      myDalvikTyper.setType(arrayRef.getIndexBox(), primTypeCollector.getIntType(), true);
+      this.myDalvikTyper.addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
+      this.myDalvikTyper.setType(arrayRef.getIndexBox(), primTypeCollector.getIntType(), true);
     }
   }
 

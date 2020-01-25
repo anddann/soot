@@ -91,7 +91,7 @@ public class IfNullToTryCatch extends BodyTransformer implements IJbcoTransform 
       if (u instanceof IfNullInst && Rand.getInt(10) <= weight) {
         Unit targ = ((IfNullInst) u).getTarget();
         Unit succ = units.getSuccOf(u);
-        Unit pop = myBaf.newPopInst(RefType.v());
+        Unit pop = myBaf.newPopInst(primeTypeCollector.getRefType());
         Unit popClone = (Unit) pop.clone();
         units.insertBefore(pop, targ);
 
@@ -114,7 +114,7 @@ public class IfNullToTryCatch extends BodyTransformer implements IJbcoTransform 
           units.remove(u);
 
           units.insertBefore(myBaf.newPushInst(myNullConstant), throwu);
-          Unit ifunit = myBaf.newIfCmpNeInst(RefType.v(), succ);
+          Unit ifunit = myBaf.newIfCmpNeInst(primeTypeCollector.getRefType(), succ);
           units.insertBefore(ifunit, throwu);
           units.insertBefore(myBaf.newPushInst(myNullConstant), throwu);
 
@@ -129,12 +129,12 @@ public class IfNullToTryCatch extends BodyTransformer implements IJbcoTransform 
         units.insertBefore(methCall, u);
         units.insertBefore(myBaf.newPushInst(myNullConstant), methCall);
         if (Rand.getInt(2) == 0) {
-          Unit pop = myBaf.newPopInst(BooleanType.v());
+          Unit pop = myBaf.newPopInst(primeTypeCollector.getBooleanType());
           units.insertBefore(pop, u);
           Unit gotoTarg = myBaf.newGotoInst(targ);
           units.insertBefore(gotoTarg, u);
 
-          pop = myBaf.newPopInst(RefType.v());
+          pop = myBaf.newPopInst(primeTypeCollector.getRefType());
           units.insertAfter(pop, u);
           units.remove(u);
 
@@ -144,7 +144,7 @@ public class IfNullToTryCatch extends BodyTransformer implements IJbcoTransform 
           Unit iffalse = myBaf.newIfEqInst(targ);
           units.insertBefore(iffalse, u);
           units.insertBefore(myBaf.newPushInst(myNullConstant), u);
-          Unit pop = myBaf.newPopInst(RefType.v());
+          Unit pop = myBaf.newPopInst(primeTypeCollector.getRefType());
           units.insertAfter(pop, u);
           units.remove(u);
 

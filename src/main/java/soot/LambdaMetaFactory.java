@@ -190,7 +190,7 @@ public final class LambdaMetaFactory {
       tclass.addInterface(RefType.v("java.io.Serializable", myScene).getSootClass());
     }
     for (int i = 0; i < markerInterfaces.size(); i++) {
-      tclass.addInterface(((RefType) AsmUtil.toBaseType(markerInterfaces.get(i).getValue())).getSootClass());
+      tclass.addInterface(((RefType) AsmUtil.toBaseType(markerInterfaces.get(i).getValue(), myScene, primeTypeCollector)).getSootClass());
     }
 
     // It contains fields for all the captures in the lambda

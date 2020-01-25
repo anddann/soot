@@ -37,10 +37,11 @@ import org.jf.dexlib2.iface.reference.TypeReference;
 import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
+import soot.options.Options;
 
 public abstract class FilledArrayInstruction extends DexlibAbstractInstruction implements DanglingInstruction {
 
-  public FilledArrayInstruction(Instruction instruction, int codeAddress) {
+  public FilledArrayInstruction(Instruction instruction, int codeAddress, Options myOptions) {
     super(instruction, codeAddress, myOptions);
   }
 

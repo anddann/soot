@@ -46,7 +46,7 @@ public class SgetInstruction extends FieldInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
     FieldReference f = (FieldReference) ((ReferenceInstruction) instruction).getReference();
     StaticFieldRef r = myJimple.newStaticFieldRef(getStaticSootFieldRef(f));

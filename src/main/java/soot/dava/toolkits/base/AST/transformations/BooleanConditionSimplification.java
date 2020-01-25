@@ -161,7 +161,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
         // A is actually !B
         return ((DNotExpr) A).getOp();
       } else {
-        return (new DNotExpr(A));
+        return (new DNotExpr(A, myGrimp, primTypeCollector));
       }
     } else if (!notEqual && truthValue == 0) {
       // A == false --> !A
@@ -169,7 +169,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
         // A is actually !B
         return ((DNotExpr) A).getOp();
       } else {
-        return new DNotExpr(A);
+        return new DNotExpr(A, myGrimp, primTypeCollector);
       }
     } else if (!notEqual && truthValue == 1) {
       // A == true --> A

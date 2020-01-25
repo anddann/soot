@@ -293,7 +293,7 @@ public class FinalFieldDefinition {
     } else if (fieldType instanceof IntType || fieldType instanceof ByteType || fieldType instanceof ShortType
         || fieldType instanceof CharType || fieldType instanceof BooleanType) {
 
-      assignStmt = new GAssignStmt(ref, DconstancFactory.createIntConstant(0, fieldType));
+      assignStmt = new GAssignStmt(ref, constancFactory.createDIntConstant(0, fieldType));
     }
 
     if (assignStmt != null) {

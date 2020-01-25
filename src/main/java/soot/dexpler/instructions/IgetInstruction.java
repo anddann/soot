@@ -46,7 +46,7 @@ public class IgetInstruction extends FieldInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     TwoRegisterInstruction i = (TwoRegisterInstruction) instruction;
     int dest = i.getRegisterA();
     int object = i.getRegisterB();

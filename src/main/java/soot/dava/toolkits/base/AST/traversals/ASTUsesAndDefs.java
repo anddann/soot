@@ -79,14 +79,14 @@ public class ASTUsesAndDefs extends DepthFirstAdapter {
   public ASTUsesAndDefs(ASTNode AST) {
     uD = new HashMap<Object, List<DefinitionStmt>>();
     dU = new HashMap<Object, List>();
-    reaching = new ReachingDefs(AST);
+    reaching = new ReachingDefs(myClosestAbruptTargetFinder, AST);
   }
 
   public ASTUsesAndDefs(boolean verbose, ASTNode AST) {
     super(verbose);
     uD = new HashMap<Object, List<DefinitionStmt>>();
     dU = new HashMap<Object, List>();
-    reaching = new ReachingDefs(AST);
+    reaching = new ReachingDefs(myClosestAbruptTargetFinder, AST);
   }
 
   /*

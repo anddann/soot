@@ -133,7 +133,7 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
             AbstractOpTypeInst ota = (AbstractOpTypeInst) u;
             t = ota.getOpType();
           } else if (u instanceof IncInst) {
-            t = IntType.v();
+            t = primeTypeCollector.getIntType();
           }
 
           if (t instanceof DoubleWordType || t instanceof WordType) {

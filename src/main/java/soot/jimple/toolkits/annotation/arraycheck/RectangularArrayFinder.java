@@ -747,7 +747,7 @@ public class RectangularArrayFinder extends SceneTransformer {
         Value rightOp = ((AssignStmt) curstmt).getRightOp();
 
         if (tmplocals[curdim].equals(leftOp) && (rightOp instanceof NewArrayExpr)) {
-          ArrayRef arexpr = new JArrayRef(local, constancFactory.createIntConstant(curdim));
+          ArrayRef arexpr = new JArrayRef(local, constancFactory.createIntConstant(curdim), myJimple, primeTypeCollector, myScene);
           ((AssignStmt) curstmt).setRightOp(arexpr);
           tmpcur = (Local) leftOp;
         } else if ((leftOp instanceof ArrayRef) && (rightOp.equals(tmpcur))) {

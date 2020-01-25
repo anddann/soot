@@ -233,7 +233,7 @@ public class ConstantInitializerToTagTransformer extends SceneTransformer {
     if (rightOp instanceof DoubleConstant) {
       return new DoubleConstantValueTag(((DoubleConstant) rightOp).value, constancFactory);
     } else if (rightOp instanceof FloatConstant) {
-      return new FloatConstantValueTag(((FloatConstant) rightOp).value);
+      return new FloatConstantValueTag(((FloatConstant) rightOp).value, constancFactory);
     } else if (rightOp instanceof IntConstant) {
       return new IntegerConstantValueTag(((IntConstant) rightOp).value);
     } else if (rightOp instanceof LongConstant) {

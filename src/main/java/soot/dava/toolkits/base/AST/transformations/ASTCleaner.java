@@ -38,6 +38,7 @@ import soot.dava.internal.AST.ASTStatementSequenceNode;
 import soot.dava.internal.AST.ASTSwitchNode;
 import soot.dava.internal.AST.ASTTryNode;
 import soot.dava.internal.SET.SETNodeLabel;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 
 /*
@@ -60,11 +61,15 @@ import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 
 public class ASTCleaner extends DepthFirstAdapter {
 
-  public ASTCleaner() {
+  private TryContentsFinder myTryContentsFinder;
+
+  public ASTCleaner(TryContentsFinder myTryContentsFinder) {
+    this.myTryContentsFinder = myTryContentsFinder;
   }
 
-  public ASTCleaner(boolean verbose) {
+  public ASTCleaner(boolean verbose, TryContentsFinder myTryContentsFinder) {
     super(verbose);
+    this.myTryContentsFinder = myTryContentsFinder;
   }
 
   public void caseASTStatementSequenceNode(ASTStatementSequenceNode node) {

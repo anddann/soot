@@ -52,9 +52,11 @@ import soot.ShortType;
 import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
 import soot.jimple.IntConstant;
+import soot.jimple.Jimple;
 import soot.jimple.NumericConstant;
 import soot.jimple.Stmt;
 
@@ -66,7 +68,7 @@ public class FillArrayDataInstruction extends PseudoInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction31t)) {
       throw new IllegalArgumentException("Expected Instruction31t but got: " + instruction.getClass());
     }

@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BDivInst extends AbstractOpTypeInst implements DivInst {
   public BDivInst(Type opType) {
-    super(myRefType, opType, myBaf);
+    super(primeTypeCollector.getRefType(), opType, myBaf);
   }
 
   public int getInCount() {

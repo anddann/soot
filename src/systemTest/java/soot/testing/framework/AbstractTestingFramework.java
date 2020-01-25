@@ -195,8 +195,8 @@ public abstract class AbstractTestingFramework {
 
   private SootClass makeDummyClass(SootMethod sootTestMethod) {
     SootClass sootClass = new SootClass("dummyClass");
-    ArrayType argsParamterType = ArrayType.v(RefType.v("java.lang.String"), 1);
-    SootMethod mainMethod = new SootMethod("main", Arrays.asList(new Type[] { argsParamterType }), VoidType.v(),
+    ArrayType argsParamterType = ArrayType.v(RefType.v("java.lang.String",myScene), 1);
+    SootMethod mainMethod = new SootMethod("main", Arrays.asList(new Type[] { argsParamterType }), primeTypeCollector.getVoidType(),
         Modifier.PUBLIC | Modifier.STATIC);
     sootClass.addMethod(mainMethod);
 

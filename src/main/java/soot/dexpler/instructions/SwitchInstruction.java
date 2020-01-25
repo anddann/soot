@@ -34,6 +34,7 @@ import org.jf.dexlib2.iface.instruction.OneRegisterInstruction;
 import soot.Local;
 import soot.Unit;
 import soot.dexpler.DexBody;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.Jimple;
 import soot.jimple.Stmt;
 import soot.options.Options;
@@ -53,8 +54,8 @@ public abstract class SwitchInstruction extends PseudoInstruction implements Def
    */
   protected abstract Stmt switchStatement(DexBody body, Instruction targetData, Local key);
 
-  public void jimplify(DexBody body) {
-    markerUnit = myJimple.newNopStmt();
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+    markerUnit = this.myJimple.newNopStmt();
     unit = markerUnit;
     body.add(markerUnit);
     body.addDeferredJimplification(this);

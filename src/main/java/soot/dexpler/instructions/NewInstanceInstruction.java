@@ -64,20 +64,20 @@ public class NewInstanceInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     Instruction21c i = (Instruction21c) instruction;
     int dest = i.getRegisterA();
     String className = dottedClassName(((TypeReference) (i.getReference())).toString(), myScene);
     RefType type = RefType.v(className,myScene);
-    NewExpr n = myJimple.newNewExpr(type);
-    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), n);
+    NewExpr n = this.myJimple.newNewExpr(type);
+    AssignStmt assign = this.myJimple.newAssignStmt(body.getRegisterLocal(dest), n);
     setUnit(assign);
     addTags(assign);
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // myDalvikTyper().captureAssign((JAssignStmt)assign, op); // TODO: ref. type may be null!
-      myDalvikTyper.setType(assign.getLeftOpBox(), type, false);
+      this.myDalvikTyper.setType(assign.getLeftOpBox(), type, false);
     }
   }
 

@@ -69,7 +69,7 @@ public class PackedSwitchInstruction extends SwitchInstruction {
     setUnit(switchStmt);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(switchStmt.getKeyBox(), IntType.v(), true);
+      myDalvikTyper().setType(switchStmt.getKeyBox(), primeTypeCollector.getIntType(), true);
     }
 
     return switchStmt;

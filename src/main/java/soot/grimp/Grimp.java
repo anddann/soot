@@ -365,7 +365,7 @@ public class Grimp {
    */
 
   public InstanceOfExpr newInstanceOfExpr(Value op1, Type t) {
-    return new GInstanceOfExpr(op1, t, myGrimp, primTypeCollector);
+    return new GInstanceOfExpr(op1, t, this, primTypeCollector);
   }
 
   /**

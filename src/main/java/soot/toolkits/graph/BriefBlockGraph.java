@@ -24,6 +24,7 @@ package soot.toolkits.graph;
 
 import soot.Body;
 import soot.Unit;
+import soot.util.PhaseDumper;
 
 /**
  * <p>
@@ -43,9 +44,10 @@ public class BriefBlockGraph extends BlockGraph {
    *
    * @param body
    *          the {@link Body} for which to build a graph.
+   * @param myPhaseDumper
    */
-  public BriefBlockGraph(Body body) {
-    this(new BriefUnitGraph(body, myPhaseDumper));
+  public BriefBlockGraph(Body body, PhaseDumper myPhaseDumper) {
+    this(new BriefUnitGraph(body, myPhaseDumper), myPhaseDumper);
   }
 
   /**
@@ -54,10 +56,11 @@ public class BriefBlockGraph extends BlockGraph {
    *
    * @param unitGraph
    *          the {@link Body} for which to build a graph.
+   * @param myPhaseDumper
    */
-  public BriefBlockGraph(BriefUnitGraph unitGraph) {
+  public BriefBlockGraph(BriefUnitGraph unitGraph, PhaseDumper myPhaseDumper) {
     super(unitGraph);
 
-    soot.util.myPhaseDumper.dumpGraph(this, mBody);
+    myPhaseDumper.dumpGraph(this, mBody);
   }
 }

@@ -39,11 +39,13 @@ import soot.Local;
 import soot.LongType;
 import soot.PatchingChain;
 import soot.PrimType;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Trap;
 import soot.Type;
 import soot.Unit;
 import soot.UnitBox;
+import soot.baf.Baf;
 import soot.baf.DupInst;
 import soot.baf.FieldArgInst;
 import soot.baf.IdentityInst;
@@ -67,14 +69,17 @@ import soot.baf.SwapInst;
 import soot.baf.TargetArgInst;
 import soot.jbco.IJbcoTransform;
 import soot.jimple.Constant;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DoubleConstant;
 import soot.jimple.FloatConstant;
 import soot.jimple.IntConstant;
+import soot.jimple.Jimple;
 import soot.jimple.LongConstant;
 import soot.jimple.NullConstant;
 import soot.jimple.StringConstant;
 import soot.toolkits.graph.BriefUnitGraph;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 /**
  * @author Michael Batchelder
@@ -86,6 +91,19 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
   int totalcounts[] = new int[512];
 
   public static String dependancies[] = new String[] { "bb.jbco_j2bl", "bb.jbco_rds", "bb.jbco_ful", "bb.lp" };
+  private PhaseDumper myPhaseDumper;
+  private Baf myBaf;
+  private Jimple myJimple;
+  private ConstantFactory constancFactory;
+  private PrimTypeCollector primTypeCollector;
+
+  public FindDuplicateSequences(PhaseDumper myPhaseDumper, Baf myBaf, Jimple myJimple, ConstantFactory constancFactory, PrimTypeCollector primTypeCollector) {
+    this.myPhaseDumper = myPhaseDumper;
+    this.myBaf = myBaf;
+    this.myJimple = myJimple;
+    this.constancFactory = constancFactory;
+    this.primTypeCollector = primTypeCollector;
+  }
 
   public String[] getDependencies() {
     return dependancies;
@@ -98,10 +116,10 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
   }
 
   public void outputSummary() {
-    out.println("Duplicate Sequences:");
+//    out.println("Duplicate Sequences:");
     for (int count = totalcounts.length - 1; count >= 0; count--) {
       if (totalcounts[count] > 0) {
-        out.println("\t" + count + " total: " + totalcounts[count]);
+//        out.println("\t" + count + " total: " + totalcounts[count]);
       }
     }
   }
@@ -112,10 +130,10 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
     if (weight == 0) {
       return;
     }
-
-    if (output) {
-      out.println("Checking " + b.getMethod().getName() + " for duplicate sequences..");
-    }
+//FIXME
+//    if (output) {
+//      out.println("Checking " + b.getMethod().getName() + " for duplicate sequences..");
+//    }
 
     List<Unit> illegalUnits = new ArrayList<Unit>();
     List<Unit> seenUnits = new ArrayList<Unit>();
@@ -320,9 +338,9 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
 
         changed = true;
 
-        controlLocal = myBaf.newLocal("controlLocalfordups" + controlLocalIndex, IntType.v());
+        controlLocal = myBaf.newLocal("controlLocalfordups" + controlLocalIndex, primTypeCollector.getIntType());
         bLocals.add(controlLocal);
-        bafToJLocals.put(controlLocal, myJimple.newLocal("controlLocalfordups" + controlLocalIndex++, IntType.v()));
+        bafToJLocals.put(controlLocal, myJimple.newLocal("controlLocalfordups" + controlLocalIndex++, primTypeCollector.getIntType()));
 
         counts[key.size()] += avalues.size();
 
@@ -331,7 +349,7 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
         Unit first = key.get(0);
         // protectedUnits.addAll(key);
 
-        Unit store = myBaf.newStoreInst(IntType.v(), controlLocal);
+        Unit store = myBaf.newStoreInst(primTypeCollector.getIntType(), controlLocal);
         // protectedUnits.add(store);
 
         units.insertBefore(store, first);
@@ -375,7 +393,7 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
 
         units.insertAfter(swUnit, insertAfter);
 
-        Unit loadUnit = myBaf.newLoadInst(IntType.v(), controlLocal);
+        Unit loadUnit = myBaf.newLoadInst(primTypeCollector.getIntType(), controlLocal);
         // protectedUnits.add(loadUnit);
 
         units.insertAfter(loadUnit, insertAfter);
@@ -390,27 +408,27 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
     } // end of for loop for duplicate seq of various length
 
     boolean dupsExist = false;
-    if (output) {
-      System.out.println("Duplicate Sequences for " + b.getMethod().getName());
-    }
+//    if (output) {
+//      System.out.println("Duplicate Sequences for " + b.getMethod().getName());
+//    }
 
     for (int count = longestSeq; count >= 0; count--) {
       if (counts[count] > 0) {
-        if (output) {
-          out.println(count + " total: " + counts[count]);
-        }
+//        if (output) {
+//          out.println(count + " total: " + counts[count]);
+//        }
         dupsExist = true;
         totalcounts[count] += counts[count];
       }
     }
-
-    if (!dupsExist) {
-      if (output) {
-        out.println("\tnone");
-      }
-    } else if (debug) {
-      StackTypeHeightCalculator.calculateStackHeights(b);
-    }
+//FIXME
+//    if (!dupsExist) {
+//      if (output) {
+//        out.println("\tnone");
+//      }
+//    } else if (debug) {
+//      StackTypeHeightCalculator.calculateStackHeights(b);
+//    }
   }
 
   private boolean equalUnits(Object o1, Object o2, Body b) {

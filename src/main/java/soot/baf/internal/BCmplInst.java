@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BCmplInst extends AbstractOpTypeInst implements CmplInst {
   public BCmplInst(Type opType) {
-    super(myRefType, opType, myBaf);
+    super(primeTypeCollector.getRefType(), opType, myBaf);
   }
 
   public int getInCount() {

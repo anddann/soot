@@ -75,7 +75,7 @@ public class DexField {
     } else if (ev instanceof DoubleEncodedValue) {
       tag = new DoubleConstantValueTag(((DoubleEncodedValue) ev).getValue(), constancFactory);
     } else if (ev instanceof FloatEncodedValue) {
-      tag = new FloatConstantValueTag(((FloatEncodedValue) ev).getValue());
+      tag = new FloatConstantValueTag(((FloatEncodedValue) ev).getValue(), constancFactory);
     } else if (ev instanceof IntEncodedValue) {
       tag = new IntegerConstantValueTag(((IntEncodedValue) ev).getValue());
     } else if (ev instanceof LongEncodedValue) {

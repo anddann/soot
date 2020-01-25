@@ -36,7 +36,9 @@ import soot.RefType;
 import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.IdentityStmt;
+import soot.jimple.Jimple;
 
 public class MoveExceptionInstruction extends DexlibAbstractInstruction implements RetypeableInstruction {
 
@@ -48,7 +50,7 @@ public class MoveExceptionInstruction extends DexlibAbstractInstruction implemen
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
     Local l = body.getRegisterLocal(dest);
     stmtToRetype = myJimple.newIdentityStmt(l, myJimple.newCaughtExceptionRef());
@@ -57,7 +59,7 @@ public class MoveExceptionInstruction extends DexlibAbstractInstruction implemen
     body.add(stmtToRetype);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(stmtToRetype.getLeftOpBox(), RefType.v("java.lang.Throwable"), false);
+      myDalvikTyper().setType(stmtToRetype.getLeftOpBox(), RefType.v("java.lang.Throwable",myScene), false);
     }
   }
 

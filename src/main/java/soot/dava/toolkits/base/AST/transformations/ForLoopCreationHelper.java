@@ -40,6 +40,8 @@ import soot.dava.internal.AST.ASTUnaryCondition;
 import soot.dava.internal.AST.ASTWhileNode;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.internal.asg.AugmentedStmt;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.jimple.ConditionExpr;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.Stmt;
@@ -65,11 +67,15 @@ public class ForLoopCreationHelper {
   List<AugmentedStmt> myStmts;// stores the statementseq list of statements whose
   // last stmt has to be removed
   boolean removeLast = false;// the last stmt in the above stmts is removed if
+  private TryContentsFinder myTryContentsFinder;
+  private ASTWalker myASTWalker;
   // this boolean is true
 
-  public ForLoopCreationHelper(ASTStatementSequenceNode stmtSeqNode, ASTWhileNode whileNode) {
+  public ForLoopCreationHelper(ASTStatementSequenceNode stmtSeqNode, ASTWhileNode whileNode, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker) {
     this.stmtSeqNode = stmtSeqNode;
     this.whileNode = whileNode;
+    this.myTryContentsFinder = myTryContentsFinder;
+    this.myASTWalker = myASTWalker;
     varToStmtMap = new HashMap<String, Integer>();
   }
 

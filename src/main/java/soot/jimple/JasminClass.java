@@ -457,7 +457,7 @@ public class JasminClass extends AbstractJasminClass {
 
           /* this should be redundant, but we do it */
           /* just in case. */
-          if (lvalue.getType() != IntType.v()) {
+          if (lvalue.getType() != primeTypeCollector.getIntType()) {
             break;
           }
 
@@ -534,7 +534,7 @@ public class JasminClass extends AbstractJasminClass {
       }
       // end of peephole
 
-      if (l.getType().equals(IntType.v())) {
+      if (l.getType().equals(primeTypeCollector.getIntType())) {
         boolean isValidCase = false;
         int x = 0;
 
@@ -1154,7 +1154,7 @@ public class JasminClass extends AbstractJasminClass {
 
         Type returnType = ((InvokeExpr) s.getInvokeExpr()).getMethodRef().returnType();
 
-        if (!returnType.equals(VoidType.v())) {
+        if (!returnType.equals(primeTypeCollector.getVoidType())) {
           // Need to do some cleanup because this value is not used.
 
           if (sizeOfType(returnType) == 1) {
@@ -1622,11 +1622,11 @@ public class JasminClass extends AbstractJasminClass {
             }
 
             public void caseDoubleType(DoubleType ty) {
-              if (toType.equals(IntType.v())) {
+              if (toType.equals(primeTypeCollector.getIntType())) {
                 emit("d2i", -1);
-              } else if (toType.equals(LongType.v())) {
+              } else if (toType.equals(primeTypeCollector.getLongType())) {
                 emit("d2l", 0);
-              } else if (toType.equals(FloatType.v())) {
+              } else if (toType.equals(primeTypeCollector.getFloatType())) {
                 emit("d2f", -1);
               } else {
                 throw new RuntimeException("invalid toType from double: " + toType);
@@ -1634,11 +1634,11 @@ public class JasminClass extends AbstractJasminClass {
             }
 
             public void caseFloatType(FloatType ty) {
-              if (toType.equals(IntType.v())) {
+              if (toType.equals(primeTypeCollector.getIntType())) {
                 emit("f2i", 0);
-              } else if (toType.equals(LongType.v())) {
+              } else if (toType.equals(primeTypeCollector.getLongType())) {
                 emit("f2l", 1);
-              } else if (toType.equals(DoubleType.v())) {
+              } else if (toType.equals(primeTypeCollector.getDoubleType())) {
                 emit("f2d", 1);
               } else {
                 throw new RuntimeException("invalid toType from float: " + toType);
@@ -1666,21 +1666,21 @@ public class JasminClass extends AbstractJasminClass {
             }
 
             private void emitIntToTypeCast() {
-              if (toType.equals(ByteType.v())) {
+              if (toType.equals(primeTypeCollector.getByteType())) {
                 emit("i2b", 0);
               } else if (toType.equals(primTypeCollector.getCharType())) {
                 emit("i2c", 0);
-              } else if (toType.equals(ShortType.v())) {
+              } else if (toType.equals(primeTypeCollector.getShortType())) {
                 emit("i2s", 0);
-              } else if (toType.equals(FloatType.v())) {
+              } else if (toType.equals(primeTypeCollector.getFloatType())) {
                 emit("i2f", 0);
-              } else if (toType.equals(LongType.v())) {
+              } else if (toType.equals(primeTypeCollector.getLongType())) {
                 emit("i2l", 1);
-              } else if (toType.equals(DoubleType.v())) {
+              } else if (toType.equals(primeTypeCollector.getDoubleType())) {
                 emit("i2d", 1);
-              } else if (toType.equals(IntType.v())) {
+              } else if (toType.equals(primeTypeCollector.getIntType())) {
                 ; // this shouldn't happen?
-              } else if (toType.equals(BooleanType.v())) {
+              } else if (toType.equals(primeTypeCollector.getBooleanType())) {
                 ;
               } else {
                 throw new RuntimeException("invalid toType from int: " + toType + " " + v.toString());
@@ -1688,22 +1688,22 @@ public class JasminClass extends AbstractJasminClass {
             }
 
             public void caseLongType(LongType ty) {
-              if (toType.equals(IntType.v())) {
+              if (toType.equals(primeTypeCollector.getIntType())) {
                 emit("l2i", -1);
-              } else if (toType.equals(FloatType.v())) {
+              } else if (toType.equals(primeTypeCollector.getFloatType())) {
                 emit("l2f", -1);
-              } else if (toType.equals(DoubleType.v())) {
+              } else if (toType.equals(primeTypeCollector.getDoubleType())) {
                 emit("l2d", 0);
-              } else if (toType.equals(ByteType.v())) {
+              } else if (toType.equals(primeTypeCollector.getByteType())) {
                 emit("l2i", -1);
                 emitIntToTypeCast();
-              } else if (toType.equals(ShortType.v())) {
+              } else if (toType.equals(primeTypeCollector.getShortType())) {
                 emit("l2i", -1);
                 emitIntToTypeCast();
               } else if (toType.equals(primTypeCollector.getCharType())) {
                 emit("l2i", -1);
                 emitIntToTypeCast();
-              } else if (toType.equals(BooleanType.v())) {
+              } else if (toType.equals(primeTypeCollector.getBooleanType())) {
                 emit("l2i", -1);
                 emitIntToTypeCast();
               } else {
@@ -1724,7 +1724,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        if (v.getOp1().getType().equals(FloatType.v())) {
+        if (v.getOp1().getType().equals(primeTypeCollector.getFloatType())) {
           emit("fcmpg", -1);
         } else {
           emit("dcmpg", -3);
@@ -1735,7 +1735,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        if (v.getOp1().getType().equals(FloatType.v())) {
+        if (v.getOp1().getType().equals(primeTypeCollector.getFloatType())) {
           emit("fcmpl", -1);
         } else {
           emit("dcmpl", -3);

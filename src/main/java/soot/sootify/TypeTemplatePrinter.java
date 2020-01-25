@@ -82,15 +82,15 @@ public class TypeTemplatePrinter extends TypeSwitch {
   }
 
   public void caseBooleanType(BooleanType t) {
-    emit("BooleanType.v()");
+    emit("primeTypeCollector.getBooleanType()");
   }
 
   public void caseByteType(ByteType t) {
-    emit("ByteType.v()");
+    emit("primeTypeCollector.getByteType()");
   }
 
   public void caseCharType(CharType t) {
-    emit("CharType.v()");
+    emit("primeTypeCollector.getCharType()");
   }
 
   public void defaultCase(Type t) {
@@ -98,7 +98,7 @@ public class TypeTemplatePrinter extends TypeSwitch {
   }
 
   public void caseDoubleType(DoubleType t) {
-    emit("DoubleType.v()");
+    emit("primeTypeCollector.getDoubleType()");
   }
 
   public void caseErroneousType(ErroneousType t) {
@@ -106,19 +106,19 @@ public class TypeTemplatePrinter extends TypeSwitch {
   }
 
   public void caseFloatType(FloatType t) {
-    emit("FloatType.v()");
+    emit("primeTypeCollector.getFloatType()");
   }
 
   public void caseIntType(IntType t) {
-    emit("IntType.v()");
+    emit("primeTypeCollector.getIntType()");
   }
 
   public void caseLongType(LongType t) {
-    emit("LongType.v()");
+    emit("primeTypeCollector.getLongType()");
   }
 
   public void caseNullType(NullType t) {
-    emit("NullType.v()");
+    emit("primeTypeCollector.getNullType()");
   }
 
   public void caseRefType(RefType t) {
@@ -126,7 +126,7 @@ public class TypeTemplatePrinter extends TypeSwitch {
   }
 
   public void caseShortType(ShortType t) {
-    emit("ShortType.v()");
+    emit("primeTypeCollector.getShortType()");
   }
 
   public void caseStmtAddressType(StmtAddressType t) {
@@ -138,7 +138,7 @@ public class TypeTemplatePrinter extends TypeSwitch {
   }
 
   public void caseVoidType(VoidType t) {
-    emit("VoidType.v()");
+    emit("primeTypeCollector.getVoidType()");
   }
 
 }

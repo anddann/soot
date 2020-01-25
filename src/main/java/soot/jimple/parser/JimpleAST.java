@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.Set;
 
 import soot.Body;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.SootResolver;
@@ -64,7 +63,7 @@ public class JimpleAST {
    * Reads an entire class from jimple, creates the Soot objects & returns it.
    */
   public SootClass createSootClass() {
-    Walker w = new Walker(mySootResolver);
+    Walker w = new Walker(constancFactory, mySootResolver, myScene, myOptions, myPackageNamer, myJimple, constantFactory);
     mTree.apply(w);
     return w.getSootClass();
   }

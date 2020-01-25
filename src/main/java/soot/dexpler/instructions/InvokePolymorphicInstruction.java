@@ -42,6 +42,8 @@ import soot.RefType;
 import soot.SootMethodRef;
 import soot.Unit;
 import soot.dexpler.DexBody;
+import soot.dexpler.typing.DalvikTyper;
+import soot.jimple.Jimple;
 import soot.jimple.internal.JArrayRef;
 import soot.jimple.internal.JAssignStmt;
 import soot.jimple.internal.JNewArrayExpr;
@@ -88,7 +90,7 @@ public class InvokePolymorphicInstruction extends MethodInvocationInstruction {
    *   invoke-polymorhpic instructions whose prototype will does not match the actual method being invoked.
    */
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     SootMethodRef ref = getVirtualSootMethodRef();
     if (ref.declaringClass().isInterface()) {
       ref = getInterfaceSootMethodRef();
@@ -115,7 +117,7 @@ public class InvokePolymorphicInstruction extends MethodInvocationInstruction {
     
       int i = 0;
       for (Local l : parms) {
-        units.add(new JAssignStmt(new JArrayRef(newArrL, constancFactory.createIntConstant(i)), l));
+        units.add(new JAssignStmt(new JArrayRef(newArrL, constancFactory.createIntConstant(i), myJimple, primeTypeCollector, myScene), l));
         i++;
       }
       parms = Arrays.asList(newArrL);

@@ -32,7 +32,9 @@ import org.jf.dexlib2.iface.instruction.TwoRegisterInstruction;
 
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
+import soot.jimple.Jimple;
 
 public class MoveInstruction extends DexlibAbstractInstruction {
 
@@ -41,7 +43,7 @@ public class MoveInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
 
     TwoRegisterInstruction i = (TwoRegisterInstruction) instruction;
 

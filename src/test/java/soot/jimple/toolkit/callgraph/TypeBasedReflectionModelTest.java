@@ -116,7 +116,7 @@ public class TypeBasedReflectionModelTest {
         SootClass cl = new SootClass("soot.test.ReflectiveBase", myOptions, Modifier.PUBLIC, myScene, myPackageNamer);
 
         SootMethod m = new SootMethod("main", Collections.singletonList((Type) ArrayType.v(myScene.getType("java.lang.String"), 1)),
-                VoidType.v(), Modifier.PUBLIC | Modifier.STATIC, myScene);
+                primeTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC, myScene);
         cl.addMethod(m);
         cl.setApplicationClass();
         cl.setResolvingLevel(HIERARCHY);
@@ -124,11 +124,11 @@ public class TypeBasedReflectionModelTest {
         JimpleBody b = myJimple.newBody(m);
 
         // add parameter local
-        Local arg = myJimple.newLocal("l0", ArrayType.v(RefType.v("java.lang.String"), 1));
+        Local arg = myJimple.newLocal("l0", ArrayType.v(RefType.v("java.lang.String",myScene), 1));
         b.getLocals().add(arg);
         b.getUnits().add(myJimple.newIdentityStmt(arg,
                 myJimple.newParameterRef(ArrayType.v
-                        (RefType.v("java.lang.String"), 1), 0)));
+                        (RefType.v("java.lang.String",myScene), 1), 0)));
 
         // get class
         StaticInvokeExpr getClass = myJimple.newStaticInvokeExpr(

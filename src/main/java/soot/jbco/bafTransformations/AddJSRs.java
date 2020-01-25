@@ -146,7 +146,7 @@ public class AddJSRs extends BodyTransformer implements IJbcoTransform {
           u.insertAfter(ji, prev);
           jsrcount++;
         }
-        PopInst pop = myBaf.newPopInst(RefType.v());
+        PopInst pop = myBaf.newPopInst(primeTypeCollector.getRefType());
         u.insertBefore(pop, unit);
         processedLabels.add(unit);
         popsBuilt.put(pop, unit);

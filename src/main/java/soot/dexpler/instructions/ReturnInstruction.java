@@ -33,6 +33,8 @@ import org.jf.dexlib2.iface.instruction.formats.Instruction11x;
 import soot.Local;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
+import soot.jimple.Jimple;
 import soot.jimple.ReturnStmt;
 
 public class ReturnInstruction extends DexlibAbstractInstruction {
@@ -42,7 +44,7 @@ public class ReturnInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     Instruction11x returnInstruction = (Instruction11x) this.instruction;
     Local l = body.getRegisterLocal(returnInstruction.getRegisterA());
     ReturnStmt returnStmt = myJimple.newReturnStmt(l);

@@ -52,8 +52,10 @@ import soot.util.queue.QueueReader;
 
 public class PropIter extends Propagator {
   private static final Logger logger = LoggerFactory.getLogger(PropIter.class);
+  private Scene myScene;
 
-  public PropIter(PAG pag) {
+  public PropIter(Scene myScene, PAG pag) {
+    this.myScene = myScene;
     this.pag = pag;
   }
 

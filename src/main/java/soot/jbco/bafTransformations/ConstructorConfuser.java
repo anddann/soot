@@ -29,6 +29,7 @@ import soot.Body;
 import soot.BodyTransformer;
 import soot.Local;
 import soot.PatchingChain;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.SootClass;
 import soot.SootMethodRef;
@@ -41,7 +42,7 @@ import soot.jbco.IJbcoTransform;
 import soot.jbco.util.BodyBuilder;
 import soot.jbco.util.Rand;
 import soot.jbco.util.ThrowSet;
-import soot.jimple.NullConstant;
+import soot.jimple.ConstantFactory;
 
 public class ConstructorConfuser extends BodyTransformer implements IJbcoTransform {
 
@@ -50,6 +51,15 @@ public class ConstructorConfuser extends BodyTransformer implements IJbcoTransfo
   static int instances[] = new int[4];
 
   public static String dependancies[] = new String[] { "bb.jbco_dcc", "bb.jbco_ful", "bb.lp" };
+  private Baf myBaf;
+  private PrimTypeCollector primeTypeCollector;
+  private ConstantFactory constantFactory;
+
+  public ConstructorConfuser(Baf myBaf, PrimTypeCollector primeTypeCollector, ConstantFactory constantFactory) {
+    this.myBaf = myBaf;
+    this.primeTypeCollector = primeTypeCollector;
+    this.constantFactory = constantFactory;
+  }
 
   public String[] getDependencies() {
     return dependancies;
@@ -62,7 +72,9 @@ public class ConstructorConfuser extends BodyTransformer implements IJbcoTransfo
   }
 
   public void outputSummary() {
-    out.println("Constructor methods have been jumbled: " + count);
+  //FIXME
+
+    //out.println("Constructor methods have been jumbled: " + count);
   }
 
   @SuppressWarnings("fallthrough")
@@ -127,13 +139,13 @@ public class ConstructorConfuser extends BodyTransformer implements IJbcoTransfo
           if (locals != null && locals.containsKey(bl)) {
             Type t = ((Local) locals.get(bl)).getType();
             if (t instanceof RefType && ((RefType) t).getSootClass().getName().equals(origClass.getName())) {
-              units.insertBefore(myBaf.newDup1Inst(RefType.v()), sii);
+              units.insertBefore(myBaf.newDup1Inst(primeTypeCollector.getRefType()), sii);
               Unit ifinst = myBaf.newIfNullInst(sii);
               units.insertBeforeNoRedirect(ifinst, sii);
               units.insertAfter(myBaf.newThrowInst(), ifinst);
-              units.insertAfter(myBaf.newPushInst(myNullConstant), ifinst);
+              units.insertAfter(myBaf.newPushInst(constantFactory.getNullConstant()), ifinst);
 
-              Unit pop = myBaf.newPopInst(RefType.v());
+              Unit pop = myBaf.newPopInst(primeTypeCollector.getRefType());
               units.add(pop);
               units.add((Unit) prev.clone());
               b.getTraps().add(myBaf.newTrap(ThrowSet.getRandomThrowable(), ifinst, sii, pop));
@@ -181,7 +193,7 @@ public class ConstructorConfuser extends BodyTransformer implements IJbcoTransfo
           break;
         }
       case 3:
-        Unit pop = myBaf.newPopInst(RefType.v());
+        Unit pop = myBaf.newPopInst(primeTypeCollector.getRefType());
         units.insertBefore(pop, sii);
         units.insertBeforeNoRedirect(myBaf.newJSRInst(pop), pop);
         done = true;
@@ -192,9 +204,9 @@ public class ConstructorConfuser extends BodyTransformer implements IJbcoTransfo
       instances[rand]++;
       count++;
     }
-
-    if (debug) {
-      StackTypeHeightCalculator.calculateStackHeights(b);
-    }
+// FIXME
+//    if (debug) {
+//      StackTypeHeightCalculator.calculateStackHeights(b);
+//    }
   }
 }

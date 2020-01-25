@@ -35,22 +35,32 @@ import org.jf.dexlib2.iface.reference.TypeReference;
 
 import soot.ArrayType;
 import soot.Local;
+import soot.Scene;
 import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
+import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
 import soot.jimple.NewArrayExpr;
+import soot.options.Options;
 
 public class FilledNewArrayRangeInstruction extends FilledArrayInstruction {
 
-  public FilledNewArrayRangeInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+  private ConstantFactory constancFactory;
+  private Scene myScene;
+
+  public FilledNewArrayRangeInstruction(Instruction instruction, int codeAdress, Options myOptions, ConstantFactory constancFactory, Scene myScene) {
+    super(instruction, codeAdress, myOptions);
+    this.constancFactory = constancFactory;
+    this.myScene = myScene;
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction3rc)) {
       throw new IllegalArgumentException("Expected Instruction3rc but got: " + instruction.getClass());
     }
@@ -87,7 +97,7 @@ public class FilledNewArrayRangeInstruction extends FilledArrayInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // Debug.printDbg(IDalvikTyper.DEBUG, "constraint: "+ assignStmt);
-      myDalvikTyper().setType(assignStmt.getLeftOpBox(), arrayExpr.getType(), false);
+      myDalvikTyper.setType(assignStmt.getLeftOpBox(), arrayExpr.getType(), false);
       // myDalvikTyper().addConstraint(assignStmt.getLeftOpBox(), assignStmt.getRightOpBox());
     }
 

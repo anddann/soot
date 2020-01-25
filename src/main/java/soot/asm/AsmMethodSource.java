@@ -422,7 +422,7 @@ final class AsmMethodSource implements MethodSource {
     Type type;
     if (out == null) {
       SootClass declClass = myScene.getSootClass(AsmUtil.toQualifiedName(insn.owner));
-      type = AsmUtil.toJimpleType(insn.desc);
+      type = AsmUtil.toJimpleType(insn.desc, primeTypeCollector, myScene);
       Value val;
       SootFieldRef ref;
       if (insn.getOpcode() == GETSTATIC) {
@@ -457,7 +457,7 @@ final class AsmMethodSource implements MethodSource {
     Type type;
     if (out == null) {
       SootClass declClass = myScene.getSootClass(AsmUtil.toQualifiedName(insn.owner));
-      type = AsmUtil.toJimpleType(insn.desc);
+      type = AsmUtil.toJimpleType(insn.desc, primeTypeCollector, myScene);
       Value val;
       SootFieldRef ref;
       rvalue = popImmediate(type);
@@ -1086,7 +1086,7 @@ final class AsmMethodSource implements MethodSource {
     } else if (val instanceof org.objectweb.asm.Type) {
       org.objectweb.asm.Type t = (org.objectweb.asm.Type) val;
       if (t.getSort() == org.objectweb.asm.Type.METHOD) {
-        List<Type> paramTypes = AsmUtil.toJimpleDesc(((org.objectweb.asm.Type) val).getDescriptor());
+        List<Type> paramTypes = AsmUtil.toJimpleDesc(((org.objectweb.asm.Type) val).getDescriptor(), primeTypeCollector, myScene);
         Type returnType = paramTypes.remove(paramTypes.size() - 1);
         v = constancFactory.createMethodType(paramTypes, returnType);
       } else {
@@ -1147,7 +1147,7 @@ final class AsmMethodSource implements MethodSource {
         clsName = "java.lang.Object";
       }
       SootClass cls = myScene.getSootClass(clsName);
-      List<Type> sigTypes = AsmUtil.toJimpleDesc(insn.desc);
+      List<Type> sigTypes = AsmUtil.toJimpleDesc(insn.desc, primeTypeCollector, myScene);
       returnType = sigTypes.remove(sigTypes.size() - 1);
       SootMethodRef ref = myScene.makeMethodRef(cls, insn.name, sigTypes, returnType, !instance);
       int nrArgs = sigTypes.size();
@@ -1351,7 +1351,7 @@ final class AsmMethodSource implements MethodSource {
   private SootMethodRef toSootMethodRef(Handle methodHandle) {
     String bsmClsName = AsmUtil.toQualifiedName(methodHandle.getOwner());
     SootClass bsmCls = myScene.getSootClass(bsmClsName);
-    List<Type> bsmSigTypes = AsmUtil.toJimpleDesc(methodHandle.getDesc());
+    List<Type> bsmSigTypes = AsmUtil.toJimpleDesc(methodHandle.getDesc(), primeTypeCollector, myScene);
     Type returnType = bsmSigTypes.remove(bsmSigTypes.size() - 1);
     return myScene.makeMethodRef(bsmCls, methodHandle.getName(), bsmSigTypes, returnType,
         methodHandle.getTag() == MethodHandle.Kind.REF_INVOKE_STATIC.getValue());
@@ -1360,7 +1360,7 @@ final class AsmMethodSource implements MethodSource {
   private SootFieldRef toSootFieldRef(Handle methodHandle) {
     String bsmClsName = AsmUtil.toQualifiedName(methodHandle.getOwner());
     SootClass bsmCls = myScene.getSootClass(bsmClsName);
-    Type t = AsmUtil.toJimpleDesc(methodHandle.getDesc()).get(0);
+    Type t = AsmUtil.toJimpleDesc(methodHandle.getDesc(), primeTypeCollector, myScene).get(0);
     int kind = methodHandle.getTag();
     return myScene.makeFieldRef(bsmCls, methodHandle.getName(), t, kind == MethodHandle.Kind.REF_GET_FIELD_STATIC.getValue()
         || kind == MethodHandle.Kind.REF_PUT_FIELD_STATIC.getValue());
@@ -1371,7 +1371,7 @@ final class AsmMethodSource implements MethodSource {
     Operand[] out = frame.out();
     Operand opr;
     if (out == null) {
-      ArrayType t = (ArrayType) AsmUtil.toJimpleType(insn.desc);
+      ArrayType t = (ArrayType) AsmUtil.toJimpleType(insn.desc, primeTypeCollector, myScene);
       int dims = insn.dims;
       Operand[] sizes = new Operand[dims];
       Value[] sizeVals = new Value[dims];
@@ -1430,7 +1430,7 @@ final class AsmMethodSource implements MethodSource {
     Operand[] out = frame.out();
     Operand opr;
     if (out == null) {
-      Type t = AsmUtil.toJimpleRefType(insn.desc);
+      Type t = AsmUtil.toJimpleRefType(insn.desc, myScene, primeTypeCollector);
       Value val;
       if (op == NEW) {
         val = myJimple.newNewExpr((RefType) t);

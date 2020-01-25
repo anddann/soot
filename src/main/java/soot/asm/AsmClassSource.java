@@ -50,8 +50,6 @@ public class AsmClassSource extends ClassSource {
   /**
    * Constructs a new ASM class source.
    *
-   * @param data
-   *          stream containing data for class.
    * @param cls
    *          fully qualified name of the class.
    * @param myScene
@@ -75,7 +73,7 @@ public class AsmClassSource extends ClassSource {
     try {
       d = foundFile.inputStream();
       ClassReader clsr = new ClassReader(d);
-      SootClassBuilder scb = new SootClassBuilder(sc, myScene, mySootResolver,  myOptions);
+      SootClassBuilder scb = new SootClassBuilder(sc, myScene, mySootResolver,  myOptions, primeTypeCollector, constancFactory);
       clsr.accept(scb, ClassReader.SKIP_FRAMES);
       Dependencies deps = new Dependencies();
       deps.typesToSignature.addAll(scb.deps);

@@ -219,7 +219,7 @@ public class SparkTransformer extends SceneTransformer {
     Propagator propagator = null;
     switch (opts.propagator()) {
       case SparkOptions.propagator_iter:
-        propagator = new PropIter(pag);
+        propagator = new PropIter(myScene, pag);
         break;
       case SparkOptions.propagator_worklist:
         propagator = new PropWorklist(pag);

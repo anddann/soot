@@ -130,7 +130,7 @@ public class CollectConstants extends SceneTransformer implements IJbcoTransform
     SootClass[] classes = applicationClasses.toArray(new SootClass[applicationClasses.size()]);
     for (Type type : typeToConstants.keySet()) {
       if (type instanceof NullType) {
-        continue; // type = RefType.v("java.lang.Object");
+        continue; // type = RefType.v("java.lang.Object",myScene);
       }
       for (Constant constant : typeToConstants.get(type)) {
         name += "_";
@@ -193,7 +193,7 @@ public class CollectConstants extends SceneTransformer implements IJbcoTransform
     Body b;
     boolean newInit = false;
     if (!sc.declaresMethodByName(SootMethod.staticInitializerName)) {
-      SootMethod m = myScene.makeSootMethod(SootMethod.staticInitializerName, emptyList(), VoidType.v(), Modifier.STATIC);
+      SootMethod m = myScene.makeSootMethod(SootMethod.staticInitializerName, emptyList(), primeTypeCollector.getVoidType(), Modifier.STATIC);
       sc.addMethod(m);
       b = myJimple.newBody(m);
       m.setActiveBody(b);

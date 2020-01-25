@@ -22,13 +22,16 @@ package soot.tagkit;
  * #L%
  */
 
+import soot.jimple.ConstantFactory;
 import soot.jimple.FloatConstant;
 
 public class FloatConstantValueTag extends ConstantValueTag {
   private final float value;
+  private ConstantFactory constancFactory;
 
-  public FloatConstantValueTag(float value) {
+  public FloatConstantValueTag(float value, ConstantFactory constancFactory) {
     this.value = value;
+    this.constancFactory = constancFactory;
   }
 
   public float getFloatValue() {

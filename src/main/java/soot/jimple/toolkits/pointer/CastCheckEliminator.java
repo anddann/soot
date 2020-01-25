@@ -31,6 +31,7 @@ import java.util.Map;
 
 import soot.Local;
 import soot.RefType;
+import soot.Scene;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
@@ -58,9 +59,11 @@ public class CastCheckEliminator extends ForwardBranchedFlowAnalysis<LocalTypeSe
   Map unitToGenFallThrough = new HashMap();
   Map unitToGenBranch = new HashMap();
   LocalTypeSet emptySet;
+  private Scene myScene;
 
-  public CastCheckEliminator(BriefUnitGraph cfg, Options myOptions, InteractionHandler myInteractionHandler) {
+  public CastCheckEliminator(BriefUnitGraph cfg, Options myOptions, InteractionHandler myInteractionHandler, Scene myScene) {
     super(cfg, myOptions.interactive_mode(), myInteractionHandler);
+    this.myScene = myScene;
     makeInitialSet();
     doAnalysis();
     tagCasts();

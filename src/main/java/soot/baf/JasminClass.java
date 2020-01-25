@@ -261,7 +261,7 @@ public class JasminClass extends AbstractJasminClass {
       {
         maxStackHeight = 0;
         if (activeBody.getUnits().size() != 0) {
-          BlockGraph blockGraph = new BriefBlockGraph(activeBody);
+          BlockGraph blockGraph = new BriefBlockGraph(activeBody, myPhaseDumper);
           List<Block> blocks = blockGraph.getBlocks();
 
           if (blocks.size() != 0) {
@@ -1421,7 +1421,7 @@ public class JasminClass extends AbstractJasminClass {
 
       @Override
       public void caseCmplInst(CmplInst i) {
-        if (i.getOpType().equals(FloatType.v())) {
+        if (i.getOpType().equals(primeTypeCollector.getFloatType())) {
           emit("fcmpl");
         } else {
           emit("dcmpl");
@@ -1430,7 +1430,7 @@ public class JasminClass extends AbstractJasminClass {
 
       @Override
       public void caseCmpgInst(CmpgInst i) {
-        if (i.getOpType().equals(FloatType.v())) {
+        if (i.getOpType().equals(primeTypeCollector.getFloatType())) {
           emit("fcmpg");
         } else {
           emit("dcmpg");

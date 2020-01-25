@@ -173,7 +173,7 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
     Map<Local, Map<Local, Integer>> newLocs = new HashMap<Local, Map<Local, Integer>>();
     while (total >= 32 && booleans.size() + bytes.size() + chars.size() + ints.size() > 2) {
       Local nloc = myBaf.newLocal("newDumby" + count++, primeTypecollecotr.getLongType()); // soot.jbco.util.Rand.getInt(2) > 0 ?
-                                                                         // DoubleType.v() : primeTypecollecotr.getLongType());
+                                                                         // primeTypeCollector.getDoubleType() : primeTypecollecotr.getLongType());
       Map<Local, Integer> nlocMap = new HashMap<Local, Integer>();
 
       boolean done = false;

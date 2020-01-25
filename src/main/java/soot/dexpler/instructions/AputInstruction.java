@@ -51,7 +51,7 @@ public class AputInstruction extends FieldInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction23x)) {
       throw new IllegalArgumentException("Expected Instruction23x but got: " + instruction.getClass());
     }
@@ -75,7 +75,7 @@ public class AputInstruction extends FieldInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       myDalvikTyper().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
-      myDalvikTyper().setType(arrayRef.getIndexBox(), IntType.v(), true);
+      myDalvikTyper().setType(arrayRef.getIndexBox(), primeTypeCollector.getIntType(), true);
     }
   }
 

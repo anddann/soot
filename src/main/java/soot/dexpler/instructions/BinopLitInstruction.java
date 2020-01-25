@@ -38,6 +38,7 @@ import soot.Local;
 import soot.Value;
 import soot.dexpler.DexBody;
 import soot.dexpler.tags.IntOpTag;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.ConstantFactory;
 import soot.jimple.IntConstant;
@@ -56,7 +57,7 @@ public class BinopLitInstruction extends TaggedInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction22s) && !(instruction instanceof Instruction22b)) {
       throw new IllegalArgumentException("Expected Instruction22s or Instruction22b but got: " + instruction.getClass());
     }
@@ -71,7 +72,7 @@ public class BinopLitInstruction extends TaggedInstruction {
 
     Value expr = getExpression(source1, constant);
 
-    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), expr);
+    AssignStmt assign = this.myJimple.newAssignStmt(body.getRegisterLocal(dest), expr);
     assign.addTag(getTag());
 
     setUnit(assign);

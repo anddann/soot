@@ -660,7 +660,7 @@ public class PAG implements PointsToAnalysis {
     }
     StringConstantNode ret = (StringConstantNode) valToAllocNode.get(s);
     if (ret == null) {
-      valToAllocNode.put(s, ret = new StringConstantNode(this, s));
+      valToAllocNode.put(s, ret = new StringConstantNode(this, s, myPhaseOptions, myScene));
       newAllocNodes.add(ret);
       addNodeTag(ret, null);
     }

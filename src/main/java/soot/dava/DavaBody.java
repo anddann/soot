@@ -440,7 +440,7 @@ public class DavaBody extends Body {
       boolean force = PhaseOptions.getBoolean(options, "enabled");
       // System.out.println("force is "+force);
       if (force) {
-        AST.apply(new SuperFirstStmtHandler((ASTMethodNode) AST));
+        AST.apply(new SuperFirstStmtHandler((ASTMethodNode) AST, myTryContentsFinder, myASTWalker, myScene, myOptions, myPackageNamer, primeTypeCollector, myGrimp, myBaf, constancFactory));
       }
 
       debug("DavaBody", "PreInit booleans is" + G.v().SootMethodAddedByDava);
@@ -456,7 +456,7 @@ public class DavaBody extends Body {
     AST.apply(new ShortcutIfGenerator());
     debug("applyBugFixes", "after ShortcutIfGenerator" + G.v().ASTTransformations_modified);
 
-    AST.apply(new TypeCastingError());
+    AST.apply(new TypeCastingError(primeTypeCollector));
     debug("applyBugFixes", "after TypeCastingError" + G.v().ASTTransformations_modified);
   }
 
@@ -553,7 +553,7 @@ public class DavaBody extends Body {
          * ASTCleaner currently does the following tasks: 1, Remove empty Labeled Blocks UselessLabeledBlockRemover 2,
          * convert ASTIfElseNodes with empty else bodies to ASTIfNodes 3, Apply OrAggregatorThree
          */
-        AST.apply(new ASTCleaner());
+        AST.apply(new ASTCleaner(myTryContentsFinder));
         debug("applyASTAnalyses", "after ASTCleaner" + G.v().ASTTransformations_modified);
 
         /*
@@ -598,7 +598,7 @@ public class DavaBody extends Body {
         AST.apply(new ShortcutIfGenerator());
         debug("applyASTAnalyses", "after ShortcutIfGenerator" + G.v().ASTTransformations_modified);
 
-        AST.apply(new TypeCastingError());
+        AST.apply(new TypeCastingError(primeTypeCollector));
         debug("applyASTAnalyses", "after TypeCastingError" + G.v().ASTTransformations_modified);
 
         /*

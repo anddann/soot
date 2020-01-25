@@ -34,7 +34,9 @@ import soot.Local;
 import soot.RefType;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
+import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.EnterMonitorStmt;
+import soot.jimple.Jimple;
 
 public class MonitorEnterInstruction extends DexlibAbstractInstruction {
 
@@ -43,7 +45,7 @@ public class MonitorEnterInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body) {
+  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     int reg = ((OneRegisterInstruction) instruction).getRegisterA();
     Local object = body.getRegisterLocal(reg);
     EnterMonitorStmt enterMonitorStmt = myJimple.newEnterMonitorStmt(object);
@@ -53,7 +55,7 @@ public class MonitorEnterInstruction extends DexlibAbstractInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // Debug.printDbg(IDalvikTyper.DEBUG, "constraint: "+ enterMonitorStmt);
-      myDalvikTyper().setType(enterMonitorStmt.getOpBox(), RefType.v("java.lang.Object"), true);
+      myDalvikTyper().setType(enterMonitorStmt.getOpBox(), RefType.v("java.lang.Object",myScene), true);
     }
   }
 }

@@ -44,8 +44,8 @@ public class GenHelloWorld
 		
 		// Create: public static void main(String[])
 		SootMethod mainMethod = new SootMethod("main",
-				Arrays.asList(new Type[] {ArrayType.v(RefType.v("java.lang.String"), 1)}),
-				VoidType.v(), Modifier.PUBLIC | Modifier.STATIC);
+				Arrays.asList(new Type[] {ArrayType.v(RefType.v("java.lang.String",myScene), 1)}),
+				primeTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC);
 		sClass.addMethod(mainMethod);
 		
 		// Generate dava body from the jimple body
@@ -64,7 +64,7 @@ public class GenHelloWorld
 		// Create a local to hold the main method argument
 		// Note: In general for any use of objects or basic-types, must generate a local to
 		// hold that in the method body
-		Local frm1 = Jimple.v().newLocal("frm1", ArrayType.v(RefType.v("java.lang.String"), 1));
+		Local frm1 = Jimple.v().newLocal("frm1", ArrayType.v(RefType.v("java.lang.String",myScene), 1));
 		body.getLocals().add(frm1);
 		
 		// Create a local to hold the PrintStream System.out
@@ -75,7 +75,7 @@ public class GenHelloWorld
 		PatchingChain<Unit> units = body.getUnits();
 		units.add(Jimple.v().newIdentityStmt(frm1,
 				Jimple.v().newParameterRef(ArrayType.v
-						(RefType.v("java.lang.String"), 1), 0)));
+						(RefType.v("java.lang.String",myScene), 1), 0)));
 		
 		// Create a unit that assigns System.out to the local tmpRef
 		units.add(Jimple.v().newAssignStmt(tmpRef,

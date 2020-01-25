@@ -94,7 +94,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
     boolean[] addedLocalLockObj = new boolean[groups.size()];
     SootField[] globalLockObj = new SootField[groups.size()];
     for (int i = 1; i < groups.size(); i++) {
-      lockObj[i] = myJimple.newLocal("lockObj" + i, RefType.v("java.lang.Object"));
+      lockObj[i] = myJimple.newLocal("lockObj" + i, RefType.v("java.lang.Object",myScene));
       addedLocalLockObj[i] = false;
       globalLockObj[i] = null;
     }
@@ -115,7 +115,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
           } catch (RuntimeException re) {
             // field does not yet exist (or, as a pre-existing
             // error, there is more than one field by this name)
-            globalLockObj[i] = myScene.makeSootField("globalLockObj" + i, RefType.v("java.lang.Object"),
+            globalLockObj[i] = myScene.makeSootField("globalLockObj" + i, RefType.v("java.lang.Object",myScene),
                 Modifier.STATIC | Modifier.PUBLIC);
             myScene.getMainClass().addField(globalLockObj[i]);
           }
@@ -144,7 +144,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       boolean addingNewClinit = !mainClass.declaresMethod("void <clinit>()");
       if (addingNewClinit) {
         clinitMethod
-            = myScene.makeSootMethod("<clinit>", new ArrayList(), VoidType.v(), Modifier.PUBLIC | Modifier.STATIC);
+            = myScene.makeSootMethod("<clinit>", new ArrayList(), primeTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC);
         clinitBody = myJimple.newBody(clinitMethod);
         clinitMethod.setActiveBody(clinitBody);
         mainClass.addMethod(clinitMethod);
@@ -166,7 +166,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
           // avoidance code
 
           // assign new object to lock obj
-          Stmt newStmt = myJimple.newAssignStmt(lockObj[i], myJimple.newNewExpr(RefType.v("java.lang.Object")));
+          Stmt newStmt = myJimple.newAssignStmt(lockObj[i], myJimple.newNewExpr(RefType.v("java.lang.Object",myScene)));
           if (addingNewClinit) {
             clinitUnits.add(newStmt);
           } else {
@@ -281,7 +281,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
               }
             }
             // add a local variable for this lock
-            Local lockLocal = myJimple.newLocal("locksetObj" + tempNum, RefType.v("java.lang.Object"));
+            Local lockLocal = myJimple.newLocal("locksetObj" + tempNum, RefType.v("java.lang.Object",myScene));
             tempNum++;
             b.getLocals().add(lockLocal);
 
@@ -485,7 +485,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
 
             // Add throwable
             Local throwableLocal
-                = myJimple.newLocal("throwableLocal" + (throwableNum++), RefType.v("java.lang.Throwable"));
+                = myJimple.newLocal("throwableLocal" + (throwableNum++), RefType.v("java.lang.Throwable",myScene));
             b.getLocals().add(throwableLocal);
             // Add stmts
             Stmt newCatch = myJimple.newIdentityStmt(throwableLocal, myJimple.newCaughtExceptionRef());
@@ -638,7 +638,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       boolean addingNewClinit = !lockClass.declaresMethod("void <clinit>()");
       if (addingNewClinit) {
         clinitMethod
-            = myScene.makeSootMethod("<clinit>", new ArrayList(), VoidType.v(), Modifier.PUBLIC | Modifier.STATIC);
+            = myScene.makeSootMethod("<clinit>", new ArrayList(), primeTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC);
         clinitBody = myJimple.newBody(clinitMethod);
         clinitMethod.setActiveBody(clinitBody);
         lockClass.addMethod(clinitMethod);
@@ -649,13 +649,13 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       }
       PatchingChain<Unit> clinitUnits = clinitBody.getUnits();
 
-      Local lockLocal = myJimple.newLocal("objectLockLocal" + lockNumber, RefType.v("java.lang.Object"));
+      Local lockLocal = myJimple.newLocal("objectLockLocal" + lockNumber, RefType.v("java.lang.Object",myScene));
       // lockNumber is increased below
       clinitBody.getLocals().add(lockLocal); // TODO: add name conflict
       // avoidance code
 
       // assign new object to lock obj
-      Stmt newStmt = myJimple.newAssignStmt(lockLocal, myJimple.newNewExpr(RefType.v("java.lang.Object")));
+      Stmt newStmt = myJimple.newAssignStmt(lockLocal, myJimple.newNewExpr(RefType.v("java.lang.Object",myScene)));
       if (addingNewClinit) {
         clinitUnits.add(newStmt);
       } else {
@@ -676,7 +676,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
 
       // copy new object to global static lock object (for use by other
       // fns)
-      SootField actualLockObject = myScene.makeSootField("objectLockGlobal" + lockNumber, RefType.v("java.lang.Object"),
+      SootField actualLockObject = myScene.makeSootField("objectLockGlobal" + lockNumber, RefType.v("java.lang.Object",myScene),
           Modifier.STATIC | Modifier.PUBLIC);
       lockNumber++;
       lockClass.addField(actualLockObject);
