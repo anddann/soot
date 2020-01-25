@@ -81,7 +81,10 @@ public class FullSensitiveNode extends IVarAbstraction {
     deadManager = new GeometricManager();
   }
 
-  public FullSensitiveNode(Node thisVar) {
+  private Scene myScene;
+
+  public FullSensitiveNode(Node thisVar, Scene myScene) {
+    this.myScene = myScene;
     me = thisVar;
   }
 

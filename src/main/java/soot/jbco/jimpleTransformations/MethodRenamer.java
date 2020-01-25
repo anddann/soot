@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import soot.ArrayType;
 import soot.Body;
 import soot.FastHierarchy;
+import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Scene;
 import soot.SceneTransformer;
@@ -58,7 +59,6 @@ import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
-import soot.VoidType;
 import soot.jbco.IJbcoTransform;
 import soot.jbco.name.JunkNameGenerator;
 import soot.jbco.name.NameGenerator;
@@ -156,10 +156,10 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
    */
 
   @Inject
-  public MethodRenamer(Scene myScene) {
+  public MethodRenamer(Scene myScene, PrimTypeCollector primTypeCollector) {
     this.myScene = myScene;
     MAIN_METHOD_SUB_SIGNATURE
-            = SootMethod.getSubSignature("main", singletonList(ArrayType.v(RefType.v("java.lang.String",myScene), 1,myScene)), primeTypeCollector.getVoidType(),myScene);
+            = SootMethod.getSubSignature("main", singletonList(ArrayType.v(RefType.v("java.lang.String",myScene), 1,myScene)), primTypeCollector.getVoidType(),myScene);
 
     nameGenerator = new JunkNameGenerator();
   }
@@ -202,8 +202,8 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
       logger.info("Transforming method names...");
     }
 
-    BodyBuilder.retrieveAllBodies();
-    BodyBuilder.retrieveAllNames();
+    BodyBuilder.retrieveAllBodies(soot.myScene);
+    BodyBuilder.retrieveAllNames(myScene);
 
     myScene.releaseActiveHierarchy();
 
@@ -347,7 +347,7 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
     }
 
     myScene.releaseActiveHierarchy();
-    myScene.setFastHierarchy(new FastHierarchy());
+    myScene.setFastHierarchy(new FastHierarchy(myScene));
 
     if (isVerbose()) {
       logger.info("Transforming method names is completed.");

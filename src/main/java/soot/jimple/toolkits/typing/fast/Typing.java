@@ -30,23 +30,27 @@ import java.util.List;
 import java.util.ListIterator;
 
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.Type;
 
 /**
  * @author Ben Bellamy
  */
 public class Typing {
+  private final PrimTypeCollector primeTypeCollector;
   private HashMap<Local, Type> map;
 
-  public Typing(Collection<Local> vs) {
+  public Typing(PrimTypeCollector primeTypeCollector, Collection<Local> vs) {
+    this.primeTypeCollector = primeTypeCollector;
     map = new HashMap<Local, Type>(vs.size());
-    final BottomType bottomType = BottomType.v();
+    final BottomType bottomType = this.primeTypeCollector.getBottomType();
     for (Local v : vs) {
       this.map.put(v, bottomType);
     }
   }
 
-  public Typing(Typing tg) {
+  public Typing(PrimTypeCollector primeTypeCollector, Typing tg) {
+    this.primeTypeCollector = primeTypeCollector;
     this.map = new HashMap<Local, Type>(tg.map);
   }
 

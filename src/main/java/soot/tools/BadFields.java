@@ -28,14 +28,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.PackManager;
 import soot.PrimType;
 import soot.Scene;
 import soot.SceneTransformer;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
-import soot.Transform;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
@@ -47,13 +45,18 @@ import soot.jimple.Stmt;
 public class BadFields extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(BadFields.class);
 
-  public static void main(String[] args) {
-    PackmyManager.getPack("cg").add(new Transform("cg.badfields", new BadFields()));
-    soot.Main.main(args);
-  }
+//  public static void main(String[] args) {
+//    myPackManager.getPack("cg").add(new Transform("cg.badfields", new BadFields()));
+//    soot.Main.main(args);
+//  }
 
   private SootClass lastClass;
   private SootClass currentClass;
+  private Scene myScene;
+
+  public BadFields(Scene myScene) {
+    this.myScene = myScene;
+  }
 
   protected void internalTransform(String phaseName, Map<String, String> options) {
     lastClass = null;

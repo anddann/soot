@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import soot.baf.DoubleWordType;
 import soot.baf.WordType;
 
+import soot.jimple.toolkits.typing.fast.BottomType;
 import soot.jimple.toolkits.typing.fast.Integer127Type;
 import soot.jimple.toolkits.typing.fast.Integer1Type;
 import soot.jimple.toolkits.typing.fast.Integer32767Type;
@@ -18,6 +19,7 @@ public class PrimTypeCollector {
   private WordType wordType;
   private DoubleWordType doubleWordType;
   private RefType refType;
+  private BottomType bottomType;
 
   public VoidType getVoidType() {
     return voidType;
@@ -77,11 +79,11 @@ public class PrimTypeCollector {
 
   @Inject
   public PrimTypeCollector(FloatType floatType, NullType nullType, ErroneousType errorneousType,
-      StmtAddressType stmtAddressType, WordType wordType, DoubleWordType doubleWordType, RefType refType,
-      BooleanType booleanType, VoidType voidType,
-      IntType intType, ShortType shortType, CharType charType, ByteType byteType, Integer1Type integer1Type,
-      Integer32767Type integer32767Type, Integer127Type integer127Type, DoubleType doubleType, LongType longType,
-      UnknownType unknownType) {
+                           StmtAddressType stmtAddressType, WordType wordType, DoubleWordType doubleWordType, RefType refType,
+                           BottomType bottomType, BooleanType booleanType, VoidType voidType,
+                           IntType intType, ShortType shortType, CharType charType, ByteType byteType, Integer1Type integer1Type,
+                           Integer32767Type integer32767Type, Integer127Type integer127Type, DoubleType doubleType, LongType longType,
+                           UnknownType unknownType) {
     this.floatType = floatType;
     this.nullType = nullType;
     this.errorneousType = errorneousType;
@@ -89,6 +91,7 @@ public class PrimTypeCollector {
     this.wordType = wordType;
     this.doubleWordType = doubleWordType;
     this.refType = refType;
+    this.bottomType = bottomType;
 
 
     this.booleanType = booleanType;
@@ -141,5 +144,9 @@ public class PrimTypeCollector {
     return refType;
   }
 
+
+  public BottomType getBottomType() {
+    return bottomType;
+  }
 
 }

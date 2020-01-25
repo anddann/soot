@@ -328,7 +328,7 @@ public class Baf {
   }
 
   public ShlInst newShlInst(Type opType) {
-    return new BShlInst(opType, myBaf, primTypeCollector);
+    return new BShlInst(opType, this, primTypeCollector);
   }
 
   public ShrInst newShrInst(Type opType) {
@@ -356,7 +356,7 @@ public class Baf {
   }
 
   public NewInst newNewInst(RefType opType) {
-    return new BNewInst(opType, myBaf);
+    return new BNewInst(opType, this);
   }
 
   public NewArrayInst newNewArrayInst(Type opType) {
@@ -409,7 +409,7 @@ public class Baf {
   }
 
   public IfCmpLtInst newIfCmpLtInst(Type opType, Unit unit) {
-    return new BIfCmpLtInst(opType, unit, myBaf, primTypeCollector);
+    return new BIfCmpLtInst(opType, unit, this, primTypeCollector);
   }
 
   public IfCmpNeInst newIfCmpNeInst(Type opType, Unit unit) {
@@ -461,7 +461,7 @@ public class Baf {
   }
 
   public ThrowInst newThrowInst() {
-    return new BThrowInst();
+    return new BThrowInst(this);
   }
 
   public SwapInst newSwapInst(Type fromType, Type toType) {

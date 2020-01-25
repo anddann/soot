@@ -869,7 +869,7 @@ public class DexBody {
       myMethodStaticnessCorrector.transform(jBody);
     }
 
-    // Inline PackmyManager.getPack("jb").apply(jBody);
+    // Inline myPackManager.getPack("jb").apply(jBody);
     // Keep only transformations that have not been done
     // at this point.
     myTrapTightener.transform(jBody);

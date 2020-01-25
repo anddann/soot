@@ -45,7 +45,7 @@ public class ReflInliner {
   private static final Logger logger = LoggerFactory.getLogger(ReflInliner.class);
 
   public static void main(String[] args) {
-    PackmyManager.getPack("wjpp").add(new Transform("wjpp.inlineReflCalls", new ReflectiveCallsInliner()));
+    myPackManager.getPack("wjpp").add(new Transform("wjpp.inlineReflCalls", new ReflectiveCallsInliner()));
     myScene.addBasicClass(Object.class.getName());
     myScene.addBasicClass(SootSig.class.getName(), SootClass.BODIES);
     myScene.addBasicClass(UnexpectedReflectiveCall.class.getName(), SootClass.BODIES);

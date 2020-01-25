@@ -41,10 +41,10 @@ public class LineNumberGenerator {
     // if you do not want soot to output new class files, run with comman line option "-f n"
 
     // if you want the source code line numbers for jimple statements, use this:
-    PackmyManager.getPack("jtp").add(new Transform("jtp.lnprinter", new LineNumberGenerator().bln));
+    myPackManager.getPack("jtp").add(new Transform("jtp.lnprinter", new LineNumberGenerator().bln));
 
     // if you want the source code line numbers for baf instructions, use this:
-    PackmyManager.getPack("bb").add(new Transform("bb.lnprinter", new LineNumberGenerator().bln));
+    myPackManager.getPack("bb").add(new Transform("bb.lnprinter", new LineNumberGenerator().bln));
 
     soot.Main.main(argv);
   }

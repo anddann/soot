@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import soot.ArrayType;
 import soot.Body;
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SceneTransformer;
 import soot.SootClass;
@@ -54,6 +55,7 @@ import soot.jimple.DefinitionStmt;
 import soot.jimple.FieldRef;
 import soot.jimple.IntConstant;
 import soot.jimple.InvokeExpr;
+import soot.jimple.Jimple;
 import soot.jimple.NewArrayExpr;
 import soot.jimple.NewMultiArrayExpr;
 import soot.jimple.ParameterRef;
@@ -75,12 +77,16 @@ public class RectangularArrayFinder extends SceneTransformer {
   private Options myOptions;
   private Scene myScene;
   private ConstantFactory constancFactory;
+  private Jimple myJimple;
+  private PrimTypeCollector primeTypeCollector;
 
   @Inject
-  public RectangularArrayFinder(Options myOptions, Scene myScene, ConstantFactory constancFactory) {
+  public RectangularArrayFinder(Options myOptions, Scene myScene, ConstantFactory constancFactory, Jimple myJimple, PrimTypeCollector primeTypeCollector) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.constancFactory = constancFactory;
+    this.myJimple = myJimple;
+    this.primeTypeCollector = primeTypeCollector;
   }
 
 

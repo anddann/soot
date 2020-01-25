@@ -38,7 +38,6 @@ import soot.Modifier;
 import soot.NullType;
 import soot.PatchingChain;
 import soot.RefType;
-import soot.Scene;
 import soot.SceneTransformer;
 import soot.SootClass;
 import soot.SootField;
@@ -47,7 +46,6 @@ import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
-import soot.VoidType;
 import soot.jbco.IJbcoTransform;
 import soot.jbco.util.BodyBuilder;
 import soot.jbco.util.Rand;
@@ -56,7 +54,6 @@ import soot.jimple.Constant;
 import soot.jimple.DoubleConstant;
 import soot.jimple.FloatConstant;
 import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
 import soot.jimple.LongConstant;
 import soot.jimple.NullConstant;
 import soot.jimple.StringConstant;
@@ -99,7 +96,7 @@ public class CollectConstants extends SceneTransformer implements IJbcoTransform
       logger.info("Collecting Constant Data");
     }
 
-    BodyBuilder.retrieveAllNames();
+    BodyBuilder.retrieveAllNames(myScene);
 
     final Chain<SootClass> applicationClasses = myScene.getApplicationClasses();
 

@@ -1158,7 +1158,7 @@ public class OnFlyCallGraphBuilder {
       if (logFile == null) {
         throw new InternalError("Trace based refection model enabled but no trace file given!?");
       } else {
-        reflectionInfo = new ReflectionTraceInfo(logFile);
+        reflectionInfo = new ReflectionTraceInfo(logFile, myScene);
       }
     }
 

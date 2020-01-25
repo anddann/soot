@@ -154,8 +154,8 @@ public class Dava {
   public DavaBody newBody(SootMethod m) {
     DavaBody davaBody = new DavaBody(m, myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, this,
-        myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector, myBaf, myScene);
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myPackageNamer, primeTypeCollector, this,
+        myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector, myBaf, myScene, myJimple);
     return davaBody;
   }
 
@@ -164,7 +164,7 @@ public class Dava {
     return new DavaBody(b, myOptions, myPrinter, myMonitorConverter, myExceptionFinder, mySynchronizedBlockFinder,
         myThrowNullConverter, mySequenceFinder, myLabeledBlockFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         myAbruptEdgeFinder, myUselessTryRemover, myPhaseOptions, myClosestAbruptTargetFinder, this, constancFactory,
-        myPhaseDumper, myGrimp, primTypeCollector, myBaf, myTryContentsFinder, myASTWalker, myScene);
+        myPhaseDumper, myGrimp, primTypeCollector, myBaf, myTryContentsFinder, myASTWalker, myScene, primeTypeCollector, myJimple);
 
   }
 

@@ -40,10 +40,13 @@ import soot.Trap;
 import soot.Unit;
 import soot.jimple.GotoStmt;
 import soot.jimple.IfStmt;
+import soot.jimple.Jimple;
+import soot.options.Options;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.BlockGraph;
 import soot.toolkits.graph.BriefBlockGraph;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 /**
  * "unrolls" the condition of while/for loops.<br>
@@ -67,6 +70,15 @@ public class LoopConditionUnroller extends BodyTransformer {
   private Body body;
 
   private Map<Unit, List<Trap>> unitsToTraps;
+  private Options myOptions;
+  private PhaseDumper myPhaseDumper;
+  private Jimple myJimple;
+
+  public LoopConditionUnroller(Options myOptions, PhaseDumper myPhaseDumper, Jimple myJimple) {
+    this.myOptions = myOptions;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myJimple = myJimple;
+  }
 
   /**
    * unrolls conditions.

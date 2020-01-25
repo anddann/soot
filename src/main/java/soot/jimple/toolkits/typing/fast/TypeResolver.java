@@ -40,7 +40,9 @@ import soot.IntType;
 import soot.IntegerType;
 import soot.Local;
 import soot.PatchingChain;
+import soot.PrimTypeCollector;
 import soot.RefType;
+import soot.Scene;
 import soot.ShortType;
 import soot.Type;
 import soot.Unit;
@@ -59,7 +61,13 @@ import soot.jimple.NewExpr;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
 import soot.jimple.toolkits.typing.Util;
+import soot.jimple.toolkits.typing.integer.ClassHierarchy;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LocalDefs;
+import soot.util.PhaseDumper;
 
 /**
  * New Type Resolver by Ben Bellamy (see 'Efficient Local Type Inference' at OOPSLA 08).
@@ -77,9 +85,27 @@ public class TypeResolver {
 
   private final List<DefinitionStmt> assignments;
   private final HashMap<Local, BitSet> depends;
+  private Scene myScene;
+  private PrimTypeCollector primeTypeCollector;
+  private ClassHierarchy myClassHierachry;
+  private Jimple myJimple;
+  private ThrowAnalysis throwAnalysis;
+  private ThrowableSet.Manager myManager;
+  private Options myOptions;
+  private PhaseDumper phaseDumper;
+  private InteractionHandler myInteractionHandler;
 
-  public TypeResolver(JimpleBody jb) {
+  public TypeResolver(JimpleBody jb, Scene myScene, PrimTypeCollector primeTypeCollector, ClassHierarchy myClassHierachry, Jimple myJimple, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
     this.jb = jb;
+    this.myScene = myScene;
+    this.primeTypeCollector = primeTypeCollector;
+    this.myClassHierachry = myClassHierachry;
+    this.myJimple = myJimple;
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
+    this.myOptions = myOptions;
+    this.phaseDumper = phaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
 
     this.assignments = new ArrayList<DefinitionStmt>();
     this.depends = new HashMap<Local, BitSet>(jb.getLocalCount());
@@ -141,7 +167,7 @@ public class TypeResolver {
   public void inferTypes() {
     AugEvalFunction ef = new AugEvalFunction(this.jb);
     BytecodeHierarchy bh = new BytecodeHierarchy(myScene);
-    Collection<Typing> sigma = this.applyAssignmentConstraints(new Typing(this.jb.getLocals()), ef, bh);
+    Collection<Typing> sigma = this.applyAssignmentConstraints(new Typing(primeTypeCollector, this.jb.getLocals()), ef, bh);
 
     // If there is nothing to type, we can quit
     if (sigma.isEmpty()) {
@@ -152,13 +178,13 @@ public class TypeResolver {
     Typing tg = this.minCasts(sigma, bh, castCount);
     if (castCount[0] != 0) {
       this.split_new();
-      sigma = this.applyAssignmentConstraints(new Typing(this.jb.getLocals()), ef, bh);
+      sigma = this.applyAssignmentConstraints(new Typing(primeTypeCollector, this.jb.getLocals()), ef, bh);
       tg = this.minCasts(sigma, bh, castCount);
     }
     this.insertCasts(tg, bh, false);
 
     final IntType inttype = primeTypeCollector.getIntType();
-    final BottomType bottom = BottomType.v();
+    final BottomType bottom = primeTypeCollector.getBottomType();
     for (Local v : this.jb.getLocals()) {
       Type t = tg.get(v);
       if (t instanceof IntegerType) {
@@ -171,7 +197,7 @@ public class TypeResolver {
     tg = this.typePromotion(tg);
     if (tg == null) {
       // Use original soot algorithm for inserting casts
-      soot.jimple.toolkits.typing.integer.TypeResolver.resolve(this.jb);
+      soot.jimple.toolkits.typing.integer.TypeResolver.resolve(this.jb,myClassHierachry,primeTypeCollector);
     } else {
       for (Local v : this.jb.getLocals()) {
         v.setType(tg.get(v));
@@ -286,8 +312,8 @@ public class TypeResolver {
     public boolean typingChanged;
 
     private final ByteType byteType = primeTypeCollector.getByteType();
-    private final Integer32767Type integer32767Type = Integer32767Type.v();
-    private final Integer127Type integer127Type = Integer127Type.v();
+    private final Integer32767Type integer32767Type = primeTypeCollector.getInteger32767Type();
+    private final Integer127Type integer127Type = primeTypeCollector.getInteger127Type();
 
     public TypePromotionUseVisitor(JimpleBody jb, Typing tg) {
       this.jb = jb;
@@ -300,7 +326,7 @@ public class TypeResolver {
     private Type promote(Type tlow, Type thigh) {
       if (tlow instanceof Integer1Type) {
         if (thigh instanceof IntType) {
-          return Integer127Type.v();
+          return primeTypeCollector.getInteger127Type();
         } else if (thigh instanceof ShortType) {
           return byteType;
         } else if (thigh instanceof BooleanType || thigh instanceof ByteType || thigh instanceof CharType
@@ -521,7 +547,7 @@ public class TypeResolver {
                 wl_ = wl;
               } else {
                 // The types do not agree, add all supertype candidates
-                tg_ = new Typing(tg);
+                tg_ = new Typing(primeTypeCollector, tg);
                 wl_ = new BitSet(numAssignments - 1);
                 wl_.or(wl);
                 sigma.add(tg_);
@@ -558,7 +584,7 @@ public class TypeResolver {
    * Taken from the soot.jimple.toolkits.typing.TypeResolver class of Soot version 2.2.5.
    */
   private void split_new() {
-    LocalDefs defs = LocalDefs.Factory.newLocalDefs(jb, myManager, myInteractionHandler);
+    LocalDefs defs = LocalDefs.Factory.newLocalDefs(jb, throwAnalysis, myManager, myOptions,  phaseDumper,  myInteractionHandler);
     PatchingChain<Unit> units = this.jb.getUnits();
     Stmt[] stmts = new Stmt[units.size()];
 

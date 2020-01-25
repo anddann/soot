@@ -32,11 +32,8 @@ import org.jf.dexlib2.iface.instruction.Instruction;
 import org.jf.dexlib2.iface.instruction.ThreeRegisterInstruction;
 import org.jf.dexlib2.iface.instruction.formats.Instruction23x;
 
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
 import soot.Local;
-import soot.LongType;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
@@ -49,11 +46,15 @@ import soot.jimple.BinopExpr;
 import soot.jimple.Expr;
 import soot.jimple.Jimple;
 import soot.jimple.internal.JAssignStmt;
+import soot.options.Options;
 
 public class CmpInstruction extends TaggedInstruction {
 
-  public CmpInstruction(Instruction instruction, int codeAdress) {
+  private PrimTypeCollector primeTypeCollector;
+
+  public CmpInstruction(Instruction instruction, int codeAdress, Options myOptions, PrimTypeCollector primeTypeCollector) {
     super(instruction, codeAdress, myOptions);
+    this.primeTypeCollector = primeTypeCollector;
   }
 
   @Override
@@ -113,9 +114,9 @@ public class CmpInstruction extends TaggedInstruction {
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       getTag().getName();
       BinopExpr bexpr = (BinopExpr) cmpExpr;
-      myDalvikTyper().setType(bexpr.getOp1Box(), type, true);
-      myDalvikTyper().setType(bexpr.getOp2Box(), type, true);
-      myDalvikTyper().setType(((JAssignStmt) assign).leftBox, primeTypeCollector.getIntType(), false);
+      myDalvikTyper.setType(bexpr.getOp1Box(), type, true);
+      myDalvikTyper.setType(bexpr.getOp2Box(), type, true);
+      myDalvikTyper.setType(((JAssignStmt) assign).leftBox, primeTypeCollector.getIntType(), false);
     }
   }
 

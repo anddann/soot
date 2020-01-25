@@ -93,7 +93,7 @@ public class CFGViewer extends BodyTransformer {
     printTransform.setDefaultOptions(
         "enabled " + altClassPathOptionName + ": " + graphTypeOptionName + ':' + defaultGraph + ' ' + irOptionName + ':'
             + defaultIR + ' ' + multipageOptionName + ":false " + ' ' + briefLabelOptionName + ":false ");
-    PackmyManager.getPack("jtp").add(printTransform);
+    myPackManager.getPack("jtp").add(printTransform);
     args = viewer.parse_options(args);
     if (args.length == 0) {
       usage();

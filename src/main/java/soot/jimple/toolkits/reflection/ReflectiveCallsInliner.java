@@ -33,7 +33,6 @@ import java.util.Set;
 
 import soot.ArrayType;
 import soot.Body;
-import soot.BooleanType;
 import soot.Local;
 import soot.Modifier;
 import soot.PatchingChain;
@@ -49,7 +48,6 @@ import soot.SootMethodRef;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
-import soot.VoidType;
 import soot.javaToJimple.LocalGenerator;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
@@ -106,7 +104,7 @@ public class ReflectiveCallsInliner extends SceneTransformer {
     if (!initialized) {
       CGOptions cgOptions = new CGOptions(myPhaseOptions().getPhaseOptions("cg"));
       String logFilePath = cgOptions.reflection_log();
-      RTI = new ReflectionTraceInfo(logFilePath);
+      RTI = new ReflectionTraceInfo(logFilePath, myScene);
 
       myScene.getSootClass(SootSig.class.getName()).setApplicationClass();
       myScene.getSootClass(UnexpectedReflectiveCall.class.getName()).setApplicationClass();

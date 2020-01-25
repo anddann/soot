@@ -31,15 +31,22 @@ import soot.Unit;
 import soot.Value;
 import soot.ValueBox;
 import soot.toolkits.exceptions.ThrowAnalysisFactory;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.InitAnalysis;
+import soot.util.PhaseDumper;
 
 public class CheckInitValidator implements BodyValidator {
 
-  @Inject
-  public CheckInitValidator(){
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
+  @Inject
+  public CheckInitValidator(ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper){
+
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
   @Override

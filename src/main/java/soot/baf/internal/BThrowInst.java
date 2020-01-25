@@ -22,12 +22,14 @@ package soot.baf.internal;
  * #L%
  */
 
+import soot.baf.Baf;
 import soot.baf.InstSwitch;
 import soot.baf.ThrowInst;
 import soot.util.Switch;
 
 public class BThrowInst extends AbstractInst implements ThrowInst {
-  public BThrowInst() {
+  public BThrowInst(Baf myBaf) {
+    super(myBaf);
   }
 
   public int getInCount() {
@@ -55,7 +57,7 @@ public class BThrowInst extends AbstractInst implements ThrowInst {
   }
 
   public Object clone() {
-    return new BThrowInst();
+    return new BThrowInst(myBaf);
   }
 
   public boolean fallsThrough() {

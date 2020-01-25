@@ -48,6 +48,7 @@ import soot.tagkit.SourceLnPosTag;
 
 public class ReflectionTraceInfo {
   private static final Logger logger = LoggerFactory.getLogger(ReflectionTraceInfo.class);
+  private final Scene myScene;
 
   public enum Kind {
     ClassForName, ClassNewInstance, ConstructorNewInstance, MethodInvoke, FieldSet, FieldGet
@@ -65,7 +66,8 @@ public class ReflectionTraceInfo {
 
   protected Map<SootMethod, Set<String>> fieldGetReceivers;
 
-  public ReflectionTraceInfo(String logFile) {
+  public ReflectionTraceInfo(String logFile, Scene myScene) {
+    this.myScene = myScene;
     classForNameReceivers = new LinkedHashMap<SootMethod, Set<String>>();
     classNewInstanceReceivers = new LinkedHashMap<SootMethod, Set<String>>();
     constructorNewInstanceReceivers = new LinkedHashMap<SootMethod, Set<String>>();
@@ -106,7 +108,7 @@ public class ReflectionTraceInfo {
               }
               receiverNames.add(target);
             } else if (kind.equals("Method.invoke")) {
-              if (!myScene.containsMethod(target)) {
+              if (!this.myScene.containsMethod(target)) {
                 throw new RuntimeException("Unknown method for signature: " + target);
               }
 
@@ -116,7 +118,7 @@ public class ReflectionTraceInfo {
               }
               receiverNames.add(target);
             } else if (kind.equals("Constructor.newInstance")) {
-              if (!myScene.containsMethod(target)) {
+              if (!this.myScene.containsMethod(target)) {
                 throw new RuntimeException("Unknown method for signature: " + target);
               }
 
@@ -126,7 +128,7 @@ public class ReflectionTraceInfo {
               }
               receiverNames.add(target);
             } else if (kind.equals("Field.set*")) {
-              if (!myScene.containsField(target)) {
+              if (!this.myScene.containsField(target)) {
                 throw new RuntimeException("Unknown method for signature: " + target);
               }
 
@@ -136,7 +138,7 @@ public class ReflectionTraceInfo {
               }
               receiverNames.add(target);
             } else if (kind.equals("Field.get*")) {
-              if (!myScene.containsField(target)) {
+              if (!this.myScene.containsField(target)) {
                 throw new RuntimeException("Unknown method for signature: " + target);
               }
 

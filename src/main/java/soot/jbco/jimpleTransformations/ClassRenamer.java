@@ -197,8 +197,8 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
       logger.info("Transforming Class Names...");
     }
 
-    BodyBuilder.retrieveAllBodies();
-    BodyBuilder.retrieveAllNames();
+    BodyBuilder.retrieveAllBodies(soot.myScene);
+    BodyBuilder.retrieveAllNames(myScene);
 
     final SootClass mainClass = getMainClassSafely(myScene);
 

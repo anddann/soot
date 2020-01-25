@@ -222,10 +222,10 @@ public class SimplifyConditions extends DepthFirstAdapter {
         // meaning both are constants
         if (leftBool.booleanValue() && rightBool.booleanValue()) {
           // both are true
-          return new ASTUnaryCondition(constancFactory.createDIntConstant(1, primTypeCollector.getBooleanType()));
+          return new ASTUnaryCondition(constancFactory.createDIntConstant(1, primTypeCollector.getBooleanType()), myGrimp, primTypeCollector);
         } else {
           // atleast one of the two is false
-          return new ASTUnaryCondition(constancFactory.createDIntConstant(0, primTypeCollector.getBooleanType()));
+          return new ASTUnaryCondition(constancFactory.createDIntConstant(0, primTypeCollector.getBooleanType()), myGrimp, primTypeCollector);
         }
       }
 
@@ -240,7 +240,7 @@ public class SimplifyConditions extends DepthFirstAdapter {
           // left bool is false meaning no need to continue since we
           // will never execute the right condition
           // return a unary false
-          return new ASTUnaryCondition(constancFactory.createDIntConstant(0, primTypeCollector.getBooleanType()));
+          return new ASTUnaryCondition(constancFactory.createDIntConstant(0, primTypeCollector.getBooleanType()), myGrimp, primTypeCollector);
         }
       }
 
@@ -272,10 +272,10 @@ public class SimplifyConditions extends DepthFirstAdapter {
         // meaning both are constants
         if (!leftBool.booleanValue() && !rightBool.booleanValue()) {
           // both are false
-          return new ASTUnaryCondition(constancFactory.createDIntConstant(0, primTypeCollector.getBooleanType()));
+          return new ASTUnaryCondition(constancFactory.createDIntConstant(0, primTypeCollector.getBooleanType()), myGrimp, primTypeCollector);
         } else {
           // atleast one of the two is true
-          return new ASTUnaryCondition(constancFactory.createDIntConstant(1, primTypeCollector.getBooleanType()));
+          return new ASTUnaryCondition(constancFactory.createDIntConstant(1, primTypeCollector.getBooleanType()), myGrimp, primTypeCollector);
         }
       }
 
@@ -284,7 +284,7 @@ public class SimplifyConditions extends DepthFirstAdapter {
         // condition passed
         if (leftBool.booleanValue()) {
           // left bool is true that means we will stop evaluation of condition, just return true
-          return new ASTUnaryCondition(constancFactory.createDIntConstant(1, primTypeCollector.getBooleanType()));
+          return new ASTUnaryCondition(constancFactory.createDIntConstant(1, primTypeCollector.getBooleanType()), myGrimp, primTypeCollector);
         } else {
           // left bool is false so we have to continue evaluating right
           return right;
@@ -400,14 +400,14 @@ public class SimplifyConditions extends DepthFirstAdapter {
               System.out.println("CONVERTED !true to false");
             }
             changed = true;
-            return new ASTUnaryCondition(constancFactory.createDIntConstant(0, primTypeCollector.getBooleanType()));
+            return new ASTUnaryCondition(constancFactory.createDIntConstant(0, primTypeCollector.getBooleanType()), myGrimp, primTypeCollector);
           } else if (!isIt.booleanValue()) {
             // false
             if (DEBUG) {
               System.out.println("CONVERTED !false to true");
             }
             changed = true;
-            return new ASTUnaryCondition(constancFactory.createDIntConstant(1, primTypeCollector.getBooleanType()));
+            return new ASTUnaryCondition(constancFactory.createDIntConstant(1, primTypeCollector.getBooleanType()), myGrimp, primTypeCollector);
           } else {
             throw new RuntimeException("BooleanType found with value different than 0 or 1");
           }
@@ -500,9 +500,9 @@ public class SimplifyConditions extends DepthFirstAdapter {
 
     if (result != null) {
       if (result.booleanValue()) {
-        return new ASTUnaryCondition(constancFactory.createDIntConstant(1,primTypeCollector.getBooleanType()));
+        return new ASTUnaryCondition(constancFactory.createDIntConstant(1,primTypeCollector.getBooleanType()), myGrimp, primTypeCollector);
       } else {
-        return new ASTUnaryCondition(constancFactory.createDIntConstant(0, primTypeCollector.getBooleanType()));
+        return new ASTUnaryCondition(constancFactory.createDIntConstant(0, primTypeCollector.getBooleanType()), myGrimp, primTypeCollector);
       }
     }
     return null;

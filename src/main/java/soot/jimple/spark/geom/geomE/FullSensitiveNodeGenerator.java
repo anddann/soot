@@ -193,7 +193,7 @@ public class FullSensitiveNodeGenerator extends IEncodingBroker {
     if (vNode instanceof AllocNode || vNode instanceof FieldRefNode) {
       ret = new DummyNode(vNode);
     } else {
-      ret = new FullSensitiveNode(vNode);
+      ret = new FullSensitiveNode(vNode, myScene);
     }
 
     return ret;

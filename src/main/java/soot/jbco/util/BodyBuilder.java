@@ -30,6 +30,7 @@ import java.util.List;
 import soot.Local;
 import soot.PatchingChain;
 import soot.RefType;
+import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
@@ -65,13 +66,13 @@ public class BodyBuilder {
   public static boolean namesHaveBeenRetrieved = false;
   public static List<String> nameList = new ArrayList<String>();
 
-  public static void retrieveAllBodies() {
+  public static void retrieveAllBodies(Scene myScene) {
     if (bodiesHaveBeenBuilt) {
       return;
     }
 
     // iterate through application classes, rename fields with junk
-    for (SootClass c : soot.myScene.getApplicationClasses()) {
+    for (SootClass c : myScene.getApplicationClasses()) {
 
       for (SootMethod m : c.getMethods()) {
         if (!m.isConcrete()) {
@@ -87,14 +88,14 @@ public class BodyBuilder {
     bodiesHaveBeenBuilt = true;
   }
 
-  public static void retrieveAllNames() {
+  public static void retrieveAllNames(Scene myScene) {
     if (namesHaveBeenRetrieved) {
       return;
     }
 
     // iterate through application classes, rename fields with junk
 
-    for (SootClass c : soot.myScene.getApplicationClasses()) {
+    for (SootClass c : myScene.getApplicationClasses()) {
       nameList.add(c.getName());
 
       for (SootMethod m : c.getMethods()) {
@@ -108,7 +109,8 @@ public class BodyBuilder {
     namesHaveBeenRetrieved = true;
   }
 
-  public static Local buildThisLocal(PatchingChain<Unit> units, ThisRef tr, Collection<Local> locals) {
+  public static Local buildThisLocal(PatchingChain<Unit> units, ThisRef tr, Collection<Local> locals, Jimple jimple) {
+    Jimple myJimple = jimple;
     Local ths = myJimple.newLocal("ths", tr.getType());
     locals.add(ths);
     units.add(myJimple.newIdentityStmt(ths, myJimple.newThisRef((RefType) tr.getType())));
@@ -116,7 +118,9 @@ public class BodyBuilder {
   }
 
   public static List<Local> buildParameterLocals(PatchingChain<Unit> units, Collection<Local> locals,
-      List<Type> paramTypes) {
+                                                 List<Type> paramTypes, Jimple jimple) {
+    Jimple myJimple = jimple;
+
     List<Local> args = new ArrayList<Local>();
     for (int k = 0; k < paramTypes.size(); k++) {
       Type type = paramTypes.get(k);

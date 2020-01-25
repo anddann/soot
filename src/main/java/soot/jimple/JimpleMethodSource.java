@@ -50,7 +50,7 @@ public class JimpleMethodSource implements MethodSource {
       logger.debug("[" + m.getName() + "] Retrieving JimpleBody from AST...");
     }
 
-    PackmyManager.getPack("jb").apply(jb);
+    myPackManager.getPack("jb").apply(jb);
     return jb;
   }
 }

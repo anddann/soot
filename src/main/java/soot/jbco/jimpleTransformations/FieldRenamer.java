@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
-import soot.BooleanType;
 import soot.IntegerType;
 import soot.Local;
 import soot.Modifier;
@@ -162,8 +161,8 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
 
     final RefType booleanWrapperRefType = myScene.getRefType(BOOLEAN_CLASS_NAME);
 
-    BodyBuilder.retrieveAllBodies();
-    BodyBuilder.retrieveAllNames();
+    BodyBuilder.retrieveAllBodies(soot.myScene);
+    BodyBuilder.retrieveAllNames(myScene);
 
     for (SootClass applicationClass : myScene.getApplicationClasses()) {
       String className = applicationClass.getName();

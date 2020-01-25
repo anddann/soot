@@ -121,7 +121,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
       logger.info("Building Library Wrapper Methods...");
     }
 
-    BodyBuilder.retrieveAllBodies();
+    BodyBuilder.retrieveAllBodies(soot.myScene);
     // iterate through application classes to find library calls
     final Iterator<SootClass> applicationClassesIterator = myScene.getApplicationClasses().snapshotIterator();
     while (applicationClassesIterator.hasNext()) {
@@ -271,7 +271,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
     Chain<Local> locals = body.getLocals();
     PatchingChain<Unit> units = body.getUnits();
 
-    List<Local> args = BodyBuilder.buildParameterLocals(units, locals, smParamTypes);
+    List<Local> args = BodyBuilder.buildParameterLocals(units, locals, smParamTypes, jimple);
     while (extraParams-- > 0) {
       args.remove(args.size() - 1);
     }

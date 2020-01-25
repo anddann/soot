@@ -36,7 +36,7 @@ import soot.grimp.internal.GInterfaceInvokeExpr;
 
 public class DInterfaceInvokeExpr extends GInterfaceInvokeExpr {
   public DInterfaceInvokeExpr(Value base, SootMethodRef methodRef, java.util.List args) {
-    super(base, methodRef, args);
+    super(base, methodRef, args, myGrimp);
   }
 
   public void toString(UnitPrinter up) {

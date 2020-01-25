@@ -186,7 +186,7 @@ public class InstructionFactory {
       case CMPL_DOUBLE:
       case CMPG_DOUBLE:
       case CMP_LONG:
-        return new CmpInstruction(instruction, codeAddress);
+        return new CmpInstruction(instruction, codeAddress, myOptions, primeTypeCollector);
 
       case IF_EQ:
       case IF_NE:

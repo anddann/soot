@@ -23,13 +23,14 @@ package soot.dava.toolkits.base.finders;
  * #L%
  */
 
+import com.google.inject.Inject;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +55,7 @@ import soot.jimple.ConditionExpr;
 import soot.jimple.ConstantFactory;
 import soot.jimple.GotoStmt;
 import soot.jimple.IfStmt;
+import soot.jimple.Jimple;
 import soot.jimple.LookupSwitchStmt;
 import soot.jimple.Stmt;
 import soot.jimple.TableSwitchStmt;
@@ -66,16 +68,16 @@ public class CycleFinder implements FactFinder {
   private static final Logger logger = LoggerFactory.getLogger(CycleFinder.class);
   private Dava myDava;
   private ConstantFactory constancFactory;
-    private TryContentsFinder myTryContentsFinder;
+  private TryContentsFinder myTryContentsFinder;
+  private Jimple myJimple;
 
-
-    @Inject
-  public CycleFinder(Dava myDava, ConstantFactory constancFactory, TryContentsFinder myTryContentsFinder) {
+  @Inject
+  public CycleFinder(Dava myDava, ConstantFactory constancFactory, TryContentsFinder myTryContentsFinder, Jimple myJimple) {
     this.myDava = myDava;
     this.constancFactory = constancFactory;
-        this.myTryContentsFinder = myTryContentsFinder;
-    }
-
+    this.myTryContentsFinder = myTryContentsFinder;
+    this.myJimple = myJimple;
+  }
 
   public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
     myDava.log("CycleFinder::find()");
@@ -176,7 +178,7 @@ public class CycleFinder implements FactFinder {
 
           IfStmt condition = (IfStmt) characterizing_stmt.get_Stmt();
           if (cycle_body.contains(asg.get_AugStmt(condition.getTarget())) == false) {
-            condition.setCondition(ConditionFlipper.flip((ConditionExpr) condition.getCondition()));
+            condition.setCondition(ConditionFlipper.flip((ConditionExpr) condition.getCondition(), myGrimp, primeTypeCollector));
           }
 
           if (characterizing_stmt == entry_point) {
@@ -438,7 +440,7 @@ public class CycleFinder implements FactFinder {
     while (epit.hasNext()) {
       AugmentedStmt entryPoint = epit.next();
 
-      GotoStmt gotoStmt = new JGotoStmt(entryPoint.get_Stmt());
+      GotoStmt gotoStmt = new JGotoStmt(entryPoint.get_Stmt(),myJimple);
       AugmentedStmt indirectionStmt = new AugmentedStmt(gotoStmt);
 
       indirectionStmtSet.add(indirectionStmt);

@@ -52,7 +52,6 @@ import soot.VoidType;
 import soot.jbco.IJbcoTransform;
 import soot.jbco.Main;
 import soot.jbco.util.BodyBuilder;
-import soot.jimple.IntConstant;
 import soot.jimple.JimpleBody;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.ThisRef;
@@ -100,7 +99,7 @@ public class BuildIntermediateAppClasses extends SceneTransformer implements IJb
       out.println("Building Intermediate Classes...");
     }
 
-    BodyBuilder.retrieveAllBodies();
+    BodyBuilder.retrieveAllBodies(soot.myScene);
 
     // iterate through application classes, build intermediate classes
     Iterator<SootClass> it = myScene.getApplicationClasses().snapshotIterator();
@@ -179,8 +178,8 @@ public class BuildIntermediateAppClasses extends SceneTransformer implements IJb
             Chain<Local> locals = body.getLocals();
             PatchingChain<Unit> units = body.getUnits();
 
-            BodyBuilder.buildThisLocal(units, thisRef, locals);
-            BodyBuilder.buildParameterLocals(units, locals, paramTypes);
+            BodyBuilder.buildThisLocal(units, thisRef, locals, jimple);
+            BodyBuilder.buildParameterLocals(units, locals, paramTypes, jimple);
 
             if (returnType instanceof VoidType) {
               units.add(myJimple.newReturnVoidStmt());
@@ -202,8 +201,8 @@ public class BuildIntermediateAppClasses extends SceneTransformer implements IJb
             Chain<Local> locals = body.getLocals();
             PatchingChain<Unit> units = body.getUnits();
 
-            Local ths = BodyBuilder.buildThisLocal(units, thisRef, locals);
-            List<Local> args = BodyBuilder.buildParameterLocals(units, locals, paramTypes);
+            Local ths = BodyBuilder.buildThisLocal(units, thisRef, locals, jimple);
+            List<Local> args = BodyBuilder.buildParameterLocals(units, locals, paramTypes, jimple);
 
             SootMethodRef superclassMethodRef = originalSuperclassMethod.makeRef();
             if (returnType instanceof VoidType) {
@@ -248,8 +247,8 @@ public class BuildIntermediateAppClasses extends SceneTransformer implements IJb
                     PatchingChain<Unit> initUnits = body.getUnits();
                     Collection<Local> locals = body.getLocals();
 
-                    Local ths = BodyBuilder.buildThisLocal(initUnits, thisRef, locals);
-                    List<Local> args = BodyBuilder.buildParameterLocals(initUnits, locals, paramTypes);
+                    Local ths = BodyBuilder.buildThisLocal(initUnits, thisRef, locals, jimple);
+                    List<Local> args = BodyBuilder.buildParameterLocals(initUnits, locals, paramTypes, jimple);
 
                     initUnits.add(myJimple.newInvokeStmt(myJimple.newSpecialInvokeExpr(ths, smr, args)));
                     initUnits.add(myJimple.newReturnVoidStmt());

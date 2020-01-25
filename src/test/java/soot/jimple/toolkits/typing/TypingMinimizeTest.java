@@ -248,12 +248,12 @@ public class TypingMinimizeTest {
     Local x1 = new JimpleLocal("$x1", null, myScene);
     Typing resultTyping;
 
-    Typing typing1 = new Typing(Arrays.asList(x1));
+    Typing typing1 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing1.set(x1, Type1);
     typingList.add(typing1);
     resultTyping = typing1;
 
-    Typing typing2 = new Typing(Arrays.asList(x1));
+    Typing typing2 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing2.set(x1, Type2);
     typingList.add(typing2);
 
@@ -275,15 +275,15 @@ public class TypingMinimizeTest {
     Type Type3 = numberType;
     Local x1 = new JimpleLocal("$x1", null, myScene);
 
-    Typing typing1 = new Typing(Arrays.asList(x1));
+    Typing typing1 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing1.set(x1, Type1);
     typingList.add(typing1);
 
-    Typing typing2 = new Typing(Arrays.asList(x1));
+    Typing typing2 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing2.set(x1, Type2);
     typingList.add(typing2);
 
-    Typing typing3 = new Typing(Arrays.asList(x1));
+    Typing typing3 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing3.set(x1, Type3);
     typingList.add(typing3);
 
@@ -303,19 +303,19 @@ public class TypingMinimizeTest {
     Type Type4 = objectType;
     Local x1 = new JimpleLocal("$x1", null, myScene);
 
-    Typing typing1 = new Typing(Arrays.asList(x1));
+    Typing typing1 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing1.set(x1, Type1);
     typingList.add(typing1);
 
-    Typing typing2 = new Typing(Arrays.asList(x1));
+    Typing typing2 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing2.set(x1, Type2);
     typingList.add(typing2);
 
-    Typing typing3 = new Typing(Arrays.asList(x1));
+    Typing typing3 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing3.set(x1, Type3);
     typingList.add(typing3);
 
-    Typing typing4 = new Typing(Arrays.asList(x1));
+    Typing typing4 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing4.set(x1, Type4);
     typingList.add(typing4);
 
@@ -336,15 +336,15 @@ public class TypingMinimizeTest {
 
     Local x1 = new JimpleLocal("$x1", null, myScene);
 
-    Typing typing1 = new Typing(Arrays.asList(x1));
+    Typing typing1 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing1.set(x1, Type1);
     typingList.add(typing1);
 
-    Typing typing2 = new Typing(Arrays.asList(x1));
+    Typing typing2 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing2.set(x1, Type2);
     typingList.add(typing2);
 
-    Typing typing3 = new Typing(Arrays.asList(x1));
+    Typing typing3 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing3.set(x1, Type3);
     typingList.add(typing3);
 
@@ -370,49 +370,49 @@ public class TypingMinimizeTest {
     Local x2 = new JimpleLocal("$x2", null, myScene);
     Local x3 = new JimpleLocal("$x3", null, myScene);
 
-    Typing typing1 = new Typing(Arrays.asList(x1, x2, x3));
+    Typing typing1 = new Typing(primeTypeCollector, Arrays.asList(x1, x2, x3));
     typing1.set(x1, Type1);
     typing1.set(x2, Type1);
     typing1.set(x3, Type1);
     typingList.add(typing1);
 
-    Typing typing2 = new Typing(Arrays.asList(x1, x2, x3));
+    Typing typing2 = new Typing(primeTypeCollector, Arrays.asList(x1, x2, x3));
     typing2.set(x1, Type2);
     typing2.set(x2, Type1);
     typing2.set(x3, Type1);
     typingList.add(typing2);
 
-    Typing typing3 = new Typing(Arrays.asList(x1, x2, x3));
+    Typing typing3 = new Typing(primeTypeCollector, Arrays.asList(x1, x2, x3));
     typing3.set(x1, Type1);
     typing3.set(x2, Type2);
     typing3.set(x3, Type1);
     typingList.add(typing3);
 
-    Typing typing4 = new Typing(Arrays.asList(x1, x2, x3));
+    Typing typing4 = new Typing(primeTypeCollector, Arrays.asList(x1, x2, x3));
     typing4.set(x1, Type1);
     typing4.set(x2, Type1);
     typing4.set(x3, Type2);
     typingList.add(typing4);
 
-    Typing typing5 = new Typing(Arrays.asList(x1, x2, x3));
+    Typing typing5 = new Typing(primeTypeCollector, Arrays.asList(x1, x2, x3));
     typing5.set(x1, Type2);
     typing5.set(x2, Type2);
     typing5.set(x3, Type1);
     typingList.add(typing5);
 
-    Typing typing6 = new Typing(Arrays.asList(x1, x2, x3));
+    Typing typing6 = new Typing(primeTypeCollector, Arrays.asList(x1, x2, x3));
     typing6.set(x1, Type2);
     typing6.set(x2, Type1);
     typing6.set(x3, Type2);
     typingList.add(typing6);
 
-    Typing typing7 = new Typing(Arrays.asList(x1, x2, x3));
+    Typing typing7 = new Typing(primeTypeCollector, Arrays.asList(x1, x2, x3));
     typing7.set(x1, Type1);
     typing7.set(x2, Type2);
     typing7.set(x3, Type2);
     typingList.add(typing7);
 
-    Typing typing8 = new Typing(Arrays.asList(x1, x2, x3));
+    Typing typing8 = new Typing(primeTypeCollector, Arrays.asList(x1, x2, x3));
     typing8.set(x1, Type2);
     typing8.set(x2, Type2);
     typing8.set(x3, Type2);
@@ -431,15 +431,15 @@ public class TypingMinimizeTest {
 
     Local x1 = new JimpleLocal("$x1", null, myScene);
 
-    Typing typing1 = new Typing(Arrays.asList(x1));
+    Typing typing1 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing1.set(x1, interfaceType);
     typingList.add(typing1);
 
-    Typing typing2 = new Typing(Arrays.asList(x1));
+    Typing typing2 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing2.set(x1, abstractClass_Interface2Type);
     typingList.add(typing2);
 
-    Typing typing3 = new Typing(Arrays.asList(x1));
+    Typing typing3 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing3.set(x1, class_AbstractInterfaceClassType);
     typingList.add(typing3);
 
@@ -457,15 +457,15 @@ public class TypingMinimizeTest {
     List<Typing> typingList = new ArrayList<>();
     Local x1 = new JimpleLocal("$x1", null, myScene);
 
-    Typing typing1 = new Typing(Arrays.asList(x1));
+    Typing typing1 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing1.set(x1, interfaceType);
     typingList.add(typing1);
 
-    Typing typing2 = new Typing(Arrays.asList(x1));
+    Typing typing2 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing2.set(x1, abstractClass_Interface1Type);
     typingList.add(typing2);
 
-    Typing typing3 = new Typing(Arrays.asList(x1));
+    Typing typing3 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing3.set(x1, abstractClass_Interface2Type);
     typingList.add(typing3);
 
@@ -482,15 +482,15 @@ public class TypingMinimizeTest {
 
     Local x1 = new JimpleLocal("$x1", null, myScene);
 
-    Typing typing1 = new Typing(Arrays.asList(x1));
+    Typing typing1 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing1.set(x1, interfaceType);
     typingList.add(typing1);
 
-    Typing typing2 = new Typing(Arrays.asList(x1));
+    Typing typing2 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing2.set(x1, integerType);
     typingList.add(typing2);
 
-    Typing typing3 = new Typing(Arrays.asList(x1));
+    Typing typing3 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing3.set(x1, numberType);
     typingList.add(typing3);
 
@@ -507,15 +507,15 @@ public class TypingMinimizeTest {
 
     Local x1 = new JimpleLocal("$x1", null, myScene);
 
-    Typing typing1 = new Typing(Arrays.asList(x1));
+    Typing typing1 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing1.set(x1, interfaceType);
     typingList.add(typing1);
 
-    Typing typing2 = new Typing(Arrays.asList(x1));
+    Typing typing2 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing2.set(x1, interfaceInterfaceType);
     typingList.add(typing2);
 
-    Typing typing3 = new Typing(Arrays.asList(x1));
+    Typing typing3 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing3.set(x1, numberType);
     typingList.add(typing3);
 
@@ -537,47 +537,47 @@ public class TypingMinimizeTest {
     List<Typing> typingList = new ArrayList<>();
     Local x1 = new JimpleLocal("$x1", null, myScene);
 
-    Typing typing1 = new Typing(Arrays.asList(x1));
+    Typing typing1 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing1.set(x1, objectType);
     typingList.add(typing1);
 
-    Typing typing2 = new Typing(Arrays.asList(x1));
+    Typing typing2 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing2.set(x1, stringType);
     typingList.add(typing2);
 
-    Typing typing3 = new Typing(Arrays.asList(x1));
+    Typing typing3 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing3.set(x1, comparableType);
     typingList.add(typing3);
 
-    Typing typing4 = new Typing(Arrays.asList(x1));
+    Typing typing4 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing4.set(x1, abstractClass_Interface2Type);
     typingList.add(typing4);
 
-    Typing typing5 = new Typing(Arrays.asList(x1));
+    Typing typing5 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing5.set(x1, class_AbstractInterfaceClassType);
     typingList.add(typing5);
 
-    Typing typing6 = new Typing(Arrays.asList(x1));
+    Typing typing6 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing6.set(x1, abstractClass_Interface1Type);
     typingList.add(typing6);
 
-    Typing typing7 = new Typing(Arrays.asList(x1));
+    Typing typing7 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing7.set(x1, class_InterfaceType);
     typingList.add(typing7);
 
-    Typing typing8 = new Typing(Arrays.asList(x1));
+    Typing typing8 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing8.set(x1, abstractType);
     typingList.add(typing8);
 
-    Typing typing9 = new Typing(Arrays.asList(x1));
+    Typing typing9 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing9.set(x1, class_AbstractType);
     typingList.add(typing9);
 
-    Typing typing10 = new Typing(Arrays.asList(x1));
+    Typing typing10 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing10.set(x1, fatherClassType);
     typingList.add(typing10);
 
-    Typing typing11 = new Typing(Arrays.asList(x1));
+    Typing typing11 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing11.set(x1, childClassType);
     typingList.add(typing11);
 
@@ -596,35 +596,35 @@ public class TypingMinimizeTest {
     List<Typing> typingList = new ArrayList<>();
     Local x1 = new JimpleLocal("$x1", null, myScene);
 
-    Typing typing1 = new Typing(Arrays.asList(x1));
+    Typing typing1 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing1.set(x1, objectType);
     typingList.add(typing1);
 
-    Typing typing2 = new Typing(Arrays.asList(x1));
+    Typing typing2 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing2.set(x1, stringType);
     typingList.add(typing2);
 
-    Typing typing3 = new Typing(Arrays.asList(x1));
+    Typing typing3 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing3.set(x1, cloneableType);
     typingList.add(typing3);
 
-    Typing typing4 = new Typing(Arrays.asList(x1));
+    Typing typing4 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing4.set(x1, integerType);
     typingList.add(typing4);
 
-    Typing typing5 = new Typing(Arrays.asList(x1));
+    Typing typing5 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing5.set(x1, processType);
     typingList.add(typing5);
 
-    Typing typing6 = new Typing(Arrays.asList(x1));
+    Typing typing6 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing6.set(x1, interfaceType);
     typingList.add(typing6);
 
-    Typing typing7 = new Typing(Arrays.asList(x1));
+    Typing typing7 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing7.set(x1, abstractType);
     typingList.add(typing7);
 
-    Typing typing8 = new Typing(Arrays.asList(x1));
+    Typing typing8 = new Typing(primeTypeCollector, Arrays.asList(x1));
     typing8.set(x1, fatherClassType);
     typingList.add(typing8);
 

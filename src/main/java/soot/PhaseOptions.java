@@ -40,7 +40,7 @@ public class PhaseOptions {
    * Needed for preventing infinite recursion in constructor. Termination is assured: each constructor is called exactly
    * once. Here is a case analysis. a. PackManager used first. Then its constructor needs PhaseOptions, which also needs a
    * PackManager; OK because we store the PackManager being initialized in a field. b. PhaseOptions used first. Then getPM()
-   * calls PackmyManager, which calls the constr, which sets the .pm field here, uses PhaseOptions (which uses PackManager),
+   * calls myPackManager, which calls the constr, which sets the .pm field here, uses PhaseOptions (which uses PackManager),
    * and returns. OK.
    */
   private PackManager myPackManager;

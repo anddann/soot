@@ -23,16 +23,20 @@ package soot.jimple.toolkits.thread.synchronization;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.SootClass;
 
 public class DeadlockAvoidanceEdge extends NewStaticLock {
-  public DeadlockAvoidanceEdge(SootClass sc) {
+  private final PrimTypeCollector primTypeCollector;
+
+  public DeadlockAvoidanceEdge(SootClass sc, PrimTypeCollector primTypeCollector) {
     super(sc, primTypeCollector);
+    this.primTypeCollector = primTypeCollector;
   }
 
   /** Clones the object. */
   public Object clone() {
-    return new DeadlockAvoidanceEdge(sc);
+    return new DeadlockAvoidanceEdge(sc, primTypeCollector);
   }
 
   public boolean equals(Object c) {

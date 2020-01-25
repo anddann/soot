@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import soot.EquivalentValue;
 import soot.MethodOrMethodContext;
-import soot.Scene;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.spark.pag.PAG;
@@ -299,7 +298,7 @@ public class DeadlockDetector {
                         + ") and " + lock2Num + " (" + lock2 + ") ");
 
                     // Create a deadlock avoidance edge
-                    DeadlockAvoidanceEdge dae = new DeadlockAvoidanceEdge(tn1.method.getDeclaringClass());
+                    DeadlockAvoidanceEdge dae = new DeadlockAvoidanceEdge(tn1.method.getDeclaringClass(), primTypeCollector);
                     EquivalentValue daeEqVal = new EquivalentValue(dae);
 
                     // Register it as a static lock

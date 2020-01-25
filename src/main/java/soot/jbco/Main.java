@@ -248,9 +248,9 @@ public class Main {
         System.exit(0);
       }
 
-      Pack wjtp = PackmyManager.getPack("wjtp");
-      Pack jtp = PackmyManager.getPack("jtp");
-      Pack bb = PackmyManager.getPack("bb");
+      Pack wjtp = myPackManager.getPack("wjtp");
+      Pack jtp = myPackManager.getPack("jtp");
+      Pack bb = myPackManager.getPack("bb");
 
       if (transformsToAdd.contains("jtp.jbco_adss")) {
         wjtp.add(new Transform("wjtp.jbco_fr", newTransform((Transformer) getTransform("wjtp.jbco_fr"))));

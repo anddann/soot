@@ -22,6 +22,8 @@ package soot.dava.toolkits.base.misc;
  * #L%
  */
 
+import soot.PrimTypeCollector;
+import soot.grimp.Grimp;
 import soot.grimp.internal.GEqExpr;
 import soot.grimp.internal.GGeExpr;
 import soot.grimp.internal.GGtExpr;
@@ -37,29 +39,29 @@ import soot.jimple.LtExpr;
 import soot.jimple.NeExpr;
 
 public class ConditionFlipper {
-  public static ConditionExpr flip(ConditionExpr ce) {
+  public static ConditionExpr flip(ConditionExpr ce, Grimp myGrimp, PrimTypeCollector primeTypeCollector) {
     if (ce instanceof EqExpr) {
       return new GNeExpr(ce.getOp1(), ce.getOp2());
     }
 
     if (ce instanceof NeExpr) {
-      return new GEqExpr(ce.getOp1(), ce.getOp2());
+      return new GEqExpr(ce.getOp1(), ce.getOp2(), myGrimp, primeTypeCollector);
     }
 
     if (ce instanceof GtExpr) {
-      return new GLeExpr(ce.getOp1(), ce.getOp2());
+      return new GLeExpr(ce.getOp1(), ce.getOp2(), myGrimp, primeTypeCollector);
     }
 
     if (ce instanceof LtExpr) {
-      return new GGeExpr(ce.getOp1(), ce.getOp2());
+      return new GGeExpr(ce.getOp1(), ce.getOp2(), myGrimp, primeTypeCollector);
     }
 
     if (ce instanceof GeExpr) {
-      return new GLtExpr(ce.getOp1(), ce.getOp2());
+      return new GLtExpr(ce.getOp1(), ce.getOp2(), myGrimp, primeTypeCollector);
     }
 
     if (ce instanceof LeExpr) {
-      return new GGtExpr(ce.getOp1(), ce.getOp2());
+      return new GGtExpr(ce.getOp1(), ce.getOp2(), myGrimp, primeTypeCollector);
     }
 
     return null;

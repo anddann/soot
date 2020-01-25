@@ -381,7 +381,7 @@ public class Grimp {
    */
 
   public NewArrayExpr newNewArrayExpr(Type type, Value size) {
-    return new GNewArrayExpr(type, size);
+    return new GNewArrayExpr(type, size, myGrimp);
   }
 
   /**
@@ -437,7 +437,7 @@ public class Grimp {
    */
 
   public InterfaceInvokeExpr newInterfaceInvokeExpr(Local base, SootMethodRef method, List args) {
-    return new GInterfaceInvokeExpr(base, method, args);
+    return new GInterfaceInvokeExpr(base, method, args, myGrimp);
   }
 
   /**

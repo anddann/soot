@@ -1205,7 +1205,7 @@ public class PackManager {
         }
       }
 
-      // PackmyManager.getPack("cfg").apply(m.retrieveActiveBody());
+      // myPackManager.getPack("cfg").apply(m.retrieveActiveBody());
 
       if (produceGrimp) {
         m.setActiveBody(myGrimp.newBody(m.getActiveBody(), "gb", myOptions, myPrinter, myGrimp, this));

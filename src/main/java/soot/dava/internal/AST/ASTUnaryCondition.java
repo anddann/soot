@@ -22,16 +22,22 @@ package soot.dava.internal.AST;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.UnitPrinter;
 import soot.Value;
 import soot.dava.internal.javaRep.DNotExpr;
 import soot.dava.toolkits.base.AST.analysis.Analysis;
+import soot.grimp.Grimp;
 
 public class ASTUnaryCondition extends ASTUnaryBinaryCondition {
   Value value;
+  private Grimp myGrimp;
+  private PrimTypeCollector primTypeCollector;
 
-  public ASTUnaryCondition(Value value) {
+  public ASTUnaryCondition(Value value, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
     this.value = value;
+    this.myGrimp = myGrimp;
+    this.primTypeCollector = primTypeCollector;
   }
 
   public void apply(Analysis a) {

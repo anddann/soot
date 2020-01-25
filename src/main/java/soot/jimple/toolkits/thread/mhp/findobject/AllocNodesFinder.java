@@ -110,7 +110,7 @@ public class AllocNodesFinder {
 
       else {
         // MultiRunStatementsFinder finder = new MultiRunStatementsFinder(graph, sm);
-        MultiRunStatementsFinder finder = new MultiRunStatementsFinder(graph, sm, multiCalledMethods, callGraph, getMyInteractionHandler(), isInteraticveMode());
+        MultiRunStatementsFinder finder = new MultiRunStatementsFinder(graph, sm, multiCalledMethods, callGraph, myInteractionHandler, isInteraticveMode());
         FlowSet fs = finder.getMultiRunStatements();
         // methodsToMultiObjsSites.put(sm, fs);
         // PatchingChain pc = sm.getActiveBody().getUnits();

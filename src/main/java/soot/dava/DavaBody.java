@@ -108,6 +108,7 @@ import soot.dava.toolkits.base.finders.SequenceFinder;
 import soot.dava.toolkits.base.finders.SwitchFinder;
 import soot.dava.toolkits.base.finders.SynchronizedBlockFinder;
 import soot.dava.toolkits.base.misc.MonitorConverter;
+import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.dava.toolkits.base.misc.ThrowNullConverter;
 import soot.grimp.Grimp;
 import soot.grimp.GrimpBody;
@@ -133,6 +134,7 @@ import soot.jimple.IntConstant;
 import soot.jimple.InterfaceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.InvokeStmt;
+import soot.jimple.Jimple;
 import soot.jimple.LengthExpr;
 import soot.jimple.LookupSwitchStmt;
 import soot.jimple.MonitorStmt;
@@ -209,6 +211,8 @@ public class DavaBody extends Body {
   private final PhaseOptions myPhaseOptions;
   private final TryContentsFinder myTryContentsFinder;
   private final ASTWalker myASTWalker;
+  private final PackageNamer myPackageNamer;
+  private final PrimTypeCollector primeTypeCollector;
   public boolean DEBUG = false;
   private Map<Integer, Value> pMap;
 
@@ -234,8 +238,9 @@ public class DavaBody extends Body {
   private PrimTypeCollector primTypeCollector;
   private Baf myBaf;
     private Scene myScene;
+  private Jimple myJimple;
 
-    /**
+  /**
    * Construct an empty DavaBody
    */
 
@@ -243,7 +248,7 @@ public class DavaBody extends Body {
            IfFinder myIfFinder, SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder,
            SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            MonitorConverter myMonitorConverter, ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover,
-           PhaseOptions myPhaseOptions, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constancFactory, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf, Scene myScene) {
+           PhaseOptions myPhaseOptions, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, PackageNamer myPackageNamer, PrimTypeCollector primeTypeCollector, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constancFactory, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf, Scene myScene, Jimple myJimple) {
     super(m, myOptions, myPrinter);
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -259,6 +264,8 @@ public class DavaBody extends Body {
     this.myPhaseOptions = myPhaseOptions;
     this.myTryContentsFinder = myTryContentsFinder;
     this.myASTWalker = myASTWalker;
+    this.myPackageNamer = myPackageNamer;
+    this.primeTypeCollector = primeTypeCollector;
     this.myDava = myDava;
     this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     this.constancFactory = constancFactory;
@@ -266,8 +273,9 @@ public class DavaBody extends Body {
     this.primTypeCollector = primTypeCollector;
     this.myBaf = myBaf;
       this.myScene = myScene;
+    this.myJimple = myJimple;
 
-      pMap = new HashMap<Integer, Value>();
+    pMap = new HashMap<Integer, Value>();
     consumedConditions = new HashSet<Object>();
     thisLocals = new HashSet<Object>();
     synchronizedBlockFacts = new IterableSet<ExceptionNode>();
@@ -360,10 +368,10 @@ public class DavaBody extends Body {
            ThrowNullConverter myThrowNullConverter, SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder,
            CycleFinder myCycleFinder, IfFinder myIfFinder, SwitchFinder mySwitchFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene) {
+           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, PrimTypeCollector primeTypeCollector, PackageNamer myPackageNamer, Jimple myJimple) {
     this(body.getMethod(), myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myDava, myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector, myBaf, myScene);
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myPackageNamer, primeTypeCollector, myDava, myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector, myBaf, myScene, myJimple);
     debug("DavaBody", "creating DavaBody for" + body.getMethod().toString());
     this.myDava.log("\nstart method " + body.getMethod().toString());
 
@@ -440,7 +448,7 @@ public class DavaBody extends Body {
       boolean force = PhaseOptions.getBoolean(options, "enabled");
       // System.out.println("force is "+force);
       if (force) {
-        AST.apply(new SuperFirstStmtHandler((ASTMethodNode) AST, myTryContentsFinder, myASTWalker, myScene, myOptions, myPackageNamer, primeTypeCollector, myGrimp, myBaf, constancFactory));
+        AST.apply(new SuperFirstStmtHandler((ASTMethodNode) AST, myTryContentsFinder, myASTWalker, myScene, myOptions, this.myPackageNamer, this.primeTypeCollector, myGrimp, myBaf, constancFactory));
       }
 
       debug("DavaBody", "PreInit booleans is" + G.v().SootMethodAddedByDava);
@@ -808,10 +816,10 @@ public class DavaBody extends Body {
         if (s instanceof IfStmt) {
           IfStmt ifs = (IfStmt) s;
 
-          JGotoStmt jgs = new JGotoStmt((Unit) units.getSuccOf(u));
+          JGotoStmt jgs = new JGotoStmt((Unit) units.getSuccOf(u),myJimple);
           units.insertAfter(jgs, u);
 
-          JGotoStmt jumper = new JGotoStmt((Unit) ifs.getTarget());
+          JGotoStmt jumper = new JGotoStmt((Unit) ifs.getTarget(),myJimple);
           units.insertAfter(jumper, jgs);
           ifs.setTarget((Unit) jumper);
         }
@@ -821,12 +829,12 @@ public class DavaBody extends Body {
 
           int targetCount = tss.getHighIndex() - tss.getLowIndex() + 1;
           for (int i = 0; i < targetCount; i++) {
-            JGotoStmt jgs = new JGotoStmt((Unit) tss.getTarget(i));
+            JGotoStmt jgs = new JGotoStmt((Unit) tss.getTarget(i),myJimple);
             units.insertAfter(jgs, tss);
             tss.setTarget(i, (Unit) jgs);
           }
 
-          JGotoStmt jgs = new JGotoStmt((Unit) tss.getDefaultTarget());
+          JGotoStmt jgs = new JGotoStmt((Unit) tss.getDefaultTarget(),myJimple);
           units.insertAfter(jgs, tss);
           tss.setDefaultTarget((Unit) jgs);
         }
@@ -835,19 +843,19 @@ public class DavaBody extends Body {
           LookupSwitchStmt lss = (LookupSwitchStmt) s;
 
           for (int i = 0; i < lss.getTargetCount(); i++) {
-            JGotoStmt jgs = new JGotoStmt((Unit) lss.getTarget(i));
+            JGotoStmt jgs = new JGotoStmt((Unit) lss.getTarget(i),myJimple);
             units.insertAfter(jgs, lss);
             lss.setTarget(i, (Unit) jgs);
           }
 
-          JGotoStmt jgs = new JGotoStmt((Unit) lss.getDefaultTarget());
+          JGotoStmt jgs = new JGotoStmt((Unit) lss.getDefaultTarget(),myJimple);
           units.insertAfter(jgs, lss);
           lss.setDefaultTarget((Unit) jgs);
         }
       }
 
       for (Trap t : getTraps()) {
-        JGotoStmt jgs = new JGotoStmt((Unit) t.getHandlerUnit());
+        JGotoStmt jgs = new JGotoStmt((Unit) t.getHandlerUnit(),myJimple);
         units.addLast(jgs);
         t.setHandlerUnit((Unit) jgs);
       }

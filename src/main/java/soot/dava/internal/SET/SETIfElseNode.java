@@ -76,7 +76,7 @@ public class SETIfElseNode extends SETDagNode {
       astBody0 = astBody1;
       astBody1 = tbody;
 
-      ce = ConditionFlipper.flip(ce);
+      ce = ConditionFlipper.flip(ce, myGrimp, primeTypeCollector);
     }
 
     if (astBody1.isEmpty()) {

@@ -161,7 +161,7 @@ public class XMLPrinter {
      * // build an invoke graph based on class hiearchy analysis InvokeGraph igCHA = myScene.getActiveInvokeGraph();
      *
      * // build an invoke graph based on variable type analysis InvokeGraph igVTA = myScene.getActiveInvokeGraph(); try {
-     * VariableTypeAnalysis vta = null; int VTApasses = 1; //Options.getInt( PackmyManager.getPhaseOptions( "jil.igb" ),
+     * VariableTypeAnalysis vta = null; int VTApasses = 1; //Options.getInt( myPackManager.getPhaseOptions( "jil.igb" ),
      * "VTA-passes" ); for (int i = 0; i < VTApasses; i++) { vta = new VariableTypeAnalysis(igVTA);
      * vta.trimActiveInvokeGraph(); igVTA.refreshReachableMethods(); } } catch (RuntimeException re) { // this will fail if
      * the --analyze-context flag is not specified // logger.debug(""+ "JIL VTA FAILED: " + re ); igVTA = null; }

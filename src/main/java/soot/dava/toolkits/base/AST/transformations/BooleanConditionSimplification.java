@@ -66,7 +66,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
       Value unary = checkBooleanUse(condExpr);
       if (unary != null) {
-        node.set_Condition(new ASTUnaryCondition(unary));
+        node.set_Condition(new ASTUnaryCondition(unary, myGrimp, primTypeCollector));
       }
     }
   }
@@ -77,7 +77,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
       Value unary = checkBooleanUse(condExpr);
       if (unary != null) {
-        node.set_Condition(new ASTUnaryCondition(unary));
+        node.set_Condition(new ASTUnaryCondition(unary, myGrimp, primTypeCollector));
       }
     }
   }
@@ -88,7 +88,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
       Value unary = checkBooleanUse(condExpr);
       if (unary != null) {
-        node.set_Condition(new ASTUnaryCondition(unary));
+        node.set_Condition(new ASTUnaryCondition(unary, myGrimp, primTypeCollector));
       }
     }
   }
@@ -99,7 +99,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
       Value unary = checkBooleanUse(condExpr);
       if (unary != null) {
-        node.set_Condition(new ASTUnaryCondition(unary));
+        node.set_Condition(new ASTUnaryCondition(unary, myGrimp, primTypeCollector));
       }
     }
   }

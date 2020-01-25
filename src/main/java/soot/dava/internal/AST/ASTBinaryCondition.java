@@ -51,7 +51,7 @@ public class ASTBinaryCondition extends ASTUnaryBinaryCondition {
   }
 
   public void flip() {
-    this.condition = ConditionFlipper.flip(condition);
+    this.condition = ConditionFlipper.flip(condition, myGrimp, primeTypeCollector);
   }
 
   /*

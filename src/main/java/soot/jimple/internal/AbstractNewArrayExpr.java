@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import soot.ArrayType;
+import soot.Scene;
 import soot.Type;
 import soot.Unit;
 import soot.UnitPrinter;
@@ -43,10 +44,12 @@ import soot.util.Switch;
 public abstract class AbstractNewArrayExpr implements NewArrayExpr, ConvertToBaf {
   Type baseType;
   final ValueBox sizeBox;
+  private Scene myScene;
 
-  protected AbstractNewArrayExpr(Type type, ValueBox sizeBox) {
+  protected AbstractNewArrayExpr(Type type, ValueBox sizeBox, Scene myScene) {
     this.baseType = type;
     this.sizeBox = sizeBox;
+    this.myScene = myScene;
   }
 
   public boolean equivTo(Object o) {
@@ -120,9 +123,9 @@ public abstract class AbstractNewArrayExpr implements NewArrayExpr, ConvertToBaf
 
   public Type getType() {
     if (baseType instanceof ArrayType) {
-      return ArrayType.v(((ArrayType) baseType).baseType, ((ArrayType) baseType).numDimensions + 1);
+      return ArrayType.v(((ArrayType) baseType).baseType, ((ArrayType) baseType).numDimensions + 1,myScene);
     } else {
-      return ArrayType.v(baseType, 1);
+      return ArrayType.v(baseType, 1,myScene);
     }
   }
 
