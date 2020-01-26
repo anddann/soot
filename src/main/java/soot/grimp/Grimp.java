@@ -874,14 +874,14 @@ public class Grimp {
     /**
      * Returns an empty GrimpBody associated with method m.
      */
-    public static GrimpBody newBody(SootMethod m, Options myOptions, Printer myPrinter) {
+    public static GrimpBody newBody(SootMethod m, Options myOptions, Printer myPrinter, ConstantFactory constantFactory) {
         return new GrimpBody(m, myOptions, myPrinter, constantFactory);
     }
 
     /**
      * Returns a GrimpBody constructed from b.
      */
-    public static GrimpBody newBody(Body b, String phase, Options myOptions, Printer myPrinter, Grimp grimp, PackManager manager) {
+    public static GrimpBody newBody(Body b, String phase, Options myOptions, Printer myPrinter, PackManager manager, ConstantFactory constantFactory) {
         return new GrimpBody(b, myOptions, myPrinter, manager, constantFactory);
     }
 

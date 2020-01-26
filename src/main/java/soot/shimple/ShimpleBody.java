@@ -109,7 +109,7 @@ public class ShimpleBody extends StmtBody {
     isExtendedSSA = this.options.extended();
 
     unitChain = new SPatchingChain(this, new HashChain());
-    sbb = new ShimpleBodyBuilder(this.myNopEliminator, myShimple, , this.myCopyPropagator, this.myInteractionHander, myOptions, this, this.myDeadAssignmentEliminator, this.myUnreachableCodeEliminator, this.myUnconditionalBranchFolder, this.myAggregator, this.myUnusedLocalEliminator, this.myLocalNameStandardizer, this.myScene);
+    sbb = new ShimpleBodyBuilder(this.myNopEliminator, myShimple , this.myCopyPropagator, this.myInteractionHander, myOptions, this, this.myDeadAssignmentEliminator, this.myUnreachableCodeEliminator, this.myUnconditionalBranchFolder, this.myAggregator, this.myUnusedLocalEliminator, this.myLocalNameStandardizer, this.myScene);
   }
 
   /**
@@ -149,7 +149,7 @@ public class ShimpleBody extends StmtBody {
     importBodyContentsFrom(body);
 
     /* Shimplise body */
-    sbb = new ShimpleBodyBuilder(this.myNopEliminator, myShimple, , this.myCopyPropagator, this.myInteractionHander, myOptions, this, this.myDeadAssignmentEliminator, this.myUnreachableCodeEliminator, this.myUnconditionalBranchFolder, this.myAggregator, this.myUnusedLocalEliminator, this.myLocalNameStandardizer, this.myScene);
+    sbb = new ShimpleBodyBuilder(this.myNopEliminator, myShimple , this.myCopyPropagator, this.myInteractionHander, myOptions, this, this.myDeadAssignmentEliminator, this.myUnreachableCodeEliminator, this.myUnconditionalBranchFolder, this.myAggregator, this.myUnusedLocalEliminator, this.myLocalNameStandardizer, this.myScene);
 
     if (body instanceof ShimpleBody) {
       rebuild(true);
@@ -198,13 +198,11 @@ public class ShimpleBody extends StmtBody {
    * Remember to setActiveBody() if necessary in your SootMethod.
    *
    * @see #eliminatePhiNodes()
-   *
-   * @param myJimplePar*/
-  public JimpleBody toJimpleBody(Jimple myJimplePar) {
+   * */
+  public JimpleBody toJimpleBody() {
     ShimpleBody sBody = (ShimpleBody) this.clone();
 
     sBody.eliminateNodes();
-    Jimple myJimple = myJimplePar;
     JimpleBody jBody = Jimple.newBody(sBody.getMethod(), myPrinter, myOptions);
     jBody.importBodyContentsFrom(sBody);
     return jBody;
@@ -218,7 +216,7 @@ public class ShimpleBody extends StmtBody {
    * naive-phi-elimination) which skips the dead code elimination and register allocation phase before eliminating Phi nodes.
    * This can be useful for understanding the effect of analyses.
    *
-   * @see #toJimpleBody(Jimple)
+   * @see #toJimpleBody()
    **/
   public void eliminatePhiNodes() {
     sbb.preElimOpt();

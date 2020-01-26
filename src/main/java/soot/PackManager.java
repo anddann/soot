@@ -64,6 +64,7 @@ import soot.dava.DavaStaticBlockCleaner;
 import soot.dava.toolkits.base.AST.interProcedural.InterProceduralAnalyses;
 import soot.dava.toolkits.base.AST.transformations.RemoveEmptyBodyDefaultConstructor;
 import soot.dava.toolkits.base.AST.transformations.VoidReturnRemover;
+import soot.dava.toolkits.base.AST.traversals.ClosestAbruptTargetFinder;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.dava.toolkits.base.misc.ThrowFinder;
 import soot.grimp.Grimp;
@@ -243,8 +244,9 @@ public class PackManager {
   private ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer;
   private UnreachableMethodTransformer myUnreachableMethodTransformer;
     private ConstantFactory constantFactory;
+  private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
 
-    @Inject
+  @Inject
   public PackManager(PhaseOptions myPhaseOptions, FieldTagger myFieldTagger, Options myOptions,
                      SourceLocator mySourceLocator, TrapTightener myTrapTightener,
                      DuplicateCatchAllTrapRemover myDuplicateCatchAllTrapRemover, LocalSplitter myLocalSplitter,
@@ -274,12 +276,12 @@ public class PackManager {
                      FieldTagAggregator myFieldTagAggregator, LineNumberAdder myLineNumberAdder, InteractionHandler myInteractionHandler,
                      PhaseDumper myPhaseDumper, ShimpleTransformer myShimpleTransformer, ThrowFinder myThrowFinder,
                      PackageNamer myPackageNamer, InnerClassTagAggregator myInnerClassTagAggregator,
-                     DavaStaticBlockCleaner myDavaStaticBlockCleaner, DavaPrinter myDavaPrinter, Shimple myShimple, ,
+                     DavaStaticBlockCleaner myDavaStaticBlockCleaner, DavaPrinter myDavaPrinter, Shimple myShimpl,
                      Dava myDava, Baf myBaf, Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter,
                      NullCheckEliminator myNullCheckEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer,
                      EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter,
                      ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer,
-                     UnreachableMethodTransformer myUnreachableMethodTransformer, ConstantFactory constantFactory) {
+                     UnreachableMethodTransformer myUnreachableMethodTransformer, ConstantFactory constantFactory, ClosestAbruptTargetFinder myClosestAbruptTargetFinder) {
     this.myPhaseOptions = myPhaseOptions;
     this.myOptions = myOptions;
     // myPhaseOptions.setPackManager(this);
@@ -351,6 +353,7 @@ public class PackManager {
     this.myInnerClassTagAggregator = myInnerClassTagAggregator;
     this.myDavaStaticBlockCleaner = myDavaStaticBlockCleaner;
     this.myDavaPrinter = myDavaPrinter;
+    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     this.myShimple = myShimple;
 
     this.myDava = myDava;
@@ -769,7 +772,7 @@ public class PackManager {
 
   protected void writeDexOutput() {
     dexPrinter = new DexPrinter(myScene, myOptions, mySourceLocator, this, myEmptySwitchEliminator,
-        mySynchronizedMethodTransformer, myFastDexTrapTightener, myTrapSplitter, myJimple, constantFactory);
+        mySynchronizedMethodTransformer, myFastDexTrapTightener, myTrapSplitter,  constantFactory);
     writeOutput(reachableClasses());
     dexPrinter.print();
     dexPrinter = null;
@@ -993,7 +996,7 @@ public class PackManager {
      * HAVE TO invoke this analysis since this invokes the renamer!!
      */
     if (transformations) {
-      InterProceduralAnalyses.applyInterProceduralAnalyses(myScene, myPhaseOptions, constantFactory, myScene.getPrimTypeCollector(), myClosestAbruptTargetFinder, );
+      InterProceduralAnalyses.applyInterProceduralAnalyses(myScene, myPhaseOptions, constantFactory, myScene.getPrimTypeCollector(), myClosestAbruptTargetFinder);
     }
   }
 
@@ -1206,7 +1209,7 @@ public class PackManager {
       // myPackManager.getPack("cfg").apply(m.retrieveActiveBody());
 
       if (produceGrimp) {
-        m.setActiveBody(Grimp.newBody(m.getActiveBody(), "gb", myOptions, myPrinter,  this));
+        m.setActiveBody(Grimp.newBody(m.getActiveBody(), "gb", myOptions, myPrinter,  this, constantFactory));
         getPack("gop").apply(m.getActiveBody());
       } else if (produceBaf) {
         m.setActiveBody(convertJimpleBodyToBaf(m));

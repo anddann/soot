@@ -59,7 +59,7 @@ public class GrimpBody extends StmtBody {
     }
 
     public Object clone() {
-        Body b = Grimp.newBody(getMethod(), getMyOptions(), getMyPrinter());
+        Body b = Grimp.newBody(getMethod(), getMyOptions(), getMyPrinter(), constantFactory);
         b.importBodyContentsFrom(this);
         return b;
     }
