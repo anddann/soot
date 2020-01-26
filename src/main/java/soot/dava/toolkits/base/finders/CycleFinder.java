@@ -57,7 +57,6 @@ import soot.jimple.ConditionExpr;
 import soot.jimple.ConstantFactory;
 import soot.jimple.GotoStmt;
 import soot.jimple.IfStmt;
-import soot.jimple.Jimple;
 import soot.jimple.LookupSwitchStmt;
 import soot.jimple.Stmt;
 import soot.jimple.TableSwitchStmt;
@@ -71,18 +70,15 @@ public class CycleFinder implements FactFinder {
     private Dava myDava;
     private ConstantFactory constantFactory;
     private TryContentsFinder myTryContentsFinder;
-    private Jimple myJimple;
     private ExceptionFinder myExceptionFinder;
-    private Grimp myGrimp;
 
     @Inject
-    public CycleFinder(Dava myDava, ConstantFactory constantFactory, TryContentsFinder myTryContentsFinder, Jimple myJimple, ExceptionFinder myExceptionFinder, Grimp myGrimp) {
+    public CycleFinder(Dava myDava, ConstantFactory constantFactory, TryContentsFinder myTryContentsFinder, ExceptionFinder myExceptionFinder) {
         this.myDava = myDava;
         this.constantFactory = constantFactory;
         this.myTryContentsFinder = myTryContentsFinder;
-        this.myJimple = myJimple;
+
         this.myExceptionFinder = myExceptionFinder;
-        this.myGrimp = myGrimp;
     }
 
     public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException {
@@ -470,7 +466,7 @@ public class CycleFinder implements FactFinder {
                     predecessorSet.add(pas);
                 }
 
-                AssignStmt asnStmt = new GAssignStmt(controlLocal, constantFactory.createDIntConstant(count, null), myGrimp);
+                AssignStmt asnStmt = new GAssignStmt(controlLocal, constantFactory.createDIntConstant(count, null));
                 AugmentedStmt directionStmt = new AugmentedStmt(asnStmt);
 
                 directionStmtSet.add(directionStmt);

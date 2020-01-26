@@ -93,7 +93,7 @@ public class TemplatePrinter {
 
       // TODO modifiers, types
       println("SootMethod m = new SootMethod(\"" + m.getName() + "\",null,null);");
-      println("Body b = myJimple.newBody(m);");
+      println("Body b = Jimple.newBody(m);");
       println("m.setActiveBody(b);");
 
       if (!m.hasActiveBody()) {
@@ -106,7 +106,7 @@ public class TemplatePrinter {
       for (Local l : b.getLocals()) {
 
         // TODO properly treat primitive types
-        println("locals.add(myJimple.newLocal(\"" + l.getName() + "\", RefType.v(\"" + l.getType() + "\")));");
+        println("locals.add(Jimple.newLocal(\"" + l.getName() + "\", RefType.v(\"" + l.getType() + "\")));");
 
       }
 

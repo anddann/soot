@@ -52,19 +52,17 @@ import soot.options.Options;
 
 public class NewInstanceInstruction extends DexlibAbstractInstruction {
 
-  private Jimple myJimple;
   private Scene myScene;
   private DalvikTyper myDalvikTyper;
 
-  public NewInstanceInstruction(Instruction instruction, int codeAdress, Jimple myJimple, Options myOptions, Scene myScene, DalvikTyper myDalvikTyper) {
+  public NewInstanceInstruction(Instruction instruction, int codeAdress, Options myOptions, Scene myScene, DalvikTyper myDalvikTyper) {
     super(instruction, codeAdress, myOptions);
-    this.myJimple = myJimple;
     this.myScene = myScene;
     this.myDalvikTyper = myDalvikTyper;
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     Instruction21c i = (Instruction21c) instruction;
     int dest = i.getRegisterA();
     String className = dottedClassName(((TypeReference) (i.getReference())).toString(), myScene);

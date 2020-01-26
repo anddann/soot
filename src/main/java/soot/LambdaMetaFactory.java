@@ -60,14 +60,12 @@ public final class LambdaMetaFactory {
 
   private int uniq;
   private Scene myScene;
-  private Jimple myJimple;
   private LocalNameStandardizer myLocalNameStandardizer;
   private PrimTypeCollector primTypeCollector;
 
   @Inject
-  public LambdaMetaFactory(Scene myScene, Jimple myJimple, LocalNameStandardizer myLocalNameStandardizer,
-      PrimTypeCollector primTypeCollector) {
-    this.myJimple = myJimple;
+  public LambdaMetaFactory(Scene myScene, LocalNameStandardizer myLocalNameStandardizer,
+                           PrimTypeCollector primTypeCollector) {
     this.myLocalNameStandardizer = myLocalNameStandardizer;
     this.primTypeCollector = primTypeCollector;
     uniq = 0;
@@ -362,7 +360,7 @@ public final class LambdaMetaFactory {
      */
     private void getInitBody(SootClass tclass, JimpleBody jb) {
       PatchingChain<Unit> us = jb.getUnits();
-      LocalGenerator lc = new LocalGenerator(jb, primTypeCollector, myJimple);
+      LocalGenerator lc = new LocalGenerator(jb, primTypeCollector);
 
       // @this
       Local l = lc.generateLocal(tclass.getType());
@@ -395,7 +393,7 @@ public final class LambdaMetaFactory {
 
     private void getBootstrapBody(SootClass tclass, JimpleBody jb) {
       PatchingChain<Unit> us = jb.getUnits();
-      LocalGenerator lc = new LocalGenerator(jb, primTypeCollector, myJimple);
+      LocalGenerator lc = new LocalGenerator(jb, primTypeCollector);
 
       List<Value> capValues = new ArrayList<Value>();
       List<Type> capTypes = new ArrayList<Type>();
@@ -425,7 +423,7 @@ public final class LambdaMetaFactory {
      */
     private void getInvokeBody(SootClass tclass, JimpleBody jb) {
       PatchingChain<Unit> us = jb.getUnits();
-      LocalGenerator lc = new LocalGenerator(jb, primTypeCollector, myJimple);
+      LocalGenerator lc = new LocalGenerator(jb, primTypeCollector);
 
       // @this
       Local this_ = lc.generateLocal(tclass.getType());
@@ -579,7 +577,7 @@ public final class LambdaMetaFactory {
         throw new NullPointerException(String.format("%s,%s,%s,%s", valueOfMethod, primitiveType, wrapper.valueOf.entrySet(),
             wrapper.valueOf.get(primitiveType)));
       }
-      us.add(Jimple.newAssignStmt(lBox, myJimple.newStaticInvokeExpr(valueOfMethod.makeRef(), fromLocal)));
+      us.add(Jimple.newAssignStmt(lBox, Jimple.newStaticInvokeExpr(valueOfMethod.makeRef(), fromLocal)));
 
       return lBox;
     }
@@ -600,7 +598,7 @@ public final class LambdaMetaFactory {
       SootMethod primitiveValueMethod = wrapper.primitiveValue.get(wrapperType);
 
       Local lUnbox = lc.generateLocal(primitiveType);
-      us.add(Jimple.newAssignStmt(lUnbox, myJimple.newVirtualInvokeExpr(fromLocal, primitiveValueMethod.makeRef())));
+      us.add(Jimple.newAssignStmt(lUnbox, Jimple.newVirtualInvokeExpr(fromLocal, primitiveValueMethod.makeRef())));
 
       return lUnbox;
     }

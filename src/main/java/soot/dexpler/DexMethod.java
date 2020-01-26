@@ -107,7 +107,7 @@ public class DexMethod {
 
       @Override
       public Body getBody(SootMethod m, String phaseName) {
-        Body b = myJimple.newBody(m);
+        Body b = Jimple.newBody(m);
         try {
           // add the body of this code item
           DexBody dexBody = new DexBody(dexFile, method, declaringClass.getType(), myJimple, constantFactory, dalivkTyper, primTypeCollector, myScene, myOptions, myPhaseOptions, myDalvikTyper, myDeadAssignmentEliminator, myUnusedLocalEliminator, myTypeAssigner, myLocalPacker, myPackManager, myFieldStaticnessCorrector, myMethodStaticnessCorrector, myTrapTightener, myTrapMinimizer, myAggregator, myConditionalBranchFolder, myConstantCastEliminator, myIdentityCastEliminator, myIdentityOperationEliminator, myUnreachableCodeEliminator, myNopEliminator, myDalvikThrowAnalysis, myManager, myPhaseDumper, myInteractionHandler, myPedanticThrowAnalysis, mySootResolver);
@@ -115,10 +115,10 @@ public class DexMethod {
         } catch (InvalidDalvikBytecodeException e) {
           String msg = "Warning: Invalid bytecode in method " + m + ": " + e;
           logger.debug("" + msg);
-          Util.emptyBody(b, primTypeCollector, myJimple, constantFactory);
+          Util.emptyBody(b, primTypeCollector, constantFactory);
           Util.addExceptionAfterUnit(b, "java.lang.RuntimeException", b.getUnits().getLast(),
               "Soot has detected that this method contains invalid Dalvik bytecode,"
-                  + " which would have throw an exception at runtime. [" + msg + "]", myScene, myJimple, constantFactory);
+                  + " which would have throw an exception at runtime. [" + msg + "]", myScene, constantFactory);
           TypemyAssigner.transform(b);
         }
         m.setActiveBody(b);

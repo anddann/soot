@@ -108,7 +108,7 @@ public class TypeResolver {
   private ThrowAnalysis throwAnalysis;
   private ThrowableSet.Manager myManager;
   private PhaseDumper phaseDumper;
-  private Jimple myJimple;
+
 
   public ClassHierarchy hierarchy() {
     return hierarchy;
@@ -178,14 +178,14 @@ public class TypeResolver {
     return result;
   }
 
-  private TypeResolver(JimpleBody stmtBody, Scene scene, Options myOptions, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, Jimple myJimple) {
+  private TypeResolver(JimpleBody stmtBody, Scene scene, Options myOptions, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, ) {
     this.stmtBody = stmtBody;
     this.myOptions = myOptions;
     this.myInteractionHandler = myInteractionHandler;
     this.throwAnalysis = throwAnalysis;
     this.myManager = myManager;
     this.phaseDumper = phaseDumper;
-    this.myJimple = myJimple;
+    ;
     hierarchy = ClassHierarchy.classHierarchy(scene, myOptions);
     this.scene = scene;
     OBJECT = hierarchy.OBJECT;
@@ -200,13 +200,13 @@ public class TypeResolver {
     }
   }
 
-  public static void resolve(JimpleBody stmtBody, Scene scene, Options myOptions, soot.jimple.toolkits.typing.integer.ClassHierarchy myClassHierarchy, PrimTypeCollector primTypeCollector, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, Jimple myJimple) {
+  public static void resolve(JimpleBody stmtBody, Scene scene, Options myOptions, soot.jimple.toolkits.typing.integer.ClassHierarchy myClassHierarchy, PrimTypeCollector primTypeCollector, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, ) {
     if (DEBUG) {
       logger.debug("" + stmtBody.getMethod());
     }
 
     try {
-      TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myJimple);
+      TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper, );
       resolver.resolve_step_1();
     } catch (TypeException e1) {
       if (DEBUG) {
@@ -215,7 +215,7 @@ public class TypeResolver {
       }
 
       try {
-        TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myJimple);
+        TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper, );
         resolver.resolve_step_2();
       } catch (TypeException e2) {
         if (DEBUG) {
@@ -224,7 +224,7 @@ public class TypeResolver {
         }
 
         try {
-          TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myJimple);
+          TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper, );
           resolver.resolve_step_3();
         } catch (TypeException e3) {
           StringWriter st = new StringWriter();
@@ -685,7 +685,7 @@ public class TypeResolver {
   }
 
   private void check_constraints() throws TypeException {
-    ConstraintChecker checker = new ConstraintChecker(this, false, primTypeCollector, myScene, myJimple);
+    ConstraintChecker checker = new ConstraintChecker(this, false, primTypeCollector, myScene, );
     StringBuffer s = null;
 
     if (DEBUG) {
@@ -710,7 +710,7 @@ public class TypeResolver {
   }
 
   private void check_and_fix_constraints() throws TypeException {
-    ConstraintChecker checker = new ConstraintChecker(this, true, primTypeCollector, myScene, myJimple);
+    ConstraintChecker checker = new ConstraintChecker(this, true, primTypeCollector, myScene, );
     StringBuffer s = null;
     PatchingChain<Unit> units = stmtBody.getUnits();
     Stmt[] stmts = new Stmt[units.size()];

@@ -243,9 +243,9 @@ public class AccessManager {
     java.util.List parameterTypes = new LinkedList();
     java.util.List<SootClass> thrownExceptions = new LinkedList<SootClass>();
 
-    Body accessorBody = myJimple.newBody();
+    Body accessorBody = Jimple.newBody();
     soot.util.Chain accStmts = accessorBody.getUnits();
-    LocalGenerator lg = new LocalGenerator(accessorBody, primTypeCollector, myJimple);
+    LocalGenerator lg = new LocalGenerator(accessorBody, primTypeCollector);
 
     Body containerBody = container.getActiveBody();
     soot.util.Chain containerStmts = containerBody.getUnits();
@@ -261,17 +261,17 @@ public class AccessManager {
       Local thisLocal = lg.generateLocal(target.getType());
       if (ref instanceof InstanceFieldRef) {
         parameterTypes.add(target.getType());
-        accStmts.addFirst(myJimple.newIdentityStmt(thisLocal, myJimple.newParameterRef(target.getType(), 0)));
+        accStmts.addFirst(Jimple.newIdentityStmt(thisLocal, Jimple.newParameterRef(target.getType(), 0)));
       }
       Local l = lg.generateLocal(ref.getField().getType());
       Value v;
       if (ref instanceof InstanceFieldRef) {
-        v = myJimple.newInstanceFieldRef(thisLocal, ref.getFieldRef());
+        v = Jimple.newInstanceFieldRef(thisLocal, ref.getFieldRef());
       } else {
-        v = myJimple.newStaticFieldRef(ref.getFieldRef());
+        v = Jimple.newStaticFieldRef(ref.getFieldRef());
       }
-      accStmts.add(myJimple.newAssignStmt(l, v));
-      accStmts.add(myJimple.newReturnStmt(l));
+      accStmts.add(Jimple.newAssignStmt(l, v));
+      accStmts.add(Jimple.newReturnStmt(l));
 
       accessor
           = myScene.makeSootMethod(name, parameterTypes, returnType, Modifier.PUBLIC | Modifier.STATIC, thrownExceptions);
@@ -283,7 +283,7 @@ public class AccessManager {
     if (ref instanceof InstanceFieldRef) {
       args.add(((InstanceFieldRef) ref).getBase());
     }
-    InvokeExpr newExpr = myJimple.newStaticInvokeExpr(accessor.makeRef(), args);
+    InvokeExpr newExpr = Jimple.newStaticInvokeExpr(accessor.makeRef(), args);
 
     as.setRightOp(newExpr);
   }
@@ -292,9 +292,9 @@ public class AccessManager {
     java.util.List parameterTypes = new LinkedList();
     java.util.List<SootClass> thrownExceptions = new LinkedList<SootClass>();
 
-    Body accessorBody = myJimple.newBody();
+    Body accessorBody = Jimple.newBody();
     soot.util.Chain accStmts = accessorBody.getUnits();
-    LocalGenerator lg = new LocalGenerator(accessorBody, primTypeCollector, myJimple);
+    LocalGenerator lg = new LocalGenerator(accessorBody, primTypeCollector);
 
     Body containerBody = container.getActiveBody();
     soot.util.Chain containerStmts = containerBody.getUnits();
@@ -308,20 +308,20 @@ public class AccessManager {
       Local thisLocal = lg.generateLocal(target.getType());
       int paramID = 0;
       if (ref instanceof InstanceFieldRef) {
-        accStmts.add(myJimple.newIdentityStmt(thisLocal, myJimple.newParameterRef(target.getType(), paramID)));
+        accStmts.add(Jimple.newIdentityStmt(thisLocal, Jimple.newParameterRef(target.getType(), paramID)));
         parameterTypes.add(target.getType());
         paramID++;
       }
       parameterTypes.add(ref.getField().getType());
       Local l = lg.generateLocal(ref.getField().getType());
-      accStmts.add(myJimple.newIdentityStmt(l, myJimple.newParameterRef(ref.getField().getType(), paramID)));
+      accStmts.add(Jimple.newIdentityStmt(l, Jimple.newParameterRef(ref.getField().getType(), paramID)));
       paramID++;
       if (ref instanceof InstanceFieldRef) {
-        accStmts.add(myJimple.newAssignStmt(myJimple.newInstanceFieldRef(thisLocal, ref.getFieldRef()), l));
+        accStmts.add(Jimple.newAssignStmt(Jimple.newInstanceFieldRef(thisLocal, ref.getFieldRef()), l));
       } else {
-        accStmts.add(myJimple.newAssignStmt(myJimple.newStaticFieldRef(ref.getFieldRef()), l));
+        accStmts.add(Jimple.newAssignStmt(Jimple.newStaticFieldRef(ref.getFieldRef()), l));
       }
-      accStmts.addLast(myJimple.newReturnVoidStmt());
+      accStmts.addLast(Jimple.newReturnVoidStmt());
       Type returnType = primTypeCollector.getVoidType();
 
       accessor
@@ -336,9 +336,9 @@ public class AccessManager {
       args.add(((InstanceFieldRef) ref).getBase());
     }
     args.add(as.getRightOp());
-    InvokeExpr newExpr = myJimple.newStaticInvokeExpr(accessor.makeRef(), args);
+    InvokeExpr newExpr = Jimple.newStaticInvokeExpr(accessor.makeRef(), args);
 
-    Stmt newStmt = myJimple.newInvokeStmt(newExpr);
+    Stmt newStmt = Jimple.newInvokeStmt(newExpr);
 
     containerStmts.insertAfter(newStmt, as);
     containerStmts.remove(as);
@@ -349,9 +349,9 @@ public class AccessManager {
     java.util.List<SootClass> thrownExceptions = new LinkedList<SootClass>();
     Type returnType;
 
-    Body accessorBody = myJimple.newBody();
+    Body accessorBody = Jimple.newBody();
     soot.util.Chain accStmts = accessorBody.getUnits();
-    LocalGenerator lg = new LocalGenerator(accessorBody, primTypeCollector, myJimple);
+    LocalGenerator lg = new LocalGenerator(accessorBody, primTypeCollector);
 
     Body containerBody = container.getActiveBody();
     soot.util.Chain containerStmts = containerBody.getUnits();
@@ -385,7 +385,7 @@ public class AccessManager {
         Type type = (Type) it.next();
         Local l = lg.generateLocal(type);
         // System.out.println("local type: " + type);
-        accStmts.add(myJimple.newIdentityStmt(l, myJimple.newParameterRef(type, paramID)));
+        accStmts.add(Jimple.newIdentityStmt(l, Jimple.newParameterRef(type, paramID)));
         arguments.add(l);
         paramID++;
       }
@@ -393,29 +393,29 @@ public class AccessManager {
       InvokeExpr accExpr;
 
       if (expr instanceof StaticInvokeExpr) {
-        accExpr = myJimple.newStaticInvokeExpr(method.makeRef(), arguments);
+        accExpr = Jimple.newStaticInvokeExpr(method.makeRef(), arguments);
       } else if (expr instanceof VirtualInvokeExpr) {
         Local thisLocal = (Local) arguments.get(0);
         arguments.remove(0);
-        accExpr = myJimple.newVirtualInvokeExpr(thisLocal, method.makeRef(), arguments);
+        accExpr = Jimple.newVirtualInvokeExpr(thisLocal, method.makeRef(), arguments);
       } else if (expr instanceof SpecialInvokeExpr) {
         Local thisLocal = (Local) arguments.get(0);
         arguments.remove(0);
-        accExpr = myJimple.newSpecialInvokeExpr(thisLocal, method.makeRef(), arguments);
+        accExpr = Jimple.newSpecialInvokeExpr(thisLocal, method.makeRef(), arguments);
       } else {
         throw new RuntimeException("");
       }
 
       Stmt s;
       if (returnType instanceof VoidType) {
-        s = myJimple.newInvokeStmt(accExpr);
+        s = Jimple.newInvokeStmt(accExpr);
         accStmts.add(s);
-        accStmts.add(myJimple.newReturnVoidStmt());
+        accStmts.add(Jimple.newReturnVoidStmt());
       } else {
         Local resultLocal = lg.generateLocal(returnType);
-        s = myJimple.newAssignStmt(resultLocal, accExpr);
+        s = Jimple.newAssignStmt(resultLocal, accExpr);
         accStmts.add(s);
-        accStmts.add(myJimple.newReturnStmt(resultLocal));
+        accStmts.add(Jimple.newReturnStmt(resultLocal));
       }
 
       accessor
@@ -430,7 +430,7 @@ public class AccessManager {
       args.add(((InstanceInvokeExpr) expr).getBase());
     }
     args.addAll(expr.getArgs());
-    InvokeExpr newExpr = myJimple.newStaticInvokeExpr(accessor.makeRef(), args);
+    InvokeExpr newExpr = Jimple.newStaticInvokeExpr(accessor.makeRef(), args);
 
     stmt.getInvokeExprBox().setValue(newExpr);
   }

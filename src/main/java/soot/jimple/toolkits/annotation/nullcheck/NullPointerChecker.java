@@ -76,7 +76,6 @@ public class NullPointerChecker extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(NullPointerChecker.class);
   private Options myOptions;
   private Scene myScene;
-  private Jimple myJimple;
   private ThrowableSet.Manager myManager;
   private ThrowAnalysis mythrowAnalysis;
   private PhaseDumper myPhaseDumper;
@@ -85,10 +84,9 @@ public class NullPointerChecker extends BodyTransformer {
 
 
     @Inject
-  public NullPointerChecker(Options myOptions, Scene myScene, Jimple myJimple, ThrowableSet.Manager myManager, ThrowAnalysis mythrowAnalysis, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, ConstantFactory constantFactory) {
+  public NullPointerChecker(Options myOptions, Scene myScene, ThrowableSet.Manager myManager, ThrowAnalysis mythrowAnalysis, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, ConstantFactory constantFactory) {
     this.myOptions = myOptions;
     this.myScene = myScene;
-    this.myJimple = myJimple;
     this.myManager = myManager;
     this.mythrowAnalysis = mythrowAnalysis;
     this.myPhaseDumper = myPhaseDumper;
@@ -201,7 +199,7 @@ public class NullPointerChecker extends BodyTransformer {
             }
 
             units.insertBefore(
-                Jimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constantFactory.createIntConstant(whichCounter))),
+                Jimple.newInvokeStmt(Jimple.newStaticInvokeExpr(increase.makeRef(), constantFactory.createIntConstant(whichCounter))),
                 s);
           }
 

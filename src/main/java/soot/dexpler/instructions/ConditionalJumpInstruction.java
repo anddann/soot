@@ -49,7 +49,7 @@ public abstract class ConditionalJumpInstruction extends JumpInstruction impleme
    */
   protected abstract IfStmt ifStatement(DexBody body);
 
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     // check if target instruction has been jimplified
     if (getTargetInstruction(body).getUnit() != null) {
       IfStmt s = ifStatement(body);
@@ -64,7 +64,7 @@ public abstract class ConditionalJumpInstruction extends JumpInstruction impleme
       // endUnit = markerUnit;
       // beginUnit = markerUnit;
       body.add(markerUnit);
-      // Unit end = myJimple.newNopStmt();
+      // Unit end = Jimple.newNopStmt();
       // body.add(end);
       // endUnit = end;
     }
@@ -109,22 +109,22 @@ public abstract class ConditionalJumpInstruction extends JumpInstruction impleme
     switch (opcode) {
       case IF_EQ:
       case IF_EQZ:
-        return myJimple.newEqExpr(one, other);
+        return Jimple.newEqExpr(one, other);
       case IF_NE:
       case IF_NEZ:
-        return myJimple.newNeExpr(one, other);
+        return Jimple.newNeExpr(one, other);
       case IF_LT:
       case IF_LTZ:
-        return myJimple.newLtExpr(one, other);
+        return Jimple.newLtExpr(one, other);
       case IF_GE:
       case IF_GEZ:
-        return myJimple.newGeExpr(one, other);
+        return Jimple.newGeExpr(one, other);
       case IF_GT:
       case IF_GTZ:
-        return myJimple.newGtExpr(one, other);
+        return Jimple.newGtExpr(one, other);
       case IF_LE:
       case IF_LEZ:
-        return myJimple.newLeExpr(one, other);
+        return Jimple.newLeExpr(one, other);
       default:
         throw new RuntimeException("Instruction is not an IfTest(z) instruction.");
     }

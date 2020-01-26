@@ -31,21 +31,20 @@ import org.jf.dexlib2.iface.instruction.Instruction;
 
 import soot.dexpler.DexBody;
 import soot.dexpler.typing.DalvikTyper;
-import soot.jimple.Jimple;
 
 public class InvokeVirtualInstruction extends MethodInvocationInstruction {
 
   public InvokeVirtualInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
+    super(instruction, codeAdress, myOptions, myDalvikTyper, myScene, mySootResolver);
   }
 
   // use Nop as begin marker
-  // NopStmt nop = myJimple.newNopStmt();
+  // NopStmt nop = Jimple.newNopStmt();
   // defineBlock(nop);
   // tagWithLineNumber(nop);
   // body.add(nop);
   // beginUnit = nop;
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     jimplifyVirtual(body);
   }
   

@@ -48,17 +48,15 @@ import soot.options.Options;
 
 public class UnopInstruction extends TaggedInstruction {
 
-  private Jimple myJimple;
   private ConstantFactory constantFactory;
 
-  public UnopInstruction(Instruction instruction, int codeAdress, Options myOptions, Jimple myJimple, ConstantFactory constantFactory) {
+  public UnopInstruction(Instruction instruction, int codeAdress, Options myOptions, ConstantFactory constantFactory) {
     super(instruction, codeAdress, myOptions);
-    this.myJimple = myJimple;
     this.constantFactory = constantFactory;
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction12x)) {
       throw new IllegalArgumentException("Expected Instruction12x but got: " + instruction.getClass());
     }

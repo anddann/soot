@@ -50,7 +50,7 @@ public class MoveExceptionInstruction extends DexlibAbstractInstruction implemen
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
     Local l = body.getRegisterLocal(dest);
     stmtToRetype = Jimple.newIdentityStmt(l, Jimple.newCaughtExceptionRef(myScene));

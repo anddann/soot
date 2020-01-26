@@ -50,7 +50,7 @@ public class CastInstruction extends TaggedInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     TwoRegisterInstruction i = (TwoRegisterInstruction) instruction;
     int dest = i.getRegisterA();
     int source = i.getRegisterB();

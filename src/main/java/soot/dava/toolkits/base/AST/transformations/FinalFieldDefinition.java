@@ -282,17 +282,17 @@ public class FinalFieldDefinition {
     GAssignStmt assignStmt = null;
 
     if (fieldType instanceof RefType) {
-      assignStmt = new GAssignStmt(ref, constantFactory.getNullConstant(),myGrimp );
+      assignStmt = new GAssignStmt(ref, constantFactory.getNullConstant());
     } else if (fieldType instanceof DoubleType) {
-      assignStmt = new GAssignStmt(ref, constantFactory.createDoubleConstant(0), myGrimp);
+      assignStmt = new GAssignStmt(ref, constantFactory.createDoubleConstant(0));
     } else if (fieldType instanceof FloatType) {
-      assignStmt = new GAssignStmt(ref, constantFactory.createFloatConstant(0), myGrimp);
+      assignStmt = new GAssignStmt(ref, constantFactory.createFloatConstant(0));
     } else if (fieldType instanceof LongType) {
-      assignStmt = new GAssignStmt(ref, constantFactory.createLongConstant(0),myGrimp );
+      assignStmt = new GAssignStmt(ref, constantFactory.createLongConstant(0));
     } else if (fieldType instanceof IntType || fieldType instanceof ByteType || fieldType instanceof ShortType
         || fieldType instanceof CharType || fieldType instanceof BooleanType) {
 
-      assignStmt = new GAssignStmt(ref, constantFactory.createDIntConstant(0, fieldType), myGrimp);
+      assignStmt = new GAssignStmt(ref, constantFactory.createDIntConstant(0, fieldType));
     }
 
     if (assignStmt != null) {
@@ -438,7 +438,7 @@ public class FinalFieldDefinition {
           // throw new RuntimeException("STOPPED");
         }
 
-        GAssignStmt assignStmt = new GAssignStmt(ref, newLocal,myGrimp );
+        GAssignStmt assignStmt = new GAssignStmt(ref, newLocal);
         AugmentedStmt assignStmt1 = new AugmentedStmt(assignStmt);
 
         /*

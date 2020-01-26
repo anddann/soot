@@ -68,7 +68,7 @@ public class FillArrayDataInstruction extends PseudoInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction31t)) {
       throw new IllegalArgumentException("Expected Instruction31t but got: " + instruction.getClass());
     }
@@ -86,7 +86,7 @@ public class FillArrayDataInstruction extends PseudoInstruction {
 
     ArrayPayload arrayTable = (ArrayPayload) referenceTable;
 
-    // NopStmt nopStmtBeginning = myJimple.newNopStmt();
+    // NopStmt nopStmtBeginning = Jimple.newNopStmt();
     // body.add(nopStmtBeginning);
 
     Local arrayReference = body.getRegisterLocal(destRegister);
@@ -112,7 +112,7 @@ public class FillArrayDataInstruction extends PseudoInstruction {
       body.add(firstAssign);
     }
 
-    // NopStmt nopStmtEnd = myJimple.newNopStmt();
+    // NopStmt nopStmtEnd = Jimple.newNopStmt();
     // body.add(nopStmtEnd);
 
     // defineBlock(nopStmtBeginning, nopStmtEnd);

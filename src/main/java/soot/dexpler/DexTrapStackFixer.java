@@ -61,10 +61,10 @@ public class DexTrapStackFixer extends BodyTransformer {
       }
 
       // Add the exception reference
-      Local l = new LocalGenerator(b, primTypeCollector, myJimple).generateLocal(t.getException().getType());
-      Stmt caughtStmt = myJimple.newIdentityStmt(l, myJimple.newCaughtExceptionRef());
+      Local l = new LocalGenerator(b, primTypeCollector).generateLocal(t.getException().getType());
+      Stmt caughtStmt = Jimple.newIdentityStmt(l, Jimple.newCaughtExceptionRef());
       b.getUnits().add(caughtStmt);
-      b.getUnits().add(myJimple.newGotoStmt(t.getHandlerUnit()));
+      b.getUnits().add(Jimple.newGotoStmt(t.getHandlerUnit()));
       t.setHandlerUnit(caughtStmt);
     }
   }

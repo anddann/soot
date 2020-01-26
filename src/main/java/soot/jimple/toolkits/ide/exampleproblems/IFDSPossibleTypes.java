@@ -215,6 +215,6 @@ public class IFDSPossibleTypes
   }
 
   public Pair<Value, Type> createZeroValue() {
-    return new Pair<Value, Type>(myJimple.newLocal("<dummy>", UnknownType.v()), UnknownType.v());
+    return new Pair<Value, Type>(Jimple.newLocal("<dummy>", UnknownType.v()), UnknownType.v());
   }
 }

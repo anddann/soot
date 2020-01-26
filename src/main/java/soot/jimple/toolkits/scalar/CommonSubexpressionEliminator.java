@@ -65,13 +65,13 @@ public class CommonSubexpressionEliminator extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(CommonSubexpressionEliminator.class);
   private Scene myScene;
   private Options myOptions;
-  private Jimple myJimple;
+
 
   @Inject
-  public CommonSubexpressionEliminator(Scene myScene, Options myOptions, Jimple myJimple) {
+  public CommonSubexpressionEliminator(Scene myScene, Options myOptions, ) {
     this.myScene = myScene;
     this.myOptions = myOptions;
-    this.myJimple = myJimple;
+    ;
   }
 
 

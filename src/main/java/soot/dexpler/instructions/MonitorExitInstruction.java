@@ -42,19 +42,17 @@ import soot.options.Options;
 
 public class MonitorExitInstruction extends DexlibAbstractInstruction {
 
-  private Jimple myJimple;
   private DalvikTyper myDalvikTyper;
   private Scene myScene;
 
-  public MonitorExitInstruction(Instruction instruction, int codeAdress, Options myOptions, Jimple myJimple, DalvikTyper myDalvikTyper, Scene myScene) {
+  public MonitorExitInstruction(Instruction instruction, int codeAdress, Options myOptions, DalvikTyper myDalvikTyper, Scene myScene) {
     super(instruction, codeAdress, myOptions);
-    this.myJimple = myJimple;
     this.myDalvikTyper = myDalvikTyper;
     this.myScene = myScene;
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     int reg = ((OneRegisterInstruction) instruction).getRegisterA();
     Local object = body.getRegisterLocal(reg);
     ExitMonitorStmt exitMonitorStmt = Jimple.newExitMonitorStmt(object);

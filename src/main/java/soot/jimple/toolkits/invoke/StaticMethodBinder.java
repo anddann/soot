@@ -71,15 +71,15 @@ import soot.util.Chain;
 public class StaticMethodBinder extends SceneTransformer {
 
   private Scene myScene;
-  private Jimple myJimple;
+
   private SynchronizerManager mySynchronizerManager;
   private LocalNameStandardizer myLocalNameStandardizer;
   private ConstantFactory myConstantfactory;
 
   @Inject
-  public StaticMethodBinder(Scene myScene, Jimple myJimple, SynchronizerManager mySynchronizerManager, LocalNameStandardizer myLocalNameStandardizer, ConstantFactory myConstantfactory) {
+  public StaticMethodBinder(Scene myScene,  SynchronizerManager mySynchronizerManager, LocalNameStandardizer myLocalNameStandardizer, ConstantFactory myConstantfactory) {
     this.myScene = myScene;
-    this.myJimple = myJimple;
+    ;
     this.mySynchronizerManager = mySynchronizerManager;
     this.myLocalNameStandardizer = myLocalNameStandardizer;
     this.myConstantfactory = myConstantfactory;

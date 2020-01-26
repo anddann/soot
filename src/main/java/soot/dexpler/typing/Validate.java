@@ -176,10 +176,10 @@ public class Validate {
 //      System.out.println("warning: incorrect array def, replacing unit " + u);
 //      // new object
 //      RefType throwableType = RefType.v("java.lang.Throwable",myScene);
-//      Local ttt = myJimple.newLocal("ttt_" + ++i, throwableType);
+//      Local ttt = Jimple.newLocal("ttt_" + ++i, throwableType);
 //      b.getLocals().add(ttt);
-//      Value r = myJimple.newNewExpr(throwableType);
-//      Unit initLocalUnit = myJimple.newAssignStmt(ttt, r);
+//      Value r = Jimple.newNewExpr(throwableType);
+//      Unit initLocalUnit = Jimple.newAssignStmt(ttt, r);
 //
 //      // call <init> method with a string parameter for message
 //      List<String> pTypes = new ArrayList<String>();
@@ -188,11 +188,11 @@ public class Validate {
 //      SootMethodRef mRef = Validate.makeMethodRef("java.lang.Throwable", "<init>", "", pTypes, isStatic);
 //      List<Value> parameters = new ArrayList<Value>();
 //      parameters.add(constantFactory.createStringConstant("Soot updated this instruction"));
-//      InvokeExpr ie = myJimple.newSpecialInvokeExpr(ttt, mRef, parameters);
-//      Unit initMethod = myJimple.newInvokeStmt(ie);
+//      InvokeExpr ie = Jimple.newSpecialInvokeExpr(ttt, mRef, parameters);
+//      Unit initMethod = Jimple.newInvokeStmt(ie);
 //
 //      // throw exception
-//      Unit newUnit = myJimple.newThrowStmt(ttt);
+//      Unit newUnit = Jimple.newThrowStmt(ttt);
 //
 //      // change instruction in body
 //      b.getUnits().swapWith(u, newUnit);

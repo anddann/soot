@@ -28,7 +28,6 @@ import java.util.List;
 
 import com.google.inject.Inject;
 import soot.*;
-import soot.baf.Baf;
 import soot.grimp.internal.ExprBox;
 import soot.grimp.internal.GAddExpr;
 import soot.grimp.internal.GAndExpr;
@@ -146,18 +145,14 @@ import soot.options.Options;
  */
 
 public class Grimp {
-  private Jimple myJimple;
   private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
-  private Baf myBaf;
   private Scene myScene;
 
   @Inject
-  public Grimp(Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Baf myBaf, Scene myScene) {
-    this.myJimple = myJimple;
+  public Grimp(ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Scene myScene) {
     this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
-    this.myBaf = myBaf;
     this.myScene = myScene;
   }
 
@@ -539,11 +534,11 @@ public class Grimp {
    */
 
   public IdentityStmt newIdentityStmt(Value local, Value identityRef) {
-    return new GIdentityStmt(local, identityRef, this,myJimple );
+    return new GIdentityStmt(local, identityRef);
   }
 
   public IdentityStmt newIdentityStmt(IdentityStmt s) {
-    return new GIdentityStmt(s.getLeftOp(), s.getRightOp(), this, myJimple);
+    return new GIdentityStmt(s.getLeftOp(), s.getRightOp());
   }
 
   /**
@@ -551,11 +546,11 @@ public class Grimp {
    */
 
   public AssignStmt newAssignStmt(Value variable, Value rvalue) {
-    return new GAssignStmt(variable, rvalue, this);
+    return new GAssignStmt(variable, rvalue);
   }
 
   public AssignStmt newAssignStmt(AssignStmt s) {
-    return new GAssignStmt(s.getLeftOp(), s.getRightOp(), this);
+    return new GAssignStmt(s.getLeftOp(), s.getRightOp());
   }
 
   /**

@@ -50,7 +50,7 @@ public class IfTestInstruction extends ConditionalJumpInstruction {
     Local one = body.getRegisterLocal(i.getRegisterA());
     Local other = body.getRegisterLocal(i.getRegisterB());
     BinopExpr condition = getComparisonExpr(one, other);
-    IfStmt jif = myJimple.newIfStmt(condition, targetInstruction.getUnit());
+    IfStmt jif = Jimple.newIfStmt(condition, targetInstruction.getUnit());
     // setUnit() is called in ConditionalJumpInstruction
 
     addTags(jif);

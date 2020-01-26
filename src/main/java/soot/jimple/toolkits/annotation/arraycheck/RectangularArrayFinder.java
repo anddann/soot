@@ -55,7 +55,6 @@ import soot.jimple.DefinitionStmt;
 import soot.jimple.FieldRef;
 import soot.jimple.IntConstant;
 import soot.jimple.InvokeExpr;
-import soot.jimple.Jimple;
 import soot.jimple.NewArrayExpr;
 import soot.jimple.NewMultiArrayExpr;
 import soot.jimple.ParameterRef;
@@ -77,15 +76,13 @@ public class RectangularArrayFinder extends SceneTransformer {
   private Options myOptions;
   private Scene myScene;
   private ConstantFactory constantFactory;
-  private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
 
   @Inject
-  public RectangularArrayFinder(Options myOptions, Scene myScene, ConstantFactory constantFactory, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+  public RectangularArrayFinder(Options myOptions, Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.constantFactory = constantFactory;
-    this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
   }
 

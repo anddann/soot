@@ -80,7 +80,6 @@ import soot.toolkits.scalar.Pair;
 public class SimpleMethodInfoFlowAnalysis
     extends ForwardFlowAnalysis<Unit, FlowSet<Pair<EquivalentValue, EquivalentValue>>> {
   private static final Logger logger = LoggerFactory.getLogger(SimpleMethodInfoFlowAnalysis.class);
-  private final Jimple myJimple;
   SootMethod sm;
   Value thisLocal;
   InfoFlowAnalysis dfa;
@@ -96,8 +95,8 @@ public class SimpleMethodInfoFlowAnalysis
 
   public static int counter = 0;
 
-  public SimpleMethodInfoFlowAnalysis(UnitGraph g, InfoFlowAnalysis dfa, boolean ignoreNonRefTypeFlow, Jimple myJimple, Options myOptions, InteractionHandler myInteractionHandler) {
-    this(g, dfa, ignoreNonRefTypeFlow,true, myOptions,myInteractionHandler, myJimple);
+  public SimpleMethodInfoFlowAnalysis(UnitGraph g, InfoFlowAnalysis dfa, boolean ignoreNonRefTypeFlow,  Options myOptions, InteractionHandler myInteractionHandler) {
+    this(g, dfa, ignoreNonRefTypeFlow,true, myOptions,myInteractionHandler, );
 
     counter++;
 
@@ -113,7 +112,7 @@ public class SimpleMethodInfoFlowAnalysis
 
     // Add every field of this class
     for (SootField sf : sm.getDeclaringClass().getFields()) {
-      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, this.myJimple);
+      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, );
       if (!infoFlowGraph.containsNode(fieldRefEqVal)) {
         infoFlowGraph.addNode(fieldRefEqVal);
       }
@@ -127,7 +126,7 @@ public class SimpleMethodInfoFlowAnalysis
     while (superclass.hasSuperclass()) // we don't want to process Object
     {
       for (SootField scField : superclass.getFields()) {
-        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, this.myJimple);
+        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, );
         if (!infoFlowGraph.containsNode(fieldRefEqVal)) {
           infoFlowGraph.addNode(fieldRefEqVal);
         }
@@ -158,10 +157,10 @@ public class SimpleMethodInfoFlowAnalysis
 
   /** A constructor that doesn't run the analysis */
   protected SimpleMethodInfoFlowAnalysis(UnitGraph g, InfoFlowAnalysis dfa, boolean ignoreNonRefTypeFlow,
-                                         boolean dummyDontRunAnalysisYet, Options myOptions, InteractionHandler myInteractionHandler, Jimple myJimple) {
+                                         boolean dummyDontRunAnalysisYet, Options myOptions, InteractionHandler myInteractionHandler, ) {
     super(g,myOptions.interactive_mode(),  myInteractionHandler);
     this.sm = g.getBody().getMethod();
-    this.myJimple = myJimple;
+    ;
     if (sm.isStatic()) {
       this.thisLocal = null;
     } else {

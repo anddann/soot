@@ -72,12 +72,10 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
 
   public static String dependancies[] = new String[] { "jtp.jbco_cae2bo" };
   public static String name = "jtp.jbco_cae2bo";
-  private Jimple myJimple;
   private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
 
-  public ArithmeticTransformer(Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
-    this.myJimple = myJimple;
+  public ArithmeticTransformer(ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
     this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
   }

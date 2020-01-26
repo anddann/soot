@@ -54,12 +54,12 @@ public class ConstantInvokeMethodBaseTransformer extends SceneTransformer {
   private final static String INVOKE_SIG
       = "<java.lang.reflect.Method: java.lang.Object invoke(java.lang.Object,java.lang.Object[])>";
   private Scene myScene;
-  private Jimple myJimple;
+
 
   @Inject
-  public ConstantInvokeMethodBaseTransformer(Scene myScene, Jimple myJimple) {
+  public ConstantInvokeMethodBaseTransformer(Scene myScene, ) {
     this.myScene = myScene;
-    this.myJimple = myJimple;
+    ;
   }
 
 

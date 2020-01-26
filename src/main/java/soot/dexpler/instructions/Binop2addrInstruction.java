@@ -50,7 +50,7 @@ public class Binop2addrInstruction extends TaggedInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction12x)) {
       throw new IllegalArgumentException("Expected Instruction12x but got: " + instruction.getClass());
     }
@@ -82,110 +82,110 @@ public class Binop2addrInstruction extends TaggedInstruction {
     switch (opcode) {
       case ADD_LONG_2ADDR:
         setTag(new LongOpTag());
-        return myJimple.newAddExpr(source1, source2);
+        return Jimple.newAddExpr(source1, source2);
       case ADD_FLOAT_2ADDR:
         setTag(new FloatOpTag());
-        return myJimple.newAddExpr(source1, source2);
+        return Jimple.newAddExpr(source1, source2);
       case ADD_DOUBLE_2ADDR:
         setTag(new DoubleOpTag());
-        return myJimple.newAddExpr(source1, source2);
+        return Jimple.newAddExpr(source1, source2);
       case ADD_INT_2ADDR:
         setTag(new IntOpTag());
-        return myJimple.newAddExpr(source1, source2);
+        return Jimple.newAddExpr(source1, source2);
 
       case SUB_LONG_2ADDR:
         setTag(new LongOpTag());
-        return myJimple.newSubExpr(source1, source2);
+        return Jimple.newSubExpr(source1, source2);
       case SUB_FLOAT_2ADDR:
         setTag(new FloatOpTag());
-        return myJimple.newSubExpr(source1, source2);
+        return Jimple.newSubExpr(source1, source2);
       case SUB_DOUBLE_2ADDR:
         setTag(new DoubleOpTag());
-        return myJimple.newSubExpr(source1, source2);
+        return Jimple.newSubExpr(source1, source2);
       case SUB_INT_2ADDR:
         setTag(new IntOpTag());
-        return myJimple.newSubExpr(source1, source2);
+        return Jimple.newSubExpr(source1, source2);
 
       case MUL_LONG_2ADDR:
         setTag(new LongOpTag());
-        return myJimple.newMulExpr(source1, source2);
+        return Jimple.newMulExpr(source1, source2);
       case MUL_FLOAT_2ADDR:
         setTag(new FloatOpTag());
-        return myJimple.newMulExpr(source1, source2);
+        return Jimple.newMulExpr(source1, source2);
       case MUL_DOUBLE_2ADDR:
         setTag(new DoubleOpTag());
-        return myJimple.newMulExpr(source1, source2);
+        return Jimple.newMulExpr(source1, source2);
       case MUL_INT_2ADDR:
         setTag(new IntOpTag());
-        return myJimple.newMulExpr(source1, source2);
+        return Jimple.newMulExpr(source1, source2);
 
       case DIV_LONG_2ADDR:
         setTag(new LongOpTag());
-        return myJimple.newDivExpr(source1, source2);
+        return Jimple.newDivExpr(source1, source2);
       case DIV_FLOAT_2ADDR:
         setTag(new FloatOpTag());
-        return myJimple.newDivExpr(source1, source2);
+        return Jimple.newDivExpr(source1, source2);
       case DIV_DOUBLE_2ADDR:
         setTag(new DoubleOpTag());
-        return myJimple.newDivExpr(source1, source2);
+        return Jimple.newDivExpr(source1, source2);
       case DIV_INT_2ADDR:
         setTag(new IntOpTag());
-        return myJimple.newDivExpr(source1, source2);
+        return Jimple.newDivExpr(source1, source2);
 
       case REM_LONG_2ADDR:
         setTag(new LongOpTag());
-        return myJimple.newRemExpr(source1, source2);
+        return Jimple.newRemExpr(source1, source2);
       case REM_FLOAT_2ADDR:
         setTag(new FloatOpTag());
-        return myJimple.newRemExpr(source1, source2);
+        return Jimple.newRemExpr(source1, source2);
       case REM_DOUBLE_2ADDR:
         setTag(new DoubleOpTag());
-        return myJimple.newRemExpr(source1, source2);
+        return Jimple.newRemExpr(source1, source2);
       case REM_INT_2ADDR:
         setTag(new IntOpTag());
-        return myJimple.newRemExpr(source1, source2);
+        return Jimple.newRemExpr(source1, source2);
 
       case AND_LONG_2ADDR:
         setTag(new LongOpTag());
-        return myJimple.newAndExpr(source1, source2);
+        return Jimple.newAndExpr(source1, source2);
       case AND_INT_2ADDR:
         setTag(new IntOpTag());
-        return myJimple.newAndExpr(source1, source2);
+        return Jimple.newAndExpr(source1, source2);
 
       case OR_LONG_2ADDR:
         setTag(new LongOpTag());
-        return myJimple.newOrExpr(source1, source2);
+        return Jimple.newOrExpr(source1, source2);
       case OR_INT_2ADDR:
         setTag(new IntOpTag());
-        return myJimple.newOrExpr(source1, source2);
+        return Jimple.newOrExpr(source1, source2);
 
       case XOR_LONG_2ADDR:
         setTag(new LongOpTag());
-        return myJimple.newXorExpr(source1, source2);
+        return Jimple.newXorExpr(source1, source2);
       case XOR_INT_2ADDR:
         setTag(new IntOpTag());
-        return myJimple.newXorExpr(source1, source2);
+        return Jimple.newXorExpr(source1, source2);
 
       case SHL_LONG_2ADDR:
         setTag(new LongOpTag());
-        return myJimple.newShlExpr(source1, source2);
+        return Jimple.newShlExpr(source1, source2);
       case SHL_INT_2ADDR:
         setTag(new IntOpTag());
-        return myJimple.newShlExpr(source1, source2);
+        return Jimple.newShlExpr(source1, source2);
 
       case SHR_LONG_2ADDR:
         setTag(new LongOpTag());
-        return myJimple.newShrExpr(source1, source2);
+        return Jimple.newShrExpr(source1, source2);
       case SHR_INT_2ADDR:
         setTag(new IntOpTag());
-        return myJimple.newShrExpr(source1, source2);
+        return Jimple.newShrExpr(source1, source2);
 
       case USHR_LONG_2ADDR:
         setTag(new LongOpTag());
-        return myJimple.newUshrExpr(source1, source2);
+        return Jimple.newUshrExpr(source1, source2);
       case USHR_INT_2ADDR:
         setTag(new IntOpTag());
-        return myJimple.newUshrExpr(source1, source2);
+        return Jimple.newUshrExpr(source1, source2);
 
       default:
         throw new RuntimeException("Invalid Opcode: " + opcode);

@@ -49,7 +49,7 @@ public class SputInstruction extends FieldInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     int source = ((OneRegisterInstruction) instruction).getRegisterA();
     FieldReference f = (FieldReference) ((ReferenceInstruction) instruction).getReference();
     StaticFieldRef instanceField = Jimple.newStaticFieldRef(getStaticSootFieldRef(f));

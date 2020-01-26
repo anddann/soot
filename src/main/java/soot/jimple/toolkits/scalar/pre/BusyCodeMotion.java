@@ -72,17 +72,17 @@ public class BusyCodeMotion extends BodyTransformer {
   private Options myOptions;
   private CriticalEdgeRemover myCriticalEdgeRemover;
   private Scene myScene;
-  private Jimple myJimple;
+
   private PhaseDumper myPhaseDumper;
   private InteractionHandler myInteractionHandler;
 
 
   @Inject
-  public BusyCodeMotion(Options myOptions, CriticalEdgeRemover myCriticalEdgeRemover, Scene myScene, Jimple myJimple, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
+  public BusyCodeMotion(Options myOptions, CriticalEdgeRemover myCriticalEdgeRemover, Scene myScene,  PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
     this.myOptions = myOptions;
     this.myCriticalEdgeRemover = myCriticalEdgeRemover;
     this.myScene = myScene;
-    this.myJimple = myJimple;
+    ;
     this.myPhaseDumper = myPhaseDumper;
     this.myInteractionHandler = myInteractionHandler;
   }

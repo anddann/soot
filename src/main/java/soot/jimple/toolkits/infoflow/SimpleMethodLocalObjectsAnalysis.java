@@ -47,8 +47,8 @@ public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalys
   private static final Logger logger = LoggerFactory.getLogger(SimpleMethodLocalObjectsAnalysis.class);
   public static int mlocounter = 0;
 
-  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, ClassLocalObjectsAnalysis cloa, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler, Jimple myJimple) {
-    super(g, dfa, true, true, myOptions,myInteractionHandler, myJimple); // special version doesn't run analysis yet
+  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, ClassLocalObjectsAnalysis cloa, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler, ) {
+    super(g, dfa, true, true, myOptions,myInteractionHandler, ); // special version doesn't run analysis yet
 
     mlocounter++;
 
@@ -69,7 +69,7 @@ public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalys
     }
 
     for (SootField sf : cloa.getSharedFields()) {
-      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, sf, myJimple);
+      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, sf, );
       addToEntryInitialFlow(sharedDataSource, fieldRefEqVal.getValue());
       addToNewInitialFlow(sharedDataSource, fieldRefEqVal.getValue());
     }
@@ -83,8 +83,8 @@ public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalys
     }
   }
 
-  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, CallLocalityContext context, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler, Jimple myJimple) {
-    super(g, dfa, true, true,  myOptions,myInteractionHandler, myJimple); // special version doesn't run analysis yet
+  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, CallLocalityContext context, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler, ) {
+    super(g, dfa, true, true,  myOptions,myInteractionHandler, ); // special version doesn't run analysis yet
 
     mlocounter++;
 

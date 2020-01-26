@@ -45,16 +45,14 @@ import soot.jimple.Jimple;
 public class ConstInstruction extends DexlibAbstractInstruction {
 
   private ConstantFactory constantFactory;
-  private Jimple myJimple;
 
-  public ConstInstruction(Instruction instruction, int codeAdress, ConstantFactory constantFactory, Jimple myJimple) {
+  public ConstInstruction(Instruction instruction, int codeAdress, ConstantFactory constantFactory) {
     super(instruction, codeAdress, myOptions);
     this.constantFactory = constantFactory;
-    this.myJimple = myJimple;
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
 
     Constant cst = getConstant(dest, body);

@@ -90,13 +90,11 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
   private int newmethods = 0;
   private int methodcalls = 0;
   private Scene myScene;
-  private Jimple myJimple;
   private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
 
-  public LibraryMethodWrappersBuilder(Scene myScene, Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
+  public LibraryMethodWrappersBuilder(Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
     this.myScene = myScene;
-    this.myJimple = myJimple;
     this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
   }
@@ -271,7 +269,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
     Chain<Local> locals = body.getLocals();
     PatchingChain<Unit> units = body.getUnits();
 
-    List<Local> args = BodyBuilder.buildParameterLocals(units, locals, smParamTypes, jimple);
+    List<Local> args = BodyBuilder.buildParameterLocals(units, locals, smParamTypes);
     while (extraParams-- > 0) {
       args.remove(args.size() - 1);
     }
@@ -331,7 +329,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
     }
   }
 
-  private static Value getConstantType(Type t, ConstantFactory constantFactory, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+  private static Value getConstantType(Type t, ConstantFactory constantFactory,  PrimTypeCollector primTypeCollector) {
     if (t instanceof BooleanType) {
       return constantFactory.createIntConstant(Rand.getInt(1));
     }

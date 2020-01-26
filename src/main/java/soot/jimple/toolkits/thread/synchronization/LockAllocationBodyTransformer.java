@@ -91,7 +91,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
     boolean[] addedLocalLockObj = new boolean[groups.size()];
     SootField[] globalLockObj = new SootField[groups.size()];
     for (int i = 1; i < groups.size(); i++) {
-      lockObj[i] = myJimple.newLocal("lockObj" + i, RefType.v("java.lang.Object",myScene));
+      lockObj[i] = Jimple.newLocal("lockObj" + i, RefType.v("java.lang.Object",myScene));
       addedLocalLockObj[i] = false;
       globalLockObj[i] = null;
     }
@@ -142,7 +142,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       if (addingNewClinit) {
         clinitMethod
             = myScene.makeSootMethod("<clinit>", new ArrayList(), primTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC);
-        clinitBody = myJimple.newBody(clinitMethod);
+        clinitBody = Jimple.newBody(clinitMethod);
         clinitMethod.setActiveBody(clinitBody);
         mainClass.addMethod(clinitMethod);
       } else {
@@ -163,7 +163,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
           // avoidance code
 
           // assign new object to lock obj
-          Stmt newStmt = myJimple.newAssignStmt(lockObj[i], myJimple.newNewExpr(RefType.v("java.lang.Object",myScene)));
+          Stmt newStmt = Jimple.newAssignStmt(lockObj[i], Jimple.newNewExpr(RefType.v("java.lang.Object",myScene)));
           if (addingNewClinit) {
             clinitUnits.add(newStmt);
           } else {
@@ -175,7 +175,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
           RefType type = RefType.v(objectClass);
           SootMethod initMethod = objectClass.getMethod("void <init>()");
           Stmt initStmt = myJimple
-              .newInvokeStmt(myJimple.newSpecialInvokeExpr(lockObj[i], initMethod.makeRef(), Collections.EMPTY_LIST));
+              .newInvokeStmt(Jimple.newSpecialInvokeExpr(lockObj[i], initMethod.makeRef(), Collections.EMPTY_LIST));
           if (addingNewClinit) {
             clinitUnits.add(initStmt);
           } else {
@@ -184,7 +184,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
 
           // copy new object to global static lock object (for use by
           // other fns)
-          Stmt assignStmt = myJimple.newAssignStmt(myJimple.newStaticFieldRef(globalLockObj[i].makeRef()), lockObj[i]);
+          Stmt assignStmt = Jimple.newAssignStmt(Jimple.newStaticFieldRef(globalLockObj[i].makeRef()), lockObj[i]);
           if (addingNewClinit) {
             clinitUnits.add(assignStmt);
           } else {
@@ -193,7 +193,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
         }
       }
       if (addingNewClinit) {
-        clinitUnits.add(myJimple.newReturnVoidStmt());
+        clinitUnits.add(Jimple.newReturnVoidStmt());
       }
       addedGlobalLockDefs = true;
     }
@@ -246,7 +246,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
               b.getLocals().add(lockObj[tn.setNumber]);
             }
 
-            newPrep = myJimple.newAssignStmt(lockObj[tn.setNumber], lock);
+            newPrep = Jimple.newAssignStmt(lockObj[tn.setNumber], lock);
             if (tn.wholeMethod) {
               units.insertBeforeNoRedirect(newPrep, firstUnit);
             } else {
@@ -278,12 +278,12 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
               }
             }
             // add a local variable for this lock
-            Local lockLocal = myJimple.newLocal("locksetObj" + tempNum, RefType.v("java.lang.Object",myScene));
+            Local lockLocal = Jimple.newLocal("locksetObj" + tempNum, RefType.v("java.lang.Object",myScene));
             tempNum++;
             b.getLocals().add(lockLocal);
 
             // make it refer to the right lock object
-            newPrep = myJimple.newAssignStmt(lockLocal, lock);
+            newPrep = Jimple.newAssignStmt(lockLocal, lock);
             if (tn.entermonitor != null) {
               units.insertBefore(newPrep, tn.entermonitor);
             } else {
@@ -331,8 +331,8 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
             b.getLocals().add(lockObj[tn.setNumber]);
           }
           addedLocalLockObj[tn.setNumber] = true;
-          newPrep = myJimple.newAssignStmt(lockObj[tn.setNumber],
-              myJimple.newStaticFieldRef(globalLockObj[tn.setNumber].makeRef()));
+          newPrep = Jimple.newAssignStmt(lockObj[tn.setNumber],
+              Jimple.newStaticFieldRef(globalLockObj[tn.setNumber].makeRef()));
           if (tn.wholeMethod) {
             units.insertBeforeNoRedirect(newPrep, firstUnit);
           } else {
@@ -357,7 +357,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
           }
 
           // Reuse old entermonitor or insert new one, and insert prep
-          Stmt newEntermonitor = myJimple.newEnterMonitorStmt(clo);
+          Stmt newEntermonitor = Jimple.newEnterMonitorStmt(clo);
           if (csr.entermonitor != null) {
             units.insertBefore(newEntermonitor, csr.entermonitor);
             // redirectTraps(b, clr.entermonitor, newEntermonitor);
@@ -383,7 +383,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
             Stmt earlyEnd = end.getO1();
             Stmt exitmonitor = end.getO2();
 
-            Stmt newExitmonitor = myJimple.newExitMonitorStmt(clo);
+            Stmt newExitmonitor = Jimple.newExitMonitorStmt(clo);
             if (exitmonitor != null) {
               if (newPrep != null) {
                 Stmt tmp = (Stmt) newPrep.clone();
@@ -412,7 +412,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
 
           // If fallthrough end, reuse or insert goto and exit
           if (csr.after != null) {
-            Stmt newExitmonitor = myJimple.newExitMonitorStmt(clo);
+            Stmt newExitmonitor = Jimple.newExitMonitorStmt(clo);
             if (csr.end != null) {
               Stmt exitmonitor = csr.end.getO2();
 
@@ -438,7 +438,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
               // them
               // to
               // monitorexit
-              Stmt newGotoStmt = myJimple.newGotoStmt(csr.after);
+              Stmt newGotoStmt = Jimple.newGotoStmt(csr.after);
               units.insertBeforeNoRedirect(newGotoStmt, csr.after);
               csr.end = new Pair<Stmt, Stmt>(newGotoStmt, newExitmonitor);
               csr.last = newGotoStmt;
@@ -446,7 +446,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
           }
 
           // If exceptional end, reuse it, else insert it and traps
-          Stmt newExitmonitor = myJimple.newExitMonitorStmt(clo);
+          Stmt newExitmonitor = Jimple.newExitMonitorStmt(clo);
           if (csr.exceptionalEnd != null) {
             Stmt exitmonitor = csr.exceptionalEnd.getO2();
 
@@ -482,10 +482,10 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
 
             // Add throwable
             Local throwableLocal
-                = myJimple.newLocal("throwableLocal" + (throwableNum++), RefType.v("java.lang.Throwable",myScene));
+                = Jimple.newLocal("throwableLocal" + (throwableNum++), RefType.v("java.lang.Throwable",myScene));
             b.getLocals().add(throwableLocal);
             // Add stmts
-            Stmt newCatch = myJimple.newIdentityStmt(throwableLocal, myJimple.newCaughtExceptionRef());
+            Stmt newCatch = Jimple.newIdentityStmt(throwableLocal, Jimple.newCaughtExceptionRef());
             if (csr.last == null) {
               throw new RuntimeException("WHY IS clr.last NULL???");
             }
@@ -494,12 +494,12 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
             }
             units.insertAfter(newCatch, csr.last);
             units.insertAfter(newExitmonitor, newCatch);
-            Stmt newThrow = myJimple.newThrowStmt(throwableLocal);
+            Stmt newThrow = Jimple.newThrowStmt(throwableLocal);
             units.insertAfter(newThrow, newExitmonitor);
             // Add traps
             SootClass throwableClass = myScene.loadClassAndSupport("java.lang.Throwable");
-            b.getTraps().addFirst(myJimple.newTrap(throwableClass, newExitmonitor, newThrow, newCatch));
-            b.getTraps().addFirst(myJimple.newTrap(throwableClass, csr.beginning, lastEnd, newCatch));
+            b.getTraps().addFirst(Jimple.newTrap(throwableClass, newExitmonitor, newThrow, newCatch));
+            b.getTraps().addFirst(Jimple.newTrap(throwableClass, csr.beginning, lastEnd, newCatch));
             csr.exceptionalEnd = new Pair<Stmt, Stmt>(newThrow, newExitmonitor);
           }
         }
@@ -511,7 +511,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
         for (Unit uNotify : tn.notifys) {
           Stmt sNotify = (Stmt) uNotify;
           Stmt newNotify = myJimple
-              .newInvokeStmt(myJimple.newVirtualInvokeExpr(clo,
+              .newInvokeStmt(Jimple.newVirtualInvokeExpr(clo,
                   sNotify.getInvokeExpr().getMethodRef().declaringClass().getMethod("void notifyAll()").makeRef(),
                   Collections.EMPTY_LIST));
           if (newPrep != null) {
@@ -575,11 +575,11 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
     Local baseLocal;
     if (base instanceof InstanceFieldRef) {
       Value newBase = reconstruct(b, units, (InstanceFieldRef) base, insertBefore, redirect);
-      baseLocal = myJimple.newLocal("baseLocal" + (baseLocalNum++), newBase.getType());
+      baseLocal = Jimple.newLocal("baseLocal" + (baseLocalNum++), newBase.getType());
       b.getLocals().add(baseLocal);
 
       // make it equal to the right value
-      Stmt baseAssign = myJimple.newAssignStmt(baseLocal, newBase);
+      Stmt baseAssign = Jimple.newAssignStmt(baseLocal, newBase);
       if (redirect == true) {
         units.insertBefore(baseAssign, insertBefore);
       } else {
@@ -592,7 +592,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
           + base.getType() + ": " + base);
     }
 
-    InstanceFieldRef newLock = myJimple.newInstanceFieldRef(baseLocal, lock.getField().makeRef());
+    InstanceFieldRef newLock = Jimple.newInstanceFieldRef(baseLocal, lock.getField().makeRef());
     logger.debug("  as " + newLock);
     return newLock;
   }
@@ -636,7 +636,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       if (addingNewClinit) {
         clinitMethod
             = myScene.makeSootMethod("<clinit>", new ArrayList(), primTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC);
-        clinitBody = myJimple.newBody(clinitMethod);
+        clinitBody = Jimple.newBody(clinitMethod);
         clinitMethod.setActiveBody(clinitBody);
         lockClass.addMethod(clinitMethod);
       } else {
@@ -646,13 +646,13 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       }
       PatchingChain<Unit> clinitUnits = clinitBody.getUnits();
 
-      Local lockLocal = myJimple.newLocal("objectLockLocal" + lockNumber, RefType.v("java.lang.Object",myScene));
+      Local lockLocal = Jimple.newLocal("objectLockLocal" + lockNumber, RefType.v("java.lang.Object",myScene));
       // lockNumber is increased below
       clinitBody.getLocals().add(lockLocal); // TODO: add name conflict
       // avoidance code
 
       // assign new object to lock obj
-      Stmt newStmt = myJimple.newAssignStmt(lockLocal, myJimple.newNewExpr(RefType.v("java.lang.Object",myScene)));
+      Stmt newStmt = Jimple.newAssignStmt(lockLocal, Jimple.newNewExpr(RefType.v("java.lang.Object",myScene)));
       if (addingNewClinit) {
         clinitUnits.add(newStmt);
       } else {
@@ -664,7 +664,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       RefType type = RefType.v(objectClass);
       SootMethod initMethod = objectClass.getMethod("void <init>()");
       Stmt initStmt = myJimple
-          .newInvokeStmt(myJimple.newSpecialInvokeExpr(lockLocal, initMethod.makeRef(), Collections.EMPTY_LIST));
+          .newInvokeStmt(Jimple.newSpecialInvokeExpr(lockLocal, initMethod.makeRef(), Collections.EMPTY_LIST));
       if (addingNewClinit) {
         clinitUnits.add(initStmt);
       } else {
@@ -678,8 +678,8 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       lockNumber++;
       lockClass.addField(actualLockObject);
 
-      StaticFieldRef actualLockSfr = myJimple.newStaticFieldRef(actualLockObject.makeRef());
-      Stmt assignStmt = myJimple.newAssignStmt(actualLockSfr, lockLocal);
+      StaticFieldRef actualLockSfr = Jimple.newStaticFieldRef(actualLockObject.makeRef());
+      Stmt assignStmt = Jimple.newAssignStmt(actualLockSfr, lockLocal);
       if (addingNewClinit) {
         clinitUnits.add(assignStmt);
       } else {
@@ -687,7 +687,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       }
 
       if (addingNewClinit) {
-        clinitUnits.add(myJimple.newReturnVoidStmt());
+        clinitUnits.add(Jimple.newReturnVoidStmt());
       }
 
       lockEqValToLock.put(lockEqVal, actualLockSfr);

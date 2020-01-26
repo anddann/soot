@@ -58,7 +58,6 @@ public class SootMethodRefImpl implements SootMethodRef {
   private final boolean isStatic;
     protected Scene myScene;
     private Options myOptions;
-  private Jimple myJimple;
   private ConstantFactory constantFactory;
 
   /**
@@ -76,16 +75,14 @@ public class SootMethodRefImpl implements SootMethodRef {
    *          the static modifier value
    * @param myScene
      * @param myOptions
-     * @param myJimple
-   * @param constantFactory
-   * @throws IllegalArgumentException
+     * @param constantFactory
+     * @throws IllegalArgumentException
    *           is thrown when {@code declaringClass}, or {@code name}, or {@code returnType} is null
    */
   public SootMethodRefImpl(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
-                           boolean isStatic, Scene myScene, Options myOptions, Jimple myJimple, ConstantFactory constantFactory) {
+                           boolean isStatic, Scene myScene, Options myOptions, ConstantFactory constantFactory) {
       this.myScene = myScene;
       this.myOptions = myOptions;
-    this.myJimple = myJimple;
     this.constantFactory = constantFactory;
     if (declaringClass == null) {
       throw new IllegalArgumentException("Attempt to create SootMethodRef with null class");
@@ -322,7 +319,7 @@ public class SootMethodRefImpl implements SootMethodRef {
     JimpleBody body = Jimple.newBody(m, myPrinter, myOptions);
     m.setActiveBody(body);
 
-    final LocalGenerator lg = new LocalGenerator(body, myScene.getPrimTypeCollector(), myJimple);
+    final LocalGenerator lg = new LocalGenerator(body, myScene.getPrimTypeCollector());
 
     // For producing valid Jimple code, we need to access all parameters.
     // Otherwise, methods like "getThisLocal()" will fail.
@@ -338,7 +335,7 @@ public class SootMethodRefImpl implements SootMethodRef {
     // exc.<init>(message)
     SootMethodRef cref = myScene.makeConstructorRef(runtimeExceptionType.getSootClass(),
         Collections.<Type>singletonList(RefType.v("java.lang.String",myScene)));
-    SpecialInvokeExpr constructorInvokeExpr = myJimple.newSpecialInvokeExpr(exceptionLocal, cref,
+    SpecialInvokeExpr constructorInvokeExpr = Jimple.newSpecialInvokeExpr(exceptionLocal, cref,
         constantFactory.createStringConstant("Unresolved compilation error: Method " + getSignature() + " does not exist!"));
     InvokeStmt initStmt = Jimple.newInvokeStmt(constructorInvokeExpr);
     body.getUnits().insertAfter(initStmt, assignStmt);

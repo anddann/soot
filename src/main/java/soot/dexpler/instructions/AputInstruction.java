@@ -50,7 +50,7 @@ public class AputInstruction extends FieldInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction23x)) {
       throw new IllegalArgumentException("Expected Instruction23x but got: " + instruction.getClass());
     }

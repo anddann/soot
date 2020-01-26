@@ -47,7 +47,7 @@ public class ConstStringInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
     String s;
     if (instruction instanceof Instruction21c) {

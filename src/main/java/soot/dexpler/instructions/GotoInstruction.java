@@ -36,14 +36,12 @@ import soot.jimple.Jimple;
 import soot.options.Options;
 
 public class GotoInstruction extends JumpInstruction implements DeferableInstruction {
-  private Jimple myJimple;
 
-  public GotoInstruction(Instruction instruction, int codeAdress, Options myOptions, Jimple myJimple) {
+  public GotoInstruction(Instruction instruction, int codeAdress, Options myOptions) {
     super(instruction, codeAdress, myOptions);
-    this.myJimple = myJimple;
   }
 
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     // check if target instruction has been jimplified
     if (getTargetInstruction(body).getUnit() != null) {
       body.add(gotoStatement());

@@ -26,11 +26,10 @@ import soot.UnitPrinter;
 import soot.Value;
 import soot.grimp.Grimp;
 import soot.grimp.internal.GIdentityStmt;
-import soot.jimple.Jimple;
 
 public class DIdentityStmt extends GIdentityStmt {
-  public DIdentityStmt(Value local, Value identityValue, Grimp myGrimp, Jimple myJimple) {
-    super(local, identityValue, myGrimp, myJimple);
+  public DIdentityStmt(Value local, Value identityValue, Grimp myGrimp) {
+    super(local, identityValue);
   }
 
   public void toString(UnitPrinter up) {

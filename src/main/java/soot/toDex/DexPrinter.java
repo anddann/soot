@@ -216,10 +216,10 @@ public class DexPrinter {
   private SynchronizedMethodTransformer mySynchronizedMethodTransformer;
   private FastDexTrapTightener myFastDexTrapTightener;
   private TrapSplitter myTrapSplitter;
-  private Jimple myJimple;
+
   private ConstantFactory constantFactory;
 
-  public DexPrinter(Scene myScene, Options myOptions, SourceLocator mySourceLocator, PackManager myPackManager, EmptySwitchEliminator myEmptySwitchEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter, Jimple myJimple, ConstantFactory constantFactory) {
+  public DexPrinter(Scene myScene, Options myOptions, SourceLocator mySourceLocator, PackManager myPackManager, EmptySwitchEliminator myEmptySwitchEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter,  ConstantFactory constantFactory) {
     this.myScene = myScene;
     this.myOptions=myOptions;
     this.mySourceLocator = mySourceLocator;
@@ -228,7 +228,7 @@ public class DexPrinter {
     this.mySynchronizedMethodTransformer = mySynchronizedMethodTransformer;
     this.myFastDexTrapTightener = myFastDexTrapTightener;
     this.myTrapSplitter = myTrapSplitter;
-    this.myJimple = myJimple;
+    ;
     this.constantFactory = constantFactory;
     dexBuilder = createDexBuilder();
   }

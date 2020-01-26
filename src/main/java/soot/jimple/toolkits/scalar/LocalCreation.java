@@ -113,7 +113,7 @@ public class LocalCreation {
       counter = suffix + 1;
     }
     String newName = prefix + suffix;
-    Local newLocal = myJimple.newLocal(newName, type);
+    Local newLocal = Jimple.newLocal(newName, type);
     localChain.add(newLocal);
     locals.add(newName);
     return newLocal;

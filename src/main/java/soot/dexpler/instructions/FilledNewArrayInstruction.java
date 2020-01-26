@@ -52,7 +52,7 @@ public class FilledNewArrayInstruction extends FilledArrayInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction35c)) {
       throw new IllegalArgumentException("Expected Instruction35c but got: " + instruction.getClass());
     }
@@ -60,7 +60,7 @@ public class FilledNewArrayInstruction extends FilledArrayInstruction {
     Instruction35c filledNewArrayInstr = (Instruction35c) instruction;
     int[] regs = { filledNewArrayInstr.getRegisterC(), filledNewArrayInstr.getRegisterD(),
         filledNewArrayInstr.getRegisterE(), filledNewArrayInstr.getRegisterF(), filledNewArrayInstr.getRegisterG(), };
-    // NopStmt nopStmtBeginning = myJimple.newNopStmt();
+    // NopStmt nopStmtBeginning = Jimple.newNopStmt();
     // body.add(nopStmtBeginning);
 
     int usedRegister = filledNewArrayInstr.getRegisterCount();
@@ -80,7 +80,7 @@ public class FilledNewArrayInstruction extends FilledArrayInstruction {
       addTags(assign2);
       body.add(assign2);
     }
-    // NopStmt nopStmtEnd = myJimple.newNopStmt();
+    // NopStmt nopStmtEnd = Jimple.newNopStmt();
     // body.add(nopStmtEnd);
     // defineBlock(nopStmtBeginning, nopStmtEnd);
     setUnit(assign);

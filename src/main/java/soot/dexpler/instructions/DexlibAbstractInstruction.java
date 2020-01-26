@@ -40,7 +40,6 @@ import soot.Type;
 import soot.Unit;
 import soot.dexpler.DexBody;
 import soot.dexpler.typing.DalvikTyper;
-import soot.jimple.Jimple;
 import soot.options.Options;
 import soot.tagkit.BytecodeOffsetTag;
 import soot.tagkit.Host;
@@ -68,12 +67,11 @@ public abstract class DexlibAbstractInstruction {
 
   /**
    * Jimplify this instruction.
-   *  @param body
+   * @param body
    *          to jimplify into.
-   * @param myJimple
    * @param myDalvikTyper
    */
-  public abstract void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper);
+  public abstract void jimplify(DexBody body, DalvikTyper myDalvikTyper);
 
   /**
    * Return the target register that is a copy of the given register. For instruction such as v0 = v3 (v0 gets the content of

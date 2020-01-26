@@ -44,7 +44,6 @@ import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
-import soot.jimple.Jimple;
 import soot.jimple.ParameterRef;
 import soot.jimple.Ref;
 import soot.jimple.StaticFieldRef;
@@ -79,7 +78,6 @@ public class LocalObjectsAnalysis {
 
   Map<SootMethod, SmartMethodLocalObjectsAnalysis> mloaCache;
   //FIXME: AD intia
-  protected Jimple myJimple;
   private ThrowAnalysis throwAnalysis;
   private Options myOptions;
   private ThrowableSet.Manager myManager;
@@ -97,7 +95,7 @@ public class LocalObjectsAnalysis {
 
   public ClassLocalObjectsAnalysis getClassLocalObjectsAnalysis(SootClass sc) {
     if (!classToClassLocalObjectsAnalysis.containsKey(sc)) {
-      ClassLocalObjectsAnalysis cloa = newClassLocalObjectsAnalysis(this, dfa, uf, sc, myJimple, throwAnalysis, myOptions, myManager, myPhaseDumper);
+      ClassLocalObjectsAnalysis cloa = newClassLocalObjectsAnalysis(this, dfa, uf, sc,  throwAnalysis, myOptions, myManager, myPhaseDumper);
       classToClassLocalObjectsAnalysis.put(sc, cloa);
     }
     return classToClassLocalObjectsAnalysis.get(sc);
@@ -105,8 +103,8 @@ public class LocalObjectsAnalysis {
 
   // meant to be overridden by specialty local objects analyses
   protected ClassLocalObjectsAnalysis newClassLocalObjectsAnalysis(LocalObjectsAnalysis loa, InfoFlowAnalysis dfa,
-                                                                   UseFinder uf, SootClass sc, Jimple myJimple, ThrowAnalysis throwAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
-    return new ClassLocalObjectsAnalysis(loa, dfa, uf, sc, myJimple, myScene, throwAnalysis, myOptions, myManager, myPhaseDumper);
+                                                                   UseFinder uf, SootClass sc, ThrowAnalysis throwAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
+    return new ClassLocalObjectsAnalysis(loa, dfa, uf, sc,  myScene, throwAnalysis, myOptions, myManager, myPhaseDumper);
   }
 
   public boolean isObjectLocalToParent(Value localOrRef, SootMethod sm) {
@@ -192,7 +190,7 @@ public class LocalObjectsAnalysis {
         /* Couldn't get thisLocal */ }
 
       if (ifr.getBase() == thisLocal) {
-        boolean isLocal = mergedContext.isFieldLocal(InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField(), myJimple));
+        boolean isLocal = mergedContext.isFieldLocal(InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField(), ));
         if (dfa.printDebug()) {
           if (isLocal) {
             logger.debug("      LOCAL  (this  .localField  from " + context.getDeclaringClass().getShortName() + "."
@@ -204,7 +202,7 @@ public class LocalObjectsAnalysis {
         }
         return isLocal;
       } else {
-        boolean isLocal = SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, sm, mergedContext, ifr.getBase(),myJimple);
+        boolean isLocal = SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, sm, mergedContext, ifr.getBase(),);
         if (isLocal) {
           ClassLocalObjectsAnalysis cloa = getClassLocalObjectsAnalysis(context.getDeclaringClass());
           isLocal = !cloa.getInnerSharedFields().contains(ifr.getField());
@@ -228,7 +226,7 @@ public class LocalObjectsAnalysis {
       }
     }
 
-    boolean isLocal = SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, sm, mergedContext, localOrRef,myJimple);
+    boolean isLocal = SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, sm, mergedContext, localOrRef,);
     if (dfa.printDebug()) {
       if (isLocal) {
         logger.debug("      LOCAL  ( local             from " + context.getDeclaringClass().getShortName() + "."

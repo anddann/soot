@@ -156,15 +156,15 @@ public class InfoFlowAnalysis {
    */
   // Returns an EquivalentValue wrapped Ref based on sfr
   // that is suitable for comparison to the nodes of a Data Flow Graph
-  public static EquivalentValue getNodeForFieldRef(SootMethod sm, SootField sf, Jimple myJimple) {
-    return getNodeForFieldRef(sm, sf, null, myJimple);
+  public static EquivalentValue getNodeForFieldRef(SootMethod sm, SootField sf) {
+    return getNodeForFieldRef(sm, sf, null);
   }
 
-  public static EquivalentValue getNodeForFieldRef(SootMethod sm, SootField sf, Local realLocal, Jimple myJimple) {
+  public static EquivalentValue getNodeForFieldRef(SootMethod sm, SootField sf, Local realLocal) {
     if (sf.isStatic()) {
       return new CachedEquivalentValue(Jimple.newStaticFieldRef(sf.makeRef()));
     } else {
-      // myJimple.newThisRef(sf.getDeclaringClass().getType())
+      // Jimple.newThisRef(sf.getDeclaringClass().getType())
       if (sm.isConcrete() && !sm.isStatic() && sm.getDeclaringClass() == sf.getDeclaringClass() && realLocal == null) {
         JimpleLocal fakethis
             = new FakeJimpleLocal("fakethis", sf.getDeclaringClass().getType(), sm.retrieveActiveBody().getThisLocal());

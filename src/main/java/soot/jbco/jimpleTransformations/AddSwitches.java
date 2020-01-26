@@ -65,17 +65,15 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
   private PhaseDumper myPhaseDumper;
   private Options myOptions;
   private FieldRenamer myFieldRenamer;
-  private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
   private ConstantFactory constantFactory;
 
   public AddSwitches(InteractionHandler myInteractionHandler, PhaseDumper myPhaseDumper, Options myOptions,
-                     FieldRenamer myFieldRenamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+                     FieldRenamer myFieldRenamer, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     this.myInteractionHandler = myInteractionHandler;
     this.myPhaseDumper = myPhaseDumper;
     this.myOptions = myOptions;
     this.myFieldRenamer = myFieldRenamer;
-    this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
   }

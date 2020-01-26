@@ -47,11 +47,9 @@ import soot.util.Chain;
 
 public class ThisInliner extends BodyTransformer {
 
-  private Jimple myJimple;
   private LocalNameStandardizer myLocalNameStandardizer;
 
-  public ThisInliner(Jimple myJimple, LocalNameStandardizer myLocalNameStandardizer) {
-    this.myJimple = myJimple;
+  public ThisInliner(LocalNameStandardizer myLocalNameStandardizer) {
     this.myLocalNameStandardizer = myLocalNameStandardizer;
   }
 

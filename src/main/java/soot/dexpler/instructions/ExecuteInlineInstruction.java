@@ -37,14 +37,13 @@ import org.jf.dexlib2.iface.instruction.formats.Instruction35mi;
 import org.jf.dexlib2.iface.instruction.formats.Instruction3rmi;
 import soot.dexpler.DexBody;
 import soot.dexpler.typing.DalvikTyper;
-import soot.jimple.Jimple;
 
 public class ExecuteInlineInstruction extends MethodInvocationInstruction implements OdexInstruction {
 
   private Method targetMethod = null;
 
   public ExecuteInlineInstruction(Instruction instruction, int codeAddress) {
-    super(instruction, codeAddress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
+    super(instruction, codeAddress, myOptions, myDalvikTyper, myScene, mySootResolver);
   }
 
   @Override
@@ -60,7 +59,7 @@ public class ExecuteInlineInstruction extends MethodInvocationInstruction implem
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     int acccessFlags = targetMethod.getAccessFlags();
     if (AccessFlags.STATIC.isSet(acccessFlags)) {
       jimplifyStatic(body);

@@ -92,18 +92,18 @@ public class Shimple {
   private Aggregator myAggregator;
   private UnusedLocalEliminator myUnusedLocalEliminator;
   private LocalNameStandardizer myLocalNameStandardizer;
-    private Jimple myJimple;
+
     private CopyPropagator myCopyPropagator;
   private InteractionHandler myInteractionHander;
   private Scene myScene;
 
 
   @Inject
-  public Shimple(PhaseOptions myPhaseOptions, Printer myPrinter, Options myOptions, NopEliminator myNopEliminator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer, Jimple myJimple, CopyPropagator myCopyPropagator, InteractionHandler myInteractionHander, Scene myScene) {
+  public Shimple(PhaseOptions myPhaseOptions, Printer myPrinter, Options myOptions, NopEliminator myNopEliminator, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer,  CopyPropagator myCopyPropagator, InteractionHandler myInteractionHander, Scene myScene) {
     this.myPhaseOptions = myPhaseOptions;
     this.myPrinter = myPrinter;
     this.myOptions = myOptions;
-        this.myJimple = myJimple;
+        ;
         this.myCopyPropagator = myCopyPropagator;
     this.myInteractionHander = myInteractionHander;
     this.myNopEliminator = myNopEliminator;
@@ -173,7 +173,7 @@ public class Shimple {
    * @see soot.options.ShimpleOptions
    **/
   public JimpleBody newJimpleBody(ShimpleBody body) {
-    return body.toJimpleBody(myJimple);
+    return body.toJimpleBody();
   }
 
   /**

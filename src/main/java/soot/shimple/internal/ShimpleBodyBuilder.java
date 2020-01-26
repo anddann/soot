@@ -86,7 +86,7 @@ import soot.toolkits.scalar.UnusedLocalEliminator;
 public class ShimpleBodyBuilder {
   private final NopEliminator myNopEliminator;
   private final Shimple myShimple;
-  private final Jimple myJimple;
+  ;
   private final CopyPropagator myCopyPropagator;
   private final InteractionHandler myInteractionHander;
   private final Options myOptions;
@@ -115,10 +115,10 @@ public class ShimpleBodyBuilder {
     /**
    * Transforms the provided body to pure SSA form.
    **/
-  public ShimpleBodyBuilder(NopEliminator myNopEliminator, Shimple myShimple, Jimple myJimple, CopyPropagator myCopyPropagator, InteractionHandler myInteractionHander, Options myOptions, ShimpleBody body, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer, Scene myScene) {
+  public ShimpleBodyBuilder(NopEliminator myNopEliminator, Shimple myShimple,  CopyPropagator myCopyPropagator, InteractionHandler myInteractionHander, Options myOptions, ShimpleBody body, DeadAssignmentEliminator myDeadAssignmentEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, UnconditionalBranchFolder myUnconditionalBranchFolder, Aggregator myAggregator, UnusedLocalEliminator myUnusedLocalEliminator, LocalNameStandardizer myLocalNameStandardizer, Scene myScene) {
     this.myNopEliminator = myNopEliminator;
     this.myShimple = myShimple;
-    this.myJimple = myJimple;
+    ;
     this.myCopyPropagator = myCopyPropagator;
     this.myInteractionHander = myInteractionHander;
     this.myOptions = myOptions;
@@ -139,8 +139,8 @@ public class ShimpleBodyBuilder {
     this.body = body;
     sf = new DefaultShimpleFactory(body);
     sf.clearCache();
-    phi = new PhiNodeManager(body, sf, this.myShimple, this.myJimple, this.myInteractionHander, this.myOptions, myScene);
-    pi = new PiNodeManager(body, false, sf, this.myShimple, this.myJimple, myDeadAssignmentEliminator, this.myCopyPropagator);
+    phi = new PhiNodeManager(body, sf, this.myShimple, , this.myInteractionHander, this.myOptions, myScene);
+    pi = new PiNodeManager(body, false, sf, this.myShimple, , myDeadAssignmentEliminator, this.myCopyPropagator);
     options = body.getOptions();
     makeUniqueLocalNames();
   }

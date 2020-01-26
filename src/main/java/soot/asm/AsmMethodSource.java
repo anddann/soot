@@ -152,22 +152,21 @@ final class AsmMethodSource implements MethodSource {
   private Table<AbstractInsnNode, AbstractInsnNode, Edge> edges;
   private ArrayDeque<Edge> conversionWorklist;
   private Scene myScene;
-  private Jimple myJimple;
   private Options myOptions;
     private ConstantFactory constantFactory;
     private LambdaMetaFactory myLambdaMetaFactory;
     private PackManager myPackManager;
     private PhaseOptions myPhaseOptions;
   private PrimTypeCollector primTypeCollector;
+  private Printer myPrinter;
 
   AsmMethodSource(int maxLocals, InsnList insns, List<LocalVariableNode> localVars, List<TryCatchBlockNode> tryCatchBlocks,
-                  Scene myScene, Options myOptions, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, PhaseOptions myPhaseOptions, Util myCoffiUtil, PrimTypeCollector primTypeCollector) {
+                  Scene myScene, Options myOptions, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, PhaseOptions myPhaseOptions, Util myCoffiUtil, PrimTypeCollector primTypeCollector, Printer myPrinter) {
     this.maxLocals = maxLocals;
     this.instructions = insns;
     this.localVars = localVars;
     this.tryCatchBlocks = tryCatchBlocks;
     this.myScene = myScene;
-    this.myJimple = myScene.getMyJimple();
     this.myOptions = myOptions;
         this.constantFactory = constantFactory;
         this.myLambdaMetaFactory = myLambdaMetaFactory;
@@ -175,12 +174,13 @@ final class AsmMethodSource implements MethodSource {
         this.myPhaseOptions = myPhaseOptions;
         this.myCoffiUtil = myCoffiUtil;
     this.primTypeCollector = primTypeCollector;
+    this.myPrinter = myPrinter;
   }
 
   private StackFrame getFrame(AbstractInsnNode insn) {
     StackFrame frame = frames.get(insn);
     if (frame == null) {
-      frame = new StackFrame(this, myJimple);
+      frame = new StackFrame(this);
       frames.put(insn, frame);
     }
     return frame;

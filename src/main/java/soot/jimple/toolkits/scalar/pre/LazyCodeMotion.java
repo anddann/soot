@@ -79,17 +79,17 @@ public class LazyCodeMotion extends BodyTransformer {
   private Options myOptions;
   private BodyTransformer myCriticalEdgeRemover;
   private Scene myScene;
-  private Jimple myJimple;
+
   private PhaseDumper myPhaseDumper;
   private InteractionHandler myInteractionHandler;
 
   @Inject
-  public LazyCodeMotion(Options myOptions, BodyTransformer myCriticalEdgeRemover, Scene myScene, Jimple myJimple, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
+  public LazyCodeMotion(Options myOptions, BodyTransformer myCriticalEdgeRemover, Scene myScene,  PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
 
     this.myOptions = myOptions;
     this.myCriticalEdgeRemover = myCriticalEdgeRemover;
     this.myScene = myScene;
-    this.myJimple = myJimple;
+    ;
     this.myPhaseDumper = myPhaseDumper;
     this.myInteractionHandler = myInteractionHandler;
   }
@@ -109,7 +109,7 @@ public class LazyCodeMotion extends BodyTransformer {
     }
 
     if (options.unroll()) {
-      new LoopConditionUnroller(myOptions, myPhaseDumper, myJimple).transform(b, phaseName + ".lcu");
+      new LoopConditionUnroller(myOptions, myPhaseDumper).transform(b, phaseName + ".lcu");
     }
 
     myCriticalEdgeRemover.transform(b, phaseName + ".cer");

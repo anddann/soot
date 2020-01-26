@@ -22,7 +22,6 @@ package soot;
  * #L%
  */
 
-import soot.jimple.Jimple;
 import soot.options.Options;
 
 /**
@@ -43,7 +42,7 @@ public class JimpleClassProvider implements ClassProvider {
   /**
    * Look for the specified class. Return a ClassSource for it if found, or null if it was not found.
    */
-  public ClassSource find(String className, Scene myScene, Jimple myJimple, Options myOptions, SootResolver mySootResolver) {
+  public ClassSource find(String className, Scene myScene, SootResolver mySootResolver) {
     // String fileName = className.replace('.', '/') + ".jimple";
     String fileName = className + ".jimple";
     FoundFile file = mySourceLocator.lookupInClassPath(fileName);

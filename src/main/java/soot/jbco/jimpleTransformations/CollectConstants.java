@@ -192,13 +192,13 @@ public class CollectConstants extends SceneTransformer implements IJbcoTransform
     if (!sc.declaresMethodByName(SootMethod.staticInitializerName)) {
       SootMethod m = myScene.makeSootMethod(SootMethod.staticInitializerName, emptyList(), primTypeCollector.getVoidType(), Modifier.STATIC);
       sc.addMethod(m);
-      b = myJimple.newBody(m);
+      b = Jimple.newBody(m);
       m.setActiveBody(b);
       newInit = true;
     } else {
       SootMethod m = sc.getMethodByName(SootMethod.staticInitializerName);
       if (!m.hasActiveBody()) {
-        b = myJimple.newBody(m);
+        b = Jimple.newBody(m);
         m.setActiveBody(b);
         newInit = true;
       } else {
@@ -208,9 +208,9 @@ public class CollectConstants extends SceneTransformer implements IJbcoTransform
 
     PatchingChain<Unit> units = b.getUnits();
 
-    units.addFirst(myJimple.newAssignStmt(myJimple.newStaticFieldRef(f.makeRef()), constant));
+    units.addFirst(Jimple.newAssignStmt(Jimple.newStaticFieldRef(f.makeRef()), constant));
     if (newInit) {
-      units.addLast(myJimple.newReturnVoidStmt());
+      units.addLast(Jimple.newReturnVoidStmt());
     }
   }
 }

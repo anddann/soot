@@ -66,16 +66,16 @@ import soot.util.Chain;
 /** Provides methods to inline a given invoke site. */
 public class SiteInliner {
   // FIXME: make singleton
-  private Jimple myJimple;
+
   private Scene myScene;
   private ConstantFactory constantFactory;
   private SynchronizerManager mySynchronizerManager;
   private LocalNameStandardizer myLocalNameStandardizer;
 
   @Inject
-  public SiteInliner(Jimple myJimple, Scene myScene, ConstantFactory constantFactory,
+  public SiteInliner( Scene myScene, ConstantFactory constantFactory,
                      SynchronizerManager mySynchronizerManager, LocalNameStandardizer myLocalNameStandardizer) {
-    this.myJimple = myJimple;
+    ;
     this.myScene = myScene;
     this.constantFactory = constantFactory;
     this.mySynchronizerManager = mySynchronizerManager;

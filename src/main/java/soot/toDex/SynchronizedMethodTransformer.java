@@ -49,15 +49,15 @@ import soot.util.PhaseDumper;
  */
 public class SynchronizedMethodTransformer extends BodyTransformer {
 
-  private Jimple myJimple;
+
   private ThrowableSet.Manager myManager;
   private PhaseDumper myPhaseDumper;
   private Options myOptions;
   private ThrowAnalysis myThrowAnalysis;
 
   @Inject
-  public SynchronizedMethodTransformer(Jimple myJimple, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Options myOptions, ThrowAnalysis myThrowAnalysis) {
-    this.myJimple = myJimple;
+  public SynchronizedMethodTransformer( ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Options myOptions, ThrowAnalysis myThrowAnalysis) {
+    ;
     this.myManager = myManager;
     this.myPhaseDumper = myPhaseDumper;
     this.myOptions = myOptions;

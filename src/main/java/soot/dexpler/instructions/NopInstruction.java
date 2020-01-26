@@ -37,14 +37,12 @@ import soot.options.Options;
 
 public class NopInstruction extends DexlibAbstractInstruction {
 
-  private Jimple myJimple;
 
-  public NopInstruction(Instruction instruction, int codeAddress, Jimple myJimple, Options myOptions) {
+  public NopInstruction(Instruction instruction, int codeAddress, Options myOptions) {
     super(instruction, codeAddress, myOptions);
-    this.myJimple = myJimple;
   }
 
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     NopStmt nop = Jimple.newNopStmt();
     setUnit(nop);
     addTags(nop);

@@ -705,7 +705,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
 
         // need to create a def stmt with the local on the left and
         // toAddExpr on the right
-        GAssignStmt assign = new GAssignStmt(initLocal, toAddExpr,myGrimp );
+        GAssignStmt assign = new GAssignStmt(initLocal, toAddExpr);
         newStmts.add(new AugmentedStmt(assign));
       }
     }
@@ -1088,7 +1088,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
         = new DNewInvokeExpr(RefType.v(sootClass,myScene), makeMethodRef("DavaSuperHandler", new ArrayList()), new ArrayList(), myGrimp, myScene);
 
     // create LHS
-    GAssignStmt initialization = new GAssignStmt(newLocal, invokeExpr,myGrimp );
+    GAssignStmt initialization = new GAssignStmt(newLocal, invokeExpr);
 
     // add to stmts
     davaHandlerStmts.add(new AugmentedStmt(initialization));

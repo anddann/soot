@@ -53,7 +53,6 @@ public class Util {
     private Scene myScene;
 
     private SootResolver mySootResolver;
-    private Jimple myJimple;
     private PhaseOptions myPhaseOptions;
     private Options myOptions;
     private PackManager myPackManager;
@@ -62,11 +61,10 @@ public class Util {
     private ConstantFactory constantFactory;
 
     @Inject
-    public Util(Scene myScene, SootResolver mySootResolver, Jimple myJimple, PhaseOptions myPhaseOptions, Options myOptions,
-                PackManager myPackManager, Timers myTimers,  PrimTypeCollector myPrimTypeCollector, ConstantFactory constantFactory) {
+    public Util(Scene myScene, SootResolver mySootResolver, PhaseOptions myPhaseOptions, Options myOptions,
+                PackManager myPackManager, Timers myTimers, PrimTypeCollector myPrimTypeCollector, ConstantFactory constantFactory) {
         this.myScene = myScene;
         this.mySootResolver = mySootResolver;
-        this.myJimple = myJimple;
         this.myPhaseOptions = myPhaseOptions;
         this.myOptions = myOptions;
         this.myPackManager = myPackManager;

@@ -170,13 +170,13 @@ public class DexNullArrayRefTransformer extends BodyTransformer {
         = myScene.makeConstructorRef(tp.getSootClass(), Collections.singletonList((Type) RefType.v("java.lang.String",myScene)));
 
     // Create the exception instance
-    Stmt newExStmt = myJimple.newAssignStmt(lcEx, myJimple.newNewExpr(tp));
+    Stmt newExStmt = Jimple.newAssignStmt(lcEx, Jimple.newNewExpr(tp));
     body.getUnits().insertBefore(newExStmt, oldStmt);
-    Stmt invConsStmt = myJimple.newInvokeStmt(myJimple.newSpecialInvokeExpr(lcEx, constructorRef,
+    Stmt invConsStmt = Jimple.newInvokeStmt(Jimple.newSpecialInvokeExpr(lcEx, constructorRef,
         Collections.singletonList(constantFactory.createStringConstant("Invalid array reference replaced by Soot"))));
     body.getUnits().insertBefore(invConsStmt, oldStmt);
 
     // Throw the exception
-    body.getUnits().swapWith(oldStmt, myJimple.newThrowStmt(lcEx));
+    body.getUnits().swapWith(oldStmt, Jimple.newThrowStmt(lcEx));
   }
 }

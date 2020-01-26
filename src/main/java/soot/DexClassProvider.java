@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import soot.dexpler.DexFileProvider;
 import soot.dexpler.Util;
-import soot.jimple.Jimple;
 import soot.options.Options;
 
 /**
@@ -73,13 +72,9 @@ public class DexClassProvider implements ClassProvider {
    *
    * @param className
    *          class to provide.
-   * @param myScene
-   * @param myJimple
-   * @param myOptions
-   * @param mySootResolver
    * @return a DexClassSource that defines the className named class.
    */
-  public ClassSource find(String className, Scene myScene, Jimple myJimple, Options myOptions, SootResolver mySootResolver) {
+  public ClassSource find(String className) {
     ensureDexIndex();
 
     Map<String, File> index = mySourceLocator.dexClassIndex();

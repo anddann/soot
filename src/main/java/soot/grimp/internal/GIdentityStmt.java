@@ -24,21 +24,16 @@ package soot.grimp.internal;
 
 import soot.Value;
 import soot.grimp.Grimp;
-import soot.jimple.Jimple;
 import soot.jimple.internal.JIdentityStmt;
 
 public class GIdentityStmt extends JIdentityStmt {
-    private Grimp myGrimp;
-    private final Jimple myJimple;
 
-    public GIdentityStmt(Value local, Value identityValue, Grimp myGrimp, Jimple myJimple) {
+    public GIdentityStmt(Value local, Value identityValue) {
         super(myGrimp.newLocalBox(local), myGrimp.newIdentityRefBox(identityValue));
-        this.myGrimp = myGrimp;
-        this.myJimple = myJimple;
     }
 
     public Object clone() {
-        return new GIdentityStmt(Grimp.cloneIfNecessary(getLeftOp()), Grimp.cloneIfNecessary(getRightOp()), myGrimp, myJimple);
+        return new GIdentityStmt(Grimp.cloneIfNecessary(getLeftOp()), Grimp.cloneIfNecessary(getRightOp()));
 
     }
 }

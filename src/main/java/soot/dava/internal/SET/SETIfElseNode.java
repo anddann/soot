@@ -72,8 +72,8 @@ public class SETIfElseNode extends SETDagNode {
   }
 
   public ASTNode emit_AST() {
-    List<Object> astBody0 = emit_ASTBody(body2childChain.get(ifBody), myTryContentsFinder, myASTWalker, myJimple),
-        astBody1 = emit_ASTBody(body2childChain.get(elseBody), myTryContentsFinder, myASTWalker, myJimple);
+    List<Object> astBody0 = emit_ASTBody(body2childChain.get(ifBody)),
+        astBody1 = emit_ASTBody(body2childChain.get(elseBody));
 
     ConditionExpr ce = (ConditionExpr) ((IfStmt) get_CharacterizingStmt().get_Stmt()).getCondition();
 

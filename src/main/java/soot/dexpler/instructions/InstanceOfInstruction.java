@@ -52,7 +52,7 @@ public class InstanceOfInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     Instruction22c i = (Instruction22c) instruction;
     int dest = i.getRegisterA();
     int source = i.getRegisterB();

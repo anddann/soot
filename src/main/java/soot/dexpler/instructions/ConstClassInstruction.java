@@ -15,12 +15,12 @@ package soot.dexpler.instructions;
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -49,54 +49,52 @@ import soot.options.Options;
 
 public class ConstClassInstruction extends DexlibAbstractInstruction {
 
-  private ConstantFactory constantFactory;
-  private Jimple myJimple;
-  private DalvikTyper myDalvikTyper;
+    private ConstantFactory constantFactory;
+    private DalvikTyper myDalvikTyper;
 
-  public ConstClassInstruction(Instruction instruction, int codeAdress, Options myOptions, ConstantFactory constantFactory, Jimple myJimple, DalvikTyper myDalvikTyper) {
-    super(instruction, codeAdress, myOptions);
-    this.constantFactory = constantFactory;
-    this.myJimple = myJimple;
-    this.myDalvikTyper = myDalvikTyper;
-  }
-
-  @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
-    if (!(instruction instanceof Instruction21c)) {
-      throw new IllegalArgumentException("Expected Instruction21c but got: " + instruction.getClass());
+    public ConstClassInstruction(Instruction instruction, int codeAdress, Options myOptions, ConstantFactory constantFactory, DalvikTyper myDalvikTyper) {
+        super(instruction, codeAdress, myOptions);
+        this.constantFactory = constantFactory;
+        this.myDalvikTyper = myDalvikTyper;
     }
 
-    ReferenceInstruction constClass = (ReferenceInstruction) this.instruction;
+    @Override
+    public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
+        if (!(instruction instanceof Instruction21c)) {
+            throw new IllegalArgumentException("Expected Instruction21c but got: " + instruction.getClass());
+        }
 
-    TypeReference tidi = (TypeReference) (constClass.getReference());
-    Constant cst = constantFactory.createClassConstant(tidi.getType());
+        ReferenceInstruction constClass = (ReferenceInstruction) this.instruction;
 
-    int dest = ((OneRegisterInstruction) instruction).getRegisterA();
-    AssignStmt assign = Jimple.newAssignStmt(body.getRegisterLocal(dest), cst);
-    setUnit(assign);
-    addTags(assign);
-    body.add(assign);
+        TypeReference tidi = (TypeReference) (constClass.getReference());
+        Constant cst = constantFactory.createClassConstant(tidi.getType());
 
-    if (IDalvikTyper.ENABLE_DVKTYPER) {
-      // myDalvikTyper().captureAssign((JAssignStmt)assign, op); //TODO:
-      // classtype could be null!
-      this.myDalvikTyper.setType(assign.getLeftOpBox(), cst.getType(), false);
+        int dest = ((OneRegisterInstruction) instruction).getRegisterA();
+        AssignStmt assign = Jimple.newAssignStmt(body.getRegisterLocal(dest), cst);
+        setUnit(assign);
+        addTags(assign);
+        body.add(assign);
+
+        if (IDalvikTyper.ENABLE_DVKTYPER) {
+            // myDalvikTyper().captureAssign((JAssignStmt)assign, op); //TODO:
+            // classtype could be null!
+            this.myDalvikTyper.setType(assign.getLeftOpBox(), cst.getType(), false);
+        }
     }
-  }
 
-  @Override
-  boolean overridesRegister(int register) {
-    OneRegisterInstruction i = (OneRegisterInstruction) instruction;
-    int dest = i.getRegisterA();
-    return register == dest;
-  }
+    @Override
+    boolean overridesRegister(int register) {
+        OneRegisterInstruction i = (OneRegisterInstruction) instruction;
+        int dest = i.getRegisterA();
+        return register == dest;
+    }
 
-  @Override
-  public Set<Type> introducedTypes() {
-    ReferenceInstruction i = (ReferenceInstruction) instruction;
+    @Override
+    public Set<Type> introducedTypes() {
+        ReferenceInstruction i = (ReferenceInstruction) instruction;
 
-    Set<Type> types = new HashSet<Type>();
-    types.add(DexType.toSoot((TypeReference) i.getReference()));
-    return types;
-  }
+        Set<Type> types = new HashSet<Type>();
+        types.add(DexType.toSoot((TypeReference) i.getReference()));
+        return types;
+    }
 }

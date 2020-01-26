@@ -322,7 +322,7 @@ public class JimpleConstructorFolder extends BodyTransformer {
           if (l.equals(base(s))) {
             continue;
           }
-          units.insertAfter(myJimple.newAssignStmt(l, base(s)), s);
+          units.insertAfter(Jimple.newAssignStmt(l, base(s)), s);
         }
       }
     }

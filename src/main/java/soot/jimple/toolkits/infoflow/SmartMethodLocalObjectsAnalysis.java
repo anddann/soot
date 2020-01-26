@@ -50,20 +50,20 @@ public class SmartMethodLocalObjectsAnalysis {
   SootMethod method;
   InfoFlowAnalysis dfa;
   SmartMethodInfoFlowAnalysis smdfa;
-  private Jimple myJimple;
 
-  public SmartMethodLocalObjectsAnalysis(SootMethod method, InfoFlowAnalysis dfa, Jimple myJimple) {
+
+  public SmartMethodLocalObjectsAnalysis(SootMethod method, InfoFlowAnalysis dfa, ) {
     this.method = method;
     this.dfa = dfa;
-    this.myJimple = myJimple;
+    ;
     this.smdfa = dfa.getMethodInfoFlowAnalysis(method);
 
     printMessages = dfa.printDebug();
     counter++;
   }
 
-  public SmartMethodLocalObjectsAnalysis(UnitGraph g, InfoFlowAnalysis dfa, Jimple myJimple) {
-    this(g.getBody().getMethod(), dfa, myJimple);
+  public SmartMethodLocalObjectsAnalysis(UnitGraph g, InfoFlowAnalysis dfa, ) {
+    this(g.getBody().getMethod(), dfa, );
   }
 
   public Value getThisLocal() {
@@ -76,7 +76,7 @@ public class SmartMethodLocalObjectsAnalysis {
   {
     EquivalentValue localEqVal;
     if (local instanceof InstanceFieldRef) {
-      localEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, ((FieldRef) local).getField(), myJimple);
+      localEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, ((FieldRef) local).getField(), );
     } else {
       localEqVal = new CachedEquivalentValue(local);
     }
@@ -105,12 +105,12 @@ public class SmartMethodLocalObjectsAnalysis {
     return true;
   }
 
-  public static boolean isObjectLocal(InfoFlowAnalysis dfa, SootMethod method, CallLocalityContext context, Value local, Jimple myJimple) {
+  public static boolean isObjectLocal(InfoFlowAnalysis dfa, SootMethod method, CallLocalityContext context, Value local, ) {
     SmartMethodInfoFlowAnalysis smdfa = dfa.getMethodInfoFlowAnalysis(method);
 
     EquivalentValue localEqVal;
     if (local instanceof InstanceFieldRef) {
-      localEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, ((FieldRef) local).getField(), myJimple);
+      localEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, ((FieldRef) local).getField(), );
     } else {
       localEqVal = new CachedEquivalentValue(local);
     }

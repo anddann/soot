@@ -100,15 +100,15 @@ public abstract class FieldInstruction extends DexlibAbstractInstruction {
     AssignStmt assign;
     // Type targetType = getTargetType(body);
     // if(targetType != UnknownType.v() && targetType != sourceValue.getType() && ! (targetType instanceof RefType)) {
-    // CastExpr castExpr = myJimple.newCastExpr(sourceValue, targetType);
+    // CastExpr castExpr = Jimple.newCastExpr(sourceValue, targetType);
     // Local local = body.generateLocal(targetType);
-    // assign = myJimple.newAssignStmt(local, castExpr);
+    // assign = Jimple.newAssignStmt(local, castExpr);
     // body.add(assign);
     // beginUnit = assign;
-    // assign = myJimple.newAssignStmt(instanceField, local);
+    // assign = Jimple.newAssignStmt(instanceField, local);
     // }
     // else {
-    assign = myJimple.newAssignStmt(instanceField, sourceValue);
+    assign = Jimple.newAssignStmt(instanceField, sourceValue);
     // }
     return assign;
   }

@@ -143,15 +143,15 @@ public class ThrowManager {
       }
     } while (!canAddI);
 
-    Local l = myJimple.newLocal("__throwee" + i, RefType.v("java.lang.NullPointerException"));
+    Local l = Jimple.newLocal("__throwee" + i, RefType.v("java.lang.NullPointerException"));
     b.getLocals().add(l);
 
-    Stmt newStmt = myJimple.newAssignStmt(l, myJimple.newNewExpr(RefType.v("java.lang.NullPointerException")));
+    Stmt newStmt = Jimple.newAssignStmt(l, Jimple.newNewExpr(RefType.v("java.lang.NullPointerException")));
 
-    Stmt invStmt = myJimple.newInvokeStmt(myJimple.newSpecialInvokeExpr(l,
+    Stmt invStmt = Jimple.newInvokeStmt(Jimple.newSpecialInvokeExpr(l,
         myScene.getMethod("<java.lang.NullPointerException: void <init>()>").makeRef()));
 
-    Stmt throwStmt = myJimple.newThrowStmt(l);
+    Stmt throwStmt = Jimple.newThrowStmt(l);
 
     units.insertAfter(newStmt, target);
     units.insertAfter(invStmt, newStmt);

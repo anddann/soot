@@ -105,7 +105,6 @@ public class Scene // extends AbstractHost
   private ThrowAnalysis myUnitThrowAnalysis;
   private ThrowAnalysis myDalvikThrowAnalysis;
   private PackageNamer myPackageNamer;
-  private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
   private Baf myBaf;
   private ConstantFactory constantFactory;
@@ -115,7 +114,7 @@ public class Scene // extends AbstractHost
   public Scene(Options myOptions, PhaseOptions myPhaseOptions, SourceLocator mySourceLocator, SootResolver mySootResolver,
                PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility,
                EntryPoints myEntryPoints, PedanticThrowAnalysis myPedanticThrowAnalysis, UnitThrowAnalysis myUnitThrowAnalysis,
-               DalvikThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer, Jimple myJimple,
+               DalvikThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer,
                PrimTypeCollector primTypeCollector, Baf myBaf, ConstantFactory constantFactory, FullObjectFactory fullObjectFactory) {
     this.myOptions = myOptions;
     this.myPhaseOptions = myPhaseOptions;
@@ -128,7 +127,6 @@ public class Scene // extends AbstractHost
     this.myUnitThrowAnalysis = myUnitThrowAnalysis;
     this.myDalvikThrowAnalysis = myDalvikThrowAnalysis;
     this.myPackageNamer = myPackageNamer;
-    this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.myBaf = myBaf;
     this.constantFactory = constantFactory;
@@ -482,13 +480,6 @@ public class Scene // extends AbstractHost
     return this.primTypeCollector;
   }
 
-  public Jimple getMyJimple() {
-    return this.myJimple;
-  }
-
-  public Baf getMyBaf() {
-    return this.myBaf;
-  }
 
   public static class AndroidVersionInfo {
 
@@ -1942,9 +1933,9 @@ public class Scene // extends AbstractHost
   public SootMethodRef makeMethodRef(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
       boolean isStatic) {
     if (PolymorphicMethodRef.handlesClass(declaringClass)) {
-      return new PolymorphicMethodRef(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, myJimple, constantFactory);
+      return new PolymorphicMethodRef(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, constantFactory);
     }
-    return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, myJimple, constantFactory);
+    return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, constantFactory);
   }
 
   /** Create an unresolved reference to a constructor. */

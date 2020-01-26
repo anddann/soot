@@ -219,7 +219,7 @@ class MethodBuilder extends JSRInlinerAdapter {
     }
     if (method.isConcrete()) {
       method.setSource(
-          new AsmMethodSource(maxLocals, instructions, localVariables, tryCatchBlocks, myScene,  myOptions, constantFactory, myLambdaMetaFactory, myPackManager, myPhaseOptions, myCoffiUtil, primTypeCollector));
+          new AsmMethodSource(maxLocals, instructions, localVariables, tryCatchBlocks, myScene,  myOptions, constantFactory, myLambdaMetaFactory, myPackManager, myPhaseOptions, myCoffiUtil, primTypeCollector, myPrinter));
     }
   }
 }

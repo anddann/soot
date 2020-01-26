@@ -83,7 +83,7 @@ public class DeadAssignmentEliminator extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(DeadAssignmentEliminator.class);
   private Options myOptions;
   private Timers myTimers;
-  private Jimple myJimple;
+
   private Scene myScene;
   private PhaseDumper phaseDumper;
   private ThrowAnalysis throwAnalysis;
@@ -92,10 +92,10 @@ public class DeadAssignmentEliminator extends BodyTransformer {
 
 
   @Inject
-  public DeadAssignmentEliminator(Options myOptions, Timers myTimers, Jimple myJimple, Scene myScene, PhaseDumper phaseDumper, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, InteractionHandler myInteractionHandler) {
+  public DeadAssignmentEliminator(Options myOptions, Timers myTimers,  Scene myScene, PhaseDumper phaseDumper, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, InteractionHandler myInteractionHandler) {
     this.myOptions = myOptions;
     this.myTimers = myTimers;
-    this.myJimple = myJimple;
+    ;
     this.myScene = myScene;
     this.phaseDumper = phaseDumper;
     this.throwAnalysis = throwAnalysis;

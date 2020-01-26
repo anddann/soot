@@ -25,8 +25,6 @@ package soot;
 
 import com.google.inject.Inject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
@@ -39,8 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.javaToJimple.IInitialResolver.Dependencies;
-import soot.jimple.ConstantFactory;
-import soot.jimple.Jimple;
 import soot.options.Options;
 import soot.util.ConcurrentHashMultiMap;
 import soot.util.MultiMap;
@@ -62,21 +58,15 @@ public class SootResolver {
   private Scene myScene;
   private PackageNamer myPackageNamer;
   private SourceLocator mySourceLocator;
-  private Jimple myJimple;
-  private PrimTypeCollector primTypeCollector;
-  private ConstantFactory constantFactory;
-  private PhaseOptions myPhaseOptions;
+
 
   @Inject
-  public SootResolver(Options myOptions, Scene myScene, PackageNamer myPackageNamer, SourceLocator mySourceLocator, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, PhaseOptions myPhaseOptions) {
+  public SootResolver(Options myOptions, Scene myScene, PackageNamer myPackageNamer, SourceLocator mySourceLocator) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myPackageNamer = myPackageNamer;
     this.mySourceLocator = mySourceLocator;
-    this.myJimple = myJimple;
-    this.primTypeCollector = primTypeCollector;
-    this.constantFactory = constantFactory;
-    this.myPhaseOptions = myPhaseOptions;
+
     worklist[SootClass.HIERARCHY] = new ArrayDeque<SootClass>();
     worklist[SootClass.SIGNATURES] = new ArrayDeque<SootClass>();
     worklist[SootClass.BODIES] = new ArrayDeque<SootClass>();

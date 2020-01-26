@@ -72,18 +72,17 @@ import soot.options.Options;
 public class InvokeCustomInstruction extends MethodInvocationInstruction {
 
   private ConstantFactory constantFactory;
-  private Jimple myJimple;
   private Scene myScene;
 
-  public InvokeCustomInstruction(Instruction instruction, int codeAddress, ConstantFactory constantFactory, Jimple myJimple, Scene myScene, Options myOptions, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
-    super(instruction, codeAddress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
+  public InvokeCustomInstruction(Instruction instruction, int codeAddress, ConstantFactory constantFactory, Scene myScene, Options myOptions, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
+    super(instruction, codeAddress, myOptions, myDalvikTyper, myScene, mySootResolver);
     this.constantFactory = constantFactory;
-    this.myJimple = myJimple;
+    ;
     this.myScene = myScene;
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     CallSiteReference callSiteReference = (CallSiteReference) ((ReferenceInstruction) instruction).getReference();
     Reference bootstrapRef = callSiteReference.getMethodHandle().getMemberReference();
     

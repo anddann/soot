@@ -217,10 +217,9 @@ public class Util {
    * depending on the return type).
    * @param jBody
    * @param primTypeCollector
-   * @param myJimple
    * @param constantFactory
    */
-  public static void emptyBody(Body jBody, PrimTypeCollector primTypeCollector, Jimple myJimple, ConstantFactory constantFactory) {
+  public static void emptyBody(Body jBody, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     // identity statements
     List<Unit> idStmts = new ArrayList<Unit>();
     List<Local> idLocals = new ArrayList<Local>();
@@ -238,7 +237,7 @@ public class Util {
     jBody.getLocals().clear();
     jBody.getTraps().clear();
 
-    final LocalGenerator lg = new LocalGenerator(jBody, primTypeCollector, myJimple);
+    final LocalGenerator lg = new LocalGenerator(jBody, primTypeCollector);
 
     for (Unit u : idStmts) {
       jBody.getUnits().add(u);
@@ -283,7 +282,7 @@ public class Util {
    * Insert a runtime exception before unit u of body b. Useful to analyze broken code (which make reference to inexisting
    * class for instance) exceptionType: e.g., "java.lang.RuntimeException"
    */
-  public static void addExceptionAfterUnit(Body b, String exceptionType, Unit u, String m, Scene myScene, Jimple myJimple, ConstantFactory constantFactory) {
+  public static void addExceptionAfterUnit(Body b, String exceptionType, Unit u, String m, Scene myScene, ConstantFactory constantFactory) {
     LocalCreation lc = new LocalCreation(b.getLocals());
     Local l = lc.newLocal(RefType.v(exceptionType,myScene));
 
@@ -291,7 +290,7 @@ public class Util {
     Unit u1 = Jimple.newAssignStmt(l, Jimple.newNewExpr(RefType.v(exceptionType,myScene)));
     Unit u2
         = Jimple
-            .newInvokeStmt(myJimple.newSpecialInvokeExpr(l,
+            .newInvokeStmt(Jimple.newSpecialInvokeExpr(l,
                 myScene.makeMethodRef(myScene.getSootClass(exceptionType), "<init>",
                     Collections.singletonList((Type) RefType.v("java.lang.String",myScene)), myScene.getPrimTypeCollector().getVoidType(), false),
                 constantFactory.createStringConstant(m)));

@@ -48,16 +48,14 @@ import soot.options.Options;
 public class BinopLitInstruction extends TaggedInstruction {
 
   private ConstantFactory constantFactory;
-  private Jimple myJimple;
 
-  public BinopLitInstruction(Instruction instruction, int codeAdress, ConstantFactory constantFactory, Jimple myJimple, Options myOptions) {
+  public BinopLitInstruction(Instruction instruction, int codeAdress, ConstantFactory constantFactory, Options myOptions) {
     super(instruction, codeAdress, myOptions);
     this.constantFactory = constantFactory;
-    this.myJimple = myJimple;
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction22s) && !(instruction instanceof Instruction22b)) {
       throw new IllegalArgumentException("Expected Instruction22s or Instruction22b but got: " + instruction.getClass());
     }

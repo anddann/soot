@@ -114,7 +114,7 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
 
         if (constant != null) {
           if (sf.isStatic()) {
-            Stmt initStmt = myJimple.newAssignStmt(myJimple.newStaticFieldRef(sf.makeRef()), constant);
+            Stmt initStmt = Jimple.newAssignStmt(Jimple.newStaticFieldRef(sf.makeRef()), constant);
             if (smInit == null) {
               smInit = getOrCreateInitializer(sc, alreadyInitialized);
             }
@@ -142,7 +142,7 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
                           break;
                         }
                         Stmt initStmt = myJimple
-                            .newAssignStmt(myJimple.newInstanceFieldRef(body.getThisLocal(), sf.makeRef()), constant);
+                            .newAssignStmt(Jimple.newInstanceFieldRef(body.getThisLocal(), sf.makeRef()), constant);
 
                         body.getUnits().insertAfter(initStmt, s);
                         break;
@@ -160,7 +160,7 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
     if (smInit != null) {
       Chain<Unit> units = smInit.getActiveBody().getUnits();
       if (units.isEmpty() || !(units.getLast() instanceof ReturnVoidStmt)) {
-        units.add(myJimple.newReturnVoidStmt());
+        units.add(Jimple.newReturnVoidStmt());
       }
     }
   }
@@ -171,7 +171,7 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
     smInit = sc.getMethodByNameUnsafe(SootMethod.staticInitializerName);
     if (smInit == null) {
       smInit = myScene.makeSootMethod(SootMethod.staticInitializerName, Collections.<Type>emptyList(), primTypeCollector.getVoidType());
-      smInit.setActiveBody(myJimple.newBody(smInit));
+      smInit.setActiveBody(Jimple.newBody(smInit));
       sc.addMethod(smInit);
       smInit.setModifiers(Modifier.PUBLIC | Modifier.STATIC);
     } else if (smInit.isPhantom()) {

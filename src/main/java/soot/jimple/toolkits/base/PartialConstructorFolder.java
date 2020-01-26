@@ -144,8 +144,8 @@ public class PartialConstructorFolder extends BodyTransformer {
 
         // make a new one here
         AssignStmt constructStmt
-            = myJimple.newAssignStmt(((DefinitionStmt) s).getLeftOp(), ((DefinitionStmt) s).getRightOp());
-        constructStmt.setRightOp(myJimple.newNewExpr(((NewExpr) rhs).getBaseType()));
+            = Jimple.newAssignStmt(((DefinitionStmt) s).getLeftOp(), ((DefinitionStmt) s).getRightOp());
+        constructStmt.setRightOp(Jimple.newNewExpr(((NewExpr) rhs).getBaseType()));
         MadeNewInvokeExpr = true;
 
         // redirect jumps

@@ -52,7 +52,7 @@ import soot.jimple.internal.JimpleLocal;
 public class InvokePolymorphicInstruction extends MethodInvocationInstruction {
 
   public InvokePolymorphicInstruction(Instruction instruction, int codeAddress) {
-    super(instruction, codeAddress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
+    super(instruction, codeAddress, myOptions, myDalvikTyper, myScene, mySootResolver);
   }
 
   /* Instruction Format for invoke-polymorphic
@@ -90,7 +90,7 @@ public class InvokePolymorphicInstruction extends MethodInvocationInstruction {
    *   invoke-polymorhpic instructions whose prototype will does not match the actual method being invoked.
    */
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     SootMethodRef ref = getVirtualSootMethodRef();
     if (ref.declaringClass().isInterface()) {
       ref = getInterfaceSootMethodRef();

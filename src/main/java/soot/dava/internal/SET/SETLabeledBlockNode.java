@@ -39,7 +39,7 @@ public class SETLabeledBlockNode extends SETNode {
   }
 
   public ASTNode emit_AST() {
-    return new ASTLabeledBlockNode(get_Label(), emit_ASTBody(body2childChain.get(subBodies.get(0)), myTryContentsFinder, myASTWalker, myJimple));
+    return new ASTLabeledBlockNode(get_Label(), emit_ASTBody(body2childChain.get(subBodies.get(0))));
   }
 
   public AugmentedStmt get_EntryStmt() {

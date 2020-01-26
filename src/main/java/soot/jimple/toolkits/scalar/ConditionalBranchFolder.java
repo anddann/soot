@@ -43,12 +43,10 @@ import soot.util.Chain;
 public class ConditionalBranchFolder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ConditionalBranchFolder.class);
   private Options myOptions;
-  private Jimple myJimple;
 
   @Inject
-  public ConditionalBranchFolder(Options myOptions, Jimple myJimple) {
+  public ConditionalBranchFolder(Options myOptions) {
     this.myOptions = myOptions;
-    this.myJimple = myJimple;
   }
 
 

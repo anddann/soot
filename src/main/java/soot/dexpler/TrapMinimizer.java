@@ -57,15 +57,13 @@ public class TrapMinimizer extends TrapTransformer {
 
   private DalvikThrowAnalysis myDalvikThrowAnalysis;
   private Options myOptions;
-  private Jimple myJimple;
   private ThrowableSet.Manager myManager;
   private PhaseDumper myPhaseDumper;
 
   @Inject
-  public TrapMinimizer(DalvikThrowAnalysis myDalvikThrowAnalysis, Options myOptions, Jimple myJimple, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
+  public TrapMinimizer(DalvikThrowAnalysis myDalvikThrowAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
     this.myDalvikThrowAnalysis = myDalvikThrowAnalysis;
     this.myOptions = myOptions;
-    this.myJimple = myJimple;
     this.myManager = myManager;
     this.myPhaseDumper = myPhaseDumper;
   }

@@ -40,7 +40,6 @@ import soot.Value;
 import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InvokeExpr;
-import soot.jimple.Jimple;
 import soot.jimple.Ref;
 import soot.jimple.toolkits.infoflow.CallLocalityContext;
 import soot.jimple.toolkits.infoflow.ClassInfoFlowAnalysis;
@@ -98,7 +97,7 @@ public class ThreadLocalObjectsAnalysis extends LocalObjectsAnalysis implements 
 
   // override
   protected ClassLocalObjectsAnalysis newClassLocalObjectsAnalysis(LocalObjectsAnalysis loa, InfoFlowAnalysis dfa,
-                                                                   UseFinder uf, SootClass sc, Jimple myJimple, ThrowAnalysis throwAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
+                                                                   UseFinder uf, SootClass sc, ThrowAnalysis throwAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
     // find the right run methods to use for threads of type sc
     List<SootMethod> runMethods = new ArrayList<SootMethod>();
     Iterator<AbstractRuntimeThread> threadsIt = threads.iterator();
@@ -113,7 +112,7 @@ public class ThreadLocalObjectsAnalysis extends LocalObjectsAnalysis implements 
       }
     }
 
-    return new ClassLocalObjectsAnalysis(loa, dfa, primitiveDfa, uf, sc, runMethods, myJimple, myScene, throwAnalysis, myOptions, myManager, myPhaseDumper);
+    return new ClassLocalObjectsAnalysis(loa, dfa, primitiveDfa, uf, sc, runMethods, myScene, throwAnalysis, myOptions, myManager, myPhaseDumper);
   }
 
   // Determines if a RefType Local or a FieldRef is Thread-Local
@@ -219,7 +218,7 @@ public class ThreadLocalObjectsAnalysis extends LocalObjectsAnalysis implements 
           // Get an IFA node for our sharedValue
           EquivalentValue sharedValueEqVal;
           if (sharedValue instanceof InstanceFieldRef) {
-            sharedValueEqVal = InfoFlowAnalysis.getNodeForFieldRef(containingMethod, ((FieldRef) sharedValue).getField(), myJimple);
+            sharedValueEqVal = InfoFlowAnalysis.getNodeForFieldRef(containingMethod, ((FieldRef) sharedValue).getField(), );
           } else {
             sharedValueEqVal = new EquivalentValue(sharedValue);
           }

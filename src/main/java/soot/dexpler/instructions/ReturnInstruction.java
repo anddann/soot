@@ -44,7 +44,7 @@ public class ReturnInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     Instruction11x returnInstruction = (Instruction11x) this.instruction;
     Local l = body.getRegisterLocal(returnInstruction.getRegisterA());
     ReturnStmt returnStmt = Jimple.newReturnStmt(l);

@@ -53,8 +53,8 @@ public class SparseSwitchInstruction extends SwitchInstruction {
   private DalvikTyper myDalvikTyper;
   private PrimTypeCollector primTypeCollector;
 
-  public SparseSwitchInstruction(Instruction instruction, int codeAdress, Jimple myJimple, ConstantFactory constantFactory, DalvikTyper myDalvikTyper, PrimTypeCollector primTypeCollector, Options myOptions) {
-    super(instruction, codeAdress, myJimple, myOptions);
+  public SparseSwitchInstruction(Instruction instruction, int codeAdress,  ConstantFactory constantFactory, DalvikTyper myDalvikTyper, PrimTypeCollector primTypeCollector, Options myOptions) {
+    super(instruction, codeAdress, myOptions);
     this.constantFactory = constantFactory;
     this.myDalvikTyper = myDalvikTyper;
     this.primTypeCollector = primTypeCollector;

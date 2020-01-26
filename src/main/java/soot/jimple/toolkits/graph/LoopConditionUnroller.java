@@ -72,12 +72,11 @@ public class LoopConditionUnroller extends BodyTransformer {
   private Map<Unit, List<Trap>> unitsToTraps;
   private Options myOptions;
   private PhaseDumper myPhaseDumper;
-  private Jimple myJimple;
 
-  public LoopConditionUnroller(Options myOptions, PhaseDumper myPhaseDumper, Jimple myJimple) {
+  public LoopConditionUnroller(Options myOptions, PhaseDumper myPhaseDumper) {
     this.myOptions = myOptions;
     this.myPhaseDumper = myPhaseDumper;
-    this.myJimple = myJimple;
+    ;
   }
 
   /**

@@ -50,7 +50,6 @@ import soot.util.PhaseDumper;
 
 public class NullCheckEliminator extends BodyTransformer {
 
-  private Jimple myJimple;
   private Options myOptions;
   private ThrowableSet.Manager myManager;
   private  PhaseDumper myPhaseDumper;
@@ -67,7 +66,7 @@ public class NullCheckEliminator extends BodyTransformer {
   private AnalysisFactory analysisFactory;
 
   @Inject
-  public NullCheckEliminator(Jimple myJimple, Scene myScene, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, ConstantFactory constantFactory) {
+  public NullCheckEliminator(Scene myScene, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, ConstantFactory constantFactory) {
     this.myScene = myScene;
     this.myManager = myManager;
     this.myOptions = myOptions;
@@ -75,7 +74,6 @@ public class NullCheckEliminator extends BodyTransformer {
     this.myInteractionHandler = myInteractionHandler;
     this.constantFactory = constantFactory;
     this.analysisFactory = new AnalysisFactory();
-    this.myJimple = myJimple;
   }
 
 //  private NullCheckEliminator(ThrowAnalysis myManager, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, AnalysisFactory f,  Options myOptions) {

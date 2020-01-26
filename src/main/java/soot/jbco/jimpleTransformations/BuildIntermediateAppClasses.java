@@ -173,20 +173,20 @@ public class BuildIntermediateAppClasses extends SceneTransformer implements IJb
             newMethod = myScene.makeSootMethod(newMethodName, paramTypes, returnType, modifiers, exceptions);
             mediatingClass.addMethod(newMethod);
 
-            Body body = myJimple.newBody(newMethod);
+            Body body = Jimple.newBody(newMethod);
             newMethod.setActiveBody(body);
             Chain<Local> locals = body.getLocals();
             PatchingChain<Unit> units = body.getUnits();
 
-            BodyBuilder.buildThisLocal(units, thisRef, locals, jimple);
-            BodyBuilder.buildParameterLocals(units, locals, paramTypes, jimple);
+            BodyBuilder.buildThisLocal(units, thisRef, locals);
+            BodyBuilder.buildParameterLocals(units, locals, paramTypes);
 
             if (returnType instanceof VoidType) {
-              units.add(myJimple.newReturnVoidStmt());
+              units.add(Jimple.newReturnVoidStmt());
             } else if (returnType instanceof PrimType) {
-              units.add(myJimple.newReturnStmt(constantFactory.createIntConstant(0)));
+              units.add(Jimple.newReturnStmt(constantFactory.createIntConstant(0)));
             } else {
-              units.add(myJimple.newReturnStmt(myNullConstant));
+              units.add(Jimple.newReturnStmt(myNullConstant));
             }
             newmethods++;
           } // end build new junk method to call original method
@@ -196,25 +196,25 @@ public class BuildIntermediateAppClasses extends SceneTransformer implements IJb
                 exceptions);
             mediatingClass.addMethod(newMethod);
 
-            Body body = myJimple.newBody(newMethod);
+            Body body = Jimple.newBody(newMethod);
             newMethod.setActiveBody(body);
             Chain<Local> locals = body.getLocals();
             PatchingChain<Unit> units = body.getUnits();
 
-            Local ths = BodyBuilder.buildThisLocal(units, thisRef, locals, jimple);
-            List<Local> args = BodyBuilder.buildParameterLocals(units, locals, paramTypes, jimple);
+            Local ths = BodyBuilder.buildThisLocal(units, thisRef, locals);
+            List<Local> args = BodyBuilder.buildParameterLocals(units, locals, paramTypes);
 
             SootMethodRef superclassMethodRef = originalSuperclassMethod.makeRef();
             if (returnType instanceof VoidType) {
-              units.add(myJimple.newInvokeStmt(myJimple.newSpecialInvokeExpr(ths, superclassMethodRef, args)));
-              units.add(myJimple.newReturnVoidStmt());
+              units.add(Jimple.newInvokeStmt(Jimple.newSpecialInvokeExpr(ths, superclassMethodRef, args)));
+              units.add(Jimple.newReturnVoidStmt());
             } else {
-              Local loc = myJimple.newLocal("retValue", returnType);
+              Local loc = Jimple.newLocal("retValue", returnType);
               body.getLocals().add(loc);
 
-              units.add(myJimple.newAssignStmt(loc, myJimple.newSpecialInvokeExpr(ths, superclassMethodRef, args)));
+              units.add(Jimple.newAssignStmt(loc, Jimple.newSpecialInvokeExpr(ths, superclassMethodRef, args)));
 
-              units.add(myJimple.newReturnStmt(loc));
+              units.add(Jimple.newReturnStmt(loc));
             }
             newmethods++;
           } // end build copy of old method
@@ -242,16 +242,16 @@ public class BuildIntermediateAppClasses extends SceneTransformer implements IJb
                     newSuperInit = myScene.makeSootMethod(constructorName, paramTypes, smr.returnType());
                     mediatingClass.addMethod(newSuperInit);
 
-                    JimpleBody body = myJimple.newBody(newSuperInit);
+                    JimpleBody body = Jimple.newBody(newSuperInit);
                     newSuperInit.setActiveBody(body);
                     PatchingChain<Unit> initUnits = body.getUnits();
                     Collection<Local> locals = body.getLocals();
 
-                    Local ths = BodyBuilder.buildThisLocal(initUnits, thisRef, locals, jimple);
-                    List<Local> args = BodyBuilder.buildParameterLocals(initUnits, locals, paramTypes, jimple);
+                    Local ths = BodyBuilder.buildThisLocal(initUnits, thisRef, locals);
+                    List<Local> args = BodyBuilder.buildParameterLocals(initUnits, locals, paramTypes);
 
-                    initUnits.add(myJimple.newInvokeStmt(myJimple.newSpecialInvokeExpr(ths, smr, args)));
-                    initUnits.add(myJimple.newReturnVoidStmt());
+                    initUnits.add(Jimple.newInvokeStmt(Jimple.newSpecialInvokeExpr(ths, smr, args)));
+                    initUnits.add(Jimple.newReturnVoidStmt());
                   } else {
                     newSuperInit = mediatingClass.getMethod(constructorName, smr.parameterTypes());
                   }

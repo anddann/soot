@@ -43,7 +43,7 @@ public abstract class ASTControlFlowNode extends ASTLabeledNode {
 
   public ASTControlFlowNode(SETNodeLabel label, ConditionExpr condition, TryContentsFinder myTryContentsFinder, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
     super(label);
-    // this.conditionBox = myJimple.newConditionExprBox(condition);
+    // this.conditionBox = Jimple.newConditionExprBox(condition);
     this.condition = new ASTBinaryCondition(condition, myGrimp, primTypeCollector);
     this.myTryContentsFinder = myTryContentsFinder;
   }

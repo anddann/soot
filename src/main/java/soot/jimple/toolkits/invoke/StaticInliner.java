@@ -61,17 +61,17 @@ public class StaticInliner extends SceneTransformer {
   private Options myOptions;
   private Scene myScene;
   private PackManager myPackManager;
-  private Jimple myJimple;
+
   private ConstantFactory constantFactory;
   private SynchronizerManager mySynchronizerManager;
   private LocalNameStandardizer myLocalNameStandardizer;
 
   @Inject
-  public StaticInliner(Options myOptions, Scene myScene, PackManager myPackManager, Jimple myJimple, ConstantFactory constantFactory, SynchronizerManager mySynchronizerManager, LocalNameStandardizer myLocalNameStandardizer) {
+  public StaticInliner(Options myOptions, Scene myScene, PackManager myPackManager,  ConstantFactory constantFactory, SynchronizerManager mySynchronizerManager, LocalNameStandardizer myLocalNameStandardizer) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myPackManager = myPackManager;
-    this.myJimple = myJimple;
+    ;
     this.constantFactory = constantFactory;
     this.mySynchronizerManager = mySynchronizerManager;
     this.myLocalNameStandardizer = myLocalNameStandardizer;

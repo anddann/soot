@@ -67,16 +67,16 @@ public class PhiNodeManager {
   protected BlockGraph cfg;
   protected GuaranteedDefs gd;
   private Shimple myShimple;
-  private Jimple myJimple;
+
   private InteractionHandler myInteractionHander;
   private Options myOptions;
   private Scene myScene;
 
-  public PhiNodeManager(ShimpleBody body, ShimpleFactory sf, Shimple myShimple, Jimple myJimple, InteractionHandler myInteractionHander, Options myOptions, Scene myScene) {
+  public PhiNodeManager(ShimpleBody body, ShimpleFactory sf, Shimple myShimple,  InteractionHandler myInteractionHander, Options myOptions, Scene myScene) {
     this.body = body;
     this.sf = sf;
     this.myShimple = myShimple;
-    this.myJimple = myJimple;
+    ;
     this.myInteractionHander = myInteractionHander;
     this.myOptions = myOptions;
     this.myScene = myScene;

@@ -162,7 +162,7 @@ public class DexBody {
 
   // detect array/instructions overlapping obfuscation
   protected List<PseudoInstruction> pseudoInstructionData = new ArrayList<PseudoInstruction>();
-  private Jimple myJimple;
+
   private ConstantFactory constantFactory;
   private DalvikTyper dalivkTyper;
   private PrimTypeCollector primTypeCollector;
@@ -239,8 +239,8 @@ public class DexBody {
    * @param myPedanticThrowAnalysis
    * @param mySootResolver
    */
-  protected DexBody(DexFile dexFile, Method method, RefType declaringClassType, Jimple myJimple, ConstantFactory constantFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, PhaseOptions myPhaseOptions, DalvikTyper myDalvikTyper, DeadAssignmentEliminator myDeadAssignmentEliminator, UnusedLocalEliminator myUnusedLocalEliminator, TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, PackManager myPackManager, FieldStaticnessCorrector myFieldStaticnessCorrector, MethodStaticnessCorrector myMethodStaticnessCorrector, TrapTightener myTrapTightener, TrapMinimizer myTrapMinimizer, Aggregator myAggregator, ConditionalBranchFolder myConditionalBranchFolder, ConstantCastEliminator myConstantCastEliminator, IdentityCastEliminator myIdentityCastEliminator, IdentityOperationEliminator myIdentityOperationEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator, DalvikThrowAnalysis myDalvikThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, PedanticThrowAnalysis myPedanticThrowAnalysis, SootResolver mySootResolver) {
-    this.myJimple = myJimple;
+  protected DexBody(DexFile dexFile, Method method, RefType declaringClassType,  ConstantFactory constantFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, PhaseOptions myPhaseOptions, DalvikTyper myDalvikTyper, DeadAssignmentEliminator myDeadAssignmentEliminator, UnusedLocalEliminator myUnusedLocalEliminator, TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, PackManager myPackManager, FieldStaticnessCorrector myFieldStaticnessCorrector, MethodStaticnessCorrector myMethodStaticnessCorrector, TrapTightener myTrapTightener, TrapMinimizer myTrapMinimizer, Aggregator myAggregator, ConditionalBranchFolder myConditionalBranchFolder, ConstantCastEliminator myConstantCastEliminator, IdentityCastEliminator myIdentityCastEliminator, IdentityOperationEliminator myIdentityOperationEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator, DalvikThrowAnalysis myDalvikThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, PedanticThrowAnalysis myPedanticThrowAnalysis, SootResolver mySootResolver) {
+    ;
     this.constantFactory = constantFactory;
     this.dalivkTyper = dalivkTyper;
     this.primTypeCollector = primTypeCollector;
@@ -619,7 +619,7 @@ public class DexBody {
         dangling.finalize(this, instruction);
         dangling = null;
       }
-      instruction.jimplify(this, myJimple, myDalvikTyper);
+      instruction.jimplify(this, myDalvikTyper);
       if (instruction.getLineNumber() > 0) {
         prevLineNumber = instruction.getLineNumber();
       } else {

@@ -31,7 +31,7 @@ public class DIncrementStmt extends GAssignStmt {
   private final Grimp myGrimp;
 
   public DIncrementStmt(Value variable, Value rvalue, Grimp myGrimp) {
-    super(variable, rvalue, myGrimp);
+    super(variable, rvalue);
     this.myGrimp = myGrimp;
   }
 

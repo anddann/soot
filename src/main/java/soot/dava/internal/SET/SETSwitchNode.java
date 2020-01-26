@@ -75,12 +75,12 @@ public class SETSwitchNode extends SETDagNode {
         if (index != lastIndex) {
           index2ASTBody.put(index, null);
         } else {
-          index2ASTBody.put(index, emit_ASTBody(get_Body2ChildChain().get(sn.get_Body()), myTryContentsFinder, myASTWalker, myJimple));
+          index2ASTBody.put(index, emit_ASTBody(get_Body2ChildChain().get(sn.get_Body())));
         }
       }
     }
 
-    return new ASTSwitchNode(get_Label(), myJimple, key, indexList, index2ASTBody, myASTWalker, myTryContentsFinder);
+    return new ASTSwitchNode(get_Label(), key, indexList, index2ASTBody, myASTWalker, myTryContentsFinder);
   }
 
   public AugmentedStmt get_EntryStmt() {

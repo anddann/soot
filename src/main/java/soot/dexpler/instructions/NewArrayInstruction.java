@@ -55,7 +55,7 @@ public class NewArrayInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
 
     if (!(instruction instanceof Instruction22c)) {
       throw new IllegalArgumentException("Expected Instruction22c but got: " + instruction.getClass());

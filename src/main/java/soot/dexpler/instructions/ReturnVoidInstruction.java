@@ -40,7 +40,7 @@ public class ReturnVoidInstruction extends DexlibAbstractInstruction {
     super(instruction, codeAdress, myOptions);
   }
 
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     ReturnVoidStmt returnStmt = Jimple.newReturnVoidStmt();
     setUnit(returnStmt);
     addTags(returnStmt);

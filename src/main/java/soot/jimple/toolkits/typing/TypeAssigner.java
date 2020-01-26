@@ -84,7 +84,7 @@ public class TypeAssigner extends BodyTransformer {
   private BodyTransformer myDeadAssignmentEliminator;
   private BodyTransformer myUnusedLocalEliminator;
   private PhaseOptions myPhaseOptions;
-  private Jimple myJimple;
+
   private ConstantFactory constantFactory;
   private ClassHierarchy myClassHierarchy;
   private PrimTypeCollector primTypeCollector;
@@ -95,14 +95,14 @@ public class TypeAssigner extends BodyTransformer {
 
   @Inject
   public TypeAssigner(Options myOptions, Scene myScene, BodyTransformer myConstantPropagatorAndFolder,
-                      BodyTransformer myDeadAssignmentEliminator, BodyTransformer myUnusedLocalEliminator, PhaseOptions myPhaseOptions, Jimple myJimple, ConstantFactory constantFactory, ClassHierarchy myClassHierarchy, PrimTypeCollector primTypeCollector, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper) {
+                      BodyTransformer myDeadAssignmentEliminator, BodyTransformer myUnusedLocalEliminator, PhaseOptions myPhaseOptions,  ConstantFactory constantFactory, ClassHierarchy myClassHierarchy, PrimTypeCollector primTypeCollector, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myConstantPropagatorAndFolder = myConstantPropagatorAndFolder;
     this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
     this.myUnusedLocalEliminator = myUnusedLocalEliminator;
     this.myPhaseOptions = myPhaseOptions;
-    this.myJimple = myJimple;
+    ;
     this.constantFactory = constantFactory;
     this.myClassHierarchy = myClassHierarchy;
     this.primTypeCollector = primTypeCollector;
@@ -149,7 +149,7 @@ public class TypeAssigner extends BodyTransformer {
       compareTypeAssigners(b, opt.use_older_type_assigner());
     } else {
       if (opt.use_older_type_assigner()) {
-        TypeResolver.resolve((JimpleBody) b, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myJimple);
+        TypeResolver.resolve((JimpleBody) b, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, );
       } else {
         (new soot.jimple.toolkits.typing.fast.TypeResolver((JimpleBody) b, myScene, primTypeCollector, myClassHierarchy, myJimple, throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler)).inferTypes();
       }
@@ -246,7 +246,7 @@ public class TypeAssigner extends BodyTransformer {
 
     for (Unit u : unitToReplaceByException) {
       soot.dexpler.Util.addExceptionAfterUnit(b, "java.lang.NullPointerException", u,
-          "This statement would have triggered an Exception: " + u, myScene, myJimple, constantFactory);
+          "This statement would have triggered an Exception: " + u, myScene, constantFactory);
       b.getUnits().remove(u);
     }
 
@@ -267,14 +267,14 @@ public class TypeAssigner extends BodyTransformer {
       (new soot.jimple.toolkits.typing.fast.TypeResolver(newJb, myScene, primTypeCollector, myClassHierarchy, myJimple, throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler)).inferTypes();
       newTime = System.currentTimeMillis() - newTime;
       oldTime = System.currentTimeMillis();
-      TypeResolver.resolve(jb, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myJimple);
+      TypeResolver.resolve(jb, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, );
       oldTime = System.currentTimeMillis() - oldTime;
       oldJb = jb;
     } else {
       // Use new type assigner last
       oldJb = (JimpleBody) jb.clone();
       oldTime = System.currentTimeMillis();
-      TypeResolver.resolve(oldJb, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myJimple);
+      TypeResolver.resolve(oldJb, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, );
       oldTime = System.currentTimeMillis() - oldTime;
       newTime = System.currentTimeMillis();
       (new soot.jimple.toolkits.typing.fast.TypeResolver(jb, myScene, primTypeCollector, myClassHierarchy, myJimple, throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler)).inferTypes();

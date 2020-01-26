@@ -69,7 +69,6 @@ import soot.dava.toolkits.base.misc.ThrowFinder;
 import soot.grimp.Grimp;
 import soot.grimp.toolkits.base.ConstructorFolder;
 import soot.jimple.ConstantFactory;
-import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.paddle.PaddleHook;
 import soot.jimple.spark.SparkTransformer;
@@ -241,7 +240,6 @@ public class PackManager {
   private EntryPoints myEntryPoints;
   private FastDexTrapTightener myFastDexTrapTightener;
   private TrapSplitter myTrapSplitter;
-  private Jimple myJimple;
   private ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer;
   private UnreachableMethodTransformer myUnreachableMethodTransformer;
     private ConstantFactory constantFactory;
@@ -279,7 +277,7 @@ public class PackManager {
                      DavaStaticBlockCleaner myDavaStaticBlockCleaner, DavaPrinter myDavaPrinter, Shimple myShimple, Grimp myGrimp,
                      Dava myDava, Baf myBaf, Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter,
                      NullCheckEliminator myNullCheckEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer,
-                     EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter, Jimple myJimple,
+                     EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter,
                      ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer,
                      UnreachableMethodTransformer myUnreachableMethodTransformer, ConstantFactory constantFactory) {
     this.myPhaseOptions = myPhaseOptions;
@@ -365,7 +363,7 @@ public class PackManager {
     this.myEntryPoints = myEntryPoints;
     this.myFastDexTrapTightener = myFastDexTrapTightener;
     this.myTrapSplitter = myTrapSplitter;
-    this.myJimple = myJimple;
+    ;
     this.myConstantInitializerToTagTransformer = myConstantInitializerToTagTransformer;
     this.myUnreachableMethodTransformer = myUnreachableMethodTransformer;
         this.constantFactory = constantFactory;
@@ -1181,7 +1179,7 @@ public class PackManager {
         getPack("sop").apply(sBody);
 
         if (produceJimple || (wholeShimple && !produceShimple)) {
-          m.setActiveBody(sBody.toJimpleBody(myJimple));
+          m.setActiveBody(sBody.toJimpleBody());
         }
       }
 

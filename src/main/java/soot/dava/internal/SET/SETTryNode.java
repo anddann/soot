@@ -120,7 +120,7 @@ public class SETTryNode extends SETNode {
       IterableSet originalCatchBody = (IterableSet) it.next();
       IterableSet catchBody = cb2clone.get(originalCatchBody);
 
-      List<Object> astBody = emit_ASTBody(body2childChain.get(catchBody), myTryContentsFinder, myASTWalker, myJimple);
+      List<Object> astBody = emit_ASTBody(body2childChain.get(catchBody));
       exceptionMap.put(astBody, en.get_Exception(originalCatchBody));
       catchList.addLast(astBody);
 
@@ -154,7 +154,7 @@ public class SETTryNode extends SETNode {
       }
     }
 
-    return new ASTTryNode(get_Label(), emit_ASTBody(body2childChain.get(en.get_TryBody()), myTryContentsFinder, myASTWalker, myJimple), catchList, exceptionMap,
+    return new ASTTryNode(get_Label(), emit_ASTBody(body2childChain.get(en.get_TryBody())), catchList, exceptionMap,
         paramMap);
   }
 

@@ -93,14 +93,12 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
   public static String dependancies[] = new String[] { "bb.jbco_j2bl", "bb.jbco_rds", "bb.jbco_ful", "bb.lp" };
   private PhaseDumper myPhaseDumper;
   private Baf myBaf;
-  private Jimple myJimple;
   private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
 
-  public FindDuplicateSequences(PhaseDumper myPhaseDumper, Baf myBaf, Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
+  public FindDuplicateSequences(PhaseDumper myPhaseDumper, Baf myBaf, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
     this.myPhaseDumper = myPhaseDumper;
     this.myBaf = myBaf;
-    this.myJimple = myJimple;
     this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
   }

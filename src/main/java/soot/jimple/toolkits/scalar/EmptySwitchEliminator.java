@@ -41,11 +41,11 @@ import soot.jimple.LookupSwitchStmt;
  */
 public class EmptySwitchEliminator extends BodyTransformer {
 
-  private Jimple myJimple;
+
 
   @Inject
-  public EmptySwitchEliminator(Jimple myJimple) {
-    this.myJimple = myJimple;
+  public EmptySwitchEliminator() {
+    ;
   }
 
 

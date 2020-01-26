@@ -113,7 +113,6 @@ import soot.jimple.IntConstant;
 import soot.jimple.InterfaceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.InvokeStmt;
-import soot.jimple.Jimple;
 import soot.jimple.LengthExpr;
 import soot.jimple.LookupSwitchStmt;
 import soot.jimple.MonitorStmt;
@@ -216,7 +215,6 @@ public class DavaBody extends Body {
   private Grimp myGrimp;
   private Baf myBaf;
     private Scene myScene;
-  private Jimple myJimple;
   private UselessLabelFinder myUselessLabelFinder;
 
   /**
@@ -227,7 +225,7 @@ public class DavaBody extends Body {
            IfFinder myIfFinder, SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder,
            SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            MonitorConverter myMonitorConverter, ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover,
-           PhaseOptions myPhaseOptions, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constantFactory, Grimp myGrimp, Baf myBaf, Scene myScene, Jimple myJimple, UselessLabelFinder myUselessLabelFinder) {
+           PhaseOptions myPhaseOptions, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constantFactory, Grimp myGrimp, Baf myBaf, Scene myScene, UselessLabelFinder myUselessLabelFinder) {
     super(m, myOptions, myPrinter);
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -251,7 +249,6 @@ public class DavaBody extends Body {
     this.myGrimp = myGrimp;
     this.myBaf = myBaf;
       this.myScene = myScene;
-    this.myJimple = myJimple;
     this.myUselessLabelFinder = myUselessLabelFinder;
 
     pMap = new HashMap<Integer, Value>();
@@ -347,10 +344,10 @@ public class DavaBody extends Body {
            ThrowNullConverter myThrowNullConverter, SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder,
            CycleFinder myCycleFinder, IfFinder myIfFinder, SwitchFinder mySwitchFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constantFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, PackageNamer myPackageNamer, Jimple myJimple, UselessLabelFinder myUselessLabelFinder) {
+           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constantFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, PackageNamer myPackageNamer, UselessLabelFinder myUselessLabelFinder) {
     this(body.getMethod(), myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myPackageNamer, primTypeCollector, myDava, myClosestAbruptTargetFinder, constantFactory, myGrimp, myBaf, myScene, myJimple, myUselessLabelFinder);
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myPackageNamer, primTypeCollector, myDava, myClosestAbruptTargetFinder, constantFactory, myGrimp, myBaf, myScene, myUselessLabelFinder);
     debug("DavaBody", "creating DavaBody for" + body.getMethod().toString());
     this.myDava.log("\nstart method " + body.getMethod().toString());
 
@@ -560,7 +557,7 @@ public class DavaBody extends Body {
         AST.apply(new ASTCleanerTwo(myTryContentsFinder));
         debug("applyASTAnalyses", "after ASTCleanerTwo" + G.v().ASTTransformations_modified);
 
-        AST.apply(new ForLoopCreator(myTryContentsFinder, myASTWalker));
+        AST.apply(new ForLoopCreator( myASTWalker));
         debug("applyASTAnalyses", "after ForLoopCreator" + G.v().ASTTransformations_modified);
 
         AST.apply(new NewStringBufferSimplification());

@@ -51,7 +51,7 @@ public class ArrayLengthInstruction extends DexlibAbstractInstruction {
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction12x)) {
       throw new IllegalArgumentException("Expected Instruction12x but got: " + instruction.getClass());
     }

@@ -87,19 +87,19 @@ public class PiNodeManager {
   protected ReversibleGraph<Block> cfg;
   protected boolean trimmed;
   private Shimple myShimple;
-  private Jimple myJimple;
+
   private DeadAssignmentEliminator myDeadAssignmentEliminator;
   private CopyPropagator myCopyPropagator;
 
   /**
    * Transforms the provided body to pure SSA form.
    **/
-  public PiNodeManager(ShimpleBody body, boolean trimmed, ShimpleFactory sf, Shimple myShimple, Jimple myJimple, DeadAssignmentEliminator myDeadAssignmentEliminator, CopyPropagator myCopyPropagator) {
+  public PiNodeManager(ShimpleBody body, boolean trimmed, ShimpleFactory sf, Shimple myShimple,  DeadAssignmentEliminator myDeadAssignmentEliminator, CopyPropagator myCopyPropagator) {
     this.body = body;
     this.trimmed = trimmed;
     this.sf = sf;
     this.myShimple = myShimple;
-    this.myJimple = myJimple;
+    ;
     this.myDeadAssignmentEliminator = myDeadAssignmentEliminator;
     this.myCopyPropagator = myCopyPropagator;
   }

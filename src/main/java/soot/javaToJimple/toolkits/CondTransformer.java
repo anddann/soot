@@ -42,11 +42,10 @@ import soot.jimple.Stmt;
 
 public class CondTransformer extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(CondTransformer.class);
-  private Jimple myJimple;
 
   @Inject
-  public CondTransformer(Jimple myJimple) {
-    this.myJimple = myJimple;
+  public CondTransformer() {
+
   }
 
 

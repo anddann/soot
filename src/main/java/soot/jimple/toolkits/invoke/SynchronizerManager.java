@@ -57,13 +57,13 @@ import soot.util.Chain;
 public class SynchronizerManager {
 
   private Scene myScene;
-  private Jimple myJimple;
+
   private ConstantFactory constantFactory;
 
   @Inject
-  public SynchronizerManager(Scene myScene, Jimple myJimple, ConstantFactory constantFactory) {
+  public SynchronizerManager(Scene myScene,  ConstantFactory constantFactory) {
     this.myScene = myScene;
-    this.myJimple = myJimple;
+    ;
     this.constantFactory = constantFactory;
   }
 
@@ -367,7 +367,7 @@ public class SynchronizerManager {
 
     // l.add(newCaughtRef);
     // l.add(exitMon.clone());
-    // l.add(myJimple.newGotoStmt((Stmt)units.getSuccOf((Stmt)t.getHandlerUnit())));
+    // l.add(Jimple.newGotoStmt((Stmt)units.getSuccOf((Stmt)t.getHandlerUnit())));
 
     // units.insertAfter(l, s);
     // t.setHandlerUnit(newCaughtRef);

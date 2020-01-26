@@ -46,12 +46,10 @@ public class ProfilingGenerator extends BodyTransformer {
 
 
   private Scene myScene;
-  private Jimple myJimple;
 
   @Inject
-  public ProfilingGenerator(Scene myScene, Jimple myJimple) {
+  public ProfilingGenerator(Scene myScene) {
     this.myScene = myScene;
-    this.myJimple = myJimple;
   }
 
 
@@ -77,7 +75,7 @@ public class ProfilingGenerator extends BodyTransformer {
       Chain units = body.getUnits();
 
       if (isMainMethod) {
-        units.addFirst(Jimple.newInvokeStmt(myJimple.newStaticInvokeExpr(reset.makeRef())));
+        units.addFirst(Jimple.newInvokeStmt(Jimple.newStaticInvokeExpr(reset.makeRef())));
       }
 
       Iterator stmtIt = body.getUnits().snapshotIterator();
@@ -91,12 +89,12 @@ public class ProfilingGenerator extends BodyTransformer {
             SootMethod tempm = ((StaticInvokeExpr) iexpr).getMethod();
 
             if (tempm.getSignature().equals("<java.lang.System: void exit(int)>")) {
-              units.insertBefore(Jimple.newInvokeStmt(myJimple.newStaticInvokeExpr(report.makeRef())), stmt);
+              units.insertBefore(Jimple.newInvokeStmt(Jimple.newStaticInvokeExpr(report.makeRef())), stmt);
 
             }
           }
         } else if (isMainMethod && (stmt instanceof ReturnStmt || stmt instanceof ReturnVoidStmt)) {
-          units.insertBefore(Jimple.newInvokeStmt(myJimple.newStaticInvokeExpr(report.makeRef())), stmt);
+          units.insertBefore(Jimple.newInvokeStmt(Jimple.newStaticInvokeExpr(report.makeRef())), stmt);
         }
       }
     }

@@ -42,7 +42,7 @@ public class SETTopNode extends SETNode {
   }
 
   public ASTNode emit_AST() {
-    return new ASTMethodNode(emit_ASTBody(body2childChain.get(subBodies.get(0)), myTryContentsFinder, myASTWalker, myJimple), this.myTryContentsFinder, this.myASTWalker);
+    return new ASTMethodNode(emit_ASTBody(body2childChain.get(subBodies.get(0))), this.myTryContentsFinder, this.myASTWalker);
   }
 
   public AugmentedStmt get_EntryStmt() {

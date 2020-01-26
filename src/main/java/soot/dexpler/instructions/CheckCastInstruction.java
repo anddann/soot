@@ -48,17 +48,15 @@ import soot.options.Options;
 
 public class CheckCastInstruction extends DexlibAbstractInstruction {
 
-  private Jimple myJimple;
   private DalvikTyper myDalvikTyper;
 
-  public CheckCastInstruction(Instruction instruction, int codeAdress, Options myOptions, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public CheckCastInstruction(Instruction instruction, int codeAdress, Options myOptions, DalvikTyper myDalvikTyper) {
     super(instruction, codeAdress, myOptions);
-    this.myJimple = myJimple;
     this.myDalvikTyper = myDalvikTyper;
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     if (!(instruction instanceof Instruction21c)) {
       throw new IllegalArgumentException("Expected Instruction21c but got: " + instruction.getClass());
     }

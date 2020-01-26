@@ -32,7 +32,6 @@ import soot.Scene;
 import soot.Type;
 import soot.jimple.ConstantFactory;
 import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
 import soot.jimple.NewArrayExpr;
 import soot.jimple.spark.pag.AllocDotField;
 import soot.jimple.spark.pag.AllocNode;
@@ -83,7 +82,7 @@ public class OnFlyCallGraph {
     return callGraph;
   }
 
-  public OnFlyCallGraph(PAG pag, boolean appOnly, Scene myScene, ArrayElement myArrayElement, EntryPoints myEntrypoints, PhaseOptions myPhaseOptions, VirtualCalls virtualCalls, EntryPoints myEntryPoints, ThrowableSet.Manager throwManager, InteractionHandler myInteractionHandler, Options myOptions, PhaseDumper constantFactory, ConstantFactory myPackManager, PackManager myPhaseDumper, Jimple myJimple, ThrowAnalysis throwAnalysis, ConstantFactory constantFactory1) {
+  public OnFlyCallGraph(PAG pag, boolean appOnly, Scene myScene, ArrayElement myArrayElement, EntryPoints myEntrypoints, PhaseOptions myPhaseOptions, VirtualCalls virtualCalls, EntryPoints myEntryPoints, ThrowableSet.Manager throwManager, InteractionHandler myInteractionHandler, Options myOptions, PhaseDumper constantFactory, ConstantFactory myPackManager, PackManager myPhaseDumper, ThrowAnalysis throwAnalysis, ConstantFactory constantFactory1) {
     this.pag = pag;
     this.myScene = myScene;
     this.myArrayElement = myArrayElement;
@@ -93,7 +92,7 @@ public class OnFlyCallGraph {
     this.myScene.setCallGraph(callGraph);
     ContextManager cm = CallGraphBuilder.makeContextManager(callGraph);
     reachableMethods = this.myScene.getReachableMethods();
-    ofcgb = new OnFlyCallGraphBuilder(cm, reachableMethods, appOnly, myPhaseOptions, myScene, virtualCalls, myEntryPoints, throwManager, myInteractionHandler, myOptions, constantFactory, myPackManager, myPhaseDumper, myJimple, throwAnalysis);
+    ofcgb = new OnFlyCallGraphBuilder(cm, reachableMethods, appOnly, myPhaseOptions, myScene, virtualCalls, myEntryPoints, throwManager, myInteractionHandler, myOptions, constantFactory, myPackManager, myPhaseDumper, throwAnalysis);
     reachablesReader = reachableMethods.listener();
     callEdges = cm.callGraph().listener();
   }

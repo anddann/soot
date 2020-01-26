@@ -41,11 +41,9 @@ import soot.options.Options;
 
 public abstract class SwitchInstruction extends PseudoInstruction implements DeferableInstruction {
   protected Unit markerUnit;
-  protected Jimple myJimple;
 
-  public SwitchInstruction(Instruction instruction, int codeAdress, Jimple myJimple, Options myOptions) {
+  public SwitchInstruction(Instruction instruction, int codeAdress, Options myOptions) {
     super(instruction, codeAdress, myOptions);
-    this.myJimple = myJimple;
   }
 
   /**
@@ -54,7 +52,7 @@ public abstract class SwitchInstruction extends PseudoInstruction implements Def
    */
   protected abstract Stmt switchStatement(DexBody body, Instruction targetData, Local key);
 
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     markerUnit = Jimple.newNopStmt();
     unit = markerUnit;
     body.add(markerUnit);

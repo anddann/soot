@@ -46,11 +46,11 @@ import soot.jimple.Stmt;
  */
 public class FieldStaticnessCorrector extends AbstractStaticnessCorrector {
 
-  private Jimple myJimple;
+
 
   @Inject
-  public FieldStaticnessCorrector(Jimple myJimple) {
-    this.myJimple = myJimple;
+  public FieldStaticnessCorrector() {
+    ;
   }
 
   @Override

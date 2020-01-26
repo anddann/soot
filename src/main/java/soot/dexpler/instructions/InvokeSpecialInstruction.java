@@ -30,15 +30,14 @@ package soot.dexpler.instructions;
 import org.jf.dexlib2.iface.instruction.Instruction;
 import soot.dexpler.DexBody;
 import soot.dexpler.typing.DalvikTyper;
-import soot.jimple.Jimple;
 
 public class InvokeSpecialInstruction extends MethodInvocationInstruction {
 
   public InvokeSpecialInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
+    super(instruction, codeAdress, myOptions, myDalvikTyper, myScene, mySootResolver);
   }
 
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) {
     jimplifySpecial(body);
   }
   

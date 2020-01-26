@@ -120,7 +120,7 @@ public abstract class Body extends AbstractHost implements Serializable {
 
   /**
    * Creates a Body associated to the given method. Used by subclasses during initialization. Creation of a Body is triggered
-   * by e.g. myJimple.newBody(options).
+   * by e.g. Jimple.newBody(options).
    */
   protected Body(SootMethod m, Options myOptions, Printer myPrinter) {
     this.method = m;

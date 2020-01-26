@@ -45,7 +45,7 @@ import soot.jimple.Stmt;
 public class PackedSwitchInstruction extends SwitchInstruction {
 
   public PackedSwitchInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress, myJimple, myOptions);
+    super(instruction, codeAdress, myOptions);
   }
 
   @Override
@@ -64,7 +64,7 @@ public class PackedSwitchInstruction extends SwitchInstruction {
       int offset = se.getOffset();
       targets.add(body.instructionAtAddress(codeAddress + offset).getUnit());
     }
-    LookupSwitchStmt switchStmt = myJimple.newLookupSwitchStmt(key, lookupValues, targets, defaultTarget, constantFactory);
+    LookupSwitchStmt switchStmt = Jimple.newLookupSwitchStmt(key, lookupValues, targets, defaultTarget, constantFactory);
     setUnit(switchStmt);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {

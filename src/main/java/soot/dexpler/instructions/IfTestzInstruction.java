@@ -46,7 +46,7 @@ public class IfTestzInstruction extends ConditionalJumpInstruction {
   protected IfStmt ifStatement(DexBody body) {
     Instruction21t i = (Instruction21t) instruction;
     BinopExpr condition = getComparisonExpr(body, i.getRegisterA());
-    IfStmt jif = myJimple.newIfStmt(condition, targetInstruction.getUnit());
+    IfStmt jif = Jimple.newIfStmt(condition, targetInstruction.getUnit());
     // setUnit() is called in ConditionalJumpInstruction
 
     addTags(jif);

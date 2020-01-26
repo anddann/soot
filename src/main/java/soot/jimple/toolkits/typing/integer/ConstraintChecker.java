@@ -786,32 +786,32 @@ class ConstraintChecker extends AbstractStmtSwitch {
   }
 
   private Local insertCast(Local oldlocal, Type type, Stmt stmt) {
-    Local newlocal = myJimple.newLocal("tmp", type);
+    Local newlocal = Jimple.newLocal("tmp", type);
     stmtBody.getLocals().add(newlocal);
 
     Unit u = Util.findFirstNonIdentityUnit(this.stmtBody, stmt);
-    stmtBody.getUnits().insertBefore(myJimple.newAssignStmt(newlocal, myJimple.newCastExpr(oldlocal, type)), u);
+    stmtBody.getUnits().insertBefore(Jimple.newAssignStmt(newlocal, Jimple.newCastExpr(oldlocal, type)), u);
     return newlocal;
   }
 
   private Local insertCastAfter(Local leftlocal, Type lefttype, Type righttype, Stmt stmt) {
-    Local newlocal = myJimple.newLocal("tmp", righttype);
+    Local newlocal = Jimple.newLocal("tmp", righttype);
     stmtBody.getLocals().add(newlocal);
 
     Unit u = Util.findLastIdentityUnit(this.stmtBody, stmt);
-    stmtBody.getUnits().insertAfter(myJimple.newAssignStmt(leftlocal, myJimple.newCastExpr(newlocal, lefttype)), u);
+    stmtBody.getUnits().insertAfter(Jimple.newAssignStmt(leftlocal, Jimple.newCastExpr(newlocal, lefttype)), u);
     return newlocal;
   }
 
   private Local insertCast(Value oldvalue, Type oldtype, Type type, Stmt stmt) {
-    Local newlocal1 = myJimple.newLocal("tmp", oldtype);
-    Local newlocal2 = myJimple.newLocal("tmp", type);
+    Local newlocal1 = Jimple.newLocal("tmp", oldtype);
+    Local newlocal2 = Jimple.newLocal("tmp", type);
     stmtBody.getLocals().add(newlocal1);
     stmtBody.getLocals().add(newlocal2);
 
     Unit u = Util.findFirstNonIdentityUnit(this.stmtBody, stmt);
-    stmtBody.getUnits().insertBefore(myJimple.newAssignStmt(newlocal1, oldvalue), u);
-    stmtBody.getUnits().insertBefore(myJimple.newAssignStmt(newlocal2, myJimple.newCastExpr(newlocal1, type)), u);
+    stmtBody.getUnits().insertBefore(Jimple.newAssignStmt(newlocal1, oldvalue), u);
+    stmtBody.getUnits().insertBefore(Jimple.newAssignStmt(newlocal2, Jimple.newCastExpr(newlocal1, type)), u);
     return newlocal2;
   }
 }

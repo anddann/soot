@@ -78,12 +78,12 @@ import soot.util.Chain;
 public class SConstantPropagatorAndFolder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(SConstantPropagatorAndFolder.class);
   private Options myOptions;
-  private Jimple myJimple;
+
 
   @Inject
-  public SConstantPropagatorAndFolder(Options myOptions, Jimple myJimple) {
+  public SConstantPropagatorAndFolder(Options myOptions, ) {
     this.myOptions = myOptions;
-    this.myJimple = myJimple;
+    ;
   }
 
   protected ShimpleBody sb;
@@ -110,7 +110,7 @@ public class SConstantPropagatorAndFolder extends BodyTransformer {
     }
 
     // *** FIXME: What happens when Shimple is built with another UnitGraph?
-    SCPFAnalysis scpf = new SCPFAnalysis(new ExceptionalUnitGraph(sb, myManager), myJimple);
+    SCPFAnalysis scpf = new SCPFAnalysis(new ExceptionalUnitGraph(sb, myManager), );
 
     propagateResults(scpf.getResults());
     if (pruneCFG) {
@@ -256,7 +256,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
    * A list of IfStmts that always fall through.
    **/
   protected List<IfStmt> deadStmts;
-  private Jimple myJimple;
+
 
   /**
    * Returns the localToConstant map.
@@ -279,9 +279,9 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
     return stmtToReplacement;
   }
 
-  public SCPFAnalysis(UnitGraph graph, Jimple myJimple) {
+  public SCPFAnalysis(UnitGraph graph, ) {
     super(graph);
-    this.myJimple = myJimple;
+    ;
     emptySet = new ArraySparseSet();
     stmtToReplacement = new HashMap<Stmt, GotoStmt>();
     deadStmts = new ArrayList<IfStmt>();

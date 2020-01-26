@@ -43,8 +43,6 @@ import soot.dava.toolkits.base.finders.AbruptEdgeFinder;
 import soot.dava.toolkits.base.finders.ExceptionFinder;
 import soot.dava.toolkits.base.finders.LabeledBlockFinder;
 import soot.dava.toolkits.base.finders.SequenceFinder;
-import soot.grimp.Grimp;
-import soot.jimple.Jimple;
 import soot.util.IterableSet;
 import soot.util.UnmodifiableIterableSet;
 
@@ -54,7 +52,6 @@ public abstract class SETNode {
     //FIXME add constudcgor and childs
     protected TryContentsFinder myTryContentsFinder;
     protected ASTWalker myASTWalker;
-    protected Jimple myJimple;
 
 
     private IterableSet<AugmentedStmt> body;
@@ -154,7 +151,7 @@ public abstract class SETNode {
         return true;
     }
 
-    public List<Object> emit_ASTBody(IterableSet children, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
+    public List<Object> emit_ASTBody(IterableSet children) {
         LinkedList<Object> l = new LinkedList<Object>();
 
         Iterator cit = children.iterator();

@@ -31,7 +31,7 @@ public class DDecrementStmt extends GAssignStmt {
   private final Grimp myGrimp;
 
   public DDecrementStmt(Value variable, Value rvalue, Grimp myGrimp) {
-    super(variable, rvalue, myGrimp);
+    super(variable, rvalue);
     this.myGrimp = myGrimp;
   }
 

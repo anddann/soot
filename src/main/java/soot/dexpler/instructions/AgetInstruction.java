@@ -46,19 +46,17 @@ import soot.options.Options;
 
 public class AgetInstruction extends DexlibAbstractInstruction {
 
-  private Jimple myJimple;
   private DalvikTyper myDalvikTyper;
   private PrimTypeCollector primTypeCollector;
 
-  public AgetInstruction(Instruction instruction, int codeAdress, Jimple myJimple, Options myOptions, DalvikTyper myDalvikTyper, PrimTypeCollector primTypeCollector) {
+  public AgetInstruction(Instruction instruction, int codeAdress, Options myOptions, DalvikTyper myDalvikTyper, PrimTypeCollector primTypeCollector) {
     super(instruction, codeAdress, myOptions);
-    this.myJimple = myJimple;
     this.myDalvikTyper = myDalvikTyper;
     this.primTypeCollector = primTypeCollector;
   }
 
   @Override
-  public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) throws InvalidDalvikBytecodeException {
+  public void jimplify(DexBody body, DalvikTyper myDalvikTyper) throws InvalidDalvikBytecodeException {
     if (!(instruction instanceof Instruction23x)) {
       throw new IllegalArgumentException("Expected Instruction23x but got: " + instruction.getClass());
     }

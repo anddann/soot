@@ -69,14 +69,13 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
   // stores the dangling InvokeExpr
   protected InvokeExpr invocation;
   protected AssignStmt assign = null;
-  private Jimple myJimple;
   private DalvikTyper myDalvikTyper;
   private Scene myScene;
   private SootResolver mySootResolver;
 
-  public MethodInvocationInstruction(Instruction instruction, int codeAddress, Options myOptions, Jimple myJimple, DalvikTyper myDalvikTyper, Scene myScene, SootResolver mySootResolver) {
+  public MethodInvocationInstruction(Instruction instruction, int codeAddress, Options myOptions, DalvikTyper myDalvikTyper, Scene myScene, SootResolver mySootResolver) {
     super(instruction, codeAddress, myOptions);
-    this.myJimple = myJimple;
+    ;
     this.myDalvikTyper = myDalvikTyper;
     this.myScene = myScene;
     this.mySootResolver = mySootResolver;

@@ -34,12 +34,10 @@ public class LocalGenerator {
 
   protected final soot.Body body;
   private PrimTypeCollector primTypeCollector;
-  private Jimple myJimple;
 
-  public LocalGenerator(Body b, PrimTypeCollector primTypeCollector, Jimple myJimple) {
+  public LocalGenerator(Body b, PrimTypeCollector primTypeCollector) {
     body = b;
     this.primTypeCollector = primTypeCollector;
-    this.myJimple = myJimple;
   }
 
   protected transient Set<String> localNames = null;

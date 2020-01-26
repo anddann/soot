@@ -38,7 +38,7 @@ public class SETUnconditionalWhileNode extends SETCycleNode {
   }
 
   public ASTNode emit_AST() {
-    return new ASTUnconditionalLoopNode(get_Label(), emit_ASTBody(body2childChain.get(subBodies.get(0)), myTryContentsFinder, myASTWalker, myJimple));
+    return new ASTUnconditionalLoopNode(get_Label(), emit_ASTBody(body2childChain.get(subBodies.get(0))));
   }
 
   public AugmentedStmt get_EntryStmt() {

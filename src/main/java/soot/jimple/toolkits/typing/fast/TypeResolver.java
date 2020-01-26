@@ -88,19 +88,19 @@ public class TypeResolver {
   private Scene myScene;
   private PrimTypeCollector primTypeCollector;
   private ClassHierarchy myClassHierarchy;
-  private Jimple myJimple;
+
   private ThrowAnalysis throwAnalysis;
   private ThrowableSet.Manager myManager;
   private Options myOptions;
   private PhaseDumper phaseDumper;
   private InteractionHandler myInteractionHandler;
 
-  public TypeResolver(JimpleBody jb, Scene myScene, PrimTypeCollector primTypeCollector, ClassHierarchy myClassHierarchy, Jimple myJimple, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
+  public TypeResolver(JimpleBody jb, Scene myScene, PrimTypeCollector primTypeCollector, ClassHierarchy myClassHierarchy,  ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
     this.jb = jb;
     this.myScene = myScene;
     this.primTypeCollector = primTypeCollector;
     this.myClassHierarchy = myClassHierarchy;
-    this.myJimple = myJimple;
+    ;
     this.throwAnalysis = throwAnalysis;
     this.myManager = myManager;
     this.myOptions = myOptions;

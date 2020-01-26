@@ -58,7 +58,7 @@ public class InstructionFactory {
    * @param myDalvikTyper
    * @param mySootResolver
    */
-  public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress, Jimple jimple, ConstantFactory constantFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Jimple myJimple, Options myOptions, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
+  public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress, Jimple jimple, ConstantFactory constantFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene,  Options myOptions, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
     return fromOpcode(instruction.getOpcode(), instruction, codeAddress, constantFactory, jimple, dalivkTyper, primTypeCollector,  myScene, myOptions, myJimple, myDalvikTyper, mySootResolver);
   }
 
@@ -79,7 +79,7 @@ public class InstructionFactory {
    * @param myDalvikTyper
    * @param mySootResolver
    */
-  public static DexlibAbstractInstruction fromOpcode(Opcode op, Instruction instruction, int codeAddress, ConstantFactory constantFactory, Jimple jimple, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, Jimple myJimple, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
+  public static DexlibAbstractInstruction fromOpcode(Opcode op, Instruction instruction, int codeAddress, ConstantFactory constantFactory, Jimple jimple, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions,  DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
     switch (op) {
 
       case SPARSE_SWITCH_PAYLOAD:
@@ -89,7 +89,7 @@ public class InstructionFactory {
                 // PackedSwitchDataPseudoInstruction,
                 // SparseSwitchDataPseudoInstruction and
                 // ArrayDataPseudoInstruction
-        return new NopInstruction(instruction, codeAddress, myJimple, myOptions);
+        return new NopInstruction(instruction, codeAddress, myOptions);
 
       case MOVE:
       case MOVE_FROM16:
@@ -125,23 +125,23 @@ public class InstructionFactory {
       case CONST_WIDE_16:
       case CONST_WIDE_32:
       case CONST_WIDE_HIGH16:
-        return new ConstInstruction(instruction, codeAddress, constantFactory,jimple);
+        return new ConstInstruction(instruction, codeAddress, constantFactory);
 
       case CONST_STRING:
       case CONST_STRING_JUMBO:
         return new ConstStringInstruction(instruction, codeAddress);
 
       case CONST_CLASS:
-        return new ConstClassInstruction(instruction, codeAddress, myOptions, constantFactory, myJimple, myDalvikTyper);
+        return new ConstClassInstruction(instruction, codeAddress, myOptions, constantFactory, myDalvikTyper);
 
       case MONITOR_ENTER:
         return new MonitorEnterInstruction(instruction, codeAddress);
 
       case MONITOR_EXIT:
-        return new MonitorExitInstruction(instruction, codeAddress, myOptions, myJimple, myDalvikTyper, myScene);
+        return new MonitorExitInstruction(instruction, codeAddress, myOptions, myDalvikTyper, myScene);
 
       case CHECK_CAST:
-        return new CheckCastInstruction(instruction, codeAddress, myOptions, myJimple, myDalvikTyper);
+        return new CheckCastInstruction(instruction, codeAddress, myOptions, myDalvikTyper);
 
       case INSTANCE_OF:
         return new InstanceOfInstruction(instruction, codeAddress);
@@ -150,7 +150,7 @@ public class InstructionFactory {
         return new ArrayLengthInstruction(instruction, codeAddress, myOptions, primTypeCollector);
 
       case NEW_INSTANCE:
-        return new NewInstanceInstruction(instruction, codeAddress, myJimple, myOptions, myScene, myDalvikTyper);
+        return new NewInstanceInstruction(instruction, codeAddress, myOptions, myScene, myDalvikTyper);
 
       case NEW_ARRAY:
         return new NewArrayInstruction(instruction, codeAddress);
@@ -170,7 +170,7 @@ public class InstructionFactory {
       case GOTO:
       case GOTO_16:
       case GOTO_32:
-        return new GotoInstruction(instruction, codeAddress, myOptions, myJimple);
+        return new GotoInstruction(instruction, codeAddress, myOptions);
 
       case PACKED_SWITCH:
         // case PACKED_SWITCH_PAYLOAD:
@@ -209,7 +209,7 @@ public class InstructionFactory {
       case AGET_CHAR:
       case AGET_SHORT:
       case AGET_WIDE:
-        return new AgetInstruction(instruction, codeAddress, jimple, myOptions, myDalvikTyper, primTypeCollector);
+        return new AgetInstruction(instruction, codeAddress, myOptions, myDalvikTyper, primTypeCollector);
 
       case APUT:
       case APUT_OBJECT:
@@ -282,7 +282,7 @@ public class InstructionFactory {
  
       case INVOKE_CUSTOM:
       case INVOKE_CUSTOM_RANGE:
-        return new InvokeCustomInstruction(instruction, codeAddress, constantFactory, jimple, myScene, myOptions, myDalvikTyper, mySootResolver);
+        return new InvokeCustomInstruction(instruction, codeAddress, constantFactory, myScene, myOptions, myDalvikTyper, mySootResolver);
 
       case NEG_INT:
       case NOT_INT:
@@ -290,7 +290,7 @@ public class InstructionFactory {
       case NEG_LONG:
       case NOT_LONG:
       case NEG_DOUBLE:
-        return new UnopInstruction(instruction, codeAddress, myOptions, myJimple, constantFactory);
+        return new UnopInstruction(instruction, codeAddress, myOptions, constantFactory);
 
       case INT_TO_LONG:
       case INT_TO_DOUBLE:
@@ -396,7 +396,7 @@ public class InstructionFactory {
       case SHL_INT_LIT8:
       case SHR_INT_LIT8:
       case USHR_INT_LIT8:
-        return new BinopLitInstruction(instruction, codeAddress, constantFactory, myJimple, myOptions);
+        return new BinopLitInstruction(instruction, codeAddress, constantFactory, myOptions);
 
       default:
         throw new IllegalArgumentException("Opcode: " + op + " @ 0x" + Integer.toHexString(codeAddress));

@@ -200,11 +200,10 @@ public class OnFlyCallGraphBuilder {
   private ConstantFactory constantFactory;
   private PackManager myPackManager;
   private PhaseDumper myPhaseDumper;
-  private Jimple myJimple;
   private ThrowAnalysis throwAnalysis;
 
   public OnFlyCallGraphBuilder(ContextManager cm, ReachableMethods rm, PhaseOptions myPhaseOptions, Scene myScene,
-                               VirtualCalls virtualCalls, EntryPoints myEntryPoints, ThrowableSet.Manager throwManager, InteractionHandler myInteractionHandler, Options myOptions, ConstantFactory constantFactory, PackManager myPackManager, PhaseDumper myPhaseDumper, Jimple myJimple, ThrowAnalysis throwAnalysis) {
+                               VirtualCalls virtualCalls, EntryPoints myEntryPoints, ThrowableSet.Manager throwManager, InteractionHandler myInteractionHandler, Options myOptions, ConstantFactory constantFactory, PackManager myPackManager, PhaseDumper myPhaseDumper, ThrowAnalysis throwAnalysis) {
     this.cm = cm;
     this.rm = rm;
     this.myScene = myScene;
@@ -218,7 +217,6 @@ public class OnFlyCallGraphBuilder {
     this.constantFactory = constantFactory;
     this.myPackManager = myPackManager;
     this.myPhaseDumper = myPhaseDumper;
-    this.myJimple = myJimple;
     this.throwAnalysis = throwAnalysis;
     if (!options.verbose()) {
       logger.debug("[Call Graph] For information on where the call graph may be incomplete,"
@@ -296,8 +294,8 @@ public class OnFlyCallGraphBuilder {
   }
 
   public OnFlyCallGraphBuilder(ContextManager cm, ReachableMethods rm, boolean appOnly, PhaseOptions myPhaseOptions,
-                               Scene myScene, VirtualCalls virtualCalls, EntryPoints myEntryPoints, ThrowableSet.Manager throwManager, InteractionHandler myInteractionHandler, Options myOptions, PhaseDumper myPhaseDumper, ConstantFactory constantFactory, PackManager myPackManager, Jimple myJimple, ThrowAnalysis throwAnalysis) {
-    this(cm, rm, myPhaseOptions, myScene, virtualCalls, myEntryPoints, throwManager, myInteractionHandler, myOptions, constantFactory, myPackManager, myPhaseDumper, myJimple, throwAnalysis);
+                               Scene myScene, VirtualCalls virtualCalls, EntryPoints myEntryPoints, ThrowableSet.Manager throwManager, InteractionHandler myInteractionHandler, Options myOptions, PhaseDumper myPhaseDumper, ConstantFactory constantFactory, PackManager myPackManager, ThrowAnalysis throwAnalysis) {
+    this(cm, rm, myPhaseOptions, myScene, virtualCalls, myEntryPoints, throwManager, myInteractionHandler, myOptions, constantFactory, myPackManager, myPhaseDumper, throwAnalysis);
     this.appOnly = appOnly;
     this.myEntryPoints = myEntryPoints;
   }
@@ -1290,7 +1288,7 @@ public class OnFlyCallGraphBuilder {
         // exc = new Error
         RefType runtimeExceptionType = RefType.v("java.lang.Error", myScene);
         NewExpr newExpr = Jimple.newNewExpr(runtimeExceptionType);
-        LocalGenerator lg = new LocalGenerator(body, myScene.getPrimTypeCollector(), myJimple);
+        LocalGenerator lg = new LocalGenerator(body, myScene.getPrimTypeCollector());
         Local exceptionLocal = lg.generateLocal(runtimeExceptionType);
         AssignStmt assignStmt = Jimple.newAssignStmt(exceptionLocal, newExpr);
         body.getUnits().insertBefore(assignStmt, insertionPoint);
@@ -1299,13 +1297,13 @@ public class OnFlyCallGraphBuilder {
         SootMethodRef cref = runtimeExceptionType.getSootClass()
             .getMethod("<init>", Collections.<Type>singletonList(RefType.v("java.lang.String", myScene))).makeRef();
         SpecialInvokeExpr constructorInvokeExpr
-            = myJimple.newSpecialInvokeExpr(exceptionLocal, cref, constantFactory.createStringConstant(guard.message));
+            = Jimple.newSpecialInvokeExpr(exceptionLocal, cref, constantFactory.createStringConstant(guard.message));
         InvokeStmt initStmt = Jimple.newInvokeStmt(constructorInvokeExpr);
         body.getUnits().insertAfter(initStmt, assignStmt);
 
         if (options.guards().equals("print")) {
           // logger.error(exc.getMessage(), exc);
-          VirtualInvokeExpr printStackTraceExpr = myJimple.newVirtualInvokeExpr(exceptionLocal, myScene
+          VirtualInvokeExpr printStackTraceExpr = Jimple.newVirtualInvokeExpr(exceptionLocal, myScene
               .getSootClass("java.lang.Throwable").getMethod("printStackTrace", Collections.<Type>emptyList()).makeRef());
           InvokeStmt printStackTraceStmt = Jimple.newInvokeStmt(printStackTraceExpr);
           body.getUnits().insertAfter(printStackTraceStmt, initStmt);

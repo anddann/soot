@@ -112,7 +112,7 @@ public class IFDSReachingDefinitions
                 int paramIndex = args.indexOf(source.getO1());
                 Pair<Value, Set<DefinitionStmt>> pair = new Pair<Value, Set<DefinitionStmt>>(
                     new EquivalentValue(
-                        myJimple.newParameterRef(destinationMethod.getParameterType(paramIndex), paramIndex)),
+                        Jimple.newParameterRef(destinationMethod.getParameterType(paramIndex), paramIndex)),
                     source.getO2());
                 return Collections.singleton(pair);
               }

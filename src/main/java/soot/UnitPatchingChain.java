@@ -47,14 +47,13 @@ public class UnitPatchingChain extends PatchingChain<Unit> {
   /**
    * Inserts instrumentation in a manner such that the resulting control flow graph (CFG) of the program will contain
    * <code>toInsert</code> on an edge that is defined by <code>point_source</code> and <code>point_target</code>.
-   * 
-   * @param toInsert
+   *  @param toInsert
    *          instrumentation to be added in the Chain
    * @param point_src
    *          the source point of an edge in CFG
    * @param point_tgt
    */
-  public void insertOnEdge(Collection<? extends Unit> toInsert, Unit point_src, Unit point_tgt, Jimple myJimple) {
+  public void insertOnEdge(Collection<? extends Unit> toInsert, Unit point_src, Unit point_tgt) {
 
     if (toInsert == null) {
       throw new RuntimeException("Bad idea! You tried to insert a null object into a Chain!");
