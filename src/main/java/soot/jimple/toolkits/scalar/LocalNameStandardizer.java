@@ -30,35 +30,18 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.inject.Inject;
-import soot.Body;
-import soot.BodyTransformer;
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.ErroneousType;
-import soot.FloatType;
-import soot.IntType;
-import soot.Local;
-import soot.LongType;
-import soot.NullType;
-import soot.PhaseOptions;
-import soot.PrimTypeCollector;
-import soot.ShortType;
-import soot.StmtAddressType;
-import soot.Type;
-import soot.UnknownType;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.util.Chain;
 
 public class LocalNameStandardizer extends BodyTransformer {
 
   private PrimTypeCollector primTypeCollector;
+  private Scene myScene;
 
   @Inject
-  public LocalNameStandardizer(PrimTypeCollector primTypeCollector) {
+  public LocalNameStandardizer(PrimTypeCollector primTypeCollector, Scene myScene) {
     this.primTypeCollector = primTypeCollector;
+    this.myScene = myScene;
   }
 
 
@@ -131,7 +114,7 @@ public class LocalNameStandardizer extends BodyTransformer {
 
         @Override
         public int compare(Local arg0, Local arg1) {
-          int ret = arg0.getType().toString().compareTo(arg1.getType().toString());
+          int ret = arg0.getType(myScene).toString().compareTo(arg1.getType(myScene).toString());
           if (ret == 0) {
             ret = Integer.compare(getFirstOccurance(arg0), getFirstOccurance(arg1));
           }
@@ -168,7 +151,7 @@ public class LocalNameStandardizer extends BodyTransformer {
       int maxDigits = sortLocals ? digits(locals.size()) : 1;
       for (Local l : locals) {
         String prefix = l.getName().startsWith("$") ? "$" : "";
-        final Type type = l.getType();
+        final Type type = l.getType(myScene);
 
         if (type.equals(booleanType)) {
           l.setName(genName(prefix, "z", intCount++, maxDigits));

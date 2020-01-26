@@ -170,7 +170,7 @@ public class DeadAssignmentEliminator extends BodyTransformer {
         }
 
         if (lhs instanceof Local
-            && (!eliminateOnlyStackLocals || ((Local) lhs).getName().startsWith("$") || lhs.getType() instanceof NullType)) {
+            && (!eliminateOnlyStackLocals || ((Local) lhs).getName().startsWith("$") || lhs.getType(myScene) instanceof NullType)) {
 
           isEssential = false;
 
@@ -211,8 +211,8 @@ public class DeadAssignmentEliminator extends BodyTransformer {
           } else if (rhs instanceof DivExpr || rhs instanceof RemExpr) {
             BinopExpr expr = (BinopExpr) rhs;
 
-            Type t1 = expr.getOp1().getType();
-            Type t2 = expr.getOp2().getType();
+            Type t1 = expr.getOp1().getType(myScene);
+            Type t2 = expr.getOp2().getType(myScene);
 
             // Can trigger a division by zero
 

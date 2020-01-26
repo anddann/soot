@@ -23,6 +23,7 @@ package soot;
 
 import java.util.List;
 
+import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.options.Options;
 import soot.tagkit.AnnotationTag;
@@ -80,12 +81,13 @@ public class PolymorphicMethodRef extends SootMethodRefImpl {
    * @param myScene
    * @param myOptions
    * @param myJimple
+   * @param constantFactory
    * @throws IllegalArgumentException
    *           is thrown when {@code declaringClass}, or {@code name}, or {@code returnType} is null
    */
   public PolymorphicMethodRef(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
-                              boolean isStatic, Scene myScene, Options myOptions, Jimple myJimple) {
-    super(declaringClass, name, parameterTypes, returnType, isStatic, myScene, myOptions, myJimple, constancFactory);
+                              boolean isStatic, Scene myScene, Options myOptions, Jimple myJimple, ConstantFactory constantFactory) {
+    super(declaringClass, name, parameterTypes, returnType, isStatic, myScene, myOptions, myJimple, constantFactory);
   }
 
   @Override

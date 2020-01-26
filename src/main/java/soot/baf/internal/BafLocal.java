@@ -25,10 +25,7 @@ package soot.baf.internal;
 import java.util.Collections;
 import java.util.List;
 
-import soot.Local;
-import soot.Type;
-import soot.UnitPrinter;
-import soot.ValueBox;
+import soot.*;
 import soot.util.Switch;
 
 public class BafLocal implements Local {
@@ -82,7 +79,7 @@ public class BafLocal implements Local {
   }
 
   @Override
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return type;
   }
 

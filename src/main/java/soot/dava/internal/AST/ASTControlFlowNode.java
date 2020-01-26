@@ -23,10 +23,12 @@ package soot.dava.internal.AST;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.toolkits.base.AST.ASTAnalysis;
 import soot.dava.toolkits.base.AST.ASTWalker;
 import soot.dava.toolkits.base.AST.TryContentsFinder;
+import soot.grimp.Grimp;
 import soot.jimple.ConditionExpr;
 
 public abstract class ASTControlFlowNode extends ASTLabeledNode {
@@ -39,10 +41,10 @@ public abstract class ASTControlFlowNode extends ASTLabeledNode {
     return myTryContentsFinder;
   }
 
-  public ASTControlFlowNode(SETNodeLabel label, ConditionExpr condition, TryContentsFinder myTryContentsFinder) {
+  public ASTControlFlowNode(SETNodeLabel label, ConditionExpr condition, TryContentsFinder myTryContentsFinder, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
     super(label);
     // this.conditionBox = myJimple.newConditionExprBox(condition);
-    this.condition = new ASTBinaryCondition(condition);
+    this.condition = new ASTBinaryCondition(condition, myGrimp, primTypeCollector);
     this.myTryContentsFinder = myTryContentsFinder;
   }
 

@@ -36,15 +36,6 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Type;
 import soot.Unit;
-import soot.jimple.validation.FieldRefValidator;
-import soot.jimple.validation.IdentityStatementsValidator;
-import soot.jimple.validation.IdentityValidator;
-import soot.jimple.validation.InvokeArgumentValidator;
-import soot.jimple.validation.JimpleTrapValidator;
-import soot.jimple.validation.MethodValidator;
-import soot.jimple.validation.NewValidator;
-import soot.jimple.validation.ReturnStatementsValidator;
-import soot.jimple.validation.TypesValidator;
 import soot.options.Options;
 import soot.util.Chain;
 import soot.validation.BodyValidator;
@@ -163,7 +154,7 @@ public class JimpleBody extends StmtBody {
             String.format("No declaring class given for method %s", method.getSubSignature()));
       }
       Local l = jimple.newLocal("this", RefType.v(declaringClass, myScene));
-      Stmt s = jimple.newIdentityStmt(l, jimple.newThisRef((RefType) l.getType()));
+      Stmt s = jimple.newIdentityStmt(l, jimple.newThisRef((RefType) l.getType(myScene)));
 
       localChain.add(l);
       unitChain.addFirst(s);
@@ -173,7 +164,7 @@ public class JimpleBody extends StmtBody {
     int i = 0;
     for (Type t : getMethod().getParameterTypes()) {
       Local l = jimple.newLocal("parameter" + i, t);
-      Stmt s = jimple.newIdentityStmt(l, jimple.newParameterRef(l.getType(), i));
+      Stmt s = jimple.newIdentityStmt(l, jimple.newParameterRef(l.getType(myScene), i));
 
       localChain.add(l);
       if (lastUnit == null) {

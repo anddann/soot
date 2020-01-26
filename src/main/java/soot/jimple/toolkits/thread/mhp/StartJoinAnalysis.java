@@ -131,9 +131,9 @@ public class StartJoinAnalysis extends ForwardFlowAnalysis {
 
         // If haven't found any run methods, then use the type of the startObject,
         // and add run from it and all subclasses
-        if (runMethodsList.isEmpty() && ((RefType) startObject.getType()).getSootClass().isApplicationClass()) {
+        if (runMethodsList.isEmpty() && ((RefType) startObject.getType(myScene)).getSootClass().isApplicationClass()) {
           List<SootClass> threadClasses
-              = hierarchy.getSubclassesOfIncluding(((RefType) startObject.getType()).getSootClass());
+              = hierarchy.getSubclassesOfIncluding(((RefType) startObject.getType(myScene)).getSootClass());
           Iterator<SootClass> threadClassesIt = threadClasses.iterator();
           while (threadClassesIt.hasNext()) {
             SootClass currentClass = threadClassesIt.next();
@@ -260,7 +260,7 @@ public class StartJoinAnalysis extends ForwardFlowAnalysis {
         InstanceInvokeExpr iie = (InstanceInvokeExpr) ie;
         SootMethod invokeMethod = ie.getMethod();
         if (invokeMethod.getName().equals("start")) {
-          RefType baseType = (RefType) iie.getBase().getType();
+          RefType baseType = (RefType) iie.getBase().getType(myScene);
           if (!baseType.getSootClass().isInterface()) // the start method we're looking for is NOT an interface method
           {
             List<SootClass> superClasses = hierarchy.getSuperclassesOfIncluding(baseType.getSootClass());
@@ -282,7 +282,7 @@ public class StartJoinAnalysis extends ForwardFlowAnalysis {
         // If this is a join stmt, add it to joinStatements
         if (invokeMethod.getName().equals("join")) // the join method we're looking for is NOT an interface method
         {
-          RefType baseType = (RefType) iie.getBase().getType();
+          RefType baseType = (RefType) iie.getBase().getType(myScene);
           if (!baseType.getSootClass().isInterface()) {
             List<SootClass> superClasses = hierarchy.getSuperclassesOfIncluding(baseType.getSootClass());
             Iterator<SootClass> it = superClasses.iterator();

@@ -135,11 +135,11 @@ import soot.util.Chain;
  */
 public class StackTypeHeightCalculator {
   private static final Logger logger = LoggerFactory.getLogger(StackTypeHeightCalculator.class);
-    private PrimTypeCollector primeTypeCollector;
+    private PrimTypeCollector primTypeCollector;
     private Scene myScene;
 
-    public StackTypeHeightCalculator(PrimTypeCollector primeTypeCollector, Scene myScene) {
-        this.primeTypeCollector = primeTypeCollector;
+    public StackTypeHeightCalculator(PrimTypeCollector primTypeCollector, Scene myScene) {
+        this.primTypeCollector = primTypeCollector;
         this.myScene = myScene;
     }
 
@@ -172,13 +172,13 @@ public class StackTypeHeightCalculator {
 
     public void caseJSRInst(JSRInst i) {
       remove_types = null;
-      // add_types=new Type[]{primeTypeCollector.getRefType()};
-      add_types = new Type[] { primeTypeCollector.getStmtAddressType() };
+      // add_types=new Type[]{primTypeCollector.getRefType()};
+      add_types = new Type[] { primTypeCollector.getStmtAddressType() };
     }
 
     public void casePushInst(PushInst i) {
       remove_types = null;
-      add_types = new Type[] { i.getConstant().getType() };
+      add_types = new Type[] { i.getConstant().getType(myScene) };
     }
 
     public void casePopInst(PopInst i) {
@@ -202,7 +202,7 @@ public class StackTypeHeightCalculator {
       if (bafToJLocals != null) {
         Local jl = (Local) bafToJLocals.get(i.getLocal());
         if (jl != null) {
-          add_types = new Type[] { jl.getType() };
+          add_types = new Type[] { jl.getType(myScene) };
         }
       }
 
@@ -213,12 +213,12 @@ public class StackTypeHeightCalculator {
 
     public void caseArrayWriteInst(ArrayWriteInst i) {
       // RefType replaces the arraytype
-      remove_types = new Type[] { primeTypeCollector.getRefType(), primeTypeCollector.getIntType(), i.getOpType() };
+      remove_types = new Type[] { primTypeCollector.getRefType(), primTypeCollector.getIntType(), i.getOpType() };
       add_types = null;
     }
 
     public void caseArrayReadInst(ArrayReadInst i) {
-      remove_types = new Type[] { primeTypeCollector.getRefType(), primeTypeCollector.getIntType() };
+      remove_types = new Type[] { primTypeCollector.getRefType(), primTypeCollector.getIntType() };
       add_types = new Type[] { i.getOpType() };
     }
 
@@ -233,32 +233,32 @@ public class StackTypeHeightCalculator {
     }
 
     public void caseIfEqInst(IfEqInst i) {
-      remove_types = new Type[] { primeTypeCollector.getIntType() };
+      remove_types = new Type[] { primTypeCollector.getIntType() };
       add_types = null;
     }
 
     public void caseIfNeInst(IfNeInst i) {
-      remove_types = new Type[] { primeTypeCollector.getIntType() };
+      remove_types = new Type[] { primTypeCollector.getIntType() };
       add_types = null;
     }
 
     public void caseIfGtInst(IfGtInst i) {
-      remove_types = new Type[] { primeTypeCollector.getIntType() };
+      remove_types = new Type[] { primTypeCollector.getIntType() };
       add_types = null;
     }
 
     public void caseIfGeInst(IfGeInst i) {
-      remove_types = new Type[] { primeTypeCollector.getIntType() };
+      remove_types = new Type[] { primTypeCollector.getIntType() };
       add_types = null;
     }
 
     public void caseIfLtInst(IfLtInst i) {
-      remove_types = new Type[] { primeTypeCollector.getIntType() };
+      remove_types = new Type[] { primTypeCollector.getIntType() };
       add_types = null;
     }
 
     public void caseIfLeInst(IfLeInst i) {
-      remove_types = new Type[] { primeTypeCollector.getIntType() };
+      remove_types = new Type[] { primTypeCollector.getIntType() };
       add_types = null;
     }
 
@@ -319,7 +319,7 @@ public class StackTypeHeightCalculator {
 
     public void caseInstanceOfInst(InstanceOfInst i) {
       remove_types = new Type[] { RefType.v("java.lang.Object",myScene) };
-      add_types = new Type[] { primeTypeCollector.getIntType() };
+      add_types = new Type[] { primTypeCollector.getIntType() };
     }
 
     public void casePrimitiveCastInst(PrimitiveCastInst i) {
@@ -362,7 +362,7 @@ public class StackTypeHeightCalculator {
 
       int length = m.getParameterCount();
       remove_types = new Type[length + 1];
-      remove_types[0] = primeTypeCollector.getRefType();
+      remove_types[0] = primTypeCollector.getRefType();
       System.arraycopy(m.getParameterTypes().toArray(), 0, remove_types, 1, length);
 
       if (m.getReturnType() instanceof VoidType) {
@@ -412,23 +412,23 @@ public class StackTypeHeightCalculator {
     }
 
     public void caseArrayLengthInst(ArrayLengthInst i) {
-      remove_types = new Type[] { primeTypeCollector.getRefType() };
-      add_types = new Type[] { primeTypeCollector.getIntType() };
+      remove_types = new Type[] { primTypeCollector.getRefType() };
+      add_types = new Type[] { primTypeCollector.getIntType() };
     }
 
     public void caseCmpInst(CmpInst i) {
       remove_types = new Type[] { i.getOpType(), i.getOpType() };
-      add_types = new Type[] { primeTypeCollector.getIntType() };
+      add_types = new Type[] { primTypeCollector.getIntType() };
     }
 
     public void caseCmpgInst(CmpgInst i) {
       remove_types = new Type[] { i.getOpType(), i.getOpType() };
-      add_types = new Type[] { primeTypeCollector.getIntType() };
+      add_types = new Type[] { primTypeCollector.getIntType() };
     }
 
     public void caseCmplInst(CmplInst i) {
       remove_types = new Type[] { i.getOpType(), i.getOpType() };
-      add_types = new Type[] { primeTypeCollector.getIntType() };
+      add_types = new Type[] { primTypeCollector.getIntType() };
     }
 
     public void caseDivInst(DivInst i) {
@@ -549,25 +549,25 @@ public class StackTypeHeightCalculator {
     }
 
     public void caseNewArrayInst(NewArrayInst i) {
-      remove_types = new Type[] { primeTypeCollector.getIntType() };
-      add_types = new Type[] { primeTypeCollector.getRefType() };
+      remove_types = new Type[] { primTypeCollector.getIntType() };
+      add_types = new Type[] { primTypeCollector.getRefType() };
     }
 
     public void caseNewMultiArrayInst(NewMultiArrayInst i) {
       remove_types = new Type[i.getDimensionCount()];
       for (int ii = 0; ii < remove_types.length; ii++) {
-        remove_types[ii] = primeTypeCollector.getIntType();
+        remove_types[ii] = primTypeCollector.getIntType();
       }
-      add_types = new Type[] { primeTypeCollector.getRefType() };
+      add_types = new Type[] { primTypeCollector.getRefType() };
     }
 
     public void caseLookupSwitchInst(LookupSwitchInst i) {
-      remove_types = new Type[] { primeTypeCollector.getIntType() };
+      remove_types = new Type[] { primTypeCollector.getIntType() };
       add_types = null;
     }
 
     public void caseTableSwitchInst(TableSwitchInst i) {
-      remove_types = new Type[] { primeTypeCollector.getIntType() };
+      remove_types = new Type[] { primTypeCollector.getIntType() };
       add_types = null;
     }
 
@@ -582,7 +582,7 @@ public class StackTypeHeightCalculator {
     }
   }
 
-  public static StackEffectSwitch sw = new StackTypeHeightCalculator(primeTypeCollector, myScene).new StackEffectSwitch();
+  public static StackEffectSwitch sw = new StackTypeHeightCalculator(primTypeCollector, myScene).new StackEffectSwitch();
   public static BriefUnitGraph bug = null;
 
   public static Map<Unit, Stack<Type>> calculateStackHeights(Body b, Map<Local, Local> b2JLocs) {

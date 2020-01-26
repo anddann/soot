@@ -22,6 +22,7 @@ package soot.jimple;
  * #L%
  */
 
+import soot.Scene;
 import soot.Type;
 import soot.Value;
 import soot.ValueBox;
@@ -34,7 +35,7 @@ public interface InstanceOfExpr extends Expr {
 
   public ValueBox getOpBox();
 
-  public Type getType();
+  public Type getType(Scene myScene);
 
   public Type getCheckType();
 

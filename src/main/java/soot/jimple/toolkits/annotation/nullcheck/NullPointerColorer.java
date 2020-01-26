@@ -68,7 +68,7 @@ public class NullPointerColorer extends BodyTransformer {
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
 
-    BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(b,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene), myInteractionHandler, myOptions.interactive_mode());
+    BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(b,  myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene), myInteractionHandler, myOptions.interactive_mode(), myScene);
 
     Iterator<Unit> it = b.getUnits().iterator();
 
@@ -112,7 +112,7 @@ public class NullPointerColorer extends BodyTransformer {
   private void addColorTags(ValueBox vBox, FlowSet set, Stmt s, BranchedRefVarsAnalysis analysis) {
 
     Value val = vBox.getValue();
-    if (val.getType() instanceof RefLikeType) {
+    if (val.getType(myScene) instanceof RefLikeType) {
       // logger.debug(""+val+": "+val.getClass().toString());
 
       int vInfo = analysis.anyRefInfo(val, set);

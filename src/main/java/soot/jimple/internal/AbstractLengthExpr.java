@@ -22,10 +22,7 @@ package soot.jimple.internal;
  * #L%
  */
 
-import soot.PrimTypeCollector;
-import soot.Type;
-import soot.UnitPrinter;
-import soot.ValueBox;
+import soot.*;
 import soot.jimple.ExprSwitch;
 import soot.jimple.Jimple;
 import soot.jimple.LengthExpr;
@@ -61,7 +58,7 @@ public abstract class AbstractLengthExpr extends AbstractUnopExpr implements Len
     opBox.toString(up);
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return primTypeCollector.getIntType();
   }
 

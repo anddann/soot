@@ -178,8 +178,8 @@ public class ClassConstant extends Constant {
     return value;
   }
 
-  public Type getType() {
-    return RefType.v("java.lang.Class", myScene);
+  public Type getType(Scene myScene) {
+    return RefType.v("java.lang.Class", this.myScene);
   }
 
   public void apply(Switch sw) {

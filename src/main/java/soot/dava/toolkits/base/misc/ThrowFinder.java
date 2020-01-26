@@ -196,7 +196,7 @@ public class ThrowFinder {
           HashSet handled = protectionSet.get(u);
 
           if (u instanceof ThrowStmt) {
-            Type t = ((ThrowStmt) u).getOp().getType();
+            Type t = ((ThrowStmt) u).getOp().getType(myScene);
 
             if (t instanceof RefType) {
               SootClass c = ((RefType) t).getSootClass();

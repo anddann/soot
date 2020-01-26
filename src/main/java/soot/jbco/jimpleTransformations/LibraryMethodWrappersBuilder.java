@@ -91,13 +91,13 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
   private int methodcalls = 0;
   private Scene myScene;
   private Jimple myJimple;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
 
-  public LibraryMethodWrappersBuilder(Scene myScene, Jimple myJimple, ConstantFactory constancFactory, PrimTypeCollector primTypeCollector) {
+  public LibraryMethodWrappersBuilder(Scene myScene, Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
     this.myScene = myScene;
     this.myJimple = myJimple;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
   }
 
@@ -192,7 +192,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
                 Type pType = parameterTypes.get(argsCount);
                 Local newLocal = myJimple.newLocal("newLocal" + localName++, pType);
                 body.getLocals().add(newLocal);
-                body.getUnits().insertBeforeNoRedirect(myJimple.newAssignStmt(newLocal, getConstantType(pType, constancFactory,myJimple, primTypeCollector)), first);
+                body.getUnits().insertBeforeNoRedirect(myJimple.newAssignStmt(newLocal, getConstantType(pType, constantFactory,myJimple, primTypeCollector)), first);
                 args.add(newLocal);
                 argsCount++;
               }
@@ -331,30 +331,30 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
     }
   }
 
-  private static Value getConstantType(Type t, ConstantFactory constancFactory, Jimple myJimple, PrimTypeCollector primTypeCollector) {
+  private static Value getConstantType(Type t, ConstantFactory constantFactory, Jimple myJimple, PrimTypeCollector primTypeCollector) {
     if (t instanceof BooleanType) {
-      return constancFactory.createIntConstant(Rand.getInt(1));
+      return constantFactory.createIntConstant(Rand.getInt(1));
     }
     if (t instanceof IntType) {
-      return constancFactory.createIntConstant(Rand.getInt());
+      return constantFactory.createIntConstant(Rand.getInt());
     }
     if (t instanceof CharType) {
-      return myJimple.newCastExpr(constancFactory.createIntConstant(Rand.getInt()), primTypeCollector.getCharType());
+      return myJimple.newCastExpr(constantFactory.createIntConstant(Rand.getInt()), primTypeCollector.getCharType());
     }
     if (t instanceof ByteType) {
-      return myJimple.newCastExpr(constancFactory.createIntConstant(Rand.getInt()), primTypeCollector.getByteType());
+      return myJimple.newCastExpr(constantFactory.createIntConstant(Rand.getInt()), primTypeCollector.getByteType());
     }
     if (t instanceof LongType) {
-      return constancFactory.createLongConstant(Rand.getLong());
+      return constantFactory.createLongConstant(Rand.getLong());
     }
     if (t instanceof FloatType) {
-      return constancFactory.createFloatConstant(Rand.getFloat());
+      return constantFactory.createFloatConstant(Rand.getFloat());
     }
     if (t instanceof DoubleType) {
-      return constancFactory.createDoubleConstant(Rand.getDouble());
+      return constantFactory.createDoubleConstant(Rand.getDouble());
     }
 
-    return myJimple.newCastExpr(constancFactory.getNullConstant(), t);
+    return myJimple.newCastExpr(constantFactory.getNullConstant(), t);
   }
 
   private static Body getBodySafely(SootMethod method) {

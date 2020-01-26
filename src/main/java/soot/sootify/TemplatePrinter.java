@@ -25,21 +25,17 @@ package soot.sootify;
 import java.io.PrintWriter;
 
 import com.google.inject.Inject;
-import soot.Body;
-import soot.G;
-import soot.Local;
-import soot.Singletons;
-import soot.SootClass;
-import soot.SootMethod;
-import soot.Unit;
+import soot.*;
 
 public class TemplatePrinter {
 
   private PrintWriter out;
   private int indentationLevel = 0;
+  private Scene myScene;
 
   @Inject
-  public TemplatePrinter() {
+  public TemplatePrinter(Scene myScene) {
+    this.myScene = myScene;
   }
 
 
@@ -110,7 +106,7 @@ public class TemplatePrinter {
       for (Local l : b.getLocals()) {
 
         // TODO properly treat primitive types
-        println("locals.add(myJimple.newLocal(\"" + l.getName() + "\", RefType.v(\"" + l.getType() + "\")));");
+        println("locals.add(myJimple.newLocal(\"" + l.getName() + "\", RefType.v(\"" + l.getType(myScene) + "\")));");
 
       }
 

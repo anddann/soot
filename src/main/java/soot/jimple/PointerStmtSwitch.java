@@ -111,7 +111,7 @@ public abstract class PointerStmtSwitch extends AbstractStmtSwitch {
     statement = s;
     Value lhs = s.getLeftOp();
     Value rhs = s.getRightOp();
-    if (!(lhs.getType() instanceof RefType) && !(lhs.getType() instanceof ArrayType)) {
+    if (!(lhs.getType(myScene) instanceof RefType) && !(lhs.getType(myScene) instanceof ArrayType)) {
       if (rhs instanceof InvokeExpr) {
         caseInvokeStmt(null, (InvokeExpr) rhs);
         return;
@@ -185,7 +185,7 @@ public abstract class PointerStmtSwitch extends AbstractStmtSwitch {
   public final void caseReturnStmt(ReturnStmt s) {
     statement = s;
     Value op = s.getOp();
-    if (op.getType() instanceof RefType || op.getType() instanceof ArrayType) {
+    if (op.getType(myScene) instanceof RefType || op.getType(myScene) instanceof ArrayType) {
       if (op instanceof Constant) {
         caseReturnConstStmt((Constant) op);
       } else {
@@ -210,7 +210,7 @@ public abstract class PointerStmtSwitch extends AbstractStmtSwitch {
     statement = s;
     Value lhs = s.getLeftOp();
     Value rhs = s.getRightOp();
-    if (!(lhs.getType() instanceof RefType) && !(lhs.getType() instanceof ArrayType)) {
+    if (!(lhs.getType(myScene) instanceof RefType) && !(lhs.getType(myScene) instanceof ArrayType)) {
       caseUninterestingStmt(s);
       return;
     }

@@ -33,7 +33,6 @@ import soot.dava.internal.javaRep.DShortcutIf;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 import soot.jimple.CastExpr;
 import soot.jimple.DefinitionStmt;
-import soot.jimple.IntConstant;
 import soot.jimple.Stmt;
 import soot.jimple.internal.ImmediateBox;
 
@@ -72,7 +71,7 @@ public class ShortcutIfGenerator extends DepthFirstAdapter {
         rightType = ((CastExpr) right).getCastType();
         OpBox = ((CastExpr) right).getOpBox();
       } else {
-        rightType = ds.getLeftOp().getType();
+        rightType = ds.getLeftOp().getType(myScene);
         OpBox = rightBox;
       }
 
@@ -81,13 +80,13 @@ public class ShortcutIfGenerator extends DepthFirstAdapter {
       }
 
       Value Op = OpBox.getValue();
-      if (!(Op.getType() instanceof BooleanType)) {
+      if (!(Op.getType(myScene) instanceof BooleanType)) {
         continue;
       }
 
       // ready for the switch
-      ImmediateBox trueBox = new ImmediateBox(constancFactory.createIntConstant(1));
-      ImmediateBox falseBox = new ImmediateBox(constancFactory.createIntConstant(0));
+      ImmediateBox trueBox = new ImmediateBox(constantFactory.createIntConstant(1));
+      ImmediateBox falseBox = new ImmediateBox(constantFactory.createIntConstant(0));
 
       DShortcutIf shortcut = new DShortcutIf(OpBox, trueBox, falseBox);
       if (DEBUG) {

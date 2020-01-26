@@ -24,20 +24,13 @@ package soot.jimple.internal;
 
 import java.util.List;
 
-import soot.AbstractUnit;
-import soot.Unit;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
-import soot.jimple.ArrayRef;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.FieldRef;
-import soot.jimple.InvokeExpr;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.Stmt;
+import soot.jimple.*;
 
 @SuppressWarnings("serial")
 public abstract class AbstractStmt extends AbstractUnit implements Stmt, ConvertToBaf {
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     Unit u = context.getBafBody().getMyBaf().newNopInst();
     out.add(u);
     u.addAllTagsOf(this);

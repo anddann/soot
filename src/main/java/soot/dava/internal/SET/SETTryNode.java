@@ -33,12 +33,11 @@ import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.AST.ASTTryNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.asg.AugmentedStmtGraph;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.finders.ExceptionFinder;
 import soot.dava.toolkits.base.finders.ExceptionNode;
-import soot.jimple.CaughtExceptionRef;
-import soot.jimple.GotoStmt;
-import soot.jimple.IdentityStmt;
-import soot.jimple.Stmt;
+import soot.jimple.*;
 import soot.util.IterableSet;
 
 public class SETTryNode extends SETNode {
@@ -114,7 +113,7 @@ public class SETTryNode extends SETNode {
     return c;
   }
 
-  public ASTNode emit_AST() {
+  public ASTNode emit_AST(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
     LinkedList<Object> catchList = new LinkedList<Object>();
     HashMap<Object, Object> exceptionMap = new HashMap<Object, Object>(), paramMap = new HashMap<Object, Object>();
 
@@ -123,7 +122,7 @@ public class SETTryNode extends SETNode {
       IterableSet originalCatchBody = (IterableSet) it.next();
       IterableSet catchBody = cb2clone.get(originalCatchBody);
 
-      List<Object> astBody = emit_ASTBody(body2childChain.get(catchBody));
+      List<Object> astBody = emit_ASTBody(body2childChain.get(catchBody), myTryContentsFinder, myASTWalker, myJimple);
       exceptionMap.put(astBody, en.get_Exception(originalCatchBody));
       catchList.addLast(astBody);
 
@@ -157,11 +156,11 @@ public class SETTryNode extends SETNode {
       }
     }
 
-    return new ASTTryNode(get_Label(), emit_ASTBody(body2childChain.get(en.get_TryBody())), catchList, exceptionMap,
+    return new ASTTryNode(get_Label(), emit_ASTBody(body2childChain.get(en.get_TryBody()), myTryContentsFinder, myASTWalker, myJimple), catchList, exceptionMap,
         paramMap);
   }
 
-  protected boolean resolve(SETNode parent) {
+  protected boolean resolve(SETNode parent, ExceptionFinder myExceptionFinder) {
     Iterator<IterableSet> sbit = parent.get_SubBodies().iterator();
     while (sbit.hasNext()) {
 

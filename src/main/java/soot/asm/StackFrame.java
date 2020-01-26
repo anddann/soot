@@ -43,15 +43,18 @@ final class StackFrame {
   private ValueBox[] boxes;
   private ArrayList<Operand[]> in;
   private final AsmMethodSource src;
+  private Jimple myJimple;
 
   /**
    * Constructs a new stack frame.
    *
    * @param src
    *          source the frame belongs to.
+   * @param myJimple
    */
-  StackFrame(AsmMethodSource src) {
+  StackFrame(AsmMethodSource src, Jimple myJimple) {
     this.src = src;
+    this.myJimple = myJimple;
   }
 
   /**

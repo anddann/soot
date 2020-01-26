@@ -25,9 +25,11 @@ package soot.jimple.internal;
 import java.util.List;
 
 import soot.PrimTypeCollector;
+import soot.Scene;
 import soot.Unit;
 import soot.Value;
 import soot.baf.Baf;
+import soot.jimple.ConstantFactory;
 import soot.jimple.ConvertToBaf;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleToBafContext;
@@ -39,8 +41,8 @@ public class JLengthExpr extends AbstractLengthExpr implements ConvertToBaf {
     this.myJimple = myJimple;
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
-    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
 
     Unit u = myBaf.newArrayLengthInst();
     u.addAllTagsOf(context.getCurrentUnit());

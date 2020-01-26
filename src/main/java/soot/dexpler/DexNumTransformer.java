@@ -79,9 +79,9 @@ import soot.jimple.ReturnStmt;
  * analysis can be performed, a default type is given to rightValue. This default type is "int" for registers whose size is
  * less or equal to 32bits and "long" to registers whose size is 64bits. The problem is that 32bits registers could be either
  * "int" or "float" and 64bits registers "long" or "double". If the analysis concludes that an "int" has to be changed to a
- * "float", rightValue has to change from constancFactory.createIntConstant(literal) to Float.intBitsToFloat((int) literal). If the analysis
- * concludes that an "long" has to be changed to a "double, rightValue has to change from constancFactory.createLongConstant(literal) to
- * constancFactory.createDoubleConstant(Double.longBitsToDouble(literal)).
+ * "float", rightValue has to change from constantFactory.createIntConstant(literal) to Float.intBitsToFloat((int) literal). If the analysis
+ * concludes that an "long" has to be changed to a "double, rightValue has to change from constantFactory.createLongConstant(literal) to
+ * constantFactory.createDoubleConstant(Double.longBitsToDouble(literal)).
  */
 public class DexNumTransformer extends DexTransformer {
   // Note: we need an instance variable for inner class access, treat this as
@@ -91,7 +91,7 @@ public class DexNumTransformer extends DexTransformer {
   boolean doBreak = false;
 
   public DexNumTransformer() {
-    super(primeTypeCollector);
+    super(primTypeCollector);
   }
 
   public static DexNumTransformer v() {
@@ -124,12 +124,12 @@ public class DexNumTransformer extends DexTransformer {
               doBreak = true;
             } else if (r instanceof NewArrayExpr) {
               NewArrayExpr nae = (NewArrayExpr) r;
-              Type t = nae.getType();
+              Type t = nae.getType(myScene);
               usedAsFloatingPoint = isFloatingPointLike(t);
               doBreak = true;
             } else if (r instanceof ArrayRef) {
               ArrayRef ar = (ArrayRef) r;
-              Type arType = ar.getType();
+              Type arType = ar.getType(myScene);
               if (arType instanceof UnknownType) {
                 Type t = findArrayType(localDefs, stmt, 0, Collections.<Unit>emptySet()); // TODO:
                 // check
@@ -140,14 +140,14 @@ public class DexNumTransformer extends DexTransformer {
                 // if(ArrayRef...
                 usedAsFloatingPoint = isFloatingPointLike(t);
               } else {
-                usedAsFloatingPoint = isFloatingPointLike(ar.getType());
+                usedAsFloatingPoint = isFloatingPointLike(ar.getType(myScene));
               }
               doBreak = true;
             } else if (r instanceof CastExpr) {
               usedAsFloatingPoint = isFloatingPointLike(((CastExpr) r).getCastType());
               doBreak = true;
             } else if (r instanceof InvokeExpr) {
-              usedAsFloatingPoint = isFloatingPointLike(((InvokeExpr) r).getType());
+              usedAsFloatingPoint = isFloatingPointLike(((InvokeExpr) r).getType(myScene));
               doBreak = true;
             } else if (r instanceof LengthExpr) {
               usedAsFloatingPoint = false;
@@ -159,7 +159,7 @@ public class DexNumTransformer extends DexTransformer {
           @Override
           public void caseIdentityStmt(IdentityStmt stmt) {
             if (stmt.getLeftOp() == l) {
-              usedAsFloatingPoint = isFloatingPointLike(stmt.getRightOp().getType());
+              usedAsFloatingPoint = isFloatingPointLike(stmt.getRightOp().getType(myScene));
               doBreak = true;
             }
           }
@@ -226,14 +226,14 @@ public class DexNumTransformer extends DexTransformer {
               } else if (r instanceof Local && r == l) {
                 if (left instanceof FieldRef) {
                   FieldRef fr = (FieldRef) left;
-                  if (isFloatingPointLike(fr.getType())) {
+                  if (isFloatingPointLike(fr.getType(myScene))) {
                     usedAsFloatingPoint = true;
                   }
                   doBreak = true;
                   return;
                 } else if (left instanceof ArrayRef) {
                   ArrayRef ar = (ArrayRef) left;
-                  Type arType = ar.getType();
+                  Type arType = ar.getType(myScene);
                   if (arType instanceof UnknownType) {
                     arType = findArrayType(localDefs, stmt, 0, Collections.<Unit>emptySet());
                   }
@@ -321,10 +321,10 @@ public class DexNumTransformer extends DexTransformer {
       Value v = s.getRightOp();
       if ((v instanceof IntConstant)) {
         int vVal = ((IntConstant) v).value;
-        s.setRightOp(constancFactory.createFloatConstant(Float.intBitsToFloat(vVal)));
+        s.setRightOp(constantFactory.createFloatConstant(Float.intBitsToFloat(vVal)));
       } else if (v instanceof LongConstant) {
         long vVal = ((LongConstant) v).value;
-        s.setRightOp(constancFactory.createDoubleConstant(Double.longBitsToDouble(vVal)));
+        s.setRightOp(constantFactory.createDoubleConstant(Double.longBitsToDouble(vVal)));
       }
     }
 

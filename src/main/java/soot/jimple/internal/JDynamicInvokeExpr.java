@@ -26,20 +26,9 @@ package soot.jimple.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import soot.SootClass;
-import soot.SootMethod;
-import soot.SootMethodRef;
-import soot.Unit;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.DynamicInvokeExpr;
-import soot.jimple.ExprSwitch;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.MethodHandle;
+import soot.jimple.*;
 import soot.util.Switch;
 
 @SuppressWarnings("serial")
@@ -220,10 +209,10 @@ public class JDynamicInvokeExpr extends AbstractInvokeExpr implements DynamicInv
     ((ExprSwitch) sw).caseDynamicInvokeExpr(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     if (argBoxes != null) {
       for (ValueBox element : argBoxes) {
-        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, myBaf);
+        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
       }
     }
 

@@ -28,12 +28,7 @@ import com.google.inject.assistedinject.Assisted;
 import java.util.Iterator;
 import java.util.Map;
 
-import soot.Local;
-import soot.PrimTypeCollector;
-import soot.Type;
-import soot.UnitBoxOwner;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.jimple.Constant;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Expr;
@@ -103,17 +98,17 @@ public class SEvaluator {
    * @see SEvaluator.TopConstant
    * @see SEvaluator.BottomConstant
    **/
-  public static Constant getFuzzyConstantValueOf(Value v, ConstantFactory constancFactory) {
+  public static Constant getFuzzyConstantValueOf(Value v, ConstantFactory constantFactory) {
     if (v instanceof Constant) {
       return (Constant) v;
     }
 
     if (v instanceof Local) {
-      return constancFactory.createBottomConstant();
+      return constantFactory.createBottomConstant();
     }
 
     if (!(v instanceof Expr)) {
-      return constancFactory.createBottomConstant();
+      return constantFactory.createBottomConstant();
     }
 
     Expr expr = (Expr) v;
@@ -137,13 +132,13 @@ public class SEvaluator {
         if (constant == null) {
           constant = (Constant) arg;
         } else if (!constant.equals(arg)) {
-          constant = constancFactory.createBottomConstant();
+          constant = constantFactory.createBottomConstant();
           break;
         }
       }
 
       if (constant == null) {
-        constant = constancFactory.createTopConstant();
+        constant = constantFactory.createTopConstant();
       }
     } else {
       Iterator valueBoxesIt = expr.getUseBoxes().iterator();
@@ -151,12 +146,12 @@ public class SEvaluator {
         Value value = ((ValueBox) valueBoxesIt.next()).getValue();
 
         if (value instanceof BottomConstant) {
-          constant = constancFactory.createBottomConstant();
+          constant = constantFactory.createBottomConstant();
           break;
         }
 
         if (value instanceof TopConstant) {
-          constant = constancFactory.createTopConstant();
+          constant = constantFactory.createTopConstant();
         }
       }
 
@@ -165,7 +160,7 @@ public class SEvaluator {
       }
 
       if (constant == null) {
-        constant = constancFactory.createBottomConstant();
+        constant = constantFactory.createBottomConstant();
       }
     }
 
@@ -180,7 +175,7 @@ public class SEvaluator {
    * @see SEvaluator.BottomConstant
    **/
   public static Constant getFuzzyConstantValueOf(Value v, Map<Local, Constant> localToConstant,
-      ConstantFactory constancFactory) {
+      ConstantFactory constantFactory) {
     if (v instanceof Constant) {
       return (Constant) v;
     }
@@ -190,7 +185,7 @@ public class SEvaluator {
     }
 
     if (!(v instanceof Expr)) {
-      return constancFactory.createBottomConstant();
+      return constantFactory.createBottomConstant();
     }
 
     /* clone expr and update the clone with our assumptions */
@@ -216,7 +211,7 @@ public class SEvaluator {
 
     /* evaluate the expression */
 
-    return (getFuzzyConstantValueOf(expr, constancFactory));
+    return (getFuzzyConstantValueOf(expr, constantFactory));
   }
 
   /**
@@ -236,7 +231,7 @@ public class SEvaluator {
       this.primTypeCollector = primTypeCollector;
     }
 
-    public Type getType() {
+    public Type getType(Scene myScene) {
       return primTypeCollector.getUnknownType();
     }
 
@@ -256,7 +251,7 @@ public class SEvaluator {
       this.primTypeCollector = primTypeCollector;
     }
 
-    public Type getType() {
+    public Type getType(Scene myScene) {
       return primTypeCollector.getUnknownType();
     }
 

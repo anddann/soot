@@ -31,7 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
-import soot.G;
+import soot.PrimTypeCollector;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
 import soot.dava.RetriggerAnalysisException;
@@ -43,6 +43,7 @@ import soot.dava.internal.SET.SETTryNode;
 import soot.dava.internal.SET.SETUnconditionalWhileNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.asg.AugmentedStmtGraph;
+import soot.grimp.Grimp;
 import soot.util.IterableSet;
 
 public class LabeledBlockFinder implements FactFinder {
@@ -57,7 +58,7 @@ public class LabeledBlockFinder implements FactFinder {
 
   private final HashMap<SETNode, Integer> orderNumber = new HashMap();
 
-  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
+  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException {
     myDava.log("LabeledBlockFinder::find()");
 
     Iterator bit = SET.get_Body().iterator();

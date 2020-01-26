@@ -214,7 +214,7 @@ public class StaticMethodBinder extends SceneTransformer {
                   IdentityStmt is = (IdentityStmt) st;
                   if (is.getRightOp() instanceof ThisRef) {
                     units.swapWith(st, myJimple.newIdentityStmt(is.getLeftOp(),
-                        myJimple.newParameterRef(is.getRightOp().getType(), 0)));
+                        myJimple.newParameterRef(is.getRightOp().getType(myScene), 0)));
                   } else {
                     if (is.getRightOp() instanceof ParameterRef) {
                       ParameterRef ro = (ParameterRef) is.getRightOp();
@@ -240,7 +240,7 @@ public class StaticMethodBinder extends SceneTransformer {
             // For instance, Bottle.price_static takes a cost.
             // Cost is an interface implemented by Bottle.
             SootClass localType, parameterType;
-            localType = ((RefType) ((InstanceInvokeExpr) ie).getBase().getType()).getSootClass();
+            localType = ((RefType) ((InstanceInvokeExpr) ie).getBase().getType(myScene)).getSootClass();
             parameterType = target.getDeclaringClass();
 
             if (localType.isInterface() || hierarchy.isClassSuperclassOf(localType, parameterType)) {

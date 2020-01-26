@@ -22,11 +22,7 @@ package soot.grimp.internal;
  * #L%
  */
 
-import soot.IntType;
-import soot.LongType;
-import soot.Type;
-import soot.UnknownType;
-import soot.Value;
+import soot.*;
 import soot.grimp.Grimp;
 import soot.jimple.ExprSwitch;
 import soot.jimple.ShrExpr;
@@ -50,19 +46,19 @@ public class GShrExpr extends AbstractGrimpIntLongBinopExpr implements ShrExpr {
   }
 
   @Override
-  public Type getType() {
+  public Type getType(Scene myScene) {
     Value op1 = op1Box.getValue();
     Value op2 = op2Box.getValue();
 
-    if (!isIntLikeType(op2.getType())) {
+    if (!isIntLikeType(op2.getType(myScene))) {
       return UnknownType.v();
     }
 
-    if (isIntLikeType(op1.getType())) {
-      return primeTypeCollector.getIntType();
+    if (isIntLikeType(op1.getType(myScene))) {
+      return primTypeCollector.getIntType();
     }
-    if (op1.getType().equals(primeTypeCollector.getLongType())) {
-      return primeTypeCollector.getLongType();
+    if (op1.getType(myScene).equals(primTypeCollector.getLongType())) {
+      return primTypeCollector.getLongType();
     }
 
     return UnknownType.v();

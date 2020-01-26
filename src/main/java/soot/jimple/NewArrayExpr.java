@@ -22,6 +22,7 @@ package soot.jimple;
  * #L%
  */
 
+import soot.Scene;
 import soot.Type;
 import soot.Value;
 import soot.ValueBox;
@@ -38,7 +39,7 @@ public interface NewArrayExpr extends Expr, AnyNewExpr {
 
   public void setSize(Value size);
 
-  public Type getType();
+  public Type getType(Scene myScene);
 
   public void apply(Switch sw);
 }

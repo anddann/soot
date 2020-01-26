@@ -33,12 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import soot.IdentityUnit;
-import soot.Local;
-import soot.Trap;
-import soot.Unit;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.jimple.AssignStmt;
 import soot.jimple.Jimple;
 import soot.options.Options;
@@ -75,14 +70,16 @@ public class PhiNodeManager {
   private Jimple myJimple;
   private InteractionHandler myInteractionHander;
   private Options myOptions;
+  private Scene myScene;
 
-  public PhiNodeManager(ShimpleBody body, ShimpleFactory sf, Shimple myShimple, Jimple myJimple, InteractionHandler myInteractionHander, Options myOptions) {
+  public PhiNodeManager(ShimpleBody body, ShimpleFactory sf, Shimple myShimple, Jimple myJimple, InteractionHandler myInteractionHander, Options myOptions, Scene myScene) {
     this.body = body;
     this.sf = sf;
     this.myShimple = myShimple;
     this.myJimple = myJimple;
     this.myInteractionHander = myInteractionHander;
     this.myOptions = myOptions;
+    this.myScene = myScene;
   }
 
   public void update() {
@@ -453,7 +450,7 @@ public class PhiNodeManager {
       if (pred.branches()) {
         boolean needPriming = false;
         Local lhsLocal = (Local) stmt.getLeftOp();
-        Local savedLocal = myJimple.newLocal(lhsLocal.getName() + "_", lhsLocal.getType());
+        Local savedLocal = myJimple.newLocal(lhsLocal.getName() + "_", lhsLocal.getType(myScene));
         Iterator<ValueBox> useBoxesIt = pred.getUseBoxes().iterator();
 
         while (useBoxesIt.hasNext()) {

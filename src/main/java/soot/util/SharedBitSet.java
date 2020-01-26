@@ -25,6 +25,7 @@ package soot.util;
 public final class SharedBitSet {
   BitVector value;
   boolean own = true;
+  private SharedBitSetCache mySharedBitSetCache;
 
   public SharedBitSet(int i) {
     value = new BitVector(i);

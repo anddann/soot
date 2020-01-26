@@ -37,9 +37,13 @@ import soot.G;
 import soot.dava.DavaBody;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.asg.AugmentedStmt;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.finders.AbruptEdgeFinder;
+import soot.dava.toolkits.base.finders.ExceptionFinder;
 import soot.dava.toolkits.base.finders.LabeledBlockFinder;
 import soot.dava.toolkits.base.finders.SequenceFinder;
+import soot.jimple.Jimple;
 import soot.util.IterableSet;
 import soot.util.UnmodifiableIterableSet;
 
@@ -56,11 +60,11 @@ public abstract class SETNode {
 
   public abstract IterableSet get_NaturalExits();
 
-  public abstract ASTNode emit_AST();
+  public abstract ASTNode emit_AST(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple);
 
   public abstract AugmentedStmt get_EntryStmt();
 
-  protected abstract boolean resolve(SETNode parent);
+  protected abstract boolean resolve(SETNode parent, ExceptionFinder myExceptionFinder);
 
   public SETNode(IterableSet<AugmentedStmt> body) {
     this.body = body;
@@ -140,12 +144,12 @@ public abstract class SETNode {
     return true;
   }
 
-  public List<Object> emit_ASTBody(IterableSet children) {
+  public List<Object> emit_ASTBody(IterableSet children, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
     LinkedList<Object> l = new LinkedList<Object>();
 
     Iterator cit = children.iterator();
     while (cit.hasNext()) {
-      ASTNode astNode = ((SETNode) cit.next()).emit_AST();
+      ASTNode astNode = ((SETNode) cit.next()).emit_AST(myTryContentsFinder, myASTWalker, myJimple);
 
       if (astNode != null) {
         l.addLast(astNode);
@@ -297,8 +301,8 @@ public abstract class SETNode {
     }
   }
 
-  public boolean nest(SETNode other) {
-    if (other.resolve(this) == false) {
+  public boolean nest(SETNode other, ExceptionFinder myExceptionFinder) {
+    if (other.resolve(this, myExceptionFinder) == false) {
       return false;
     }
 
@@ -320,7 +324,7 @@ public abstract class SETNode {
           if (childBody.intersects(otherBody)) {
 
             if (childBody.isSupersetOf(otherBody)) {
-              return curChild.nest(other);
+              return curChild.nest(other, myExceptionFinder);
             } else {
               remove_Child(curChild, childChain);
 

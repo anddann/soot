@@ -59,14 +59,14 @@ public class ConstStringInstruction extends DexlibAbstractInstruction {
     } else {
       throw new IllegalArgumentException("Expected Instruction21c or Instruction31c but got neither.");
     }
-    StringConstant sc = constancFactory.createStringConstant(s);
+    StringConstant sc = constantFactory.createStringConstant(s);
     AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), sc);
     setUnit(assign);
     addTags(assign);
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(assign.getLeftOpBox(), sc.getType(), false);
+      myDalvikTyper().setType(assign.getLeftOpBox(), sc.getType(myScene), false);
     }
   }
 

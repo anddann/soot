@@ -163,7 +163,7 @@ public class DexBody {
   // detect array/instructions overlapping obfuscation
   protected List<PseudoInstruction> pseudoInstructionData = new ArrayList<PseudoInstruction>();
   private Jimple myJimple;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private DalvikTyper dalivkTyper;
   private PrimTypeCollector primTypeCollector;
   private Scene myScene;
@@ -191,7 +191,6 @@ public class DexBody {
   private PhaseDumper myPhaseDumper;
   private InteractionHandler myInteractionHandler;
   private PedanticThrowAnalysis myPedanticThrowAnalysis;
-  private ConstantFactory constantFactory;
   private SootResolver mySootResolver;
 
   PseudoInstruction isAddressInData(int a) {
@@ -210,7 +209,7 @@ public class DexBody {
    *          the codeitem that is contained in this body
    * @param method
    * @param myJimple
-   * @param constancFactory
+   * @param constantFactory
    * @param dalivkTyper
    * @param primTypeCollector
    * @param myScene
@@ -238,12 +237,11 @@ public class DexBody {
    * @param myPhaseDumper
    * @param myInteractionHandler
    * @param myPedanticThrowAnalysis
-   * @param constantFactory
    * @param mySootResolver
    */
-  protected DexBody(DexFile dexFile, Method method, RefType declaringClassType, Jimple myJimple, ConstantFactory constancFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, PhaseOptions myPhaseOptions, DalvikTyper myDalvikTyper, DeadAssignmentEliminator myDeadAssignmentEliminator, UnusedLocalEliminator myUnusedLocalEliminator, TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, PackManager myPackManager, FieldStaticnessCorrector myFieldStaticnessCorrector, MethodStaticnessCorrector myMethodStaticnessCorrector, TrapTightener myTrapTightener, TrapMinimizer myTrapMinimizer, Aggregator myAggregator, ConditionalBranchFolder myConditionalBranchFolder, ConstantCastEliminator myConstantCastEliminator, IdentityCastEliminator myIdentityCastEliminator, IdentityOperationEliminator myIdentityOperationEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator, DalvikThrowAnalysis myDalvikThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, PedanticThrowAnalysis myPedanticThrowAnalysis, ConstantFactory constantFactory, SootResolver mySootResolver) {
+  protected DexBody(DexFile dexFile, Method method, RefType declaringClassType, Jimple myJimple, ConstantFactory constantFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, PhaseOptions myPhaseOptions, DalvikTyper myDalvikTyper, DeadAssignmentEliminator myDeadAssignmentEliminator, UnusedLocalEliminator myUnusedLocalEliminator, TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, PackManager myPackManager, FieldStaticnessCorrector myFieldStaticnessCorrector, MethodStaticnessCorrector myMethodStaticnessCorrector, TrapTightener myTrapTightener, TrapMinimizer myTrapMinimizer, Aggregator myAggregator, ConditionalBranchFolder myConditionalBranchFolder, ConstantCastEliminator myConstantCastEliminator, IdentityCastEliminator myIdentityCastEliminator, IdentityOperationEliminator myIdentityOperationEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator, DalvikThrowAnalysis myDalvikThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, PedanticThrowAnalysis myPedanticThrowAnalysis, SootResolver mySootResolver) {
     this.myJimple = myJimple;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.dalivkTyper = dalivkTyper;
     this.primTypeCollector = primTypeCollector;
     this.myScene = myScene;
@@ -338,7 +336,7 @@ public class DexBody {
   protected void extractDexInstructions(MethodImplementation code) {
     int address = 0;
     for (Instruction instruction : code.getInstructions()) {
-      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address, myJimple, constancFactory, dalivkTyper, primTypeCollector, myScene, myJimple, myOptions, myDalvikTyper, constantFactory, mySootResolver);
+      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address, myJimple, constantFactory, dalivkTyper, primTypeCollector, myScene, myJimple, myOptions, myDalvikTyper, mySootResolver);
       instructions.add(dexInstruction);
       instructionAtAddress.put(address, dexInstruction);
       address += instruction.getCodeUnits();
@@ -486,7 +484,7 @@ public class DexBody {
 
     final Jimple jimple = myJimple;
     final UnknownType unknownType = primTypeCollector.getUnknownType();
-    final NullConstant nullConstant = constancFactory.getNullConstant();
+    final NullConstant nullConstant = constantFactory.getNullConstant();
     final Options options = myOptions;
 
     /*
@@ -768,7 +766,7 @@ public class DexBody {
             Value op2 = expr.getOp2();
             if (op1 instanceof Constant && op2 instanceof Local) {
               Local l = (Local) op2;
-              Type ltype = l.getType();
+              Type ltype = l.getType(myScene);
               if (ltype instanceof PrimType) {
                 continue;
               }
@@ -786,7 +784,7 @@ public class DexBody {
               expr.setOp1(nullConstant);
             } else if (op1 instanceof Local && op2 instanceof Constant) {
               Local l = (Local) op1;
-              Type ltype = l.getType();
+              Type ltype = l.getType(myScene);
               if (ltype instanceof PrimType) {
                 continue;
               }
@@ -811,7 +809,7 @@ public class DexBody {
                 if (nc.value != 0) {
                   throw new RuntimeException("expected value 0 for int constant. Got " + expr);
                 }
-                expr.setOp2(constancFactory.getNullConstant());
+                expr.setOp2(constantFactory.getNullConstant());
               } else if (op2 instanceof NullConstant && op1 instanceof NumericConstant) {
                 IntConstant nc = (IntConstant) op1;
                 if (nc.value != 0) {
@@ -834,7 +832,7 @@ public class DexBody {
       List<Local> toRemove = new ArrayList<Local>();
       for (Local l : jBody.getLocals()) {
 
-        if (l.getType() instanceof NullType) {
+        if (l.getType(myScene) instanceof NullType) {
           toRemove.add(l);
           for (ValueBox vb : uses) {
             Value v = vb.getValue();
@@ -917,7 +915,7 @@ public class DexBody {
         AssignStmt ass = (AssignStmt) u;
         if (ass.getRightOp() instanceof CastExpr) {
           CastExpr c = (CastExpr) ass.getRightOp();
-          if (c.getType() instanceof NullType) {
+          if (c.getType(myScene) instanceof NullType) {
             ass.setRightOp(nullConstant);
           }
         }
@@ -928,7 +926,7 @@ public class DexBody {
         // CaughtExceptionRef,
         // we must manually fix the hierarchy
         if (def.getLeftOp() instanceof Local && def.getRightOp() instanceof CaughtExceptionRef) {
-          Type t = def.getLeftOp().getType();
+          Type t = def.getLeftOp().getType(myScene);
           if (t instanceof RefType) {
             RefType rt = (RefType) t;
             if (rt.getSootClass().isPhantom() && !rt.getSootClass().hasSuperclass()
@@ -950,7 +948,7 @@ public class DexBody {
     // java.lang.Object get()>();
     //
     for (Local l : jBody.getLocals()) {
-      Type t = l.getType();
+      Type t = l.getType(myScene);
       if (t instanceof NullType) {
         l.setType(objectType);
       }
@@ -1006,7 +1004,7 @@ public class DexBody {
 
   protected CopyPropagator getCopyPopagator() {
     if (this.copyPropagator == null) {
-      this.copyPropagator = new CopyPropagator(myDalvikThrowAnalysis, false, myOptions,   myScene,  myPhaseDumper,  myManager,  constancFactory,  myInteractionHandler);
+      this.copyPropagator = new CopyPropagator(myDalvikThrowAnalysis, false, myOptions,   myScene,  myPhaseDumper,  myManager,  constantFactory,  myInteractionHandler);
     }
     return this.copyPropagator;
   }

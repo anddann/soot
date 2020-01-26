@@ -59,7 +59,7 @@ public class IFDSUninitializedVariables
 
   //FIMXE
   private Scene myScene;
-  private PrimTypeCollector primeTypeCollector;
+  private PrimTypeCollector primTypeCollector;
 
   public IFDSUninitializedVariables(InterproceduralCFG<Unit, SootMethod> icfg) {
     super(icfg);
@@ -230,7 +230,7 @@ public class IFDSUninitializedVariables
 
   @Override
   public Local createZeroValue() {
-    return new JimpleLocal("<<zero>>", primeTypeCollector.getNullType(), myScene);
+    return new JimpleLocal("<<zero>>", primTypeCollector.getNullType(), myScene);
   }
 
 }

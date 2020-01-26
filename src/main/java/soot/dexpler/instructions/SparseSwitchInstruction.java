@@ -49,13 +49,13 @@ import soot.options.Options;
 
 public class SparseSwitchInstruction extends SwitchInstruction {
 
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private DalvikTyper myDalvikTyper;
   private PrimTypeCollector primTypeCollector;
 
-  public SparseSwitchInstruction(Instruction instruction, int codeAdress, Jimple myJimple, ConstantFactory constancFactory, DalvikTyper myDalvikTyper, PrimTypeCollector primTypeCollector, Options myOptions) {
+  public SparseSwitchInstruction(Instruction instruction, int codeAdress, Jimple myJimple, ConstantFactory constantFactory, DalvikTyper myDalvikTyper, PrimTypeCollector primTypeCollector, Options myOptions) {
     super(instruction, codeAdress, myJimple, myOptions);
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.myDalvikTyper = myDalvikTyper;
     this.primTypeCollector = primTypeCollector;
   }
@@ -72,7 +72,7 @@ public class SparseSwitchInstruction extends SwitchInstruction {
     List<IntConstant> lookupValues = new ArrayList<IntConstant>();
     List<Unit> targets = new ArrayList<Unit>();
     for (SwitchElement se : seList) {
-      lookupValues.add(constancFactory.createIntConstant(se.getKey()));
+      lookupValues.add(constantFactory.createIntConstant(se.getKey()));
       int offset = se.getOffset();
       targets.add(body.instructionAtAddress(codeAddress + offset).getUnit());
     }

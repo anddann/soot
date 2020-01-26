@@ -32,15 +32,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.ArrayType;
-import soot.EquivalentValue;
-import soot.Local;
-import soot.NullType;
-import soot.RefType;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
 import soot.jimple.BinopExpr;
@@ -178,6 +170,7 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
   // fast conversion from Value -> EquivalentValue
   // because used in methods
   private final HashMap<Value, EquivalentValue> valueToEquivValue = new HashMap<Value, EquivalentValue>(2293, 0.7f);
+  private Scene myScene;
 
   public EquivalentValue getEquivalentValue(Value v) {
     if (valueToEquivValue.containsKey(v)) {
@@ -231,7 +224,7 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
 
   // isAlwaysNull returns true if the reference r is known to be always null
   private final boolean isAlwaysNull(Value r) {
-    return ((r instanceof NullConstant) || (r.getType() instanceof NullType));
+    return ((r instanceof NullConstant) || (r.getType(myScene) instanceof NullType));
   } // end isAlwaysNull
 
   // isAlwaysTop returns true if the reference r is known to be always top for this analysis
@@ -272,7 +265,7 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
     if (isAlwaysNull(r) || isAlwaysTop(r)) {
       return false;
     } else if (r instanceof Local || r instanceof InstanceFieldRef || r instanceof StaticFieldRef) {
-      Type rType = r.getType();
+      Type rType = r.getType(myScene);
 
       return (rType instanceof RefType || rType instanceof ArrayType);
     } else {
@@ -405,8 +398,9 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
    * @deprecated THIS IS KNOWN TO BE BUGGY. USE {@link NullnessAnalysis} INSTEAD!
    */
   @Deprecated
-  public BranchedRefVarsAnalysis(UnitGraph g, InteractionHandler myInteractionHandler, boolean interactiveMode) {
+  public BranchedRefVarsAnalysis(UnitGraph g, InteractionHandler myInteractionHandler, boolean interactiveMode, Scene myScene) {
     super(g,interactiveMode, myInteractionHandler);
+    this.myScene = myScene;
 
     // initialize all the refType lists
     initRefTypeLists();
@@ -437,7 +431,7 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
     while (it.hasNext()) {
       Local l = (Local) (it.next());
 
-      if (l.getType() instanceof RefType || l.getType() instanceof ArrayType) {
+      if (l.getType(myScene) instanceof RefType || l.getType(myScene) instanceof ArrayType) {
         refTypeLocals.add(getEquivalentValue(l));
       }
     }
@@ -481,7 +475,7 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
 
       InstanceFieldRef ir = (InstanceFieldRef) val;
 
-      opType = ir.getType();
+      opType = ir.getType(myScene);
       if (opType instanceof RefType || opType instanceof ArrayType) {
 
         EquivalentValue eir = getEquivalentValue(ir);
@@ -499,7 +493,7 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
     } else if (val instanceof StaticFieldRef) {
 
       StaticFieldRef sr = (StaticFieldRef) val;
-      opType = sr.getType();
+      opType = sr.getType(myScene);
 
       if (opType instanceof RefType || opType instanceof ArrayType) {
 

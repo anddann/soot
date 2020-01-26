@@ -217,9 +217,9 @@ public class DexPrinter {
   private FastDexTrapTightener myFastDexTrapTightener;
   private TrapSplitter myTrapSplitter;
   private Jimple myJimple;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
-  public DexPrinter(Scene myScene, Options myOptions, SourceLocator mySourceLocator, PackManager myPackManager, EmptySwitchEliminator myEmptySwitchEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter, Jimple myJimple, ConstantFactory constancFactory) {
+  public DexPrinter(Scene myScene, Options myOptions, SourceLocator mySourceLocator, PackManager myPackManager, EmptySwitchEliminator myEmptySwitchEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter, Jimple myJimple, ConstantFactory constantFactory) {
     this.myScene = myScene;
     this.myOptions=myOptions;
     this.mySourceLocator = mySourceLocator;
@@ -229,7 +229,7 @@ public class DexPrinter {
     this.myFastDexTrapTightener = myFastDexTrapTightener;
     this.myTrapSplitter = myTrapSplitter;
     this.myJimple = myJimple;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     dexBuilder = createDexBuilder();
   }
 
@@ -1302,7 +1302,7 @@ public class DexPrinter {
    * @return the statement visitor
    */
   protected StmtVisitor buildStmtVisitor(SootMethod belongingMethod, DexArrayInitDetector arrayInitDetector) {
-    return new StmtVisitor(belongingMethod, arrayInitDetector, constancFactory, myScene);
+    return new StmtVisitor(belongingMethod, arrayInitDetector, constantFactory, myScene);
   }
 
   /**
@@ -1501,7 +1501,7 @@ public class DexPrinter {
   private void addRegisterAssignmentDebugInfo(LocalRegisterAssignmentInformation registerAssignment,
       Map<Local, Integer> seenRegisters, MethodImplementationBuilder builder) {
     Local local = registerAssignment.getLocal();
-    String dexLocalType = SootToDexUtils.getDexTypeDescriptor(local.getType());
+    String dexLocalType = SootToDexUtils.getDexTypeDescriptor(local.getType(myScene));
     StringReference localName = new ImmutableStringReference(local.getName());
     Register reg = registerAssignment.getRegister();
     int register = reg.getNumber();

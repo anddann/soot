@@ -36,7 +36,7 @@ public class ASTDoWhileNode extends ASTControlFlowNode {
   private List<Object> body;
 
   public ASTDoWhileNode(SETNodeLabel label, ConditionExpr ce, List<Object> body, TryContentsFinder myTryContentsFinder) {
-    super(label, ce, myTryContentsFinder);
+    super(label, ce, myTryContentsFinder, myGrimp, primTypeCollector);
     this.body = body;
 
     subBodies.add(body);

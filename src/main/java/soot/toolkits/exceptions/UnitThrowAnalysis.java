@@ -216,20 +216,20 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
   // Cache the response to mightThrowImplicitly():
   private final ThrowableSet implicitThrowExceptions;
   private Scene myScene;
-  private PrimTypeCollector primeTypeCollector;
+  private PrimTypeCollector primTypeCollector;
 
 
   @Inject
-  public UnitThrowAnalysis(ThrowableSet.Manager mgr, Scene myScene, PrimTypeCollector primeTypeCollector, ConstantFactory constancFactory) {
-      super(mgr);
+  public UnitThrowAnalysis(ThrowableSet.Manager mgr, Scene myScene, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+      super(mgr, myScene);
       this.myScene = myScene;
-    this.primeTypeCollector = primeTypeCollector;
+    this.primTypeCollector = primTypeCollector;
     this.isInterproc = false;
     this.mgr = mgr;
     implicitThrowExceptions = mgr.VM_ERRORS
             .add(mgr.NULL_POINTER_EXCEPTION).add(mgr.ILLEGAL_MONITOR_STATE_EXCEPTION);
-    INT_CONSTANT_ZERO = constancFactory.createIntConstant(0);
-    LONG_CONSTANT_ZERO = constancFactory.createLongConstant(0);
+    INT_CONSTANT_ZERO = constantFactory.createIntConstant(0);
+    LONG_CONSTANT_ZERO = constantFactory.createLongConstant(0);
   }
 
 
@@ -619,7 +619,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
 
     @Override
     public void caseDivInst(DivInst i) {
-      if (i.getOpType() instanceof IntegerType || i.getOpType() == primeTypeCollector.getLongType()) {
+      if (i.getOpType() instanceof IntegerType || i.getOpType() == primTypeCollector.getLongType()) {
         result = result.add(mgr.ARITHMETIC_EXCEPTION);
       }
     }
@@ -634,7 +634,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
 
     @Override
     public void caseRemInst(RemInst i) {
-      if (i.getOpType() instanceof IntegerType || i.getOpType() == primeTypeCollector.getLongType()) {
+      if (i.getOpType() instanceof IntegerType || i.getOpType() == primTypeCollector.getLongType()) {
         result = result.add(mgr.ARITHMETIC_EXCEPTION);
       }
     }
@@ -726,7 +726,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
     @Override
     public void caseAssignStmt(AssignStmt s) {
       Value lhs = s.getLeftOp();
-      if (lhs instanceof ArrayRef && (lhs.getType() instanceof UnknownType || lhs.getType() instanceof RefType)) {
+      if (lhs instanceof ArrayRef && (lhs.getType(myScene) instanceof UnknownType || lhs.getType(myScene) instanceof RefType)) {
         // This corresponds to an aastore byte code.
         result = result.add(mgr.ARRAY_STORE_EXCEPTION);
       }
@@ -960,7 +960,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
 
     public void caseCastExpr(CastExpr expr) {
       result = result.add(mgr.RESOLVE_CLASS_ERRORS);
-      Type fromType = expr.getOp().getType();
+      Type fromType = expr.getOp().getType(myScene);
       Type toType = expr.getCastType();
       if (toType instanceof RefLikeType) {
         // fromType might still be unknown when we are called,
@@ -1080,13 +1080,13 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
       // The checks against constant divisors would perhaps be
       // better performed in a later pass, post-constant-propagation.
       Value divisor = expr.getOp2();
-      Type divisorType = divisor.getType();
+      Type divisorType = divisor.getType(myScene);
       if (divisorType instanceof UnknownType) {
         result = result.add(mgr.ARITHMETIC_EXCEPTION);
       } else if ((divisorType instanceof IntegerType)
           && ((!(divisor instanceof IntConstant)) || (((IntConstant) divisor).equals(INT_CONSTANT_ZERO)))) {
         result = result.add(mgr.ARITHMETIC_EXCEPTION);
-      } else if ((divisorType == primeTypeCollector.getLongType())
+      } else if ((divisorType == primTypeCollector.getLongType())
           && ((!(divisor instanceof LongConstant)) || (((LongConstant) divisor).equals(LONG_CONSTANT_ZERO)))) {
         result = result.add(mgr.ARITHMETIC_EXCEPTION);
       }

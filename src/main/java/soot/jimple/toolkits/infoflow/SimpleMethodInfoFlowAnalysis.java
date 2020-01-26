@@ -449,12 +449,12 @@ public class SimpleMethodInfoFlowAnalysis
       if (ir instanceof JCaughtExceptionRef) {
         // TODO: What the heck do we do with this???
       } else if (ir instanceof ParameterRef) {
-        if (!ignoreThisDataType(ir.getType())) {
+        if (!ignoreThisDataType(ir.getType(myScene))) {
           // <Local, ParameterRef and sources>
           handleFlowsToValue(is.getLeftOp(), ir, changedFlow);
         }
       } else if (ir instanceof ThisRef) {
-        if (!ignoreThisDataType(ir.getType())) {
+        if (!ignoreThisDataType(ir.getType(myScene))) {
           // <Local, ThisRef and sources>
           handleFlowsToValue(is.getLeftOp(), ir, changedFlow);
         }
@@ -466,7 +466,7 @@ public class SimpleMethodInfoFlowAnalysis
       if (rv instanceof Constant) {
         // No (interesting) data flow
       } else if (rv instanceof Local) {
-        if (!ignoreThisDataType(rv.getType())) {
+        if (!ignoreThisDataType(rv.getType(myScene))) {
           // <ReturnRef, sources of Local>
           handleFlowsToValue(returnRef, rv, changedFlow);
         }
@@ -508,53 +508,53 @@ public class SimpleMethodInfoFlowAnalysis
 
       if (rv instanceof Local) {
         sources.add(rv);
-        interestingFlow = !ignoreThisDataType(rv.getType());
+        interestingFlow = !ignoreThisDataType(rv.getType(myScene));
       } else if (rv instanceof Constant) {
         sources.add(rv);
-        interestingFlow = !ignoreThisDataType(rv.getType());
+        interestingFlow = !ignoreThisDataType(rv.getType(myScene));
       } else if (rv instanceof ArrayRef) // data flows from the base's data structure
       {
         ArrayRef ar = (ArrayRef) rv;
         sources.add(ar.getBase());
-        interestingFlow = !ignoreThisDataType(ar.getType());
+        interestingFlow = !ignoreThisDataType(ar.getType(myScene));
       } else if (rv instanceof StaticFieldRef) {
         sources.add(rv);
-        interestingFlow = !ignoreThisDataType(rv.getType());
+        interestingFlow = !ignoreThisDataType(rv.getType(myScene));
       } else if (rv instanceof InstanceFieldRef) {
         InstanceFieldRef ifr = (InstanceFieldRef) rv;
         if (ifr.getBase() == thisLocal) // data flows from the field ref
         {
           sources.add(rv);
-          interestingFlow = !ignoreThisDataType(rv.getType());
+          interestingFlow = !ignoreThisDataType(rv.getType(myScene));
         } else // data flows from the base's data structure
         {
           sources.add(ifr.getBase());
-          interestingFlow = !ignoreThisDataType(ifr.getType());
+          interestingFlow = !ignoreThisDataType(ifr.getType(myScene));
         }
       } else if (rv instanceof AnyNewExpr) {
         sources.add(rv);
-        interestingFlow = !ignoreThisDataType(rv.getType());
+        interestingFlow = !ignoreThisDataType(rv.getType(myScene));
       } else if (rv instanceof BinopExpr) {
         BinopExpr be = (BinopExpr) rv;
         sources.add(be.getOp1());
         sources.add(be.getOp2());
-        interestingFlow = !ignoreThisDataType(be.getType());
+        interestingFlow = !ignoreThisDataType(be.getType(myScene));
       } else if (rv instanceof CastExpr) {
         CastExpr ce = (CastExpr) rv;
         sources.add(ce.getOp());
-        interestingFlow = !ignoreThisDataType(ce.getType());
+        interestingFlow = !ignoreThisDataType(ce.getType(myScene));
       } else if (rv instanceof InstanceOfExpr) {
         InstanceOfExpr ioe = (InstanceOfExpr) rv;
         sources.add(ioe.getOp());
-        interestingFlow = !ignoreThisDataType(ioe.getType());
+        interestingFlow = !ignoreThisDataType(ioe.getType(myScene));
       } else if (rv instanceof UnopExpr) {
         UnopExpr ue = (UnopExpr) rv;
         sources.add(ue.getOp());
-        interestingFlow = !ignoreThisDataType(ue.getType());
+        interestingFlow = !ignoreThisDataType(ue.getType(myScene));
       } else if (rv instanceof InvokeExpr) {
         InvokeExpr ie = (InvokeExpr) rv;
         sources.addAll(handleInvokeExpr(ie, as, changedFlow));
-        interestingFlow = !ignoreThisDataType(ie.getType());
+        interestingFlow = !ignoreThisDataType(ie.getType(myScene));
       }
 
       if (interestingFlow) {

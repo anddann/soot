@@ -403,7 +403,7 @@ public class XMLPrinter {
       int defineCount = 0;
       Local localData = (Local) localsIterator.next();
       String local = cleanLocal((String) localData.toString());
-      String localType = localData.getType().toString();
+      String localType = localData.getType(myScene).toString();
 
       // collect the local types
       if (!localTypes.contains(localType)) {

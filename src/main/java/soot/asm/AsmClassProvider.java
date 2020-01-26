@@ -22,13 +22,8 @@ package soot.asm;
  * #L%
  */
 
-import soot.ClassProvider;
-import soot.ClassSource;
-import soot.FoundFile;
-import soot.Scene;
-import soot.SootResolver;
-import soot.SourceLocator;
-import soot.jimple.Jimple;
+import soot.*;
+import soot.jimple.ConstantFactory;
 import soot.options.Options;
 
 /**
@@ -39,15 +34,19 @@ import soot.options.Options;
 public class AsmClassProvider implements ClassProvider {
 
   private SourceLocator mySourceLocator;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
 
-  public AsmClassProvider(SourceLocator mySourceLocator) {
+  public AsmClassProvider(SourceLocator mySourceLocator, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
 
     this.mySourceLocator = mySourceLocator;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
   }
 
   public ClassSource find(String cls, Scene myScene,  Options myOptions, SootResolver mySootResolver) {
     String clsFile = cls.replace('.', '/') + ".class";
     FoundFile file = mySourceLocator.lookupInClassPath(clsFile);
-    return file == null ? null : new AsmClassSource(cls, file, myScene, mySootResolver, myOptions);
+    return file == null ? null : new AsmClassSource(cls, file, myScene, mySootResolver, myOptions, primTypeCollector, constantFactory);
   }
 }

@@ -58,8 +58,8 @@ public class StringConstant extends Constant {
     return StringTools.getQuotedStringOf(value);
   }
 
-  public Type getType() {
-    return RefType.v("java.lang.String", myScene);
+  public Type getType(Scene myScene) {
+    return RefType.v("java.lang.String", this.myScene);
   }
 
   public void apply(Switch sw) {

@@ -25,18 +25,9 @@ package soot.jimple.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import soot.Unit;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
-import soot.VoidType;
+import soot.*;
 import soot.baf.Baf;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.InvokeExpr;
-import soot.jimple.InvokeStmt;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.StmtSwitch;
+import soot.jimple.*;
 import soot.util.Switch;
 
 public class JInvokeStmt extends AbstractStmt implements InvokeStmt {
@@ -91,13 +82,13 @@ public class JInvokeStmt extends AbstractStmt implements InvokeStmt {
     ((StmtSwitch) sw).caseInvokeStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     InvokeExpr ie = getInvokeExpr();
 
     context.setCurrentUnit(this);
 
-    ((ConvertToBaf) ie).convertToBaf(context, out, myBaf);
-    if (!ie.getMethodRef().returnType().equals(primeTypeCollector.getVoidType())) {
+    ((ConvertToBaf) ie).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+    if (!ie.getMethodRef().returnType().equals(primTypeCollector.getVoidType())) {
       Unit u = myBaf.newPopInst(ie.getMethodRef().returnType());
       u.addAllTagsOf(this);
       out.add(u);

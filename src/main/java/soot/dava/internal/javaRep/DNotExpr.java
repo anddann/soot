@@ -22,19 +22,7 @@ package soot.dava.internal.javaRep;
  * #L%
  */
 
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
-import soot.LongType;
-import soot.PrimTypeCollector;
-import soot.ShortType;
-import soot.Type;
-import soot.UnitPrinter;
-import soot.UnknownType;
-import soot.Value;
+import soot.*;
 import soot.grimp.Grimp;
 import soot.jimple.internal.AbstractUnopExpr;
 import soot.util.Switch;
@@ -63,17 +51,17 @@ public class DNotExpr extends AbstractUnopExpr {
     return " ! (" + (getOpBox().getValue()).toString() + ")";
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     Value op = getOpBox().getValue();
 
-    if (op.getType().equals(primTypeCollector.getIntType()) || op.getType().equals(primTypeCollector.getByteType()) || op.getType().equals(primTypeCollector.getShortType())
-        || op.getType().equals(primTypeCollector.getBooleanType()) || op.getType().equals(primTypeCollector.getCharType())) {
+    if (op.getType(myScene).equals(primTypeCollector.getIntType()) || op.getType(myScene).equals(primTypeCollector.getByteType()) || op.getType(myScene).equals(primTypeCollector.getShortType())
+        || op.getType(myScene).equals(primTypeCollector.getBooleanType()) || op.getType(myScene).equals(primTypeCollector.getCharType())) {
       return primTypeCollector.getIntType();
-    } else if (op.getType().equals(primTypeCollector.getLongType())) {
+    } else if (op.getType(myScene).equals(primTypeCollector.getLongType())) {
       return primTypeCollector.getLongType();
-    } else if (op.getType().equals(primTypeCollector.getDoubleType())) {
+    } else if (op.getType(myScene).equals(primTypeCollector.getDoubleType())) {
       return primTypeCollector.getDoubleType();
-    } else if (op.getType().equals(primTypeCollector.getFloatType())) {
+    } else if (op.getType(myScene).equals(primTypeCollector.getFloatType())) {
       return primTypeCollector.getFloatType();
     } else {
       return primTypeCollector.getUnknownType();

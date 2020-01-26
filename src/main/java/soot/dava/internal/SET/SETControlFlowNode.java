@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import soot.dava.internal.asg.AugmentedStmt;
+import soot.dava.toolkits.base.finders.ExceptionFinder;
 import soot.jimple.GotoStmt;
 import soot.util.IterableSet;
 
@@ -41,7 +42,7 @@ public abstract class SETControlFlowNode extends SETNode {
     return characterizingStmt;
   }
 
-  protected boolean resolve(SETNode parent) {
+  protected boolean resolve(SETNode parent, ExceptionFinder myExceptionFinder) {
     for (IterableSet subBody : parent.get_SubBodies()) {
       if (subBody.contains(get_EntryStmt()) == false) {
         continue;

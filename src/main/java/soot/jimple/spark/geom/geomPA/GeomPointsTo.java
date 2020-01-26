@@ -918,7 +918,7 @@ public class GeomPointsTo extends PAG {
         continue;
       }
 
-      myVirtualCalls.resolve(type, receiver.getType(), subSig, src, targetsQueue);
+      myVirtualCalls.resolve(type, receiver.getType(myScene), subSig, src, targetsQueue);
     }
   }
 

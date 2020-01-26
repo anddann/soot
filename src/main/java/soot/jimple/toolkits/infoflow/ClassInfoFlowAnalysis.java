@@ -111,7 +111,7 @@ public class ClassInfoFlowAnalysis {
       if (method.isConcrete()) {
         Body b = method.retrieveActiveBody();
         UnitGraph g = new ExceptionalUnitGraph(b, myManager,myOptions.omit_excepting_unit_edges(),myPhaseDumper, myScene );
-        SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(myJimple, primTypeCollector, g, dfa);
+        SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(myJimple, primTypeCollector, myScene, g, dfa);
 
         methodToInfoFlowAnalysis.put(method, smdfa);
         methodToInfoFlowSummary.remove(method);
@@ -144,7 +144,7 @@ public class ClassInfoFlowAnalysis {
       {
         Body b = method.retrieveActiveBody();
         UnitGraph g = new ExceptionalUnitGraph(b, myManager,myOptions.omit_excepting_unit_edges(),myPhaseDumper, myScene);
-        SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(myJimple, primTypeCollector, g, dfa);
+        SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(myJimple, primTypeCollector, myScene, g, dfa);
 
         methodToInfoFlowAnalysis.put(method, smdfa);
         methodToInfoFlowSummary.remove(method);
@@ -299,7 +299,7 @@ public class ClassInfoFlowAnalysis {
     while (accessedIt1.hasNext()) {
       EquivalentValue r = accessedIt1.next();
       Ref rRef = (Ref) r.getValue();
-      if (!(rRef.getType() instanceof RefLikeType) && !dfa.includesPrimitiveInfoFlow()) {
+      if (!(rRef.getType(myScene) instanceof RefLikeType) && !dfa.includesPrimitiveInfoFlow()) {
         continue;
       }
       Iterator<EquivalentValue> accessedIt2 = fieldsStaticsParamsAccessed.iterator();
@@ -312,11 +312,11 @@ public class ClassInfoFlowAnalysis {
           ; // don't add this edge
         } else if (sRef instanceof ParameterRef && dfa.includesInnerFields()) {
           ; // don't add edges to parameters if we are including inner fields
-        } else if (sRef.getType() instanceof RefLikeType) {
+        } else if (sRef.getType(myScene) instanceof RefLikeType) {
           dataFlowGraph.addEdge(r, s);
         }
       }
-      if (returnValueRef != null && (returnValueRef.getType() instanceof RefLikeType || dfa.includesPrimitiveInfoFlow())) {
+      if (returnValueRef != null && (returnValueRef.getType(myScene) instanceof RefLikeType || dfa.includesPrimitiveInfoFlow())) {
         dataFlowGraph.addEdge(r, InfoFlowAnalysis.getNodeForReturnRef(sm));
       }
     }
@@ -390,7 +390,7 @@ public class ClassInfoFlowAnalysis {
     while (accessedIt1.hasNext()) {
       EquivalentValue r = accessedIt1.next();
       Ref rRef = (Ref) r.getValue();
-      if (!(rRef.getType() instanceof RefLikeType) && !dfa.includesPrimitiveInfoFlow()) {
+      if (!(rRef.getType(myScene) instanceof RefLikeType) && !dfa.includesPrimitiveInfoFlow()) {
         continue;
       }
       Iterator<EquivalentValue> accessedIt2 = fieldsStaticsParamsAccessed.iterator();
@@ -401,11 +401,11 @@ public class ClassInfoFlowAnalysis {
           ; // don't add this edge
         } else if (sRef instanceof ThisRef && rRef instanceof InstanceFieldRef) {
           ; // don't add this edge
-        } else if (sRef.getType() instanceof RefLikeType) {
+        } else if (sRef.getType(myScene) instanceof RefLikeType) {
           dataFlowGraph.addEdge(r, s);
         }
       }
-      if (returnValueRef != null && (returnValueRef.getType() instanceof RefLikeType || dfa.includesPrimitiveInfoFlow())) {
+      if (returnValueRef != null && (returnValueRef.getType(myScene) instanceof RefLikeType || dfa.includesPrimitiveInfoFlow())) {
         dataFlowGraph.addEdge(r, InfoFlowAnalysis.getNodeForReturnRef(sm));
       }
     }

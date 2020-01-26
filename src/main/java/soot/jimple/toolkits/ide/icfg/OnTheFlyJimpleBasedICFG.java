@@ -33,8 +33,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,18 +43,13 @@ import soot.Local;
 import soot.NullType;
 import soot.RefType;
 import soot.Scene;
-import soot.SceneTransformer;
 import soot.SootClass;
 import soot.SootMethod;
-import soot.SourceLocator;
-import soot.Transform;
 import soot.Unit;
 import soot.jimple.InstanceInvokeExpr;
-import soot.jimple.InterfaceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.Stmt;
-import soot.jimple.VirtualInvokeExpr;
 import soot.jimple.toolkits.pointer.LocalMustNotAliasAnalysis;
 import soot.options.Options;
 import soot.toolkits.exceptions.ThrowAnalysis;
@@ -107,16 +100,16 @@ public class OnTheFlyJimpleBasedICFG extends AbstractJimpleBasedICFG {
                 return Collections.singleton(singleTargetMethod);
               } else {
                 SootClass baseTypeClass;
-                if (base.getType() instanceof RefType) {
-                  RefType refType = (RefType) base.getType();
+                if (base.getType(myScene) instanceof RefType) {
+                  RefType refType = (RefType) base.getType(myScene);
                   baseTypeClass = refType.getSootClass();
-                } else if (base.getType() instanceof ArrayType) {
+                } else if (base.getType(myScene) instanceof ArrayType) {
                   baseTypeClass = myScene.getSootClass("java.lang.Object");
-                } else if (base.getType() instanceof NullType) {
+                } else if (base.getType(myScene) instanceof NullType) {
                   // if the base is definitely null then there is no call target
                   return Collections.emptySet();
                 } else {
-                  throw new InternalError("Unexpected base type:" + base.getType());
+                  throw new InternalError("Unexpected base type:" + base.getType(myScene));
                 }
                 return fastHierarchy.resolveAbstractDispatch(baseTypeClass, iie.getMethod());
               }

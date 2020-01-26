@@ -28,7 +28,11 @@ import soot.Value;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.AST.ASTSynchronizedBlockNode;
 import soot.dava.internal.asg.AugmentedStmt;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
+import soot.dava.toolkits.base.finders.ExceptionFinder;
 import soot.dava.toolkits.base.finders.ExceptionNode;
+import soot.jimple.Jimple;
 import soot.util.IterableSet;
 
 public class SETSynchronizedBlockNode extends SETNode {
@@ -47,15 +51,15 @@ public class SETSynchronizedBlockNode extends SETNode {
     return ((SETNode) body2childChain.get(subBodies.get(0)).getLast()).get_NaturalExits();
   }
 
-  public ASTNode emit_AST() {
-    return new ASTSynchronizedBlockNode(get_Label(), myJimple, emit_ASTBody(body2childChain.get(subBodies.get(0))), local);
+  public ASTNode emit_AST(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
+    return new ASTSynchronizedBlockNode(get_Label(), myJimple, emit_ASTBody(body2childChain.get(subBodies.get(0)), myTryContentsFinder, myASTWalker, myJimple), local);
   }
 
   public AugmentedStmt get_EntryStmt() {
     return ((SETNode) body2childChain.get(subBodies.get(0)).getFirst()).get_EntryStmt();
   }
 
-  protected boolean resolve(SETNode parent) {
+  protected boolean resolve(SETNode parent, ExceptionFinder myExceptionFinder) {
     Iterator<IterableSet> sbit = parent.get_SubBodies().iterator();
 
     while (sbit.hasNext()) {

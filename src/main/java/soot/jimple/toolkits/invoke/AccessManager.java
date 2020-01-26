@@ -245,7 +245,7 @@ public class AccessManager {
 
     Body accessorBody = myJimple.newBody();
     soot.util.Chain accStmts = accessorBody.getUnits();
-    LocalGenerator lg = new LocalGenerator(accessorBody, primeTypeCollector, myJimple);
+    LocalGenerator lg = new LocalGenerator(accessorBody, primTypeCollector, myJimple);
 
     Body containerBody = container.getActiveBody();
     soot.util.Chain containerStmts = containerBody.getUnits();
@@ -294,7 +294,7 @@ public class AccessManager {
 
     Body accessorBody = myJimple.newBody();
     soot.util.Chain accStmts = accessorBody.getUnits();
-    LocalGenerator lg = new LocalGenerator(accessorBody, primeTypeCollector, myJimple);
+    LocalGenerator lg = new LocalGenerator(accessorBody, primTypeCollector, myJimple);
 
     Body containerBody = container.getActiveBody();
     soot.util.Chain containerStmts = containerBody.getUnits();
@@ -322,7 +322,7 @@ public class AccessManager {
         accStmts.add(myJimple.newAssignStmt(myJimple.newStaticFieldRef(ref.getFieldRef()), l));
       }
       accStmts.addLast(myJimple.newReturnVoidStmt());
-      Type returnType = primeTypeCollector.getVoidType();
+      Type returnType = primTypeCollector.getVoidType();
 
       accessor
           = myScene.makeSootMethod(name, parameterTypes, returnType, Modifier.PUBLIC | Modifier.STATIC, thrownExceptions);
@@ -351,7 +351,7 @@ public class AccessManager {
 
     Body accessorBody = myJimple.newBody();
     soot.util.Chain accStmts = accessorBody.getUnits();
-    LocalGenerator lg = new LocalGenerator(accessorBody, primeTypeCollector, myJimple);
+    LocalGenerator lg = new LocalGenerator(accessorBody, primTypeCollector, myJimple);
 
     Body containerBody = container.getActiveBody();
     soot.util.Chain containerStmts = containerBody.getUnits();

@@ -66,18 +66,18 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
   private Options myOptions;
   private FieldRenamer myFieldRenamer;
   private Jimple myJimple;
-  private PrimTypeCollector primeTypeCollector;
-  private ConstantFactory constancFactory;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
 
   public AddSwitches(InteractionHandler myInteractionHandler, PhaseDumper myPhaseDumper, Options myOptions,
-                     FieldRenamer myFieldRenamer, Jimple myJimple, PrimTypeCollector primeTypeCollector, ConstantFactory constancFactory) {
+                     FieldRenamer myFieldRenamer, Jimple myJimple, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     this.myInteractionHandler = myInteractionHandler;
     this.myPhaseDumper = myPhaseDumper;
     this.myOptions = myOptions;
     this.myFieldRenamer = myFieldRenamer;
     this.myJimple = myJimple;
-    this.primeTypeCollector = primeTypeCollector;
-    this.constancFactory = constancFactory;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
   }
 
   public void outputSummary() {
@@ -176,9 +176,9 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
 
     SootField ops[] = myFieldRenamer.getRandomOpaques();
 
-    Local b1 = myJimple.newLocal("addswitchesbool1", primeTypeCollector.getBooleanType());
+    Local b1 = myJimple.newLocal("addswitchesbool1", primTypeCollector.getBooleanType());
     locals.add(b1);
-    Local b2 = myJimple.newLocal("addswitchesbool2", primeTypeCollector.getBooleanType());
+    Local b2 = myJimple.newLocal("addswitchesbool2", primTypeCollector.getBooleanType());
     locals.add(b2);
 
     if (ops[0].getType() instanceof PrimType) {
@@ -207,9 +207,9 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
     IfStmt ifstmt = myJimple.newIfStmt(myJimple.newNeExpr(b1, b2), u);
     units.insertBefore(ifstmt, u);
 
-    Local l = myJimple.newLocal("addswitchlocal", primeTypeCollector.getIntType());
+    Local l = myJimple.newLocal("addswitchlocal", primTypeCollector.getIntType());
     locals.add(l);
-    units.insertBeforeNoRedirect(myJimple.newAssignStmt(l, constancFactory.createIntConstant(0)), first);
+    units.insertBeforeNoRedirect(myJimple.newAssignStmt(l, constantFactory.createIntConstant(0)), first);
     units.insertAfter(myJimple.newTableSwitchStmt(l, 1, zeroheight.size(), targs, u), ifstmt);
 
     switchesadded += zeroheight.size() + 1;
@@ -219,7 +219,7 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
       Unit nxt = (Unit) tit.next();
       if (Rand.getInt(5) < 4) {
         units.insertBefore(
-            myJimple.newAssignStmt(l, myJimple.newAddExpr(l, constancFactory.createIntConstant(Rand.getInt(3) + 1))), nxt);
+            myJimple.newAssignStmt(l, myJimple.newAddExpr(l, constantFactory.createIntConstant(Rand.getInt(3) + 1))), nxt);
       }
     }
 

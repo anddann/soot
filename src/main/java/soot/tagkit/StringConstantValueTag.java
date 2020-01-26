@@ -28,11 +28,11 @@ import soot.jimple.StringConstant;
 
 public class StringConstantValueTag extends ConstantValueTag {
   private final String value;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
-  public StringConstantValueTag(String value, ConstantFactory constancFactory) {
+  public StringConstantValueTag(String value, ConstantFactory constantFactory) {
     this.value = value;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.bytes = CONSTANT_Utf8_info.toUtf8(value);
   }
 
@@ -46,7 +46,7 @@ public class StringConstantValueTag extends ConstantValueTag {
 
   @Override
   public StringConstant getConstant() {
-    return constancFactory.createStringConstant(value);
+    return constantFactory.createStringConstant(value);
   }
 
   @Override

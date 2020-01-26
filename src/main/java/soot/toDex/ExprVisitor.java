@@ -125,14 +125,14 @@ public class ExprVisitor implements ExprSwitch {
   protected Stmt origStmt;
 
   private int lastInvokeInstructionPosition;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private Scene myScene;
 
-  public ExprVisitor(StmtVisitor stmtV, ConstantVisitor constantV, RegisterAllocator regAlloc, ConstantFactory constancFactory, Scene myScene) {
+  public ExprVisitor(StmtVisitor stmtV, ConstantVisitor constantV, RegisterAllocator regAlloc, ConstantFactory constantFactory, Scene myScene) {
     this.stmtV = stmtV;
     this.constantV = constantV;
     this.regAlloc = regAlloc;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.myScene = myScene;
   }
 
@@ -328,7 +328,7 @@ public class ExprVisitor implements ExprSwitch {
 
     // Double-check that we are not carrying out any arithmetic operations
     // on non-primitive values
-    if (!(secondOperand.getType() instanceof PrimType)) {
+    if (!(secondOperand.getType(myScene) instanceof PrimType)) {
       throw new RuntimeException("Invalid value type for primitibe operation");
     }
 
@@ -444,19 +444,19 @@ public class ExprVisitor implements ExprSwitch {
 
     // see for unary ones-complement shortcut, may be a result of Dexpler's
     // conversion
-    if (secondOperand.equals(constancFactory.createIntConstant(-1)) || secondOperand.equals(constancFactory.createLongConstant(-1))) {
+    if (secondOperand.equals(constantFactory.createIntConstant(-1)) || secondOperand.equals(constantFactory.createLongConstant(-1))) {
       PrimitiveType destRegType = PrimitiveType.getByName(destinationReg.getType().toString());
       Register orgDestReg = destinationReg;
 
       // We may need a temporary register if we need a typecast
-      if (isBiggerThan(PrimitiveType.getByName(secondOperand.getType().toString()), destRegType)) {
+      if (isBiggerThan(PrimitiveType.getByName(secondOperand.getType(myScene).toString()), destRegType)) {
         destinationReg = regAlloc.asTmpReg(myScene.getPrimTypeCollector().getIntType());
       }
 
-      if (secondOperand.equals(constancFactory.createIntConstant(-1))) {
+      if (secondOperand.equals(constantFactory.createIntConstant(-1))) {
         Register sourceReg = regAlloc.asImmediate(firstOperand, constantV);
         stmtV.addInsn(new Insn12x(Opcode.NOT_INT, destinationReg, sourceReg), origStmt);
-      } else if (secondOperand.equals(constancFactory.createLongConstant(-1))) {
+      } else if (secondOperand.equals(constantFactory.createLongConstant(-1))) {
         Register sourceReg = regAlloc.asImmediate(firstOperand, constantV);
         stmtV.addInsn(new Insn12x(Opcode.NOT_LONG, destinationReg, sourceReg), origStmt);
       }
@@ -518,7 +518,7 @@ public class ExprVisitor implements ExprSwitch {
      * null comparison in if-*z opcodes.
      */
     if (potentialNullConstant instanceof NullConstant) {
-      return constancFactory.createIntConstant(0);
+      return constantFactory.createIntConstant(0);
     }
     return potentialNullConstant;
   }
@@ -584,7 +584,7 @@ public class ExprVisitor implements ExprSwitch {
     } else if (firstReg.isDouble()) {
       opc = Opcode.valueOf(opcodePrefix + "_DOUBLE");
     } else {
-      throw new RuntimeException("unsupported type of operands for cmp* opcode: " + firstOperand.getType());
+      throw new RuntimeException("unsupported type of operands for cmp* opcode: " + firstOperand.getType(myScene));
     }
     return new Insn23x(opc, destinationReg, firstReg, secondReg);
   }
@@ -605,7 +605,7 @@ public class ExprVisitor implements ExprSwitch {
     constantV.setOrigStmt(origStmt);
     Register sourceReg = regAlloc.asImmediate(source, constantV);
     Opcode opc;
-    Type type = source.getType();
+    Type type = source.getType(myScene);
     if (type instanceof IntegerType) {
       opc = Opcode.NEG_INT;
     } else if (type instanceof FloatType) {
@@ -678,13 +678,13 @@ public class ExprVisitor implements ExprSwitch {
     // Fix null_types on the fly. This should not be necessary, but better
     // be safe
     // than sorry and it's easy to fix it here.
-    if (castType == PrimitiveType.INT && source.getType() instanceof NullType) {
-      source = constancFactory.createIntConstant(0);
+    if (castType == PrimitiveType.INT && source.getType(myScene) instanceof NullType) {
+      source = constantFactory.createIntConstant(0);
     }
 
     // select fitting conversion opcode, depending on the source and cast
     // type
-    Type srcType = source.getType();
+    Type srcType = source.getType(myScene);
     if (srcType instanceof RefType) {
       throw new RuntimeException("Trying to cast reference type " + srcType + " to a primitive");
     }

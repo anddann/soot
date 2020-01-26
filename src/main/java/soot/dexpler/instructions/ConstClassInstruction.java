@@ -49,13 +49,13 @@ import soot.options.Options;
 
 public class ConstClassInstruction extends DexlibAbstractInstruction {
 
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private Jimple myJimple;
   private DalvikTyper myDalvikTyper;
 
-  public ConstClassInstruction(Instruction instruction, int codeAdress, Options myOptions, ConstantFactory constancFactory, Jimple myJimple, DalvikTyper myDalvikTyper) {
+  public ConstClassInstruction(Instruction instruction, int codeAdress, Options myOptions, ConstantFactory constantFactory, Jimple myJimple, DalvikTyper myDalvikTyper) {
     super(instruction, codeAdress, myOptions);
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.myJimple = myJimple;
     this.myDalvikTyper = myDalvikTyper;
   }
@@ -69,7 +69,7 @@ public class ConstClassInstruction extends DexlibAbstractInstruction {
     ReferenceInstruction constClass = (ReferenceInstruction) this.instruction;
 
     TypeReference tidi = (TypeReference) (constClass.getReference());
-    Constant cst = constancFactory.createClassConstant(tidi.getType());
+    Constant cst = constantFactory.createClassConstant(tidi.getType());
 
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
     AssignStmt assign = this.myJimple.newAssignStmt(body.getRegisterLocal(dest), cst);
@@ -80,7 +80,7 @@ public class ConstClassInstruction extends DexlibAbstractInstruction {
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // myDalvikTyper().captureAssign((JAssignStmt)assign, op); //TODO:
       // classtype could be null!
-      this.myDalvikTyper.setType(assign.getLeftOpBox(), cst.getType(), false);
+      this.myDalvikTyper.setType(assign.getLeftOpBox(), cst.getType(myScene), false);
     }
   }
 

@@ -28,6 +28,7 @@ import java.util.List;
 
 import soot.EquivalentValue;
 import soot.RefLikeType;
+import soot.Scene;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.ParameterRef;
 import soot.jimple.Ref;
@@ -42,8 +43,10 @@ import soot.jimple.ThisRef;
 public class CallLocalityContext {
   List<EquivalentValue> nodes;
   List<Boolean> isNodeLocal;
+  private Scene myScene;
 
-  public CallLocalityContext(List<EquivalentValue> nodes) {
+  public CallLocalityContext(List<EquivalentValue> nodes, Scene myScene) {
+    this.myScene = myScene;
     this.nodes = new ArrayList<EquivalentValue>();
     this.nodes.addAll(nodes);
 
@@ -259,7 +262,7 @@ public class CallLocalityContext {
     for (int i = 0; i < nodes.size(); i++) {
       if ((!refsOnly) && isNodeLocal.get(i).booleanValue()) {
         return false;
-      } else if (((EquivalentValue) nodes.get(i)).getValue().getType() instanceof RefLikeType
+      } else if (((EquivalentValue) nodes.get(i)).getValue().getType(myScene) instanceof RefLikeType
           && isNodeLocal.get(i).booleanValue()) {
         return false;
       }

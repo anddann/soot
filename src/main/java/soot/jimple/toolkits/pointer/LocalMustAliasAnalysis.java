@@ -120,7 +120,7 @@ public class LocalMustAliasAnalysis extends ForwardFlowAnalysis<Unit, HashMap<Va
 
     // add all locals
     for (Local l : (Collection<Local>) g.getBody().getLocals()) {
-      if (l.getType() instanceof RefLikeType) {
+      if (l.getType(myScene) instanceof RefLikeType) {
         this.localsAndFieldRefs.add(l);
       }
     }
@@ -153,7 +153,7 @@ public class LocalMustAliasAnalysis extends ForwardFlowAnalysis<Unit, HashMap<Va
         Value val = useBox.getValue();
         if (val instanceof FieldRef) {
           FieldRef fieldRef = (FieldRef) val;
-          if (fieldRef.getType() instanceof RefLikeType) {
+          if (fieldRef.getType(myScene) instanceof RefLikeType) {
             usedFieldRefs.add(new EquivalentValue(fieldRef));
           }
         }
@@ -258,7 +258,7 @@ public class LocalMustAliasAnalysis extends ForwardFlowAnalysis<Unit, HashMap<Va
       }
 
       if ((lhs instanceof Local || (lhs instanceof FieldRef && this.localsAndFieldRefs.contains(new EquivalentValue(lhs))))
-          && lhs.getType() instanceof RefLikeType) {
+          && lhs.getType(myScene) instanceof RefLikeType) {
         if (rhs instanceof Local) {
           // local-assignment - must be aliased...
           Integer val = in.get(rhs);

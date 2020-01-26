@@ -277,7 +277,7 @@ public class ClassRenamer extends SceneTransformer implements IJbcoTransform {
                 updateType(instanceOfExpr.getCheckType());
               }
             } else if (v instanceof Ref) {
-              updateType(v.getType());
+              updateType(v.getType(myScene));
             }
           }
         }

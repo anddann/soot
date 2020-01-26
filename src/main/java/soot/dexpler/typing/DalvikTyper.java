@@ -253,7 +253,7 @@ public class DalvikTyper implements IDalvikTyper {
           }
 
           if (r instanceof Local) { // l NOT local
-            Type leftType = stmt.getLeftOp().getType();
+            Type leftType = stmt.getLeftOp().getType(myScene);
             if (l instanceof ArrayRef && leftType instanceof UnknownType) {
               // find type later
               todoUnits.add(stmt);
@@ -294,7 +294,7 @@ public class DalvikTyper implements IDalvikTyper {
                 return;
               }
             }
-            Type rightType = stmt.getRightOp().getType();
+            Type rightType = stmt.getRightOp().getType(myScene);
             if (r instanceof ArrayRef && rightType instanceof UnknownType) {
               // find type later
               todoUnits.add(stmt);
@@ -333,7 +333,7 @@ public class DalvikTyper implements IDalvikTyper {
 
         @Override
         public void caseIdentityStmt(IdentityStmt stmt) {
-          DalvikTyper.this.setType(stmt.getLeftOpBox(), stmt.getRightOp().getType(), false);
+          DalvikTyper.this.setType(stmt.getLeftOpBox(), stmt.getRightOp().getType(myScene), false);
 
         }
 
@@ -446,7 +446,7 @@ public class DalvikTyper implements IDalvikTyper {
             continue;
           }
 
-          Type rType = r.getType();
+          Type rType = r.getType(myScene);
           if (rType instanceof ArrayType && ass.getLeftOp() instanceof Local) {
             // Debug.printDbg("propagate-array: checking ", u);
             // propagate array type through aliases
@@ -870,7 +870,7 @@ public class DalvikTyper implements IDalvikTyper {
               ArrayType arrayType = (ArrayType) localTyped.get(baseLocal);
               lType = arrayType.getElementType();
             } else {
-              lType = l.getType();
+              lType = l.getType(myScene);
             }
             stmt.setRightOp(uc.defineType(lType));
           } else if (stmt.getRightOp() instanceof InvokeExpr) {
@@ -957,10 +957,10 @@ public class DalvikTyper implements IDalvikTyper {
               } else if (op1 instanceof UntypedConstant || op2 instanceof UntypedConstant) {
                 if (op1 instanceof UntypedConstant) {
                   UntypedConstant uc = (UntypedConstant) op1;
-                  be.setOp1(uc.defineType(op2.getType()));
+                  be.setOp1(uc.defineType(op2.getType(myScene)));
                 } else if (op2 instanceof UntypedConstant) {
                   UntypedConstant uc = (UntypedConstant) op2;
-                  be.setOp2(uc.defineType(op1.getType()));
+                  be.setOp2(uc.defineType(op1.getType(myScene)));
                 }
               } else {
                 throw new RuntimeException("error: expected local/untyped untyped/local or untyped/untyped. Got " + stmt);

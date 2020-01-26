@@ -71,13 +71,13 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
   public static String dependancies[] = new String[] { "bb.jbco_iii", "bb.jbco_ful", "bb.lp" };
   private Baf myBaf;
   private FieldRenamer myFieldRenamer;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
 
-  public IndirectIfJumpsToCaughtGotos(Baf myBaf, FieldRenamer myFieldRenamer, ConstantFactory constancFactory, PrimTypeCollector primTypeCollector) {
+  public IndirectIfJumpsToCaughtGotos(Baf myBaf, FieldRenamer myFieldRenamer, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
     this.myBaf = myBaf;
     this.myFieldRenamer = myFieldRenamer;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
   }
 
@@ -163,17 +163,17 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
         toinsert.add(myBaf.newIfGeInst((Unit) units.getSuccOf(nonTrap)));
       }
     } else {
-      toinsert.add(myBaf.newPushInst(constancFactory.createIntConstant(BodyBuilder.getIntegerNine())));
+      toinsert.add(myBaf.newPushInst(constantFactory.createIntConstant(BodyBuilder.getIntegerNine())));
       toinsert.add(myBaf.newPrimitiveCastInst(primTypeCollector.getIntType(), primTypeCollector.getByteType()));
-      toinsert.add(myBaf.newPushInst(constancFactory.createIntConstant(Rand.getInt() % 2 == 0 ? 9 : 3)));
+      toinsert.add(myBaf.newPushInst(constantFactory.createIntConstant(Rand.getInt() % 2 == 0 ? 9 : 3)));
       toinsert.add(myBaf.newRemInst(primTypeCollector.getByteType()));
 
       /*
-       * toinsert.add(myBaf.newDup1Inst(primeTypeCollector.getByteType()));
-       * toinsert.add(myBaf.newPrimitiveCastInst(primeTypeCollector.getByteType(),primeTypeCollector.getIntType()));
+       * toinsert.add(myBaf.newDup1Inst(primTypeCollector.getByteType()));
+       * toinsert.add(myBaf.newPrimitiveCastInst(primTypeCollector.getByteType(),primTypeCollector.getIntType()));
        * toinsert.add(myBaf.newStaticGetInst(sys.getFieldByName("out").makeRef()));
-       * toinsert.add(myBaf.newSwapInst(primeTypeCollector.getIntType(),primeTypeCollector.getRefType())); ArrayList parms = new ArrayList();
-       * parms.add(primeTypeCollector.getIntType()); toinsert.add(myBaf.newVirtualInvokeInst(out.getMethod("println",parms).makeRef()));
+       * toinsert.add(myBaf.newSwapInst(primTypeCollector.getIntType(),primTypeCollector.getRefType())); ArrayList parms = new ArrayList();
+       * parms.add(primTypeCollector.getIntType()); toinsert.add(myBaf.newVirtualInvokeInst(out.getMethod("println",parms).makeRef()));
        */
       toinsert.add(myBaf.newIfEqInst((Unit) units.getSuccOf(nonTrap)));
     }
@@ -182,7 +182,7 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
     while (stack.size() > 0) {
       toinserttry.add(myBaf.newPopInst(stack.pop()));
     }
-    toinserttry.add(myBaf.newPushInst(constancFactory.getNullConstant()));
+    toinserttry.add(myBaf.newPushInst(constantFactory.getNullConstant()));
 
     Unit handler = myBaf.newThrowInst();
     int rand = Rand.getInt(toinserttry.size());

@@ -116,7 +116,7 @@ public class Renamer {
 
       debug("arraysGetTypeArray", "checking " + tempLocal);
 
-      Type type = tempLocal.getType();
+      Type type = tempLocal.getType(myScene);
       if (type instanceof ArrayType) {
         debug("arraysGetTypeArray", "Local:" + tempLocal + " is an Array Type: " + type.toString());
         String tempClassName = type.toString();
@@ -161,7 +161,7 @@ public class Renamer {
 
       debug("objectsGetClassName", "checking " + tempLocal);
 
-      Type type = tempLocal.getType();
+      Type type = tempLocal.getType(myScene);
       if (type instanceof ArrayType) {
         // should have been handled by arraysGetTypeArray heuristic
         continue;
@@ -366,7 +366,7 @@ public class Renamer {
     Iterator<Local> it = heuristics.getLocalsIterator();
     while (it.hasNext()) {
       Local tempLocal = it.next();
-      Type localType = tempLocal.getType();
+      Type localType = tempLocal.getType(myScene);
       String typeString = localType.toString();
       if (typeString.indexOf("Exception") >= 0) {
         // the string xception occurs in this type

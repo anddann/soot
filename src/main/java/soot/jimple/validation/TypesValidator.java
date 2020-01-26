@@ -62,7 +62,7 @@ public class TypesValidator implements BodyValidator {
       }
     }
     for (Local l : body.getLocals()) {
-      Type t = l.getType();
+      Type t = l.getType(myScene);
       if (!t.isAllowedInFinalCode()) {
         exceptions.add(new ValidationException(l, "Local type not allowed in final code: " + t,
             "(" + method + ") local type not allowed in final code: " + t + " local: " + l));

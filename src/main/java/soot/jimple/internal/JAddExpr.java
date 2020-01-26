@@ -44,7 +44,7 @@ public class JAddExpr extends AbstractJimpleFloatBinopExpr implements AddExpr {
   }
 
   Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newAddInst(this.getOp1().getType());
+    return myBaf.newAddInst(this.getOp1().getType(myScene));
   }
 
   public Object clone() {

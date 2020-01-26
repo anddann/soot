@@ -139,7 +139,7 @@ public class ShimpleBodyBuilder {
     this.body = body;
     sf = new DefaultShimpleFactory(body);
     sf.clearCache();
-    phi = new PhiNodeManager(body, sf, this.myShimple, this.myJimple, this.myInteractionHander, this.myOptions);
+    phi = new PhiNodeManager(body, sf, this.myShimple, this.myJimple, this.myInteractionHander, this.myOptions, myScene);
     pi = new PiNodeManager(body, false, sf, this.myShimple, this.myJimple, myDeadAssignmentEliminator, this.myCopyPropagator);
     options = body.getOptions();
     makeUniqueLocalNames();
@@ -432,7 +432,7 @@ public class ShimpleBodyBuilder {
     Local newLocal = newLocals.get(name);
 
     if (newLocal == null) {
-      newLocal = new JimpleLocal(name, oldLocal.getType(), myScene);
+      newLocal = new JimpleLocal(name, oldLocal.getType(myScene), myScene);
       newLocals.put(name, newLocal);
       newLocalsToOldLocal.put(newLocal, oldLocal);
 

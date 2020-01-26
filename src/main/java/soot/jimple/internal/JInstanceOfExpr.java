@@ -24,11 +24,9 @@ package soot.jimple.internal;
 
 import java.util.List;
 
-import soot.PrimTypeCollector;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.baf.Baf;
+import soot.jimple.ConstantFactory;
 import soot.jimple.ConvertToBaf;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleToBafContext;
@@ -45,8 +43,8 @@ public class JInstanceOfExpr extends AbstractInstanceOfExpr implements ConvertTo
     this.primTypeCollector = primTypeCollector;
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
-    ((ConvertToBaf) (getOp())).convertToBaf(context, out, this.myBaf);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) (getOp())).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
     Unit u = this.myBaf.newInstanceOfInst(getCheckType());
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);

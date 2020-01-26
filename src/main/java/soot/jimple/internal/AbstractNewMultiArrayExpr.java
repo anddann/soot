@@ -26,18 +26,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import soot.ArrayType;
-import soot.Type;
-import soot.Unit;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.ExprSwitch;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.NewMultiArrayExpr;
+import soot.jimple.*;
 import soot.util.Switch;
 
 @SuppressWarnings("serial")
@@ -150,7 +141,7 @@ public abstract class AbstractNewMultiArrayExpr implements NewMultiArrayExpr, Co
     return list;
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return baseType;
   }
 
@@ -158,11 +149,11 @@ public abstract class AbstractNewMultiArrayExpr implements NewMultiArrayExpr, Co
     ((ExprSwitch) sw).caseNewMultiArrayExpr(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     List<Value> sizes = getSizes();
 
     for (int i = 0; i < sizes.size(); i++) {
-      ((ConvertToBaf) (sizes.get(i))).convertToBaf(context, out, myBaf);
+      ((ConvertToBaf) (sizes.get(i))).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
     }
 
     Unit u = myBaf.newNewMultiArrayInst(getBaseType(), sizes.size());

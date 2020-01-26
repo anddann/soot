@@ -24,11 +24,9 @@ package soot.jimple.internal;
 
 import java.util.List;
 
-import soot.PrimTypeCollector;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.baf.Baf;
+import soot.jimple.ConstantFactory;
 import soot.jimple.ConvertToBaf;
 import soot.jimple.JimpleToBafContext;
 
@@ -37,15 +35,15 @@ abstract public class AbstractJimpleIntBinopExpr extends AbstractIntBinopExpr im
   protected AbstractJimpleIntBinopExpr(Value op1, Value op2, PrimTypeCollector primTypeCollector) {
     super(null, null, primTypeCollector);
 
-    this.op1Box = op1.getType().getMyScene().getMyJimple().newArgBox(op1);
-    this.op2Box = op1.getType().getMyScene().getMyJimple().newArgBox(op2);
+    this.op1Box = op1.getType(myScene).getMyScene().getMyJimple().newArgBox(op1);
+    this.op2Box = op1.getType(myScene).getMyScene().getMyJimple().newArgBox(op2);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
-    ((ConvertToBaf) this.getOp1()).convertToBaf(context, out, myBaf);
-    ((ConvertToBaf) this.getOp2()).convertToBaf(context, out, myBaf);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) this.getOp1()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+    ((ConvertToBaf) this.getOp2()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
 
-    Unit u = (Unit) makeBafInst(this.getOp1().getType());
+    Unit u = (Unit) makeBafInst(this.getOp1().getType(myScene));
     out.add(u);
     u.addAllTagsOf(context.getCurrentUnit());
   }

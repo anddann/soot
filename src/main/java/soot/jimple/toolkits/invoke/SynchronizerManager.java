@@ -58,13 +58,13 @@ public class SynchronizerManager {
 
   private Scene myScene;
   private Jimple myJimple;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
   @Inject
-  public SynchronizerManager(Scene myScene, Jimple myJimple, ConstantFactory constancFactory) {
+  public SynchronizerManager(Scene myScene, Jimple myJimple, ConstantFactory constantFactory) {
     this.myScene = myScene;
     this.myJimple = myJimple;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
   }
 
 
@@ -127,10 +127,10 @@ public class SynchronizerManager {
     units.insertBefore(myJimple.newAssignStmt(l, myJimple.newStaticFieldRef(classCacher.makeRef())), target);
 
     IfStmt ifStmt;
-    units.insertBefore(ifStmt = myJimple.newIfStmt(myJimple.newNeExpr(l, constancFactory.getNullConstant()), target), target);
+    units.insertBefore(ifStmt = myJimple.newIfStmt(myJimple.newNeExpr(l, constantFactory.getNullConstant()), target), target);
 
     units.insertBefore(myJimple.newAssignStmt(l, myJimple.newStaticInvokeExpr(getClassFetcherFor(sc).makeRef(),
-        Arrays.asList(new Value[] { constancFactory.createStringConstant(sc.getName()) }))), target);
+        Arrays.asList(new Value[] { constantFactory.createStringConstant(sc.getName()) }))), target);
     units.insertBefore(myJimple.newAssignStmt(myJimple.newStaticFieldRef(classCacher.makeRef()), l), target);
 
     ifStmt.setTarget(target);

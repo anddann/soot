@@ -90,8 +90,8 @@ public class EquivalentValue implements Value {
     return e.getUseBoxes();
   }
 
-  public Type getType() {
-    return e.getType();
+  public Type getType(Scene myScene) {
+    return e.getType(myScene);
   }
 
   public Object clone() {

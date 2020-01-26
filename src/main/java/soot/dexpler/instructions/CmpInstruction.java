@@ -50,11 +50,11 @@ import soot.options.Options;
 
 public class CmpInstruction extends TaggedInstruction {
 
-  private PrimTypeCollector primeTypeCollector;
+  private PrimTypeCollector primTypeCollector;
 
-  public CmpInstruction(Instruction instruction, int codeAdress, Options myOptions, PrimTypeCollector primeTypeCollector) {
+  public CmpInstruction(Instruction instruction, int codeAdress, Options myOptions, PrimTypeCollector primTypeCollector) {
     super(instruction, codeAdress, myOptions);
-    this.primeTypeCollector = primeTypeCollector;
+    this.primTypeCollector = primTypeCollector;
   }
 
   @Override
@@ -77,27 +77,27 @@ public class CmpInstruction extends TaggedInstruction {
     switch (opcode) {
       case CMPL_DOUBLE:
         setTag(new DoubleOpTag());
-        type = primeTypeCollector.getDoubleType();
+        type = primTypeCollector.getDoubleType();
         cmpExpr = myJimple.newCmplExpr(first, second);
         break;
       case CMPL_FLOAT:
         setTag(new FloatOpTag());
-        type = primeTypeCollector.getFloatType();
+        type = primTypeCollector.getFloatType();
         cmpExpr = myJimple.newCmplExpr(first, second);
         break;
       case CMPG_DOUBLE:
         setTag(new DoubleOpTag());
-        type = primeTypeCollector.getDoubleType();
+        type = primTypeCollector.getDoubleType();
         cmpExpr = myJimple.newCmpgExpr(first, second);
         break;
       case CMPG_FLOAT:
         setTag(new FloatOpTag());
-        type = primeTypeCollector.getFloatType();
+        type = primTypeCollector.getFloatType();
         cmpExpr = myJimple.newCmpgExpr(first, second);
         break;
       case CMP_LONG:
         setTag(new LongOpTag());
-        type = primeTypeCollector.getLongType();
+        type = primTypeCollector.getLongType();
         cmpExpr = myJimple.newCmpExpr(first, second);
         break;
       default:
@@ -116,7 +116,7 @@ public class CmpInstruction extends TaggedInstruction {
       BinopExpr bexpr = (BinopExpr) cmpExpr;
       myDalvikTyper.setType(bexpr.getOp1Box(), type, true);
       myDalvikTyper.setType(bexpr.getOp2Box(), type, true);
-      myDalvikTyper.setType(((JAssignStmt) assign).leftBox, primeTypeCollector.getIntType(), false);
+      myDalvikTyper.setType(((JAssignStmt) assign).leftBox, primTypeCollector.getIntType(), false);
     }
   }
 

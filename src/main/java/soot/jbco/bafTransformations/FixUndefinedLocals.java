@@ -32,7 +32,6 @@ import soot.Body;
 import soot.BodyTransformer;
 import soot.DoubleType;
 import soot.FloatType;
-import soot.IntType;
 import soot.IntegerType;
 import soot.Local;
 import soot.LongType;
@@ -121,11 +120,11 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
         Local l = (Local) v;
         Local jl = (Local) bafToJLocals.get(l);
         if (jl != null) {
-          t = jl.getType();
+          t = jl.getType(myScene);
         } else {
           // We should hopefully never get here. There should be a jimple
           // local unless it's one of our ControlDups
-          t = l.getType();
+          t = l.getType(myScene);
           if (u instanceof OpTypeArgInst) {
             OpTypeArgInst ota = (OpTypeArgInst) u;
             t = ota.getOpType();
@@ -133,7 +132,7 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
             AbstractOpTypeInst ota = (AbstractOpTypeInst) u;
             t = ota.getOpType();
           } else if (u instanceof IncInst) {
-            t = primeTypeCollector.getIntType();
+            t = primTypeCollector.getIntType();
           }
 
           if (t instanceof DoubleWordType || t instanceof WordType) {
@@ -170,15 +169,15 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
 
   public static PushInst getPushInitializer(Local l, Type t) {
     if (t instanceof IntegerType) {
-      return myBaf.newPushInst(constancFactory.createIntConstant(soot.jbco.util.Rand.getInt()));
+      return myBaf.newPushInst(constantFactory.createIntConstant(soot.jbco.util.Rand.getInt()));
     } else if (t instanceof RefLikeType || t instanceof StmtAddressType) {
       return myBaf.newPushInst(myNullConstant);
     } else if (t instanceof LongType) {
-      return myBaf.newPushInst(constancFactory.createLongConstant(soot.jbco.util.Rand.getLong()));
+      return myBaf.newPushInst(constantFactory.createLongConstant(soot.jbco.util.Rand.getLong()));
     } else if (t instanceof FloatType) {
-      return myBaf.newPushInst(constancFactory.createFloatConstant(soot.jbco.util.Rand.getFloat()));
+      return myBaf.newPushInst(constantFactory.createFloatConstant(soot.jbco.util.Rand.getFloat()));
     } else if (t instanceof DoubleType) {
-      return myBaf.newPushInst(constancFactory.createDoubleConstant(soot.jbco.util.Rand.getDouble()));
+      return myBaf.newPushInst(constantFactory.createDoubleConstant(soot.jbco.util.Rand.getDouble()));
     }
 
     return null;

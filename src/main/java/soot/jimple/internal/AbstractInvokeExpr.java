@@ -27,11 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import soot.SootMethod;
-import soot.SootMethodRef;
-import soot.Type;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.jimple.InvokeExpr;
 
 @SuppressWarnings("serial")
@@ -88,7 +84,7 @@ abstract public class AbstractInvokeExpr implements InvokeExpr {
     return argBoxes[index];
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return methodRef.returnType();
   }
 

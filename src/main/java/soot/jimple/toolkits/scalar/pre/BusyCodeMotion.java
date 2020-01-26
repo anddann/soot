@@ -158,7 +158,7 @@ public class BusyCodeMotion extends BodyTransformer {
           }
 
           if (helper == null) {
-            helper = localCreation.newLocal(equiVal.getType());
+            helper = localCreation.newLocal(equiVal.getType(myScene));
             expToHelper.put(equiVal, helper);
           }
 

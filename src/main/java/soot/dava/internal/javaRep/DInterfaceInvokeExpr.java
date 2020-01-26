@@ -35,12 +35,12 @@ import soot.grimp.PrecedenceTest;
 import soot.grimp.internal.GInterfaceInvokeExpr;
 
 public class DInterfaceInvokeExpr extends GInterfaceInvokeExpr {
-  public DInterfaceInvokeExpr(Value base, SootMethodRef methodRef, java.util.List args) {
+  public DInterfaceInvokeExpr(Value base, SootMethodRef methodRef, java.util.List args, Grimp myGrimp) {
     super(base, methodRef, args, myGrimp);
   }
 
   public void toString(UnitPrinter up) {
-    if (getBase().getType() instanceof NullType) {
+    if (getBase().getType(myScene) instanceof NullType) {
       // OL: I don't know what this is for; I'm just refactoring the
       // original code. An explanation here would be welcome.
       up.literal("((");
@@ -78,7 +78,7 @@ public class DInterfaceInvokeExpr extends GInterfaceInvokeExpr {
   }
 
   public String toString() {
-    if (getBase().getType() instanceof NullType) {
+    if (getBase().getType(myScene) instanceof NullType) {
       StringBuffer b = new StringBuffer();
 
       b.append("((");
@@ -121,6 +121,6 @@ public class DInterfaceInvokeExpr extends GInterfaceInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DInterfaceInvokeExpr(getBase(), methodRef, clonedArgs);
+    return new DInterfaceInvokeExpr(getBase(), methodRef, clonedArgs, myGrimp);
   }
 }

@@ -36,7 +36,7 @@ public class ASTIfNode extends ASTControlFlowNode {
   private List<Object> body;
 
   public ASTIfNode(SETNodeLabel label, ConditionExpr condition, List<Object> body, TryContentsFinder myTryContentsFinder) {
-    super(label, condition, myTryContentsFinder);
+    super(label, condition, myTryContentsFinder, myGrimp, primTypeCollector);
     this.body = body;
 
     subBodies.add(body);

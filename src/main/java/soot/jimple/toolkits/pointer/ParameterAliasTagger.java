@@ -68,7 +68,7 @@ public class ParameterAliasTagger extends BodyTransformer {
         continue;
       }
       ParameterRef pr = (ParameterRef) vb.getValue();
-      if (!(pr.getType() instanceof RefLikeType)) {
+      if (!(pr.getType(myScene) instanceof RefLikeType)) {
         continue;
       }
       parms.add(is);

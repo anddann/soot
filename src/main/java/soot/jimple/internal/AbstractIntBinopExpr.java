@@ -22,10 +22,7 @@ package soot.jimple.internal;
  * #L%
  */
 
-import soot.IntType;
-import soot.PrimTypeCollector;
-import soot.Type;
-import soot.ValueBox;
+import soot.*;
 
 @SuppressWarnings("serial")
 abstract public class AbstractIntBinopExpr extends AbstractBinopExpr {
@@ -33,7 +30,7 @@ abstract public class AbstractIntBinopExpr extends AbstractBinopExpr {
     super(op1Box, op2Box, primTypeCollector);
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return primTypeCollector.getIntType();
   }
 }

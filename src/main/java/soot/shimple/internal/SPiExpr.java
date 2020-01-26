@@ -25,11 +25,7 @@ package soot.shimple.internal;
 import java.util.Collections;
 import java.util.List;
 
-import soot.Type;
-import soot.Unit;
-import soot.UnitBox;
-import soot.UnitPrinter;
-import soot.Value;
+import soot.*;
 import soot.shimple.PiExpr;
 import soot.shimple.Shimple;
 import soot.toolkits.scalar.ValueUnitPair;
@@ -119,8 +115,8 @@ public class SPiExpr implements PiExpr {
     up.literal("])");
   }
 
-  public Type getType() {
-    return getValue().getType();
+  public Type getType(Scene myScene) {
+    return getValue().getType(myScene);
   }
 
   public List getUseBoxes() {

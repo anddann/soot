@@ -34,13 +34,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.Local;
-import soot.Type;
-import soot.Unit;
-import soot.UnitBox;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.shimple.PhiExpr;
 import soot.shimple.Shimple;
 import soot.shimple.ShimpleExprSwitch;
@@ -65,7 +59,7 @@ public class SPhiExpr implements PhiExpr {
    * PhiExpr.
    **/
   public SPhiExpr(Local leftLocal, List<Block> preds) {
-    type = leftLocal.getType();
+    type = leftLocal.getType(myScene);
 
     for (Block pred : preds) {
       addArg(leftLocal, pred);
@@ -84,7 +78,7 @@ public class SPhiExpr implements PhiExpr {
       throw new RuntimeException("Arg list does not match Pred list");
     }
 
-    type = args.get(0).getType();
+    type = args.get(0).getType(myScene);
     Iterator<Value> argsIt = args.iterator();
     Iterator<Unit> predsIt = preds.iterator();
 
@@ -407,7 +401,7 @@ public class SPhiExpr implements PhiExpr {
     return new ArrayList<ValueBox>(set);
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return type;
   }
 

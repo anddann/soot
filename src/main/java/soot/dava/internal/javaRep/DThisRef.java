@@ -31,10 +31,10 @@ public class DThisRef extends ThisRef {
   }
 
   public String toString() {
-    return "this: " + getType();
+    return "this: " + getType(myScene);
   }
 
   public Object clone() {
-    return new DThisRef((RefType) getType());
+    return new DThisRef((RefType) getType(myScene));
   }
 }

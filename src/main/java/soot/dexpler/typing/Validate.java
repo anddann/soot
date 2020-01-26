@@ -187,7 +187,7 @@ public class Validate {
 //      boolean isStatic = false;
 //      SootMethodRef mRef = Validate.makeMethodRef("java.lang.Throwable", "<init>", "", pTypes, isStatic);
 //      List<Value> parameters = new ArrayList<Value>();
-//      parameters.add(constancFactory.createStringConstant("Soot updated this instruction"));
+//      parameters.add(constantFactory.createStringConstant("Soot updated this instruction"));
 //      InvokeExpr ie = myJimple.newSpecialInvokeExpr(ttt, mRef, parameters);
 //      Unit initMethod = myJimple.newInvokeStmt(ie);
 //

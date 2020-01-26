@@ -26,12 +26,7 @@ package soot.grimp.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import soot.RefType;
-import soot.SootMethodRef;
-import soot.Type;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.grimp.Grimp;
 import soot.grimp.GrimpValueSwitch;
 import soot.grimp.NewInvokeExpr;
@@ -71,7 +66,7 @@ public class GNewInvokeExpr extends AbstractInvokeExpr implements NewInvokeExpr,
     this.type = type;
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return type;
   }
 

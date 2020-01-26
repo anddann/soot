@@ -37,16 +37,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.ArrayType;
-import soot.Body;
-import soot.Local;
-import soot.Modifier;
-import soot.SootClass;
-import soot.SootField;
-import soot.SootMethod;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.jimple.AssignStmt;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.FieldRef;
@@ -68,14 +59,16 @@ public class ClassFieldAnalysis {
   private ThrowableSet.Manager myManager;
   private PhaseDumper phaseDumper;
   private InteractionHandler myInteractionHandler;
+  private Scene myScene;
 
   @Inject
-  public ClassFieldAnalysis(Options myOptions, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
+  public ClassFieldAnalysis(Options myOptions, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler, Scene myScene) {
     this.myOptions = myOptions;
     this.throwAnalysis = throwAnalysis;
     this.myManager = myManager;
     this.phaseDumper = phaseDumper;
     this.myInteractionHandler = myInteractionHandler;
+    this.myScene = myScene;
   }
 
 
@@ -198,7 +191,7 @@ public class ClassFieldAnalysis {
       Iterator<Local> localIt = locals.iterator();
       while (localIt.hasNext()) {
         Local local = localIt.next();
-        Type type = local.getType();
+        Type type = local.getType(myScene);
 
         if (type instanceof ArrayType) {
           hasArrayLocal = true;

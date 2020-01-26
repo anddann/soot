@@ -79,7 +79,7 @@ public class LocalMustNotAliasAnalysis extends ForwardFlowAnalysis<Unit, HashMap
     locals.addAll(b.getLocals());
 
     for (Local l : b.getLocals()) {
-      if (l.getType() instanceof RefLikeType) {
+      if (l.getType(myScene) instanceof RefLikeType) {
         locals.add(l);
       }
     }
@@ -197,7 +197,7 @@ public class LocalMustNotAliasAnalysis extends ForwardFlowAnalysis<Unit, HashMap
       if (singleNewExpr == UNKNOWN) {
         return null;
       }
-      return (RefType) singleNewExpr.getType();
+      return (RefType) singleNewExpr.getType(myScene);
     }
   }
 

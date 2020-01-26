@@ -22,10 +22,7 @@ package soot.jimple;
  * #L%
  */
 
-import soot.Local;
-import soot.Type;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.util.Switch;
 
 public interface ArrayRef extends ConcreteRef {
@@ -41,7 +38,7 @@ public interface ArrayRef extends ConcreteRef {
 
   public ValueBox getIndexBox();
 
-  public Type getType();
+  public Type getType(Scene myScene);
 
   public void apply(Switch sw);
 }

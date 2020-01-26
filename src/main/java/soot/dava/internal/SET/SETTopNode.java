@@ -27,6 +27,8 @@ import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.toolkits.base.AST.ASTWalker;
 import soot.dava.toolkits.base.AST.TryContentsFinder;
+import soot.dava.toolkits.base.finders.ExceptionFinder;
+import soot.jimple.Jimple;
 import soot.util.IterableSet;
 
 public class SETTopNode extends SETNode {
@@ -44,8 +46,8 @@ public class SETTopNode extends SETNode {
     return new IterableSet();
   }
 
-  public ASTNode emit_AST() {
-    return new ASTMethodNode(emit_ASTBody(body2childChain.get(subBodies.get(0))), myTryContentsFinder, myASTWalker);
+  public ASTNode emit_AST(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
+    return new ASTMethodNode(emit_ASTBody(body2childChain.get(subBodies.get(0)), myTryContentsFinder, myASTWalker, myJimple), this.myTryContentsFinder, this.myASTWalker);
   }
 
   public AugmentedStmt get_EntryStmt() {
@@ -57,7 +59,7 @@ public class SETTopNode extends SETNode {
     // subBodies.get(0))).get_EntryStmt();
   }
 
-  protected boolean resolve(SETNode parent) {
+  protected boolean resolve(SETNode parent, ExceptionFinder myExceptionFinder) {
     throw new RuntimeException("Attempting auto-nest a SETTopNode.");
   }
 }

@@ -97,19 +97,19 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
         Constant constant = null;
         if (t instanceof DoubleConstantValueTag) {
           double value = ((DoubleConstantValueTag) t).getDoubleValue();
-          constant = constancFactory.createDoubleConstant(value);
+          constant = constantFactory.createDoubleConstant(value);
         } else if (t instanceof FloatConstantValueTag) {
           float value = ((FloatConstantValueTag) t).getFloatValue();
-          constant = constancFactory.createFloatConstant(value);
+          constant = constantFactory.createFloatConstant(value);
         } else if (t instanceof IntegerConstantValueTag) {
           int value = ((IntegerConstantValueTag) t).getIntValue();
-          constant = constancFactory.createIntConstant(value);
+          constant = constantFactory.createIntConstant(value);
         } else if (t instanceof LongConstantValueTag) {
           long value = ((LongConstantValueTag) t).getLongValue();
-          constant = constancFactory.createLongConstant(value);
+          constant = constantFactory.createLongConstant(value);
         } else if (t instanceof StringConstantValueTag) {
           String value = ((StringConstantValueTag) t).getStringValue();
-          constant = constancFactory.createStringConstant(value);
+          constant = constantFactory.createStringConstant(value);
         }
 
         if (constant != null) {
@@ -170,7 +170,7 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
     // Create a static initializer if we don't already have one
     smInit = sc.getMethodByNameUnsafe(SootMethod.staticInitializerName);
     if (smInit == null) {
-      smInit = myScene.makeSootMethod(SootMethod.staticInitializerName, Collections.<Type>emptyList(), primeTypeCollector.getVoidType());
+      smInit = myScene.makeSootMethod(SootMethod.staticInitializerName, Collections.<Type>emptyList(), primTypeCollector.getVoidType());
       smInit.setActiveBody(myJimple.newBody(smInit));
       sc.addMethod(smInit);
       smInit.setModifiers(Modifier.PUBLIC | Modifier.STATIC);

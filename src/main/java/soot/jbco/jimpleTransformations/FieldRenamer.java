@@ -92,7 +92,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
   private final Object fieldNamesLock = new Object();
   private Scene myScene;
   private Jimple myJimple;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
   /**
    * Singleton constructor.
@@ -100,16 +100,16 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
    *          the singletons container. Must not be {@code null}
    * @param myScene
    * @param myJimple
-   * @param constancFactory
+   * @param constantFactory
    * @throws NullPointerException
    *           when {@code global} argument is {@code null}
    */
 
   @Inject
-  public FieldRenamer(Scene myScene, Jimple myJimple, ConstantFactory constancFactory) {
+  public FieldRenamer(Scene myScene, Jimple myJimple, ConstantFactory constantFactory) {
     this.myScene = myScene;
     this.myJimple = myJimple;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
 
 
     this.nameGenerator = new JunkNameGenerator();
@@ -300,7 +300,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
 
     final PatchingChain<Unit> units = body.getUnits();
     if (field.getType() instanceof IntegerType) {
-      units.addFirst(myJimple.newAssignStmt(myJimple.newStaticFieldRef(field.makeRef()), constancFactory.createIntConstant(value ? 1 : 0)));
+      units.addFirst(myJimple.newAssignStmt(myJimple.newStaticFieldRef(field.makeRef()), constantFactory.createIntConstant(value ? 1 : 0)));
     } else {
       Local bool = myJimple.newLocal("boolLcl", booleanWrapperRefType);
       body.getLocals().add(bool);
@@ -308,7 +308,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
       final SootMethod booleanWrapperConstructor = booleanWrapperRefType.getSootClass().getMethod("void <init>(boolean)");
       units.addFirst(myJimple.newAssignStmt(myJimple.newStaticFieldRef(field.makeRef()), bool));
       units.addFirst(myJimple.newInvokeStmt(
-          myJimple.newSpecialInvokeExpr(bool, booleanWrapperConstructor.makeRef(), constancFactory.createIntConstant(value ? 1 : 0))));
+          myJimple.newSpecialInvokeExpr(bool, booleanWrapperConstructor.makeRef(), constantFactory.createIntConstant(value ? 1 : 0))));
       units.addFirst(myJimple.newAssignStmt(bool, myJimple.newNewExpr(booleanWrapperRefType)));
     }
     if (addStaticInitializer) {

@@ -25,20 +25,10 @@ package soot.jimple.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import soot.ArrayType;
-import soot.RefType;
-import soot.Type;
-import soot.Unit;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
 import soot.grimp.PrecedenceTest;
-import soot.jimple.CastExpr;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.ExprSwitch;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleToBafContext;
+import soot.jimple.*;
 import soot.util.Switch;
 
 @SuppressWarnings("serial")
@@ -122,7 +112,7 @@ abstract public class AbstractCastExpr implements CastExpr, ConvertToBaf {
     this.type = castType;
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return type;
   }
 
@@ -130,11 +120,11 @@ abstract public class AbstractCastExpr implements CastExpr, ConvertToBaf {
     ((ExprSwitch) sw).caseCastExpr(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     final Type toType = getCastType();
-    final Type fromType = getOp().getType();
+    final Type fromType = getOp().getType(myScene);
 
-    ((ConvertToBaf) getOp()).convertToBaf(context, out, this.myBaf);
+    ((ConvertToBaf) getOp()).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
 
     Unit u;
     if (toType instanceof ArrayType || toType instanceof RefType) {

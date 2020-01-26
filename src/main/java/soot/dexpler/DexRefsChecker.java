@@ -49,8 +49,8 @@ import soot.jimple.Stmt;
 public class DexRefsChecker extends DexTransformer {
   private Scene myScene;
 
-  public DexRefsChecker(Scene myScene, PrimTypeCollector primeTypeCollector) {
-    super(primeTypeCollector);
+  public DexRefsChecker(Scene myScene, PrimTypeCollector primTypeCollector) {
+    super(primTypeCollector);
     this.myScene = myScene;
   }
 
@@ -90,7 +90,7 @@ public class DexRefsChecker extends DexTransformer {
         }
         String fname = fr.toString().split(">")[0].split(" ")[2];
         int modifiers = soot.Modifier.PUBLIC;
-        Type ftype = fr.getType();
+        Type ftype = fr.getType(myScene);
         sc.addField(myScene.makeSootField(fname, ftype, modifiers));
       } else {
         // System.out.println("field "+ sf.getName() +" '"+ sf +"'

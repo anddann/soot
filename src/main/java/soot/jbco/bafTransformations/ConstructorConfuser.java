@@ -52,12 +52,12 @@ public class ConstructorConfuser extends BodyTransformer implements IJbcoTransfo
 
   public static String dependancies[] = new String[] { "bb.jbco_dcc", "bb.jbco_ful", "bb.lp" };
   private Baf myBaf;
-  private PrimTypeCollector primeTypeCollector;
+  private PrimTypeCollector primTypeCollector;
   private ConstantFactory constantFactory;
 
-  public ConstructorConfuser(Baf myBaf, PrimTypeCollector primeTypeCollector, ConstantFactory constantFactory) {
+  public ConstructorConfuser(Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     this.myBaf = myBaf;
-    this.primeTypeCollector = primeTypeCollector;
+    this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
   }
 
@@ -137,15 +137,15 @@ public class ConstructorConfuser extends BodyTransformer implements IJbcoTransfo
           Local bl = ((LoadInst) prev).getLocal();
           Map<Local, Local> locals = soot.jbco.Main.methods2Baf2JLocals.get(b.getMethod());
           if (locals != null && locals.containsKey(bl)) {
-            Type t = ((Local) locals.get(bl)).getType();
+            Type t = ((Local) locals.get(bl)).getType(myScene);
             if (t instanceof RefType && ((RefType) t).getSootClass().getName().equals(origClass.getName())) {
-              units.insertBefore(myBaf.newDup1Inst(primeTypeCollector.getRefType()), sii);
+              units.insertBefore(myBaf.newDup1Inst(primTypeCollector.getRefType()), sii);
               Unit ifinst = myBaf.newIfNullInst(sii);
               units.insertBeforeNoRedirect(ifinst, sii);
               units.insertAfter(myBaf.newThrowInst(), ifinst);
               units.insertAfter(myBaf.newPushInst(constantFactory.getNullConstant()), ifinst);
 
-              Unit pop = myBaf.newPopInst(primeTypeCollector.getRefType());
+              Unit pop = myBaf.newPopInst(primTypeCollector.getRefType());
               units.add(pop);
               units.add((Unit) prev.clone());
               b.getTraps().add(myBaf.newTrap(ThrowSet.getRandomThrowable(), ifinst, sii, pop));
@@ -193,7 +193,7 @@ public class ConstructorConfuser extends BodyTransformer implements IJbcoTransfo
           break;
         }
       case 3:
-        Unit pop = myBaf.newPopInst(primeTypeCollector.getRefType());
+        Unit pop = myBaf.newPopInst(primTypeCollector.getRefType());
         units.insertBefore(pop, sii);
         units.insertBeforeNoRedirect(myBaf.newJSRInst(pop), pop);
         done = true;

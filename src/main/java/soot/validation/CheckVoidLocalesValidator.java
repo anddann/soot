@@ -40,7 +40,7 @@ public class CheckVoidLocalesValidator implements BodyValidator {
   @Override
   public void validate(Body body, List<ValidationException> exception) {
     for (Local l : body.getLocals()) {
-      if (l.getType() instanceof VoidType) {
+      if (l.getType(myScene) instanceof VoidType) {
         exception.add(new ValidationException(l, "Local " + l + " in " + body.getMethod() + " defined with void type"));
       }
     }

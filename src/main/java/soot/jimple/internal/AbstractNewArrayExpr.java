@@ -25,31 +25,19 @@ package soot.jimple.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import soot.ArrayType;
-import soot.Scene;
-import soot.Type;
-import soot.Unit;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.ExprSwitch;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.NewArrayExpr;
+import soot.jimple.*;
 import soot.util.Switch;
 
 @SuppressWarnings("serial")
 public abstract class AbstractNewArrayExpr implements NewArrayExpr, ConvertToBaf {
   Type baseType;
   final ValueBox sizeBox;
-  private Scene myScene;
 
-  protected AbstractNewArrayExpr(Type type, ValueBox sizeBox, Scene myScene) {
+  protected AbstractNewArrayExpr(Type type, ValueBox sizeBox) {
     this.baseType = type;
     this.sizeBox = sizeBox;
-    this.myScene = myScene;
   }
 
   public boolean equivTo(Object o) {
@@ -121,11 +109,11 @@ public abstract class AbstractNewArrayExpr implements NewArrayExpr, ConvertToBaf
     return useBoxes;
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     if (baseType instanceof ArrayType) {
-      return ArrayType.v(((ArrayType) baseType).baseType, ((ArrayType) baseType).numDimensions + 1,myScene);
+      return ArrayType.v(((ArrayType) baseType).baseType, ((ArrayType) baseType).numDimensions + 1, myScene);
     } else {
-      return ArrayType.v(baseType, 1,myScene);
+      return ArrayType.v(baseType, 1, myScene);
     }
   }
 
@@ -133,8 +121,8 @@ public abstract class AbstractNewArrayExpr implements NewArrayExpr, ConvertToBaf
     ((ExprSwitch) sw).caseNewArrayExpr(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
-    ((ConvertToBaf) (getSize())).convertToBaf(context, out, myBaf);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) (getSize())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
 
     Unit u = myBaf.newNewArrayInst(getBaseType());
     out.add(u);

@@ -63,7 +63,7 @@ public class JimpleAST {
    * Reads an entire class from jimple, creates the Soot objects & returns it.
    */
   public SootClass createSootClass() {
-    Walker w = new Walker(constancFactory, mySootResolver, myScene, myOptions, myPackageNamer, myJimple, constantFactory);
+    Walker w = new Walker(constantFactory, mySootResolver, myScene, myOptions, myPackageNamer, myJimple);
     mTree.apply(w);
     return w.getSootClass();
   }

@@ -30,12 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import soot.Body;
-import soot.Local;
-import soot.Type;
-import soot.Unit;
-import soot.UnitPrinter;
-import soot.Value;
+import soot.*;
 import soot.dava.DavaBody;
 import soot.dava.DavaUnitPrinter;
 import soot.dava.internal.asg.AugmentedStmt;
@@ -87,7 +82,7 @@ public class ASTMethodNode extends ASTNode {
     return davaBody;
   }
 
-  public void storeLocals(Body OrigBody) {
+  public void storeLocals(Body OrigBody, Scene myScene) {
     if ((OrigBody instanceof DavaBody) == false) {
       throw new RuntimeException("Only DavaBodies should invoke this method");
     }
@@ -112,7 +107,7 @@ public class ASTMethodNode extends ASTNode {
       List<Local> localList;
 
       String typeName;
-      Type t = local.getType();
+      Type t = local.getType(myScene);
 
       typeName = t.toString();
 

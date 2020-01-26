@@ -190,7 +190,7 @@ public final class LambdaMetaFactory {
       tclass.addInterface(RefType.v("java.io.Serializable", myScene).getSootClass());
     }
     for (int i = 0; i < markerInterfaces.size(); i++) {
-      tclass.addInterface(((RefType) AsmUtil.toBaseType(markerInterfaces.get(i).getValue(), myScene, primeTypeCollector)).getSootClass());
+      tclass.addInterface(((RefType) AsmUtil.toBaseType(markerInterfaces.get(i).getValue(), myScene, primTypeCollector)).getSootClass());
     }
 
     // It contains fields for all the captures in the lambda
@@ -362,7 +362,7 @@ public final class LambdaMetaFactory {
      */
     private void getInitBody(SootClass tclass, JimpleBody jb) {
       PatchingChain<Unit> us = jb.getUnits();
-      LocalGenerator lc = new LocalGenerator(jb, primeTypeCollector, myJimple);
+      LocalGenerator lc = new LocalGenerator(jb, primTypeCollector, myJimple);
 
       // @this
       Local l = lc.generateLocal(tclass.getType());
@@ -395,7 +395,7 @@ public final class LambdaMetaFactory {
 
     private void getBootstrapBody(SootClass tclass, JimpleBody jb) {
       PatchingChain<Unit> us = jb.getUnits();
-      LocalGenerator lc = new LocalGenerator(jb, primeTypeCollector, myJimple);
+      LocalGenerator lc = new LocalGenerator(jb, primTypeCollector, myJimple);
 
       List<Value> capValues = new ArrayList<Value>();
       List<Type> capTypes = new ArrayList<Type>();
@@ -425,7 +425,7 @@ public final class LambdaMetaFactory {
      */
     private void getInvokeBody(SootClass tclass, JimpleBody jb) {
       PatchingChain<Unit> us = jb.getUnits();
-      LocalGenerator lc = new LocalGenerator(jb, primeTypeCollector, myJimple);
+      LocalGenerator lc = new LocalGenerator(jb, primTypeCollector, myJimple);
 
       // @this
       Local this_ = lc.generateLocal(tclass.getType());
@@ -498,7 +498,7 @@ public final class LambdaMetaFactory {
 
     private Local adapt(Local fromLocal, Type to, JimpleBody jb, PatchingChain<Unit> us, LocalGenerator lc) {
 
-      Type from = fromLocal.getType();
+      Type from = fromLocal.getType(myScene);
 
       // Implements JLS 5.3 Method Invocation Context for adapting arguments from lambda expression to
       // formal arguments of target implementation
@@ -569,7 +569,7 @@ public final class LambdaMetaFactory {
      * @return
      */
     private Local box(Local fromLocal, JimpleBody jb, PatchingChain<Unit> us, LocalGenerator lc) {
-      PrimType primitiveType = (PrimType) fromLocal.getType();
+      PrimType primitiveType = (PrimType) fromLocal.getType(myScene);
       RefType wrapperType = primitiveType.boxedType();
 
       SootMethod valueOfMethod = wrapper.valueOf.get(primitiveType);
@@ -594,7 +594,7 @@ public final class LambdaMetaFactory {
      * @return
      */
     private Local unbox(Local fromLocal, JimpleBody jb, PatchingChain<Unit> us, LocalGenerator lc) {
-      RefType wrapperType = (RefType) fromLocal.getType();
+      RefType wrapperType = (RefType) fromLocal.getType(myScene);
       PrimType primitiveType = wrapper.wrapperTypes.get(wrapperType);
 
       SootMethod primitiveValueMethod = wrapper.primitiveValue.get(wrapperType);
@@ -622,11 +622,11 @@ public final class LambdaMetaFactory {
      */
     private Local narrowingReferenceConversion(Local fromLocal, Type to, JimpleBody jb, PatchingChain<Unit> us,
         LocalGenerator lc) {
-      if (fromLocal.getType().equals(to)) {
+      if (fromLocal.getType(myScene).equals(to)) {
         return fromLocal;
       }
 
-      if (!(fromLocal.getType() instanceof RefType || fromLocal.getType() instanceof ArrayType)) {
+      if (!(fromLocal.getType(myScene) instanceof RefType || fromLocal.getType(myScene) instanceof ArrayType)) {
         return fromLocal;
       }
       // throw new IllegalArgumentException("Expected source to have reference type");
@@ -651,7 +651,7 @@ public final class LambdaMetaFactory {
      */
     private Local wideningPrimitiveConversion(Local fromLocal, Type to, JimpleBody jb, PatchingChain<Unit> us,
         LocalGenerator lc) {
-      if (!(fromLocal.getType() instanceof PrimType)) {
+      if (!(fromLocal.getType(myScene) instanceof PrimType)) {
         throw new IllegalArgumentException("Expected source to have primitive type");
       }
       if (!(to instanceof PrimType)) {
@@ -685,7 +685,7 @@ public final class LambdaMetaFactory {
       } else {
         // neither is void, must pass through return value
 
-        Local ret = lc.generateLocal(value.getType());
+        Local ret = lc.generateLocal(value.getType(myScene));
         us.add(myJimple.newAssignStmt(ret, value));
 
         // adapt return value

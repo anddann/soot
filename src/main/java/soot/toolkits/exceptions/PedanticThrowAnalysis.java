@@ -49,7 +49,7 @@ public class PedanticThrowAnalysis extends AbstractThrowAnalysis {
 
   @Inject
   public PedanticThrowAnalysis(ThrowableSet.Manager mgr) {
-    super(mgr);
+    super(mgr, myScene);
     this.mgr = mgr;
   }
 

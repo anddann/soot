@@ -30,13 +30,8 @@ import java.util.Collections;
 import soot.ArrayType;
 import soot.BooleanType;
 import soot.ByteType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
 import soot.IntegerType;
 import soot.Local;
-import soot.LongType;
-import soot.NullType;
 import soot.RefType;
 import soot.ShortType;
 import soot.TrapManager;
@@ -100,9 +95,9 @@ public class AugEvalFunction implements IEvalFunction {
 
   public static Type eval_(Typing tg, Value expr, Stmt stmt, JimpleBody jb) {
     if (expr instanceof ThisRef) {
-      return ((ThisRef) expr).getType();
+      return ((ThisRef) expr).getType(myScene);
     } else if (expr instanceof ParameterRef) {
-      return ((ParameterRef) expr).getType();
+      return ((ParameterRef) expr).getType(myScene);
     } else if (expr instanceof Local) {
       Local ex = (Local) expr;
       // changed to prevent null pointer exception in case of phantom classes where a null typing is encountered
@@ -119,13 +114,13 @@ public class AugEvalFunction implements IEvalFunction {
       Type tl = eval_(tg, opl, stmt, jb), tr = eval_(tg, opr, stmt, jb);
 
       if (expr instanceof CmpExpr || expr instanceof CmpgExpr || expr instanceof CmplExpr) {
-        return primeTypeCollector.getByteType();
+        return primTypeCollector.getByteType();
       } else if (expr instanceof GeExpr || expr instanceof GtExpr || expr instanceof LeExpr || expr instanceof LtExpr
           || expr instanceof EqExpr || expr instanceof NeExpr) {
-        return primeTypeCollector.getBooleanType();
+        return primTypeCollector.getBooleanType();
       } else if (expr instanceof ShlExpr) {
         if (tl instanceof IntegerType) {
-          return primeTypeCollector.getIntType();
+          return primTypeCollector.getIntType();
         } else {
           return tl;
         }
@@ -134,7 +129,7 @@ public class AugEvalFunction implements IEvalFunction {
       } else if (expr instanceof AddExpr || expr instanceof SubExpr || expr instanceof MulExpr || expr instanceof DivExpr
           || expr instanceof RemExpr) {
         if (tl instanceof IntegerType) {
-          return primeTypeCollector.getIntType();
+          return primTypeCollector.getIntType();
         } else {
           return tl;
         }
@@ -142,7 +137,7 @@ public class AugEvalFunction implements IEvalFunction {
         if (tl instanceof IntegerType && tr instanceof IntegerType) {
           if (tl instanceof BooleanType) {
             if (tr instanceof BooleanType) {
-              return primeTypeCollector.getBooleanType();
+              return primTypeCollector.getBooleanType();
             } else {
               return tr;
             }
@@ -170,11 +165,11 @@ public class AugEvalFunction implements IEvalFunction {
          * -(-128) is not! --BRB
          */
         if (t instanceof Integer1Type || t instanceof BooleanType || t instanceof Integer127Type || t instanceof ByteType) {
-          return primeTypeCollector.getByteType();
+          return primTypeCollector.getByteType();
         } else if (t instanceof ShortType || t instanceof Integer32767Type) {
-          return primeTypeCollector.getShortType();
+          return primTypeCollector.getShortType();
         } else {
-          return primeTypeCollector.getIntType();
+          return primTypeCollector.getIntType();
         }
       } else {
         return t;
@@ -234,19 +229,19 @@ public class AugEvalFunction implements IEvalFunction {
     } else if (expr instanceof CastExpr) {
       return ((CastExpr) expr).getCastType();
     } else if (expr instanceof InstanceOfExpr) {
-      return primeTypeCollector.getBooleanType();
+      return primTypeCollector.getBooleanType();
     } else if (expr instanceof LengthExpr) {
-      return primeTypeCollector.getIntType();
+      return primTypeCollector.getIntType();
     } else if (expr instanceof InvokeExpr) {
       return ((InvokeExpr) expr).getMethodRef().returnType();
     } else if (expr instanceof NewExpr) {
       return ((NewExpr) expr).getBaseType();
     } else if (expr instanceof FieldRef) {
-      return ((FieldRef) expr).getType();
+      return ((FieldRef) expr).getType(myScene);
     } else if (expr instanceof DoubleConstant) {
-      return primeTypeCollector.getDoubleType();
+      return primTypeCollector.getDoubleType();
     } else if (expr instanceof FloatConstant) {
-      return primeTypeCollector.getFloatType();
+      return primTypeCollector.getFloatType();
     } else if (expr instanceof IntConstant) {
       int value = ((IntConstant) expr).value;
 
@@ -255,20 +250,20 @@ public class AugEvalFunction implements IEvalFunction {
       } else if (value >= 2 && value < 128) {
         return Integer127Type.v();
       } else if (value >= -128 && value < 0) {
-        return primeTypeCollector.getByteType();
+        return primTypeCollector.getByteType();
       } else if (value >= 128 && value < 32768) {
         return Integer32767Type.v();
       } else if (value >= -32768 && value < -128) {
-        return primeTypeCollector.getShortType();
+        return primTypeCollector.getShortType();
       } else if (value >= 32768 && value < 65536) {
         return primTypeCollector.getCharType();
       } else {
-        return primeTypeCollector.getIntType();
+        return primTypeCollector.getIntType();
       }
     } else if (expr instanceof LongConstant) {
-      return primeTypeCollector.getLongType();
+      return primTypeCollector.getLongType();
     } else if (expr instanceof NullConstant) {
-      return primeTypeCollector.getNullType();
+      return primTypeCollector.getNullType();
     } else if (expr instanceof StringConstant) {
       return RefType.v("java.lang.String",myScene);
     } else if (expr instanceof ClassConstant) {

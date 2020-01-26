@@ -86,8 +86,8 @@ public class TypeResolver {
   private final List<DefinitionStmt> assignments;
   private final HashMap<Local, BitSet> depends;
   private Scene myScene;
-  private PrimTypeCollector primeTypeCollector;
-  private ClassHierarchy myClassHierachry;
+  private PrimTypeCollector primTypeCollector;
+  private ClassHierarchy myClassHierarchy;
   private Jimple myJimple;
   private ThrowAnalysis throwAnalysis;
   private ThrowableSet.Manager myManager;
@@ -95,11 +95,11 @@ public class TypeResolver {
   private PhaseDumper phaseDumper;
   private InteractionHandler myInteractionHandler;
 
-  public TypeResolver(JimpleBody jb, Scene myScene, PrimTypeCollector primeTypeCollector, ClassHierarchy myClassHierachry, Jimple myJimple, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
+  public TypeResolver(JimpleBody jb, Scene myScene, PrimTypeCollector primTypeCollector, ClassHierarchy myClassHierarchy, Jimple myJimple, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, Options myOptions, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
     this.jb = jb;
     this.myScene = myScene;
-    this.primeTypeCollector = primeTypeCollector;
-    this.myClassHierachry = myClassHierachry;
+    this.primTypeCollector = primTypeCollector;
+    this.myClassHierarchy = myClassHierarchy;
     this.myJimple = myJimple;
     this.throwAnalysis = throwAnalysis;
     this.myManager = myManager;
@@ -167,7 +167,7 @@ public class TypeResolver {
   public void inferTypes() {
     AugEvalFunction ef = new AugEvalFunction(this.jb);
     BytecodeHierarchy bh = new BytecodeHierarchy(myScene);
-    Collection<Typing> sigma = this.applyAssignmentConstraints(new Typing(primeTypeCollector, this.jb.getLocals()), ef, bh);
+    Collection<Typing> sigma = this.applyAssignmentConstraints(new Typing(primTypeCollector, this.jb.getLocals()), ef, bh);
 
     // If there is nothing to type, we can quit
     if (sigma.isEmpty()) {
@@ -178,13 +178,13 @@ public class TypeResolver {
     Typing tg = this.minCasts(sigma, bh, castCount);
     if (castCount[0] != 0) {
       this.split_new();
-      sigma = this.applyAssignmentConstraints(new Typing(primeTypeCollector, this.jb.getLocals()), ef, bh);
+      sigma = this.applyAssignmentConstraints(new Typing(primTypeCollector, this.jb.getLocals()), ef, bh);
       tg = this.minCasts(sigma, bh, castCount);
     }
     this.insertCasts(tg, bh, false);
 
-    final IntType inttype = primeTypeCollector.getIntType();
-    final BottomType bottom = primeTypeCollector.getBottomType();
+    final IntType inttype = primTypeCollector.getIntType();
+    final BottomType bottom = primTypeCollector.getBottomType();
     for (Local v : this.jb.getLocals()) {
       Type t = tg.get(v);
       if (t instanceof IntegerType) {
@@ -197,7 +197,7 @@ public class TypeResolver {
     tg = this.typePromotion(tg);
     if (tg == null) {
       // Use original soot algorithm for inserting casts
-      soot.jimple.toolkits.typing.integer.TypeResolver.resolve(this.jb,myClassHierachry,primeTypeCollector);
+      soot.jimple.toolkits.typing.integer.TypeResolver.resolve(this.jb,myClassHierarchy,primTypeCollector);
     } else {
       for (Local v : this.jb.getLocals()) {
         v.setType(tg.get(v));
@@ -311,9 +311,9 @@ public class TypeResolver {
     public boolean fail;
     public boolean typingChanged;
 
-    private final ByteType byteType = primeTypeCollector.getByteType();
-    private final Integer32767Type integer32767Type = primeTypeCollector.getInteger32767Type();
-    private final Integer127Type integer127Type = primeTypeCollector.getInteger127Type();
+    private final ByteType byteType = primTypeCollector.getByteType();
+    private final Integer32767Type integer32767Type = primTypeCollector.getInteger32767Type();
+    private final Integer127Type integer127Type = primTypeCollector.getInteger127Type();
 
     public TypePromotionUseVisitor(JimpleBody jb, Typing tg) {
       this.jb = jb;
@@ -326,7 +326,7 @@ public class TypeResolver {
     private Type promote(Type tlow, Type thigh) {
       if (tlow instanceof Integer1Type) {
         if (thigh instanceof IntType) {
-          return primeTypeCollector.getInteger127Type();
+          return primTypeCollector.getInteger127Type();
         } else if (thigh instanceof ShortType) {
           return byteType;
         } else if (thigh instanceof BooleanType || thigh instanceof ByteType || thigh instanceof CharType
@@ -390,9 +390,9 @@ public class TypeResolver {
   }
 
   private Typing typePromotion(Typing tg) {
-    final BooleanType booleanType = primeTypeCollector.getBooleanType();
-    final ByteType byteType = primeTypeCollector.getByteType();
-    final ShortType shortType = primeTypeCollector.getShortType();
+    final BooleanType booleanType = primTypeCollector.getBooleanType();
+    final ByteType byteType = primTypeCollector.getByteType();
+    final ShortType shortType = primTypeCollector.getShortType();
     boolean conversionDone;
     do {
       AugEvalFunction ef = new AugEvalFunction(this.jb);
@@ -547,7 +547,7 @@ public class TypeResolver {
                 wl_ = wl;
               } else {
                 // The types do not agree, add all supertype candidates
-                tg_ = new Typing(primeTypeCollector, tg);
+                tg_ = new Typing(primTypeCollector, tg);
                 wl_ = new BitSet(numAssignments - 1);
                 wl_.or(wl);
                 sigma.add(tg_);

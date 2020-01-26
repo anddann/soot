@@ -27,23 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.inject.Inject;
-import soot.ArrayType;
-import soot.Body;
-import soot.Local;
-import soot.PackManager;
-import soot.PrimTypeCollector;
-import soot.Printer;
-import soot.RefType;
-import soot.SootClass;
-import soot.SootFieldRef;
-import soot.SootMethod;
-import soot.SootMethodRef;
-import soot.Trap;
-import soot.Type;
-import soot.Unit;
-import soot.UnitBox;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
 import soot.grimp.internal.ExprBox;
 import soot.grimp.internal.GAddExpr;
@@ -163,16 +147,18 @@ import soot.options.Options;
 
 public class Grimp {
   private Jimple myJimple;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
   private Baf myBaf;
+  private Scene myScene;
 
   @Inject
-  public Grimp(Jimple myJimple, ConstantFactory constancFactory, PrimTypeCollector primTypeCollector, Baf myBaf) {
+  public Grimp(Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Baf myBaf, Scene myScene) {
     this.myJimple = myJimple;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
     this.myBaf = myBaf;
+    this.myScene = myScene;
   }
 
 
@@ -381,7 +367,7 @@ public class Grimp {
    */
 
   public NewArrayExpr newNewArrayExpr(Type type, Value size) {
-    return new GNewArrayExpr(type, size, myGrimp);
+    return new GNewArrayExpr(type, size, this);
   }
 
   /**
@@ -437,7 +423,7 @@ public class Grimp {
    */
 
   public InterfaceInvokeExpr newInterfaceInvokeExpr(Local base, SootMethodRef method, List args) {
-    return new GInterfaceInvokeExpr(base, method, args, myGrimp);
+    return new GInterfaceInvokeExpr(base, method, args, this);
   }
 
   /**
@@ -723,7 +709,7 @@ public class Grimp {
   /** Carries out the mapping from other Value's to Grimp Value's */
   public Value newExpr(Value value) {
     if (value instanceof Expr) {
-      final ExprBox returnedExpr = new ExprBox(constancFactory.createIntConstant(0));
+      final ExprBox returnedExpr = new ExprBox(constantFactory.createIntConstant(0));
       ((Expr) value).apply(new AbstractExprSwitch() {
         public void caseAddExpr(AddExpr v) {
           returnedExpr.setValue(newAddExpr(newExpr(v.getOp1()), newExpr(v.getOp2())));
@@ -847,7 +833,7 @@ public class Grimp {
         }
 
         public void caseCastExpr(CastExpr v) {
-          returnedExpr.setValue(newCastExpr(newExpr(v.getOp()), v.getType()));
+          returnedExpr.setValue(newCastExpr(newExpr(v.getOp()), v.getType(myScene)));
         }
 
         public void caseInstanceOfExpr(InstanceOfExpr v) {

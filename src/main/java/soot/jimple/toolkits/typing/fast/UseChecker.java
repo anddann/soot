@@ -28,7 +28,6 @@ import java.util.Iterator;
 
 import soot.ArrayType;
 import soot.BooleanType;
-import soot.IntType;
 import soot.IntegerType;
 import soot.Local;
 import soot.NullType;
@@ -148,8 +147,8 @@ public class UseChecker extends AbstractStmtSwitch {
         || be instanceof RemExpr || be instanceof GeExpr || be instanceof GtExpr || be instanceof LeExpr
         || be instanceof LtExpr || be instanceof ShlExpr || be instanceof ShrExpr || be instanceof UshrExpr) {
       if (tlhs instanceof IntegerType) {
-        be.setOp1(this.uv.visit(opl, primeTypeCollector.getIntType(), stmt));
-        be.setOp2(this.uv.visit(opr, primeTypeCollector.getIntType(), stmt));
+        be.setOp1(this.uv.visit(opl, primTypeCollector.getIntType(), stmt));
+        be.setOp2(this.uv.visit(opr, primTypeCollector.getIntType(), stmt));
       }
     } else if (be instanceof CmpExpr || be instanceof CmpgExpr || be instanceof CmplExpr) {
       // No checks in the original assigner
@@ -160,14 +159,14 @@ public class UseChecker extends AbstractStmtSwitch {
       if (tl instanceof BooleanType && tr instanceof BooleanType) {
       } else if (tl instanceof Integer1Type || tr instanceof Integer1Type) {
       } else if (tl instanceof IntegerType) {
-        be.setOp1(this.uv.visit(opl, primeTypeCollector.getIntType(), stmt));
-        be.setOp2(this.uv.visit(opr, primeTypeCollector.getIntType(), stmt));
+        be.setOp1(this.uv.visit(opl, primTypeCollector.getIntType(), stmt));
+        be.setOp2(this.uv.visit(opr, primTypeCollector.getIntType(), stmt));
       }
     }
   }
 
   private void handleArrayRef(ArrayRef ar, Stmt stmt) {
-    ar.setIndex(this.uv.visit(ar.getIndex(), primeTypeCollector.getIntType(), stmt));
+    ar.setIndex(this.uv.visit(ar.getIndex(), primTypeCollector.getIntType(), stmt));
   }
 
   private void handleInstanceFieldRef(InstanceFieldRef ifr, Stmt stmt) {
@@ -214,7 +213,7 @@ public class UseChecker extends AbstractStmtSwitch {
               if (defU instanceof AssignStmt) {
                 AssignStmt defUas = (AssignStmt) defU;
                 if (defUas.getRightOp() instanceof NewArrayExpr) {
-                  at = (ArrayType) defUas.getRightOp().getType();
+                  at = (ArrayType) defUas.getRightOp().getType(myScene);
                   break;
                 }
               }
@@ -357,12 +356,12 @@ public class UseChecker extends AbstractStmtSwitch {
       stmt.setRightOp(this.uv.visit(rhs, tlhs, stmt));
     } else if (rhs instanceof NewArrayExpr) {
       NewArrayExpr nae = (NewArrayExpr) rhs;
-      nae.setSize(this.uv.visit(nae.getSize(), primeTypeCollector.getIntType(), stmt));
+      nae.setSize(this.uv.visit(nae.getSize(), primTypeCollector.getIntType(), stmt));
       stmt.setRightOp(this.uv.visit(rhs, tlhs, stmt));
     } else if (rhs instanceof NewMultiArrayExpr) {
       NewMultiArrayExpr nmae = (NewMultiArrayExpr) rhs;
       for (int i = 0; i < nmae.getSizeCount(); i++) {
-        nmae.setSize(i, this.uv.visit(nmae.getSize(i), primeTypeCollector.getIntType(), stmt));
+        nmae.setSize(i, this.uv.visit(nmae.getSize(i), primTypeCollector.getIntType(), stmt));
       }
       stmt.setRightOp(this.uv.visit(rhs, tlhs, stmt));
     } else if (rhs instanceof LengthExpr) {
@@ -378,8 +377,8 @@ public class UseChecker extends AbstractStmtSwitch {
 
   private Type getTargetType(final Value other) {
     if (other instanceof Constant) {
-      if (other.getType() != primeTypeCollector.getNullType()) {
-        return other.getType();
+      if (other.getType(myScene) != primTypeCollector.getNullType()) {
+        return other.getType(myScene);
       }
     } else if (other instanceof Local) {
       Type tgTp = tg.get((Local) other);
@@ -405,11 +404,11 @@ public class UseChecker extends AbstractStmtSwitch {
   }
 
   public void caseIfStmt(IfStmt stmt) {
-    this.handleBinopExpr((BinopExpr) stmt.getCondition(), stmt, primeTypeCollector.getBooleanType());
+    this.handleBinopExpr((BinopExpr) stmt.getCondition(), stmt, primTypeCollector.getBooleanType());
   }
 
   public void caseLookupSwitchStmt(LookupSwitchStmt stmt) {
-    stmt.setKey(this.uv.visit(stmt.getKey(), primeTypeCollector.getIntType(), stmt));
+    stmt.setKey(this.uv.visit(stmt.getKey(), primTypeCollector.getIntType(), stmt));
   }
 
   public void caseNopStmt(NopStmt stmt) {
@@ -423,7 +422,7 @@ public class UseChecker extends AbstractStmtSwitch {
   }
 
   public void caseTableSwitchStmt(TableSwitchStmt stmt) {
-    stmt.setKey(this.uv.visit(stmt.getKey(), primeTypeCollector.getIntType(), stmt));
+    stmt.setKey(this.uv.visit(stmt.getKey(), primTypeCollector.getIntType(), stmt));
   }
 
   public void caseThrowStmt(ThrowStmt stmt) {

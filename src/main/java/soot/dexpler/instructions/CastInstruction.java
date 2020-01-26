@@ -31,13 +31,6 @@ import org.jf.dexlib2.Opcode;
 import org.jf.dexlib2.iface.instruction.Instruction;
 import org.jf.dexlib2.iface.instruction.TwoRegisterInstruction;
 
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
-import soot.LongType;
-import soot.ShortType;
 import soot.Type;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
@@ -70,7 +63,7 @@ public class CastInstruction extends TaggedInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(assign.getLeftOpBox(), cast.getType(), false);
+      myDalvikTyper().setType(assign.getLeftOpBox(), cast.getType(myScene), false);
       // myDalvikTyper().captureAssign((JAssignStmt)assign, op);
     }
   }
@@ -86,53 +79,53 @@ public class CastInstruction extends TaggedInstruction {
     switch (opcode) {
       case INT_TO_BYTE:
         setTag(new IntOpTag());
-        return primeTypeCollector.getByteType();
+        return primTypeCollector.getByteType();
       case INT_TO_CHAR:
         setTag(new IntOpTag());
-        return primeTypeCollector.getCharType();
+        return primTypeCollector.getCharType();
       case INT_TO_SHORT:
         setTag(new IntOpTag());
-        return primeTypeCollector.getShortType();
+        return primTypeCollector.getShortType();
 
       case LONG_TO_INT:
         setTag(new LongOpTag());
-        return primeTypeCollector.getIntType();
+        return primTypeCollector.getIntType();
       case DOUBLE_TO_INT:
         setTag(new DoubleOpTag());
-        return primeTypeCollector.getIntType();
+        return primTypeCollector.getIntType();
       case FLOAT_TO_INT:
         setTag(new FloatOpTag());
-        return primeTypeCollector.getIntType();
+        return primTypeCollector.getIntType();
 
       case INT_TO_LONG:
         setTag(new IntOpTag());
-        return primeTypeCollector.getLongType();
+        return primTypeCollector.getLongType();
       case DOUBLE_TO_LONG:
         setTag(new DoubleOpTag());
-        return primeTypeCollector.getLongType();
+        return primTypeCollector.getLongType();
       case FLOAT_TO_LONG:
         setTag(new FloatOpTag());
-        return primeTypeCollector.getLongType();
+        return primTypeCollector.getLongType();
 
       case LONG_TO_FLOAT:
         setTag(new LongOpTag());
-        return primeTypeCollector.getFloatType();
+        return primTypeCollector.getFloatType();
       case DOUBLE_TO_FLOAT:
         setTag(new DoubleOpTag());
-        return primeTypeCollector.getFloatType();
+        return primTypeCollector.getFloatType();
       case INT_TO_FLOAT:
         setTag(new IntOpTag());
-        return primeTypeCollector.getFloatType();
+        return primTypeCollector.getFloatType();
 
       case INT_TO_DOUBLE:
         setTag(new IntOpTag());
-        return primeTypeCollector.getDoubleType();
+        return primTypeCollector.getDoubleType();
       case FLOAT_TO_DOUBLE:
         setTag(new FloatOpTag());
-        return primeTypeCollector.getDoubleType();
+        return primTypeCollector.getDoubleType();
       case LONG_TO_DOUBLE:
         setTag(new LongOpTag());
-        return primeTypeCollector.getDoubleType();
+        return primTypeCollector.getDoubleType();
 
       default:
         throw new RuntimeException("Invalid Opcode: " + opcode);

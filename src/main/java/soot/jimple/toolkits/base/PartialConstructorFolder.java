@@ -123,7 +123,7 @@ public class PartialConstructorFolder extends BodyTransformer {
       }
 
       // check if new is in the types list - only process these
-      if (!types.contains(((NewExpr) rhs).getType())) {
+      if (!types.contains(((NewExpr) rhs).getType(myScene))) {
         continue;
       }
 

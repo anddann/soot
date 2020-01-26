@@ -215,7 +215,7 @@ public class PegChain extends HashChain {
     if (unit instanceof MonitorStmt) {
       Value value = ((MonitorStmt) unit).getOp();
       if (value instanceof Local) {
-        Type type = ((Local) value).getType();
+        Type type = ((Local) value).getType(myScene);
 
         if (type instanceof RefType) {
 
@@ -258,7 +258,7 @@ public class PegChain extends HashChain {
 
         if (value instanceof Local) {
           // Type type = ((Local)value).getType();
-          type = ((Local) value).getType();
+          type = ((Local) value).getType(myScene);
 
           if (type instanceof RefType) {
 
@@ -648,7 +648,7 @@ public class PegChain extends HashChain {
           if (obj instanceof JIdentityStmt) {
             Value thisRef = ((JIdentityStmt) obj).getLeftOp();
             if (thisRef instanceof Local) {
-              Type type = ((Local) thisRef).getType();
+              Type type = ((Local) thisRef).getType(myScene);
               if (type instanceof RefType) {
                 objName = makeObjName(thisRef, type, (Unit) obj);
                 synchObj.put(targetMethod, objName);

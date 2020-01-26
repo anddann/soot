@@ -64,7 +64,7 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
   public static String dependancies[] = new String[] { "jtp.jbco_jl", "bb.jbco_plvb", "bb.jbco_ful", "bb.lp" };
   private Baf myBaf;
   private PrimTypeCollector primeTypecollecotr;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
   //FIXME: add to singelton
   @Inject
@@ -148,7 +148,7 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
       locals++;
       Local jlocal = bafToJLocals.get(bl);
       if (jlocal != null) {
-        Type t = jlocal.getType();
+        Type t = jlocal.getType(myScene);
         if (t instanceof PrimType && !(t instanceof DoubleType || t instanceof LongType) && Rand.getInt(10) <= weight) {
           if (t instanceof BooleanType) {
             booleans.add(bl);
@@ -173,7 +173,7 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
     Map<Local, Map<Local, Integer>> newLocs = new HashMap<Local, Map<Local, Integer>>();
     while (total >= 32 && booleans.size() + bytes.size() + chars.size() + ints.size() > 2) {
       Local nloc = myBaf.newLocal("newDumby" + count++, primeTypecollecotr.getLongType()); // soot.jbco.util.Rand.getInt(2) > 0 ?
-                                                                         // primeTypeCollector.getDoubleType() : primeTypecollecotr.getLongType());
+                                                                         // primTypeCollector.getDoubleType() : primeTypecollecotr.getLongType());
       Map<Local, Integer> nlocMap = new HashMap<Local, Integer>();
 
       boolean done = false;
@@ -228,10 +228,10 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
       bLocals.add(nloc);
       if (first != null) {
         u.insertAfter(myBaf.newStoreInst(primeTypecollecotr.getLongType(), nloc), first);
-        u.insertAfter(myBaf.newPushInst(constancFactory.createLongConstant(0)), first);
+        u.insertAfter(myBaf.newPushInst(constantFactory.createLongConstant(0)), first);
       } else {
         u.addFirst(myBaf.newStoreInst(primeTypecollecotr.getLongType(), nloc));
-        u.addFirst(myBaf.newPushInst(constancFactory.createLongConstant(0)));
+        u.addFirst(myBaf.newPushInst(constantFactory.createLongConstant(0)));
       }
       total = booleans.size() + bytes.size() * 8 + chars.size() * 16 + ints.size() * 32;
     }
@@ -254,15 +254,15 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
           int size = sizes.get(bafLoc);
           long longmask = ~((size == 1 ? 0x1L : size == 8 ? 0xFFL : size == 16 ? 0xFFFFL : 0xFFFFFFFFL) << index);
 
-          u.insertBefore(myBaf.newPrimitiveCastInst(jloc.getType(), primeTypecollecotr.getLongType()), unit);
+          u.insertBefore(myBaf.newPrimitiveCastInst(jloc.getType(myScene), primeTypecollecotr.getLongType()), unit);
           if (index > 0) {
-            u.insertBefore(myBaf.newPushInst(constancFactory.createIntConstant(index)), unit);
+            u.insertBefore(myBaf.newPushInst(constantFactory.createIntConstant(index)), unit);
             u.insertBefore(myBaf.newShlInst(primeTypecollecotr.getLongType()), unit);
           }
-          u.insertBefore(myBaf.newPushInst(constancFactory.createLongConstant(~longmask)), unit);
+          u.insertBefore(myBaf.newPushInst(constantFactory.createLongConstant(~longmask)), unit);
           u.insertBefore(myBaf.newAndInst(primeTypecollecotr.getLongType()), unit);
           u.insertBefore(myBaf.newLoadInst(primeTypecollecotr.getLongType(), nloc), unit);
-          u.insertBefore(myBaf.newPushInst(constancFactory.createLongConstant(longmask)), unit);
+          u.insertBefore(myBaf.newPushInst(constantFactory.createLongConstant(longmask)), unit);
           u.insertBefore(myBaf.newAndInst(primeTypecollecotr.getLongType()), unit);
           u.insertBefore(myBaf.newXorInst(primeTypecollecotr.getLongType()), unit);
           u.insertBefore(myBaf.newStoreInst(primeTypecollecotr.getLongType(), nloc), unit);
@@ -278,14 +278,14 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
           long longmask = (size == 1 ? 0x1L : size == 8 ? 0xFFL : size == 16 ? 0xFFFFL : 0xFFFFFFFFL) << index;
 
           u.insertBefore(myBaf.newLoadInst(primeTypecollecotr.getLongType(), nloc), unit);
-          u.insertBefore(myBaf.newPushInst(constancFactory.createLongConstant(longmask)), unit);
+          u.insertBefore(myBaf.newPushInst(constantFactory.createLongConstant(longmask)), unit);
           u.insertBefore(myBaf.newAndInst(primeTypecollecotr.getLongType()), unit);
           if (index > 0) {
-            u.insertBefore(myBaf.newPushInst(constancFactory.createIntConstant(index)), unit);
+            u.insertBefore(myBaf.newPushInst(constantFactory.createIntConstant(index)), unit);
             u.insertBefore(myBaf.newShrInst(primeTypecollecotr.getLongType()), unit);
           }
 
-          Type origType = bafToJLocals.get(bafLoc).getType();
+          Type origType = bafToJLocals.get(bafLoc).getType(myScene);
           Type t = getType(origType);
           u.insertBefore(myBaf.newPrimitiveCastInst(primeTypecollecotr.getLongType(), t), unit);
           if (!(origType instanceof IntType) && !(origType instanceof BooleanType)) {
@@ -298,7 +298,7 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
         Local bafLoc = ii.getLocal();
         Local nloc = bafToNewLocs.get(bafLoc);
         if (nloc != null) {
-          Type jlocType = getType(bafToJLocals.get(bafLoc).getType());
+          Type jlocType = getType(bafToJLocals.get(bafLoc).getType(myScene));
 
           int index = newLocs.get(nloc).get(bafLoc);
           int size = sizes.get(bafLoc);
@@ -306,23 +306,23 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
 
           u.insertBefore(myBaf.newPushInst(ii.getConstant()), unit);
           u.insertBefore(myBaf.newLoadInst(primeTypecollecotr.getLongType(), nloc), unit);
-          u.insertBefore(myBaf.newPushInst(constancFactory.createLongConstant(longmask)), unit);
+          u.insertBefore(myBaf.newPushInst(constantFactory.createLongConstant(longmask)), unit);
           u.insertBefore(myBaf.newAndInst(primeTypecollecotr.getLongType()), unit);
           if (index > 0) {
-            u.insertBefore(myBaf.newPushInst(constancFactory.createIntConstant(index)), unit);
+            u.insertBefore(myBaf.newPushInst(constantFactory.createIntConstant(index)), unit);
             u.insertBefore(myBaf.newShrInst(primeTypecollecotr.getLongType()), unit);
           }
-          u.insertBefore(myBaf.newPrimitiveCastInst(primeTypecollecotr.getLongType(), ii.getConstant().getType()), unit);
-          u.insertBefore(myBaf.newAddInst(ii.getConstant().getType()), unit);
+          u.insertBefore(myBaf.newPrimitiveCastInst(primeTypecollecotr.getLongType(), ii.getConstant().getType(myScene)), unit);
+          u.insertBefore(myBaf.newAddInst(ii.getConstant().getType(myScene)), unit);
           u.insertBefore(myBaf.newPrimitiveCastInst(jlocType, primeTypecollecotr.getLongType()), unit);
           if (index > 0) {
-            u.insertBefore(myBaf.newPushInst(constancFactory.createIntConstant(index)), unit);
+            u.insertBefore(myBaf.newPushInst(constantFactory.createIntConstant(index)), unit);
             u.insertBefore(myBaf.newShlInst(primeTypecollecotr.getLongType()), unit);
           }
 
           longmask = ~longmask;
           u.insertBefore(myBaf.newLoadInst(primeTypecollecotr.getLongType(), nloc), unit);
-          u.insertBefore(myBaf.newPushInst(constancFactory.createLongConstant(longmask)), unit);
+          u.insertBefore(myBaf.newPushInst(constantFactory.createLongConstant(longmask)), unit);
           u.insertBefore(myBaf.newAndInst(primeTypecollecotr.getLongType()), unit);
           u.insertBefore(myBaf.newXorInst(primeTypecollecotr.getLongType()), unit);
           u.insertBefore(myBaf.newStoreInst(primeTypecollecotr.getLongType(), nloc), unit);

@@ -128,7 +128,7 @@ public class DexIfTransformer extends AbstractNullTransformer {
                 return;
               } else if (r instanceof ArrayRef) {
                 ArrayRef ar = (ArrayRef) r;
-                if (ar.getType() instanceof UnknownType) {
+                if (ar.getType(myScene) instanceof UnknownType) {
                   usedAsObject = stmt.hasTag("ObjectOpTag"); // isObject
                   // (findArrayType
                   // (g,
@@ -136,7 +136,7 @@ public class DexIfTransformer extends AbstractNullTransformer {
                   // localUses,
                   // stmt));
                 } else {
-                  usedAsObject = isObject(ar.getType());
+                  usedAsObject = isObject(ar.getType(myScene));
                 }
                 if (usedAsObject) {
                   doBreak = true;
@@ -155,7 +155,7 @@ public class DexIfTransformer extends AbstractNullTransformer {
                 }
                 return;
               } else if (r instanceof InvokeExpr) {
-                usedAsObject = isObject(((InvokeExpr) r).getType());
+                usedAsObject = isObject(((InvokeExpr) r).getType(myScene));
                 if (usedAsObject) {
                   doBreak = true;
                 }
@@ -173,7 +173,7 @@ public class DexIfTransformer extends AbstractNullTransformer {
             @Override
             public void caseIdentityStmt(IdentityStmt stmt) {
               if (stmt.getLeftOp() == l) {
-                usedAsObject = isObject(stmt.getRightOp().getType());
+                usedAsObject = isObject(stmt.getRightOp().getType(myScene));
                 if (usedAsObject) {
                   doBreak = true;
                 }
@@ -272,7 +272,7 @@ public class DexIfTransformer extends AbstractNullTransformer {
                     }
                     return;
                   } else if (l instanceof ArrayRef) {
-                    Type aType = ((ArrayRef) l).getType();
+                    Type aType = ((ArrayRef) l).getType(myScene);
                     if (aType instanceof UnknownType) {
                       usedAsObject = stmt.hasTag("ObjectOpTag"); // isObject(
                       // findArrayType(g,

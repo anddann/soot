@@ -30,10 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import soot.Local;
-import soot.SootMethod;
-import soot.Type;
-import soot.Value;
+import soot.*;
 import soot.jimple.ClassConstant;
 import soot.jimple.Constant;
 import soot.jimple.DoubleConstant;
@@ -56,8 +53,10 @@ public class RegisterAllocator {
   private Map<Local, Integer> localToLastRegNum;
 
   private int paramRegCount;
+  private Scene myScene;
 
-  public RegisterAllocator() {
+  public RegisterAllocator(Scene myScene) {
+    this.myScene = myScene;
     localToLastRegNum = new HashMap<Local, Integer>();
   }
 
@@ -145,14 +144,14 @@ public class RegisterAllocator {
       rArray = stringConstantReg;
       iI = stringI;
     } else {
-      throw new RuntimeException("Error. Unknown constant type: '" + c.getType() + "'");
+      throw new RuntimeException("Error. Unknown constant type: '" + c.getType(myScene) + "'");
     }
 
     boolean inConflict = true;
     while (inConflict) {
       if (rArray.size() == 0 || iI.intValue() >= rArray.size()) {
-        rArray.add(new Register(c.getType(), nextRegNum));
-        nextRegNum += SootToDexUtils.getDexWords(c.getType());
+        rArray.add(new Register(c.getType(myScene), nextRegNum));
+        nextRegNum += SootToDexUtils.getDexWords(c.getType(myScene));
       }
 
       constantRegister = rArray.get(iI.getAndIncrement()).clone();
@@ -185,12 +184,12 @@ public class RegisterAllocator {
     Integer oldRegNum = localToLastRegNum.get(local);
     if (oldRegNum != null) {
       // reuse the reg num last seen for this local, since this is where the content is
-      localRegister = new Register(local.getType(), oldRegNum);
+      localRegister = new Register(local.getType(myScene), oldRegNum);
     } else {
       // use a new reg num for this local
-      localRegister = new Register(local.getType(), nextRegNum);
+      localRegister = new Register(local.getType(myScene), nextRegNum);
       localToLastRegNum.put(local, nextRegNum);
-      nextRegNum += SootToDexUtils.getDexWords(local.getType());
+      nextRegNum += SootToDexUtils.getDexWords(local.getType(myScene));
     }
     return localRegister;
   }
@@ -240,7 +239,7 @@ public class RegisterAllocator {
     }
 
     localToLastRegNum.put(l, paramRegNum);
-    int wordsforParameters = SootToDexUtils.getDexWords(l.getType());
+    int wordsforParameters = SootToDexUtils.getDexWords(l.getType(myScene));
     nextRegNum = Math.max(nextRegNum + wordsforParameters, paramRegNum + wordsforParameters);
     paramRegCount += wordsforParameters;
   }

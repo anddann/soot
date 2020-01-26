@@ -72,7 +72,7 @@ public class LocalRefVarsAnalysisWrapper {
 
   // constructor, where we do all our computations
   public LocalRefVarsAnalysisWrapper(ExceptionalUnitGraph graph) {
-    analysis = new BranchedRefVarsAnalysis(graph, myInteractionHandler, interactiveMode);
+    analysis = new BranchedRefVarsAnalysis(graph, myInteractionHandler, interactiveMode, myScene);
 
     unitToVarsBefore = new HashMap<Unit, List<RefIntPair>>(graph.size() * 2 + 1, 0.7f);
     unitToVarsAfterFall = new HashMap<Unit, List<RefIntPair>>(graph.size() * 2 + 1, 0.7f);

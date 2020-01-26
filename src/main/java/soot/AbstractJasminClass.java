@@ -96,7 +96,8 @@ public abstract class AbstractJasminClass {
   protected Map<Block, Integer> blockToStackHeight = new HashMap<Block, Integer>(); // maps a block to the stack height upon
                                                                                     // entering it
   protected Map<Block, Integer> blockToLogicalStackHeight = new HashMap<Block, Integer>(); // maps a block to the logical
-                                                                                           // stack height upon entering
+  private Scene myScene;
+  // stack height upon entering
                                                                                            // it
 
   public static String slashify(String s) {
@@ -403,8 +404,9 @@ public abstract class AbstractJasminClass {
     return result.toString();
   }
 
-  public AbstractJasminClass(SootClass sootClass, Options myOptions) {
+  public AbstractJasminClass(SootClass sootClass, Options myOptions, Scene myScene) {
     this.myOptions = myOptions;
+    this.myScene = myScene;
 //    if (myOptions.time()) {
 //      myTimers.buildJasminTimer.start();
 //    }
@@ -639,10 +641,10 @@ public abstract class AbstractJasminClass {
         Local l = localIt.next();
         Object g;
 
-        if (sizeOfType(l.getType()) == 1) {
-          g = l.getType().getMyScene().getPrimTypeCollector().getIntType();
+        if (sizeOfType(l.getType(myScene)) == 1) {
+          g = l.getType(myScene).getMyScene().getPrimTypeCollector().getIntType();
         } else {
-          g = l.getType().getMyScene().getPrimTypeCollector().getLongType();
+          g = l.getType(myScene).getMyScene().getPrimTypeCollector().getLongType();
         }
 
         localToGroup.put(l, g);

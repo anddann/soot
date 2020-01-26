@@ -484,10 +484,10 @@ public class LockAllocator extends SceneTransformer {
 
             // Assign a lock number to the placeholder
             Integer lockNum = new Integer(-lockPTSets.size()); // negative indicates a static lock
-            logger.debug("[wjtp.tn] Lock: num " + lockNum + " type " + newStaticLock.getType() + " obj " + newStaticLock);
+            logger.debug("[wjtp.tn] Lock: num " + lockNum + " type " + newStaticLock.getType(myScene) + " obj " + newStaticLock);
             lockToLockNum.put(newStaticLockEqVal, lockNum);
             lockToLockNum.put(newStaticLock, lockNum);
-            PointsToSetInternal dummyLockPT = new HashPointsToSet(newStaticLock.getType(), (PAG) pta); // KILLS CHA-BASED
+            PointsToSetInternal dummyLockPT = new HashPointsToSet(newStaticLock.getType(myScene), (PAG) pta); // KILLS CHA-BASED
                                                                                                        // ANALYSIS (pointer
                                                                                                        // exception)
             lockPTSets.add(dummyLockPT);
@@ -524,7 +524,7 @@ public class LockAllocator extends SceneTransformer {
                   PointsToSetInternal otherLockPT = lockPTSets.get(i);
                   if (lockPT.hasNonEmptyIntersection(otherLockPT)) // will never happen for empty, negative numbered sets
                   {
-                    logger.debug("[wjtp.tn] Lock: num " + i + " type " + lock.getType() + " obj " + lock);
+                    logger.debug("[wjtp.tn] Lock: num " + i + " type " + lock.getType(myScene) + " obj " + lock);
                     lockToLockNum.put(lock, new Integer(i));
                     otherLockPT.addAll(lockPT, null);
                     foundLock = true;
@@ -534,7 +534,7 @@ public class LockAllocator extends SceneTransformer {
 
                 // Assign a brand new lock number otherwise
                 if (!foundLock) {
-                  logger.debug("[wjtp.tn] Lock: num " + lockPTSets.size() + " type " + lock.getType() + " obj " + lock);
+                  logger.debug("[wjtp.tn] Lock: num " + lockPTSets.size() + " type " + lock.getType(myScene) + " obj " + lock);
                   lockToLockNum.put(lock, new Integer(lockPTSets.size()));
                   PointsToSetInternal otherLockPT = new HashPointsToSet(lockPT.getType(), (PAG) pta);
                   lockPTSets.add(otherLockPT);
@@ -545,14 +545,14 @@ public class LockAllocator extends SceneTransformer {
                 // Assign an existing lock number if possible
                 if (lockToLockNum.get(lockEqVal) != null) {
                   Integer lockNum = lockToLockNum.get(lockEqVal);
-                  logger.debug("[wjtp.tn] Lock: num " + lockNum + " type " + lock.getType() + " obj " + lock);
+                  logger.debug("[wjtp.tn] Lock: num " + lockNum + " type " + lock.getType(myScene) + " obj " + lock);
                   lockToLockNum.put(lock, lockNum);
                 } else {
                   Integer lockNum = new Integer(-lockPTSets.size()); // negative indicates a static lock
-                  logger.debug("[wjtp.tn] Lock: num " + lockNum + " type " + lock.getType() + " obj " + lock);
+                  logger.debug("[wjtp.tn] Lock: num " + lockNum + " type " + lock.getType(myScene) + " obj " + lock);
                   lockToLockNum.put(lockEqVal, lockNum);
                   lockToLockNum.put(lock, lockNum);
-                  PointsToSetInternal dummyLockPT = new HashPointsToSet(lock.getType(), (PAG) pta);
+                  PointsToSetInternal dummyLockPT = new HashPointsToSet(lock.getType(myScene), (PAG) pta);
                   lockPTSets.add(dummyLockPT);
                 }
               }
@@ -781,10 +781,10 @@ public class LockAllocator extends SceneTransformer {
               // typeString = ((RefType) lockObject[group].getType()).getSootClass().getShortName();
               // else
               // typeString = lockObject[group].getType().toString();
-              if (tn.group.lockObject.getType() instanceof RefType) {
-                typeString = ((RefType) tn.group.lockObject.getType()).getSootClass().getShortName();
+              if (tn.group.lockObject.getType(myScene) instanceof RefType) {
+                typeString = ((RefType) tn.group.lockObject.getType(myScene)).getSootClass().getShortName();
               } else {
-                typeString = tn.group.lockObject.getType().toString();
+                typeString = tn.group.lockObject.getType(myScene).toString();
               }
               logger.debug("[transaction-graph] subgraph cluster_" + (group + 1)
                   + " {\n[transaction-graph] color=blue;\n[transaction-graph] label=\"Lock: a \\n" + typeString

@@ -33,16 +33,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.EquivalentValue;
-import soot.Local;
-import soot.PrimTypeCollector;
-import soot.RefLikeType;
-import soot.SootClass;
-import soot.SootField;
-import soot.SootMethod;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.jimple.AnyNewExpr;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
@@ -81,6 +72,7 @@ public class SmartMethodInfoFlowAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(SmartMethodInfoFlowAnalysis.class);
   private final Jimple myJimple;
   private final PrimTypeCollector primTypeCollector;
+  private final Scene myScene;
   UnitGraph graph;
   SootMethod sm;
   Value thisLocal;
@@ -97,9 +89,10 @@ public class SmartMethodInfoFlowAnalysis {
 
   public static int counter = 0;
 
-  public SmartMethodInfoFlowAnalysis(Jimple myJimple, PrimTypeCollector primTypeCollector, UnitGraph g, InfoFlowAnalysis dfa) {
+  public SmartMethodInfoFlowAnalysis(Jimple myJimple, PrimTypeCollector primTypeCollector, Scene myScene, UnitGraph g, InfoFlowAnalysis dfa) {
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
+    this.myScene = myScene;
     graph = g;
     this.sm = g.getBody().getMethod();
     if (sm.isStatic()) {
@@ -183,7 +176,7 @@ public class SmartMethodInfoFlowAnalysis {
 
     // Add returnref of this method
     EquivalentValue returnRefEqVal = new CachedEquivalentValue(returnRef);
-    if (returnRef.getType() != this.primTypeCollector.getVoidType() && !infoFlowSummary.containsNode(returnRefEqVal)) {
+    if (returnRef.getType(this.myScene) != this.primTypeCollector.getVoidType() && !infoFlowSummary.containsNode(returnRefEqVal)) {
       infoFlowSummary.addNode(returnRefEqVal);
     }
 
@@ -639,12 +632,12 @@ public class SmartMethodInfoFlowAnalysis {
       if (ir instanceof JCaughtExceptionRef) {
         // TODO: What the heck do we do with this???
       } else if (ir instanceof ParameterRef) {
-        if (!ignoreThisDataType(ir.getType())) {
+        if (!ignoreThisDataType(ir.getType(myScene))) {
           // <Local, ParameterRef and sources>
           handleFlowsToValue(is.getLeftOp(), ir);
         }
       } else if (ir instanceof ThisRef) {
-        if (!ignoreThisDataType(ir.getType())) {
+        if (!ignoreThisDataType(ir.getType(myScene))) {
           // <Local, ThisRef and sources>
           handleFlowsToValue(is.getLeftOp(), ir);
         }
@@ -656,7 +649,7 @@ public class SmartMethodInfoFlowAnalysis {
       if (rv instanceof Constant) {
         // No (interesting) data flow
       } else if (rv instanceof Local) {
-        if (!ignoreThisDataType(rv.getType())) {
+        if (!ignoreThisDataType(rv.getType(myScene))) {
           // <ReturnRef, sources of Local>
           handleFlowsToValue(returnRef, rv);
         }
@@ -708,24 +701,24 @@ public class SmartMethodInfoFlowAnalysis {
 
       if (rv instanceof Local) {
         sources.add(rv);
-        interestingFlow = !ignoreThisDataType(rv.getType());
+        interestingFlow = !ignoreThisDataType(rv.getType(myScene));
       } else if (rv instanceof Constant) {
         sources.add(rv);
-        interestingFlow = !ignoreThisDataType(rv.getType());
+        interestingFlow = !ignoreThisDataType(rv.getType(myScene));
       } else if (rv instanceof ArrayRef) // data flows from the base's data structure
       {
         ArrayRef ar = (ArrayRef) rv;
         sources.add(ar.getBase());
-        interestingFlow = !ignoreThisDataType(ar.getType());
+        interestingFlow = !ignoreThisDataType(ar.getType(myScene));
       } else if (rv instanceof StaticFieldRef) {
         sources.add(rv);
-        interestingFlow = !ignoreThisDataType(rv.getType());
+        interestingFlow = !ignoreThisDataType(rv.getType(myScene));
       } else if (rv instanceof InstanceFieldRef) {
         InstanceFieldRef ifr = (InstanceFieldRef) rv;
         if (ifr.getBase() == thisLocal) // data flows from the field ref
         {
           sources.add(rv);
-          interestingFlow = !ignoreThisDataType(rv.getType());
+          interestingFlow = !ignoreThisDataType(rv.getType(myScene));
         } else if (includeInnerFields) {
           if (false) // isNonRefType(rv.getType()) ) // TODO: double check this policy
           {
@@ -737,37 +730,37 @@ public class SmartMethodInfoFlowAnalysis {
             sources.add(rv);
             handleInnerField(rv);
           }
-          interestingFlow = !ignoreThisDataType(rv.getType());
+          interestingFlow = !ignoreThisDataType(rv.getType(myScene));
         } else // data flows from the base's data structure
         {
           sources.add(ifr.getBase());
-          interestingFlow = !ignoreThisDataType(ifr.getType());
+          interestingFlow = !ignoreThisDataType(ifr.getType(myScene));
         }
       } else if (rv instanceof AnyNewExpr) {
         sources.add(rv);
-        interestingFlow = !ignoreThisDataType(rv.getType());
+        interestingFlow = !ignoreThisDataType(rv.getType(myScene));
       } else if (rv instanceof BinopExpr) // does this include compares and others??? yes
       {
         BinopExpr be = (BinopExpr) rv;
         sources.add(be.getOp1());
         sources.add(be.getOp2());
-        interestingFlow = !ignoreThisDataType(be.getType());
+        interestingFlow = !ignoreThisDataType(be.getType(myScene));
       } else if (rv instanceof CastExpr) {
         CastExpr ce = (CastExpr) rv;
         sources.add(ce.getOp());
-        interestingFlow = !ignoreThisDataType(ce.getType());
+        interestingFlow = !ignoreThisDataType(ce.getType(myScene));
       } else if (rv instanceof InstanceOfExpr) {
         InstanceOfExpr ioe = (InstanceOfExpr) rv;
         sources.add(ioe.getOp());
-        interestingFlow = !ignoreThisDataType(ioe.getType());
+        interestingFlow = !ignoreThisDataType(ioe.getType(myScene));
       } else if (rv instanceof UnopExpr) {
         UnopExpr ue = (UnopExpr) rv;
         sources.add(ue.getOp());
-        interestingFlow = !ignoreThisDataType(ue.getType());
+        interestingFlow = !ignoreThisDataType(ue.getType(myScene));
       } else if (rv instanceof InvokeExpr) {
         InvokeExpr ie = (InvokeExpr) rv;
         sources.addAll(handleInvokeExpr(ie, as));
-        interestingFlow = !ignoreThisDataType(ie.getType());
+        interestingFlow = !ignoreThisDataType(ie.getType(myScene));
       }
 
       if (interestingFlow) {

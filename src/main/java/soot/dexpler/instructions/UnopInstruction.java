@@ -49,12 +49,12 @@ import soot.options.Options;
 public class UnopInstruction extends TaggedInstruction {
 
   private Jimple myJimple;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
-  public UnopInstruction(Instruction instruction, int codeAdress, Options myOptions, Jimple myJimple, ConstantFactory constancFactory) {
+  public UnopInstruction(Instruction instruction, int codeAdress, Options myOptions, Jimple myJimple, ConstantFactory constantFactory) {
     super(instruction, codeAdress, myOptions);
     this.myJimple = myJimple;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
   }
 
   @Override
@@ -123,7 +123,7 @@ public class UnopInstruction extends TaggedInstruction {
    * @return
    */
   private Value getNotIntExpr(Local source) {
-    return myJimple.newXorExpr(source, constancFactory.createIntConstant(-1));
+    return myJimple.newXorExpr(source, constantFactory.createIntConstant(-1));
 
   }
 
@@ -134,7 +134,7 @@ public class UnopInstruction extends TaggedInstruction {
    * @return
    */
   private Value getNotLongExpr(Local source) {
-    return myJimple.newXorExpr(source, constancFactory.createLongConstant(-1l));
+    return myJimple.newXorExpr(source, constantFactory.createLongConstant(-1l));
 
   }
 

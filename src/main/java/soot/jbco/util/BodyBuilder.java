@@ -111,9 +111,9 @@ public class BodyBuilder {
 
   public static Local buildThisLocal(PatchingChain<Unit> units, ThisRef tr, Collection<Local> locals, Jimple jimple) {
     Jimple myJimple = jimple;
-    Local ths = myJimple.newLocal("ths", tr.getType());
+    Local ths = myJimple.newLocal("ths", tr.getType(myScene));
     locals.add(ths);
-    units.add(myJimple.newIdentityStmt(ths, myJimple.newThisRef((RefType) tr.getType())));
+    units.add(myJimple.newIdentityStmt(ths, myJimple.newThisRef((RefType) tr.getType(myScene))));
     return ths;
   }
 

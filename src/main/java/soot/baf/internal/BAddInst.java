@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BAddInst extends AbstractOpTypeInst implements AddInst {
   public BAddInst(Type opType) {
-    super(primeTypeCollector.getRefType(), opType, myBaf);
+    super(primTypeCollector.getRefType(), opType, myBaf);
   }
 
   public int getInCount() {

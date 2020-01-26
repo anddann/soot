@@ -27,15 +27,15 @@ import soot.jimple.DoubleConstant;
 
 public class DoubleConstantValueTag extends ConstantValueTag {
   private final double value;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
   public double getDoubleValue() {
     return value;
   }
 
-  public DoubleConstantValueTag(double val, ConstantFactory constancFactory) {
+  public DoubleConstantValueTag(double val, ConstantFactory constantFactory) {
     this.value = val;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
   }
 
   public String toString() {
@@ -44,7 +44,7 @@ public class DoubleConstantValueTag extends ConstantValueTag {
 
   @Override
   public DoubleConstant getConstant() {
-    return constancFactory.createDoubleConstant(value);
+    return constantFactory.createDoubleConstant(value);
   }
 
   @Override

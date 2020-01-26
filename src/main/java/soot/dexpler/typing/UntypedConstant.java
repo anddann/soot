@@ -22,6 +22,7 @@ package soot.dexpler.typing;
  * #L%
  */
 
+import soot.Scene;
 import soot.Type;
 import soot.Value;
 import soot.jimple.Constant;
@@ -34,7 +35,7 @@ public abstract class UntypedConstant extends Constant {
   private static final long serialVersionUID = -742448859930407635L;
 
   @Override
-  public Type getType() {
+  public Type getType(Scene myScene) {
     throw new RuntimeException("no type yet!");
   }
 

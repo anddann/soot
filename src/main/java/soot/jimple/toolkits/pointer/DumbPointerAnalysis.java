@@ -24,13 +24,7 @@ package soot.jimple.toolkits.pointer;
 
 import com.google.inject.Inject;
 
-import soot.Context;
-import soot.Local;
-import soot.PointsToAnalysis;
-import soot.PointsToSet;
-import soot.RefType;
-import soot.SootField;
-import soot.Type;
+import soot.*;
 import soot.jimple.FullObjectFactory;
 
 /**
@@ -39,15 +33,17 @@ import soot.jimple.FullObjectFactory;
 public class DumbPointerAnalysis implements PointsToAnalysis {
 
   private FullObjectFactory myFullObjectSet;
+  private Scene myScene;
 
   @Inject
-  public DumbPointerAnalysis(FullObjectFactory myFullObjectSet) {
+  public DumbPointerAnalysis(FullObjectFactory myFullObjectSet, Scene myScene) {
     this.myFullObjectSet = myFullObjectSet;
+    this.myScene = myScene;
   }
 
   /** Returns the set of objects pointed to by variable l. */
   public PointsToSet reachingObjects(Local l) {
-    Type t = l.getType();
+    Type t = l.getType(myScene);
     if (t instanceof RefType) {
       return myFullObjectSet.createFullObjectSet((RefType) t);
     }

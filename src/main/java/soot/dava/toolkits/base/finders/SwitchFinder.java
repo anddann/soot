@@ -29,7 +29,7 @@ import java.util.LinkedList;
 import java.util.TreeSet;
 
 import com.google.inject.Inject;
-import soot.G;
+import soot.PrimTypeCollector;
 import soot.Value;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
@@ -38,6 +38,7 @@ import soot.dava.internal.SET.SETNode;
 import soot.dava.internal.SET.SETSwitchNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.asg.AugmentedStmtGraph;
+import soot.grimp.Grimp;
 import soot.jimple.LookupSwitchStmt;
 import soot.jimple.Stmt;
 import soot.jimple.TableSwitchStmt;
@@ -59,7 +60,7 @@ public class SwitchFinder implements FactFinder {
   private LinkedList targetList, snTargetList, tSuccList;
   private HashMap index2target, tSucc2indexSet, tSucc2target, tSucc2Body;
 
-  public void find(DavaBody davaBody, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
+  public void find(DavaBody davaBody, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException {
     myDava.log("SwitchFinder::find()");
 
     final String defaultStr = "default";
@@ -239,7 +240,7 @@ public class SwitchFinder implements FactFinder {
         }
       }
 
-      SET.nest(new SETSwitchNode(as, key, body, switchNodeList, junkBody));
+      SET.nest(new SETSwitchNode(as, key, body, switchNodeList, junkBody), myExceptionFinder);
     }
   }
 

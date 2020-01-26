@@ -27,7 +27,6 @@ import java.util.Iterator;
 import soot.Body;
 import soot.Hierarchy;
 import soot.RefType;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Value;
@@ -186,8 +185,8 @@ public class InlinerSafetyManager {
     InvokeExpr ie = toInline.getInvokeExpr();
     Value base = (ie instanceof InstanceInvokeExpr) ? ((InstanceInvokeExpr) ie).getBase() : null;
 
-    if (base != null && base.getType() instanceof RefType
-        && invokeThrowsAccessErrorIn(((RefType) base.getType()).getSootClass(), inlinee, container)) {
+    if (base != null && base.getType(myScene) instanceof RefType
+        && invokeThrowsAccessErrorIn(((RefType) base.getType(myScene)).getSootClass(), inlinee, container)) {
       return false;
     }
 

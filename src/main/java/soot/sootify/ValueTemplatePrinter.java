@@ -381,7 +381,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     suggestVariableName("type");
     String lhsName = varName;
     ttp.setVariableName(varName);
-    v.getType().apply(ttp);
+    v.getType(myScene).apply(ttp);
 
     String rhsName = printValueAssignment(v.getOp(), "op");
 
@@ -396,7 +396,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     suggestVariableName("type");
     String lhsName = varName;
     ttp.setVariableName(varName);
-    v.getType().apply(ttp);
+    v.getType(myScene).apply(ttp);
 
     String rhsName = printValueAssignment(v.getOp(), "op");
 
@@ -416,7 +416,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     suggestVariableName("type");
     String lhsName = varName;
     ttp.setVariableName(varName);
-    v.getType().apply(ttp);
+    v.getType(myScene).apply(ttp);
 
     p.println("Value " + oldName + " = myJimple.newNewArrayExpr(" + lhsName + ", " + sizeName + ");");
     varName = oldName;
@@ -427,7 +427,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     String oldName = varName;
 
     ttp.setVariableName("arrayType");
-    v.getType().apply(ttp);
+    v.getType(myScene).apply(ttp);
 
     p.println("List<IntConstant> sizes = new LinkedList<IntConstant>();");
     int i = 0;
@@ -450,7 +450,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
     suggestVariableName("type");
     String typeName = varName;
     ttp.setVariableName(varName);
-    v.getType().apply(ttp);
+    v.getType(myScene).apply(ttp);
 
     p.println("Value " + oldName + " = myJimple.newNewExpr(" + typeName + ");");
     varName = oldName;
@@ -531,7 +531,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
   public void caseParameterRef(ParameterRef v) {
     String oldName = varName;
 
-    Type paramType = v.getType();
+    Type paramType = v.getType(myScene);
     suggestVariableName("paramType");
     String paramTypeName = this.varName;
     ttp.setVariableName(paramTypeName);
@@ -553,7 +553,7 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
 
     String oldName = varName;
 
-    Type paramType = v.getType();
+    Type paramType = v.getType(myScene);
     suggestVariableName("type");
     String typeName = this.varName;
     ttp.setVariableName(typeName);

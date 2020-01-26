@@ -163,12 +163,12 @@ public class DalvikThrowAnalysis extends UnitThrowAnalysis {
    * @param g
    *          guarantees that the constructor may only be called from {@link Singletons}.
    * @param myScene1
-   * @param primeTypeCollector
+   * @param primTypeCollector
    * @param constantFactory
    */
   @Inject
-  public DalvikThrowAnalysis(ThrowableSet.Manager mgr, Scene myScene, PrimTypeCollector primeTypeCollector, ConstantFactory constantFactory) {
-    super(mgr,myScene, primeTypeCollector, constantFactory);
+  public DalvikThrowAnalysis(ThrowableSet.Manager mgr, Scene myScene, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+    super(mgr,myScene, primTypeCollector, constantFactory);
     this.myScene = myScene;
   }
 
@@ -296,7 +296,7 @@ public class DalvikThrowAnalysis extends UnitThrowAnalysis {
           // No exception are thrown for primitive casts
           return;
         }
-        Type fromType = expr.getOp().getType();
+        Type fromType = expr.getOp().getType(myScene);
         Type toType = expr.getCastType();
         result = result.add(mgr.RESOLVE_CLASS_ERRORS);
         if (toType instanceof RefLikeType) {

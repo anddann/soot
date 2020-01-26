@@ -24,8 +24,8 @@ package soot.jimple;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import soot.DoubleType;
 import soot.PrimTypeCollector;
+import soot.Scene;
 import soot.Type;
 import soot.util.Switch;
 
@@ -168,7 +168,7 @@ public class DoubleConstant extends RealConstant {
   }
 
   @Override
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return primTypeCollector.getDoubleType();
   }
 

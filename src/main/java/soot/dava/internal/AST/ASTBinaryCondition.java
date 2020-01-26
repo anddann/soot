@@ -22,16 +22,23 @@ package soot.dava.internal.AST;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.UnitPrinter;
 import soot.dava.toolkits.base.AST.analysis.Analysis;
 import soot.dava.toolkits.base.misc.ConditionFlipper;
+import soot.grimp.Grimp;
 import soot.jimple.ConditionExpr;
+import soot.jimple.Jimple;
 
 public class ASTBinaryCondition extends ASTUnaryBinaryCondition {
   ConditionExpr condition;
+  private Grimp myGrimp;
+  private PrimTypeCollector primTypeCollector;
 
-  public ASTBinaryCondition(ConditionExpr condition) {
+  public ASTBinaryCondition(ConditionExpr condition, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
     this.condition = condition;
+    this.myGrimp = myGrimp;
+    this.primTypeCollector = primTypeCollector;
   }
 
   public ConditionExpr getConditionExpr() {
@@ -47,11 +54,11 @@ public class ASTBinaryCondition extends ASTUnaryBinaryCondition {
   }
 
   public void toString(UnitPrinter up) {
-    (this.condition.getType().getMyScene().getMyJimple().newConditionExprBox(condition)).toString(up);
+    (myGrimp.newConditionExprBox(condition)).toString(up);
   }
 
   public void flip() {
-    this.condition = ConditionFlipper.flip(condition, myGrimp, primeTypeCollector);
+    this.condition = ConditionFlipper.flip(condition, myGrimp, primTypeCollector);
   }
 
   /*

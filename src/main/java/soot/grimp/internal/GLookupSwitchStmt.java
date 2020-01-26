@@ -54,7 +54,7 @@ public class GLookupSwitchStmt extends JLookupSwitchStmt {
     List clonedLookupValues = new ArrayList(lookupValueCount);
 
     for (int i = 0; i < lookupValueCount; i++) {
-      clonedLookupValues.add(i, constancFactory.createIntConstant(getLookupValue(i)));
+      clonedLookupValues.add(i, constantFactory.createIntConstant(getLookupValue(i)));
     }
 
     return new GLookupSwitchStmt(Grimp.cloneIfNecessary(getKey()), clonedLookupValues, getTargets(), getDefaultTarget());

@@ -55,7 +55,7 @@ public class IfTestzInstruction extends ConditionalJumpInstruction {
       /*
        * int op = instruction.getOpcode().value; switch (op) { case 0x38: case 0x39:
        * //myDalvikTyper().addConstraint(condition.getOp1Box(), condition.getOp2Box()); break; case 0x3a: case 0x3b: case
-       * 0x3c: case 0x3d: myDalvikTyper().setType(condition.getOp1Box(), primeTypeCollector.getBooleanType(), true); break; default: throw new
+       * 0x3c: case 0x3d: myDalvikTyper().setType(condition.getOp1Box(), primTypeCollector.getBooleanType(), true); break; default: throw new
        * RuntimeException("error: unknown op: 0x"+ Integer.toHexString(op)); }
        */
     }

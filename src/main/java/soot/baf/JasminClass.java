@@ -84,7 +84,7 @@ public class JasminClass extends AbstractJasminClass {
   private static final Logger logger = LoggerFactory.getLogger(JasminClass.class);
 
   public JasminClass(SootClass sootClass) {
-    super(sootClass, myOptions);
+    super(sootClass, myOptions, myScene);
   }
 
   @Override
@@ -223,7 +223,7 @@ public class JasminClass extends AbstractJasminClass {
         for (Local local : body.getLocals()) {
           if (assignedLocals.add(local)) {
             localToSlot.put(local, new Integer(localCount));
-            localCount += sizeOfType(local.getType());
+            localCount += sizeOfType(local.getType(myScene));
           }
         }
 
@@ -1363,7 +1363,7 @@ public class JasminClass extends AbstractJasminClass {
         String bsmArgString = "";
         for (Iterator<Value> iterator = i.getBootstrapArgs().iterator(); iterator.hasNext();) {
           Value val = iterator.next();
-          bsmArgString += "(" + jasminDescriptorOf(val.getType()) + ")";
+          bsmArgString += "(" + jasminDescriptorOf(val.getType(myScene)) + ")";
           bsmArgString += escape(val.toString());
 
           if (iterator.hasNext()) {
@@ -1421,7 +1421,7 @@ public class JasminClass extends AbstractJasminClass {
 
       @Override
       public void caseCmplInst(CmplInst i) {
-        if (i.getOpType().equals(primeTypeCollector.getFloatType())) {
+        if (i.getOpType().equals(primTypeCollector.getFloatType())) {
           emit("fcmpl");
         } else {
           emit("dcmpl");
@@ -1430,7 +1430,7 @@ public class JasminClass extends AbstractJasminClass {
 
       @Override
       public void caseCmpgInst(CmpgInst i) {
-        if (i.getOpType().equals(primeTypeCollector.getFloatType())) {
+        if (i.getOpType().equals(primTypeCollector.getFloatType())) {
           emit("fcmpg");
         } else {
           emit("dcmpg");

@@ -110,7 +110,7 @@ public class CollectConstants extends SceneTransformer implements IJbcoTransform
           final Value value = useBox.getValue();
           if (value instanceof Constant) {
             final Constant constant = (Constant) value;
-            Type type = constant.getType();
+            Type type = constant.getType(myScene);
             List<Constant> constants = typeToConstants.computeIfAbsent(type, t -> new ArrayList<>());
 
             if (!constants.contains(constant)) {
@@ -190,7 +190,7 @@ public class CollectConstants extends SceneTransformer implements IJbcoTransform
     Body b;
     boolean newInit = false;
     if (!sc.declaresMethodByName(SootMethod.staticInitializerName)) {
-      SootMethod m = myScene.makeSootMethod(SootMethod.staticInitializerName, emptyList(), primeTypeCollector.getVoidType(), Modifier.STATIC);
+      SootMethod m = myScene.makeSootMethod(SootMethod.staticInitializerName, emptyList(), primTypeCollector.getVoidType(), Modifier.STATIC);
       sc.addMethod(m);
       b = myJimple.newBody(m);
       m.setActiveBody(b);

@@ -24,9 +24,12 @@ package soot.jimple.internal;
 
 import java.util.List;
 
+import soot.PrimTypeCollector;
 import soot.RefType;
+import soot.Scene;
 import soot.Unit;
 import soot.baf.Baf;
+import soot.jimple.ConstantFactory;
 import soot.jimple.ConvertToBaf;
 import soot.jimple.JimpleToBafContext;
 
@@ -35,7 +38,7 @@ public class JNewExpr extends AbstractNewExpr implements ConvertToBaf {
     this.type = type;
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     Unit u = myBaf.newNewInst(getBaseType());
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);

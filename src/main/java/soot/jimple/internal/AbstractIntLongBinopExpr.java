@@ -22,17 +22,7 @@ package soot.jimple.internal;
  * #L%
  */
 
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.IntType;
-import soot.LongType;
-import soot.PrimTypeCollector;
-import soot.ShortType;
-import soot.Type;
-import soot.UnknownType;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 
 @SuppressWarnings("serial")
 abstract public class AbstractIntLongBinopExpr extends AbstractBinopExpr {
@@ -46,13 +36,13 @@ abstract public class AbstractIntLongBinopExpr extends AbstractBinopExpr {
         || t.equals(primTypeCollector.getBooleanType());
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     Value op1 = op1Box.getValue();
     Value op2 = op2Box.getValue();
 
-    if (isIntLikeType(op1.getType(),primTypeCollector) && isIntLikeType(op2.getType(),primTypeCollector)) {
+    if (isIntLikeType(op1.getType(myScene),primTypeCollector) && isIntLikeType(op2.getType(myScene),primTypeCollector)) {
       return primTypeCollector.getIntType();
-    } else if (op1.getType().equals(primTypeCollector.getLongType()) && op2.getType().equals(primTypeCollector.getLongType())) {
+    } else if (op1.getType(myScene).equals(primTypeCollector.getLongType()) && op2.getType(myScene).equals(primTypeCollector.getLongType())) {
       return primTypeCollector.getLongType();
     } else {
       return primTypeCollector.getUnknownType();

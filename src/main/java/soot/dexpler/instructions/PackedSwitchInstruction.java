@@ -61,7 +61,7 @@ public class PackedSwitchInstruction extends SwitchInstruction {
     List<IntConstant> lookupValues = new ArrayList<IntConstant>();
     List<Unit> targets = new ArrayList<Unit>();
     for (SwitchElement se : seList) {
-      lookupValues.add(constancFactory.createIntConstant(se.getKey()));
+      lookupValues.add(constantFactory.createIntConstant(se.getKey()));
       int offset = se.getOffset();
       targets.add(body.instructionAtAddress(codeAddress + offset).getUnit());
     }
@@ -69,7 +69,7 @@ public class PackedSwitchInstruction extends SwitchInstruction {
     setUnit(switchStmt);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(switchStmt.getKeyBox(), primeTypeCollector.getIntType(), true);
+      myDalvikTyper().setType(switchStmt.getKeyBox(), primTypeCollector.getIntType(), true);
     }
 
     return switchStmt;

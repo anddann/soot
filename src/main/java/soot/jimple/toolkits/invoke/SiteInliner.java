@@ -147,7 +147,7 @@ public class SiteInliner {
         // For instance, Bottle.price_static takes a cost.
         // Cost is an interface implemented by Bottle.
         SootClass localType, parameterType;
-        localType = ((RefType) ((InstanceInvokeExpr) ie).getBase().getType()).getSootClass();
+        localType = ((RefType) ((InstanceInvokeExpr) ie).getBase().getType(myScene)).getSootClass();
         parameterType = inlinee.getDeclaringClass();
 
         if (localType.isInterface() || hierarchy.isClassSuperclassOf(localType, parameterType)) {

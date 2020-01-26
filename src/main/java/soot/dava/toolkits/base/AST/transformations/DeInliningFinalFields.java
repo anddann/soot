@@ -33,7 +33,6 @@ import soot.DoubleType;
 import soot.FloatType;
 import soot.IntType;
 import soot.LongType;
-import soot.Scene;
 import soot.ShortType;
 import soot.SootClass;
 import soot.SootField;
@@ -261,7 +260,7 @@ public class DeInliningFinalFields extends DepthFirstAdapter {
           return null;
         }
 
-        Type valType = ((IntConstant) val).getType();
+        Type valType = ((IntConstant) val).getType(myScene);
 
         Integer myInt = null;
         try {

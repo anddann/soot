@@ -110,15 +110,15 @@ public class DexMethod {
         Body b = myJimple.newBody(m);
         try {
           // add the body of this code item
-          DexBody dexBody = new DexBody(dexFile, method, declaringClass.getType(), myJimple, constancFactory, dalivkTyper, primTypeCollector, myScene, myOptions, myPhaseOptions, myDalvikTyper, myDeadAssignmentEliminator, myUnusedLocalEliminator, myTypeAssigner, myLocalPacker, myPackManager, myFieldStaticnessCorrector, myMethodStaticnessCorrector, myTrapTightener, myTrapMinimizer, myAggregator, myConditionalBranchFolder, myConstantCastEliminator, myIdentityCastEliminator, myIdentityOperationEliminator, myUnreachableCodeEliminator, myNopEliminator, myDalvikThrowAnalysis, myManager, myPhaseDumper, myInteractionHandler, myPedanticThrowAnalysis, constantFactory, mySootResolver);
+          DexBody dexBody = new DexBody(dexFile, method, declaringClass.getType(), myJimple, constantFactory, dalivkTyper, primTypeCollector, myScene, myOptions, myPhaseOptions, myDalvikTyper, myDeadAssignmentEliminator, myUnusedLocalEliminator, myTypeAssigner, myLocalPacker, myPackManager, myFieldStaticnessCorrector, myMethodStaticnessCorrector, myTrapTightener, myTrapMinimizer, myAggregator, myConditionalBranchFolder, myConstantCastEliminator, myIdentityCastEliminator, myIdentityOperationEliminator, myUnreachableCodeEliminator, myNopEliminator, myDalvikThrowAnalysis, myManager, myPhaseDumper, myInteractionHandler, myPedanticThrowAnalysis, mySootResolver);
           dexBody.jimplify(b, m);
         } catch (InvalidDalvikBytecodeException e) {
           String msg = "Warning: Invalid bytecode in method " + m + ": " + e;
           logger.debug("" + msg);
-          Util.emptyBody(b, primeTypeCollector, myJimple, constancFactory);
+          Util.emptyBody(b, primTypeCollector, myJimple, constantFactory);
           Util.addExceptionAfterUnit(b, "java.lang.RuntimeException", b.getUnits().getLast(),
               "Soot has detected that this method contains invalid Dalvik bytecode,"
-                  + " which would have throw an exception at runtime. [" + msg + "]", myScene, myJimple, constancFactory);
+                  + " which would have throw an exception at runtime. [" + msg + "]", myScene, myJimple, constantFactory);
           TypemyAssigner.transform(b);
         }
         m.setActiveBody(b);

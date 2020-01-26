@@ -25,6 +25,9 @@ package soot.dava.internal.SET;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.AST.ASTUnconditionalLoopNode;
 import soot.dava.internal.asg.AugmentedStmt;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
+import soot.jimple.Jimple;
 import soot.util.IterableSet;
 
 public class SETUnconditionalWhileNode extends SETCycleNode {
@@ -37,8 +40,8 @@ public class SETUnconditionalWhileNode extends SETCycleNode {
     return new IterableSet();
   }
 
-  public ASTNode emit_AST() {
-    return new ASTUnconditionalLoopNode(get_Label(), emit_ASTBody(body2childChain.get(subBodies.get(0))));
+  public ASTNode emit_AST(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
+    return new ASTUnconditionalLoopNode(get_Label(), emit_ASTBody(body2childChain.get(subBodies.get(0)), myTryContentsFinder, myASTWalker, myJimple));
   }
 
   public AugmentedStmt get_EntryStmt() {

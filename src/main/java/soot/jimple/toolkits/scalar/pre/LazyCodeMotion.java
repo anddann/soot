@@ -207,7 +207,7 @@ public class LazyCodeMotion extends BodyTransformer {
           /* get the unic helper-name for this expression */
           Local helper = expToHelper.get(equiVal);
           if (helper == null) {
-            helper = localCreation.newLocal(equiVal.getType());
+            helper = localCreation.newLocal(equiVal.getType(myScene));
             expToHelper.put(equiVal, helper);
           }
 

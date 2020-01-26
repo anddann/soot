@@ -22,6 +22,7 @@ package soot.jimple.internal;
  * #L%
  */
 
+import soot.Scene;
 import soot.Type;
 import soot.Value;
 import soot.baf.Baf;
@@ -44,21 +45,21 @@ public class JUshrExpr extends AbstractJimpleIntLongBinopExpr implements UshrExp
   }
 
   Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newUshrInst(this.getOp1().getType());
+    return myBaf.newUshrInst(this.getOp1().getType(myScene));
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     Value op1 = op1Box.getValue();
     Value op2 = op2Box.getValue();
 
-    if (!isIntLikeType(op2.getType())) {
+    if (!isIntLikeType(op2.getType(myScene))) {
       return primTypeCollector.getUnknownType();
     }
 
-    if (isIntLikeType(op1.getType())) {
+    if (isIntLikeType(op1.getType(myScene))) {
       return primTypeCollector.getIntType();
     }
-    if (op1.getType().equals(primTypeCollector.getLongType())) {
+    if (op1.getType(myScene).equals(primTypeCollector.getLongType())) {
       return primTypeCollector.getLongType();
     }
 

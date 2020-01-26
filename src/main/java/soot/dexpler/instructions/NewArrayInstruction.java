@@ -37,7 +37,6 @@ import org.jf.dexlib2.iface.instruction.formats.Instruction22c;
 import org.jf.dexlib2.iface.reference.TypeReference;
 
 import soot.ArrayType;
-import soot.IntType;
 import soot.Local;
 import soot.Type;
 import soot.Value;
@@ -81,8 +80,8 @@ public class NewArrayInstruction extends DexlibAbstractInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(newArrayExpr.getSizeBox(), primeTypeCollector.getIntType(), true);
-      myDalvikTyper().setType(assign.getLeftOpBox(), newArrayExpr.getType(), false);
+      myDalvikTyper().setType(newArrayExpr.getSizeBox(), primTypeCollector.getIntType(), true);
+      myDalvikTyper().setType(assign.getLeftOpBox(), newArrayExpr.getType(myScene), false);
     }
   }
 

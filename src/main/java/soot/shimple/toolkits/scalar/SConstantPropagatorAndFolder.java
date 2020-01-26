@@ -295,7 +295,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
 
       while (localsIt.hasNext()) {
         Local local = (Local) localsIt.next();
-        localToConstant.put(local, constancFactory.createTopConstant());
+        localToConstant.put(local, constantFactory.createTopConstant());
       }
     }
 
@@ -316,7 +316,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
    **/
   protected Object entryInitialFlow() {
     FlowSet entrySet = (FlowSet) emptySet.emptySet();
-    entrySet.add(constancFactory.createTopConstant());
+    entrySet.add(constantFactory.createTopConstant());
     return entrySet;
   }
 
@@ -395,7 +395,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
       if (s instanceof IfStmt) {
         IfStmt ifStmt = (IfStmt) s;
         Value cond = ifStmt.getCondition();
-        Constant constant = SEvaluator.getFuzzyConstantValueOf(cond, localToConstant, constancFactory);
+        Constant constant = SEvaluator.getFuzzyConstantValueOf(cond, localToConstant, constantFactory);
 
         // flow both ways
         if (constant instanceof BottomConstant) {
@@ -413,8 +413,8 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
 
         conservative = false;
 
-        Constant trueC = constancFactory.createIntConstant(1);
-        Constant falseC = constancFactory.createIntConstant(0);
+        Constant trueC = constantFactory.createIntConstant(1);
+        Constant falseC = constantFactory.createIntConstant(0);
 
         if (constant.equals(trueC)) {
           branch = true;
@@ -433,7 +433,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
       if (s instanceof TableSwitchStmt) {
         TableSwitchStmt table = (TableSwitchStmt) s;
         Value keyV = table.getKey();
-        Constant keyC = SEvaluator.getFuzzyConstantValueOf(keyV, localToConstant, constancFactory);
+        Constant keyC = SEvaluator.getFuzzyConstantValueOf(keyV, localToConstant, constantFactory);
 
         // flow all branches
         if (keyC instanceof BottomConstant) {
@@ -480,7 +480,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
       if (s instanceof LookupSwitchStmt) {
         LookupSwitchStmt lookup = (LookupSwitchStmt) s;
         Value keyV = lookup.getKey();
-        Constant keyC = SEvaluator.getFuzzyConstantValueOf(keyV, localToConstant, constancFactory);
+        Constant keyC = SEvaluator.getFuzzyConstantValueOf(keyV, localToConstant, constantFactory);
 
         // flow all branches
         if (keyC instanceof BottomConstant) {
@@ -570,7 +570,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
     /* update assumptions */
 
     Value rightOp = dStmt.getRightOp();
-    Constant constant = SEvaluator.getFuzzyConstantValueOf(rightOp, localToConstant, constancFactory);
+    Constant constant = SEvaluator.getFuzzyConstantValueOf(rightOp, localToConstant, constantFactory);
 
     if (!merge(local, constant)) {
       return null;
@@ -600,7 +600,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
     }
 
     // not equal
-    localToConstant.put(local, constancFactory.createBottomConstant());
+    localToConstant.put(local, constantFactory.createBottomConstant());
     return true;
   }
 }

@@ -40,7 +40,6 @@ import soot.Local;
 import soot.PointsToAnalysis;
 import soot.PointsToSet;
 import soot.PrimType;
-import soot.Scene;
 import soot.SootMethod;
 import soot.Type;
 import soot.Unit;
@@ -51,7 +50,6 @@ import soot.jimple.Constant;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InvokeExpr;
-import soot.jimple.Jimple;
 import soot.jimple.NewExpr;
 import soot.jimple.Ref;
 import soot.jimple.ReturnStmt;
@@ -79,7 +77,7 @@ public class IFDSPossibleTypes
           final Value right = defnStmt.getRightOp();
           final Value left = defnStmt.getLeftOp();
           // won't track primitive-typed variables
-          if (right.getType() instanceof PrimType) {
+          if (right.getType(myScene) instanceof PrimType) {
             return Identity.v();
           }
 
@@ -88,7 +86,7 @@ public class IFDSPossibleTypes
               public Set<Pair<Value, Type>> computeTargets(Pair<Value, Type> source) {
                 if (source == zeroValue()) {
                   Set<Pair<Value, Type>> res = new LinkedHashSet<Pair<Value, Type>>();
-                  res.add(new Pair<Value, Type>(left, right.getType()));
+                  res.add(new Pair<Value, Type>(left, right.getType(myScene)));
                   res.add(zeroValue());
                   return res;
                 } else if (source.getO1() instanceof Local && source.getO1().equivTo(left)) {

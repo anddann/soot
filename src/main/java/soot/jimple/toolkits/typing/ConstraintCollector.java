@@ -451,7 +451,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
       TypeVariable left = resolver.typeVariable((Local) l);
 
       if (!(r instanceof CaughtExceptionRef)) {
-        TypeVariable right = resolver.typeVariable(r.getType());
+        TypeVariable right = resolver.typeVariable(r.getType(myScene));
         right.addParent(left);
       } else {
         List<RefType> exceptionTypes = TrapManager.getExceptionTypesOf(stmt, stmtBody);

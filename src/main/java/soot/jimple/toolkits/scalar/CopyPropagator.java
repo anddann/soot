@@ -157,7 +157,7 @@ public class CopyPropagator extends BodyTransformer {
 
             // We force propagating nulls. If a target can only be
             // null due to typing, we always inline that constant.
-            if (!(l.getType() instanceof NullType)) {
+            if (!(l.getType(myScene) instanceof NullType)) {
               if (options.only_regular_locals() && l.getName().startsWith("$")) {
                 continue;
               }

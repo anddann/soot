@@ -49,18 +49,17 @@ public class InstructionFactory {
    *          the corresponding dexlib instruction
    * @param codeAddress
    * @param jimple
-   * @param constancFactory
+   * @param constantFactory
    * @param dalivkTyper
    * @param primTypeCollector
    * @param myScene
    * @param myJimple
    * @param myOptions
    * @param myDalvikTyper
-   * @param constantFactory
    * @param mySootResolver
    */
-  public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress, Jimple jimple, ConstantFactory constancFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Jimple myJimple, Options myOptions, DalvikTyper myDalvikTyper, ConstantFactory constantFactory, SootResolver mySootResolver) {
-    return fromOpcode(instruction.getOpcode(), instruction, codeAddress, constancFactory, jimple, dalivkTyper, primTypeCollector,  myScene, myOptions, myJimple, myDalvikTyper, constantFactory, mySootResolver);
+  public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress, Jimple jimple, ConstantFactory constantFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Jimple myJimple, Options myOptions, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
+    return fromOpcode(instruction.getOpcode(), instruction, codeAddress, constantFactory, jimple, dalivkTyper, primTypeCollector,  myScene, myOptions, myJimple, myDalvikTyper, mySootResolver);
   }
 
   /**
@@ -70,7 +69,7 @@ public class InstructionFactory {
    * @param instruction
    *          the corresponding dexlib instruction
    * @param codeAddress
-   * @param constancFactory
+   * @param constantFactory
    * @param jimple
    * @param dalivkTyper
    * @param primTypeCollector
@@ -78,10 +77,9 @@ public class InstructionFactory {
    * @param myOptions
    * @param myJimple
    * @param myDalvikTyper
-   * @param constantFactory
    * @param mySootResolver
    */
-  public static DexlibAbstractInstruction fromOpcode(Opcode op, Instruction instruction, int codeAddress, ConstantFactory constancFactory, Jimple jimple, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, Jimple myJimple, DalvikTyper myDalvikTyper, ConstantFactory constantFactory, SootResolver mySootResolver) {
+  public static DexlibAbstractInstruction fromOpcode(Opcode op, Instruction instruction, int codeAddress, ConstantFactory constantFactory, Jimple jimple, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, Jimple myJimple, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
     switch (op) {
 
       case SPARSE_SWITCH_PAYLOAD:
@@ -127,14 +125,14 @@ public class InstructionFactory {
       case CONST_WIDE_16:
       case CONST_WIDE_32:
       case CONST_WIDE_HIGH16:
-        return new ConstInstruction(instruction, codeAddress, constancFactory,jimple);
+        return new ConstInstruction(instruction, codeAddress, constantFactory,jimple);
 
       case CONST_STRING:
       case CONST_STRING_JUMBO:
         return new ConstStringInstruction(instruction, codeAddress);
 
       case CONST_CLASS:
-        return new ConstClassInstruction(instruction, codeAddress, myOptions, constancFactory, myJimple, myDalvikTyper);
+        return new ConstClassInstruction(instruction, codeAddress, myOptions, constantFactory, myJimple, myDalvikTyper);
 
       case MONITOR_ENTER:
         return new MonitorEnterInstruction(instruction, codeAddress);
@@ -161,7 +159,7 @@ public class InstructionFactory {
         return new FilledNewArrayInstruction(instruction, codeAddress);
 
       case FILLED_NEW_ARRAY_RANGE:
-        return new FilledNewArrayRangeInstruction(instruction, codeAddress, myOptions, constancFactory, myScene);
+        return new FilledNewArrayRangeInstruction(instruction, codeAddress, myOptions, constantFactory, myScene);
 
       case FILL_ARRAY_DATA:
         return new FillArrayDataInstruction(instruction, codeAddress);
@@ -179,14 +177,14 @@ public class InstructionFactory {
         return new PackedSwitchInstruction(instruction, codeAddress);
       case SPARSE_SWITCH:
         // case SPARSE_SWITCH_PAYLOAD:
-        return new SparseSwitchInstruction(instruction, codeAddress,jimple,constancFactory,dalivkTyper,primTypeCollector, myOptions);
+        return new SparseSwitchInstruction(instruction, codeAddress,jimple,constantFactory,dalivkTyper,primTypeCollector, myOptions);
 
       case CMPL_FLOAT:
       case CMPG_FLOAT:
       case CMPL_DOUBLE:
       case CMPG_DOUBLE:
       case CMP_LONG:
-        return new CmpInstruction(instruction, codeAddress, myOptions, primeTypeCollector);
+        return new CmpInstruction(instruction, codeAddress, myOptions, primTypeCollector);
 
       case IF_EQ:
       case IF_NE:
@@ -284,7 +282,7 @@ public class InstructionFactory {
  
       case INVOKE_CUSTOM:
       case INVOKE_CUSTOM_RANGE:
-        return new InvokeCustomInstruction(instruction, codeAddress, constancFactory, jimple, myScene, myOptions, myDalvikTyper, mySootResolver);
+        return new InvokeCustomInstruction(instruction, codeAddress, constantFactory, jimple, myScene, myOptions, myDalvikTyper, mySootResolver);
 
       case NEG_INT:
       case NOT_INT:
@@ -292,7 +290,7 @@ public class InstructionFactory {
       case NEG_LONG:
       case NOT_LONG:
       case NEG_DOUBLE:
-        return new UnopInstruction(instruction, codeAddress, myOptions, myJimple, constancFactory);
+        return new UnopInstruction(instruction, codeAddress, myOptions, myJimple, constantFactory);
 
       case INT_TO_LONG:
       case INT_TO_DOUBLE:

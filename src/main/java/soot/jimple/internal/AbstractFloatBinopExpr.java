@@ -22,19 +22,7 @@ package soot.jimple.internal;
  * #L%
  */
 
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
-import soot.LongType;
-import soot.PrimTypeCollector;
-import soot.ShortType;
-import soot.Type;
-import soot.UnknownType;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 
 @SuppressWarnings("serial")
 public abstract class AbstractFloatBinopExpr extends AbstractBinopExpr {
@@ -42,11 +30,11 @@ public abstract class AbstractFloatBinopExpr extends AbstractBinopExpr {
     super(op1Box, op2Box, primTypeCollector);
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     Value op1 = op1Box.getValue();
     Value op2 = op2Box.getValue();
-    Type op1t = op1.getType();
-    Type op2t = op2.getType();
+    Type op1t = op1.getType(myScene);
+    Type op2t = op2.getType(myScene);
     if ((op1t.equals(primTypeCollector.getIntType()) || op1t.equals(primTypeCollector.getByteType()) || op1t.equals(primTypeCollector.getShortType()) || op1t.equals(primTypeCollector.getCharType())
         || op1t.equals(primTypeCollector.getBooleanType()))
         && (op2t.equals(primTypeCollector.getIntType()) || op2t.equals(primTypeCollector.getByteType()) || op2t.equals(primTypeCollector.getShortType()) || op2t.equals(primTypeCollector.getCharType())

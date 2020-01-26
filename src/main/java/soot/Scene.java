@@ -105,7 +105,7 @@ public class Scene // extends AbstractHost
   private Jimple myJimple;
   private PrimTypeCollector primTypeCollector;
   private Baf myBaf;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private FullObjectFactory fullObjectFactory;
 
   @Inject
@@ -113,7 +113,7 @@ public class Scene // extends AbstractHost
                PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility,
                EntryPoints myEntryPoints, ThrowAnalysis myPedanticThrowAnalysis, ThrowAnalysis myUnitThrowAnalysis,
                ThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer, Jimple myJimple,
-               PrimTypeCollector primTypeCollector, Baf myBaf, ConstantFactory constancFactory, FullObjectFactory fullObjectFactory) {
+               PrimTypeCollector primTypeCollector, Baf myBaf, ConstantFactory constantFactory, FullObjectFactory fullObjectFactory) {
     this.myOptions = myOptions;
     this.myPhaseOptions = myPhaseOptions;
     this.mySourceLocator = mySourceLocator;
@@ -128,7 +128,7 @@ public class Scene // extends AbstractHost
     this.myJimple = myJimple;
     this.primTypeCollector = primTypeCollector;
     this.myBaf = myBaf;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.fullObjectFactory = fullObjectFactory;
     setReservedNames();
     // load soot.class.path system property, if defined
@@ -1939,9 +1939,9 @@ public class Scene // extends AbstractHost
   public SootMethodRef makeMethodRef(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
       boolean isStatic) {
     if (PolymorphicMethodRef.handlesClass(declaringClass)) {
-      return new PolymorphicMethodRef(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, myJimple);
+      return new PolymorphicMethodRef(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, myJimple, constantFactory);
     }
-    return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, myJimple, constancFactory);
+    return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, myJimple, constantFactory);
   }
 
   /** Create an unresolved reference to a constructor. */

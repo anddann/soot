@@ -40,7 +40,7 @@ public class BStoreInst extends AbstractOpTypeInst implements StoreInst {
   List defBoxes;
 
   public BStoreInst(Type opType, Local local) {
-    super(primeTypeCollector.getRefType(), opType, myBaf);
+    super(primTypeCollector.getRefType(), opType, myBaf);
     localBox = new BafLocalBox(local);
     defBoxes = Collections.singletonList(localBox);
   }

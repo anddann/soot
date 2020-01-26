@@ -30,20 +30,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.Body;
-import soot.Local;
-import soot.PackManager;
-import soot.Printer;
-import soot.SootMethod;
-import soot.Trap;
-import soot.Type;
-import soot.Unit;
-import soot.UnitBox;
+import soot.*;
 import soot.baf.internal.BafLocal;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.JimpleBody;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.Stmt;
+import soot.jimple.*;
 import soot.options.Options;
 
 public class BafBody extends Body {
@@ -73,7 +62,7 @@ public class BafBody extends Body {
   }
 
   public BafBody(JimpleBody body, Map<String, String> options, Options myOptions, Printer myPrinter, Baf myBaf,
-      PackManager myPackManager) {
+                 PackManager myPackManager, Scene myScene, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     super(body.getMethod(), myOptions, myPrinter);
     this.myBaf = myBaf;
     if (myOptions.verbose()) {
@@ -87,7 +76,7 @@ public class BafBody extends Body {
     // Convert all locals
     {
       for (Local l : jimpleBody.getLocals()) {
-        Type t = l.getType();
+        Type t = l.getType(myScene);
         Local newLocal = myBaf.newLocal(l.getName(), myBaf.getPrimTypeCollector().getUnknownType());
 
         if (t.equals(myBaf.getPrimTypeCollector().getDoubleType()) || t.equals(myBaf.getPrimTypeCollector().getLongType())) {
@@ -115,7 +104,7 @@ public class BafBody extends Body {
         List<Unit> conversionList = new ArrayList<Unit>();
 
         context.setCurrentUnit(s);
-        ((ConvertToBaf) s).convertToBaf(context, conversionList, myBaf);
+        ((ConvertToBaf) s).convertToBaf(context, conversionList, myBaf, primTypeCollector, constantFactory, myScene);
 
         stmtToFirstInstruction.put(s, conversionList.get(0));
         getUnits().addAll(conversionList);

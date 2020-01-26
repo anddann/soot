@@ -157,10 +157,10 @@ public class BafASMBackend extends AbstractASMBackend {
         if (((PushInst) u).getConstant() instanceof ClassConstant) {
           minVersion = Math.max(minVersion, Options.java_version_1_5);
         }
-        if (((PushInst) u).getConstant().getType().toQuotedString().equals(PolymorphicMethodRef.METHODHANDLE_SIGNATURE)) {
+        if (((PushInst) u).getConstant().getType(myScene).toQuotedString().equals(PolymorphicMethodRef.METHODHANDLE_SIGNATURE)) {
           minVersion = Math.max(minVersion, Options.java_version_1_7);
         }
-        if (((PushInst) u).getConstant().getType().toQuotedString().equals(PolymorphicMethodRef.VARHANDLE_SIGNATURE)) {
+        if (((PushInst) u).getConstant().getType(myScene).toQuotedString().equals(PolymorphicMethodRef.VARHANDLE_SIGNATURE)) {
           minVersion = Math.max(minVersion, Options.java_version_1_9);
         }
       }
@@ -253,7 +253,7 @@ public class BafASMBackend extends AbstractASMBackend {
     for (Local local : body.getLocals()) {
       if (assignedLocals.add(local)) {
         localToSlot.put(local, localCount);
-        localCount += sizeOfType(local.getType());
+        localCount += sizeOfType(local.getType(myScene));
       }
     }
 
@@ -278,7 +278,7 @@ public class BafASMBackend extends AbstractASMBackend {
           if (l.getOriginalLocal() != null) {
             Local jimpleLocal = l.getOriginalLocal();
             if (jimpleLocal != null) {
-              mv.visitLocalVariable(jimpleLocal.getName(), toTypeDesc(jimpleLocal.getType()), null, startLabel, endLabel,
+              mv.visitLocalVariable(jimpleLocal.getName(), toTypeDesc(jimpleLocal.getType(myScene)), null, startLabel, endLabel,
                   slot);
             }
           }

@@ -56,10 +56,10 @@ public class SootMethodRefImpl implements SootMethodRef {
   protected List<Type> parameterTypes;
   private final Type returnType;
   private final boolean isStatic;
-    private Scene myScene;
+    protected Scene myScene;
     private Options myOptions;
   private Jimple myJimple;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
   /**
    * Constructor.
@@ -77,16 +77,16 @@ public class SootMethodRefImpl implements SootMethodRef {
    * @param myScene
      * @param myOptions
      * @param myJimple
-   * @param constancFactory
+   * @param constantFactory
    * @throws IllegalArgumentException
    *           is thrown when {@code declaringClass}, or {@code name}, or {@code returnType} is null
    */
   public SootMethodRefImpl(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
-                           boolean isStatic, Scene myScene, Options myOptions, Jimple myJimple, ConstantFactory constancFactory) {
+                           boolean isStatic, Scene myScene, Options myOptions, Jimple myJimple, ConstantFactory constantFactory) {
       this.myScene = myScene;
       this.myOptions = myOptions;
     this.myJimple = myJimple;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     if (declaringClass == null) {
       throw new IllegalArgumentException("Attempt to create SootMethodRef with null class");
     }
@@ -339,7 +339,7 @@ public class SootMethodRefImpl implements SootMethodRef {
     SootMethodRef cref = myScene.makeConstructorRef(runtimeExceptionType.getSootClass(),
         Collections.<Type>singletonList(RefType.v("java.lang.String",myScene)));
     SpecialInvokeExpr constructorInvokeExpr = myJimple.newSpecialInvokeExpr(exceptionLocal, cref,
-        constancFactory.createStringConstant("Unresolved compilation error: Method " + getSignature() + " does not exist!"));
+        constantFactory.createStringConstant("Unresolved compilation error: Method " + getSignature() + " does not exist!"));
     InvokeStmt initStmt = myJimple.newInvokeStmt(constructorInvokeExpr);
     body.getUnits().insertAfter(initStmt, assignStmt);
 

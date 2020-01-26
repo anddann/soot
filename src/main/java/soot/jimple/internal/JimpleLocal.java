@@ -25,13 +25,9 @@ package soot.jimple.internal;
 import java.util.Collections;
 import java.util.List;
 
-import soot.Local;
-import soot.Scene;
-import soot.Type;
-import soot.Unit;
-import soot.UnitPrinter;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
+import soot.jimple.ConstantFactory;
 import soot.jimple.ConvertToBaf;
 import soot.jimple.JimpleToBafContext;
 import soot.jimple.JimpleValueSwitch;
@@ -93,9 +89,10 @@ public class JimpleLocal implements Local, ConvertToBaf {
     this.name = (name == null) ? null : name.intern();
   }
 
-  /** Returns the type of this local. */
+  /** Returns the type of this local.
+   * @param myScene*/
   @Override
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return type;
   }
 
@@ -126,8 +123,8 @@ public class JimpleLocal implements Local, ConvertToBaf {
   }
 
   @Override
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
-    Unit u = myBaf.newLoadInst(getType(), context.getBafLocalOfJimpleLocal(this));
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    Unit u = myBaf.newLoadInst(getType(this.myScene), context.getBafLocalOfJimpleLocal(this));
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);
   }

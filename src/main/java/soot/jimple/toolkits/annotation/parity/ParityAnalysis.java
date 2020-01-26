@@ -46,7 +46,6 @@ import soot.jimple.IntConstant;
 import soot.jimple.LongConstant;
 import soot.jimple.MulExpr;
 import soot.jimple.SubExpr;
-import soot.options.Options;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
 import soot.toolkits.scalar.LiveLocals;
@@ -245,7 +244,7 @@ public class ParityAnalysis extends ForwardFlowAnalysis<Unit, Map<Value, ParityA
     if (s instanceof DefinitionStmt) {
       Value left = ((DefinitionStmt) s).getLeftOp();
       if (left instanceof Local) {
-        if ((left.getType() instanceof IntegerType) || (left.getType() instanceof LongType)) {
+        if ((left.getType(myScene) instanceof IntegerType) || (left.getType(myScene) instanceof LongType)) {
           // useS = true;
           Value right = ((DefinitionStmt) s).getRightOp();
           out.put(left, getParity(out, right));
@@ -336,7 +335,7 @@ public class ParityAnalysis extends ForwardFlowAnalysis<Unit, Map<Value, ParityA
     Map<Value, Parity> initMap = new HashMap<Value, Parity>();
 
     for (Local l : g.getBody().getLocals()) {
-      Type t = l.getType();
+      Type t = l.getType(myScene);
       // System.out.println("next local: "+next);
       if ((t instanceof IntegerType) || (t instanceof LongType)) {
         initMap.put(l, BOTTOM);

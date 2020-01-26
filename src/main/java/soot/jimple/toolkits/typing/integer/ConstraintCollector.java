@@ -114,7 +114,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
     for (int i = 0; i < ie.getArgCount(); i++) {
       if (ie.getArg(i) instanceof Local) {
         Local local = (Local) ie.getArg(i);
-        if (local.getType() instanceof IntegerType) {
+        if (local.getType(myScene) instanceof IntegerType) {
           TypeVariable localType = resolver.typeVariable(local);
           localType.addParent(resolver.typeVariable(method.parameterType(i)));
         }
@@ -127,7 +127,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
       for (int i = 0; i < die.getBootstrapArgCount(); i++) {
         if (die.getBootstrapArg(i) instanceof Local) {
           Local local = (Local) die.getBootstrapArg(i);
-          if (local.getType() instanceof IntegerType) {
+          if (local.getType(myScene) instanceof IntegerType) {
             TypeVariable localType = resolver.typeVariable(local);
             localType.addParent(resolver.typeVariable(bootstrapMethod.parameterType(i)));
           }
@@ -155,7 +155,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
 
     if (l instanceof ArrayRef) {
       ArrayRef ref = (ArrayRef) l;
-      Type baset = ((Local) ref.getBase()).getType();
+      Type baset = ((Local) ref.getBase()).getType(myScene);
       if (baset instanceof ArrayType) {
         ArrayType base = (ArrayType) baset;
         Value index = ref.getIndex();
@@ -171,7 +171,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
         }
       }
     } else if (l instanceof Local) {
-      if (((Local) l).getType() instanceof IntegerType) {
+      if (((Local) l).getType(myScene) instanceof IntegerType) {
         left = resolver.typeVariable((Local) l);
       }
     } else if (l instanceof InstanceFieldRef) {
@@ -202,7 +202,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
 
     if (r instanceof ArrayRef) {
       ArrayRef ref = (ArrayRef) r;
-      Type baset = ((Local) ref.getBase()).getType();
+      Type baset = ((Local) ref.getBase()).getType(myScene);
       if (!(baset instanceof NullType)) {
         Value index = ref.getIndex();
 
@@ -262,7 +262,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
 
       // ******** LEFT ********
       if (lv instanceof Local) {
-        if (((Local) lv).getType() instanceof IntegerType) {
+        if (((Local) lv).getType(myScene) instanceof IntegerType) {
           lop = resolver.typeVariable((Local) lv);
         }
       } else if (lv instanceof DoubleConstant) {
@@ -297,7 +297,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
 
       // ******** RIGHT ********
       if (rv instanceof Local) {
-        if (((Local) rv).getType() instanceof IntegerType) {
+        if (((Local) rv).getType(myScene) instanceof IntegerType) {
           rop = resolver.typeVariable((Local) rv);
         }
       } else if (rv instanceof DoubleConstant) {
@@ -446,7 +446,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
       if (ne.getOp() instanceof Local) {
         Local local = (Local) ne.getOp();
 
-        if (local.getType() instanceof IntegerType) {
+        if (local.getType(myScene) instanceof IntegerType) {
           if (uses) {
             resolver.typeVariable(local).addParent(resolver.INT);
           }
@@ -485,7 +485,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
     } else if (r instanceof Local) {
       Local local = (Local) r;
 
-      if (local.getType() instanceof IntegerType) {
+      if (local.getType(myScene) instanceof IntegerType) {
         right = resolver.typeVariable(local);
       }
     } else if (r instanceof InstanceFieldRef) {
@@ -514,10 +514,10 @@ class ConstraintCollector extends AbstractStmtSwitch {
     Value r = stmt.getRightOp();
 
     if (l instanceof Local) {
-      if (((Local) l).getType() instanceof IntegerType) {
+      if (((Local) l).getType(myScene) instanceof IntegerType) {
         TypeVariable left = resolver.typeVariable((Local) l);
 
-        TypeVariable right = resolver.typeVariable(r.getType());
+        TypeVariable right = resolver.typeVariable(r.getType(myScene));
         right.addParent(left);
       }
     }
@@ -545,7 +545,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
 
       // ******** LEFT ********
       if (lv instanceof Local) {
-        if (((Local) lv).getType() instanceof IntegerType) {
+        if (((Local) lv).getType(myScene) instanceof IntegerType) {
           lop = resolver.typeVariable((Local) lv);
         }
       } else if (lv instanceof DoubleConstant) {
@@ -580,7 +580,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
 
       // ******** RIGHT ********
       if (rv instanceof Local) {
-        if (((Local) rv).getType() instanceof IntegerType) {
+        if (((Local) rv).getType(myScene) instanceof IntegerType) {
           rop = resolver.typeVariable((Local) rv);
         }
       } else if (rv instanceof DoubleConstant) {
@@ -641,7 +641,7 @@ class ConstraintCollector extends AbstractStmtSwitch {
   public void caseReturnStmt(ReturnStmt stmt) {
     if (uses) {
       if (stmt.getOp() instanceof Local) {
-        if (((Local) stmt.getOp()).getType() instanceof IntegerType) {
+        if (((Local) stmt.getOp()).getType(myScene) instanceof IntegerType) {
           resolver.typeVariable((Local) stmt.getOp()).addParent(resolver.typeVariable(stmtBody.getMethod().getReturnType()));
         }
       }

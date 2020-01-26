@@ -43,6 +43,8 @@ import soot.dava.internal.AST.ASTSynchronizedBlockNode;
 import soot.dava.internal.AST.ASTTryNode;
 import soot.dava.internal.AST.ASTUnconditionalLoopNode;
 import soot.dava.internal.AST.ASTWhileNode;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 
 /*
@@ -61,11 +63,18 @@ import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 
 public class ForLoopCreator extends DepthFirstAdapter {
 
-  public ForLoopCreator() {
+  private TryContentsFinder myTryContentsFinder;
+  private ASTWalker myASTWalker;
+
+  public ForLoopCreator(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker) {
+    this.myTryContentsFinder = myTryContentsFinder;
+    this.myASTWalker = myASTWalker;
   }
 
-  public ForLoopCreator(boolean verbose) {
+  public ForLoopCreator(boolean verbose, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker) {
     super(verbose);
+    this.myTryContentsFinder = myTryContentsFinder;
+    this.myASTWalker = myASTWalker;
   }
 
   public void caseASTStatementSequenceNode(ASTStatementSequenceNode node) {

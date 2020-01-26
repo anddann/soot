@@ -413,7 +413,7 @@ public class TypeResolver {
     for (Iterator<Local> localIt = stmtBody.getLocals().iterator(); localIt.hasNext();) {
       final Local local = localIt.next();
 
-      if (local.getType() instanceof IntegerType) {
+      if (local.getType(myScene) instanceof IntegerType) {
         TypeVariable var = typeVariable(local);
 
         if (var.type() == null || var.type().type() == null) {
@@ -424,8 +424,8 @@ public class TypeResolver {
 
         if (DEBUG) {
           if ((var != null) && (var.approx() != null) && (var.approx().type() != null) && (local != null)
-              && (local.getType() != null) && !local.getType().equals(var.approx().type())) {
-            logger.debug("local: " + local + ", type: " + local.getType() + ", approx: " + var.approx().type());
+              && (local.getType(myScene) != null) && !local.getType(myScene).equals(var.approx().type())) {
+            logger.debug("local: " + local + ", type: " + local.getType(myScene) + ", approx: " + var.approx().type());
           }
         }
       }
@@ -436,7 +436,7 @@ public class TypeResolver {
     for (Iterator<Local> localIt = stmtBody.getLocals().iterator(); localIt.hasNext();) {
       final Local local = localIt.next();
 
-      if (local.getType() instanceof IntegerType) {
+      if (local.getType(myScene) instanceof IntegerType) {
         TypeVariable var = typeVariable(local);
 
         if (var.inv_approx() != null && var.inv_approx().type() != null) {

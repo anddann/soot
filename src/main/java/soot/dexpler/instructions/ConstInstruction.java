@@ -44,12 +44,12 @@ import soot.jimple.Jimple;
 
 public class ConstInstruction extends DexlibAbstractInstruction {
 
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private Jimple myJimple;
 
-  public ConstInstruction(Instruction instruction, int codeAdress, ConstantFactory constancFactory, Jimple myJimple) {
+  public ConstInstruction(Instruction instruction, int codeAdress, ConstantFactory constantFactory, Jimple myJimple) {
     super(instruction, codeAdress, myOptions);
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.myJimple = myJimple;
   }
 
@@ -67,7 +67,7 @@ public class ConstInstruction extends DexlibAbstractInstruction {
       if (cst instanceof UntypedConstant) {
         myDalvikTyper().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
       } else {
-        myDalvikTyper().setType(assign.getLeftOpBox(), cst.getType(), false);
+        myDalvikTyper().setType(assign.getLeftOpBox(), cst.getType(myScene), false);
       }
     }
   }
@@ -99,39 +99,39 @@ public class ConstInstruction extends DexlibAbstractInstruction {
       case CONST_4:
       case CONST_16:
         if (IDalvikTyper.ENABLE_DVKTYPER) {
-          return constancFactory.createUntypedIntOrFloatConstant((int) literal);
+          return constantFactory.createUntypedIntOrFloatConstant((int) literal);
         } else {
-          return constancFactory.createIntConstant((int) literal);
+          return constantFactory.createIntConstant((int) literal);
         }
 
       case CONST_HIGH16:
         if (IDalvikTyper.ENABLE_DVKTYPER) {
           //
-          // return constancFactory.createUntypedIntOrFloatConstant((int)literal<<16).toFloatConstant();
+          // return constantFactory.createUntypedIntOrFloatConstant((int)literal<<16).toFloatConstant();
           // seems that dexlib correctly puts the 16bits into the topmost bits.
           //
-          return constancFactory.createUntypedIntOrFloatConstant((int) literal);// .toFloatConstant();
+          return constantFactory.createUntypedIntOrFloatConstant((int) literal);// .toFloatConstant();
         } else {
-          return constancFactory.createIntConstant((int) literal);
+          return constantFactory.createIntConstant((int) literal);
         }
 
       case CONST_WIDE_HIGH16:
         if (IDalvikTyper.ENABLE_DVKTYPER) {
-          // return UntypedLongOrconstancFactory.createDoubleConstant((long)literal<<48).toDoubleConstant();
+          // return UntypedLongOrconstantFactory.createDoubleConstant((long)literal<<48).toDoubleConstant();
           // seems that dexlib correctly puts the 16bits into the topmost bits.
           //
-          return constancFactory.createUntypedLongOrDoubleConstant(literal);// .toDoubleConstant();
+          return constantFactory.createUntypedLongOrDoubleConstant(literal);// .toDoubleConstant();
         } else {
-          return constancFactory.createLongConstant(literal);
+          return constantFactory.createLongConstant(literal);
         }
 
       case CONST_WIDE:
       case CONST_WIDE_16:
       case CONST_WIDE_32:
         if (IDalvikTyper.ENABLE_DVKTYPER) {
-          return constancFactory.createUntypedLongOrDoubleConstant(literal);
+          return constantFactory.createUntypedLongOrDoubleConstant(literal);
         } else {
-          return constancFactory.createLongConstant(literal);
+          return constantFactory.createLongConstant(literal);
         }
       default:
         throw new IllegalArgumentException("Expected a const or a const-wide instruction, got neither.");

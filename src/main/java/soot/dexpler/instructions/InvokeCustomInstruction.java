@@ -71,13 +71,13 @@ import soot.options.Options;
 
 public class InvokeCustomInstruction extends MethodInvocationInstruction {
 
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private Jimple myJimple;
   private Scene myScene;
 
-  public InvokeCustomInstruction(Instruction instruction, int codeAddress, ConstantFactory constancFactory, Jimple myJimple, Scene myScene, Options myOptions, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
+  public InvokeCustomInstruction(Instruction instruction, int codeAddress, ConstantFactory constantFactory, Jimple myJimple, Scene myScene, Options myOptions, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
     super(instruction, codeAddress, myOptions, myJimple, myDalvikTyper, myScene, mySootResolver);
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.myJimple = myJimple;
     this.myScene = myScene;
   }
@@ -125,39 +125,39 @@ public class InvokeCustomInstruction extends MethodInvocationInstruction {
     List<Value> out = new ArrayList<>();
     for (EncodedValue ev : in) {
       if (ev instanceof BooleanEncodedValue) {
-        out.add(constancFactory.createIntConstant(((BooleanEncodedValue) ev).getValue() == true ? 1 : 0));
+        out.add(constantFactory.createIntConstant(((BooleanEncodedValue) ev).getValue() == true ? 1 : 0));
       } else if (ev instanceof ByteEncodedValue) {
-        out.add(constancFactory.createIntConstant(((ByteEncodedValue) ev).getValue()));
+        out.add(constantFactory.createIntConstant(((ByteEncodedValue) ev).getValue()));
       } else if (ev instanceof CharEncodedValue) {
-        out.add(constancFactory.createIntConstant(((CharEncodedValue) ev).getValue()));
+        out.add(constantFactory.createIntConstant(((CharEncodedValue) ev).getValue()));
       } else if (ev instanceof DoubleEncodedValue) {
-        out.add(constancFactory.createDoubleConstant(((DoubleEncodedValue) ev).getValue()));
+        out.add(constantFactory.createDoubleConstant(((DoubleEncodedValue) ev).getValue()));
       } else if (ev instanceof FloatEncodedValue) {
-        out.add(constancFactory.createFloatConstant(((FloatEncodedValue) ev).getValue()));
+        out.add(constantFactory.createFloatConstant(((FloatEncodedValue) ev).getValue()));
       } else if (ev instanceof IntEncodedValue) {
-        out.add(constancFactory.createIntConstant(((IntEncodedValue) ev).getValue()));
+        out.add(constantFactory.createIntConstant(((IntEncodedValue) ev).getValue()));
       } else if (ev instanceof LongEncodedValue) {
-        out.add(constancFactory.createLongConstant(((LongEncodedValue) ev).getValue()));
+        out.add(constantFactory.createLongConstant(((LongEncodedValue) ev).getValue()));
       } else if (ev instanceof ShortEncodedValue) {
-        out.add(constancFactory.createIntConstant(((ShortEncodedValue) ev).getValue()));
+        out.add(constantFactory.createIntConstant(((ShortEncodedValue) ev).getValue()));
       } else if (ev instanceof StringEncodedValue) {
-        out.add(constancFactory.createStringConstant(((StringEncodedValue) ev).getValue()));
+        out.add(constantFactory.createStringConstant(((StringEncodedValue) ev).getValue()));
       } else if (ev instanceof NullEncodedValue) {
-        out.add(constancFactory.getNullConstant());
+        out.add(constantFactory.getNullConstant());
       } else if (ev instanceof MethodTypeEncodedValue) {
         MethodProtoReference protRef = ((MethodTypeEncodedValue) ev).getValue();
-        out.add(constancFactory.createMethodType(convertParameterTypes(protRef.getParameterTypes()), DexType.toSoot(protRef.getReturnType())));
+        out.add(constantFactory.createMethodType(convertParameterTypes(protRef.getParameterTypes()), DexType.toSoot(protRef.getReturnType())));
       } else if (ev instanceof TypeEncodedValue) {
-        out.add(constancFactory.createClassConstant(((TypeEncodedValue) ev).getValue()));
+        out.add(constantFactory.createClassConstant(((TypeEncodedValue) ev).getValue()));
       } else if (ev instanceof MethodHandleEncodedValue) {
         MethodHandleReference mh = ((MethodHandleEncodedValue) ev).getValue();
         Reference ref = mh.getMemberReference();
         Kind kind = dexToSootMethodHandleKind(mh.getMethodHandleType());
         MethodHandle handle;
         if (ref instanceof MethodReference) {
-          handle = constancFactory.createMethodHandle(getSootMethodRef((MethodReference) ref, kind), kind.getValue());
+          handle = constantFactory.createMethodHandle(getSootMethodRef((MethodReference) ref, kind), kind.getValue());
         } else if (ref instanceof FieldReference) {
-          handle = constancFactory.createMethodHandle(getSootFieldRef((FieldReference) ref, kind), kind.getValue());
+          handle = constantFactory.createMethodHandle(getSootFieldRef((FieldReference) ref, kind), kind.getValue());
         } else {
           throw new RuntimeException("Error: Unhandled method reference type " + ref.getClass().toString() + ".");
         }

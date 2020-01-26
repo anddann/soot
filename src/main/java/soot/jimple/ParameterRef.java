@@ -25,6 +25,7 @@ package soot.jimple;
 import java.util.Collections;
 import java.util.List;
 
+import soot.Scene;
 import soot.Type;
 import soot.UnitPrinter;
 import soot.ValueBox;
@@ -86,8 +87,9 @@ public class ParameterRef implements IdentityRef {
     return Collections.emptyList();
   }
 
-  /** Returns the type of this ParameterRef. */
-  public Type getType() {
+  /** Returns the type of this ParameterRef.
+   * @param myScene*/
+  public Type getType(Scene myScene) {
     return paramType;
   }
 

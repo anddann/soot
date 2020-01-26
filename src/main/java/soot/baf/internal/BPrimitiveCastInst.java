@@ -98,11 +98,11 @@ public class BPrimitiveCastInst extends AbstractInst implements PrimitiveCastIns
       }
 
       public void caseDoubleType(DoubleType ty) {
-        if (toType.equals(primeTypeCollector.getIntType())) {
+        if (toType.equals(primTypeCollector.getIntType())) {
           setResult("d2i");
-        } else if (toType.equals(primeTypeCollector.getLongType())) {
+        } else if (toType.equals(primTypeCollector.getLongType())) {
           setResult("d2l");
-        } else if (toType.equals(primeTypeCollector.getFloatType())) {
+        } else if (toType.equals(primTypeCollector.getFloatType())) {
           setResult("d2f");
         } else {
           throw new RuntimeException("invalid toType from double: " + toType);
@@ -110,11 +110,11 @@ public class BPrimitiveCastInst extends AbstractInst implements PrimitiveCastIns
       }
 
       public void caseFloatType(FloatType ty) {
-        if (toType.equals(primeTypeCollector.getIntType())) {
+        if (toType.equals(primTypeCollector.getIntType())) {
           setResult("f2i");
-        } else if (toType.equals(primeTypeCollector.getLongType())) {
+        } else if (toType.equals(primTypeCollector.getLongType())) {
           setResult("f2l");
-        } else if (toType.equals(primeTypeCollector.getDoubleType())) {
+        } else if (toType.equals(primTypeCollector.getDoubleType())) {
           setResult("f2d");
         } else {
           throw new RuntimeException("invalid toType from float: " + toType);
@@ -142,21 +142,21 @@ public class BPrimitiveCastInst extends AbstractInst implements PrimitiveCastIns
       }
 
       private void emitIntToTypeCast() {
-        if (toType.equals(primeTypeCollector.getByteType())) {
+        if (toType.equals(primTypeCollector.getByteType())) {
           setResult("i2b");
-        } else if (toType.equals(primeTypeCollector.getCharType())) {
+        } else if (toType.equals(primTypeCollector.getCharType())) {
           setResult("i2c");
-        } else if (toType.equals(primeTypeCollector.getShortType())) {
+        } else if (toType.equals(primTypeCollector.getShortType())) {
           setResult("i2s");
-        } else if (toType.equals(primeTypeCollector.getFloatType())) {
+        } else if (toType.equals(primTypeCollector.getFloatType())) {
           setResult("i2f");
-        } else if (toType.equals(primeTypeCollector.getLongType())) {
+        } else if (toType.equals(primTypeCollector.getLongType())) {
           setResult("i2l");
-        } else if (toType.equals(primeTypeCollector.getDoubleType())) {
+        } else if (toType.equals(primTypeCollector.getDoubleType())) {
           setResult("i2d");
-        } else if (toType.equals(primeTypeCollector.getIntType())) {
+        } else if (toType.equals(primTypeCollector.getIntType())) {
           setResult(""); // this shouldn't happen?
-        } else if (toType.equals(primeTypeCollector.getBooleanType())) {
+        } else if (toType.equals(primTypeCollector.getBooleanType())) {
           setResult("");
         } else {
           throw new RuntimeException("invalid toType from int: " + toType);
@@ -164,11 +164,11 @@ public class BPrimitiveCastInst extends AbstractInst implements PrimitiveCastIns
       }
 
       public void caseLongType(LongType ty) {
-        if (toType.equals(primeTypeCollector.getIntType())) {
+        if (toType.equals(primTypeCollector.getIntType())) {
           setResult("l2i");
-        } else if (toType.equals(primeTypeCollector.getFloatType())) {
+        } else if (toType.equals(primTypeCollector.getFloatType())) {
           setResult("l2f");
-        } else if (toType.equals(primeTypeCollector.getDoubleType())) {
+        } else if (toType.equals(primTypeCollector.getDoubleType())) {
           setResult("l2d");
         } else {
           throw new RuntimeException("invalid toType from long: " + toType);

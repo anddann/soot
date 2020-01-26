@@ -641,7 +641,7 @@ public class OnFlyCallGraphBuilder {
             targetsQueue.add(target);
           }
         } else {
-          virtualCalls.resolve(type, receiver.getType(), site.subSig(), site.container(), targetsQueue, appOnly);
+          virtualCalls.resolve(type, receiver.getType(myScene), site.subSig(), site.container(), targetsQueue, appOnly);
           if (!targets.hasNext() && options.resolve_all_abstract_invokes()) {
             /*
              * In the situation where we find nothing to resolve an invoke to in the first call, this might be because the
@@ -657,7 +657,7 @@ public class OnFlyCallGraphBuilder {
              * Where as, it used to not resolve any targets in this situation, I want to at least resolve the method in the
              * parent class if there is one (as this is technically a possibility and the only information we have).
              */
-            virtualCalls.resolveSuperType(type, receiver.getType(), site.subSig(), targetsQueue, appOnly);
+            virtualCalls.resolveSuperType(type, receiver.getType(myScene), site.subSig(), targetsQueue, appOnly);
           }
         }
         while (targets.hasNext()) {
@@ -779,9 +779,9 @@ public class OnFlyCallGraphBuilder {
       if (analysisKey != container) {
         //FIXME: AD ignore bogus parameter
         ExceptionalUnitGraph graph = new ExceptionalUnitGraph(container.getActiveBody(), throwAnalysis, throwManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper);
-        nullnessCache = new NullnessAnalysis(graph, myInteractionHandler, myOptions.interactive_mode(), constantFactory);
+        nullnessCache = new NullnessAnalysis(graph, myInteractionHandler, myOptions.interactive_mode(), constantFactory, myScene);
         arrayCache = new ConstantArrayAnalysis(graph, container.getActiveBody(), myOptions.interactive_mode(),
-            myInteractionHandler, myScene.getPrimTypeCollector());
+            myInteractionHandler, myScene, myScene.getPrimTypeCollector());
         analysisKey = container;
       }
       Local argLocal = (Local) argArray;
@@ -952,7 +952,7 @@ public class OnFlyCallGraphBuilder {
             addEdge(source, s, clinit, Kind.CLINIT);
           }
         } else if (rhs instanceof NewArrayExpr || rhs instanceof NewMultiArrayExpr) {
-          Type t = rhs.getType();
+          Type t = rhs.getType(myScene);
           if (t instanceof ArrayType) {
             t = ((ArrayType) t).baseType;
           }

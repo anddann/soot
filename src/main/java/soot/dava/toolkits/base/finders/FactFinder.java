@@ -22,11 +22,13 @@ package soot.dava.toolkits.base.finders;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.dava.DavaBody;
 import soot.dava.RetriggerAnalysisException;
 import soot.dava.internal.SET.SETNode;
 import soot.dava.internal.asg.AugmentedStmtGraph;
+import soot.grimp.Grimp;
 
 public interface FactFinder {
-  public abstract void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException;
+  public abstract void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException;
 }

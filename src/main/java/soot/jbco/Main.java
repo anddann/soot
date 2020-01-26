@@ -421,7 +421,7 @@ public class Main {
       return new IfNullToTryCatch();
     }
     if (name.equals("wjtp.jbco_blbc")) {
-      return new LibraryMethodWrappersBuilder(myScene, myJimple, constancFactory, primTypeCollector);
+      return new LibraryMethodWrappersBuilder(myScene, myJimple, constantFactory, primTypeCollector);
     }
     if (name.equals("wjtp.jbco_bapibm")) {
       return new BuildIntermediateAppClasses();

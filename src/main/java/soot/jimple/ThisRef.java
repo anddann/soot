@@ -25,10 +25,7 @@ package soot.jimple;
 import java.util.Collections;
 import java.util.List;
 
-import soot.RefType;
-import soot.Type;
-import soot.UnitPrinter;
-import soot.ValueBox;
+import soot.*;
 import soot.util.Switch;
 
 public class ThisRef implements IdentityRef {
@@ -62,7 +59,7 @@ public class ThisRef implements IdentityRef {
     return Collections.emptyList();
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return thisType;
   }
 

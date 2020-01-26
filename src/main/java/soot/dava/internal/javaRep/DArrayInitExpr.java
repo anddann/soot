@@ -25,10 +25,7 @@ package soot.dava.internal.javaRep;
 import java.util.ArrayList;
 import java.util.List;
 
-import soot.Type;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.util.Switch;
 
 /*
@@ -67,7 +64,7 @@ public class DArrayInitExpr implements Value {
     return this;
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return type;
   }
 

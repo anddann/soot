@@ -49,8 +49,8 @@ public class MethodType extends Constant {
     this.myScene = myScene;
   }
 
-  public Type getType() {
-    return RefType.v("java.lang.invoke.MethodType", myScene);
+  public Type getType(Scene myScene) {
+    return RefType.v("java.lang.invoke.MethodType", this.myScene);
   }
 
   public String toString() {

@@ -24,16 +24,9 @@ package soot.jimple.internal;
 
 import java.util.List;
 
-import soot.Unit;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.ExitMonitorStmt;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.StmtSwitch;
+import soot.jimple.*;
 import soot.util.Switch;
 
 public class JExitMonitorStmt extends AbstractOpStmt implements ExitMonitorStmt {
@@ -64,8 +57,8 @@ public class JExitMonitorStmt extends AbstractOpStmt implements ExitMonitorStmt 
 
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
-    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
 
     Unit u = myBaf.newExitMonitorInst();
     u.addAllTagsOf(this);

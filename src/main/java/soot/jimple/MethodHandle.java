@@ -111,8 +111,8 @@ public class MethodHandle extends Constant {
         + (methodRef == null ? Objects.toString(fieldRef) : Objects.toString(methodRef));
   }
 
-  public Type getType() {
-    return RefType.v("java.lang.invoke.MethodHandle", myScene);
+  public Type getType(Scene myScene) {
+    return RefType.v("java.lang.invoke.MethodHandle", this.myScene);
   }
 
   public SootMethodRef getMethodRef() {

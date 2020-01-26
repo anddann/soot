@@ -43,14 +43,14 @@ public class UnreachableMethodTransformer extends BodyTransformer {
 
   private Scene myScene;
   private Jimple myJimple;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
   @Inject
-  public UnreachableMethodTransformer(Scene myScene, Jimple myJimple, ConstantFactory constancFactory){
+  public UnreachableMethodTransformer(Scene myScene, Jimple myJimple, ConstantFactory constantFactory){
 
     this.myScene = myScene;
     this.myJimple = myJimple;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
   }
 
 
@@ -78,21 +78,21 @@ public class UnreachableMethodTransformer extends BodyTransformer {
 
     toCall = myScene.getMethod("<java.io.PrintStream: void println(java.lang.String)>");
     list.add(myJimple.newInvokeStmt(myJimple.newVirtualInvokeExpr(tmpRef, toCall.makeRef(),
-        constancFactory.createStringConstant("Executing supposedly unreachable method:"))));
+        constantFactory.createStringConstant("Executing supposedly unreachable method:"))));
     list.add(myJimple.newInvokeStmt(myJimple.newVirtualInvokeExpr(tmpRef, toCall.makeRef(),
-        constancFactory.createStringConstant("\t" + method.getDeclaringClass().getName() + "." + method.getName()))));
+        constantFactory.createStringConstant("\t" + method.getDeclaringClass().getName() + "." + method.getName()))));
 
     toCall = myScene.getMethod("<java.lang.System: void exit(int)>");
-    list.add(myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(toCall.makeRef(), constancFactory.createIntConstant(1))));
+    list.add(myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(toCall.makeRef(), constantFactory.createIntConstant(1))));
 
     /*
      * Stmt r; if( method.getReturnType() instanceof VoidType ) { list.add( r=myJimple.newReturnVoidStmt() ); } else if(
      * method.getReturnType() instanceof RefLikeType ) { list.add( r=myJimple.newReturnStmt( myNullConstant ) ); } else
      * if( method.getReturnType() instanceof PrimType ) { if( method.getReturnType() instanceof DoubleType ) { list.add(
-     * r=myJimple.newReturnStmt( constancFactory.createDoubleConstant( 0 ) ) ); } else if( method.getReturnType() instanceof LongType ) {
-     * list.add( r=myJimple.newReturnStmt( constancFactory.createLongConstant( 0 ) ) ); } else if( method.getReturnType() instanceof FloatType
-     * ) { list.add( r=myJimple.newReturnStmt( constancFactory.createFloatConstant( 0 ) ) ); } else { list.add( r=myJimple.newReturnStmt(
-     * constancFactory.createIntConstant( 0 ) ) ); } } else { throw new RuntimeException( "Wrong return method type: " + method.getReturnType()
+     * r=myJimple.newReturnStmt( constantFactory.createDoubleConstant( 0 ) ) ); } else if( method.getReturnType() instanceof LongType ) {
+     * list.add( r=myJimple.newReturnStmt( constantFactory.createLongConstant( 0 ) ) ); } else if( method.getReturnType() instanceof FloatType
+     * ) { list.add( r=myJimple.newReturnStmt( constantFactory.createFloatConstant( 0 ) ) ); } else { list.add( r=myJimple.newReturnStmt(
+     * constantFactory.createIntConstant( 0 ) ) ); } } else { throw new RuntimeException( "Wrong return method type: " + method.getReturnType()
      * ); }
      */
 

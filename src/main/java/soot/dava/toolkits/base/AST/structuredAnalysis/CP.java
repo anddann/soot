@@ -157,7 +157,7 @@ public class CP extends StructuredAnalysis {
       Object temp = it.next();
       if (temp instanceof Local) {
         Local tempLocal = (Local) temp;
-        if (!(tempLocal.getType() instanceof PrimType)) {
+        if (!(tempLocal.getType(myScene) instanceof PrimType)) {
           continue;
         }
 
@@ -182,7 +182,7 @@ public class CP extends StructuredAnalysis {
       Object temp = it.next();
       if (temp instanceof Local) {
         Local tempLocal = (Local) temp;
-        Type localType = tempLocal.getType();
+        Type localType = tempLocal.getType(myScene);
 
         if (!(localType instanceof PrimType)) {
           continue;
@@ -407,7 +407,7 @@ public class CP extends StructuredAnalysis {
     // x = expr;
     // confirm that the left side is a local with a primitive type
     Value left = defStmt.getLeftOp();
-    if (!(left instanceof Local && ((Local) left).getType() instanceof PrimType)) {
+    if (!(left instanceof Local && ((Local) left).getType(myScene) instanceof PrimType)) {
       return inSet;
     }
 
@@ -425,7 +425,7 @@ public class CP extends StructuredAnalysis {
     Object value = CPHelper.isAConstantValue(right);
     if (value != null) {
       // EXPR IS A CONSTANT
-      if (left.getType() instanceof BooleanType) {
+      if (left.getType(myScene) instanceof BooleanType) {
         Integer tempValue = (Integer) value;
         if (tempValue.intValue() == 0) {
           value = new Boolean(false);
@@ -546,7 +546,7 @@ public class CP extends StructuredAnalysis {
 
       if (op1Val != null && op2Val != null) {
         // System.out.println("found constant values for both operands of binary expression");
-        if (left.getType() instanceof IntType && op1Val instanceof Integer && op2Val instanceof Integer) {
+        if (left.getType(myScene) instanceof IntType && op1Val instanceof Integer && op2Val instanceof Integer) {
           // only caring about operations on two integers and result
           // is an integer
 
@@ -893,7 +893,7 @@ public class CP extends StructuredAnalysis {
         // no value of a found but value of b was found <classname, a,b>
         // System.out.println("From INSET: a:"+a+" is not a constant b "+b+" is"
         // );
-        if (!(a instanceof Local && ((Local) a).getType() instanceof PrimType)) {
+        if (!(a instanceof Local && ((Local) a).getType(myScene) instanceof PrimType)) {
           // we only hanlde primitive locals
           return null;
         }
@@ -903,7 +903,7 @@ public class CP extends StructuredAnalysis {
         // no value of b found but value of a was found <classname, b,a>
         // System.out.println("From INSET: a:"+a+" is a constant b "+b+" is not"
         // );
-        if (!(b instanceof Local && ((Local) b).getType() instanceof PrimType)) {
+        if (!(b instanceof Local && ((Local) b).getType(myScene) instanceof PrimType)) {
           // we only hanlde primitive locals
           return null;
         }
@@ -915,7 +915,7 @@ public class CP extends StructuredAnalysis {
       // entering a tuple <className,b,a> maybe
       // System.out.println("a:"+a+" is a constant b:"+b+" is not");
 
-      if (!(b instanceof Local && ((Local) b).getType() instanceof PrimType)) {
+      if (!(b instanceof Local && ((Local) b).getType(myScene) instanceof PrimType)) {
         // we only hanlde primitive locals
         return null;
       }
@@ -928,7 +928,7 @@ public class CP extends StructuredAnalysis {
       // chance of entering a tuple <className,a,b>
       // System.out.println("a:"+a+" is not a constant b:"+b+" is ");
 
-      if (!(a instanceof Local && ((Local) a).getType() instanceof PrimType)) {
+      if (!(a instanceof Local && ((Local) a).getType(myScene) instanceof PrimType)) {
         // we only hanlde primitive locals
         return null;
       }
@@ -948,7 +948,7 @@ public class CP extends StructuredAnalysis {
 
       // need to see if constant is supposed to be a boolean
       // (isAConstantValue returns an Integer for a boolean)
-      if (cpVar.getLocal().getType() instanceof BooleanType) {
+      if (cpVar.getLocal().getType(myScene) instanceof BooleanType) {
         if (!(constantToUse instanceof Integer)) {
           // booleans are represented by Integeres in the
           // isConstantValue method what happened here???

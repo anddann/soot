@@ -44,7 +44,7 @@ public class LongConstantValueTag extends ConstantValueTag {
 
   @Override
   public LongConstant getConstant() {
-    return constancFactory.createLongConstant(value);
+    return constantFactory.createLongConstant(value);
   }
 
   @Override

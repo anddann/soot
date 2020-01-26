@@ -212,7 +212,7 @@ public class DavaBody extends Body {
   private final TryContentsFinder myTryContentsFinder;
   private final ASTWalker myASTWalker;
   private final PackageNamer myPackageNamer;
-  private final PrimTypeCollector primeTypeCollector;
+  private final PrimTypeCollector primTypeCollector;
   public boolean DEBUG = false;
   private Map<Integer, Value> pMap;
 
@@ -233,9 +233,8 @@ public class DavaBody extends Body {
   private List<CaughtExceptionRef> caughtrefs;
   private Dava myDava;
   private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private Grimp myGrimp;
-  private PrimTypeCollector primTypeCollector;
   private Baf myBaf;
     private Scene myScene;
   private Jimple myJimple;
@@ -248,7 +247,7 @@ public class DavaBody extends Body {
            IfFinder myIfFinder, SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder,
            SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            MonitorConverter myMonitorConverter, ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover,
-           PhaseOptions myPhaseOptions, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, PackageNamer myPackageNamer, PrimTypeCollector primeTypeCollector, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constancFactory, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf, Scene myScene, Jimple myJimple) {
+           PhaseOptions myPhaseOptions, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constantFactory, Grimp myGrimp, Baf myBaf, Scene myScene, Jimple myJimple) {
     super(m, myOptions, myPrinter);
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -265,12 +264,11 @@ public class DavaBody extends Body {
     this.myTryContentsFinder = myTryContentsFinder;
     this.myASTWalker = myASTWalker;
     this.myPackageNamer = myPackageNamer;
-    this.primeTypeCollector = primeTypeCollector;
+    this.primTypeCollector = primTypeCollector;
     this.myDava = myDava;
     this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.myGrimp = myGrimp;
-    this.primTypeCollector = primTypeCollector;
     this.myBaf = myBaf;
       this.myScene = myScene;
     this.myJimple = myJimple;
@@ -323,7 +321,7 @@ public class DavaBody extends Body {
 
   public Local get_ControlLocal() {
     if (controlLocal == null) {
-      controlLocal = new JimpleLocal("controlLocal", controlLocal.getType().getMyScene().getPrimTypeCollector().getIntType(), myScene);
+      controlLocal = new JimpleLocal("controlLocal", controlLocal.getType(myScene).getMyScene().getPrimTypeCollector().getIntType(), myScene);
       getLocals().add(controlLocal);
     }
 
@@ -368,10 +366,10 @@ public class DavaBody extends Body {
            ThrowNullConverter myThrowNullConverter, SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder,
            CycleFinder myCycleFinder, IfFinder myIfFinder, SwitchFinder mySwitchFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, PrimTypeCollector primeTypeCollector, PackageNamer myPackageNamer, Jimple myJimple) {
+           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constantFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector, Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, PackageNamer myPackageNamer, Jimple myJimple) {
     this(body.getMethod(), myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myPackageNamer, primeTypeCollector, myDava, myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector, myBaf, myScene, myJimple);
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myPackageNamer, primTypeCollector, myDava, myClosestAbruptTargetFinder, constantFactory, myGrimp, myBaf, myScene, myJimple);
     debug("DavaBody", "creating DavaBody for" + body.getMethod().toString());
     this.myDava.log("\nstart method " + body.getMethod().toString());
 
@@ -395,14 +393,14 @@ public class DavaBody extends Body {
 
     while (true) {
       try {
-        this.myCycleFinder.find(this, asg, SET);
-        this.myIfFinder.find(this, asg, SET);
-        this.mySwitchFinder.find(this, asg, SET);
-        this.mySynchronizedBlockFinder.find(this, asg, SET);
-        this.myExceptionFinder.find(this, asg, SET);
-        this.mySequenceFinder.find(this, asg, SET);
-        this.myLabeledBlockFinder.find(this, asg, SET);
-        this.myAbruptEdgeFinder.find(this, asg, SET);
+        this.myCycleFinder.find(this, asg, SET, primTypeCollector, myGrimp);
+        this.myIfFinder.find(this, asg, SET, primTypeCollector, myGrimp);
+        this.mySwitchFinder.find(this, asg, SET, primTypeCollector, myGrimp);
+        this.mySynchronizedBlockFinder.find(this, asg, SET, primTypeCollector, myGrimp);
+        this.myExceptionFinder.find(this, asg, SET, primTypeCollector, myGrimp);
+        this.mySequenceFinder.find(this, asg, SET, primTypeCollector, myGrimp);
+        this.myLabeledBlockFinder.find(this, asg, SET, primTypeCollector, myGrimp);
+        this.myAbruptEdgeFinder.find(this, asg, SET, primTypeCollector, myGrimp);
       } catch (RetriggerAnalysisException rae) {
         SET = new SETTopNode(asg.get_ChainView(), this.myTryContentsFinder, this.myASTWalker);
         consumedConditions = new HashSet<Object>();
@@ -414,7 +412,7 @@ public class DavaBody extends Body {
     this.myMonitorConverter.convert(this);
     this.myThrowNullConverter.convert(this);
 
-    ASTNode AST = SET.emit_AST();
+    ASTNode AST = SET.emit_AST(myTryContentsFinder, myASTWalker, myJimple);
 
     // get rid of the grimp representation, put in the new AST
     getTraps().clear();
@@ -439,7 +437,7 @@ public class DavaBody extends Body {
      * to invoke this method here will result in no locals being printed out
      */
     if (AST instanceof ASTMethodNode) {
-      ((ASTMethodNode) AST).storeLocals(this);
+      ((ASTMethodNode) AST).storeLocals(this, myScene);
 
       /*
        * January 12th, 2006 Deal with the super() problem before continuing
@@ -448,7 +446,7 @@ public class DavaBody extends Body {
       boolean force = PhaseOptions.getBoolean(options, "enabled");
       // System.out.println("force is "+force);
       if (force) {
-        AST.apply(new SuperFirstStmtHandler((ASTMethodNode) AST, myTryContentsFinder, myASTWalker, myScene, myOptions, this.myPackageNamer, this.primeTypeCollector, myGrimp, myBaf, constancFactory));
+        AST.apply(new SuperFirstStmtHandler((ASTMethodNode) AST, myTryContentsFinder, myASTWalker, myScene, myOptions, this.myPackageNamer, this.primTypeCollector, myGrimp, myBaf, constantFactory));
       }
 
       debug("DavaBody", "PreInit booleans is" + G.v().SootMethodAddedByDava);
@@ -464,7 +462,7 @@ public class DavaBody extends Body {
     AST.apply(new ShortcutIfGenerator());
     debug("applyBugFixes", "after ShortcutIfGenerator" + G.v().ASTTransformations_modified);
 
-    AST.apply(new TypeCastingError(primeTypeCollector));
+    AST.apply(new TypeCastingError(primTypeCollector));
     debug("applyBugFixes", "after TypeCastingError" + G.v().ASTTransformations_modified);
   }
 
@@ -581,7 +579,7 @@ public class DavaBody extends Body {
         AST.apply(new ASTCleanerTwo(myTryContentsFinder));
         debug("applyASTAnalyses", "after ASTCleanerTwo" + G.v().ASTTransformations_modified);
 
-        AST.apply(new ForLoopCreator());
+        AST.apply(new ForLoopCreator(myTryContentsFinder, myASTWalker));
         debug("applyASTAnalyses", "after ForLoopCreator" + G.v().ASTTransformations_modified);
 
         AST.apply(new NewStringBufferSimplification());
@@ -594,7 +592,7 @@ public class DavaBody extends Body {
         debug("applyASTAnalyses", "after UselessLabeledBlockRemover" + G.v().ASTTransformations_modified);
 
         if (!G.v().ASTTransformations_modified) {
-          AST.apply(new IfElseSplitter());
+          AST.apply(new IfElseSplitter(myTryContentsFinder));
           debug("applyASTAnalyses", "after IfElseSplitter" + G.v().ASTTransformations_modified);
         }
 
@@ -606,7 +604,7 @@ public class DavaBody extends Body {
         AST.apply(new ShortcutIfGenerator());
         debug("applyASTAnalyses", "after ShortcutIfGenerator" + G.v().ASTTransformations_modified);
 
-        AST.apply(new TypeCastingError(primeTypeCollector));
+        AST.apply(new TypeCastingError(primTypeCollector));
         debug("applyASTAnalyses", "after TypeCastingError" + G.v().ASTTransformations_modified);
 
         /*
@@ -762,7 +760,7 @@ public class DavaBody extends Body {
 
       // Clone locals.
       for (Local original : grimpBody.getLocals()) {
-        Local copy = myDava.newLocal(original.getName(), original.getType());
+        Local copy = myDava.newLocal(original.getName(), original.getType(myScene));
 
         getLocals().add(copy);
 
@@ -867,7 +865,7 @@ public class DavaBody extends Body {
 
     {
       for (Local l : getLocals()) {
-        Type t = l.getType();
+        Type t = l.getType(myScene);
 
         if (t instanceof RefType) {
           RefType rt = (RefType) t;
@@ -911,7 +909,7 @@ public class DavaBody extends Body {
           javafy(ds.getLeftOpBox());
 
           if (ds.getRightOp() instanceof IntConstant) {
-            ds.getRightOpBox().setValue(constancFactory.createDIntConstant(((IntConstant) ds.getRightOp()).value, ds.getLeftOp().getType()));
+            ds.getRightOpBox().setValue(constantFactory.createDIntConstant(((IntConstant) ds.getRightOp()).value, ds.getLeftOp().getType(myScene)));
           }
         }
 
@@ -919,7 +917,7 @@ public class DavaBody extends Body {
           ReturnStmt rs = (ReturnStmt) s;
 
           if (rs.getOp() instanceof IntConstant) {
-            rs.getOpBox().setValue(constancFactory.createDIntConstant(((IntConstant) rs.getOp()).value, body.getMethod().getReturnType()));
+            rs.getOpBox().setValue(constantFactory.createDIntConstant(((IntConstant) rs.getOp()).value, body.getMethod().getReturnType()));
           } else {
             javafy(rs.getOpBox());
           }
@@ -1086,7 +1084,7 @@ public class DavaBody extends Body {
     else if (r instanceof ThisRef) {
       ThisRef tr = (ThisRef) r;
 
-      vb.setValue(new DThisRef((RefType) tr.getType()));
+      vb.setValue(new DThisRef((RefType) tr.getType(myScene)));
     }
   }
 
@@ -1108,9 +1106,9 @@ public class DavaBody extends Body {
         leftOp = leftOpBox.getValue();
 
         if (boe instanceof ConditionExpr) {
-          rightOpBox.setValue(constancFactory.createDIntConstant(((IntConstant) rightOp).value, leftOp.getType()));
+          rightOpBox.setValue(constantFactory.createDIntConstant(((IntConstant) rightOp).value, leftOp.getType(myScene)));
         } else {
-          rightOpBox.setValue(constancFactory.createDIntConstant(((IntConstant) rightOp).value, null));
+          rightOpBox.setValue(constantFactory.createDIntConstant(((IntConstant) rightOp).value, null));
         }
       }
     } else if (leftOp instanceof IntConstant) {
@@ -1118,9 +1116,9 @@ public class DavaBody extends Body {
       rightOp = rightOpBox.getValue();
 
       if (boe instanceof ConditionExpr) {
-        leftOpBox.setValue(constancFactory.createDIntConstant(((IntConstant) leftOp).value, rightOp.getType()));
+        leftOpBox.setValue(constantFactory.createDIntConstant(((IntConstant) leftOp).value, rightOp.getType(myScene)));
       } else {
-        leftOpBox.setValue(constancFactory.createDIntConstant(((IntConstant) leftOp).value, null));
+        leftOpBox.setValue(constantFactory.createDIntConstant(((IntConstant) leftOp).value, null));
       }
     } else {
       javafy(rightOpBox);
@@ -1131,7 +1129,7 @@ public class DavaBody extends Body {
     }
 
     if (boe instanceof CmpExpr) {
-      vb.setValue(new DCmpExpr(leftOp, rightOp));
+      vb.setValue(new DCmpExpr(leftOp, rightOp,myGrimp,primTypeCollector));
     } else if (boe instanceof CmplExpr) {
       vb.setValue(new DCmplExpr(leftOp, rightOp,myGrimp,primTypeCollector));
     } else if (boe instanceof CmpgExpr) {
@@ -1145,9 +1143,9 @@ public class DavaBody extends Body {
     javafy(uoe.getOpBox());
 
     if (uoe instanceof LengthExpr) {
-      vb.setValue(new DLengthExpr(((LengthExpr) uoe).getOp()));
+      vb.setValue(new DLengthExpr(((LengthExpr) uoe).getOp(), myGrimp, primTypeCollector));
     } else if (uoe instanceof NegExpr) {
-      vb.setValue(new DNegExpr(((NegExpr) uoe).getOp()));
+      vb.setValue(new DNegExpr(((NegExpr) uoe).getOp(), myGrimp, primTypeCollector));
     }
   }
 
@@ -1159,7 +1157,7 @@ public class DavaBody extends Body {
   private void javafy_newarray_expr(ValueBox vb) {
     NewArrayExpr nae = (NewArrayExpr) vb.getValue();
     javafy(nae.getSizeBox());
-    vb.setValue(new DNewArrayExpr(nae.getBaseType(), nae.getSize()));
+    vb.setValue(new DNewArrayExpr(nae.getBaseType(), nae.getSize(), myGrimp));
   }
 
   private void javafy_newmultiarray_expr(ValueBox vb) {
@@ -1167,7 +1165,7 @@ public class DavaBody extends Body {
     for (int i = 0; i < nmae.getSizeCount(); i++) {
       javafy(nmae.getSizeBox(i));
     }
-    vb.setValue(new DNewMultiArrayExpr(nmae.getBaseType(), nmae.getSizes()));
+    vb.setValue(new DNewMultiArrayExpr(nmae.getBaseType(), nmae.getSizes(), myGrimp));
   }
 
   private void javafy_instanceof_expr(ValueBox vb) {
@@ -1195,7 +1193,7 @@ public class DavaBody extends Body {
       Value arg = ie.getArg(i);
 
       if (arg instanceof IntConstant) {
-        ie.getArgBox(i).setValue(constancFactory.createDIntConstant(((IntConstant) arg).value, ie.getMethodRef().parameterType(i)));
+        ie.getArgBox(i).setValue(constantFactory.createDIntConstant(((IntConstant) arg).value, ie.getMethodRef().parameterType(i)));
       } else {
         javafy(ie.getArgBox(i));
       }
@@ -1216,7 +1214,7 @@ public class DavaBody extends Body {
 
       else if (ie instanceof InterfaceInvokeExpr) {
         InterfaceInvokeExpr iie = (InterfaceInvokeExpr) ie;
-        vb.setValue(new DInterfaceInvokeExpr(iie.getBase(), iie.getMethodRef(), iie.getArgs()));
+        vb.setValue(new DInterfaceInvokeExpr(iie.getBase(), iie.getMethodRef(), iie.getArgs(), myGrimp));
       } else {
         throw new RuntimeException("InstanceInvokeExpr " + ie + " not javafied correctly");
       }
@@ -1244,7 +1242,7 @@ public class DavaBody extends Body {
         }
 
         addToImportList(className);
-        vb.setValue(new DNewInvokeExpr((RefType) nie.getType(), nie.getMethodRef(), nie.getArgs(), myGrimp));
+        vb.setValue(new DNewInvokeExpr((RefType) nie.getType(myScene), nie.getMethodRef(), nie.getArgs(), myGrimp));
       } else {
         SootMethodRef methodRef = sie.getMethodRef();
         className = methodRef.declaringClass().toString();

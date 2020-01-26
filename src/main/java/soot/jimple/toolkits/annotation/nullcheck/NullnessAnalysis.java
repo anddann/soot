@@ -27,11 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import soot.Immediate;
-import soot.Local;
-import soot.RefLikeType;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.jimple.ArrayRef;
 import soot.jimple.CaughtExceptionRef;
 import soot.jimple.ClassConstant;
@@ -69,8 +65,9 @@ import soot.toolkits.scalar.ForwardBranchedFlowAnalysis;
  */
 public class NullnessAnalysis extends ForwardBranchedFlowAnalysis<NullnessAnalysis.AnalysisInfo> {
     private ConstantFactory constantFactory;
+  private Scene myScene;
 
-    /**
+  /**
    * The analysis info is a simple mapping of type {@link Value} to any of the constants BOTTOM, NON_NULL, NULL or TOP. This
    * class returns BOTTOM by default.
    *
@@ -132,12 +129,14 @@ public class NullnessAnalysis extends ForwardBranchedFlowAnalysis<NullnessAnalys
    * @param myInteractionHandler
    * @param interaticveMode
    * @param constantFactory
+   * @param myScene
    */
-  public NullnessAnalysis(UnitGraph graph, InteractionHandler myInteractionHandler, boolean interaticveMode, ConstantFactory constantFactory) {
+  public NullnessAnalysis(UnitGraph graph, InteractionHandler myInteractionHandler, boolean interaticveMode, ConstantFactory constantFactory, Scene myScene) {
     super(graph, interaticveMode,myInteractionHandler);
       this.constantFactory = constantFactory;
+    this.myScene = myScene;
 
-      doAnalysis();
+    doAnalysis();
   }
 
   /**
@@ -187,7 +186,7 @@ public class NullnessAnalysis extends ForwardBranchedFlowAnalysis<NullnessAnalys
     // x=y, copy the info for y (for locals x,y)
     if (s instanceof DefinitionStmt) {
       DefinitionStmt defStmt = (DefinitionStmt) s;
-      if (defStmt.getLeftOp().getType() instanceof RefLikeType) {
+      if (defStmt.getLeftOp().getType(myScene) instanceof RefLikeType) {
         handleRefTypeAssignment(defStmt, out);
       }
     }

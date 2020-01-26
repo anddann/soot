@@ -26,12 +26,7 @@ package soot.jimple.toolkits.thread.synchronization;
 import java.util.Collections;
 import java.util.List;
 
-import soot.PrimTypeCollector;
-import soot.SootClass;
-import soot.Type;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.util.Switch;
 
 // Written by Richard L. Halpert on August 11, 2007
@@ -92,7 +87,7 @@ public class NewStaticLock implements Value {
   public void toString(UnitPrinter up) {
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return primTypeCollector.getNullType();
   }
 

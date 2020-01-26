@@ -56,7 +56,7 @@ public class BodyExtractorWalker extends Walker {
    * Constructs a walker, and attaches it to the given SootClass, sending bodies to the given methodToParsedBodyMap.
    */
   public BodyExtractorWalker(SootClass sc, SootResolver resolver, Map<SootMethod, JimpleBody> methodToParsedBodyMap) {
-    super(sc, constancFactory, resolver, myScene, myOptions, myPackageNamer, myJimple, constantFactory);
+    super(sc, constantFactory, resolver, myScene, myOptions, myPackageNamer, myJimple);
     this.methodToParsedBodyMap = methodToParsedBodyMap;
   }
 

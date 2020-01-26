@@ -48,7 +48,7 @@ public class CPVariable {
     this.field = null;
     this.local = local;
 
-    if (!(local.getType() instanceof PrimType)) {
+    if (!(local.getType(myScene) instanceof PrimType)) {
       throw new DavaFlowAnalysisException("Variables managed for CP should only be primitives");
     }
 

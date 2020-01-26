@@ -26,19 +26,10 @@ package soot.jimple.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import soot.SootField;
-import soot.SootFieldRef;
-import soot.Type;
-import soot.Unit;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
 import soot.grimp.PrecedenceTest;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.InstanceFieldRef;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.RefSwitch;
+import soot.jimple.*;
 import soot.util.Switch;
 
 @SuppressWarnings("serial")
@@ -106,7 +97,7 @@ public abstract class AbstractInstanceFieldRef implements InstanceFieldRef, Conv
     return useBoxes;
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return fieldRef.type();
   }
 
@@ -127,8 +118,8 @@ public abstract class AbstractInstanceFieldRef implements InstanceFieldRef, Conv
     return getField().equivHashCode() * 101 + baseBox.getValue().equivHashCode() + 17;
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
-    ((ConvertToBaf) getBase()).convertToBaf(context, out, myBaf);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) getBase()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
     Unit u;
     out.add(u = myBaf.newFieldGetInst(fieldRef));
 

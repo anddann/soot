@@ -24,10 +24,7 @@ package soot.shimple;
 
 import java.util.List;
 
-import soot.Local;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.toolkits.graph.Block;
 import soot.toolkits.scalar.ValueUnitPair;
 import soot.util.Switch;
@@ -198,8 +195,9 @@ public interface PhiExpr extends ShimpleExpr {
 
   /**
    * The type of the PhiExpr is usually the same as the type of its arguments.
-   **/
-  public Type getType();
+   *
+   * @param myScene*/
+  public Type getType(Scene myScene);
 
   public void apply(Switch sw);
 }

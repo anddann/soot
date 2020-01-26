@@ -25,22 +25,14 @@ package soot.jimple.internal;
 
 import java.util.List;
 
-import soot.SootMethodRef;
-import soot.Unit;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.ExprSwitch;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.StaticInvokeExpr;
+import soot.jimple.*;
 import soot.util.Switch;
 
 @SuppressWarnings("serial")
 public abstract class AbstractStaticInvokeExpr extends AbstractInvokeExpr implements StaticInvokeExpr, ConvertToBaf {
-  AbstractStaticInvokeExpr(SootMethodRef methodRef, List<Value> args) {
+  AbstractStaticInvokeExpr(SootMethodRef methodRef, List<Value> args, Jimple myJimple) {
     this(methodRef, new ValueBox[args.size()]);
 
     for (int i = 0; i < args.size(); i++) {
@@ -127,10 +119,10 @@ public abstract class AbstractStaticInvokeExpr extends AbstractInvokeExpr implem
     ((ExprSwitch) sw).caseStaticInvokeExpr(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     if (argBoxes != null) {
       for (ValueBox element : argBoxes) {
-        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, myBaf);
+        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
       }
     }
 

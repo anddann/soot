@@ -29,11 +29,9 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.JSRInlinerAdapter;
 
-import soot.ArrayType;
-import soot.RefType;
-import soot.Scene;
-import soot.SootMethod;
-import soot.Type;
+import soot.*;
+import soot.coffi.Util;
+import soot.jimple.ConstantFactory;
 import soot.options.Options;
 import soot.tagkit.AnnotationConstants;
 import soot.tagkit.AnnotationDefaultTag;
@@ -55,13 +53,25 @@ class MethodBuilder extends JSRInlinerAdapter {
   private final SootClassBuilder scb;
   private Scene myScene;
   private Options myOptions;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
+  private LambdaMetaFactory myLambdaMetaFactory;
+  private PackManager myPackManager;
+  private Util myCoffiUtil;
+  private PhaseOptions myPhaseOptions;
 
-  MethodBuilder(SootMethod method, SootClassBuilder scb, String desc, String[] ex, Scene myScene, Options myOptions) {
+  MethodBuilder(SootMethod method, SootClassBuilder scb, String desc, String[] ex, Scene myScene, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions) {
     super(Opcodes.ASM5, null, method.getModifiers(), method.getName(), desc, null, ex);
     this.method = method;
     this.scb = scb;
     this.myScene = myScene;
     this.myOptions = myOptions;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
+    this.myLambdaMetaFactory = myLambdaMetaFactory;
+    this.myPackManager = myPackManager;
+    this.myCoffiUtil = myCoffiUtil;
+    this.myPhaseOptions = myPhaseOptions;
   }
 
   private TagBuilder getTagBuilder() {
@@ -131,7 +141,7 @@ class MethodBuilder extends JSRInlinerAdapter {
   @Override
   public void visitTypeInsn(int op, String t) {
     super.visitTypeInsn(op, t);
-    Type rt = AsmUtil.toJimpleRefType(t, myScene, primeTypeCollector);
+    Type rt = AsmUtil.toJimpleRefType(t, myScene, primTypeCollector);
     if (rt instanceof ArrayType) {
       scb.addDep(((ArrayType) rt).baseType);
     } else {
@@ -142,7 +152,7 @@ class MethodBuilder extends JSRInlinerAdapter {
   @Override
   public void visitFieldInsn(int opcode, String owner, String name, String desc) {
     super.visitFieldInsn(opcode, owner, name, desc);
-    for (Type t : AsmUtil.toJimpleDesc(desc, primeTypeCollector, myScene)) {
+    for (Type t : AsmUtil.toJimpleDesc(desc, primTypeCollector, myScene)) {
       if (t instanceof RefType) {
         scb.addDep(t);
       }
@@ -154,11 +164,11 @@ class MethodBuilder extends JSRInlinerAdapter {
   @Override
   public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean isInterf) {
     super.visitMethodInsn(opcode, owner, name, desc, isInterf);
-    for (Type t : AsmUtil.toJimpleDesc(desc, primeTypeCollector, myScene)) {
+    for (Type t : AsmUtil.toJimpleDesc(desc, primTypeCollector, myScene)) {
       addDeps(t);
     }
 
-    scb.addDep(AsmUtil.toBaseType(owner, myScene, primeTypeCollector));
+    scb.addDep(AsmUtil.toBaseType(owner, myScene, primTypeCollector));
   }
 
   @Override
@@ -167,7 +177,7 @@ class MethodBuilder extends JSRInlinerAdapter {
 
     if (cst instanceof Handle) {
       Handle methodHandle = (Handle) cst;
-      scb.addDep(AsmUtil.toBaseType(methodHandle.getOwner(), myScene, primeTypeCollector));
+      scb.addDep(AsmUtil.toBaseType(methodHandle.getOwner(), myScene, primTypeCollector));
     }
   }
 
@@ -209,7 +219,7 @@ class MethodBuilder extends JSRInlinerAdapter {
     }
     if (method.isConcrete()) {
       method.setSource(
-          new AsmMethodSource(maxLocals, instructions, localVariables, tryCatchBlocks, myScene,  myOptions, constancFactory, myLambdaMetaFactory, myPackManager, myPhaseOptions, myCoffiUtil));
+          new AsmMethodSource(maxLocals, instructions, localVariables, tryCatchBlocks, myScene,  myOptions, constantFactory, myLambdaMetaFactory, myPackManager, myPhaseOptions, myCoffiUtil, primTypeCollector));
     }
   }
 }

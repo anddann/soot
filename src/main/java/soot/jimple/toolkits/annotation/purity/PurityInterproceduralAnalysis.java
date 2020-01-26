@@ -350,7 +350,7 @@ public class PurityInterproceduralAnalysis extends AbstractInterproceduralAnalys
     Local ret = null;
     if (stmt instanceof AssignStmt) {
       Local v = (Local) ((AssignStmt) stmt).getLeftOp();
-      if (v.getType() instanceof RefLikeType) {
+      if (v.getType(myScene) instanceof RefLikeType) {
         ret = v;
       }
     }

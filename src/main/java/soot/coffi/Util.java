@@ -24,9 +24,7 @@ package soot.coffi;
 
 import com.google.inject.Inject;
 
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,15 +35,11 @@ import org.slf4j.LoggerFactory;
 import soot.ArrayType;
 import soot.Body;
 import soot.Local;
-import soot.Modifier;
 import soot.PackManager;
 import soot.PhaseOptions;
 import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Scene;
-import soot.SootClass;
-import soot.SootField;
-import soot.SootMethod;
 import soot.SootResolver;
 import soot.Timers;
 import soot.Type;
@@ -53,35 +47,6 @@ import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.options.Options;
-import soot.tagkit.AnnotationAnnotationElem;
-import soot.tagkit.AnnotationArrayElem;
-import soot.tagkit.AnnotationClassElem;
-import soot.tagkit.AnnotationConstants;
-import soot.tagkit.AnnotationDefaultTag;
-import soot.tagkit.AnnotationDoubleElem;
-import soot.tagkit.AnnotationElem;
-import soot.tagkit.AnnotationEnumElem;
-import soot.tagkit.AnnotationFloatElem;
-import soot.tagkit.AnnotationIntElem;
-import soot.tagkit.AnnotationLongElem;
-import soot.tagkit.AnnotationStringElem;
-import soot.tagkit.AnnotationTag;
-import soot.tagkit.ConstantValueTag;
-import soot.tagkit.DeprecatedTag;
-import soot.tagkit.DoubleConstantValueTag;
-import soot.tagkit.EnclosingMethodTag;
-import soot.tagkit.FloatConstantValueTag;
-import soot.tagkit.GenericAttribute;
-import soot.tagkit.Host;
-import soot.tagkit.InnerClassTag;
-import soot.tagkit.IntegerConstantValueTag;
-import soot.tagkit.LongConstantValueTag;
-import soot.tagkit.SignatureTag;
-import soot.tagkit.SourceFileTag;
-import soot.tagkit.StringConstantValueTag;
-import soot.tagkit.SyntheticTag;
-import soot.tagkit.VisibilityAnnotationTag;
-import soot.tagkit.VisibilityParameterAnnotationTag;
 
 public class Util {
     private static final Logger logger = LoggerFactory.getLogger(Util.class);
@@ -94,11 +59,11 @@ public class Util {
     private PackManager myPackManager;
     private Timers myTimers;
     private PrimTypeCollector myPrimTypeCollector;
-    private ConstantFactory constancFactory;
+    private ConstantFactory constantFactory;
 
     @Inject
     public Util(Scene myScene, SootResolver mySootResolver, Jimple myJimple, PhaseOptions myPhaseOptions, Options myOptions,
-                PackManager myPackManager, Timers myTimers,  PrimTypeCollector myPrimTypeCollector, ConstantFactory constancFactory) {
+                PackManager myPackManager, Timers myTimers,  PrimTypeCollector myPrimTypeCollector, ConstantFactory constantFactory) {
         this.myScene = myScene;
         this.mySootResolver = mySootResolver;
         this.myJimple = myJimple;
@@ -107,7 +72,7 @@ public class Util {
         this.myPackManager = myPackManager;
         this.myTimers = myTimers;
         this.myPrimTypeCollector = myPrimTypeCollector;
-        this.constancFactory = constancFactory;
+        this.constantFactory = constantFactory;
     }
 
     /*
@@ -147,12 +112,12 @@ public class Util {
      * // Handle array case while(descriptor.startsWith("[")) { isArray = true; numDimensions++; descriptor =
      * descriptor.substring(1); }
      *
-     * // Determine base type if(descriptor.startsWith("B")) { baseType = primeTypeCollector.getByteType(); descriptor = descriptor.substring(1); }
-     * else if(descriptor.startsWith("C")) { baseType = primeTypeCollector.getCharType(); descriptor = descriptor.substring(1); } else
-     * if(descriptor.startsWith("D")) { baseType = primeTypeCollector.getDoubleType(); descriptor = descriptor.substring(1); } else
-     * if(descriptor.startsWith("F")) { baseType = primeTypeCollector.getFloatType(); descriptor = descriptor.substring(1); } else
-     * if(descriptor.startsWith("I")) { baseType = primeTypeCollector.getIntType(); descriptor = descriptor.substring(1); } else
-     * if(descriptor.startsWith("J")) { baseType = primeTypeCollector.getLongType(); descriptor = descriptor.substring(1); } else
+     * // Determine base type if(descriptor.startsWith("B")) { baseType = primTypeCollector.getByteType(); descriptor = descriptor.substring(1); }
+     * else if(descriptor.startsWith("C")) { baseType = primTypeCollector.getCharType(); descriptor = descriptor.substring(1); } else
+     * if(descriptor.startsWith("D")) { baseType = primTypeCollector.getDoubleType(); descriptor = descriptor.substring(1); } else
+     * if(descriptor.startsWith("F")) { baseType = primTypeCollector.getFloatType(); descriptor = descriptor.substring(1); } else
+     * if(descriptor.startsWith("I")) { baseType = primTypeCollector.getIntType(); descriptor = descriptor.substring(1); } else
+     * if(descriptor.startsWith("J")) { baseType = primTypeCollector.getLongType(); descriptor = descriptor.substring(1); } else
      * if(descriptor.startsWith("L")) { int index = descriptor.indexOf(';');
      *
      * if(index == -1) throw new RuntimeException("Class reference has no ending ;" );
@@ -161,9 +126,9 @@ public class Util {
      *
      * baseType = RefType.v(className.replace('/', '.'));
      *
-     * descriptor = descriptor.substring(index + 1); } else if(descriptor.startsWith("S")) { baseType = primeTypeCollector.getShortType();
-     * descriptor = descriptor.substring(1); } else if(descriptor.startsWith("Z")) { baseType = primeTypeCollector.getBooleanType(); descriptor =
-     * descriptor.substring(1); } else if(descriptor.startsWith("V")) { baseType = primeTypeCollector.getVoidType(); descriptor =
+     * descriptor = descriptor.substring(index + 1); } else if(descriptor.startsWith("S")) { baseType = primTypeCollector.getShortType();
+     * descriptor = descriptor.substring(1); } else if(descriptor.startsWith("Z")) { baseType = primTypeCollector.getBooleanType(); descriptor =
+     * descriptor.substring(1); } else if(descriptor.startsWith("V")) { baseType = primTypeCollector.getVoidType(); descriptor =
      * descriptor.substring(1); } else throw new RuntimeException("Unknown field type!" );
      *
      * Type t;
@@ -414,7 +379,7 @@ public class Util {
     Local getLocalCreatingIfNecessary(JimpleBody listBody, String name, Type type) {
         Local l = getLocalUnsafe(listBody, name);
         if (l != null) {
-            if (!l.getType().equals(type)) {
+            if (!l.getType(myScene).equals(type)) {
                 throw new RuntimeException("The body already declares this local name with a different type.");
             }
         } else {
@@ -434,17 +399,17 @@ public class Util {
      * void setLocalType(Local local, List locals, int localIndex, Type type) { if(local.getType().equals(UnknownType .v()) ||
      * local.getType().equals(type)) { local.setType(type);
      *
-     * if(local.getType().equals(DoubleType. v()) || local.getType().equals(primeTypeCollector.getLongType())) { // This means the next local
+     * if(local.getType().equals(DoubleType. v()) || local.getType().equals(primTypeCollector.getLongType())) { // This means the next local
      * becomes voided, since these types occupy two // words.
      *
      * Local secondHalf = (Local) locals.get(localIndex + 1);
      *
-     * secondHalf.setType(primeTypeCollector.getVoidType()); }
+     * secondHalf.setType(primTypeCollector.getVoidType()); }
      *
      * return; }
      *
-     * if(type.equals(primeTypeCollector.getIntType())) { if(local.getType().equals(BooleanType .v()) || local.getType().equals(primeTypeCollector.getCharType()) ||
-     * local.getType().equals(primeTypeCollector.getShortType()) || local.getType().equals(primeTypeCollector.getByteType())) { // Even though it's not the same, it's
+     * if(type.equals(primTypeCollector.getIntType())) { if(local.getType().equals(BooleanType .v()) || local.getType().equals(primTypeCollector.getCharType()) ||
+     * local.getType().equals(primTypeCollector.getShortType()) || local.getType().equals(primTypeCollector.getByteType())) { // Even though it's not the same, it's
      * ok, because booleans, chars, shorts, and // bytes are all sort of treated like integers by the JVM. return; }
      *
      * }

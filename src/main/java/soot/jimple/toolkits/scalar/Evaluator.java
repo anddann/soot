@@ -139,7 +139,7 @@ public class Evaluator {
       } else if (op instanceof EqExpr || op instanceof NeExpr) {
         if (c1 instanceof NumericConstant) {
           if (!(c2 instanceof NumericConstant)) {
-            return constancFactory.createIntConstant(0);
+            return constantFactory.createIntConstant(0);
           } else if (op instanceof EqExpr) {
             return ((NumericConstant) c1).equalEqual((NumericConstant) c2);
           } else if (op instanceof NeExpr) {
@@ -151,7 +151,7 @@ public class Evaluator {
           boolean truth = (op instanceof EqExpr) ? equality : !equality;
 
           // Yeah, this variable name sucks, but I couldn't resist.
-          IntConstant beauty = constancFactory.createIntConstant(truth ? 1 : 0);
+          IntConstant beauty = constantFactory.createIntConstant(truth ? 1 : 0);
           return beauty;
         }
         throw new RuntimeException("constant neither numeric nor string");

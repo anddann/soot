@@ -240,7 +240,7 @@ public class SourceLocator {
 
   protected void setupClassProviders() {
     classProviders = new LinkedList<ClassProvider>();
-    ClassProvider classFileClassProvider = new AsmClassProvider(this);
+    ClassProvider classFileClassProvider = new AsmClassProvider(this, primTypeCollector, constantFactory);
     switch (myOptions.src_prec()) {
       case Options.src_prec_class:
         classProviders.add(classFileClassProvider);

@@ -220,32 +220,32 @@ public abstract class DexlibAbstractInstruction {
   // All uses for the array have been commented out.
   // Calling all v()s for all types make no sense if we do not use them
   /*
-   * protected Type [] opUnType = { primeTypeCollector.getIntType(), // 0x7B neg-int vx, vy primeTypeCollector.getIntType(), // 0x7C primeTypeCollector.getLongType(), // 0x7D
-   * primeTypeCollector.getLongType(), // 0x7E primeTypeCollector.getFloatType(), // 0x7F primeTypeCollector.getDoubleType(), // 0x80 primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(),
-   * primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(),
-   * primeTypeCollector.getDoubleType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType() // 0x8F int-to-short vx, vy };
+   * protected Type [] opUnType = { primTypeCollector.getIntType(), // 0x7B neg-int vx, vy primTypeCollector.getIntType(), // 0x7C primTypeCollector.getLongType(), // 0x7D
+   * primTypeCollector.getLongType(), // 0x7E primTypeCollector.getFloatType(), // 0x7F primTypeCollector.getDoubleType(), // 0x80 primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(),
+   * primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getFloatType(), primTypeCollector.getFloatType(), primTypeCollector.getFloatType(), primTypeCollector.getDoubleType(), primTypeCollector.getDoubleType(),
+   * primTypeCollector.getDoubleType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType() // 0x8F int-to-short vx, vy };
    *
-   * protected Type [] resUnType = { primeTypeCollector.getIntType(), // 0x7B primeTypeCollector.getIntType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getFloatType(),
-   * primeTypeCollector.getDoubleType(), primeTypeCollector.getLongType(), primeTypeCollector.getFloatType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getIntType(), primeTypeCollector.getFloatType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getIntType(),
-   * primeTypeCollector.getLongType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getIntType(), primeTypeCollector.getLongType(), primeTypeCollector.getFloatType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType() // 0x8F };
+   * protected Type [] resUnType = { primTypeCollector.getIntType(), // 0x7B primTypeCollector.getIntType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getFloatType(),
+   * primTypeCollector.getDoubleType(), primTypeCollector.getLongType(), primTypeCollector.getFloatType(), primTypeCollector.getDoubleType(), primTypeCollector.getIntType(), primTypeCollector.getFloatType(), primTypeCollector.getDoubleType(), primTypeCollector.getIntType(),
+   * primTypeCollector.getLongType(), primTypeCollector.getDoubleType(), primTypeCollector.getIntType(), primTypeCollector.getLongType(), primTypeCollector.getFloatType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType() // 0x8F };
    *
-   * protected Type [] resBinType = { primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(),
-   * primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(),
-   * primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getFloatType(),
-   * primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(),
-   * primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType() };
+   * protected Type [] resBinType = { primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(),
+   * primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(),
+   * primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getFloatType(),
+   * primTypeCollector.getFloatType(), primTypeCollector.getFloatType(), primTypeCollector.getFloatType(), primTypeCollector.getFloatType(), primTypeCollector.getDoubleType(), primTypeCollector.getDoubleType(), primTypeCollector.getDoubleType(),
+   * primTypeCollector.getDoubleType(), primTypeCollector.getDoubleType() };
    *
-   * protected Type [] op1BinType = { primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(),
-   * primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(),
-   * primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getFloatType(),
-   * primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(),
-   * primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType() };
+   * protected Type [] op1BinType = { primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(),
+   * primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(),
+   * primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getFloatType(),
+   * primTypeCollector.getFloatType(), primTypeCollector.getFloatType(), primTypeCollector.getFloatType(), primTypeCollector.getFloatType(), primTypeCollector.getDoubleType(), primTypeCollector.getDoubleType(), primTypeCollector.getDoubleType(),
+   * primTypeCollector.getDoubleType(), primTypeCollector.getDoubleType() };
    *
-   * protected Type [] op2BinType = { primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(),
-   * primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(),
-   * primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getLongType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getIntType(), primeTypeCollector.getFloatType(),
-   * primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getFloatType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType(),
-   * primeTypeCollector.getDoubleType(), primeTypeCollector.getDoubleType() };
+   * protected Type [] op2BinType = { primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(),
+   * primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(),
+   * primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getLongType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getIntType(), primTypeCollector.getFloatType(),
+   * primTypeCollector.getFloatType(), primTypeCollector.getFloatType(), primTypeCollector.getFloatType(), primTypeCollector.getFloatType(), primTypeCollector.getDoubleType(), primTypeCollector.getDoubleType(), primTypeCollector.getDoubleType(),
+   * primTypeCollector.getDoubleType(), primTypeCollector.getDoubleType() };
    */
 
   // public abstract void getConstraint(IDalvikTyper myDalvikTyper());

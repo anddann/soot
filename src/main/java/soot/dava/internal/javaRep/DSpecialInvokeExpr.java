@@ -40,7 +40,7 @@ public class DSpecialInvokeExpr extends GSpecialInvokeExpr {
   }
 
   public void toString(UnitPrinter up) {
-    if (getBase().getType() instanceof NullType) {
+    if (getBase().getType(myScene) instanceof NullType) {
       // OL: I don't know what this is for; I'm just refactoring the
       // original code. An explanation here would be welcome.
       up.literal("((");
@@ -78,7 +78,7 @@ public class DSpecialInvokeExpr extends GSpecialInvokeExpr {
   }
 
   public String toString() {
-    if (getBase().getType() instanceof NullType) {
+    if (getBase().getType(myScene) instanceof NullType) {
       StringBuffer b = new StringBuffer();
 
       b.append("((");

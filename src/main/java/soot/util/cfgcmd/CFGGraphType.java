@@ -86,8 +86,6 @@ public abstract class CFGGraphType extends CFGOptionMatcher.CFGOption {
   /**
    * Returns the <code>CFGGraphType</code> identified by the passed name.
    *
-   * @param name
-   *          A {@link String} identifying the graph type.
    *
    * @return A {@link CFGGraphType} object whose {@link #buildGraph()} method will create the desired sort of control flow
    *         graph and whose {@link #drawGraph} method will produce a {@link DotGraph} corresponding to the graph.

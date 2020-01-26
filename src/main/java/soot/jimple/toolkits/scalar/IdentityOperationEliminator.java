@@ -59,11 +59,11 @@ import soot.jimple.SubExpr;
 public class IdentityOperationEliminator extends BodyTransformer {
 
 
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
   @Inject
-  public IdentityOperationEliminator(ConstantFactory constancFactory) {
-    this.constancFactory = constancFactory;
+  public IdentityOperationEliminator(ConstantFactory constantFactory) {
+    this.constantFactory = constantFactory;
   }
 
 
@@ -99,9 +99,9 @@ public class IdentityOperationEliminator extends BodyTransformer {
         if (assignStmt.getRightOp() instanceof MulExpr) {
           BinopExpr aer = (BinopExpr) assignStmt.getRightOp();
           if (isConstZero(aer.getOp1())) {
-            assignStmt.setRightOp(getZeroConst(assignStmt.getLeftOp().getType()));
+            assignStmt.setRightOp(getZeroConst(assignStmt.getLeftOp().getType(myScene)));
           } else if (isConstZero(aer.getOp2())) {
-            assignStmt.setRightOp(getZeroConst(assignStmt.getLeftOp().getType()));
+            assignStmt.setRightOp(getZeroConst(assignStmt.getLeftOp().getType(myScene)));
           }
         }
 
@@ -139,13 +139,13 @@ public class IdentityOperationEliminator extends BodyTransformer {
    */
   private Value getZeroConst(Type type) {
     if (type instanceof IntType) {
-      return constancFactory.createIntConstant(0);
+      return constantFactory.createIntConstant(0);
     } else if (type instanceof LongType) {
-      return constancFactory.createLongConstant(0);
+      return constantFactory.createLongConstant(0);
     } else if (type instanceof FloatType) {
-      return constancFactory.createFloatConstant(0);
+      return constantFactory.createFloatConstant(0);
     } else if (type instanceof DoubleType) {
-      return constancFactory.createDoubleConstant(0);
+      return constantFactory.createDoubleConstant(0);
     }
 
     throw new RuntimeException("Unsupported numeric type");

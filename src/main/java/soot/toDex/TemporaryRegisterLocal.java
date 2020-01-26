@@ -25,10 +25,7 @@ package soot.toDex;
 import java.util.Collections;
 import java.util.List;
 
-import soot.Local;
-import soot.Type;
-import soot.UnitPrinter;
-import soot.ValueBox;
+import soot.*;
 import soot.jimple.JimpleValueSwitch;
 import soot.util.Switch;
 
@@ -50,7 +47,7 @@ public class TemporaryRegisterLocal implements Local {
   }
 
   @Override
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return type;
   }
 

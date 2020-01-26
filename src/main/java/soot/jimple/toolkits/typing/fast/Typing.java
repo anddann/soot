@@ -37,20 +37,20 @@ import soot.Type;
  * @author Ben Bellamy
  */
 public class Typing {
-  private final PrimTypeCollector primeTypeCollector;
+  private final PrimTypeCollector primTypeCollector;
   private HashMap<Local, Type> map;
 
-  public Typing(PrimTypeCollector primeTypeCollector, Collection<Local> vs) {
-    this.primeTypeCollector = primeTypeCollector;
+  public Typing(PrimTypeCollector primTypeCollector, Collection<Local> vs) {
+    this.primTypeCollector = primTypeCollector;
     map = new HashMap<Local, Type>(vs.size());
-    final BottomType bottomType = this.primeTypeCollector.getBottomType();
+    final BottomType bottomType = this.primTypeCollector.getBottomType();
     for (Local v : vs) {
       this.map.put(v, bottomType);
     }
   }
 
-  public Typing(PrimTypeCollector primeTypeCollector, Typing tg) {
-    this.primeTypeCollector = primeTypeCollector;
+  public Typing(PrimTypeCollector primTypeCollector, Typing tg) {
+    this.primTypeCollector = primTypeCollector;
     this.map = new HashMap<Local, Type>(tg.map);
   }
 

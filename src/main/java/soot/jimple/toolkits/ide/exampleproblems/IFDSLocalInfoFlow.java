@@ -155,7 +155,7 @@ public class IFDSLocalInfoFlow extends DefaultJimpleIFDSTabulationProblem<Local,
 
   @Override
   public Local createZeroValue() {
-    return new JimpleLocal("zero", primeTypeCollector.getNullType(), myScene);
+    return new JimpleLocal("zero", primTypeCollector.getNullType(), myScene);
   }
 
   @Override

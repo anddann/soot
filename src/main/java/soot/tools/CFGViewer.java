@@ -30,13 +30,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.Body;
-import soot.BodyTransformer;
-import soot.PackManager;
-import soot.PhaseOptions;
-import soot.SootMethod;
-import soot.Transform;
-import soot.Unit;
+import soot.*;
 import soot.jimple.JimpleBody;
 import soot.options.Options;
 import soot.toolkits.graph.DirectedGraph;
@@ -69,6 +63,15 @@ public class CFGViewer extends BodyTransformer {
   private CFGIntermediateRep ir;
   private CFGToDotGraph drawer;
   private Map<String, String> methodsToPrint; // If the user specifies
+  private Options myOptions;
+  private AltClassLoader myAltClassLoader;
+  private SourceLocator mySourceLocator;
+
+  public CFGViewer(Options myOptions, AltClassLoader myAltClassLoader, SourceLocator mySourceLocator) {
+    this.myOptions = myOptions;
+    this.myAltClassLoader = myAltClassLoader;
+    this.mySourceLocator = mySourceLocator;
+  }
   // particular
 
   // methods to print, this is a map
@@ -85,22 +88,23 @@ public class CFGViewer extends BodyTransformer {
     }
   }
 
-  public static void main(String[] args) {
-    CFGViewer viewer = new CFGViewer();
-    Transform printTransform = new Transform(phaseFullname, viewer);
-    printTransform.setDeclaredOptions("enabled " + altClassPathOptionName + ' ' + graphTypeOptionName + ' ' + irOptionName
-        + ' ' + multipageOptionName + ' ' + briefLabelOptionName + ' ');
-    printTransform.setDefaultOptions(
-        "enabled " + altClassPathOptionName + ": " + graphTypeOptionName + ':' + defaultGraph + ' ' + irOptionName + ':'
-            + defaultIR + ' ' + multipageOptionName + ":false " + ' ' + briefLabelOptionName + ":false ");
-    myPackManager.getPack("jtp").add(printTransform);
-    args = viewer.parse_options(args);
-    if (args.length == 0) {
-      usage();
-    } else {
-      soot.Main.main(args);
-    }
-  }
+  //FIXME
+//  public static void main(String[] args) {
+//    CFGViewer viewer = new CFGViewer();
+//    Transform printTransform = new Transform(phaseFullname, viewer,myOptions,myPhaseOptions,myPhaseDumper);
+//    printTransform.setDeclaredOptions("enabled " + altClassPathOptionName + ' ' + graphTypeOptionName + ' ' + irOptionName
+//        + ' ' + multipageOptionName + ' ' + briefLabelOptionName + ' ');
+//    printTransform.setDefaultOptions(
+//        "enabled " + altClassPathOptionName + ": " + graphTypeOptionName + ':' + defaultGraph + ' ' + irOptionName + ':'
+//            + defaultIR + ' ' + multipageOptionName + ":false " + ' ' + briefLabelOptionName + ":false ");
+//    myPackManager.getPack("jtp").add(printTransform);
+//    args = viewer.parse_options(args);
+//    if (args.length == 0) {
+//      usage();
+//    } else {
+//      soot.Main.main(args);
+//    }
+//  }
 
   private static void usage() {
     System.out.println("Usage:\n" //
@@ -224,7 +228,7 @@ public class CFGViewer extends BodyTransformer {
 
     String methodname = body.getMethod().getSubSignature();
     String classname = body.getMethod().getDeclaringClass().getName().replaceAll("\\$", "\\.");
-    String filename = soot.mySourceLocator.getOutputDir();
+    String filename = mySourceLocator.getOutputDir();
     if (filename.length() > 0) {
       filename = filename + java.io.File.separator;
     }

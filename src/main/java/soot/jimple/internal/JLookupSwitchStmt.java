@@ -26,19 +26,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import soot.Unit;
-import soot.UnitBox;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
 import soot.baf.PlaceholderInst;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.LookupSwitchStmt;
-import soot.jimple.StmtSwitch;
+import soot.jimple.*;
 import soot.util.Switch;
 
 public class JLookupSwitchStmt extends AbstractSwitchStmt implements LookupSwitchStmt {
@@ -61,7 +52,7 @@ public class JLookupSwitchStmt extends AbstractSwitchStmt implements LookupSwitc
     List<IntConstant> clonedLookupValues = new ArrayList<IntConstant>(lookupValueCount);
 
     for (int i = 0; i < lookupValueCount; i++) {
-      clonedLookupValues.add(i, constancFactory.createIntConstant(getLookupValue(i)));
+      clonedLookupValues.add(i, constantFactory.createIntConstant(getLookupValue(i)));
     }
 
     return new JLookupSwitchStmt(getKey(), clonedLookupValues, getTargets(), getDefaultTarget());
@@ -143,7 +134,7 @@ public class JLookupSwitchStmt extends AbstractSwitchStmt implements LookupSwitc
   }
 
   public void setLookupValue(int index, int value) {
-    lookupValues.set(index, constancFactory.createIntConstant(value));
+    lookupValues.set(index, constantFactory.createIntConstant(value));
   }
 
   public int getLookupValue(int index) {
@@ -158,10 +149,10 @@ public class JLookupSwitchStmt extends AbstractSwitchStmt implements LookupSwitc
     ((StmtSwitch) sw).caseLookupSwitchStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     List<PlaceholderInst> targetPlaceholders = new ArrayList<PlaceholderInst>();
 
-    ((ConvertToBaf) getKey()).convertToBaf(context, out, myBaf);
+    ((ConvertToBaf) getKey()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
 
     for (Unit target : getTargets()) {
       targetPlaceholders.add(myBaf.newPlaceholderInst(target));

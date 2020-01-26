@@ -70,12 +70,12 @@ import soot.tagkit.Tag;
 public class ConstantInitializerToTagTransformer extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ConstantInitializerToTagTransformer.class);
   private Scene myScene;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
   @Inject
-  public ConstantInitializerToTagTransformer(Scene myScene, ConstantFactory constancFactory) {
+  public ConstantInitializerToTagTransformer(Scene myScene, ConstantFactory constantFactory) {
     this.myScene = myScene;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
   }
 
   @Override
@@ -231,15 +231,15 @@ public class ConstantInitializerToTagTransformer extends SceneTransformer {
 
   private ConstantValueTag createConstantTagFromValue(Constant rightOp) {
     if (rightOp instanceof DoubleConstant) {
-      return new DoubleConstantValueTag(((DoubleConstant) rightOp).value, constancFactory);
+      return new DoubleConstantValueTag(((DoubleConstant) rightOp).value, constantFactory);
     } else if (rightOp instanceof FloatConstant) {
-      return new FloatConstantValueTag(((FloatConstant) rightOp).value, constancFactory);
+      return new FloatConstantValueTag(((FloatConstant) rightOp).value, constantFactory);
     } else if (rightOp instanceof IntConstant) {
       return new IntegerConstantValueTag(((IntConstant) rightOp).value);
     } else if (rightOp instanceof LongConstant) {
       return new LongConstantValueTag(((LongConstant) rightOp).value);
     } else if (rightOp instanceof StringConstant) {
-      return new StringConstantValueTag(((StringConstant) rightOp).value, constancFactory);
+      return new StringConstantValueTag(((StringConstant) rightOp).value, constantFactory);
     } else {
       return null;
     }

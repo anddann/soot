@@ -25,16 +25,9 @@ package soot.jimple.internal;
 
 import java.util.List;
 
-import soot.SootMethodRef;
-import soot.Unit;
-import soot.UnitPrinter;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.ExprSwitch;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.VirtualInvokeExpr;
+import soot.jimple.*;
 import soot.util.Switch;
 
 @SuppressWarnings("serial")
@@ -123,12 +116,12 @@ public abstract class AbstractVirtualInvokeExpr extends AbstractInstanceInvokeEx
     up.literal(")");
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
-    ((ConvertToBaf) (getBase())).convertToBaf(context, out, this.myBaf);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) (getBase())).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
 
     if (argBoxes != null) {
       for (ValueBox element : argBoxes) {
-        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, this.myBaf);
+        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
       }
     }
 

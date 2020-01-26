@@ -33,12 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import soot.G;
-import soot.Local;
-import soot.RefType;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
 import soot.dava.RetriggerAnalysisException;
@@ -46,6 +41,7 @@ import soot.dava.internal.SET.SETNode;
 import soot.dava.internal.SET.SETSynchronizedBlockNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.asg.AugmentedStmtGraph;
+import soot.grimp.Grimp;
 import soot.jimple.CaughtExceptionRef;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.EnterMonitorStmt;
@@ -60,10 +56,12 @@ import soot.util.IterableSet;
 public class SynchronizedBlockFinder implements FactFinder {
 
   private Dava myDava;
+  private Scene myScene;
 
   @Inject
-  public SynchronizedBlockFinder(Dava myDava) {
+  public SynchronizedBlockFinder(Dava myDava, Scene myScene) {
     this.myDava = myDava;
+    this.myScene = myScene;
   }
 
 
@@ -86,7 +84,7 @@ public class SynchronizedBlockFinder implements FactFinder {
 
   private final String THROWABLE = "java.lang.Throwable";
 
-  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
+  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException {
     davaBody = body;
     myDava.log("SynchronizedBlockFinder::find()");
 
@@ -144,7 +142,7 @@ public class SynchronizedBlockFinder implements FactFinder {
             // see if the two bodies match exactly
 
             if (verify_CatchBody(en, synchBody, local, copiedLocal)) {
-              if (SET.nest(new SETSynchronizedBlockNode(en, local))) {
+              if (SET.nest(new SETSynchronizedBlockNode(en, local), myExceptionFinder)) {
                 done = true;
                 // System.out.println("synch block created");
                 Iterator ssit = synchSet.iterator();
@@ -753,7 +751,7 @@ public class SynchronizedBlockFinder implements FactFinder {
                   while (localIt.hasNext()) {
                     Local local = (Local) localIt.next();
                     if (local.toString().compareTo(leftOp.toString()) == 0) {
-                      Type t = local.getType();
+                      Type t = local.getType(myScene);
 
                       typeName = t.toString();
                       break;
@@ -976,7 +974,7 @@ public class SynchronizedBlockFinder implements FactFinder {
 
     // if not a caught exception of type throwable we have a problem
     if (!((asnFrom instanceof CaughtExceptionRef)
-        && (((RefType) ((CaughtExceptionRef) asnFrom).getType()).getSootClass().getName().equals(THROWABLE)))) {
+        && (((RefType) ((CaughtExceptionRef) asnFrom).getType(myScene)).getSootClass().getName().equals(THROWABLE)))) {
       // System.out.println("here4");
       return false;
     }

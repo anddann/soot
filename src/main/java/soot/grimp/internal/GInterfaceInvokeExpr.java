@@ -36,7 +36,7 @@ import soot.grimp.PrecedenceTest;
 import soot.jimple.internal.AbstractInterfaceInvokeExpr;
 
 public class GInterfaceInvokeExpr extends AbstractInterfaceInvokeExpr implements Precedence {
-  private Grimp myGrimp;
+  protected Grimp myGrimp;
 
   public GInterfaceInvokeExpr(Value base, SootMethodRef methodRef, List args, Grimp myGrimp) {
     super(myGrimp.newObjExprBox(base), methodRef, new ValueBox[args.size()]);

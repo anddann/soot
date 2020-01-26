@@ -25,18 +25,10 @@ package soot.jimple.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import soot.Unit;
-import soot.UnitBox;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
 import soot.baf.PlaceholderInst;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.StmtSwitch;
-import soot.jimple.TableSwitchStmt;
+import soot.jimple.*;
 import soot.util.Switch;
 
 public class JTableSwitchStmt extends AbstractSwitchStmt implements TableSwitchStmt {
@@ -163,10 +155,10 @@ public class JTableSwitchStmt extends AbstractSwitchStmt implements TableSwitchS
     ((StmtSwitch) sw).caseTableSwitchStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     List<PlaceholderInst> targetPlaceholders = new ArrayList<PlaceholderInst>();
 
-    ((ConvertToBaf) getKey()).convertToBaf(context, out, myBaf);
+    ((ConvertToBaf) getKey()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
 
     for (Unit target : getTargets()) {
       targetPlaceholders.add(myBaf.newPlaceholderInst(target));

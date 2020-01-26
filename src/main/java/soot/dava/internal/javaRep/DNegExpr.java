@@ -22,18 +22,22 @@ package soot.dava.internal.javaRep;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.UnitPrinter;
 import soot.Value;
 import soot.grimp.Grimp;
 import soot.jimple.internal.AbstractNegExpr;
 
 public class DNegExpr extends AbstractNegExpr {
-  public DNegExpr(Value op) {
-    super(myGrimp.newExprBox(op));
+  private final Grimp myGrimp;
+
+  public DNegExpr(Value op, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
+    super(myGrimp.newExprBox(op), primTypeCollector);
+    this.myGrimp = myGrimp;
   }
 
   public Object clone() {
-    return new DNegExpr(Grimp.cloneIfNecessary(getOp()));
+    return new DNegExpr(Grimp.cloneIfNecessary(getOp()), myGrimp, primTypeCollector);
   }
 
   public void toString(UnitPrinter up) {

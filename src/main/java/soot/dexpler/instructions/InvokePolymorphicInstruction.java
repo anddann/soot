@@ -112,12 +112,12 @@ public class InvokePolymorphicInstruction extends MethodInvocationInstruction {
       RefType rf = myScene.getRefType("java.lang.Object");
       Local newArrL = new JimpleLocal("$u" + (b.getLocalCount() + 1), ArrayType.v(rf, 1), myScene);
       b.getLocals().add(newArrL);
-      JAssignStmt newArr = new JAssignStmt(newArrL, new JNewArrayExpr(rf, constancFactory.createIntConstant(parms.size())));
+      JAssignStmt newArr = new JAssignStmt(newArrL, new JNewArrayExpr(rf, constantFactory.createIntConstant(parms.size())));
       units.add(newArr);
     
       int i = 0;
       for (Local l : parms) {
-        units.add(new JAssignStmt(new JArrayRef(newArrL, constancFactory.createIntConstant(i), myJimple, primeTypeCollector, myScene), l));
+        units.add(new JAssignStmt(new JArrayRef(newArrL, constantFactory.createIntConstant(i), myJimple, primTypeCollector, myScene), l));
         i++;
       }
       parms = Arrays.asList(newArrL);

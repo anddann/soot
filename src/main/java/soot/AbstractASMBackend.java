@@ -97,7 +97,7 @@ public abstract class AbstractASMBackend {
   private final Map<SootMethod, BafBody> bafBodyCache = new HashMap<SootMethod, BafBody>();
   private Options myOptions;
   private PackManager myPackManager;
-    private Scene myScene;
+    protected Scene myScene;
 
     /**
    * Creates a new ASM backend

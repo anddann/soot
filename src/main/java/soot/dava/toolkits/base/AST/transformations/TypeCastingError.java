@@ -42,16 +42,16 @@ import soot.jimple.Stmt;
 
 public class TypeCastingError extends DepthFirstAdapter {
   public boolean myDebug = false;
-  private PrimTypeCollector primeTypeCollector;
+  private PrimTypeCollector primTypeCollector;
 
-  public TypeCastingError(PrimTypeCollector primeTypeCollector) {
+  public TypeCastingError(PrimTypeCollector primTypeCollector) {
 
-    this.primeTypeCollector = primeTypeCollector;
+    this.primTypeCollector = primTypeCollector;
   }
 
-  public TypeCastingError(boolean verbose, PrimTypeCollector primeTypeCollector) {
+  public TypeCastingError(boolean verbose, PrimTypeCollector primTypeCollector) {
     super(verbose);
-    this.primeTypeCollector = primeTypeCollector;
+    this.primTypeCollector = primTypeCollector;
   }
 
   public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
@@ -72,7 +72,7 @@ public class TypeCastingError extends DepthFirstAdapter {
       Value right = rightBox.getValue();
       Value left = leftBox.getValue();
 
-      if (!(left.getType() instanceof PrimType && right.getType() instanceof PrimType)) {
+      if (!(left.getType(myScene) instanceof PrimType && right.getType(myScene) instanceof PrimType)) {
         // only interested in prim type casting errors
         if (myDebug) {
           System.out.println("\tDefinition stmt does not contain prims no need to modify");
@@ -80,8 +80,8 @@ public class TypeCastingError extends DepthFirstAdapter {
         continue;
       }
 
-      Type leftType = left.getType();
-      Type rightType = right.getType();
+      Type leftType = left.getType(myScene);
+      Type rightType = right.getType(myScene);
       if (myDebug) {
         System.out.println("Left type is: " + leftType);
       }
@@ -113,7 +113,7 @@ public class TypeCastingError extends DepthFirstAdapter {
           if (DEBUG) {
             System.out.println("Explicit casting to BYTE required");
           }
-          rightBox.setValue(new GCastExpr(right, primeTypeCollector.getByteType()));
+          rightBox.setValue(new GCastExpr(right, primTypeCollector.getByteType()));
           if (DEBUG) {
             System.out.println("New right expr is " + rightBox.getValue().toString());
           }
@@ -127,7 +127,7 @@ public class TypeCastingError extends DepthFirstAdapter {
           if (DEBUG) {
             System.out.println("Explicit casting to SHORT required");
           }
-          rightBox.setValue(new GCastExpr(right, primeTypeCollector.getShortType()));
+          rightBox.setValue(new GCastExpr(right, primTypeCollector.getShortType()));
           if (DEBUG) {
             System.out.println("New right expr is " + rightBox.getValue().toString());
           }
@@ -141,7 +141,7 @@ public class TypeCastingError extends DepthFirstAdapter {
           if (myDebug) {
             System.out.println("Explicit casting to INT required");
           }
-          rightBox.setValue(new GCastExpr(right, primeTypeCollector.getIntType()));
+          rightBox.setValue(new GCastExpr(right, primTypeCollector.getIntType()));
           if (myDebug) {
             System.out.println("New right expr is " + rightBox.getValue().toString());
           }
@@ -154,7 +154,7 @@ public class TypeCastingError extends DepthFirstAdapter {
           if (DEBUG) {
             System.out.println("Explicit casting to LONG required");
           }
-          rightBox.setValue(new GCastExpr(right, primeTypeCollector.getLongType()));
+          rightBox.setValue(new GCastExpr(right, primTypeCollector.getLongType()));
           if (DEBUG) {
             System.out.println("New right expr is " + rightBox.getValue().toString());
           }
@@ -167,7 +167,7 @@ public class TypeCastingError extends DepthFirstAdapter {
           if (DEBUG) {
             System.out.println("Explicit casting to FLOAT required");
           }
-          rightBox.setValue(new GCastExpr(right, primeTypeCollector.getFloatType()));
+          rightBox.setValue(new GCastExpr(right, primTypeCollector.getFloatType()));
           if (DEBUG) {
             System.out.println("New right expr is " + rightBox.getValue().toString());
           }

@@ -33,12 +33,12 @@ import soot.jimple.Jimple;
 public class LocalGenerator {
 
   protected final soot.Body body;
-  private PrimTypeCollector primeTypeCollector;
+  private PrimTypeCollector primTypeCollector;
   private Jimple myJimple;
 
-  public LocalGenerator(Body b, PrimTypeCollector primeTypeCollector, Jimple myJimple) {
+  public LocalGenerator(Body b, PrimTypeCollector primTypeCollector, Jimple myJimple) {
     body = b;
-    this.primeTypeCollector = primeTypeCollector;
+    this.primTypeCollector = primTypeCollector;
     this.myJimple = myJimple;
   }
 
@@ -106,7 +106,7 @@ public class LocalGenerator {
           break;
         }
       }
-      type = primeTypeCollector.getCharType();
+      type = primTypeCollector.getCharType();
     } else if (type instanceof soot.DoubleType) {
       while (true) {
         name = nextDoubleName();

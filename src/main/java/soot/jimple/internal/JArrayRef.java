@@ -36,11 +36,7 @@ import soot.UnitPrinter;
 import soot.Value;
 import soot.ValueBox;
 import soot.baf.Baf;
-import soot.jimple.ArrayRef;
-import soot.jimple.ConvertToBaf;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleToBafContext;
-import soot.jimple.RefSwitch;
+import soot.jimple.*;
 import soot.tagkit.Tag;
 import soot.util.Switch;
 
@@ -48,23 +44,23 @@ public class JArrayRef implements ArrayRef, ConvertToBaf {
   protected ValueBox baseBox;
   protected ValueBox indexBox;
   protected Jimple myJimple;
-  protected PrimTypeCollector primeTypeCollector;
+  protected PrimTypeCollector primTypeCollector;
   protected Scene myScene;
 
-  public JArrayRef(Value base, Value index, Jimple myJimple, PrimTypeCollector primeTypeCollector, Scene myScene) {
-    this(myJimple.newLocalBox(base), myJimple.newImmediateBox(index),myJimple, primeTypeCollector, myScene);
+  public JArrayRef(Value base, Value index, Jimple myJimple, PrimTypeCollector primTypeCollector, Scene myScene) {
+    this(myJimple.newLocalBox(base), myJimple.newImmediateBox(index),myJimple, primTypeCollector, myScene);
   }
 
-  protected JArrayRef(ValueBox baseBox, ValueBox indexBox, Jimple myJimple, PrimTypeCollector primeTypeCollector, Scene myScene) {
+  protected JArrayRef(ValueBox baseBox, ValueBox indexBox, Jimple myJimple, PrimTypeCollector primTypeCollector, Scene myScene) {
     this.baseBox = baseBox;
     this.indexBox = indexBox;
     this.myJimple = myJimple;
-    this.primeTypeCollector = primeTypeCollector;
+    this.primTypeCollector = primTypeCollector;
     this.myScene = myScene;
   }
 
   public Object clone() {
-    return new JArrayRef(Jimple.cloneIfNecessary(getBase()), Jimple.cloneIfNecessary(getIndex()), myJimple, primeTypeCollector, myScene);
+    return new JArrayRef(Jimple.cloneIfNecessary(getBase()), Jimple.cloneIfNecessary(getIndex()), myJimple, primTypeCollector, myScene);
   }
 
   public boolean equivTo(Object o) {
@@ -126,14 +122,14 @@ public class JArrayRef implements ArrayRef, ConvertToBaf {
     return useBoxes;
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     Value base = baseBox.getValue();
-    Type type = base.getType();
+    Type type = base.getType(this.myScene);
 
-    if (type.equals(primeTypeCollector.getUnknownType())) {
-      return primeTypeCollector.getUnknownType();
-    } else if (type.equals(primeTypeCollector.getNullType())) {
-      return primeTypeCollector.getNullType();
+    if (type.equals(primTypeCollector.getUnknownType())) {
+      return primTypeCollector.getUnknownType();
+    } else if (type.equals(primTypeCollector.getNullType())) {
+      return primTypeCollector.getNullType();
     } else {
       // use makeArrayType on non-array type references when they propagate to this point.
       // kludge, most likely not correct.
@@ -149,7 +145,7 @@ public class JArrayRef implements ArrayRef, ConvertToBaf {
       if (arrayType.numDimensions == 1) {
         return arrayType.baseType;
       } else {
-        return ArrayType.v(arrayType.baseType, arrayType.numDimensions - 1,myScene);
+        return ArrayType.v(arrayType.baseType, arrayType.numDimensions - 1, this.myScene);
       }
     }
   }
@@ -158,15 +154,15 @@ public class JArrayRef implements ArrayRef, ConvertToBaf {
     ((RefSwitch) sw).caseArrayRef(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
-    ((ConvertToBaf) getBase()).convertToBaf(context, out, myBaf);
-    ((ConvertToBaf) getIndex()).convertToBaf(context, out, myBaf);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) getBase()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, this.myScene);
+    ((ConvertToBaf) getIndex()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, this.myScene);
 
     Unit currentUnit = context.getCurrentUnit();
 
     Unit x;
 
-    out.add(x = myBaf.newArrayReadInst(getType()));
+    out.add(x = myBaf.newArrayReadInst(getType(this.myScene)));
 
     Iterator it = currentUnit.getTags().iterator();
     while (it.hasNext()) {

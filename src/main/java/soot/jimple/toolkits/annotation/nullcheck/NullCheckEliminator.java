@@ -60,7 +60,7 @@ public class NullCheckEliminator extends BodyTransformer {
 
   public static class AnalysisFactory {
     public NullnessAnalysis newAnalysis(UnitGraph g, boolean interaticveMode, InteractionHandler myInteractionHandler, ConstantFactory constantFactory) {
-      return new NullnessAnalysis(g, myInteractionHandler, interaticveMode, constantFactory);
+      return new NullnessAnalysis(g, myInteractionHandler, interaticveMode, constantFactory, myScene);
     }
   }
 

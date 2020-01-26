@@ -23,6 +23,7 @@ package soot.jimple;
  */
 
 import soot.RefType;
+import soot.Scene;
 import soot.Type;
 import soot.util.Switch;
 
@@ -31,7 +32,7 @@ public interface NewExpr extends Expr, AnyNewExpr {
 
   public void setBaseType(RefType type);
 
-  public Type getType();
+  public Type getType(Scene myScene);
 
   public void apply(Switch sw);
 }

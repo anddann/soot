@@ -55,7 +55,7 @@ public class InterProceduralAnalyses {
    *
    * All interproceduralAnalyses should be applied in here
    */
-  public static void applyInterProceduralAnalyses(Scene myScene, PhaseOptions myPhaseOptions, ConstantFactory constancFactory, PrimTypeCollector primTypeCollector) {
+  public static void applyInterProceduralAnalyses(Scene myScene, PhaseOptions myPhaseOptions, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
     Chain classes = myScene.getApplicationClasses();
 
     if (DEBUG) {
@@ -114,7 +114,7 @@ public class InterProceduralAnalyses {
         AST.apply(new SimplifyExpressions());
 
         // SimplifyConditions.DEBUG=true;
-        AST.apply(new SimplifyConditions(constancFactory, primTypeCollector));
+        AST.apply(new SimplifyConditions(constantFactory, primTypeCollector));
 
         // condition elimination
         // EliminateConditions.DEBUG=true;

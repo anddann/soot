@@ -39,19 +39,16 @@ import soot.Local;
 import soot.Modifier;
 import soot.PatchingChain;
 import soot.RefType;
-import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
 import soot.Trap;
 import soot.Unit;
 import soot.Value;
-import soot.VoidType;
 import soot.jimple.ArrayRef;
 import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InstanceInvokeExpr;
-import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.Ref;
 import soot.jimple.StaticFieldRef;
@@ -144,7 +141,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       boolean addingNewClinit = !mainClass.declaresMethod("void <clinit>()");
       if (addingNewClinit) {
         clinitMethod
-            = myScene.makeSootMethod("<clinit>", new ArrayList(), primeTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC);
+            = myScene.makeSootMethod("<clinit>", new ArrayList(), primTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC);
         clinitBody = myJimple.newBody(clinitMethod);
         clinitMethod.setActiveBody(clinitBody);
         mainClass.addMethod(clinitMethod);
@@ -578,7 +575,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
     Local baseLocal;
     if (base instanceof InstanceFieldRef) {
       Value newBase = reconstruct(b, units, (InstanceFieldRef) base, insertBefore, redirect);
-      baseLocal = myJimple.newLocal("baseLocal" + (baseLocalNum++), newBase.getType());
+      baseLocal = myJimple.newLocal("baseLocal" + (baseLocalNum++), newBase.getType(myScene));
       b.getLocals().add(baseLocal);
 
       // make it equal to the right value
@@ -592,7 +589,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       baseLocal = (Local) base;
     } else {
       throw new RuntimeException("InstanceFieldRef cannot be reconstructed because it's base is of an unsupported type"
-          + base.getType() + ": " + base);
+          + base.getType(myScene) + ": " + base);
     }
 
     InstanceFieldRef newLock = myJimple.newInstanceFieldRef(baseLocal, lock.getField().makeRef());
@@ -638,7 +635,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       boolean addingNewClinit = !lockClass.declaresMethod("void <clinit>()");
       if (addingNewClinit) {
         clinitMethod
-            = myScene.makeSootMethod("<clinit>", new ArrayList(), primeTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC);
+            = myScene.makeSootMethod("<clinit>", new ArrayList(), primTypeCollector.getVoidType(), Modifier.PUBLIC | Modifier.STATIC);
         clinitBody = myJimple.newBody(clinitMethod);
         clinitMethod.setActiveBody(clinitBody);
         lockClass.addMethod(clinitMethod);

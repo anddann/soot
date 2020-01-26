@@ -22,11 +22,7 @@ package soot.jimple.internal;
  * #L%
  */
 
-import soot.PrimTypeCollector;
-import soot.Type;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.jimple.ExprSwitch;
 import soot.jimple.Jimple;
 import soot.jimple.NegExpr;
@@ -63,17 +59,17 @@ public abstract class AbstractNegExpr extends AbstractUnopExpr implements NegExp
     opBox.toString(up);
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     Value op = opBox.getValue();
 
-    if (op.getType().equals(primTypeCollector.getIntType()) || op.getType().equals(primTypeCollector.getByteType()) || op.getType().equals(primTypeCollector.getShortType())
-        || op.getType().equals(primTypeCollector.getBooleanType()) || op.getType().equals(primTypeCollector.getCharType())) {
+    if (op.getType(myScene).equals(primTypeCollector.getIntType()) || op.getType(myScene).equals(primTypeCollector.getByteType()) || op.getType(myScene).equals(primTypeCollector.getShortType())
+        || op.getType(myScene).equals(primTypeCollector.getBooleanType()) || op.getType(myScene).equals(primTypeCollector.getCharType())) {
       return primTypeCollector.getIntType();
-    } else if (op.getType().equals(primTypeCollector.getLongType())) {
+    } else if (op.getType(myScene).equals(primTypeCollector.getLongType())) {
       return primTypeCollector.getLongType();
-    } else if (op.getType().equals(primTypeCollector.getDoubleType())) {
+    } else if (op.getType(myScene).equals(primTypeCollector.getDoubleType())) {
       return primTypeCollector.getDoubleType();
-    } else if (op.getType().equals(primTypeCollector.getFloatType())) {
+    } else if (op.getType(myScene).equals(primTypeCollector.getFloatType())) {
       return primTypeCollector.getFloatType();
     } else {
       return primTypeCollector.getUnknownType();

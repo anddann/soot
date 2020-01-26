@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import com.google.inject.Inject;
-import soot.G;
+import soot.PrimTypeCollector;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
 import soot.dava.RetriggerAnalysisException;
@@ -34,6 +34,7 @@ import soot.dava.internal.SET.SETNode;
 import soot.dava.internal.SET.SETStatementSequenceNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.asg.AugmentedStmtGraph;
+import soot.grimp.Grimp;
 import soot.util.IterableSet;
 
 public class SequenceFinder implements FactFinder {
@@ -46,7 +47,7 @@ public class SequenceFinder implements FactFinder {
   }
 
 
-  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
+  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException {
     myDava.log("SequenceFinder::find()");
 
     SET.find_StatementSequences(this, body);

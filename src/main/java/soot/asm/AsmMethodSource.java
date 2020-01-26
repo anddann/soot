@@ -57,26 +57,7 @@ import org.objectweb.asm.tree.TryCatchBlockNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import soot.ArrayType;
-import soot.Body;
-import soot.LambdaMetaFactory;
-import soot.Local;
-import soot.MethodSource;
-import soot.PackManager;
-import soot.PhaseOptions;
-import soot.RefType;
-import soot.Scene;
-import soot.SootClass;
-import soot.SootFieldRef;
-import soot.SootMethod;
-import soot.SootMethodRef;
-import soot.Trap;
-import soot.Type;
-import soot.Unit;
-import soot.UnitBox;
-import soot.Value;
-import soot.ValueBox;
-import soot.VoidType;
+import soot.*;
 import soot.coffi.Util;
 import soot.jimple.AddExpr;
 import soot.jimple.ArrayRef;
@@ -173,13 +154,14 @@ final class AsmMethodSource implements MethodSource {
   private Scene myScene;
   private Jimple myJimple;
   private Options myOptions;
-    private ConstantFactory constancFactory;
+    private ConstantFactory constantFactory;
     private LambdaMetaFactory myLambdaMetaFactory;
     private PackManager myPackManager;
     private PhaseOptions myPhaseOptions;
+  private PrimTypeCollector primTypeCollector;
 
-    AsmMethodSource(int maxLocals, InsnList insns, List<LocalVariableNode> localVars, List<TryCatchBlockNode> tryCatchBlocks,
-                    Scene myScene, Options myOptions, ConstantFactory constancFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, PhaseOptions myPhaseOptions, Util myCoffiUtil) {
+  AsmMethodSource(int maxLocals, InsnList insns, List<LocalVariableNode> localVars, List<TryCatchBlockNode> tryCatchBlocks,
+                  Scene myScene, Options myOptions, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, PhaseOptions myPhaseOptions, Util myCoffiUtil, PrimTypeCollector primTypeCollector) {
     this.maxLocals = maxLocals;
     this.instructions = insns;
     this.localVars = localVars;
@@ -187,17 +169,18 @@ final class AsmMethodSource implements MethodSource {
     this.myScene = myScene;
     this.myJimple = myScene.getMyJimple();
     this.myOptions = myOptions;
-        this.constancFactory = constancFactory;
+        this.constantFactory = constantFactory;
         this.myLambdaMetaFactory = myLambdaMetaFactory;
         this.myPackManager = myPackManager;
         this.myPhaseOptions = myPhaseOptions;
         this.myCoffiUtil = myCoffiUtil;
-    }
+    this.primTypeCollector = primTypeCollector;
+  }
 
   private StackFrame getFrame(AbstractInsnNode insn) {
     StackFrame frame = frames.get(insn);
     if (frame == null) {
-      frame = new StackFrame(this);
+      frame = new StackFrame(this, myJimple);
       frames.put(insn, frame);
     }
     return frame;
@@ -422,7 +405,7 @@ final class AsmMethodSource implements MethodSource {
     Type type;
     if (out == null) {
       SootClass declClass = myScene.getSootClass(AsmUtil.toQualifiedName(insn.owner));
-      type = AsmUtil.toJimpleType(insn.desc, primeTypeCollector, myScene);
+      type = AsmUtil.toJimpleType(insn.desc, primTypeCollector, myScene);
       Value val;
       SootFieldRef ref;
       if (insn.getOpcode() == GETSTATIC) {
@@ -457,7 +440,7 @@ final class AsmMethodSource implements MethodSource {
     Type type;
     if (out == null) {
       SootClass declClass = myScene.getSootClass(AsmUtil.toQualifiedName(insn.owner));
-      type = AsmUtil.toJimpleType(insn.desc, primeTypeCollector, myScene);
+      type = AsmUtil.toJimpleType(insn.desc, primTypeCollector, myScene);
       Value val;
       SootFieldRef ref;
       rvalue = popImmediate(type);
@@ -515,7 +498,7 @@ final class AsmMethodSource implements MethodSource {
     Local local = getLocal(insn.var);
     assignReadOps(local);
     if (!units.containsKey(insn)) {
-      AddExpr add = myJimple.newAddExpr(local, constancFactory.createIntConstant(insn.incr));
+      AddExpr add = myJimple.newAddExpr(local, constantFactory.createIntConstant(insn.incr));
       setUnit(insn, myJimple.newAssignStmt(local, add));
     }
   }
@@ -528,15 +511,15 @@ final class AsmMethodSource implements MethodSource {
     if (out == null) {
       Value v;
       if (op == ACONST_NULL) {
-        v = constancFactory.getNullConstant();
+        v = constantFactory.getNullConstant();
       } else if (op >= ICONST_M1 && op <= ICONST_5) {
-        v = constancFactory.createIntConstant(op - ICONST_0);
+        v = constantFactory.createIntConstant(op - ICONST_0);
       } else if (op == LCONST_0 || op == LCONST_1) {
-        v = constancFactory.createLongConstant(op - LCONST_0);
+        v = constantFactory.createLongConstant(op - LCONST_0);
       } else if (op >= FCONST_0 && op <= FCONST_2) {
-        v = constancFactory.createFloatConstant(op - FCONST_0);
+        v = constantFactory.createFloatConstant(op - FCONST_0);
       } else if (op == DCONST_0 || op == DCONST_1) {
-        v = constancFactory.createDoubleConstant(op - DCONST_0);
+        v = constantFactory.createDoubleConstant(op - DCONST_0);
       } else {
         throw new AssertionError("Unknown constant opcode: " + op);
       }
@@ -924,7 +907,7 @@ final class AsmMethodSource implements MethodSource {
     if (out == null) {
       Value v;
       if (op == BIPUSH || op == SIPUSH) {
-        v = constancFactory.createIntConstant(insn.operand);
+        v = constantFactory.createIntConstant(insn.operand);
       } else {
         Type type;
         switch (insn.operand) {
@@ -1017,21 +1000,21 @@ final class AsmMethodSource implements MethodSource {
         frame.in(val, val1);
       } else {
         if (op == IFEQ) {
-          cond = myJimple.newEqExpr(v, constancFactory.createIntConstant(0));
+          cond = myJimple.newEqExpr(v, constantFactory.createIntConstant(0));
         } else if (op == IFNE) {
-          cond = myJimple.newNeExpr(v, constancFactory.createIntConstant(0));
+          cond = myJimple.newNeExpr(v, constantFactory.createIntConstant(0));
         } else if (op == IFLT) {
-          cond = myJimple.newLtExpr(v, constancFactory.createIntConstant(0));
+          cond = myJimple.newLtExpr(v, constantFactory.createIntConstant(0));
         } else if (op == IFGE) {
-          cond = myJimple.newGeExpr(v, constancFactory.createIntConstant(0));
+          cond = myJimple.newGeExpr(v, constantFactory.createIntConstant(0));
         } else if (op == IFGT) {
-          cond = myJimple.newGtExpr(v, constancFactory.createIntConstant(0));
+          cond = myJimple.newGtExpr(v, constantFactory.createIntConstant(0));
         } else if (op == IFLE) {
-          cond = myJimple.newLeExpr(v, constancFactory.createIntConstant(0));
+          cond = myJimple.newLeExpr(v, constantFactory.createIntConstant(0));
         } else if (op == IFNULL) {
-          cond = myJimple.newEqExpr(v, constancFactory.getNullConstant());
+          cond = myJimple.newEqExpr(v, constantFactory.getNullConstant());
         } else if (op == IFNONNULL) {
-          cond = myJimple.newNeExpr(v, constancFactory.getNullConstant());
+          cond = myJimple.newNeExpr(v, constantFactory.getNullConstant());
         } else {
           throw new AssertionError("Unknown if op: " + op);
         }
@@ -1074,30 +1057,30 @@ final class AsmMethodSource implements MethodSource {
   private Value toSootValue(Object val) throws AssertionError {
     Value v;
     if (val instanceof Integer) {
-      v = constancFactory.createIntConstant((Integer) val);
+      v = constantFactory.createIntConstant((Integer) val);
     } else if (val instanceof Float) {
-      v = constancFactory.createFloatConstant((Float) val);
+      v = constantFactory.createFloatConstant((Float) val);
     } else if (val instanceof Long) {
-      v = constancFactory.createLongConstant((Long) val);
+      v = constantFactory.createLongConstant((Long) val);
     } else if (val instanceof Double) {
-      v = constancFactory.createDoubleConstant((Double) val);
+      v = constantFactory.createDoubleConstant((Double) val);
     } else if (val instanceof String) {
-      v = constancFactory.createStringConstant(val.toString());
+      v = constantFactory.createStringConstant(val.toString());
     } else if (val instanceof org.objectweb.asm.Type) {
       org.objectweb.asm.Type t = (org.objectweb.asm.Type) val;
       if (t.getSort() == org.objectweb.asm.Type.METHOD) {
-        List<Type> paramTypes = AsmUtil.toJimpleDesc(((org.objectweb.asm.Type) val).getDescriptor(), primeTypeCollector, myScene);
+        List<Type> paramTypes = AsmUtil.toJimpleDesc(((org.objectweb.asm.Type) val).getDescriptor(), primTypeCollector, myScene);
         Type returnType = paramTypes.remove(paramTypes.size() - 1);
-        v = constancFactory.createMethodType(paramTypes, returnType);
+        v = constantFactory.createMethodType(paramTypes, returnType);
       } else {
-        v = constancFactory.createClassConstant(((org.objectweb.asm.Type) val).getDescriptor());
+        v = constantFactory.createClassConstant(((org.objectweb.asm.Type) val).getDescriptor());
       }
     } else if (val instanceof Handle) {
       Handle h = (Handle) val;
       if (MethodHandle.isMethodRef(h.getTag())) {
-        v = constancFactory.createMethodHandle(toSootMethodRef((Handle) val), ((Handle) val).getTag());
+        v = constantFactory.createMethodHandle(toSootMethodRef((Handle) val), ((Handle) val).getTag());
       } else {
-        v = constancFactory.createMethodHandle(toSootFieldRef((Handle) val), ((Handle) val).getTag());
+        v = constantFactory.createMethodHandle(toSootFieldRef((Handle) val), ((Handle) val).getTag());
       }
     } else {
       throw new AssertionError("Unknown constant type: " + val.getClass());
@@ -1124,7 +1107,7 @@ final class AsmMethodSource implements MethodSource {
 
     List<IntConstant> keys = new ArrayList<IntConstant>(insn.keys.size());
     for (Integer i : insn.keys) {
-      keys.add(constancFactory.createIntConstant(i));
+      keys.add(constantFactory.createIntConstant(i));
     }
 
     LookupSwitchStmt lss = myJimple.newLookupSwitchStmt(key.stackOrValue(), keys, targets, dflt);
@@ -1147,7 +1130,7 @@ final class AsmMethodSource implements MethodSource {
         clsName = "java.lang.Object";
       }
       SootClass cls = myScene.getSootClass(clsName);
-      List<Type> sigTypes = AsmUtil.toJimpleDesc(insn.desc, primeTypeCollector, myScene);
+      List<Type> sigTypes = AsmUtil.toJimpleDesc(insn.desc, primTypeCollector, myScene);
       returnType = sigTypes.remove(sigTypes.size() - 1);
       SootMethodRef ref = myScene.makeMethodRef(cls, insn.name, sigTypes, returnType, !instance);
       int nrArgs = sigTypes.size();
@@ -1351,7 +1334,7 @@ final class AsmMethodSource implements MethodSource {
   private SootMethodRef toSootMethodRef(Handle methodHandle) {
     String bsmClsName = AsmUtil.toQualifiedName(methodHandle.getOwner());
     SootClass bsmCls = myScene.getSootClass(bsmClsName);
-    List<Type> bsmSigTypes = AsmUtil.toJimpleDesc(methodHandle.getDesc(), primeTypeCollector, myScene);
+    List<Type> bsmSigTypes = AsmUtil.toJimpleDesc(methodHandle.getDesc(), primTypeCollector, myScene);
     Type returnType = bsmSigTypes.remove(bsmSigTypes.size() - 1);
     return myScene.makeMethodRef(bsmCls, methodHandle.getName(), bsmSigTypes, returnType,
         methodHandle.getTag() == MethodHandle.Kind.REF_INVOKE_STATIC.getValue());
@@ -1360,7 +1343,7 @@ final class AsmMethodSource implements MethodSource {
   private SootFieldRef toSootFieldRef(Handle methodHandle) {
     String bsmClsName = AsmUtil.toQualifiedName(methodHandle.getOwner());
     SootClass bsmCls = myScene.getSootClass(bsmClsName);
-    Type t = AsmUtil.toJimpleDesc(methodHandle.getDesc(), primeTypeCollector, myScene).get(0);
+    Type t = AsmUtil.toJimpleDesc(methodHandle.getDesc(), primTypeCollector, myScene).get(0);
     int kind = methodHandle.getTag();
     return myScene.makeFieldRef(bsmCls, methodHandle.getName(), t, kind == MethodHandle.Kind.REF_GET_FIELD_STATIC.getValue()
         || kind == MethodHandle.Kind.REF_PUT_FIELD_STATIC.getValue());
@@ -1371,7 +1354,7 @@ final class AsmMethodSource implements MethodSource {
     Operand[] out = frame.out();
     Operand opr;
     if (out == null) {
-      ArrayType t = (ArrayType) AsmUtil.toJimpleType(insn.desc, primeTypeCollector, myScene);
+      ArrayType t = (ArrayType) AsmUtil.toJimpleType(insn.desc, primTypeCollector, myScene);
       int dims = insn.dims;
       Operand[] sizes = new Operand[dims];
       Value[] sizeVals = new Value[dims];
@@ -1430,7 +1413,7 @@ final class AsmMethodSource implements MethodSource {
     Operand[] out = frame.out();
     Operand opr;
     if (out == null) {
-      Type t = AsmUtil.toJimpleRefType(insn.desc, myScene, primeTypeCollector);
+      Type t = AsmUtil.toJimpleRefType(insn.desc, myScene, primTypeCollector);
       Value val;
       if (op == NEW) {
         val = myJimple.newNewExpr((RefType) t);

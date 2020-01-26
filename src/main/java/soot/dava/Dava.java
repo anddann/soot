@@ -11,12 +11,12 @@ package soot.dava;
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -60,148 +60,156 @@ import soot.dava.toolkits.base.finders.SequenceFinder;
 import soot.dava.toolkits.base.finders.SwitchFinder;
 import soot.dava.toolkits.base.finders.SynchronizedBlockFinder;
 import soot.dava.toolkits.base.misc.MonitorConverter;
+import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.dava.toolkits.base.misc.ThrowNullConverter;
 import soot.grimp.Grimp;
 import soot.jimple.ConstantFactory;
+import soot.jimple.Jimple;
 import soot.options.Options;
 import soot.util.IterableSet;
 import soot.util.PhaseDumper;
 
 public class Dava {
-  private static final Logger logger = LoggerFactory.getLogger(Dava.class);
-  private Dava myJimple;
-  private final ExceptionFinder myExceptionFinder;
-  private final CycleFinder myCycleFinder;
-  private final IfFinder myIfFinder;
-  private final SwitchFinder mySwitchFinder;
-  private final SynchronizedBlockFinder mySynchronizedBlockFinder;
-  private final SequenceFinder mySequenceFinder;
-  private final LabeledBlockFinder myLabeledBlockFinder;
-  private final AbruptEdgeFinder myAbruptEdgeFinder;
-  private final MonitorConverter myMonitorConverter;
-  private final ThrowNullConverter myThrowNullConverter;
-  private final UselessTryRemover myUselessTryRemover;
-  private final PhaseOptions myPhaseOptions;
-  private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
-  private Options myOptions;
-  private Printer myPrinter;
-  private ConstantFactory constancFactory;
-  private PhaseDumper myPhaseDumper;
-  private Grimp myGrimp;
-  private PrimTypeCollector primTypeCollector;
-  private Baf myBaf;
-  private TryContentsFinder myTryContentsFinder;
-  private ASTWalker myASTWalker;
-  private Scene myScene;
+    private static final Logger logger = LoggerFactory.getLogger(Dava.class);
+    private Jimple myJimple;
+    private final ExceptionFinder myExceptionFinder;
+    private final CycleFinder myCycleFinder;
+    private final IfFinder myIfFinder;
+    private final SwitchFinder mySwitchFinder;
+    private final SynchronizedBlockFinder mySynchronizedBlockFinder;
+    private final SequenceFinder mySequenceFinder;
+    private final LabeledBlockFinder myLabeledBlockFinder;
+    private final AbruptEdgeFinder myAbruptEdgeFinder;
+    private final MonitorConverter myMonitorConverter;
+    private final ThrowNullConverter myThrowNullConverter;
+    private final UselessTryRemover myUselessTryRemover;
+    private final PhaseOptions myPhaseOptions;
+    private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
+    private Options myOptions;
+    private Printer myPrinter;
+    private ConstantFactory constantFactory;
+    private PhaseDumper myPhaseDumper;
+    private Grimp myGrimp;
+    private PrimTypeCollector primTypeCollector;
+    private Baf myBaf;
+    private TryContentsFinder myTryContentsFinder;
+    private ASTWalker myASTWalker;
+    private Scene myScene;
+    private PackageNamer myPackageNamer;
 
-  @Inject
-  public Dava(Dava myJimple, ExceptionFinder myExceptionFinder, CycleFinder myCycleFinder, IfFinder myIfFinder,
-      SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder, SequenceFinder mySequenceFinder,
-      LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder, MonitorConverter myMonitorConverter,
-      ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-      ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter,
-      ConstantFactory constancFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector,
-      Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene) {
-    this.myJimple = myJimple;
-    this.myExceptionFinder = myExceptionFinder;
-    this.myCycleFinder = myCycleFinder;
-    this.myIfFinder = myIfFinder;
-    this.mySwitchFinder = mySwitchFinder;
-    this.mySynchronizedBlockFinder = mySynchronizedBlockFinder;
-    this.mySequenceFinder = mySequenceFinder;
-    this.myLabeledBlockFinder = myLabeledBlockFinder;
-    this.myAbruptEdgeFinder = myAbruptEdgeFinder;
-    this.myMonitorConverter = myMonitorConverter;
-    this.myThrowNullConverter = myThrowNullConverter;
-    this.myUselessTryRemover = myUselessTryRemover;
-    this.myPhaseOptions = myPhaseOptions;
-    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
-    this.myOptions = myOptions;
-    this.myPrinter = myPrinter;
-    this.constancFactory = constancFactory;
-    this.myPhaseDumper = myPhaseDumper;
-    this.myGrimp = myGrimp;
-    this.primTypeCollector = primTypeCollector;
-    this.myBaf = myBaf;
-    this.myTryContentsFinder = myTryContentsFinder;
-    this.myASTWalker = myASTWalker;
-    this.myScene = myScene;
-  }
-
-  private static final String LOG_TO_FILE = null;
-  private static final PrintStream LOG_TO_SCREEN = null;
-
-  private Writer iOut = null;
-  private IterableSet currentPackageContext = null;
-  private String currentPackage;
-
-  public void set_CurrentPackage(String cp) {
-    currentPackage = cp;
-  }
-
-  public String get_CurrentPackage() {
-    return currentPackage;
-  }
-
-  public void set_CurrentPackageContext(IterableSet cpc) {
-    currentPackageContext = cpc;
-  }
-
-  public IterableSet get_CurrentPackageContext() {
-    return currentPackageContext;
-  }
-
-  public DavaBody newBody(SootMethod m) {
-    DavaBody davaBody = new DavaBody(m, myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
-        mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myPackageNamer, primeTypeCollector, this,
-        myClosestAbruptTargetFinder, constancFactory, myGrimp, primTypeCollector, myBaf, myScene, myJimple);
-    return davaBody;
-  }
-
-  /** Returns a DavaBody constructed from the given body b. */
-  public DavaBody newBody(Body b) {
-    return new DavaBody(b, myOptions, myPrinter, myMonitorConverter, myExceptionFinder, mySynchronizedBlockFinder,
-        myThrowNullConverter, mySequenceFinder, myLabeledBlockFinder, myCycleFinder, myIfFinder, mySwitchFinder,
-        myAbruptEdgeFinder, myUselessTryRemover, myPhaseOptions, myClosestAbruptTargetFinder, this, constancFactory,
-        myPhaseDumper, myGrimp, primTypeCollector, myBaf, myTryContentsFinder, myASTWalker, myScene, primeTypeCollector, myJimple);
-
-  }
-
-  public Local newLocal(String name, Type t) {
-    return myJimple.newLocal(name, t);
-  }
-
-  public void log(String s) {
-    if (LOG_TO_SCREEN != null) {
-      LOG_TO_SCREEN.println(s);
-      LOG_TO_SCREEN.flush();
+    @Inject
+    public Dava(Jimple myJimple, ExceptionFinder myExceptionFinder, CycleFinder myCycleFinder, IfFinder myIfFinder,
+                SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder, SequenceFinder mySequenceFinder,
+                LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder, MonitorConverter myMonitorConverter,
+                ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
+                ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter,
+                ConstantFactory constantFactory, PhaseDumper myPhaseDumper, Grimp myGrimp, PrimTypeCollector primTypeCollector,
+                Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, PackageNamer myPackageNamer) {
+        this.myJimple = myJimple;
+        this.myExceptionFinder = myExceptionFinder;
+        this.myCycleFinder = myCycleFinder;
+        this.myIfFinder = myIfFinder;
+        this.mySwitchFinder = mySwitchFinder;
+        this.mySynchronizedBlockFinder = mySynchronizedBlockFinder;
+        this.mySequenceFinder = mySequenceFinder;
+        this.myLabeledBlockFinder = myLabeledBlockFinder;
+        this.myAbruptEdgeFinder = myAbruptEdgeFinder;
+        this.myMonitorConverter = myMonitorConverter;
+        this.myThrowNullConverter = myThrowNullConverter;
+        this.myUselessTryRemover = myUselessTryRemover;
+        this.myPhaseOptions = myPhaseOptions;
+        this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
+        this.myOptions = myOptions;
+        this.myPrinter = myPrinter;
+        this.constantFactory = constantFactory;
+        this.myPhaseDumper = myPhaseDumper;
+        this.myGrimp = myGrimp;
+        this.primTypeCollector = primTypeCollector;
+        this.myBaf = myBaf;
+        this.myTryContentsFinder = myTryContentsFinder;
+        this.myASTWalker = myASTWalker;
+        this.myScene = myScene;
+        this.myPackageNamer = myPackageNamer;
     }
 
-    if (LOG_TO_FILE != null) {
-      if (iOut == null) {
-        try {
-          iOut = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(LOG_TO_FILE), "US-ASCII"));
-        } catch (FileNotFoundException fnfe) {
-          logger.debug("" + "Unable to open " + LOG_TO_FILE);
-          logger.error(fnfe.getMessage(), fnfe);
-          throw new CompilationDeathException(CompilationDeathException.COMPILATION_ABORTED);
-        } catch (UnsupportedEncodingException uee) {
-          logger.debug("" + "This system doesn't support US-ASCII encoding!!");
-          logger.error(uee.getMessage(), uee);
-          throw new CompilationDeathException(CompilationDeathException.COMPILATION_ABORTED);
+    private static final String LOG_TO_FILE = null;
+    private static final PrintStream LOG_TO_SCREEN = null;
+
+    private Writer iOut = null;
+    private IterableSet currentPackageContext = null;
+    private String currentPackage;
+
+    public void set_CurrentPackage(String cp) {
+        currentPackage = cp;
+    }
+
+    public String get_CurrentPackage() {
+        return currentPackage;
+    }
+
+    public void set_CurrentPackageContext(IterableSet cpc) {
+        currentPackageContext = cpc;
+    }
+
+    public IterableSet get_CurrentPackageContext() {
+        return currentPackageContext;
+    }
+
+    public DavaBody newBody(SootMethod m) {
+        DavaBody davaBody = new DavaBody(m, myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
+                mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
+                myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myPackageNamer, primTypeCollector, this,
+                myClosestAbruptTargetFinder, constantFactory, myGrimp, myBaf, myScene, myJimple);
+        return davaBody;
+    }
+
+    /**
+     * Returns a DavaBody constructed from the given body b.
+     */
+    public DavaBody newBody(Body b) {
+        return new DavaBody(b, myOptions, myPrinter, myMonitorConverter,
+                myExceptionFinder, mySynchronizedBlockFinder,
+                myThrowNullConverter, mySequenceFinder, myLabeledBlockFinder,
+                myCycleFinder, myIfFinder, mySwitchFinder, myAbruptEdgeFinder,
+                myUselessTryRemover, myPhaseOptions,
+                myClosestAbruptTargetFinder, this, constantFactory, myPhaseDumper, myGrimp, primTypeCollector, myBaf, myTryContentsFinder, myASTWalker, myScene, myPackageNamer, myJimple);
+
+    }
+
+    public Local newLocal(String name, Type t) {
+        return myJimple.newLocal(name, t);
+    }
+
+    public void log(String s) {
+        if (LOG_TO_SCREEN != null) {
+            LOG_TO_SCREEN.println(s);
+            LOG_TO_SCREEN.flush();
         }
-      }
 
-      try {
-        iOut.write(s);
-        iOut.write("\n");
-        iOut.flush();
-      } catch (IOException ioe) {
-        logger.debug("" + "Unable to write to " + LOG_TO_FILE);
-        logger.error(ioe.getMessage(), ioe);
-        throw new CompilationDeathException(CompilationDeathException.COMPILATION_ABORTED);
-      }
+        if (LOG_TO_FILE != null) {
+            if (iOut == null) {
+                try {
+                    iOut = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(LOG_TO_FILE), "US-ASCII"));
+                } catch (FileNotFoundException fnfe) {
+                    logger.debug("" + "Unable to open " + LOG_TO_FILE);
+                    logger.error(fnfe.getMessage(), fnfe);
+                    throw new CompilationDeathException(CompilationDeathException.COMPILATION_ABORTED);
+                } catch (UnsupportedEncodingException uee) {
+                    logger.debug("" + "This system doesn't support US-ASCII encoding!!");
+                    logger.error(uee.getMessage(), uee);
+                    throw new CompilationDeathException(CompilationDeathException.COMPILATION_ABORTED);
+                }
+            }
+
+            try {
+                iOut.write(s);
+                iOut.write("\n");
+                iOut.flush();
+            } catch (IOException ioe) {
+                logger.debug("" + "Unable to write to " + LOG_TO_FILE);
+                logger.error(ioe.getMessage(), ioe);
+                throw new CompilationDeathException(CompilationDeathException.COMPILATION_ABORTED);
+            }
+        }
     }
-  }
 }

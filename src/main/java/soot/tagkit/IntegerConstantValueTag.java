@@ -43,7 +43,7 @@ public class IntegerConstantValueTag extends ConstantValueTag {
 
   @Override
   public IntConstant getConstant() {
-    return constancFactory.createIntConstant(value);
+    return constantFactory.createIntConstant(value);
   }
 
   @Override

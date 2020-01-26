@@ -32,7 +32,7 @@ public class GNewArrayExpr extends AbstractNewArrayExpr implements Precedence {
   private final Grimp myGrimp;
 
   public GNewArrayExpr(Type type, Value size, Grimp myGrimp) {
-    super(type, myGrimp.newExprBox(size), myScene);
+    super(type, myGrimp.newExprBox(size));
     this.myGrimp = myGrimp;
   }
 

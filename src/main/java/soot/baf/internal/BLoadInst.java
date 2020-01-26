@@ -38,7 +38,7 @@ public class BLoadInst extends AbstractOpTypeInst implements LoadInst {
   List useBoxes;
 
   public BLoadInst(Type opType, Local local) {
-    super(primeTypeCollector.getRefType(), opType, myBaf);
+    super(primTypeCollector.getRefType(), opType, myBaf);
     localBox = new BafLocalBox(local);
     useBoxes = Collections.singletonList(localBox);
   }

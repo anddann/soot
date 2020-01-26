@@ -22,13 +22,7 @@ package soot.toolkits.exceptions;
  * #L%
  */
 
-import soot.AnySubType;
-import soot.NullType;
-import soot.RefType;
-import soot.Type;
-import soot.Unit;
-import soot.UnknownType;
-import soot.Value;
+import soot.*;
 import soot.baf.ThrowInst;
 import soot.grimp.NewInvokeExpr;
 import soot.jimple.ThrowStmt;
@@ -42,9 +36,11 @@ import soot.jimple.ThrowStmt;
 public abstract class AbstractThrowAnalysis implements ThrowAnalysis {
 
   private ThrowableSet.Manager myManager;
+  private Scene myScene;
 
-  protected AbstractThrowAnalysis(ThrowableSet.Manager myManager) {
+  protected AbstractThrowAnalysis(ThrowableSet.Manager myManager, Scene myScene) {
     this.myManager = myManager;
+    this.myScene = myScene;
   }
 
   abstract public ThrowableSet mightThrow(Unit u);
@@ -56,7 +52,7 @@ public abstract class AbstractThrowAnalysis implements ThrowAnalysis {
 
   public ThrowableSet mightThrowExplicitly(ThrowStmt t) {
     Value thrownExpression = t.getOp();
-    Type thrownType = thrownExpression.getType();
+    Type thrownType = thrownExpression.getType(myScene);
     if (thrownType == null || thrownType instanceof UnknownType) {
       // We can't identify the type of thrownExpression, so...
       return myManager.ALL_THROWABLES;

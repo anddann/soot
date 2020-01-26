@@ -194,7 +194,7 @@ public class SootToDexUtils {
         InvokeExpr invocation = stmt.getInvokeExpr();
         List<Value> args = invocation.getArgs();
         for (Value arg : args) {
-          wordsForParameters += getDexWords(arg.getType());
+          wordsForParameters += getDexWords(arg.getType(myScene));
         }
         if (!invocation.getMethod().isStatic()) {
           wordsForParameters++; // extra word for "this"

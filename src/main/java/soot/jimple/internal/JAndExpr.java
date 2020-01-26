@@ -44,7 +44,7 @@ public class JAndExpr extends AbstractJimpleIntLongBinopExpr implements AndExpr 
   }
 
   Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newAndInst(this.getOp1().getType());
+    return myBaf.newAndInst(this.getOp1().getType(myScene));
   }
 
   public Object clone() {

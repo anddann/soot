@@ -24,11 +24,9 @@ package soot.jimple.internal;
 
 import java.util.List;
 
-import soot.PrimTypeCollector;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.baf.Baf;
+import soot.jimple.ConstantFactory;
 import soot.jimple.ConvertToBaf;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleToBafContext;
@@ -46,10 +44,10 @@ abstract public class AbstractJimpleIntLongBinopExpr extends AbstractIntLongBino
 
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
-    ((ConvertToBaf) this.getOp1()).convertToBaf(context, out, myBaf);
-    ((ConvertToBaf) this.getOp2()).convertToBaf(context, out, myBaf);
-    Unit u = (Unit) makeBafInst(this.getOp1().getType(), myBaf);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) this.getOp1()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+    ((ConvertToBaf) this.getOp2()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+    Unit u = (Unit) makeBafInst(this.getOp1().getType(myScene), myBaf);
     out.add(u);
     u.addAllTagsOf(context.getCurrentUnit());
   }

@@ -43,7 +43,7 @@ import soot.jimple.NeExpr;
 public abstract class AbstractNullTransformer extends DexTransformer {
 
   public AbstractNullTransformer() {
-    super(primeTypeCollector);
+    super(primTypeCollector);
   }
 
   /**

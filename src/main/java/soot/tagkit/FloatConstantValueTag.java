@@ -27,11 +27,11 @@ import soot.jimple.FloatConstant;
 
 public class FloatConstantValueTag extends ConstantValueTag {
   private final float value;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
-  public FloatConstantValueTag(float value, ConstantFactory constancFactory) {
+  public FloatConstantValueTag(float value, ConstantFactory constantFactory) {
     this.value = value;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
   }
 
   public float getFloatValue() {
@@ -44,7 +44,7 @@ public class FloatConstantValueTag extends ConstantValueTag {
 
   @Override
   public FloatConstant getConstant() {
-    return constancFactory.createFloatConstant(value);
+    return constantFactory.createFloatConstant(value);
   }
 
   @Override

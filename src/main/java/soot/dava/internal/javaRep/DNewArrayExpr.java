@@ -31,8 +31,11 @@ import soot.grimp.Precedence;
 import soot.jimple.internal.AbstractNewArrayExpr;
 
 public class DNewArrayExpr extends AbstractNewArrayExpr implements Precedence {
-  public DNewArrayExpr(Type type, Value size) {
-    super(type, myGrimp.newExprBox(size), myScene);
+  private final Grimp myGrimp;
+
+  public DNewArrayExpr(Type type, Value size, Grimp myGrimp) {
+    super(type, myGrimp.newExprBox(size));
+    this.myGrimp = myGrimp;
   }
 
   public int getPrecedence() {
@@ -40,7 +43,7 @@ public class DNewArrayExpr extends AbstractNewArrayExpr implements Precedence {
   }
 
   public Object clone() {
-    return new DNewArrayExpr(getBaseType(), Grimp.cloneIfNecessary(getSize()));
+    return new DNewArrayExpr(getBaseType(), Grimp.cloneIfNecessary(getSize()), myGrimp);
   }
 
   public void toString(UnitPrinter up) {

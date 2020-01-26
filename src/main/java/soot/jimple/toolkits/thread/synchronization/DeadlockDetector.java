@@ -306,7 +306,7 @@ public class DeadlockDetector {
                     permanentOrder.addNode(daeNum);
                     lockToLockNum.put(dae, daeNum);
                     PointsToSetInternal dummyLockPT
-                        = new HashPointsToSet(lock1.getType(), (PAG) myScene.getPointsToAnalysis());
+                        = new HashPointsToSet(lock1.getType(myScene), (PAG) myScene.getPointsToAnalysis());
                     lockPTSets.add(dummyLockPT);
 
                     // Add it to the locksets of tn1 and whoever says l2 before l1

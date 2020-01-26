@@ -32,7 +32,10 @@ import soot.Value;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.AST.ASTSwitchNode;
 import soot.dava.internal.asg.AugmentedStmt;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.finders.SwitchNode;
+import soot.jimple.Jimple;
 import soot.util.IterableSet;
 
 public class SETSwitchNode extends SETDagNode {
@@ -57,7 +60,7 @@ public class SETSwitchNode extends SETDagNode {
     return new IterableSet();
   }
 
-  public ASTNode emit_AST() {
+  public ASTNode emit_AST(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
     LinkedList<Object> indexList = new LinkedList<Object>();
     Map<Object, List<Object>> index2ASTBody = new HashMap<Object, List<Object>>();
 
@@ -75,7 +78,7 @@ public class SETSwitchNode extends SETDagNode {
         if (index != lastIndex) {
           index2ASTBody.put(index, null);
         } else {
-          index2ASTBody.put(index, emit_ASTBody(get_Body2ChildChain().get(sn.get_Body())));
+          index2ASTBody.put(index, emit_ASTBody(get_Body2ChildChain().get(sn.get_Body()), myTryContentsFinder, myASTWalker, myJimple));
         }
       }
     }

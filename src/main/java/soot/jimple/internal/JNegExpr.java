@@ -24,9 +24,12 @@ package soot.jimple.internal;
 
 import java.util.List;
 
+import soot.PrimTypeCollector;
+import soot.Scene;
 import soot.Unit;
 import soot.Value;
 import soot.baf.Baf;
+import soot.jimple.ConstantFactory;
 import soot.jimple.ConvertToBaf;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleToBafContext;
@@ -36,9 +39,9 @@ public class JNegExpr extends AbstractNegExpr implements ConvertToBaf {
     super(myJimple.newImmediateBox(op));
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
-    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf);
-    Unit u = myBaf.newNegInst(getType());
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+    Unit u = myBaf.newNegInst(getType(myScene));
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);
   }

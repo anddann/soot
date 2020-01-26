@@ -64,18 +64,18 @@ public class ArrayBoundsChecker extends BodyTransformer {
   private Scene myScene;
   private Orderer<Block> mySlowPseudoTopologicalOrderer;
   private Jimple myJimple;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
 
   @Inject
   public ArrayBoundsChecker(Options myOptions, RectangularArrayFinder myRectangularArrayFinder,
-                            ClassFieldAnalysis myClassFieldAnalysis, Scene myScene, Orderer<Block> mySlowPseudoTopologicalOrderer, Jimple myJimple, ConstantFactory constancFactory) {
+                            ClassFieldAnalysis myClassFieldAnalysis, Scene myScene, Orderer<Block> mySlowPseudoTopologicalOrderer, Jimple myJimple, ConstantFactory constantFactory) {
     this.myOptions = myOptions;
     this.myRectangularArrayFinder = myRectangularArrayFinder;
     this.myClassFieldAnalysis = myClassFieldAnalysis;
     this.myScene = myScene;
     this.mySlowPseudoTopologicalOrderer = mySlowPseudoTopologicalOrderer;
     this.myJimple = myJimple;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
   }
 
   protected boolean takeClassField = false;
@@ -220,7 +220,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
               }
 
               units.insertBefore(
-                  myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constancFactory.createIntConstant(lowercounter))),
+                  myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constantFactory.createIntConstant(lowercounter))),
                   stmt);
 
               int uppercounter = 2;
@@ -229,17 +229,17 @@ public class ArrayBoundsChecker extends BodyTransformer {
               }
 
               units.insertBefore(
-                  myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constancFactory.createIntConstant(uppercounter))),
+                  myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constantFactory.createIntConstant(uppercounter))),
                   stmt);
 
               /*
                * if (!lowercheck && !uppercheck) { units.insertBefore(myJimple.newInvokeStmt(
-               * myJimple.newStaticInvokeExpr(increase, constancFactory.createIntConstant(4))), stmt);
+               * myJimple.newStaticInvokeExpr(increase, constantFactory.createIntConstant(4))), stmt);
                *
                * NullCheckTag nullTag = (NullCheckTag)stmt.getTag("NullCheckTag");
                *
                * if (nullTag != null && !nullTag.needCheck()) units.insertBefore(myJimple.newInvokeStmt(
-               * myJimple.newStaticInvokeExpr(increase, constancFactory.createIntConstant(7))), stmt); }
+               * myJimple.newStaticInvokeExpr(increase, constantFactory.createIntConstant(7))), stmt); }
                */
             } else {
               Tag checkTag = new ArrayCheckTag(lowercheck, uppercheck);
@@ -257,7 +257,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
           if (!(v instanceof Local)) {
             continue;
           }
-          Type t = v.getType();
+          Type t = v.getType(myScene);
           if (!(t instanceof ArrayType)) {
             continue;
           }
@@ -283,7 +283,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
 
     while (localIt.hasNext()) {
       Local local = (Local) localIt.next();
-      if (local.getType() instanceof ArrayType) {
+      if (local.getType(myScene) instanceof ArrayType) {
         return true;
       }
     }

@@ -25,10 +25,7 @@ package soot.jimple.internal;
 import java.util.Collections;
 import java.util.List;
 
-import soot.RefType;
-import soot.Type;
-import soot.UnitPrinter;
-import soot.ValueBox;
+import soot.*;
 import soot.jimple.ExprSwitch;
 import soot.jimple.Jimple;
 import soot.jimple.NewExpr;
@@ -71,7 +68,7 @@ public abstract class AbstractNewExpr implements NewExpr {
     this.type = type;
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return type;
   }
 

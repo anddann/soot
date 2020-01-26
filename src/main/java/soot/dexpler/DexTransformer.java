@@ -71,10 +71,10 @@ import soot.toolkits.scalar.UnitValueBoxPair;
 
 public abstract class DexTransformer extends BodyTransformer {
 
-  private PrimTypeCollector primeTypeCollector;
+  private PrimTypeCollector primTypeCollector;
 
-  protected DexTransformer(PrimTypeCollector primeTypeCollector) {
-    this.primeTypeCollector = primeTypeCollector;
+  protected DexTransformer(PrimTypeCollector primTypeCollector) {
+    this.primTypeCollector = primTypeCollector;
   }
 
   /**
@@ -192,7 +192,7 @@ public abstract class DexTransformer extends BodyTransformer {
           }
         } else if (r instanceof ArrayRef) {
           ArrayRef ar = (ArrayRef) r;
-          if (ar.getType().toString().equals(".unknown") || ar.getType().toString().equals("unknown")) { // ||
+          if (ar.getType(myScene).toString().equals(".unknown") || ar.getType(myScene).toString().equals("unknown")) { // ||
             // ar.getType())
             // {
             Type t = findArrayType(localDefs, stmt, ++depth, newVisitedDefs); // TODO: which type should be
@@ -208,7 +208,7 @@ public abstract class DexTransformer extends BodyTransformer {
               return t;
             }
           } else {
-            ArrayType at = (ArrayType) stmt.getRightOp().getType();
+            ArrayType at = (ArrayType) stmt.getRightOp().getType(myScene);
             Type t = at.getArrayElementType();
             if (depth == 0) {
               aType = t;
@@ -283,7 +283,7 @@ public abstract class DexTransformer extends BodyTransformer {
 
       } else if (baseDef instanceof IdentityStmt) {
         IdentityStmt stmt = (IdentityStmt) baseDef;
-        ArrayType at = (ArrayType) stmt.getRightOp().getType();
+        ArrayType at = (ArrayType) stmt.getRightOp().getType(myScene);
         Type t = at.getArrayElementType();
         if (depth == 0) {
           aType = t;
@@ -302,7 +302,7 @@ public abstract class DexTransformer extends BodyTransformer {
 
     if (depth == 0 && aType == null) {
       if (nullDefCount == defsOfaBaseList.size()) {
-        return primeTypeCollector.getNullType();
+        return primTypeCollector.getNullType();
       } else {
         throw new RuntimeException("ERROR: could not find type of array from statement '" + arrayStmt + "'");
       }

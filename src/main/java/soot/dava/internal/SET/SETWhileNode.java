@@ -25,9 +25,11 @@ package soot.dava.internal.SET;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.AST.ASTWhileNode;
 import soot.dava.internal.asg.AugmentedStmt;
+import soot.dava.toolkits.base.AST.ASTWalker;
 import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.jimple.ConditionExpr;
 import soot.jimple.IfStmt;
+import soot.jimple.Jimple;
 import soot.util.IterableSet;
 
 public class SETWhileNode extends SETCycleNode {
@@ -50,9 +52,9 @@ public class SETWhileNode extends SETCycleNode {
     return c;
   }
 
-  public ASTNode emit_AST() {
+  public ASTNode emit_AST(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
     return new ASTWhileNode(get_Label(), (ConditionExpr) ((IfStmt) get_CharacterizingStmt().get_Stmt()).getCondition(),
-        emit_ASTBody(body2childChain.get(subBodies.get(0))), myTryContentsFinder);
+        emit_ASTBody(body2childChain.get(subBodies.get(0)), myTryContentsFinder, myASTWalker, myJimple), this.myTryContentsFinder);
   }
 
   public AugmentedStmt get_EntryStmt() {

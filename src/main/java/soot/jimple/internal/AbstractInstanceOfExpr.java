@@ -25,11 +25,7 @@ package soot.jimple.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import soot.PrimTypeCollector;
-import soot.Type;
-import soot.UnitPrinter;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.jimple.ExprSwitch;
 import soot.jimple.InstanceOfExpr;
 import soot.jimple.Jimple;
@@ -99,7 +95,7 @@ public abstract class AbstractInstanceOfExpr implements InstanceOfExpr {
     return list;
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return primTypeCollector.getBooleanType();
   }
 

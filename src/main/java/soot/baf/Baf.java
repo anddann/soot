@@ -564,12 +564,12 @@ public class Baf {
 
   /** Returns a BafBody constructed from b. */
   public BafBody newBody(JimpleBody b) {
-    return new BafBody(b, Collections.<String, String>emptyMap(), myOptions, myPrinter, this, myPackmanager);
+    return new BafBody(b, Collections.<String, String>emptyMap(), myOptions, myPrinter, this, myPackmanager, myScene, primTypeCollector, constantFactory);
   }
 
   /** Returns a BafBody constructed from b. */
   public BafBody newBody(JimpleBody b, String phase) {
     Map<String, String> options = myPhaseOptions.getPhaseOptions(phase);
-    return new BafBody(b, options, myOptions, myPrinter, this, myPackmanager);
+    return new BafBody(b, options, myOptions, myPrinter, this, myPackmanager, myScene, primTypeCollector, constantFactory);
   }
 }

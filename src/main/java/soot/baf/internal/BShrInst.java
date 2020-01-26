@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BShrInst extends AbstractOpTypeInst implements ShrInst {
   public BShrInst(Type opType) {
-    super(primeTypeCollector.getRefType(), opType, myBaf);
+    super(primTypeCollector.getRefType(), opType, myBaf);
   }
 
   public int getInCount() {

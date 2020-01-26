@@ -244,7 +244,7 @@ public class PackManager {
   private Jimple myJimple;
   private ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer;
   private UnreachableMethodTransformer myUnreachableMethodTransformer;
-    private ConstantFactory constancFactory;
+    private ConstantFactory constantFactory;
 
     @Inject
   public PackManager(PhaseOptions myPhaseOptions, FieldTagger myFieldTagger, Options myOptions,
@@ -281,7 +281,7 @@ public class PackManager {
                      NullCheckEliminator myNullCheckEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer,
                      EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter, Jimple myJimple,
                      ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer,
-                     UnreachableMethodTransformer myUnreachableMethodTransformer, ConstantFactory constancFactory) {
+                     UnreachableMethodTransformer myUnreachableMethodTransformer, ConstantFactory constantFactory) {
     this.myPhaseOptions = myPhaseOptions;
     this.myOptions = myOptions;
     // myPhaseOptions.setPackManager(this);
@@ -368,7 +368,7 @@ public class PackManager {
     this.myJimple = myJimple;
     this.myConstantInitializerToTagTransformer = myConstantInitializerToTagTransformer;
     this.myUnreachableMethodTransformer = myUnreachableMethodTransformer;
-        this.constancFactory = constancFactory;
+        this.constantFactory = constantFactory;
         init();
   }
 
@@ -771,7 +771,7 @@ public class PackManager {
 
   protected void writeDexOutput() {
     dexPrinter = new DexPrinter(myScene, myOptions, mySourceLocator, this, myEmptySwitchEliminator,
-        mySynchronizedMethodTransformer, myFastDexTrapTightener, myTrapSplitter, myJimple, constancFactory);
+        mySynchronizedMethodTransformer, myFastDexTrapTightener, myTrapSplitter, myJimple, constantFactory);
     writeOutput(reachableClasses());
     dexPrinter.print();
     dexPrinter = null;
@@ -995,7 +995,7 @@ public class PackManager {
      * HAVE TO invoke this analysis since this invokes the renamer!!
      */
     if (transformations) {
-      InterProceduralAnalyses.applyInterProceduralAnalyses(myScene, myPhaseOptions, constancFactory, myScene.getPrimTypeCollector());
+      InterProceduralAnalyses.applyInterProceduralAnalyses(myScene, myPhaseOptions, constantFactory, myScene.getPrimTypeCollector());
     }
   }
 

@@ -26,6 +26,7 @@ import com.google.inject.Inject;
 
 import java.util.Iterator;
 
+import soot.PrimTypeCollector;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
 import soot.dava.RetriggerAnalysisException;
@@ -35,6 +36,7 @@ import soot.dava.internal.SET.SETStatementSequenceNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.asg.AugmentedStmtGraph;
 import soot.dava.internal.javaRep.DAbruptStmt;
+import soot.grimp.Grimp;
 import soot.util.IterableSet;
 
 public class AbruptEdgeFinder implements FactFinder {
@@ -46,7 +48,7 @@ public class AbruptEdgeFinder implements FactFinder {
     this.myDava = myDava;
   }
 
-  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
+  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException {
     myDava.log("AbruptEdgeFinder::find()");
 
     SET.find_AbruptEdges(this);

@@ -32,7 +32,6 @@ import org.jf.dexlib2.iface.instruction.Instruction;
 import org.jf.dexlib2.iface.instruction.formats.Instruction23x;
 
 import soot.ArrayType;
-import soot.IntType;
 import soot.Local;
 import soot.Type;
 import soot.UnknownType;
@@ -75,14 +74,14 @@ public class AputInstruction extends FieldInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       myDalvikTyper().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
-      myDalvikTyper().setType(arrayRef.getIndexBox(), primeTypeCollector.getIntType(), true);
+      myDalvikTyper().setType(arrayRef.getIndexBox(), primTypeCollector.getIntType(), true);
     }
   }
 
   @Override
   protected Type getTargetType(DexBody body) {
     Instruction23x aPutInstr = (Instruction23x) instruction;
-    Type t = body.getRegisterLocal(aPutInstr.getRegisterB()).getType();
+    Type t = body.getRegisterLocal(aPutInstr.getRegisterB()).getType(myScene);
     if (t instanceof ArrayType) {
       return ((ArrayType) t).getElementType();
     } else {

@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Local;
+import soot.PrimTypeCollector;
 import soot.Unit;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
@@ -48,6 +49,7 @@ import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.asg.AugmentedStmtGraph;
 import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.misc.ConditionFlipper;
+import soot.grimp.Grimp;
 import soot.grimp.internal.GAssignStmt;
 import soot.grimp.internal.GTableSwitchStmt;
 import soot.jimple.AssignStmt;
@@ -67,19 +69,19 @@ import soot.util.StationaryArrayList;
 public class CycleFinder implements FactFinder {
   private static final Logger logger = LoggerFactory.getLogger(CycleFinder.class);
   private Dava myDava;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private TryContentsFinder myTryContentsFinder;
   private Jimple myJimple;
 
   @Inject
-  public CycleFinder(Dava myDava, ConstantFactory constancFactory, TryContentsFinder myTryContentsFinder, Jimple myJimple) {
+  public CycleFinder(Dava myDava, ConstantFactory constantFactory, TryContentsFinder myTryContentsFinder, Jimple myJimple) {
     this.myDava = myDava;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.myTryContentsFinder = myTryContentsFinder;
     this.myJimple = myJimple;
   }
 
-  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
+  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException {
     myDava.log("CycleFinder::find()");
 
     AugmentedStmtGraph wasg = (AugmentedStmtGraph) asg.clone();
@@ -178,7 +180,7 @@ public class CycleFinder implements FactFinder {
 
           IfStmt condition = (IfStmt) characterizing_stmt.get_Stmt();
           if (cycle_body.contains(asg.get_AugStmt(condition.getTarget())) == false) {
-            condition.setCondition(ConditionFlipper.flip((ConditionExpr) condition.getCondition(), myGrimp, primeTypeCollector));
+            condition.setCondition(ConditionFlipper.flip((ConditionExpr) condition.getCondition(), myGrimp, primTypeCollector));
           }
 
           if (characterizing_stmt == entry_point) {
@@ -190,7 +192,7 @@ public class CycleFinder implements FactFinder {
         }
 
         if (newNode != null) {
-          SET.nest(newNode);
+          SET.nest(newNode, myExceptionFinder);
         }
       }
 
@@ -465,7 +467,7 @@ public class CycleFinder implements FactFinder {
           predecessorSet.add(pas);
         }
 
-        AssignStmt asnStmt = new GAssignStmt(controlLocal, constancFactory.createDIntConstant(count, null));
+        AssignStmt asnStmt = new GAssignStmt(controlLocal, constantFactory.createDIntConstant(count, null));
         AugmentedStmt directionStmt = new AugmentedStmt(asnStmt);
 
         directionStmtSet.add(directionStmt);

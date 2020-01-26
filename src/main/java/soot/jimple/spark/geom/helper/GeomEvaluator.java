@@ -41,7 +41,6 @@ import soot.FastHierarchy;
 import soot.Local;
 import soot.RefLikeType;
 import soot.RefType;
-import soot.Scene;
 import soot.SootField;
 import soot.SootMethod;
 import soot.Type;
@@ -470,7 +469,7 @@ public class GeomEvaluator {
         if (st instanceof AssignStmt) {
           Value rhs = ((AssignStmt) st).getRightOp();
           Value lhs = ((AssignStmt) st).getLeftOp();
-          if (rhs instanceof CastExpr && lhs.getType() instanceof RefLikeType) {
+          if (rhs instanceof CastExpr && lhs.getType(myScene) instanceof RefLikeType) {
 
             Value v = ((CastExpr) rhs).getOp();
             VarNode node = ptsProvider.findLocalVarNode(v);

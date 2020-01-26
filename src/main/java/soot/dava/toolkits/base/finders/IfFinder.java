@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.google.inject.Inject;
+import soot.PrimTypeCollector;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
 import soot.dava.RetriggerAnalysisException;
@@ -34,6 +35,7 @@ import soot.dava.internal.SET.SETNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.asg.AugmentedStmtGraph;
 import soot.dava.toolkits.base.AST.TryContentsFinder;
+import soot.grimp.Grimp;
 import soot.jimple.IfStmt;
 import soot.jimple.Stmt;
 import soot.util.IterableSet;
@@ -52,7 +54,7 @@ public class IfFinder implements FactFinder {
 
 
 
-  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET) throws RetriggerAnalysisException {
+  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException {
     myDava.log("IfFinder::find()");
 
     Iterator asgit = asg.iterator();
@@ -112,7 +114,7 @@ public class IfFinder implements FactFinder {
           }
         }
 
-        SET.nest(new SETIfElseNode(as, fullBody, ifBody, elseBody, myTryContentsFinder));
+        SET.nest(new SETIfElseNode(as, fullBody, ifBody, elseBody, myTryContentsFinder, myGrimp, primTypeCollector), myExceptionFinder);
       }
     }
   }

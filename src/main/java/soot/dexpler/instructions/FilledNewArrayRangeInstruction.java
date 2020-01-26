@@ -50,12 +50,12 @@ import soot.options.Options;
 
 public class FilledNewArrayRangeInstruction extends FilledArrayInstruction {
 
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private Scene myScene;
 
-  public FilledNewArrayRangeInstruction(Instruction instruction, int codeAdress, Options myOptions, ConstantFactory constancFactory, Scene myScene) {
+  public FilledNewArrayRangeInstruction(Instruction instruction, int codeAdress, Options myOptions, ConstantFactory constantFactory, Scene myScene) {
     super(instruction, codeAdress, myOptions);
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.myScene = myScene;
   }
 
@@ -74,13 +74,13 @@ public class FilledNewArrayRangeInstruction extends FilledArrayInstruction {
     Type t = DexType.toSoot((TypeReference) filledNewArrayInstr.getReference());
     // NewArrayExpr needs the ElementType as it increases the array dimension by 1
     Type arrayType = ((ArrayType) t).getElementType();
-    NewArrayExpr arrayExpr = myJimple.newNewArrayExpr(arrayType, constancFactory.createIntConstant(usedRegister));
+    NewArrayExpr arrayExpr = myJimple.newNewArrayExpr(arrayType, constantFactory.createIntConstant(usedRegister));
     Local arrayLocal = body.getStoreResultLocal();
     AssignStmt assignStmt = myJimple.newAssignStmt(arrayLocal, arrayExpr);
     body.add(assignStmt);
 
     for (int i = 0; i < usedRegister; i++) {
-      ArrayRef arrayRef = myJimple.newArrayRef(arrayLocal, constancFactory.createIntConstant(i));
+      ArrayRef arrayRef = myJimple.newArrayRef(arrayLocal, constantFactory.createIntConstant(i));
 
       AssignStmt assign
           = myJimple.newAssignStmt(arrayRef, body.getRegisterLocal(i + filledNewArrayInstr.getStartRegister()));
@@ -97,7 +97,7 @@ public class FilledNewArrayRangeInstruction extends FilledArrayInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // Debug.printDbg(IDalvikTyper.DEBUG, "constraint: "+ assignStmt);
-      myDalvikTyper.setType(assignStmt.getLeftOpBox(), arrayExpr.getType(), false);
+      myDalvikTyper.setType(assignStmt.getLeftOpBox(), arrayExpr.getType(myScene), false);
       // myDalvikTyper().addConstraint(assignStmt.getLeftOpBox(), assignStmt.getRightOpBox());
     }
 

@@ -610,7 +610,7 @@ public class ClassLocalObjectsAnalysis {
     }
 
     SootMethod callingMethod = e.tgt();
-    CallLocalityContext callingContext = new CallLocalityContext(dfa.getMethodInfoFlowSummary(callingMethod).getNodes());
+    CallLocalityContext callingContext = new CallLocalityContext(dfa.getMethodInfoFlowSummary(callingMethod).getNodes(), myScene);
     // just
     // keeps
     // a
@@ -685,9 +685,9 @@ public class ClassLocalObjectsAnalysis {
   private CallLocalityContext getContextFor(SootMethod sm, boolean includePrimitiveDataFlowIfAvailable) {
     CallLocalityContext context;
     if (includePrimitiveDataFlowIfAvailable) {
-      context = new CallLocalityContext(primitiveDfa.getMethodInfoFlowSummary(sm).getNodes());
+      context = new CallLocalityContext(primitiveDfa.getMethodInfoFlowSummary(sm).getNodes(), myScene);
     } else {
-      context = new CallLocalityContext(dfa.getMethodInfoFlowSummary(sm).getNodes());
+      context = new CallLocalityContext(dfa.getMethodInfoFlowSummary(sm).getNodes(), myScene);
     }
 
     // Set context for every parameter that is shared
@@ -821,7 +821,7 @@ public class ClassLocalObjectsAnalysis {
 
     // Check if param is primitive or ref type
     ParameterRef param = (ParameterRef) parameterRef.getValue();
-    if (!(param.getType() instanceof RefLikeType) && (!dfa.includesPrimitiveInfoFlow() || method.getName().equals("<init>")))
+    if (!(param.getType(myScene) instanceof RefLikeType) && (!dfa.includesPrimitiveInfoFlow() || method.getName().equals("<init>")))
     // TODO
     // fix
     {

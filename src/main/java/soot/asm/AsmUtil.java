@@ -63,10 +63,10 @@ public class AsmUtil {
    * @param internal
    *          internal name.
    * @param myScene
-   * @param primeTypeCollector
+   * @param primTypeCollector
    * @return type
    */
-  public static Type toBaseType(String internal, Scene myScene, PrimTypeCollector primeTypeCollector) {
+  public static Type toBaseType(String internal, Scene myScene, PrimTypeCollector primTypeCollector) {
     if (internal.charAt(0) == '[') {
       /* [Ljava/lang/Object; */
       internal = internal.substring(internal.lastIndexOf('[') + 1, internal.length());
@@ -87,21 +87,21 @@ public class AsmUtil {
     }
     switch (internal.charAt(0)) {
       case 'Z':
-        return primeTypeCollector.getBooleanType();
+        return primTypeCollector.getBooleanType();
       case 'B':
-        return primeTypeCollector.getByteType();
+        return primTypeCollector.getByteType();
       case 'C':
-        return primeTypeCollector.getCharType();
+        return primTypeCollector.getCharType();
       case 'S':
-        return primeTypeCollector.getShortType();
+        return primTypeCollector.getShortType();
       case 'I':
-        return primeTypeCollector.getIntType();
+        return primTypeCollector.getIntType();
       case 'F':
-        return primeTypeCollector.getFloatType();
+        return primTypeCollector.getFloatType();
       case 'J':
-        return primeTypeCollector.getLongType();
+        return primTypeCollector.getLongType();
       case 'D':
-        return primeTypeCollector.getDoubleType();
+        return primTypeCollector.getDoubleType();
       default:
         internal = toQualifiedName(internal);
         return RefType.v(internal, myScene);
@@ -147,11 +147,11 @@ public class AsmUtil {
    * @param desc
    *          the descriptor.
    * @param myScene
-   * @param primeTypeCollector
+   * @param primTypeCollector
    * @return the reference type.
    */
-  public static Type toJimpleRefType(String desc, Scene myScene, PrimTypeCollector primeTypeCollector) {
-    return desc.charAt(0) == '[' ? toJimpleType(desc, primeTypeCollector, myScene) : RefType.v(toQualifiedName(desc), myScene);
+  public static Type toJimpleRefType(String desc, Scene myScene, PrimTypeCollector primTypeCollector) {
+    return desc.charAt(0) == '[' ? toJimpleType(desc, primTypeCollector, myScene) : RefType.v(toQualifiedName(desc), myScene);
   }
 
   /**
@@ -159,11 +159,11 @@ public class AsmUtil {
    * 
    * @param desc
    *          the descriptor.
-   * @param primeTypeCollector
+   * @param primTypeCollector
    * @param myScene
    * @return equivalent Jimple type.
    */
-  public static Type toJimpleType(String desc, PrimTypeCollector primeTypeCollector, Scene myScene) {
+  public static Type toJimpleType(String desc, PrimTypeCollector primTypeCollector, Scene myScene) {
     int idx = desc.lastIndexOf('[');
     int nrDims = idx + 1;
     if (nrDims > 0) {
@@ -175,28 +175,28 @@ public class AsmUtil {
     Type baseType;
     switch (desc.charAt(0)) {
       case 'Z':
-        baseType = primeTypeCollector.getBooleanType();
+        baseType = primTypeCollector.getBooleanType();
         break;
       case 'B':
-        baseType = primeTypeCollector.getByteType();
+        baseType = primTypeCollector.getByteType();
         break;
       case 'C':
-        baseType = primeTypeCollector.getCharType();
+        baseType = primTypeCollector.getCharType();
         break;
       case 'S':
-        baseType = primeTypeCollector.getShortType();
+        baseType = primTypeCollector.getShortType();
         break;
       case 'I':
-        baseType = primeTypeCollector.getIntType();
+        baseType = primTypeCollector.getIntType();
         break;
       case 'F':
-        baseType = primeTypeCollector.getFloatType();
+        baseType = primTypeCollector.getFloatType();
         break;
       case 'J':
-        baseType = primeTypeCollector.getLongType();
+        baseType = primTypeCollector.getLongType();
         break;
       case 'D':
-        baseType = primeTypeCollector.getDoubleType();
+        baseType = primTypeCollector.getDoubleType();
         break;
       case 'L':
         if (desc.charAt(desc.length() - 1) != ';') {
@@ -220,11 +220,11 @@ public class AsmUtil {
    * 
    * @param desc
    *          method signature.
-   * @param primeTypeCollector
+   * @param primTypeCollector
    * @param myScene
    * @return list of types.
    */
-  public static List<Type> toJimpleDesc(String desc, PrimTypeCollector primeTypeCollector, Scene myScene) {
+  public static List<Type> toJimpleDesc(String desc, PrimTypeCollector primTypeCollector, Scene myScene) {
     ArrayList<Type> types = new ArrayList<Type>(2);
     int len = desc.length();
     int idx = 0;
@@ -241,31 +241,31 @@ public class AsmUtil {
             ++nrDims;
             continue this_type;
           case 'Z':
-            baseType = primeTypeCollector.getBooleanType();
+            baseType = primTypeCollector.getBooleanType();
             break this_type;
           case 'B':
-            baseType = primeTypeCollector.getByteType();
+            baseType = primTypeCollector.getByteType();
             break this_type;
           case 'C':
-            baseType = primeTypeCollector.getCharType();
+            baseType = primTypeCollector.getCharType();
             break this_type;
           case 'S':
-            baseType = primeTypeCollector.getShortType();
+            baseType = primTypeCollector.getShortType();
             break this_type;
           case 'I':
-            baseType = primeTypeCollector.getIntType();
+            baseType = primTypeCollector.getIntType();
             break this_type;
           case 'F':
-            baseType = primeTypeCollector.getFloatType();
+            baseType = primTypeCollector.getFloatType();
             break this_type;
           case 'J':
-            baseType = primeTypeCollector.getLongType();
+            baseType = primTypeCollector.getLongType();
             break this_type;
           case 'D':
-            baseType = primeTypeCollector.getDoubleType();
+            baseType = primTypeCollector.getDoubleType();
             break this_type;
           case 'V':
-            baseType = primeTypeCollector.getVoidType();
+            baseType = primTypeCollector.getVoidType();
             break this_type;
           case 'L':
             int begin = idx;

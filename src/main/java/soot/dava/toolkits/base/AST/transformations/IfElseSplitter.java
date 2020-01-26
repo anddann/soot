@@ -37,6 +37,7 @@ import soot.dava.internal.AST.ASTTryNode;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DAbruptStmt;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 import soot.dava.toolkits.base.AST.traversals.ASTParentNodeFinder;
 import soot.jimple.ReturnStmt;
@@ -71,13 +72,16 @@ public class IfElseSplitter extends DepthFirstAdapter {
   ASTIfNode toInsert;
   List<Object> bodyAfterInsert;
   boolean transform = false;
+  private TryContentsFinder myTryContentsFinder;
 
-  public IfElseSplitter() {
+  public IfElseSplitter(TryContentsFinder myTryContentsFinder) {
 
+    this.myTryContentsFinder = myTryContentsFinder;
   }
 
-  public IfElseSplitter(boolean verbose) {
+  public IfElseSplitter(boolean verbose, TryContentsFinder myTryContentsFinder) {
     super(verbose);
+    this.myTryContentsFinder = myTryContentsFinder;
   }
 
   public void inASTMethodNode(ASTMethodNode node) {

@@ -27,12 +27,9 @@ import java.io.InputStream;
 
 import org.objectweb.asm.ClassReader;
 
-import soot.ClassSource;
-import soot.FoundFile;
-import soot.Scene;
-import soot.SootClass;
-import soot.SootResolver;
+import soot.*;
 import soot.javaToJimple.IInitialResolver.Dependencies;
+import soot.jimple.ConstantFactory;
 import soot.options.Options;
 
 /**
@@ -46,21 +43,26 @@ public class AsmClassSource extends ClassSource {
   private Scene myScene;
   private SootResolver mySootResolver;
   private Options myOptions;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
 
   /**
    * Constructs a new ASM class source.
-   *
-   * @param cls
+   *  @param cls
    *          fully qualified name of the class.
    * @param myScene
    * @param mySootResolver
    * @param myOptions
+   * @param primTypeCollector
+   * @param constantFactory
    */
-  protected AsmClassSource(String cls, FoundFile foundFile, Scene myScene, SootResolver mySootResolver, Options myOptions) {
+  protected AsmClassSource(String cls, FoundFile foundFile, Scene myScene, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     super(cls);
     this.myScene = myScene;
     this.mySootResolver = mySootResolver;
     this.myOptions = myOptions;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
     if (foundFile == null) {
       throw new IllegalStateException("Error: The FoundFile must not be null.");
     }
@@ -73,7 +75,7 @@ public class AsmClassSource extends ClassSource {
     try {
       d = foundFile.inputStream();
       ClassReader clsr = new ClassReader(d);
-      SootClassBuilder scb = new SootClassBuilder(sc, myScene, mySootResolver,  myOptions, primeTypeCollector, constancFactory);
+      SootClassBuilder scb = new SootClassBuilder(sc, myScene, mySootResolver,  myOptions, primTypeCollector, constantFactory);
       clsr.accept(scb, ClassReader.SKIP_FRAMES);
       Dependencies deps = new Dependencies();
       deps.typesToSignature.addAll(scb.deps);

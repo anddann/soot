@@ -33,14 +33,7 @@ import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.Body;
-import soot.BodyTransformer;
-import soot.IdentityUnit;
-import soot.Local;
-import soot.PhaseOptions;
-import soot.Type;
-import soot.Unit;
-import soot.ValueBox;
+import soot.*;
 import soot.jimple.GroupIntPair;
 import soot.options.Options;
 import soot.toolkits.exceptions.PedanticThrowAnalysis;
@@ -70,14 +63,16 @@ public class LocalPacker extends BodyTransformer {
     private PedanticThrowAnalysis myPedanticThrowAnalysis;
     private ThrowableSet.Manager myManager;
     private PhaseDumper myPhaseDumper;
+  private Scene myScene;
 
-    @Inject
-  public LocalPacker(Options myOptions, PedanticThrowAnalysis myPedanticThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
+  @Inject
+  public LocalPacker(Options myOptions, PedanticThrowAnalysis myPedanticThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Scene myScene) {
     this.myOptions = myOptions;
         this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
         this.myManager = myManager;
         this.myPhaseDumper = myPhaseDumper;
-    }
+    this.myScene = myScene;
+  }
 
 
   protected void internalTransform(Body body, String phaseName, Map<String, String> options) {
@@ -100,7 +95,7 @@ public class LocalPacker extends BodyTransformer {
     // Assign each local to a group, and set that group's color count to 0.
     {
       for (Local l : body.getLocals()) {
-        Type g = l.getType();
+        Type g = l.getType(myScene);
 
         localToGroup.put(l, g);
 

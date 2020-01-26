@@ -30,14 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import soot.ArrayType;
-import soot.Body;
-import soot.Local;
-import soot.PrimTypeCollector;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.jimple.ArrayRef;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.IntConstant;
@@ -50,6 +43,7 @@ import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
 
 public class ConstantArrayAnalysis extends ForwardFlowAnalysis<Unit, ConstantArrayAnalysis.ArrayState> {
+  private final Scene myScene;
   private PrimTypeCollector primTypeCollectior;
 
   private class ArrayTypesInternal implements Cloneable {
@@ -122,8 +116,9 @@ public class ConstantArrayAnalysis extends ForwardFlowAnalysis<Unit, ConstantArr
   private int typeSize;
   private int szSize;
 
-  public ConstantArrayAnalysis(DirectedGraph<Unit> graph, Body b, boolean interaticveMode, InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollectior) {
+  public ConstantArrayAnalysis(DirectedGraph<Unit> graph, Body b, boolean interaticveMode, InteractionHandler myInteractionHandler, Scene myScene, PrimTypeCollector primTypeCollectior) {
     super(graph,interaticveMode, myInteractionHandler);
+    this.myScene = myScene;
     this.primTypeCollectior = primTypeCollectior;
     for (Local l : b.getLocals()) {
       localToInt.put(l, size++);
@@ -131,7 +126,7 @@ public class ConstantArrayAnalysis extends ForwardFlowAnalysis<Unit, ConstantArr
     for (Unit u : b.getUnits()) {
       Stmt s = (Stmt) u;
       if (s instanceof DefinitionStmt) {
-        Type ty = ((DefinitionStmt) s).getRightOp().getType();
+        Type ty = ((DefinitionStmt) s).getRightOp().getType(this.myScene);
         if (!typeToInt.containsKey(ty)) {
           int key = typeSize++;
           typeToInt.put(ty, key);
@@ -179,7 +174,7 @@ public class ConstantArrayAnalysis extends ForwardFlowAnalysis<Unit, ConstantArr
             out.state[varRef].typeState[i] = new BitSet(typeSize);
           }
         }
-      } else if (lhs instanceof Local && lhs.getType() instanceof ArrayType && rhs instanceof NullConstant) {
+      } else if (lhs instanceof Local && lhs.getType(myScene) instanceof ArrayType && rhs instanceof NullConstant) {
         int varRef = localToInt.get(lhs);
         out.active.clear(varRef);
         out.state[varRef] = null;
@@ -227,7 +222,7 @@ public class ConstantArrayAnalysis extends ForwardFlowAnalysis<Unit, ConstantArr
           out.state[localRef] = null;
           out.active.set(localRef);
         } else if (out.state[localRef] != null) {
-          Type assignType = rhs.getType();
+          Type assignType = rhs.getType(myScene);
           int index = ((IntConstant) indexVal).value;
           assert index < out.state[localRef].typeState.length;
           out.deepCloneLocalValueSlot(localRef, index);

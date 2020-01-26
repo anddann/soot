@@ -39,7 +39,6 @@ import soot.Local;
 import soot.PhaseOptions;
 import soot.Scene;
 import soot.SideEffectTester;
-import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.AssignStmt;
@@ -133,7 +132,7 @@ public class CommonSubexpressionEliminator extends BodyTransformer {
                 counter++;
               }
 
-              Local l = myJimple.newLocal(newName, v.getType().toMachineType());
+              Local l = myJimple.newLocal(newName, v.getType(myScene).toMachineType());
 
               b.getLocals().add(l);
 

@@ -277,7 +277,7 @@ public class FinalFieldDefinition {
 
     } else if (field instanceof Local) {
       ref = (Local) field;
-      fieldType = ((Local) field).getType();
+      fieldType = ((Local) field).getType(myScene);
     }
 
     GAssignStmt assignStmt = null;
@@ -285,15 +285,15 @@ public class FinalFieldDefinition {
     if (fieldType instanceof RefType) {
       assignStmt = new GAssignStmt(ref, myNullConstant);
     } else if (fieldType instanceof DoubleType) {
-      assignStmt = new GAssignStmt(ref, constancFactory.createDoubleConstant(0));
+      assignStmt = new GAssignStmt(ref, constantFactory.createDoubleConstant(0));
     } else if (fieldType instanceof FloatType) {
-      assignStmt = new GAssignStmt(ref, constancFactory.createFloatConstant(0));
+      assignStmt = new GAssignStmt(ref, constantFactory.createFloatConstant(0));
     } else if (fieldType instanceof LongType) {
-      assignStmt = new GAssignStmt(ref, constancFactory.createLongConstant(0));
+      assignStmt = new GAssignStmt(ref, constantFactory.createLongConstant(0));
     } else if (fieldType instanceof IntType || fieldType instanceof ByteType || fieldType instanceof ShortType
         || fieldType instanceof CharType || fieldType instanceof BooleanType) {
 
-      assignStmt = new GAssignStmt(ref, constancFactory.createDIntConstant(0, fieldType));
+      assignStmt = new GAssignStmt(ref, constantFactory.createDIntConstant(0, fieldType));
     }
 
     if (assignStmt != null) {

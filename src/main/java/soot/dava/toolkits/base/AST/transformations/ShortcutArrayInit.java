@@ -89,10 +89,10 @@ public class ShortcutArrayInit extends DepthFirstAdapter {
       }
 
       debug("Found a new ArrayExpr" + rightValue);
-      debug("Type of array is:" + rightValue.getType());
+      debug("Type of array is:" + rightValue.getType(myScene));
 
       // get type out
-      Type arrayType = rightValue.getType();
+      Type arrayType = rightValue.getType(myScene);
 
       // get size....need to know this statically for sure!!!
       Value size = ((NewArrayExpr) rightValue).getSize();
@@ -281,11 +281,11 @@ public class ShortcutArrayInit extends DepthFirstAdapter {
 
       if (DEBUG) {
         System.out.println("Found a new ArrayExpr" + rightValue);
-        System.out.println("Type of array is:" + rightValue.getType());
+        System.out.println("Type of array is:" + rightValue.getType(myScene));
       }
 
       // get type out
-      Type arrayType = rightValue.getType();
+      Type arrayType = rightValue.getType(myScene);
 
       // get size....need to know this statically for sure!!!
       Value size = ((NewArrayExpr) rightValue).getSize();

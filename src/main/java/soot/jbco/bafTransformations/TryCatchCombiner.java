@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import soot.Body;
 import soot.BodyTransformer;
-import soot.BooleanType;
-import soot.IntType;
 import soot.Local;
 import soot.PatchingChain;
 import soot.RefType;
@@ -171,12 +169,12 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
       }
 
       // local to hold control flow flag (0=try, 1=catch)
-      Local controlLocal = myBaf.newLocal("controlLocal_tccomb" + trapCount, primeTypeCollector.getIntType());
+      Local controlLocal = myBaf.newLocal("controlLocal_tccomb" + trapCount, primTypeCollector.getIntType());
       locs.add(controlLocal);
 
       // initialize local to 0=try
-      Unit pushZero = myBaf.newPushInst(constancFactory.createIntConstant(0));
-      Unit storZero = myBaf.newStoreInst(primeTypeCollector.getIntType(), controlLocal);
+      Unit pushZero = myBaf.newPushInst(constantFactory.createIntConstant(0));
+      Unit storZero = myBaf.newStoreInst(primTypeCollector.getIntType(), controlLocal);
 
       // this is necessary even though it seems like it shouldn't be
       units.insertBeforeNoRedirect((Unit) pushZero.clone(), first);
@@ -228,14 +226,14 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
       }
 
       Unit handlerUnit = t.getHandlerUnit();
-      Unit newBeginUnit = myBaf.newLoadInst(primeTypeCollector.getIntType(), controlLocal);
+      Unit newBeginUnit = myBaf.newLoadInst(primTypeCollector.getIntType(), controlLocal);
       units.insertBefore(newBeginUnit, begUnit);
       units.insertBefore(myBaf.newIfNeInst(handlerUnit), begUnit);
-      units.insertBefore(myBaf.newPopInst(primeTypeCollector.getRefType()), begUnit);
+      units.insertBefore(myBaf.newPopInst(primTypeCollector.getRefType()), begUnit);
 
       while (varsToLoad.size() > 0) {
         Local varLocal = (Local) varsToLoad.pop();
-        units.insertBefore(myBaf.newLoadInst(varLocal.getType(), varLocal), begUnit);
+        units.insertBefore(myBaf.newLoadInst(varLocal.getType(myScene), varLocal), begUnit);
       }
 
       try {
@@ -244,7 +242,7 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
           loadBooleanValue(units, f[0], begUnit);
           loadBooleanValue(units, f[1], begUnit);
 
-          units.insertBeforeNoRedirect(myBaf.newIfCmpEqInst(primeTypeCollector.getBooleanType(), begUnit), begUnit);
+          units.insertBeforeNoRedirect(myBaf.newIfCmpEqInst(primTypeCollector.getBooleanType(), begUnit), begUnit);
         }
       } catch (NullPointerException npe) {
         logger.debug(npe.getMessage(), npe);
@@ -252,10 +250,10 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
 
       // randomize the increment - sometimes store one, sometimes just set to 1
       if (Rand.getInt() % 2 == 0) {
-        units.insertBeforeNoRedirect(myBaf.newPushInst(constancFactory.createIntConstant(Rand.getInt(3) + 1)), begUnit);
-        units.insertBeforeNoRedirect(myBaf.newStoreInst(primeTypeCollector.getIntType(), controlLocal), begUnit);
+        units.insertBeforeNoRedirect(myBaf.newPushInst(constantFactory.createIntConstant(Rand.getInt(3) + 1)), begUnit);
+        units.insertBeforeNoRedirect(myBaf.newStoreInst(primTypeCollector.getIntType(), controlLocal), begUnit);
       } else {
-        units.insertBeforeNoRedirect(myBaf.newIncInst(controlLocal, constancFactory.createIntConstant(Rand.getInt(3) + 1)), begUnit);
+        units.insertBeforeNoRedirect(myBaf.newIncInst(controlLocal, constantFactory.createIntConstant(Rand.getInt(3) + 1)), begUnit);
       }
 
       trapCount--;

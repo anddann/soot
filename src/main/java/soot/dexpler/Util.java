@@ -216,11 +216,11 @@ public class Util {
    * Remove all statements except from IdentityStatements for parameters. Return default value (null or zero or nothing
    * depending on the return type).
    * @param jBody
-   * @param primeTypeCollector
+   * @param primTypeCollector
    * @param myJimple
-   * @param constancFactory
+   * @param constantFactory
    */
-  public static void emptyBody(Body jBody, PrimTypeCollector primeTypeCollector, Jimple myJimple, ConstantFactory constancFactory) {
+  public static void emptyBody(Body jBody, PrimTypeCollector primTypeCollector, Jimple myJimple, ConstantFactory constantFactory) {
     // identity statements
     List<Unit> idStmts = new ArrayList<Unit>();
     List<Local> idLocals = new ArrayList<Local>();
@@ -238,7 +238,7 @@ public class Util {
     jBody.getLocals().clear();
     jBody.getTraps().clear();
 
-    final LocalGenerator lg = new LocalGenerator(jBody, primeTypeCollector, myJimple);
+    final LocalGenerator lg = new LocalGenerator(jBody, primTypeCollector, myJimple);
 
     for (Unit u : idStmts) {
       jBody.getUnits().add(u);
@@ -259,17 +259,17 @@ public class Util {
 
       AssignStmt ass = null;
       if (t instanceof RefType || t instanceof ArrayType) {
-        ass = myJimple.newAssignStmt(l, constancFactory.getNullConstant());
+        ass = myJimple.newAssignStmt(l, constantFactory.getNullConstant());
       } else if (t instanceof LongType) {
-        ass = myJimple.newAssignStmt(l, constancFactory.createLongConstant(0));
+        ass = myJimple.newAssignStmt(l, constantFactory.createLongConstant(0));
       } else if (t instanceof FloatType) {
-        ass = myJimple.newAssignStmt(l, constancFactory.createFloatConstant(0.0f));
+        ass = myJimple.newAssignStmt(l, constantFactory.createFloatConstant(0.0f));
       } else if (t instanceof IntType) {
-        ass = myJimple.newAssignStmt(l, constancFactory.createIntConstant(0));
+        ass = myJimple.newAssignStmt(l, constantFactory.createIntConstant(0));
       } else if (t instanceof DoubleType) {
-        ass = myJimple.newAssignStmt(l, constancFactory.createDoubleConstant(0));
+        ass = myJimple.newAssignStmt(l, constantFactory.createDoubleConstant(0));
       } else if (t instanceof BooleanType || t instanceof ByteType || t instanceof CharType || t instanceof ShortType) {
-        ass = myJimple.newAssignStmt(l, constancFactory.createIntConstant(0));
+        ass = myJimple.newAssignStmt(l, constantFactory.createIntConstant(0));
       } else {
         throw new RuntimeException("error: return type unknown: " + t + " class: " + t.getClass());
       }
@@ -283,7 +283,7 @@ public class Util {
    * Insert a runtime exception before unit u of body b. Useful to analyze broken code (which make reference to inexisting
    * class for instance) exceptionType: e.g., "java.lang.RuntimeException"
    */
-  public static void addExceptionAfterUnit(Body b, String exceptionType, Unit u, String m, Scene myScene, Jimple myJimple, ConstantFactory constancFactory) {
+  public static void addExceptionAfterUnit(Body b, String exceptionType, Unit u, String m, Scene myScene, Jimple myJimple, ConstantFactory constantFactory) {
     LocalCreation lc = new LocalCreation(b.getLocals());
     Local l = lc.newLocal(RefType.v(exceptionType,myScene));
 
@@ -294,7 +294,7 @@ public class Util {
             .newInvokeStmt(myJimple.newSpecialInvokeExpr(l,
                 myScene.makeMethodRef(myScene.getSootClass(exceptionType), "<init>",
                     Collections.singletonList((Type) RefType.v("java.lang.String",myScene)), myScene.getPrimTypeCollector().getVoidType(), false),
-                constancFactory.createStringConstant(m)));
+                constantFactory.createStringConstant(m)));
     Unit u3 = myJimple.newThrowStmt(l);
     newUnits.add(u1);
     newUnits.add(u2);

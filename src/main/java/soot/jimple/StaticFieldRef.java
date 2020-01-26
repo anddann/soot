@@ -26,12 +26,7 @@ package soot.jimple;
 import java.util.Collections;
 import java.util.List;
 
-import soot.SootField;
-import soot.SootFieldRef;
-import soot.Type;
-import soot.Unit;
-import soot.UnitPrinter;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.Baf;
 import soot.util.Switch;
 
@@ -75,7 +70,7 @@ public class StaticFieldRef implements FieldRef, ConvertToBaf {
     return Collections.emptyList();
   }
 
-  public Type getType() {
+  public Type getType(Scene myScene) {
     return fieldRef.type();
   }
 
@@ -95,7 +90,7 @@ public class StaticFieldRef implements FieldRef, ConvertToBaf {
     return getField().equivHashCode();
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     Unit u = context.getBafBody().getMyBaf().newStaticGetInst(fieldRef);
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);

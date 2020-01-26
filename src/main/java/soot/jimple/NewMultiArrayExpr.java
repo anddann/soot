@@ -24,10 +24,7 @@ package soot.jimple;
 
 import java.util.List;
 
-import soot.ArrayType;
-import soot.Type;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.util.Switch;
 
 public interface NewMultiArrayExpr extends Expr, AnyNewExpr {
@@ -45,7 +42,7 @@ public interface NewMultiArrayExpr extends Expr, AnyNewExpr {
 
   public void setSize(int index, Value size);
 
-  public Type getType();
+  public Type getType(Scene myScene);
 
   public void apply(Switch sw);
 }

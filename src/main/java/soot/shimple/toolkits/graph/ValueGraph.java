@@ -30,11 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import soot.Body;
 import soot.Local;
 import soot.Scene;
-import soot.SootClass;
-import soot.SootMethod;
 import soot.Type;
 import soot.Unit;
 import soot.UnitPrinter;
@@ -92,11 +89,9 @@ import soot.jimple.VirtualInvokeExpr;
 import soot.jimple.XorExpr;
 import soot.shimple.AbstractShimpleValueSwitch;
 import soot.shimple.PhiExpr;
-import soot.shimple.Shimple;
 import soot.shimple.ShimpleBody;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.BlockGraph;
-import soot.toolkits.graph.CompleteBlockGraph;
 import soot.toolkits.graph.Orderer;
 import soot.toolkits.graph.PseudoTopologicalOrderer;
 import soot.util.Switch;
@@ -644,7 +639,7 @@ public class ValueGraph {
       return Collections.<ValueBox>emptyList();
     }
 
-    public Type getType() {
+    public Type getType(Scene myScene) {
       return type;
     }
 
@@ -665,11 +660,11 @@ public class ValueGraph {
         return false;
       }
 
-      return getType().equals(((TypeValueWrapper) o).getType());
+      return getType(myScene).equals(((TypeValueWrapper) o).getType(myScene));
     }
 
     public int hashCode() {
-      return getType().hashCode();
+      return getType(myScene).hashCode();
     }
 
     public boolean equivTo(Object o) {

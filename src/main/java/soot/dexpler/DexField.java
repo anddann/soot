@@ -73,9 +73,9 @@ public class DexField {
     } else if (ev instanceof CharEncodedValue) {
       tag = new IntegerConstantValueTag(((CharEncodedValue) ev).getValue());
     } else if (ev instanceof DoubleEncodedValue) {
-      tag = new DoubleConstantValueTag(((DoubleEncodedValue) ev).getValue(), constancFactory);
+      tag = new DoubleConstantValueTag(((DoubleEncodedValue) ev).getValue(), constantFactory);
     } else if (ev instanceof FloatEncodedValue) {
-      tag = new FloatConstantValueTag(((FloatEncodedValue) ev).getValue(), constancFactory);
+      tag = new FloatConstantValueTag(((FloatEncodedValue) ev).getValue(), constantFactory);
     } else if (ev instanceof IntEncodedValue) {
       tag = new IntegerConstantValueTag(((IntEncodedValue) ev).getValue());
     } else if (ev instanceof LongEncodedValue) {
@@ -83,7 +83,7 @@ public class DexField {
     } else if (ev instanceof ShortEncodedValue) {
       tag = new IntegerConstantValueTag(((ShortEncodedValue) ev).getValue());
     } else if (ev instanceof StringEncodedValue) {
-      tag = new StringConstantValueTag(((StringEncodedValue) ev).getValue(), constancFactory);
+      tag = new StringConstantValueTag(((StringEncodedValue) ev).getValue(), constantFactory);
     }
 
     if (tag != null) {

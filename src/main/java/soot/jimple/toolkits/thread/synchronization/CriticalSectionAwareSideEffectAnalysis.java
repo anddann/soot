@@ -105,7 +105,7 @@ class WholeObject {
         return (type == other.type);
       }
     } else if (o instanceof FieldRef) {
-      return type == ((FieldRef) o).getType();
+      return type == ((FieldRef) o).getType(myScene);
     } else if (o instanceof SootFieldRef) {
       return type == ((SootFieldRef) o).type();
     } else if (o instanceof SootField) {
@@ -335,7 +335,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
         // Set possibleTypes = base.possibleTypes();
         // for(Iterator pTypeIt = possibleTypes.iterator(); pTypeIt.hasNext(); )
         // {
-        Type pType = vLocal.getType(); // (Type) pTypeIt.next();
+        Type pType = vLocal.getType(myScene); // (Type) pTypeIt.next();
         if (pType instanceof RefType) {
           SootClass baseTypeClass = ((RefType) pType).getSootClass();
           if (!baseTypeClass.isInterface()) {
@@ -541,7 +541,7 @@ public class CriticalSectionAwareSideEffectAnalysis {
         // Set possibleTypes = base.possibleTypes();
         // for(Iterator pTypeIt = possibleTypes.iterator(); pTypeIt.hasNext(); )
         // {
-        Type pType = vLocal.getType(); // (Type) pTypeIt.next();
+        Type pType = vLocal.getType(myScene); // (Type) pTypeIt.next();
         if (pType instanceof RefType) {
           SootClass baseTypeClass = ((RefType) pType).getSootClass();
           if (!baseTypeClass.isInterface()) {
@@ -797,8 +797,8 @@ public class CriticalSectionAwareSideEffectAnalysis {
       InstanceFieldRef ifr = (InstanceFieldRef) v;
       Local baseLocal = (Local) ifr.getBase();
       PointsToSet base = pa.reachingObjects(baseLocal);
-      if (baseLocal.getType() instanceof RefType) {
-        SootClass baseClass = ((RefType) baseLocal.getType()).getSootClass();
+      if (baseLocal.getType(myScene) instanceof RefType) {
+        SootClass baseClass = ((RefType) baseLocal.getType(myScene)).getSootClass();
         if (myScene.getActiveHierarchy().isClassSubclassOfIncluding(baseClass,
             RefType.v("java.lang.Exception",myScene).getSootClass())) {
           return null;

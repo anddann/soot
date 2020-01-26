@@ -75,22 +75,22 @@ public class CPHelper {
     return value;
   }
 
-  public static Value createConstant(Object toConvert, ConstantFactory constancFactory, PrimTypeCollector primTypeCollector) {
+  public static Value createConstant(Object toConvert, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
     if (toConvert instanceof Long) {
-      return constancFactory.createLongConstant(((Long) toConvert).longValue());
+      return constantFactory.createLongConstant(((Long) toConvert).longValue());
     } else if (toConvert instanceof Double) {
-      return constancFactory.createDoubleConstant(((Double) toConvert).doubleValue());
+      return constantFactory.createDoubleConstant(((Double) toConvert).doubleValue());
     } else if (toConvert instanceof Boolean) {
       boolean val = ((Boolean) toConvert).booleanValue();
       if (val) {
-        return constancFactory.createDIntConstant(1, primTypeCollector.getBooleanType());
+        return constantFactory.createDIntConstant(1, primTypeCollector.getBooleanType());
       } else {
-        return constancFactory.createDIntConstant(0, primTypeCollector.getBooleanType());
+        return constantFactory.createDIntConstant(0, primTypeCollector.getBooleanType());
       }
     } else if (toConvert instanceof Float) {
-      return constancFactory.createFloatConstant(((Float) toConvert).floatValue());
+      return constantFactory.createFloatConstant(((Float) toConvert).floatValue());
     } else if (toConvert instanceof Integer) {
-      return constancFactory.createIntConstant(((Integer) toConvert).intValue());
+      return constantFactory.createIntConstant(((Integer) toConvert).intValue());
     } else {
       return null;
     }

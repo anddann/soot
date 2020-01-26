@@ -81,11 +81,11 @@ public class NullPointerChecker extends BodyTransformer {
   private ThrowAnalysis mythrowAnalysis;
   private PhaseDumper myPhaseDumper;
     private InteractionHandler myInteractionHandler;
-    private ConstantFactory constancFactory;
+    private ConstantFactory constantFactory;
 
 
     @Inject
-  public NullPointerChecker(Options myOptions, Scene myScene, Jimple myJimple, ThrowableSet.Manager myManager, ThrowAnalysis mythrowAnalysis, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, ConstantFactory constancFactory) {
+  public NullPointerChecker(Options myOptions, Scene myScene, Jimple myJimple, ThrowableSet.Manager myManager, ThrowAnalysis mythrowAnalysis, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, ConstantFactory constantFactory) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myJimple = myJimple;
@@ -93,7 +93,7 @@ public class NullPointerChecker extends BodyTransformer {
     this.mythrowAnalysis = mythrowAnalysis;
     this.myPhaseDumper = myPhaseDumper;
         this.myInteractionHandler = myInteractionHandler;
-        this.constancFactory = constancFactory;
+        this.constantFactory = constantFactory;
     }
 
 
@@ -112,7 +112,7 @@ public class NullPointerChecker extends BodyTransformer {
         logger.debug("[npc] Null pointer check for " + body.getMethod().getName() + " started on " + start);
       }
 
-      BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(body, mythrowAnalysis, myOptions.omit_excepting_unit_edges(),   myManager,myPhaseDumper), myInteractionHandler, myOptions.interactive_mode());
+      BranchedRefVarsAnalysis analysis = new BranchedRefVarsAnalysis(new ExceptionalUnitGraph(body, mythrowAnalysis, myOptions.omit_excepting_unit_edges(),   myManager,myPhaseDumper), myInteractionHandler, myOptions.interactive_mode(), myScene);
 
       SootClass counterClass = null;
       SootMethod increase = null;
@@ -201,7 +201,7 @@ public class NullPointerChecker extends BodyTransformer {
             }
 
             units.insertBefore(
-                myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constancFactory.createIntConstant(whichCounter))),
+                myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constantFactory.createIntConstant(whichCounter))),
                 s);
           }
 

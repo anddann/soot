@@ -94,14 +94,14 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
   private PhaseDumper myPhaseDumper;
   private Baf myBaf;
   private Jimple myJimple;
-  private ConstantFactory constancFactory;
+  private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
 
-  public FindDuplicateSequences(PhaseDumper myPhaseDumper, Baf myBaf, Jimple myJimple, ConstantFactory constancFactory, PrimTypeCollector primTypeCollector) {
+  public FindDuplicateSequences(PhaseDumper myPhaseDumper, Baf myBaf, Jimple myJimple, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
     this.myPhaseDumper = myPhaseDumper;
     this.myBaf = myBaf;
     this.myJimple = myJimple;
-    this.constancFactory = constancFactory;
+    this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
   }
 
@@ -354,7 +354,7 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
 
         units.insertBefore(store, first);
 
-        Unit pushUnit = myBaf.newPushInst(constancFactory.createIntConstant(0));
+        Unit pushUnit = myBaf.newPushInst(constantFactory.createIntConstant(0));
         // protectedUnits.add(pushUnit);
 
         units.insertBefore(pushUnit, store);
@@ -373,7 +373,7 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
 
           units.insertBefore(storet, firstt);
 
-          pushUnit = myBaf.newPushInst(constancFactory.createIntConstant(index++));
+          pushUnit = myBaf.newPushInst(constantFactory.createIntConstant(index++));
           // protectedUnits.add(pushUnit);
 
           units.insertBefore(pushUnit, storet);
@@ -584,8 +584,8 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
   }
 
   private boolean equalConstants(Constant c1, Constant c2) {
-    Type t = c1.getType();
-    if (t != c2.getType()) {
+    Type t = c1.getType(myScene);
+    if (t != c2.getType(myScene)) {
       return false;
     }
 

@@ -95,7 +95,7 @@ public class FillArrayDataInstruction extends PseudoInstruction {
 
     Stmt firstAssign = null;
     for (int i = 0; i < numElements; i++) {
-      ArrayRef arrayRef = myJimple.newArrayRef(arrayReference, constancFactory.createIntConstant(i));
+      ArrayRef arrayRef = myJimple.newArrayRef(arrayReference, constantFactory.createIntConstant(i));
       NumericConstant element = getArrayElement(elements.get(i), body, destRegister);
       if (element == null) {
         break;
@@ -172,23 +172,23 @@ public class FillArrayDataInstruction extends PseudoInstruction {
     NumericConstant value;
 
     if (elementType instanceof BooleanType) {
-      value = constancFactory.createIntConstant(element.intValue());
+      value = constantFactory.createIntConstant(element.intValue());
       IntConstant ic = (IntConstant) value;
       if (ic.value != 0) {
-        value = constancFactory.createIntConstant(1);
+        value = constantFactory.createIntConstant(1);
       }
     } else if (elementType instanceof ByteType) {
-      value = constancFactory.createIntConstant(element.byteValue());
+      value = constantFactory.createIntConstant(element.byteValue());
     } else if (elementType instanceof CharType || elementType instanceof ShortType) {
-      value = constancFactory.createIntConstant(element.shortValue());
+      value = constantFactory.createIntConstant(element.shortValue());
     } else if (elementType instanceof DoubleType) {
-      value = constancFactory.createDoubleConstant(Double.longBitsToDouble(element.longValue()));
+      value = constantFactory.createDoubleConstant(Double.longBitsToDouble(element.longValue()));
     } else if (elementType instanceof FloatType) {
-      value = constancFactory.createFloatConstant(Float.intBitsToFloat(element.intValue()));
+      value = constantFactory.createFloatConstant(Float.intBitsToFloat(element.intValue()));
     } else if (elementType instanceof IntType) {
-      value = constancFactory.createIntConstant(element.intValue());
+      value = constantFactory.createIntConstant(element.intValue());
     } else if (elementType instanceof LongType) {
-      value = constancFactory.createLongConstant(element.longValue());
+      value = constantFactory.createLongConstant(element.longValue());
     } else {
       throw new RuntimeException("Invalid Array Type occured in FillArrayDataInstruction: " + elementType);
     }

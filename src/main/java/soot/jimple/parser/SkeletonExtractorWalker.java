@@ -43,11 +43,11 @@ import soot.jimple.parser.node.PModifier;
 public class SkeletonExtractorWalker extends Walker {
 
   public SkeletonExtractorWalker(SootResolver aResolver, SootClass aSootClass) {
-    super(aSootClass, constancFactory, aResolver, myScene, myOptions, myPackageNamer, myJimple, constantFactory);
+    super(aSootClass, constantFactory, aResolver, myScene, myOptions, myPackageNamer, myJimple);
   }
 
   public SkeletonExtractorWalker(SootResolver aResolver) {
-    super(constancFactory, aResolver, myScene, myOptions, myPackageNamer, myJimple, constantFactory);
+    super(constantFactory, aResolver, myScene, myOptions, myPackageNamer, myJimple);
   }
 
   public void caseAFile(AFile node) {
