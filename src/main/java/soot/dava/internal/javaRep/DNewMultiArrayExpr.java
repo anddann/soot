@@ -36,7 +36,7 @@ import soot.jimple.internal.AbstractNewMultiArrayExpr;
 public class DNewMultiArrayExpr extends AbstractNewMultiArrayExpr {
   ;
 
-  public DNewMultiArrayExpr(ArrayType type, List sizes, ) {
+  public DNewMultiArrayExpr(ArrayType type, List sizes) {
     super(type, new ValueBox[sizes.size()]);
 
 
@@ -52,7 +52,7 @@ public class DNewMultiArrayExpr extends AbstractNewMultiArrayExpr {
       clonedSizes.add(i, Grimp.cloneIfNecessary(getSize(i)));
     }
 
-    return new DNewMultiArrayExpr(getBaseType(), clonedSizes, );
+    return new DNewMultiArrayExpr(getBaseType(), clonedSizes );
   }
 
   public void toString(UnitPrinter up) {

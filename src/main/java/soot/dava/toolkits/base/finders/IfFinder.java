@@ -56,7 +56,7 @@ public class IfFinder implements FactFinder {
 
 
 
-  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, ) throws RetriggerAnalysisException {
+  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector) throws RetriggerAnalysisException {
     myDava.log("IfFinder::find()");
 
     Iterator asgit = asg.iterator();

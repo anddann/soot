@@ -1392,7 +1392,7 @@ public class PackManager {
    */
   private AbstractJasminClass createJasminBackend(SootClass c) {
     if (c.containsBafBody()) {
-      return new soot.baf.JasminClass(c);
+      return new soot.baf.JasminClass(c, myScene, myOptions, myPackManager, myPhaseDumper, primTypeCollector);
     } else {
       return new soot.jimple.JasminClass(c, myOptions);
     }

@@ -54,7 +54,7 @@ public class ExceptionFinder implements FactFinder {
 
 
 
-  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, ) throws RetriggerAnalysisException {
+  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector) throws RetriggerAnalysisException {
     myDava.log("ExceptionFinder::find()");
 
     for (ExceptionNode en : body.get_ExceptionFacts()) {

@@ -39,15 +39,7 @@ import soot.Unit;
 import soot.Value;
 import soot.VoidType;
 import soot.javaToJimple.LocalGenerator;
-import soot.jimple.AssignStmt;
-import soot.jimple.FieldRef;
-import soot.jimple.InstanceFieldRef;
-import soot.jimple.InstanceInvokeExpr;
-import soot.jimple.InvokeExpr;
-import soot.jimple.SpecialInvokeExpr;
-import soot.jimple.StaticInvokeExpr;
-import soot.jimple.Stmt;
-import soot.jimple.VirtualInvokeExpr;
+import soot.jimple.*;
 
 /** Methods for checking Java scope and visibiliity requirements. */
 public class AccessManager {

@@ -22,7 +22,6 @@ package soot.dava.internal.javaRep;
  * #L%
  */
 
-import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Value;
 import soot.grimp.Grimp;
@@ -35,9 +34,9 @@ import soot.util.Switch;
  * TODO
  */
 public class DCmpExpr extends AbstractGrimpIntBinopExpr implements CmpExpr {
-  ;
 
-  public DCmpExpr(Value op1, Value op2, , PrimTypeCollector primTypeCollector) {
+
+  public DCmpExpr(Value op1, Value op2) {
     super(op1, op2);
 
   }
@@ -55,7 +54,7 @@ public class DCmpExpr extends AbstractGrimpIntBinopExpr implements CmpExpr {
   }
 
   public Object clone() {
-    return new DCmpExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()),  primTypeCollector);
+    return new DCmpExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()));
   }
 
   public Type getType() {
@@ -63,6 +62,6 @@ public class DCmpExpr extends AbstractGrimpIntBinopExpr implements CmpExpr {
       return getOp1().getType();
     }
 
-    return primTypeCollector.getIntType();
+    return getOp1().getType().getMyScene().getPrimTypeCollector().getIntType();
   }
 }

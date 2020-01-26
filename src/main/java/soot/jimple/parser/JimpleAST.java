@@ -81,7 +81,7 @@ public class JimpleAST {
    */
   // FIXME
 //  public SootClass createSootClass() {
-//    Walker w = new Walker(constantFactory, mySootResolver, myScene, myOptions, myPackageNamer, );
+//    Walker w = new Walker(constantFactory, mySootResolver, myScene, myOptions, myPackageNamer)
 //    mTree.apply(w);
 //    return w.getSootClass();
 //  }

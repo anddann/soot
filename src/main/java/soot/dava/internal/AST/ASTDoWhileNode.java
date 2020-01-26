@@ -26,19 +26,17 @@ package soot.dava.internal.AST;
 import java.util.ArrayList;
 import java.util.List;
 
-import soot.PrimTypeCollector;
 import soot.UnitPrinter;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.Analysis;
-import soot.grimp.Grimp;
 import soot.jimple.ConditionExpr;
 
 public class ASTDoWhileNode extends ASTControlFlowNode {
   private List<Object> body;
 
-  public ASTDoWhileNode(SETNodeLabel label, ConditionExpr ce, List<Object> body, TryContentsFinder myTryContentsFinder, , PrimTypeCollector primTypeCollector) {
-    super(label, ce, myTryContentsFinder,  primTypeCollector);
+  public ASTDoWhileNode(SETNodeLabel label, ConditionExpr ce, List<Object> body, TryContentsFinder myTryContentsFinder) {
+    super(label, ce, myTryContentsFinder);
     this.body = body;
 
     subBodies.add(body);

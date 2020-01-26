@@ -40,10 +40,10 @@ import soot.jimple.ThrowStmt;
 
 public class ThrowNullConverter {
 
-  ;
+
 
   @Inject
-  public ThrowNullConverter(, Scene myScene) {
+  public ThrowNullConverter( Scene myScene) {
 
     this.myScene = myScene;
   }

@@ -57,7 +57,7 @@ public class UnreachableCodeEliminator extends DepthFirstAdapter {
   }
 
   private void setup() {
-    codeFinder = new UnreachableCodeFinder(AST, myClosestAbruptTargetFinder);
+    codeFinder = new UnreachableCodeFinder(AST, myClosestAbruptTargetFinder, myScene);
     // parentOf = new ASTParentNodeFinder();
     // AST.apply(parentOf);
   }

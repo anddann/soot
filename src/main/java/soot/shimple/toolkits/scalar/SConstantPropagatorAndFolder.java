@@ -81,7 +81,7 @@ public class SConstantPropagatorAndFolder extends BodyTransformer {
 
 
   @Inject
-  public SConstantPropagatorAndFolder(Options myOptions, ) {
+  public SConstantPropagatorAndFolder(Options myOptions) {
     this.myOptions = myOptions;
     ;
   }
@@ -110,7 +110,7 @@ public class SConstantPropagatorAndFolder extends BodyTransformer {
     }
 
     // *** FIXME: What happens when Shimple is built with another UnitGraph?
-    SCPFAnalysis scpf = new SCPFAnalysis(new ExceptionalUnitGraph(sb, myManager), );
+    SCPFAnalysis scpf = new SCPFAnalysis(new ExceptionalUnitGraph(sb, myManager));
 
     propagateResults(scpf.getResults());
     if (pruneCFG) {
@@ -279,7 +279,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
     return stmtToReplacement;
   }
 
-  public SCPFAnalysis(UnitGraph graph, ) {
+  public SCPFAnalysis(UnitGraph graph) {
     super(graph);
     ;
     emptySet = new ArraySparseSet();

@@ -22,8 +22,6 @@ package soot.dava.toolkits.base.misc;
  * #L%
  */
 
-import soot.PrimTypeCollector;
-import soot.grimp.Grimp;
 import soot.grimp.internal.GEqExpr;
 import soot.grimp.internal.GGeExpr;
 import soot.grimp.internal.GGtExpr;
@@ -39,7 +37,7 @@ import soot.jimple.LtExpr;
 import soot.jimple.NeExpr;
 
 public class ConditionFlipper {
-  public static ConditionExpr flip(ConditionExpr ce, , PrimTypeCollector primTypeCollector) {
+  public static ConditionExpr flip(ConditionExpr ce) {
     if (ce instanceof EqExpr) {
       return new GNeExpr(ce.getOp1(), ce.getOp2());
     }
@@ -49,7 +47,7 @@ public class ConditionFlipper {
     }
 
     if (ce instanceof GtExpr) {
-      return new GLeExpr(ce.getOp1(), ce.getOp2(),  primTypeCollector);
+      return new GLeExpr(ce.getOp1(), ce.getOp2());
     }
 
     if (ce instanceof LtExpr) {

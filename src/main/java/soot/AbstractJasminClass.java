@@ -74,7 +74,7 @@ import soot.toolkits.graph.Block;
 
 public abstract class AbstractJasminClass {
   private static final Logger logger = LoggerFactory.getLogger(AbstractJasminClass.class);
-  private final Options myOptions;
+  protected final Options myOptions;
   protected Map<Unit, String> unitToLabel;
   protected Map<Local, Integer> localToSlot;
   protected Map<Unit, Integer> subroutineToReturnAddressSlot;

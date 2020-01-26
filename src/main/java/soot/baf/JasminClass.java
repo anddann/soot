@@ -31,32 +31,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.AbstractJasminClass;
-import soot.ArrayType;
-import soot.Body;
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
-import soot.Local;
-import soot.LongType;
-import soot.Modifier;
-import soot.NullType;
-import soot.RefType;
-import soot.ShortType;
-import soot.SootClass;
-import soot.SootFieldRef;
-import soot.SootMethod;
-import soot.SootMethodRef;
-import soot.StmtAddressType;
-import soot.Trap;
-import soot.Type;
-import soot.TypeSwitch;
-import soot.Unit;
-import soot.UnitBox;
-import soot.Value;
+import soot.*;
 import soot.jimple.CaughtExceptionRef;
 import soot.jimple.ClassConstant;
 import soot.jimple.DoubleConstant;
@@ -70,6 +45,7 @@ import soot.jimple.NullConstant;
 import soot.jimple.ParameterRef;
 import soot.jimple.StringConstant;
 import soot.jimple.ThisRef;
+import soot.options.Options;
 import soot.tagkit.JasminAttribute;
 import soot.tagkit.LineNumberTag;
 import soot.tagkit.Tag;
@@ -79,12 +55,19 @@ import soot.toolkits.graph.BriefBlockGraph;
 import soot.toolkits.graph.DirectedGraph;
 import soot.util.ArraySet;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 public class JasminClass extends AbstractJasminClass {
   private static final Logger logger = LoggerFactory.getLogger(JasminClass.class);
+  private PackManager myPackManager;
+  private PhaseDumper myPhaseDumper;
+  private PrimTypeCollector primTypeCollector;
 
-  public JasminClass(SootClass sootClass) {
+  public JasminClass(SootClass sootClass, Scene myScene, Options myOptions, PackManager myPackManager, PhaseDumper myPhaseDumper, PrimTypeCollector primTypeCollector) {
     super(sootClass, myOptions, myScene);
+    this.myPackManager = myPackManager;
+    this.myPhaseDumper = myPhaseDumper;
+    this.primTypeCollector = primTypeCollector;
   }
 
   @Override
@@ -92,7 +75,7 @@ public class JasminClass extends AbstractJasminClass {
     super.assignColorsToLocals(body);
 
     if (myOptions.time()) {
-      myTimers.packTimer.end();
+//      myTimers.packTimer.end();
     }
 
   }
@@ -100,7 +83,7 @@ public class JasminClass extends AbstractJasminClass {
   @Override
   protected void emitMethodBody(SootMethod method) {
     if (myOptions.time()) {
-      myTimers.buildJasminTimer.end();
+//      myTimers.buildJasminTimer.end();
     }
 
     Body activeBody = method.getActiveBody();
@@ -124,7 +107,7 @@ public class JasminClass extends AbstractJasminClass {
     }
 
     if (myOptions.time()) {
-      myTimers.buildJasminTimer.start();
+//      myTimers.buildJasminTimer.start();
     }
 
     Chain<Unit> instList = body.getUnits();
@@ -594,7 +577,7 @@ public class JasminClass extends AbstractJasminClass {
             returnAddressSlot = slot;
 
             /*
-             * if ( slot >= 0 && slot <= 3) emit("astore_" + slot, ); else emit("astore " + slot, );
+             * if ( slot >= 0 && slot <= 3) emit("astore_" + slot) else emit("astore " + slot)
              */
           }
 

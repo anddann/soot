@@ -35,6 +35,7 @@ import soot.Unit;
 import soot.UnitPrinter;
 import soot.Value;
 import soot.ValueBox;
+import soot.baf.Baf;
 import soot.jimple.*;
 import soot.tagkit.Tag;
 import soot.util.Switch;

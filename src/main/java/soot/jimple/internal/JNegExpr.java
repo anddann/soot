@@ -28,6 +28,7 @@ import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.Unit;
 import soot.Value;
+import soot.baf.Baf;
 import soot.jimple.ConstantFactory;
 import soot.jimple.ConvertToBaf;
 import soot.jimple.Jimple;

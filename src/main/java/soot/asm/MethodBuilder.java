@@ -59,8 +59,9 @@ class MethodBuilder extends JSRInlinerAdapter {
   private PackManager myPackManager;
   private Util myCoffiUtil;
   private PhaseOptions myPhaseOptions;
+  private Printer myPrinter;
 
-  MethodBuilder(SootMethod method, SootClassBuilder scb, String desc, String[] ex, Scene myScene, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions) {
+  MethodBuilder(SootMethod method, SootClassBuilder scb, String desc, String[] ex, Scene myScene, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions, Printer myPrinter) {
     super(Opcodes.ASM5, null, method.getModifiers(), method.getName(), desc, null, ex);
     this.method = method;
     this.scb = scb;
@@ -72,6 +73,7 @@ class MethodBuilder extends JSRInlinerAdapter {
     this.myPackManager = myPackManager;
     this.myCoffiUtil = myCoffiUtil;
     this.myPhaseOptions = myPhaseOptions;
+    this.myPrinter = myPrinter;
   }
 
   private TagBuilder getTagBuilder() {

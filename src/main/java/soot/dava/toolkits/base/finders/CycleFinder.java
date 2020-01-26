@@ -49,7 +49,6 @@ import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.asg.AugmentedStmtGraph;
 import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.misc.ConditionFlipper;
-import soot.grimp.Grimp;
 import soot.grimp.internal.GAssignStmt;
 import soot.grimp.internal.GTableSwitchStmt;
 import soot.jimple.AssignStmt;
@@ -81,7 +80,7 @@ public class CycleFinder implements FactFinder {
         this.myExceptionFinder = myExceptionFinder;
     }
 
-    public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, ) throws RetriggerAnalysisException {
+    public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector ) throws RetriggerAnalysisException {
         myDava.log("CycleFinder::find()");
 
         AugmentedStmtGraph wasg = (AugmentedStmtGraph) asg.clone();
@@ -179,7 +178,7 @@ public class CycleFinder implements FactFinder {
 
                     IfStmt condition = (IfStmt) characterizing_stmt.get_Stmt();
                     if (cycle_body.contains(asg.get_AugStmt(condition.getTarget())) == false) {
-                        condition.setCondition(ConditionFlipper.flip((ConditionExpr) condition.getCondition(),  primTypeCollector));
+                        condition.setCondition(ConditionFlipper.flip((ConditionExpr) condition.getCondition()));
                     }
 
                     if (characterizing_stmt == entry_point) {

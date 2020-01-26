@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import soot.Local;
+import soot.Scene;
 import soot.Value;
 import soot.dava.internal.AST.ASTDoWhileNode;
 import soot.dava.internal.AST.ASTForLoopNode;
@@ -69,12 +70,10 @@ import soot.jimple.Stmt;
  */
 
 public class ReachingDefs extends StructuredAnalysis<Stmt> {
-  private final ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
   Object toAnalyze;
 
-  public ReachingDefs(ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Object analyze) {
-    super();
-    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
+  public ReachingDefs(ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Object analyze, Scene myScene) {
+    super(myScene,myClosestAbruptTargetFinder);
     toAnalyze = analyze;
     process(analyze, new DavaFlowSet<Stmt>(this.myClosestAbruptTargetFinder));
   }

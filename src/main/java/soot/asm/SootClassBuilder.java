@@ -200,7 +200,7 @@ public class SootClassBuilder extends ClassVisitor {
       method.addTag(new SignatureTag(signature));
     }
     method = klass.getOrAddMethod(method);
-    return new MethodBuilder(method, this, desc, exceptions, myScene, myOptions, primTypeCollector, constantFactory, myLambdaMetaFactory, myPackManager, myCoffiUtil, myPhaseOptions);
+    return new MethodBuilder(method, this, desc, exceptions, myScene, myOptions, primTypeCollector, constantFactory, myLambdaMetaFactory, myPackManager, myCoffiUtil, myPhaseOptions, myPrinter);
   }
 
   @Override

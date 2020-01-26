@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import soot.*;
+import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 

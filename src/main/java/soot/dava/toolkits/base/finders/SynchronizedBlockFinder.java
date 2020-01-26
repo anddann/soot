@@ -86,7 +86,7 @@ public class SynchronizedBlockFinder implements FactFinder {
 
   private final String THROWABLE = "java.lang.Throwable";
 
-  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, ) throws RetriggerAnalysisException {
+  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector) throws RetriggerAnalysisException {
     davaBody = body;
     myDava.log("SynchronizedBlockFinder::find()");
 

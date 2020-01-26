@@ -218,7 +218,7 @@ public class ThreadLocalObjectsAnalysis extends LocalObjectsAnalysis implements 
           // Get an IFA node for our sharedValue
           EquivalentValue sharedValueEqVal;
           if (sharedValue instanceof InstanceFieldRef) {
-            sharedValueEqVal = InfoFlowAnalysis.getNodeForFieldRef(containingMethod, ((FieldRef) sharedValue).getField(), );
+            sharedValueEqVal = InfoFlowAnalysis.getNodeForFieldRef(containingMethod, ((FieldRef) sharedValue).getField());
           } else {
             sharedValueEqVal = new EquivalentValue(sharedValue);
           }

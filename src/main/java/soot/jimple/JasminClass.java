@@ -704,7 +704,7 @@ public class JasminClass extends AbstractJasminClass {
             returnAddressSlot = slot;
 
             /*
-             * if ( slot >= 0 && slot <= 3) emit("astore_" + slot, ); else emit("astore " + slot, );
+             * if ( slot >= 0 && slot <= 3) emit("astore_" + slot) else emit("astore " + slot)
              *
              */
 

@@ -32,7 +32,7 @@ import soot.util.Switch;
 public class DCmpgExpr extends AbstractGrimpIntBinopExpr implements CmpgExpr {
   ;
 
-  public DCmpgExpr(Value op1, Value op2, , PrimTypeCollector primTypeCollector) {
+  public DCmpgExpr(Value op1, Value op2) {
     super(op1, op2);
 
   }
@@ -50,7 +50,7 @@ public class DCmpgExpr extends AbstractGrimpIntBinopExpr implements CmpgExpr {
   }
 
   public Object clone() {
-    return new DCmpgExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()), primTypeCollector);
+    return new DCmpgExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()));
   }
 
   public Type getType() {
@@ -58,6 +58,6 @@ public class DCmpgExpr extends AbstractGrimpIntBinopExpr implements CmpgExpr {
       return getOp1().getType();
     }
 
-    return primTypeCollector.getIntType();
+    return getOp1().getType().getMyScene().getPrimTypeCollector().getIntType();
   }
 }

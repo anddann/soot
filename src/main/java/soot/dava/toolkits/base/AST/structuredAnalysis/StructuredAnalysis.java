@@ -72,10 +72,10 @@ public abstract class StructuredAnalysis<E> {
   public static boolean DEBUG_WHILE = false;
   public static boolean DEBUG_STATEMENTS = false;
   public static boolean DEBUG_TRY = false;
+  protected final ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
 
   //FIXME constructor and child
   protected Scene myScene;
-  protected ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
   /*
    * public static boolean DEBUG = true; public static boolean DEBUG_IF = true; public static boolean DEBUG_WHILE = true;
    * public static boolean DEBUG_STATEMENTS = true; public static boolean DEBUG_TRY = true; /* /** Whenever an abrupt edge is

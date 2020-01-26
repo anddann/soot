@@ -68,7 +68,7 @@ public class CommonSubexpressionEliminator extends BodyTransformer {
 
 
   @Inject
-  public CommonSubexpressionEliminator(Scene myScene, Options myOptions, ) {
+  public CommonSubexpressionEliminator(Scene myScene, Options myOptions ) {
     this.myScene = myScene;
     this.myOptions = myOptions;
     ;

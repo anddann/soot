@@ -63,7 +63,7 @@ public class ConstructorFolder extends BodyTransformer {
   private ThrowableSet.Manager myManager;
 
   @Inject
-  public ConstructorFolder(Options myOptions, , InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, PhaseDumper myPhaseDumper, ThrowableSet.Manager myManager) {
+  public ConstructorFolder(Options myOptions, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, PhaseDumper myPhaseDumper, ThrowableSet.Manager myManager) {
     this.myOptions = myOptions;
 
     this.myInteractionHandler = myInteractionHandler;

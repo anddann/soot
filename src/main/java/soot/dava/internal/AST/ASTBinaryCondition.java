@@ -10,12 +10,12 @@ package soot.dava.internal.AST;
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -28,44 +28,41 @@ import soot.dava.toolkits.base.AST.analysis.Analysis;
 import soot.dava.toolkits.base.misc.ConditionFlipper;
 import soot.grimp.Grimp;
 import soot.jimple.ConditionExpr;
-import soot.jimple.Jimple;
 
 public class ASTBinaryCondition extends ASTUnaryBinaryCondition {
-  ConditionExpr condition;
-  ;
-  private PrimTypeCollector primTypeCollector;
+    ConditionExpr condition;
 
-  public ASTBinaryCondition(ConditionExpr condition, , PrimTypeCollector primTypeCollector) {
-    this.condition = condition;
 
-    this.primTypeCollector = primTypeCollector;
-  }
+    public ASTBinaryCondition(ConditionExpr condition) {
+        this.condition = condition;
 
-  public ConditionExpr getConditionExpr() {
-    return condition;
-  }
+    }
 
-  public void apply(Analysis a) {
-    a.caseASTBinaryCondition(this);
-  }
+    public ConditionExpr getConditionExpr() {
+        return condition;
+    }
 
-  public String toString() {
-    return condition.toString();
-  }
+    public void apply(Analysis a) {
+        a.caseASTBinaryCondition(this);
+    }
 
-  public void toString(UnitPrinter up) {
-    (Grimp.newConditionExprBox(condition)).toString(up);
-  }
+    public String toString() {
+        return condition.toString();
+    }
 
-  public void flip() {
-    this.condition = ConditionFlipper.flip(condition,  primTypeCollector);
-  }
+    public void toString(UnitPrinter up) {
+        (Grimp.newConditionExprBox(condition)).toString(up);
+    }
 
-  /*
-   * Since a conditionExpr can always be flipped we always return true
-   * 
-   */
-  public boolean isNotted() {
-    return true;
-  }
+    public void flip() {
+        this.condition = ConditionFlipper.flip(condition);
+    }
+
+    /*
+     * Since a conditionExpr can always be flipped we always return true
+     *
+     */
+    public boolean isNotted() {
+        return true;
+    }
 }

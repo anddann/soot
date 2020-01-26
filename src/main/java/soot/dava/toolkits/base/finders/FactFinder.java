@@ -30,5 +30,5 @@ import soot.dava.internal.asg.AugmentedStmtGraph;
 import soot.grimp.Grimp;
 
 public interface FactFinder {
-  public abstract void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, ) throws RetriggerAnalysisException;
+  public abstract void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector) throws RetriggerAnalysisException;
 }

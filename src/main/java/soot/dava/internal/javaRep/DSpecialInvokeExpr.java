@@ -36,7 +36,7 @@ public class DSpecialInvokeExpr extends GSpecialInvokeExpr {
   private Scene myScene;
   ;
 
-  public DSpecialInvokeExpr(Value base, SootMethodRef methodRef, List args, Scene myScene, ) {
+  public DSpecialInvokeExpr(Value base, SootMethodRef methodRef, List args, Scene myScene) {
     super(base, methodRef, args);
     this.myScene = myScene;
 
@@ -124,6 +124,6 @@ public class DSpecialInvokeExpr extends GSpecialInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DSpecialInvokeExpr(getBase(), methodRef, clonedArgs, myScene, );
+    return new DSpecialInvokeExpr(getBase(), methodRef, clonedArgs, myScene);
   }
 }

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import soot.*;
+import soot.baf.Baf;
 import soot.grimp.PrecedenceTest;
 import soot.jimple.*;
 import soot.util.Switch;

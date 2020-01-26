@@ -115,13 +115,13 @@ class ConstraintChecker extends AbstractStmtSwitch {
   private Scene myScene;
 
 
-  public ConstraintChecker(TypeResolver resolver, boolean fix, PrimTypeCollector primTypeCollector, Scene myScene, ) {
+  public ConstraintChecker(TypeResolver resolver, boolean fix, PrimTypeCollector primTypeCollector, Scene myScene ) {
     this.fix = fix;
 
     hierarchy = resolver.hierarchy();
     this.primTypeCollector = primTypeCollector;
     this.myScene = myScene;
-    ;
+
   }
 
   public void check(Stmt stmt, JimpleBody stmtBody) throws TypeException {

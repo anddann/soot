@@ -31,14 +31,13 @@ import soot.UnitPrinter;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.Analysis;
-import soot.grimp.Grimp;
 import soot.jimple.ConditionExpr;
 
 public class ASTIfNode extends ASTControlFlowNode {
   private List<Object> body;
 
   public ASTIfNode(SETNodeLabel label, ConditionExpr condition, List<Object> body, TryContentsFinder myTryContentsFinder,  PrimTypeCollector primTypeCollector) {
-    super(label, condition, myTryContentsFinder,  primTypeCollector);
+    super(label, condition, myTryContentsFinder);
     this.body = body;
 
     subBodies.add(body);

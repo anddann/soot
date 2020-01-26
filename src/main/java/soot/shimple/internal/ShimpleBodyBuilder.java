@@ -139,8 +139,8 @@ public class ShimpleBodyBuilder {
     this.body = body;
     sf = new DefaultShimpleFactory(body);
     sf.clearCache();
-    phi = new PhiNodeManager(body, sf, this.myShimple, , this.myInteractionHander, this.myOptions, myScene);
-    pi = new PiNodeManager(body, false, sf, this.myShimple, , myDeadAssignmentEliminator, this.myCopyPropagator);
+    phi = new PhiNodeManager(body, sf, this.myShimple, this.myInteractionHander, this.myOptions, myScene);
+    pi = new PiNodeManager(body, false, sf, this.myShimple, myDeadAssignmentEliminator, this.myCopyPropagator);
     options = body.getOptions();
     makeUniqueLocalNames();
   }

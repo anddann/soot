@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import soot.Local;
+import soot.Scene;
 import soot.Value;
 import soot.dava.DecompilationException;
 import soot.dava.internal.AST.ASTDoWhileNode;
@@ -70,7 +71,6 @@ import soot.toolkits.scalar.FlowSet;
 
 public class UnreachableCodeFinder extends StructuredAnalysis {
   public static boolean DEBUG = false;
-  private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
 
   public class UnreachableCodeFlowSet extends DavaFlowSet {
 
@@ -141,9 +141,8 @@ public class UnreachableCodeFinder extends StructuredAnalysis {
 
   } // end UnreachableCodeFlowSet
 
-  public UnreachableCodeFinder(Object analyze, ClosestAbruptTargetFinder myClosestAbruptTargetFinder) {
-    super();
-    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
+  public UnreachableCodeFinder(Object analyze, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Scene myScene) {
+    super(myScene,myClosestAbruptTargetFinder);
     // the input to the process method is newInitialFlow
     DavaFlowSet temp = (DavaFlowSet) process(analyze, newInitialFlow());
   }

@@ -80,7 +80,7 @@ public class FinalFieldDefinition {
   private Scene myScene;
   private ConstantFactory constantFactory;
 
-  public FinalFieldDefinition(ASTMethodNode node, , TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, ConstantFactory constantFactory) {
+  public FinalFieldDefinition(ASTMethodNode node, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, ConstantFactory constantFactory) {
     davaBody = node.getDavaBody();
 
     this.myTryContentsFinder = myTryContentsFinder;
@@ -271,7 +271,7 @@ public class FinalFieldDefinition {
       if (((SootField) field).isStatic()) {
         ref = new DStaticFieldRef(tempFieldRef, true);
       } else {
-        ref = new DInstanceFieldRef(new JimpleLocal("this", fieldType), tempFieldRef, new HashSet<Object>(), );
+        ref = new DInstanceFieldRef(new JimpleLocal("this", fieldType), tempFieldRef, new HashSet<Object>());
       }
 
     } else if (field instanceof Local) {
@@ -434,7 +434,7 @@ public class FinalFieldDefinition {
         if (field.isStatic()) {
           ref = new DStaticFieldRef(tempFieldRef, true);
         } else {
-          ref = new DInstanceFieldRef(new JimpleLocal("this", field.getType()), tempFieldRef, new HashSet<Object>(), );
+          ref = new DInstanceFieldRef(new JimpleLocal("this", field.getType()), tempFieldRef, new HashSet<Object>());
           // throw new RuntimeException("STOPPED");
         }
 

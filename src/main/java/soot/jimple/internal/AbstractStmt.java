@@ -25,6 +25,7 @@ package soot.jimple.internal;
 import java.util.List;
 
 import soot.*;
+import soot.baf.Baf;
 import soot.jimple.*;
 
 @SuppressWarnings("serial")

@@ -38,17 +38,20 @@ import soot.Unit;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
+import soot.options.Options;
 
 public class UnreachableMethodTransformer extends BodyTransformer {
 
   private Scene myScene;
   private ConstantFactory constantFactory;
+  private Options myOptions;
 
   @Inject
-  public UnreachableMethodTransformer(Scene myScene, ConstantFactory constantFactory){
+  public UnreachableMethodTransformer(Scene myScene, ConstantFactory constantFactory, Options myOptions){
 
     this.myScene = myScene;
     this.constantFactory = constantFactory;
+    this.myOptions = myOptions;
   }
 
 

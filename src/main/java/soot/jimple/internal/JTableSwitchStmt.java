@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import soot.*;
+import soot.baf.Baf;
 import soot.baf.PlaceholderInst;
 import soot.jimple.*;
 import soot.util.Switch;

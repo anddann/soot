@@ -46,7 +46,7 @@ public class SkeletonExtractorWalker extends Walker {
   }
 
 //  public SkeletonExtractorWalker(SootResolver aResolver) {
-//    super(constantFactory, aResolver, myScene, myOptions, myPackageNamer, );
+//    super(constantFactory, aResolver, myScene, myOptions, myPackageNamer)
 //  }
 
   public void caseAFile(AFile node) {

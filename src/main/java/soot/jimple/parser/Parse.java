@@ -76,7 +76,7 @@ public class Parse {
 
     Walker w;
     if (sc == null) {
-      w = new Walker(constantFactory, null, myScene, myOptions, myPackageNamer, );
+      w = new Walker(constantFactory, null, myScene, myOptions, myPackageNamer);
     } else {
       w = new BodyExtractorWalker(sc, null, new HashMap<SootMethod, JimpleBody>(), constantFactory, myScene, myOptions, myPackageNamer, myPrinter);
     }
@@ -134,7 +134,7 @@ public class Parse {
 
         Start tree = p.parse();
 
-        tree.apply(new Walker(constantFactory, null, myScene, myOptions, myPackageNamer, ));
+        tree.apply(new Walker(constantFactory, null, myScene, myOptions, myPackageNamer));
       }
     }
   } // main

@@ -162,7 +162,7 @@ public abstract class JPegStmt extends AbstractHost
    */
 
   /*
-   * public Object clone() { if (containUnit()){ } return new JPegStmt(object,name,caller, ); }
+   * public Object clone() { if (containUnit()){ } return new JPegStmt(object,name,caller) }
    */
 
   public String toString() {

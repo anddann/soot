@@ -25,6 +25,7 @@ package soot.jimple.internal;
 import java.util.List;
 
 import soot.*;
+import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 
@@ -73,7 +74,7 @@ public class JIdentityStmt extends AbstractDefinitionStmt implements IdentityStm
     } else if (currentRhs instanceof ParameterRef) {
       newRhs = Baf.newParameterRef(((ParameterRef) currentRhs).getType(), ((ParameterRef) currentRhs).getIndex());
     } else if (currentRhs instanceof CaughtExceptionRef) {
-      Unit u = Baf.newStoreInst(Baf.getPrimTypeCollector().getRefType(),
+      Unit u = Baf.newStoreInst(primTypeCollector.getRefType(),
           context.getBafLocalOfJimpleLocal((Local) getLeftOp()));
       u.addAllTagsOf(this);
       out.add(u);

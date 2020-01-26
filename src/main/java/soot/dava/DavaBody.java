@@ -49,7 +49,6 @@ import soot.Unit;
 import soot.UnitBox;
 import soot.Value;
 import soot.ValueBox;
-import soot.baf.Baf;
 import soot.dava.internal.AST.ASTMethodNode;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.SET.SETNode;
@@ -89,7 +88,6 @@ import soot.dava.toolkits.base.finders.SynchronizedBlockFinder;
 import soot.dava.toolkits.base.misc.MonitorConverter;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.dava.toolkits.base.misc.ThrowNullConverter;
-import soot.grimp.Grimp;
 import soot.grimp.GrimpBody;
 import soot.grimp.NewInvokeExpr;
 import soot.jimple.ArrayRef;
@@ -424,7 +422,7 @@ public class DavaBody extends Body {
       boolean force = PhaseOptions.getBoolean(options, "enabled");
       // System.out.println("force is "+force);
       if (force) {
-        AST.apply(new SuperFirstStmtHandler((ASTMethodNode) AST, myTryContentsFinder, myASTWalker, myScene, myOptions, this.myPackageNamer, this.primTypeCollector,   constantFactory));
+        AST.apply(new SuperFirstStmtHandler((ASTMethodNode) AST, myOptions, this.myPackageNamer));
       }
 
       debug("DavaBody", "PreInit booleans is" + G.v().SootMethodAddedByDava);
@@ -1107,11 +1105,11 @@ public class DavaBody extends Body {
     }
 
     if (boe instanceof CmpExpr) {
-      vb.setValue(new DCmpExpr(leftOp, rightOp,primTypeCollector));
+      vb.setValue(new DCmpExpr(leftOp, rightOp));
     } else if (boe instanceof CmplExpr) {
-      vb.setValue(new DCmplExpr(leftOp, rightOp,primTypeCollector));
+      vb.setValue(new DCmplExpr(leftOp, rightOp));
     } else if (boe instanceof CmpgExpr) {
-      vb.setValue(new DCmpgExpr(leftOp, rightOp, primTypeCollector));
+      vb.setValue(new DCmpgExpr(leftOp, rightOp));
     }
   }
 
@@ -1121,9 +1119,9 @@ public class DavaBody extends Body {
     javafy(uoe.getOpBox());
 
     if (uoe instanceof LengthExpr) {
-      vb.setValue(new DLengthExpr(((LengthExpr) uoe).getOp(),  primTypeCollector));
+      vb.setValue(new DLengthExpr(((LengthExpr) uoe).getOp()));
     } else if (uoe instanceof NegExpr) {
-      vb.setValue(new DNegExpr(((NegExpr) uoe).getOp(),  primTypeCollector));
+      vb.setValue(new DNegExpr(((NegExpr) uoe).getOp()));
     }
   }
 

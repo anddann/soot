@@ -79,7 +79,7 @@ public class ASTUsesAndDefs extends DepthFirstAdapter {
     this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     uD = new HashMap<Object, List<DefinitionStmt>>();
     dU = new HashMap<Object, List>();
-    reaching = new ReachingDefs(this.myClosestAbruptTargetFinder, AST);
+    reaching = new ReachingDefs(this.myClosestAbruptTargetFinder, AST, myScene);
   }
 
   public ASTUsesAndDefs(boolean verbose, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ASTNode AST) {
@@ -87,7 +87,7 @@ public class ASTUsesAndDefs extends DepthFirstAdapter {
     this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     uD = new HashMap<Object, List<DefinitionStmt>>();
     dU = new HashMap<Object, List>();
-    reaching = new ReachingDefs(this.myClosestAbruptTargetFinder, AST);
+    reaching = new ReachingDefs(this.myClosestAbruptTargetFinder, AST, myScene);
   }
 
   /*

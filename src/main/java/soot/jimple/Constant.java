@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import soot.*;
+import soot.baf.Baf;
 
 @SuppressWarnings("serial")
 public abstract class Constant implements Value, ConvertToBaf, Immediate {

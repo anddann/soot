@@ -32,7 +32,6 @@ import java.util.Map;
 import soot.G;
 import soot.Local;
 import soot.PrimType;
-import soot.PrimTypeCollector;
 import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
@@ -41,7 +40,6 @@ import soot.SootMethodRef;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
-import soot.baf.Baf;
 import soot.dava.CorruptASTException;
 import soot.dava.Dava;
 import soot.dava.DavaBody;
@@ -56,19 +54,15 @@ import soot.dava.internal.javaRep.DSpecialInvokeExpr;
 import soot.dava.internal.javaRep.DStaticInvokeExpr;
 import soot.dava.internal.javaRep.DVariableDeclarationStmt;
 import soot.dava.internal.javaRep.DVirtualInvokeExpr;
-import soot.dava.toolkits.base.AST.ASTWalker;
-import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 import soot.dava.toolkits.base.AST.traversals.ASTParentNodeFinder;
 import soot.dava.toolkits.base.AST.traversals.ASTUsesAndDefs;
 import soot.dava.toolkits.base.AST.traversals.AllDefinitionsFinder;
 import soot.dava.toolkits.base.misc.PackageNamer;
-import soot.grimp.Grimp;
 import soot.grimp.internal.GAssignStmt;
 import soot.grimp.internal.GCastExpr;
 import soot.grimp.internal.GInvokeStmt;
 import soot.grimp.internal.GReturnStmt;
-import soot.jimple.ConstantFactory;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.Stmt;
@@ -121,7 +115,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
   //FIXME
   private Dava myDava;
 
-  public SuperFirstStmtHandler(ASTMethodNode AST, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, Options myOptions, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, ,  ConstantFactory constantFactory) {
+  public SuperFirstStmtHandler(ASTMethodNode AST, Options myOptions, PackageNamer myPackageNamer) {
     this.originalASTMethod = AST;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
@@ -130,7 +124,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     initialize();
   }
 
-  public SuperFirstStmtHandler(boolean verbose, ASTMethodNode AST, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, Options myOptions, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, ,  ConstantFactory constantFactory) {
+  public SuperFirstStmtHandler(boolean verbose, ASTMethodNode AST, Options myOptions, PackageNamer myPackageNamer) {
     super(verbose);
     this.originalASTMethod = AST;
     this.myOptions = myOptions;
@@ -352,13 +346,13 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     List thisArgList = new ArrayList();
     thisArgList.addAll(argsOneValues);
 
-    DStaticInvokeExpr newInvokeExpr = new DStaticInvokeExpr(newSootPreInitMethod.makeRef(), argsOneValues, );
+    DStaticInvokeExpr newInvokeExpr = new DStaticInvokeExpr(newSootPreInitMethod.makeRef(), argsOneValues);
     thisArgList.add(newInvokeExpr);
 
     // the methodRef of themethod to be called is the new constructor we
     // created
     InstanceInvokeExpr tempExpr
-        = new DSpecialInvokeExpr(originalConstructorExpr.getBase(), newConstructor.makeRef(), thisArgList, myScene, );
+        = new DSpecialInvokeExpr(originalConstructorExpr.getBase(), newConstructor.makeRef(), thisArgList, myScene );
 
     originalDavaBody.set_ConstructorExpr(tempExpr);
 

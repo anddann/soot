@@ -22,7 +22,6 @@ package soot.dava.internal.javaRep;
  * #L%
  */
 
-import soot.PrimTypeCollector;
 import soot.UnitPrinter;
 import soot.Value;
 import soot.grimp.Grimp;
@@ -33,7 +32,7 @@ import soot.jimple.internal.AbstractLengthExpr;
 public class DLengthExpr extends AbstractLengthExpr implements Precedence {
   ;
 
-  public DLengthExpr(Value op, , PrimTypeCollector primTypeCollector) {
+  public DLengthExpr(Value op) {
     super(Grimp.newObjExprBox(op));
 
   }
@@ -43,7 +42,7 @@ public class DLengthExpr extends AbstractLengthExpr implements Precedence {
   }
 
   public Object clone() {
-    return new DLengthExpr(Grimp.cloneIfNecessary(getOp()),  primTypeCollector);
+    return new DLengthExpr(Grimp.cloneIfNecessary(getOp()));
   }
 
   public void toString(UnitPrinter up) {

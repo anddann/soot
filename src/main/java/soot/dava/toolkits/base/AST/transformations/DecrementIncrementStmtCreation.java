@@ -72,11 +72,11 @@ public class DecrementIncrementStmtCreation extends DepthFirstAdapter {
         if (op2 instanceof IntConstant) {
           if (((IntConstant) op2).value == 1) {
             // this is i = i-1
-            DDecrementStmt newStmt = new DDecrementStmt(left, right, );
+            DDecrementStmt newStmt = new DDecrementStmt(left, right);
             as.set_Stmt(newStmt);
           } else if (((IntConstant) op2).value == -1) {
             // this is i = i+1
-            DIncrementStmt newStmt = new DIncrementStmt(left, right, );
+            DIncrementStmt newStmt = new DIncrementStmt(left, right);
             as.set_Stmt(newStmt);
           }
         }
@@ -91,11 +91,11 @@ public class DecrementIncrementStmtCreation extends DepthFirstAdapter {
         if (op2 instanceof IntConstant) {
           if (((IntConstant) op2).value == 1) {
             // this is i = i+1
-            DIncrementStmt newStmt = new DIncrementStmt(left, right, );
+            DIncrementStmt newStmt = new DIncrementStmt(left, right);
             as.set_Stmt(newStmt);
           } else if (((IntConstant) op2).value == -1) {
             // this is i = i-1
-            DDecrementStmt newStmt = new DDecrementStmt(left, right, );
+            DDecrementStmt newStmt = new DDecrementStmt(left, right);
             as.set_Stmt(newStmt);
           }
         }

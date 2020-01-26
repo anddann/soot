@@ -57,9 +57,9 @@ public class ConstantInvokeMethodBaseTransformer extends SceneTransformer {
 
 
   @Inject
-  public ConstantInvokeMethodBaseTransformer(Scene myScene, ) {
+  public ConstantInvokeMethodBaseTransformer(Scene myScene) {
     this.myScene = myScene;
-    ;
+
   }
 
 

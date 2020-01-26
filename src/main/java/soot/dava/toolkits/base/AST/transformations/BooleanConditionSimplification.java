@@ -65,7 +65,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
       Value unary = checkBooleanUse(condExpr,  primTypeCollector);
       if (unary != null) {
-        node.set_Condition(new ASTUnaryCondition(unary,  primTypeCollector));
+        node.set_Condition(new ASTUnaryCondition(unary));
       }
     }
   }
@@ -76,7 +76,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
       Value unary = checkBooleanUse(condExpr,  primTypeCollector);
       if (unary != null) {
-        node.set_Condition(new ASTUnaryCondition(unary,  primTypeCollector));
+        node.set_Condition(new ASTUnaryCondition(unary));
       }
     }
   }
@@ -87,7 +87,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
       Value unary = checkBooleanUse(condExpr,  primTypeCollector);
       if (unary != null) {
-        node.set_Condition(new ASTUnaryCondition(unary,  primTypeCollector));
+        node.set_Condition(new ASTUnaryCondition(unary));
       }
     }
   }
@@ -98,12 +98,12 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
       Value unary = checkBooleanUse(condExpr,  primTypeCollector);
       if (unary != null) {
-        node.set_Condition(new ASTUnaryCondition(unary,  primTypeCollector));
+        node.set_Condition(new ASTUnaryCondition(unary));
       }
     }
   }
 
-  private Value checkBooleanUse(ConditionExpr condition, , PrimTypeCollector primTypeCollector) {
+  private Value checkBooleanUse(ConditionExpr condition, PrimTypeCollector primTypeCollector) {
     // check whether the condition qualifies as a boolean use
     if (condition instanceof NeExpr || condition instanceof EqExpr) {
       Value op1 = condition.getOp1();
@@ -129,7 +129,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
    * Used to decide what the condition should be if we are converting from ConditionExpr to Value A != false/0 --> A A !=
    * true/1 --> !A A == false/0 --> !A A == true/1 --> A
    */
-  private Value decideCondition(Value A, String truthString, ConditionExpr condition, , PrimTypeCollector primTypeCollector) {
+  private Value decideCondition(Value A, String truthString, ConditionExpr condition, PrimTypeCollector primTypeCollector) {
     int truthValue = 0;
     boolean notEqual = false;
 
@@ -160,7 +160,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
         // A is actually !B
         return ((DNotExpr) A).getOp();
       } else {
-        return (new DNotExpr(A,  primTypeCollector));
+        return (new DNotExpr(A));
       }
     } else if (!notEqual && truthValue == 0) {
       // A == false --> !A
@@ -168,7 +168,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
         // A is actually !B
         return ((DNotExpr) A).getOp();
       } else {
-        return new DNotExpr(A,  primTypeCollector);
+        return new DNotExpr(A);
       }
     } else if (!notEqual && truthValue == 1) {
       // A == true --> A
