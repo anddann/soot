@@ -48,11 +48,13 @@ public class SwitchFinder implements FactFinder {
 
 
     private Dava myDava;
+  private ExceptionFinder myExceptionFinder;
 
-    @Inject
-    public SwitchFinder(Dava myDava) {
+  @Inject
+    public SwitchFinder(Dava myDava, ExceptionFinder myExceptionFinder) {
         this.myDava = myDava;
-    }
+    this.myExceptionFinder = myExceptionFinder;
+  }
 
 
   private IterableSet junkBody;

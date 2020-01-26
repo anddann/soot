@@ -26,16 +26,18 @@ package soot.dava.internal.AST;
 import java.util.ArrayList;
 import java.util.List;
 
+import soot.PrimTypeCollector;
 import soot.UnitPrinter;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.Analysis;
+import soot.grimp.Grimp;
 import soot.jimple.ConditionExpr;
 
 public class ASTIfElseNode extends ASTControlFlowNode {
   private List<Object> ifBody, elseBody;
 
-  public ASTIfElseNode(SETNodeLabel label, ConditionExpr condition, List<Object> ifBody, List<Object> elseBody, TryContentsFinder myTryContentsFinder) {
+  public ASTIfElseNode(SETNodeLabel label, ConditionExpr condition, List<Object> ifBody, List<Object> elseBody, TryContentsFinder myTryContentsFinder, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
     super(label, condition, myTryContentsFinder, myGrimp, primTypeCollector);
     this.ifBody = ifBody;
     this.elseBody = elseBody;

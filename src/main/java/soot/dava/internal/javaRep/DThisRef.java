@@ -23,11 +23,15 @@ package soot.dava.internal.javaRep;
  */
 
 import soot.RefType;
+import soot.Scene;
 import soot.jimple.ThisRef;
 
 public class DThisRef extends ThisRef {
-  public DThisRef(RefType thisType) {
+  private Scene myScene;
+
+  public DThisRef(RefType thisType, Scene myScene) {
     super(thisType);
+    this.myScene = myScene;
   }
 
   public String toString() {
@@ -35,6 +39,6 @@ public class DThisRef extends ThisRef {
   }
 
   public Object clone() {
-    return new DThisRef((RefType) getType(myScene));
+    return new DThisRef((RefType) getType(myScene), myScene);
   }
 }

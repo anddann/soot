@@ -113,7 +113,7 @@ public class infoGatheringAnalysis extends DepthFirstAdapter {
   boolean inFor = false;
 
   public infoGatheringAnalysis(DavaBody davaBody) {
-    info = new heuristicSet();
+    info = new heuristicSet(myScene);
 
     List localList = new ArrayList();
     /*

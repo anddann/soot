@@ -57,11 +57,13 @@ public class SynchronizedBlockFinder implements FactFinder {
 
   private Dava myDava;
   private Scene myScene;
+  private ExceptionFinder myExceptionFinder;
 
   @Inject
-  public SynchronizedBlockFinder(Dava myDava, Scene myScene) {
+  public SynchronizedBlockFinder(Dava myDava, Scene myScene, ExceptionFinder myExceptionFinder) {
     this.myDava = myDava;
     this.myScene = myScene;
+    this.myExceptionFinder = myExceptionFinder;
   }
 
 

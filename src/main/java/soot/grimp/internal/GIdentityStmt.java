@@ -10,12 +10,12 @@ package soot.grimp.internal;
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -24,18 +24,21 @@ package soot.grimp.internal;
 
 import soot.Value;
 import soot.grimp.Grimp;
+import soot.jimple.Jimple;
 import soot.jimple.internal.JIdentityStmt;
 
 public class GIdentityStmt extends JIdentityStmt {
-  private Grimp myGrimp;
+    private Grimp myGrimp;
+    private final Jimple myJimple;
 
-  public GIdentityStmt(Value local, Value identityValue, Grimp myGrimp) {
-    super(myGrimp.newLocalBox(local), myGrimp.newIdentityRefBox(identityValue));
-    this.myGrimp = myGrimp;
-  }
+    public GIdentityStmt(Value local, Value identityValue, Grimp myGrimp, Jimple myJimple) {
+        super(myGrimp.newLocalBox(local), myGrimp.newIdentityRefBox(identityValue), myJimple);
+        this.myGrimp = myGrimp;
+        this.myJimple = myJimple;
+    }
 
-  public Object clone() {
-    return new GIdentityStmt(Grimp.cloneIfNecessary(getLeftOp()), Grimp.cloneIfNecessary(getRightOp()), myGrimp);
+    public Object clone() {
+        return new GIdentityStmt(Grimp.cloneIfNecessary(getLeftOp()), Grimp.cloneIfNecessary(getRightOp()), myGrimp, myJimple);
 
-  }
+    }
 }

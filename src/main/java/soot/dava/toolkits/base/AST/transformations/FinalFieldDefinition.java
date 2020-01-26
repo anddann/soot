@@ -27,22 +27,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
-import soot.Local;
-import soot.LongType;
-import soot.RefType;
-import soot.ShortType;
-import soot.SootClass;
-import soot.SootField;
-import soot.SootFieldRef;
-import soot.SootMethod;
-import soot.Type;
-import soot.Value;
+import soot.*;
 import soot.dava.DavaBody;
 import soot.dava.DecompilationException;
 import soot.dava.internal.AST.ASTMethodNode;
@@ -53,10 +38,14 @@ import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DInstanceFieldRef;
 import soot.dava.internal.javaRep.DStaticFieldRef;
 import soot.dava.internal.javaRep.DVariableDeclarationStmt;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 import soot.dava.toolkits.base.AST.structuredAnalysis.MustMayInitialize;
 import soot.dava.toolkits.base.AST.traversals.AllVariableUses;
+import soot.grimp.Grimp;
 import soot.grimp.internal.GAssignStmt;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.InvokeExpr;
 import soot.jimple.Stmt;
@@ -85,9 +74,19 @@ public class FinalFieldDefinition {
   DavaBody davaBody;
 
   List<SootField> cancelFinalModifier;
+  private Grimp myGrimp;
+  private TryContentsFinder myTryContentsFinder;
+  private ASTWalker myASTWalker;
+  private Scene myScene;
+  private ConstantFactory constantFactory;
 
-  public FinalFieldDefinition(ASTMethodNode node) {
+  public FinalFieldDefinition(ASTMethodNode node, Grimp myGrimp, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, ConstantFactory constantFactory) {
     davaBody = node.getDavaBody();
+    this.myGrimp = myGrimp;
+    this.myTryContentsFinder = myTryContentsFinder;
+    this.myASTWalker = myASTWalker;
+    this.myScene = myScene;
+    this.constantFactory = constantFactory;
     sootMethod = davaBody.getMethod();
     sootClass = sootMethod.getDeclaringClass();
 
@@ -283,17 +282,17 @@ public class FinalFieldDefinition {
     GAssignStmt assignStmt = null;
 
     if (fieldType instanceof RefType) {
-      assignStmt = new GAssignStmt(ref, myNullConstant);
+      assignStmt = new GAssignStmt(ref, constantFactory.getNullConstant(),myGrimp );
     } else if (fieldType instanceof DoubleType) {
-      assignStmt = new GAssignStmt(ref, constantFactory.createDoubleConstant(0));
+      assignStmt = new GAssignStmt(ref, constantFactory.createDoubleConstant(0), myGrimp);
     } else if (fieldType instanceof FloatType) {
-      assignStmt = new GAssignStmt(ref, constantFactory.createFloatConstant(0));
+      assignStmt = new GAssignStmt(ref, constantFactory.createFloatConstant(0), myGrimp);
     } else if (fieldType instanceof LongType) {
-      assignStmt = new GAssignStmt(ref, constantFactory.createLongConstant(0));
+      assignStmt = new GAssignStmt(ref, constantFactory.createLongConstant(0),myGrimp );
     } else if (fieldType instanceof IntType || fieldType instanceof ByteType || fieldType instanceof ShortType
         || fieldType instanceof CharType || fieldType instanceof BooleanType) {
 
-      assignStmt = new GAssignStmt(ref, constantFactory.createDIntConstant(0, fieldType));
+      assignStmt = new GAssignStmt(ref, constantFactory.createDIntConstant(0, fieldType), myGrimp);
     }
 
     if (assignStmt != null) {
@@ -439,7 +438,7 @@ public class FinalFieldDefinition {
           // throw new RuntimeException("STOPPED");
         }
 
-        GAssignStmt assignStmt = new GAssignStmt(ref, newLocal);
+        GAssignStmt assignStmt = new GAssignStmt(ref, newLocal,myGrimp );
         AugmentedStmt assignStmt1 = new AugmentedStmt(assignStmt);
 
         /*

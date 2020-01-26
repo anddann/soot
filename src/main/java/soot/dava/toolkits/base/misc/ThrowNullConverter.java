@@ -61,7 +61,7 @@ public class ThrowNullConverter {
         Value op = opBox.getValue();
 
         if (op.getType(myScene) instanceof NullType) {
-          opBox.setValue(new DNewInvokeExpr(npeRef, null, new ArrayList(), myGrimp));
+          opBox.setValue(new DNewInvokeExpr(npeRef, null, new ArrayList(), myGrimp, myScene));
         }
       }
     }

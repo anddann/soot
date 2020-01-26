@@ -71,13 +71,16 @@ public class UselessAbruptStmtRemover extends DepthFirstAdapter {
   ASTParentNodeFinder finder;
   ASTMethodNode methodNode;
   LabelToNodeMapper mapper;
+  private UselessLabelFinder myUselessLabelFinder;
 
-  public UselessAbruptStmtRemover() {
+  public UselessAbruptStmtRemover(UselessLabelFinder myUselessLabelFinder) {
+    this.myUselessLabelFinder = myUselessLabelFinder;
     finder = null;
   }
 
-  public UselessAbruptStmtRemover(boolean verbose) {
+  public UselessAbruptStmtRemover(boolean verbose, UselessLabelFinder myUselessLabelFinder) {
     super(verbose);
+    this.myUselessLabelFinder = myUselessLabelFinder;
     finder = null;
   }
 

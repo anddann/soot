@@ -59,7 +59,7 @@ public class NullCheckEliminator extends BodyTransformer {
   private ConstantFactory constantFactory;
 
   public static class AnalysisFactory {
-    public NullnessAnalysis newAnalysis(UnitGraph g, boolean interaticveMode, InteractionHandler myInteractionHandler, ConstantFactory constantFactory) {
+    public NullnessAnalysis newAnalysis(UnitGraph g, boolean interaticveMode, InteractionHandler myInteractionHandler, ConstantFactory constantFactory, Scene myScene) {
       return new NullnessAnalysis(g, myInteractionHandler, interaticveMode, constantFactory, myScene);
     }
   }
@@ -95,7 +95,7 @@ public class NullCheckEliminator extends BodyTransformer {
       changed = false;
 
       NullnessAnalysis analysis = analysisFactory.newAnalysis(
-          new ExceptionalUnitGraph(body, myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene), myOptions.interactive_mode(), myInteractionHandler, constantFactory);
+          new ExceptionalUnitGraph(body, myManager, myOptions.omit_excepting_unit_edges(), myPhaseDumper, myScene), myOptions.interactive_mode(), myInteractionHandler, constantFactory, myScene);
 
       Chain<Unit> units = body.getUnits();
       Stmt s;

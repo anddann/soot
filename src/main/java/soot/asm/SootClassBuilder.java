@@ -35,14 +35,8 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import soot.Modifier;
-import soot.PrimTypeCollector;
-import soot.RefType;
-import soot.Scene;
-import soot.SootClass;
-import soot.SootField;
-import soot.SootMethod;
-import soot.SootResolver;
+import soot.*;
+import soot.coffi.Util;
 import soot.jimple.ConstantFactory;
 import soot.options.Options;
 import soot.tagkit.DoubleConstantValueTag;
@@ -72,6 +66,10 @@ public class SootClassBuilder extends ClassVisitor {
   private Options myOptions;
   private PrimTypeCollector primTypeCollector;
   private ConstantFactory constantFactory;
+  private LambdaMetaFactory myLambdaMetaFactory;
+  private PackManager myPackManager;
+  private Util myCoffiUtil;
+  private PhaseOptions myPhaseOptions;
 
   /**
    * Constructs a new Soot class builder.
@@ -82,8 +80,12 @@ public class SootClassBuilder extends ClassVisitor {
    * @param myOptions
    * @param primTypeCollector
    * @param constantFactory
+   * @param myLambdaMetaFactory
+   * @param myPackManager
+   * @param myCoffiUtil
+   * @param myPhaseOptions
    */
-  protected SootClassBuilder(SootClass klass, Scene myScene, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+  protected SootClassBuilder(SootClass klass, Scene myScene, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions) {
     super(Opcodes.ASM5);
     this.klass = klass;
     this.myScene = myScene;
@@ -91,6 +93,10 @@ public class SootClassBuilder extends ClassVisitor {
     this.myOptions = myOptions;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+    this.myLambdaMetaFactory = myLambdaMetaFactory;
+    this.myPackManager = myPackManager;
+    this.myCoffiUtil = myCoffiUtil;
+    this.myPhaseOptions = myPhaseOptions;
     this.deps = new HashSet();
   }
 

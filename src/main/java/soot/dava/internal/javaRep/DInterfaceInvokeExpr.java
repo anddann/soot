@@ -24,19 +24,20 @@ package soot.dava.internal.javaRep;
  */
 
 import java.util.ArrayList;
+import java.util.List;
 
-import soot.NullType;
-import soot.SootMethodRef;
-import soot.UnitPrinter;
-import soot.Value;
+import soot.*;
 import soot.grimp.Grimp;
 import soot.grimp.Precedence;
 import soot.grimp.PrecedenceTest;
 import soot.grimp.internal.GInterfaceInvokeExpr;
 
 public class DInterfaceInvokeExpr extends GInterfaceInvokeExpr {
-  public DInterfaceInvokeExpr(Value base, SootMethodRef methodRef, java.util.List args, Grimp myGrimp) {
+  private Scene myScene;
+
+  public DInterfaceInvokeExpr(Value base, SootMethodRef methodRef, List args, Grimp myGrimp, Scene myScene) {
     super(base, methodRef, args, myGrimp);
+    this.myScene = myScene;
   }
 
   public void toString(UnitPrinter up) {
@@ -121,6 +122,6 @@ public class DInterfaceInvokeExpr extends GInterfaceInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DInterfaceInvokeExpr(getBase(), methodRef, clonedArgs, myGrimp);
+    return new DInterfaceInvokeExpr(getBase(), methodRef, clonedArgs, myGrimp, myScene);
   }
 }

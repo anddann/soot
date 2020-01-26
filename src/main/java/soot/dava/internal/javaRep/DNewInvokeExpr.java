@@ -27,16 +27,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import soot.RefType;
+import soot.Scene;
 import soot.SootMethodRef;
 import soot.grimp.Grimp;
 import soot.grimp.internal.GNewInvokeExpr;
 
 public class DNewInvokeExpr extends GNewInvokeExpr {
   private final Grimp myGrimp;
+  private Scene myScene;
 
-  public DNewInvokeExpr(RefType type, SootMethodRef methodRef, List args, Grimp myGrimp) {
+  public DNewInvokeExpr(RefType type, SootMethodRef methodRef, List args, Grimp myGrimp, Scene myScene) {
     super(type, methodRef, args, myGrimp);
     this.myGrimp = myGrimp;
+    this.myScene = myScene;
   }
 
   public Object clone() {
@@ -46,6 +49,6 @@ public class DNewInvokeExpr extends GNewInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DNewInvokeExpr((RefType) getType(myScene), methodRef, clonedArgs, myGrimp);
+    return new DNewInvokeExpr((RefType) getType(myScene), methodRef, clonedArgs, myGrimp, myScene);
   }
 }

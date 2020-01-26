@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import soot.Local;
+import soot.Scene;
 import soot.Value;
 import soot.ValueBox;
 import soot.dava.internal.AST.ASTAggregatedCondition;
@@ -313,7 +314,7 @@ public class ASTUsesAndDefs extends DepthFirstAdapter {
     }
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       // in the case of stmtts in a stmtt sequence each stmt is considered

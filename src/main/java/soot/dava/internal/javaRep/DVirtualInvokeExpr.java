@@ -25,11 +25,9 @@ package soot.dava.internal.javaRep;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
-import soot.NullType;
-import soot.SootMethodRef;
-import soot.UnitPrinter;
-import soot.Value;
+import soot.*;
 import soot.baf.Baf;
 import soot.grimp.Grimp;
 import soot.grimp.Precedence;
@@ -38,11 +36,13 @@ import soot.grimp.internal.GVirtualInvokeExpr;
 
 public class DVirtualInvokeExpr extends GVirtualInvokeExpr {
   private HashSet<Object> thisLocals;
+  private Scene myScene;
 
-  public DVirtualInvokeExpr(Value base, SootMethodRef methodRef, java.util.List args, HashSet<Object> thisLocals, Grimp myGrimp, Baf myBaf) {
+  public DVirtualInvokeExpr(Value base, SootMethodRef methodRef, List args, HashSet<Object> thisLocals, Grimp myGrimp, Baf myBaf, Scene myScene) {
     super(base, methodRef, args, myBaf, myGrimp);
 
     this.thisLocals = thisLocals;
+    this.myScene = myScene;
   }
 
   public void toString(UnitPrinter up) {
@@ -127,6 +127,6 @@ public class DVirtualInvokeExpr extends GVirtualInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DVirtualInvokeExpr(Grimp.cloneIfNecessary(getBase()), methodRef, clonedArgs, thisLocals, myGrimp, myBaf);
+    return new DVirtualInvokeExpr(Grimp.cloneIfNecessary(getBase()), methodRef, clonedArgs, thisLocals, myGrimp, myBaf, myScene);
   }
 }

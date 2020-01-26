@@ -36,6 +36,7 @@ import soot.dava.internal.AST.ASTStatementSequenceNode;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DAbruptStmt;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 import soot.jimple.Stmt;
 
@@ -64,11 +65,18 @@ import soot.jimple.Stmt;
 
 public class OrAggregatorOne extends DepthFirstAdapter {
 
-  public OrAggregatorOne() {
+  private UselessLabelFinder myUselessLabelFinder;
+  private TryContentsFinder myTryContentsFinder;
+
+  public OrAggregatorOne(UselessLabelFinder myUselessLabelFinder, TryContentsFinder myTryContentsFinder) {
+    this.myUselessLabelFinder = myUselessLabelFinder;
+    this.myTryContentsFinder = myTryContentsFinder;
   }
 
-  public OrAggregatorOne(boolean verbose) {
+  public OrAggregatorOne(boolean verbose, UselessLabelFinder myUselessLabelFinder, TryContentsFinder myTryContentsFinder) {
     super(verbose);
+    this.myUselessLabelFinder = myUselessLabelFinder;
+    this.myTryContentsFinder = myTryContentsFinder;
   }
 
   public void caseASTStatementSequenceNode(ASTStatementSequenceNode node) {

@@ -26,11 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import soot.G;
-import soot.Local;
-import soot.Type;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.dava.DecompilationException;
 import soot.dava.internal.AST.ASTMethodNode;
 import soot.dava.internal.AST.ASTStatementSequenceNode;
@@ -69,7 +65,7 @@ public class ShortcutArrayInit extends DepthFirstAdapter {
     }
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
     debug("inASTStatementSequenceNode");
     boolean success = false;
     ArrayList<AugmentedStmt> toRemove = new ArrayList<AugmentedStmt>();
@@ -204,12 +200,12 @@ public class ShortcutArrayInit extends DepthFirstAdapter {
       node.setStatements(newStmtList);
 
       // make sure any other possible simplifications are done
-      inASTStatementSequenceNode(node);
+      inASTStatementSequenceNode(node, myScene);
       G.v().ASTTransformations_modified = true;
     }
 
     // try the second pattern also
-    secondPattern(node);
+    secondPattern(node, myScene);
   }
 
   /*
@@ -261,7 +257,7 @@ public class ShortcutArrayInit extends DepthFirstAdapter {
   /*
    * Maybe its a multi-D array then we need to look for a DAssignStmt followed by a definition Stmt
    */
-  public void secondPattern(ASTStatementSequenceNode node) {
+  public void secondPattern(ASTStatementSequenceNode node, Scene myScene) {
     boolean success = false;
     ArrayList<AugmentedStmt> toRemove = new ArrayList<AugmentedStmt>();
     for (AugmentedStmt as : node.getStatements()) {
@@ -407,7 +403,7 @@ public class ShortcutArrayInit extends DepthFirstAdapter {
       node.setStatements(newStmtList);
 
       // make sure any other possible simplifications are done
-      inASTStatementSequenceNode(node);
+      inASTStatementSequenceNode(node, myScene);
       G.v().ASTTransformations_modified = true;
     }
 

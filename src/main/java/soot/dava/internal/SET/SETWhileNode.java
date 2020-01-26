@@ -54,7 +54,7 @@ public class SETWhileNode extends SETCycleNode {
 
   public ASTNode emit_AST(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
     return new ASTWhileNode(get_Label(), (ConditionExpr) ((IfStmt) get_CharacterizingStmt().get_Stmt()).getCondition(),
-        emit_ASTBody(body2childChain.get(subBodies.get(0)), myTryContentsFinder, myASTWalker, myJimple), this.myTryContentsFinder);
+        emit_ASTBody(body2childChain.get(subBodies.get(0)), myTryContentsFinder, myASTWalker, myJimple), this.myTryContentsFinder, myGrimp, primTypeCollector);
   }
 
   public AugmentedStmt get_EntryStmt() {

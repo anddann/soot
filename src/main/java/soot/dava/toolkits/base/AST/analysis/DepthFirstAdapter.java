@@ -26,12 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import soot.Immediate;
-import soot.Local;
-import soot.SootClass;
-import soot.Type;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.dava.internal.AST.ASTAndCondition;
 import soot.dava.internal.AST.ASTBinaryCondition;
 import soot.dava.internal.AST.ASTCondition;
@@ -564,7 +559,7 @@ public class DepthFirstAdapter extends AnalysisAdapter {
     } // end of going over subBodies
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
     if (verbose) {
       System.out.println("inASTStatementSequenceNode");
     }
@@ -577,7 +572,7 @@ public class DepthFirstAdapter extends AnalysisAdapter {
   }
 
   public void caseASTStatementSequenceNode(ASTStatementSequenceNode node) {
-    inASTStatementSequenceNode(node);
+    inASTStatementSequenceNode(node, myScene);
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       /*

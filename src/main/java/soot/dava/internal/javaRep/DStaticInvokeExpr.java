@@ -32,7 +32,7 @@ import soot.grimp.internal.GStaticInvokeExpr;
 
 public class DStaticInvokeExpr extends GStaticInvokeExpr {
   public DStaticInvokeExpr(SootMethodRef methodRef, java.util.List args) {
-    super(methodRef, args);
+    super(methodRef, args, myGrimp);
   }
 
   public void toString(UnitPrinter up) {

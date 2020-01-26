@@ -114,7 +114,7 @@ public class InterProceduralAnalyses {
         AST.apply(new SimplifyExpressions());
 
         // SimplifyConditions.DEBUG=true;
-        AST.apply(new SimplifyConditions(constantFactory, primTypeCollector));
+        AST.apply(new SimplifyConditions(constantFactory, primTypeCollector, myGrimp));
 
         // condition elimination
         // EliminateConditions.DEBUG=true;
@@ -162,7 +162,7 @@ public class InterProceduralAnalyses {
     infoGatheringAnalysis info = new infoGatheringAnalysis(body);
     AST.apply(info);
 
-    Renamer renamer = new Renamer(info.getHeuristicSet(), (ASTMethodNode) AST);
+    Renamer renamer = new Renamer(info.getHeuristicSet(), (ASTMethodNode) AST, myScene);
     renamer.rename();
   }
 

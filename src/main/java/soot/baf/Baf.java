@@ -29,33 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import soot.ArrayType;
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
-import soot.Local;
-import soot.LongType;
-import soot.NullType;
-import soot.PackManager;
-import soot.PhaseOptions;
-import soot.PrimTypeCollector;
-import soot.Printer;
-import soot.RefType;
-import soot.ShortType;
-import soot.SootClass;
-import soot.SootFieldRef;
-import soot.SootMethod;
-import soot.SootMethodRef;
-import soot.Trap;
-import soot.Type;
-import soot.TypeSwitch;
-import soot.Unit;
-import soot.UnitBox;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.baf.internal.BAddInst;
 import soot.baf.internal.BAndInst;
 import soot.baf.internal.BArrayLengthInst;
@@ -129,11 +103,7 @@ import soot.baf.internal.BVirtualInvokeInst;
 import soot.baf.internal.BXorInst;
 import soot.baf.internal.BafLocal;
 import soot.baf.internal.BafLocalBox;
-import soot.jimple.Constant;
-import soot.jimple.IntConstant;
-import soot.jimple.JimpleBody;
-import soot.jimple.ParameterRef;
-import soot.jimple.ThisRef;
+import soot.jimple.*;
 import soot.jimple.internal.IdentityRefBox;
 import soot.options.Options;
 
@@ -142,6 +112,8 @@ public class Baf {
   private PackManager myPackmanager;
   private Options myOptions;
   private Printer myPrinter;
+  private ConstantFactory constantFactory;
+  private Scene myScene;
 
   public PrimTypeCollector getPrimTypeCollector() {
     return primTypeCollector;
@@ -151,11 +123,13 @@ public class Baf {
 
   @Inject
   public Baf(PhaseOptions myPhaseOptions, PackManager myPackmanager, Options myOptions, Printer myPrinter,
-      PrimTypeCollector primTypeCollector) {
+             ConstantFactory constantFactory, Scene myScene, PrimTypeCollector primTypeCollector) {
     this.myPhaseOptions = myPhaseOptions;
     this.myPackmanager = myPackmanager;
     this.myOptions = myOptions;
     this.myPrinter = myPrinter;
+    this.constantFactory = constantFactory;
+    this.myScene = myScene;
     this.primTypeCollector = primTypeCollector;
   }
 

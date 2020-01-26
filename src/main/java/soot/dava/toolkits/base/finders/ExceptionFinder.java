@@ -70,7 +70,7 @@ public class ExceptionFinder implements FactFinder {
 
       fullBody.addAll(en.get_TryBody());
 
-      if (SET.nest(new SETTryNode(fullBody, en, asg, body), myExceptionFinder) == false) {
+      if (SET.nest(new SETTryNode(fullBody, en, asg, body), this) == false) {
         throw new RetriggerAnalysisException();
       }
     }

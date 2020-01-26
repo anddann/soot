@@ -27,11 +27,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import soot.Local;
+import soot.Scene;
 
 public class heuristicSet {
   HashMap<Local, heuristicTuple> set;
+  private Scene myScene;
 
-  public heuristicSet() {
+  public heuristicSet(Scene myScene) {
+    this.myScene = myScene;
     set = new HashMap<Local, heuristicTuple>();
   }
 

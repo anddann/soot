@@ -27,10 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import soot.Local;
-import soot.SootField;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.dava.internal.AST.ASTAggregatedCondition;
 import soot.dava.internal.AST.ASTBinaryCondition;
 import soot.dava.internal.AST.ASTCondition;
@@ -138,7 +135,7 @@ public class AllVariableUses extends DepthFirstAdapter {
     } // end of going through all FieldRef uses in switch key
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       // in the case of stmtts in a stmtt sequence each stmt is considered

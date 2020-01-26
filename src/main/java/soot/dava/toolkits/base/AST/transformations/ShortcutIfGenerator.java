@@ -22,11 +22,7 @@ package soot.dava.toolkits.base.AST.transformations;
  * #L%
  */
 
-import soot.BooleanType;
-import soot.IntType;
-import soot.Type;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.dava.internal.AST.ASTStatementSequenceNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DShortcutIf;
@@ -46,7 +42,7 @@ public class ShortcutIfGenerator extends DepthFirstAdapter {
     super(verbose);
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       if (!(s instanceof DefinitionStmt)) {

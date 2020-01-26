@@ -26,12 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import soot.Local;
-import soot.SootField;
-import soot.SootMethod;
-import soot.SootMethodRef;
-import soot.Type;
-import soot.Value;
+import soot.*;
 import soot.jimple.AddExpr;
 import soot.jimple.AndExpr;
 import soot.jimple.ArrayRef;
@@ -92,10 +87,12 @@ public class ValueTemplatePrinter implements JimpleValueSwitch {
   private String varName;
 
   private Set<String> varnamesAlreadyUsed = new HashSet<String>();
+  private Scene myScene;
 
-  public ValueTemplatePrinter(TemplatePrinter p) {
+  public ValueTemplatePrinter(TemplatePrinter p, Scene myScene) {
     this.p = p;
     ttp = new TypeTemplatePrinter(p);
+    this.myScene = myScene;
 
     varnamesAlreadyUsed.add("b");// body
     varnamesAlreadyUsed.add("m");// method

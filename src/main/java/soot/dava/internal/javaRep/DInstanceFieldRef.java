@@ -34,7 +34,7 @@ public class DInstanceFieldRef extends GInstanceFieldRef {
   private HashSet<Object> thisLocals;
 
   public DInstanceFieldRef(Value base, SootFieldRef fieldRef, HashSet<Object> thisLocals) {
-    super(base, fieldRef);
+    super(base, fieldRef, myGrimp);
 
     this.thisLocals = thisLocals;
   }

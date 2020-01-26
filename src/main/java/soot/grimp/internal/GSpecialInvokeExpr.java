@@ -35,8 +35,11 @@ import soot.grimp.PrecedenceTest;
 import soot.jimple.internal.AbstractSpecialInvokeExpr;
 
 public class GSpecialInvokeExpr extends AbstractSpecialInvokeExpr implements Precedence {
-  public GSpecialInvokeExpr(Value base, SootMethodRef methodRef, List args) {
+  private final Grimp myGrimp;
+
+  public GSpecialInvokeExpr(Value base, SootMethodRef methodRef, List args, Grimp myGrimp) {
     super(myGrimp.newObjExprBox(base), methodRef, new ExprBox[args.size()]);
+    this.myGrimp = myGrimp;
 
     for (int i = 0; i < args.size(); i++) {
       this.argBoxes[i] = myGrimp.newExprBox((Value) args.get(i));
@@ -108,6 +111,6 @@ public class GSpecialInvokeExpr extends AbstractSpecialInvokeExpr implements Pre
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new GSpecialInvokeExpr(Grimp.cloneIfNecessary(getBase()), methodRef, clonedArgs);
+    return new GSpecialInvokeExpr(Grimp.cloneIfNecessary(getBase()), methodRef, clonedArgs, myGrimp);
   }
 }

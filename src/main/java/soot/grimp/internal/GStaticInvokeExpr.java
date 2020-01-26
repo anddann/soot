@@ -33,8 +33,11 @@ import soot.grimp.Grimp;
 import soot.jimple.internal.AbstractStaticInvokeExpr;
 
 public class GStaticInvokeExpr extends AbstractStaticInvokeExpr {
-  public GStaticInvokeExpr(SootMethodRef methodRef, List args) {
+  private final Grimp myGrimp;
+
+  public GStaticInvokeExpr(SootMethodRef methodRef, List args, Grimp myGrimp) {
     super(methodRef, new ValueBox[args.size()]);
+    this.myGrimp = myGrimp;
 
     for (int i = 0; i < args.size(); i++) {
       this.argBoxes[i] = myGrimp.newExprBox((Value) args.get(i));
@@ -48,7 +51,7 @@ public class GStaticInvokeExpr extends AbstractStaticInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new GStaticInvokeExpr(methodRef, clonedArgs);
+    return new GStaticInvokeExpr(methodRef, clonedArgs, myGrimp);
   }
 
 }

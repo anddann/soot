@@ -26,20 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
-import soot.LongType;
-import soot.ShortType;
-import soot.SootClass;
-import soot.SootField;
-import soot.SootMethod;
-import soot.Type;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.dava.DavaBody;
 import soot.dava.internal.AST.ASTAggregatedCondition;
 import soot.dava.internal.AST.ASTBinaryCondition;
@@ -111,14 +98,17 @@ public class DeInliningFinalFields extends DepthFirstAdapter {
   DavaBody davaBody = null;
 
   HashMap<Comparable, SootField> finalFields;
+  private Scene myScene;
 
   // ASTParentNodeFinder parentFinder;
 
-  public DeInliningFinalFields() {
+  public DeInliningFinalFields(Scene myScene) {
+    this.myScene = myScene;
   }
 
-  public DeInliningFinalFields(boolean verbose) {
+  public DeInliningFinalFields(boolean verbose, Scene myScene) {
     super(verbose);
+    this.myScene = myScene;
   }
 
   public void inASTMethodNode(ASTMethodNode node) {
@@ -323,7 +313,7 @@ public class DeInliningFinalFields extends DepthFirstAdapter {
     }
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       Iterator tempIt = s.getUseBoxes().iterator();

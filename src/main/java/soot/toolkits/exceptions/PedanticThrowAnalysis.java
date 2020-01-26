@@ -24,6 +24,7 @@ package soot.toolkits.exceptions;
 
 import com.google.inject.Inject;
 import soot.G;
+import soot.Scene;
 import soot.Singletons;
 import soot.Unit;
 import soot.baf.ThrowInst;
@@ -45,10 +46,11 @@ public class PedanticThrowAnalysis extends AbstractThrowAnalysis {
    * @param g
    *          guarantees that the constructor may only be called from {@link Singletons}.
    * @param mgr
+   * @param myScene
    */
 
   @Inject
-  public PedanticThrowAnalysis(ThrowableSet.Manager mgr) {
+  public PedanticThrowAnalysis(ThrowableSet.Manager mgr, Scene myScene) {
     super(mgr, myScene);
     this.mgr = mgr;
   }

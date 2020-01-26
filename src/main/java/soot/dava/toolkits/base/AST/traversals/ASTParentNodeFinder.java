@@ -25,6 +25,7 @@ package soot.dava.toolkits.base.AST.traversals;
 import java.util.HashMap;
 import java.util.Stack;
 
+import soot.Scene;
 import soot.Unit;
 import soot.dava.internal.AST.ASTDoWhileNode;
 import soot.dava.internal.AST.ASTForLoopNode;
@@ -173,7 +174,7 @@ public class ASTParentNodeFinder extends DepthFirstAdapter {
     parentStack.pop();
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
     parentOf.put(node, parentStack.peek());
     parentStack.push(node);
   }

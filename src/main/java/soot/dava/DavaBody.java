@@ -540,7 +540,7 @@ public class DavaBody extends Body {
          * UselessLabeledBlockRemover in the end to remove such labeled blocks
          */
 
-        AST.apply(new OrAggregatorOne());
+        AST.apply(new OrAggregatorOne(myUselessLabelFinder, myTryContentsFinder));
         debug("applyASTAnalyses", "after OraggregatorOne" + G.v().ASTTransformations_modified);
 
         /*
@@ -569,7 +569,7 @@ public class DavaBody extends Body {
         AST.apply(new PushLabeledBlockIn());
         debug("applyASTAnalyses", "after PushLabeledBlockIn" + G.v().ASTTransformations_modified);
 
-        AST.apply(new LoopStrengthener());
+        AST.apply(new LoopStrengthener(myTryContentsFinder, myASTWalker, myUselessLabelFinder));
         debug("applyASTAnalyses", "after LoopStrengthener" + G.v().ASTTransformations_modified);
 
         /*
@@ -597,7 +597,7 @@ public class DavaBody extends Body {
         }
 
         if (!G.v().ASTTransformations_modified) {
-          AST.apply(new UselessAbruptStmtRemover());
+          AST.apply(new UselessAbruptStmtRemover(myUselessLabelFinder));
           debug("applyASTAnalyses", "after UselessAbruptStmtRemover" + G.v().ASTTransformations_modified);
         }
 
@@ -651,12 +651,12 @@ public class DavaBody extends Body {
 
     if (force) {
       debug("applyASTAnalyses", "before FinalFieldDefinition" + G.v().ASTTransformations_modified);
-      new FinalFieldDefinition((ASTMethodNode) AST);
+      new FinalFieldDefinition((ASTMethodNode) AST, myGrimp, myTryContentsFinder, myASTWalker, myScene, constantFactory);
       debug("applyASTAnalyses", "after FinalFieldDefinition" + G.v().ASTTransformations_modified);
     }
 
     // this analysis has to be after ShortcutArrayInit to give that analysis more chances
-    AST.apply(new DeInliningFinalFields());
+    AST.apply(new DeInliningFinalFields(myScene));
 
     debug("applyASTAnalyses", "end applyASTAnlayses" + G.v().ASTTransformations_modified);
   }
@@ -1084,7 +1084,7 @@ public class DavaBody extends Body {
     else if (r instanceof ThisRef) {
       ThisRef tr = (ThisRef) r;
 
-      vb.setValue(new DThisRef((RefType) tr.getType(myScene)));
+      vb.setValue(new DThisRef((RefType) tr.getType(myScene), myScene));
     }
   }
 
@@ -1204,17 +1204,17 @@ public class DavaBody extends Body {
 
       if (ie instanceof VirtualInvokeExpr) {
         VirtualInvokeExpr vie = (VirtualInvokeExpr) ie;
-        vb.setValue(new DVirtualInvokeExpr(vie.getBase(), vie.getMethodRef(), vie.getArgs(), thisLocals, myGrimp, myBaf));
+        vb.setValue(new DVirtualInvokeExpr(vie.getBase(), vie.getMethodRef(), vie.getArgs(), thisLocals, myGrimp, myBaf, myScene));
       }
 
       else if (ie instanceof SpecialInvokeExpr) {
         SpecialInvokeExpr sie = (SpecialInvokeExpr) ie;
-        vb.setValue(new DSpecialInvokeExpr(sie.getBase(), sie.getMethodRef(), sie.getArgs()));
+        vb.setValue(new DSpecialInvokeExpr(sie.getBase(), sie.getMethodRef(), sie.getArgs(), myScene));
       }
 
       else if (ie instanceof InterfaceInvokeExpr) {
         InterfaceInvokeExpr iie = (InterfaceInvokeExpr) ie;
-        vb.setValue(new DInterfaceInvokeExpr(iie.getBase(), iie.getMethodRef(), iie.getArgs(), myGrimp));
+        vb.setValue(new DInterfaceInvokeExpr(iie.getBase(), iie.getMethodRef(), iie.getArgs(), myGrimp, myScene));
       } else {
         throw new RuntimeException("InstanceInvokeExpr " + ie + " not javafied correctly");
       }
@@ -1242,7 +1242,7 @@ public class DavaBody extends Body {
         }
 
         addToImportList(className);
-        vb.setValue(new DNewInvokeExpr((RefType) nie.getType(myScene), nie.getMethodRef(), nie.getArgs(), myGrimp));
+        vb.setValue(new DNewInvokeExpr((RefType) nie.getType(myScene), nie.getMethodRef(), nie.getArgs(), myGrimp, myScene));
       } else {
         SootMethodRef methodRef = sie.getMethodRef();
         className = methodRef.declaringClass().toString();

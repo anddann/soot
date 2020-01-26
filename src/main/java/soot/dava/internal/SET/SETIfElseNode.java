@@ -88,9 +88,9 @@ public class SETIfElseNode extends SETDagNode {
     }
 
     if (astBody1.isEmpty()) {
-      return new ASTIfNode(get_Label(), ce, astBody0, this.myTryContentsFinder);
+      return new ASTIfNode(get_Label(), ce, astBody0, this.myTryContentsFinder, myGrimp, primTypeCollector);
     } else {
-      return new ASTIfElseNode(get_Label(), ce, astBody0, astBody1, this.myTryContentsFinder);
+      return new ASTIfElseNode(get_Label(), ce, astBody0, astBody1, this.myTryContentsFinder, myGrimp, primTypeCollector);
     }
   }
 }

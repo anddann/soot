@@ -40,6 +40,7 @@ import soot.dava.internal.AST.ASTWhileNode;
 import soot.dava.internal.javaRep.DIntConstant;
 import soot.dava.internal.javaRep.DNotExpr;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
+import soot.grimp.Grimp;
 import soot.jimple.ConditionExpr;
 import soot.jimple.ConstantFactory;
 import soot.jimple.DoubleConstant;
@@ -78,17 +79,20 @@ public class SimplifyConditions extends DepthFirstAdapter {
   public boolean changed = false;
   private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
+  private Grimp myGrimp;
 
-  public SimplifyConditions(ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
+  public SimplifyConditions(ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Grimp myGrimp) {
     super();
     this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
+    this.myGrimp = myGrimp;
   }
 
-  public SimplifyConditions(boolean verbose, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
+  public SimplifyConditions(boolean verbose, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Grimp myGrimp) {
     super(verbose);
     this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
+    this.myGrimp = myGrimp;
   }
 
   public void fixedPoint(ASTControlFlowNode node) {

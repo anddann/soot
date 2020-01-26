@@ -75,7 +75,7 @@ public class AsmClassSource extends ClassSource {
     try {
       d = foundFile.inputStream();
       ClassReader clsr = new ClassReader(d);
-      SootClassBuilder scb = new SootClassBuilder(sc, myScene, mySootResolver,  myOptions, primTypeCollector, constantFactory);
+      SootClassBuilder scb = new SootClassBuilder(sc, myScene, mySootResolver,  myOptions, primTypeCollector, constantFactory, myLambdaMetaFactory, myPackManager, myCoffiUtil, myPhaseOptions);
       clsr.accept(scb, ClassReader.SKIP_FRAMES);
       Dependencies deps = new Dependencies();
       deps.typesToSignature.addAll(scb.deps);

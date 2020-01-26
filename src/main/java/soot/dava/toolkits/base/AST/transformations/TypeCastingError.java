@@ -22,17 +22,7 @@ package soot.dava.toolkits.base.AST.transformations;
  * #L%
  */
 
-import soot.ByteType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
-import soot.LongType;
-import soot.PrimType;
-import soot.PrimTypeCollector;
-import soot.ShortType;
-import soot.Type;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.dava.internal.AST.ASTStatementSequenceNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
@@ -54,7 +44,7 @@ public class TypeCastingError extends DepthFirstAdapter {
     this.primTypeCollector = primTypeCollector;
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       if (!(s instanceof DefinitionStmt)) {

@@ -45,11 +45,13 @@ public class IfFinder implements FactFinder {
 
   private Dava myDava;
   private TryContentsFinder myTryContentsFinder;
+  private ExceptionFinder myExceptionFinder;
 
   @Inject
-  public IfFinder(Dava myDava, TryContentsFinder myTryContentsFinder) {
+  public IfFinder(Dava myDava, TryContentsFinder myTryContentsFinder, ExceptionFinder myExceptionFinder) {
     this.myDava = myDava;
     this.myTryContentsFinder = myTryContentsFinder;
+    this.myExceptionFinder = myExceptionFinder;
   }
 
 

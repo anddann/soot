@@ -62,6 +62,7 @@ import pxb.android.axml.NodeVisitor;
 
 import soot.baf.Baf;
 import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.dexpler.DalvikThrowAnalysis;
 import soot.jimple.ConstantFactory;
 import soot.jimple.FullObjectFactory;
 import soot.jimple.Jimple;
@@ -73,7 +74,9 @@ import soot.jimple.toolkits.callgraph.ReachableMethods;
 import soot.jimple.toolkits.pointer.SideEffectAnalysis;
 import soot.options.CGOptions;
 import soot.options.Options;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
 import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.UnitThrowAnalysis;
 import soot.util.ArrayNumberer;
 import soot.util.Chain;
 import soot.util.HashChain;
@@ -111,8 +114,8 @@ public class Scene // extends AbstractHost
   @Inject
   public Scene(Options myOptions, PhaseOptions myPhaseOptions, SourceLocator mySourceLocator, SootResolver mySootResolver,
                PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility,
-               EntryPoints myEntryPoints, ThrowAnalysis myPedanticThrowAnalysis, ThrowAnalysis myUnitThrowAnalysis,
-               ThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer, Jimple myJimple,
+               EntryPoints myEntryPoints, PedanticThrowAnalysis myPedanticThrowAnalysis, UnitThrowAnalysis myUnitThrowAnalysis,
+               DalvikThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer, Jimple myJimple,
                PrimTypeCollector primTypeCollector, Baf myBaf, ConstantFactory constantFactory, FullObjectFactory fullObjectFactory) {
     this.myOptions = myOptions;
     this.myPhaseOptions = myPhaseOptions;

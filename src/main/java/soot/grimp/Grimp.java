@@ -391,7 +391,7 @@ public class Grimp {
    */
 
   public StaticInvokeExpr newStaticInvokeExpr(SootMethodRef method, List args) {
-    return new GStaticInvokeExpr(method, args);
+    return new GStaticInvokeExpr(method, args, this);
   }
 
   /**
@@ -399,7 +399,7 @@ public class Grimp {
    */
 
   public SpecialInvokeExpr newSpecialInvokeExpr(Local base, SootMethodRef method, List args) {
-    return new GSpecialInvokeExpr(base, method, args);
+    return new GSpecialInvokeExpr(base, method, args, this);
   }
 
   /**
@@ -539,11 +539,11 @@ public class Grimp {
    */
 
   public IdentityStmt newIdentityStmt(Value local, Value identityRef) {
-    return new GIdentityStmt(local, identityRef, this);
+    return new GIdentityStmt(local, identityRef, this,myJimple );
   }
 
   public IdentityStmt newIdentityStmt(IdentityStmt s) {
-    return new GIdentityStmt(s.getLeftOp(), s.getRightOp(), this);
+    return new GIdentityStmt(s.getLeftOp(), s.getRightOp(), this, myJimple);
   }
 
   /**
@@ -551,11 +551,11 @@ public class Grimp {
    */
 
   public AssignStmt newAssignStmt(Value variable, Value rvalue) {
-    return new GAssignStmt(variable, rvalue);
+    return new GAssignStmt(variable, rvalue, this);
   }
 
   public AssignStmt newAssignStmt(AssignStmt s) {
-    return new GAssignStmt(s.getLeftOp(), s.getRightOp());
+    return new GAssignStmt(s.getLeftOp(), s.getRightOp(), this);
   }
 
   /**
@@ -643,7 +643,7 @@ public class Grimp {
    */
 
   public InstanceFieldRef newInstanceFieldRef(Value base, SootFieldRef f) {
-    return new GInstanceFieldRef(base, f);
+    return new GInstanceFieldRef(base, f, this);
   }
 
   /**

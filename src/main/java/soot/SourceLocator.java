@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import soot.JavaClassProvider.JarException;
 import soot.asm.AsmClassProvider;
 import soot.dexpler.DexFileProvider;
+import soot.jimple.ConstantFactory;
 import soot.options.Options;
 
 /**
@@ -123,14 +124,18 @@ public class SourceLocator {
   private Scene myScene;
   private DexFileProvider myDexFileProvider;
   private SootResolver mySootResolver;
+  private PrimTypeCollector primTypeCollector;
+  private ConstantFactory constantFactory;
 
   @Inject
   public SourceLocator(Options myOptions, Scene myScene, DexFileProvider myDexFileProvider,
-     SootResolver mySootResolver) {
+                       SootResolver mySootResolver, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     this.myOptions = myOptions;
     this.myScene = myScene;
     this.myDexFileProvider = myDexFileProvider;
     this.mySootResolver = mySootResolver;
+    this.primTypeCollector = primTypeCollector;
+    this.constantFactory = constantFactory;
   }
 
   /**
