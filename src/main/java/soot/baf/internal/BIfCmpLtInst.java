@@ -23,7 +23,6 @@ package soot.baf.internal;
  */
 
 import soot.AbstractJasminClass;
-import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Unit;
 import soot.baf.Baf;
@@ -32,8 +31,8 @@ import soot.baf.InstSwitch;
 import soot.util.Switch;
 
 public class BIfCmpLtInst extends AbstractOpTypeBranchInst implements IfCmpLtInst {
-  public BIfCmpLtInst(Type opType, Unit target, Baf myBaf, PrimTypeCollector primTypeCollector) {
-    super(opType, myBaf.newInstBox(target), myBaf, primTypeCollector);
+  public BIfCmpLtInst(Type opType, Unit target) {
+    super(opType, Baf.newInstBox(target));
   }
 
   public int getInCount() {
@@ -41,7 +40,7 @@ public class BIfCmpLtInst extends AbstractOpTypeBranchInst implements IfCmpLtIns
   }
 
   public Object clone() {
-    return new BIfCmpLtInst(getOpType(), getTarget(), myBaf, primTypeCollector);
+    return new BIfCmpLtInst(getOpType(), getTarget());
   }
 
   public int getInMachineCount() {

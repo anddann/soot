@@ -34,8 +34,8 @@ import soot.util.Switch;
 public class BStaticGetInst extends AbstractInst implements StaticGetInst {
   SootFieldRef fieldRef;
 
-  public BStaticGetInst(SootFieldRef fieldRef, Baf myBaf) {
-    super(myBaf);
+  public BStaticGetInst(SootFieldRef fieldRef) {
+    super();
     if (!fieldRef.isStatic()) {
       throw new RuntimeException("wrong static-ness");
     }
@@ -47,7 +47,7 @@ public class BStaticGetInst extends AbstractInst implements StaticGetInst {
   }
 
   public Object clone() {
-    return new BStaticGetInst(fieldRef, myBaf);
+    return new BStaticGetInst(fieldRef);
   }
 
   public int getInMachineCount() {

@@ -59,7 +59,7 @@ public abstract class CFGIntermediateRep extends CFGOptionMatcher.CFGOption {
 //
 //  public static final CFGIntermediateRep BAF_IR = new CFGIntermediateRep("baf") {
 //    public Body getBody(JimpleBody b) {
-//      return myBaf.newBody(b);
+//      return Baf.newBody(b);
 //    }
 //  };
 //

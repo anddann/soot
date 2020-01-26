@@ -1392,7 +1392,7 @@ public class Walker extends DepthFirstAdapter {
         if (invokeType instanceof ASpecialNonstaticInvoke) {
             invokeExpr = Jimple.newSpecialInvokeExpr(l, method, args);
         } else if (invokeType instanceof AVirtualNonstaticInvoke) {
-            invokeExpr = Jimple.newVirtualInvokeExpr(l, method, args);
+            invokeExpr = Jimple.newVirtualInvokeExpr(l, method, args, myOptions);
         } else {
             if (debug) {
                 if (!(invokeType instanceof AInterfaceNonstaticInvoke)) {

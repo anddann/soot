@@ -24,14 +24,13 @@ package soot.baf.internal;
  */
 
 import soot.SootMethodRef;
-import soot.baf.Baf;
 import soot.baf.InstSwitch;
 import soot.baf.SpecialInvokeInst;
 import soot.util.Switch;
 
 public class BSpecialInvokeInst extends AbstractInvokeInst implements SpecialInvokeInst {
-  public BSpecialInvokeInst(SootMethodRef methodRef, Baf myBaf) {
-    super(myBaf);
+  public BSpecialInvokeInst(SootMethodRef methodRef) {
+    super();
     if (methodRef.isStatic()) {
       throw new RuntimeException("wrong static-ness");
     }
@@ -47,7 +46,7 @@ public class BSpecialInvokeInst extends AbstractInvokeInst implements SpecialInv
   }
 
   public Object clone() {
-    return new BSpecialInvokeInst(methodRef, myBaf);
+    return new BSpecialInvokeInst(methodRef);
   }
 
   public String getName() {

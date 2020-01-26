@@ -170,7 +170,7 @@ public class TrapSplitter extends BodyTransformer {
       }
     }
     
-    removePotentiallyUselassTraps(b, potentiallyUselessTrapHandlers,myJimple,myUnreachableCodeEliminator, myConstantFactory);
+    removePotentiallyUselassTraps(b, potentiallyUselessTrapHandlers,myUnreachableCodeEliminator, myConstantFactory);
   }
 
   /**

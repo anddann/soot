@@ -34,8 +34,8 @@ public class BInstanceOfInst extends AbstractInst implements InstanceOfInst {
 
   protected Type checkType;
 
-  public BInstanceOfInst(Type opType, Baf myBaf) {
-    super(myBaf);
+  public BInstanceOfInst(Type opType) {
+    super();
     if (!(opType instanceof RefType) && !(opType instanceof ArrayType)) {
       throw new RuntimeException("invalid InstanceOfInst: " + opType);
     }
@@ -76,7 +76,7 @@ public class BInstanceOfInst extends AbstractInst implements InstanceOfInst {
   }
 
   public Object clone() {
-    return new BInstanceOfInst(checkType, myBaf);
+    return new BInstanceOfInst(checkType);
   }
 
 }

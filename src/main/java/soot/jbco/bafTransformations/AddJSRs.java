@@ -141,12 +141,12 @@ public class AddJSRs extends BodyTransformer implements IJbcoTransform {
       // ignore GOTOs as they will, themselves, become a jsr.
       if (targets.contains(unit)) {
         if (fallsthrough) {
-          JSRInst ji = myBaf.newJSRInst(unit);
+          JSRInst ji = Baf.newJSRInst(unit);
           builtJsrs.put(unit, ji);
           u.insertAfter(ji, prev);
           jsrcount++;
         }
-        PopInst pop = myBaf.newPopInst(primTypeCollector.getRefType());
+        PopInst pop = Baf.newPopInst(primTypeCollector.getRefType());
         u.insertBefore(pop, unit);
         processedLabels.add(unit);
         popsBuilt.put(pop, unit);
@@ -179,7 +179,7 @@ public class AddJSRs extends BodyTransformer implements IJbcoTransform {
           } else if (ji != null) {
             ti.setTarget(ji);
           } else {
-            ji = myBaf.newJSRInst(tu);
+            ji = Baf.newJSRInst(tu);
             u.insertAfter(ji, u.getPredOf(tu));
             ti.setTarget(ji);
 

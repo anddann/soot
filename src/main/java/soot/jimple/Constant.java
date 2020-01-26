@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 
 @SuppressWarnings("serial")
 public abstract class Constant implements Value, ConvertToBaf, Immediate {
@@ -36,8 +35,8 @@ public abstract class Constant implements Value, ConvertToBaf, Immediate {
   }
 
   /** Adds a Baf instruction pushing this constant to the stack onto <code>out</code>. */
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-    Unit u = context.getBafBody().getMyBaf().newPushInst(this);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    Unit u = Baf.newPushInst(this);
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);
   }

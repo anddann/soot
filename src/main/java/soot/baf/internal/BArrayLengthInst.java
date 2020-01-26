@@ -23,13 +23,12 @@ package soot.baf.internal;
  */
 
 import soot.baf.ArrayLengthInst;
-import soot.baf.Baf;
 import soot.baf.InstSwitch;
 import soot.util.Switch;
 
 public class BArrayLengthInst extends AbstractInst implements ArrayLengthInst {
-  public BArrayLengthInst(Baf myBaf) {
-    super(myBaf);
+  public BArrayLengthInst() {
+    super();
   }
 
   public int getInCount() {
@@ -57,7 +56,7 @@ public class BArrayLengthInst extends AbstractInst implements ArrayLengthInst {
   }
 
   public Object clone() {
-    return new BArrayLengthInst(myBaf);
+    return new BArrayLengthInst();
   }
 
 }

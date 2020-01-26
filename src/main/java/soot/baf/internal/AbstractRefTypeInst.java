@@ -30,8 +30,8 @@ import soot.baf.Baf;
 public abstract class AbstractRefTypeInst extends AbstractInst {
   Type opType;
 
-  protected AbstractRefTypeInst(RefType opType, Baf myBaf) {
-    super(myBaf);
+  protected AbstractRefTypeInst(RefType opType) {
+    super();
     this.opType = opType;
   }
 

@@ -44,8 +44,8 @@ public class JMulExpr extends AbstractJimpleFloatBinopExpr implements MulExpr {
     ((ExprSwitch) sw).caseMulExpr(this);
   }
 
-  Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newMulInst(this.getOp1().getType());
+  Object makeBafInst(Type opType) {
+    return Baf.newMulInst(this.getOp1().getType());
   }
 
   public Object clone() {

@@ -31,7 +31,7 @@ import soot.util.Switch;
 
 public class BIfCmpGeInst extends AbstractOpTypeBranchInst implements IfCmpGeInst {
   public BIfCmpGeInst(Type opType, Unit target) {
-    super(opType, myBaf.newInstBox(target), myBaf, primTypeCollector);
+    super(opType, Baf.newInstBox(target));
   }
 
   public int getInCount() {

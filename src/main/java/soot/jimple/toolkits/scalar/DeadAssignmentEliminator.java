@@ -301,7 +301,6 @@ public class DeadAssignmentEliminator extends BodyTransformer {
           }
         }
 
-        final Jimple jimple = myJimple;
         for (AssignStmt s : postProcess) {
           // Transform it into a simple invoke.
           Stmt newInvoke = Jimple.newInvokeStmt(s.getInvokeExpr());

@@ -151,7 +151,7 @@ public class TypeAssigner extends BodyTransformer {
       if (opt.use_older_type_assigner()) {
         TypeResolver.resolve((JimpleBody) b, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, );
       } else {
-        (new soot.jimple.toolkits.typing.fast.TypeResolver((JimpleBody) b, myScene, primTypeCollector, myClassHierarchy, myJimple, throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler)).inferTypes();
+        (new soot.jimple.toolkits.typing.fast.TypeResolver((JimpleBody) b, myScene, primTypeCollector, myClassHierarchy,  throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler)).inferTypes();
       }
     }
 
@@ -264,7 +264,7 @@ public class TypeAssigner extends BodyTransformer {
       // Use old type assigner last
       newJb = (JimpleBody) jb.clone();
       newTime = System.currentTimeMillis();
-      (new soot.jimple.toolkits.typing.fast.TypeResolver(newJb, myScene, primTypeCollector, myClassHierarchy, myJimple, throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler)).inferTypes();
+      (new soot.jimple.toolkits.typing.fast.TypeResolver(newJb, myScene, primTypeCollector, myClassHierarchy,  throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler)).inferTypes();
       newTime = System.currentTimeMillis() - newTime;
       oldTime = System.currentTimeMillis();
       TypeResolver.resolve(jb, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, );
@@ -277,7 +277,7 @@ public class TypeAssigner extends BodyTransformer {
       TypeResolver.resolve(oldJb, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, );
       oldTime = System.currentTimeMillis() - oldTime;
       newTime = System.currentTimeMillis();
-      (new soot.jimple.toolkits.typing.fast.TypeResolver(jb, myScene, primTypeCollector, myClassHierarchy, myJimple, throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler)).inferTypes();
+      (new soot.jimple.toolkits.typing.fast.TypeResolver(jb, myScene, primTypeCollector, myClassHierarchy,  throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler)).inferTypes();
       newTime = System.currentTimeMillis() - newTime;
       newJb = jb;
     }

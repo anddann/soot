@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 
@@ -121,10 +120,10 @@ public abstract class AbstractNewArrayExpr implements NewArrayExpr, ConvertToBaf
     ((ExprSwitch) sw).caseNewArrayExpr(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-    ((ConvertToBaf) (getSize())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) (getSize())).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
 
-    Unit u = myBaf.newNewArrayInst(getBaseType());
+    Unit u = Baf.newNewArrayInst(getBaseType());
     out.add(u);
     u.addAllTagsOf(context.getCurrentUnit());
   }

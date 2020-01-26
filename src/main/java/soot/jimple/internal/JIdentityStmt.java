@@ -25,7 +25,6 @@ package soot.jimple.internal;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 
@@ -65,16 +64,16 @@ public class JIdentityStmt extends AbstractDefinitionStmt implements IdentityStm
     ((StmtSwitch) sw).caseIdentityStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     Value currentRhs = getRightOp();
     Value newRhs;
 
     if (currentRhs instanceof ThisRef) {
-      newRhs = myBaf.newThisRef((RefType) ((ThisRef) currentRhs).getType());
+      newRhs = Baf.newThisRef((RefType) ((ThisRef) currentRhs).getType());
     } else if (currentRhs instanceof ParameterRef) {
-      newRhs = myBaf.newParameterRef(((ParameterRef) currentRhs).getType(), ((ParameterRef) currentRhs).getIndex());
+      newRhs = Baf.newParameterRef(((ParameterRef) currentRhs).getType(), ((ParameterRef) currentRhs).getIndex());
     } else if (currentRhs instanceof CaughtExceptionRef) {
-      Unit u = myBaf.newStoreInst(myBaf.getPrimTypeCollector().getRefType(),
+      Unit u = Baf.newStoreInst(Baf.getPrimTypeCollector().getRefType(),
           context.getBafLocalOfJimpleLocal((Local) getLeftOp()));
       u.addAllTagsOf(this);
       out.add(u);
@@ -82,7 +81,7 @@ public class JIdentityStmt extends AbstractDefinitionStmt implements IdentityStm
     } else {
       throw new RuntimeException("Don't know how to convert unknown rhs");
     }
-    Unit u = myBaf.newIdentityInst(context.getBafLocalOfJimpleLocal((Local) getLeftOp()), newRhs);
+    Unit u = Baf.newIdentityInst(context.getBafLocalOfJimpleLocal((Local) getLeftOp()), newRhs);
     u.addAllTagsOf(this);
     out.add(u);
   }

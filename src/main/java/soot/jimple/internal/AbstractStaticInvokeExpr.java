@@ -26,7 +26,6 @@ package soot.jimple.internal;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 
@@ -119,14 +118,14 @@ public abstract class AbstractStaticInvokeExpr extends AbstractInvokeExpr implem
     ((ExprSwitch) sw).caseStaticInvokeExpr(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     if (argBoxes != null) {
       for (ValueBox element : argBoxes) {
-        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
       }
     }
 
-    Unit u = myBaf.newStaticInvokeInst(methodRef);
+    Unit u = Baf.newStaticInvokeInst(methodRef);
     out.add(u);
     u.addAllTagsOf(context.getCurrentUnit());
   }

@@ -449,23 +449,23 @@ public class Jimple {
   /**
    * Constructs a NewVirtualInvokeExpr(Local base, SootMethodRef method, List of Immediate) grammar chunk.
    */
-  public static VirtualInvokeExpr newVirtualInvokeExpr(Local base, SootMethodRef method, List<? extends Value> args) {
+  public static VirtualInvokeExpr newVirtualInvokeExpr(Local base, SootMethodRef method, List<? extends Value> args, Options myOptions) {
     return new JVirtualInvokeExpr(base, method, args, myOptions);
   }
 
   /**
    * Constructs a NewVirtualInvokeExpr(Local base, SootMethodRef method, List of Immediate) grammar chunk.
    */
-  public static VirtualInvokeExpr newVirtualInvokeExpr(Local base, SootMethodRef method, Value... args) {
-    return newVirtualInvokeExpr(base, method, Arrays.asList(args));
+//  public static VirtualInvokeExpr newVirtualInvokeExpr(Local base, SootMethodRef method, Value... args) {
+//    return newVirtualInvokeExpr(base, method, Arrays.asList(args), myOptions);
+//  }
+
+  public static VirtualInvokeExpr newVirtualInvokeExpr(Local base, SootMethodRef method, Value arg, Options myOptions) {
+    return newVirtualInvokeExpr(base, method, Collections.<Value>singletonList(arg), myOptions);
   }
 
-  public static VirtualInvokeExpr newVirtualInvokeExpr(Local base, SootMethodRef method, Value arg) {
-    return newVirtualInvokeExpr(base, method, Collections.<Value>singletonList(arg));
-  }
-
-  public static VirtualInvokeExpr newVirtualInvokeExpr(Local base, SootMethodRef method) {
-    return newVirtualInvokeExpr(base, method, Collections.<Value>emptyList());
+  public static VirtualInvokeExpr newVirtualInvokeExpr(Local base, SootMethodRef method, Options myOptions) {
+    return newVirtualInvokeExpr(base, method, Collections.<Value>emptyList(), myOptions);
   }
 
   /**

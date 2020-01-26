@@ -25,7 +25,6 @@ package soot.jimple.internal;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 
@@ -58,9 +57,9 @@ public class JEnterMonitorStmt extends AbstractOpStmt implements EnterMonitorStm
 
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
-    Unit u = myBaf.newEnterMonitorInst();
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) (getOp())).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
+    Unit u = Baf.newEnterMonitorInst();
     u.addAllTagsOf(this);
     out.add(u);
   }

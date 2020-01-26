@@ -92,13 +92,13 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
 
   public static String dependancies[] = new String[] { "bb.jbco_j2bl", "bb.jbco_rds", "bb.jbco_ful", "bb.lp" };
   private PhaseDumper myPhaseDumper;
-  private Baf myBaf;
+
   private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
 
-  public FindDuplicateSequences(PhaseDumper myPhaseDumper, Baf myBaf, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
+  public FindDuplicateSequences(PhaseDumper myPhaseDumper,  ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
     this.myPhaseDumper = myPhaseDumper;
-    this.myBaf = myBaf;
+
     this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
   }
@@ -336,7 +336,7 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
 
         changed = true;
 
-        controlLocal = myBaf.newLocal("controlLocalfordups" + controlLocalIndex, primTypeCollector.getIntType());
+        controlLocal = Baf.newLocal("controlLocalfordups" + controlLocalIndex, primTypeCollector.getIntType());
         bLocals.add(controlLocal);
         bafToJLocals.put(controlLocal, Jimple.newLocal("controlLocalfordups" + controlLocalIndex++, primTypeCollector.getIntType()));
 
@@ -347,12 +347,12 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
         Unit first = key.get(0);
         // protectedUnits.addAll(key);
 
-        Unit store = myBaf.newStoreInst(primTypeCollector.getIntType(), controlLocal);
+        Unit store = Baf.newStoreInst(primTypeCollector.getIntType(), controlLocal);
         // protectedUnits.add(store);
 
         units.insertBefore(store, first);
 
-        Unit pushUnit = myBaf.newPushInst(constantFactory.createIntConstant(0));
+        Unit pushUnit = Baf.newPushInst(constantFactory.createIntConstant(0));
         // protectedUnits.add(pushUnit);
 
         units.insertBefore(pushUnit, store);
@@ -371,12 +371,12 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
 
           units.insertBefore(storet, firstt);
 
-          pushUnit = myBaf.newPushInst(constantFactory.createIntConstant(index++));
+          pushUnit = Baf.newPushInst(constantFactory.createIntConstant(index++));
           // protectedUnits.add(pushUnit);
 
           units.insertBefore(pushUnit, storet);
 
-          Unit goUnit = myBaf.newGotoInst(first);
+          Unit goUnit = Baf.newGotoInst(first);
           // protectedUnits.add(goUnit);
 
           units.insertAfter(goUnit, storet);
@@ -386,12 +386,12 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
         Unit insertAfter = key.get(key.size() - 1);
         // protectedUnits.add(insertAfter);
 
-        Unit swUnit = myBaf.newTableSwitchInst(units.getSuccOf(insertAfter), 1, jumps.size(), jumps);
+        Unit swUnit = Baf.newTableSwitchInst(units.getSuccOf(insertAfter), 1, jumps.size(), jumps);
         // protectedUnits.add(swUnit);
 
         units.insertAfter(swUnit, insertAfter);
 
-        Unit loadUnit = myBaf.newLoadInst(primTypeCollector.getIntType(), controlLocal);
+        Unit loadUnit = Baf.newLoadInst(primTypeCollector.getIntType(), controlLocal);
         // protectedUnits.add(loadUnit);
 
         units.insertAfter(loadUnit, insertAfter);

@@ -43,8 +43,8 @@ public class JCmplExpr extends AbstractJimpleIntBinopExpr implements CmplExpr {
     ((ExprSwitch) sw).caseCmplExpr(this);
   }
 
-  Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newCmplInst(this.getOp1().getType());
+  Object makeBafInst(Type opType) {
+    return Baf.newCmplInst(this.getOp1().getType());
   }
 
   public Object clone() {

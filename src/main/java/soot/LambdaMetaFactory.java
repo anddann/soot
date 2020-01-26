@@ -598,7 +598,7 @@ public final class LambdaMetaFactory {
       SootMethod primitiveValueMethod = wrapper.primitiveValue.get(wrapperType);
 
       Local lUnbox = lc.generateLocal(primitiveType);
-      us.add(Jimple.newAssignStmt(lUnbox, Jimple.newVirtualInvokeExpr(fromLocal, primitiveValueMethod.makeRef())));
+      us.add(Jimple.newAssignStmt(lUnbox, Jimple.newVirtualInvokeExpr(fromLocal, primitiveValueMethod.makeRef(), myOptions)));
 
       return lUnbox;
     }
@@ -706,7 +706,7 @@ public final class LambdaMetaFactory {
         case REF_INVOKE_INTERFACE:
           return Jimple.newInterfaceInvokeExpr(args.get(0), methodRef, rest(args));
         case REF_INVOKE_VIRTUAL:
-          return Jimple.newVirtualInvokeExpr(args.get(0), methodRef, rest(args));
+          return Jimple.newVirtualInvokeExpr(args.get(0), methodRef, rest(args), myOptions);
         case REF_INVOKE_SPECIAL:
           final SootClass currentClass = jb.getMethod().getDeclaringClass();
           final SootClass calledClass = methodRef.getDeclaringClass();
@@ -727,7 +727,7 @@ public final class LambdaMetaFactory {
             if (methodRef.getDeclaringClass().isInterface()) {
               return Jimple.newInterfaceInvokeExpr(args.get(0), methodRef, rest(args));
             } else {
-              return Jimple.newVirtualInvokeExpr(args.get(0), methodRef, rest(args));
+              return Jimple.newVirtualInvokeExpr(args.get(0), methodRef, rest(args), myOptions);
             }
           }
         case REF_INVOKE_CONSTRUCTOR:

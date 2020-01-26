@@ -23,13 +23,14 @@ package soot.baf.internal;
  */
 
 import soot.Unit;
+import soot.baf.Baf;
 import soot.baf.IfEqInst;
 import soot.baf.InstSwitch;
 import soot.util.Switch;
 
 public class BIfEqInst extends AbstractBranchInst implements IfEqInst {
   public BIfEqInst(Unit target) {
-    super(myBaf.newInstBox(target), myBaf);
+    super(Baf.newInstBox(target));
   }
 
   public int getInCount() {

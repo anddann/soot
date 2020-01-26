@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 
@@ -82,14 +81,14 @@ public class JInvokeStmt extends AbstractStmt implements InvokeStmt {
     ((StmtSwitch) sw).caseInvokeStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     InvokeExpr ie = getInvokeExpr();
 
     context.setCurrentUnit(this);
 
-    ((ConvertToBaf) ie).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+    ((ConvertToBaf) ie).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
     if (!ie.getMethodRef().returnType().equals(primTypeCollector.getVoidType())) {
-      Unit u = myBaf.newPopInst(ie.getMethodRef().returnType());
+      Unit u = Baf.newPopInst(ie.getMethodRef().returnType());
       u.addAllTagsOf(this);
       out.add(u);
     }

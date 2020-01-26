@@ -114,7 +114,7 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
         }
         if (headList.get(i) == headList.get(j)) {
           Trap t = trapList.get(i);
-          Unit nop = myBaf.newNopInst();
+          Unit nop = Baf.newNopInst();
           units.insertBeforeNoRedirect(nop, headList.get(i));
           headList.set(i, nop);
           t.setBeginUnit(nop);
@@ -132,7 +132,7 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
       first = unit;
     }
     if (first == null) {
-      first = myBaf.newNopInst();
+      first = Baf.newNopInst();
       units.insertBefore(first, units.getFirst());
     } else {
       first = (Unit) units.getSuccOf(first);
@@ -169,12 +169,12 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
       }
 
       // local to hold control flow flag (0=try, 1=catch)
-      Local controlLocal = myBaf.newLocal("controlLocal_tccomb" + trapCount, primTypeCollector.getIntType());
+      Local controlLocal = Baf.newLocal("controlLocal_tccomb" + trapCount, primTypeCollector.getIntType());
       locs.add(controlLocal);
 
       // initialize local to 0=try
-      Unit pushZero = myBaf.newPushInst(constantFactory.createIntConstant(0));
-      Unit storZero = myBaf.newStoreInst(primTypeCollector.getIntType(), controlLocal);
+      Unit pushZero = Baf.newPushInst(constantFactory.createIntConstant(0));
+      Unit storZero = Baf.newStoreInst(primTypeCollector.getIntType(), controlLocal);
 
       // this is necessary even though it seems like it shouldn't be
       units.insertBeforeNoRedirect((Unit) pushZero.clone(), first);
@@ -193,17 +193,17 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
         for (int i = 0; i < s.size(); i++) {
           Type type = s.pop();
 
-          Local varLocal = myBaf.newLocal("varLocal_tccomb" + varCount++, type);
+          Local varLocal = Baf.newLocal("varLocal_tccomb" + varCount++, type);
           locs.add(varLocal);
           varsToLoad.push(varLocal);
-          units.add(myBaf.newStoreInst(type, varLocal));
+          units.add(Baf.newStoreInst(type, varLocal));
 
           units.insertBeforeNoRedirect(FixUndefinedLocals.getPushInitializer(varLocal, type), first);
-          units.insertBeforeNoRedirect(myBaf.newStoreInst(type, varLocal), first);
+          units.insertBeforeNoRedirect(Baf.newStoreInst(type, varLocal), first);
         }
       }
-      units.add(myBaf.newPushInst(myNullConstant));
-      units.add(myBaf.newGotoInst(begUnit));
+      units.add(Baf.newPushInst(myNullConstant));
+      units.add(Baf.newGotoInst(begUnit));
 
       // for each pred of the beginUnit of the try, we must insert goto initializer
       for (int i = 0; i < l.size(); i++) {
@@ -216,24 +216,24 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
 
           Unit succ = units.getSuccOf(ifPred);
           if (succ == begUnit) {
-            units.insertAfter(myBaf.newGotoInst(pushZero), ifPred);
+            units.insertAfter(Baf.newGotoInst(pushZero), ifPred);
           }
         } else if (pred instanceof GotoInst && ((GotoInst) pred).getTarget() == begUnit) {
           ((GotoInst) pred).setTarget(pushZero);
         } else {
-          units.insertAfter(myBaf.newGotoInst(pushZero), pred);
+          units.insertAfter(Baf.newGotoInst(pushZero), pred);
         }
       }
 
       Unit handlerUnit = t.getHandlerUnit();
-      Unit newBeginUnit = myBaf.newLoadInst(primTypeCollector.getIntType(), controlLocal);
+      Unit newBeginUnit = Baf.newLoadInst(primTypeCollector.getIntType(), controlLocal);
       units.insertBefore(newBeginUnit, begUnit);
-      units.insertBefore(myBaf.newIfNeInst(handlerUnit), begUnit);
-      units.insertBefore(myBaf.newPopInst(primTypeCollector.getRefType()), begUnit);
+      units.insertBefore(Baf.newIfNeInst(handlerUnit), begUnit);
+      units.insertBefore(Baf.newPopInst(primTypeCollector.getRefType()), begUnit);
 
       while (varsToLoad.size() > 0) {
         Local varLocal = (Local) varsToLoad.pop();
-        units.insertBefore(myBaf.newLoadInst(varLocal.getType(), varLocal), begUnit);
+        units.insertBefore(Baf.newLoadInst(varLocal.getType(), varLocal), begUnit);
       }
 
       try {
@@ -242,7 +242,7 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
           loadBooleanValue(units, f[0], begUnit);
           loadBooleanValue(units, f[1], begUnit);
 
-          units.insertBeforeNoRedirect(myBaf.newIfCmpEqInst(primTypeCollector.getBooleanType(), begUnit), begUnit);
+          units.insertBeforeNoRedirect(Baf.newIfCmpEqInst(primTypeCollector.getBooleanType(), begUnit), begUnit);
         }
       } catch (NullPointerException npe) {
         logger.debug(npe.getMessage(), npe);
@@ -250,10 +250,10 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
 
       // randomize the increment - sometimes store one, sometimes just set to 1
       if (Rand.getInt() % 2 == 0) {
-        units.insertBeforeNoRedirect(myBaf.newPushInst(constantFactory.createIntConstant(Rand.getInt(3) + 1)), begUnit);
-        units.insertBeforeNoRedirect(myBaf.newStoreInst(primTypeCollector.getIntType(), controlLocal), begUnit);
+        units.insertBeforeNoRedirect(Baf.newPushInst(constantFactory.createIntConstant(Rand.getInt(3) + 1)), begUnit);
+        units.insertBeforeNoRedirect(Baf.newStoreInst(primTypeCollector.getIntType(), controlLocal), begUnit);
       } else {
-        units.insertBeforeNoRedirect(myBaf.newIncInst(controlLocal, constantFactory.createIntConstant(Rand.getInt(3) + 1)), begUnit);
+        units.insertBeforeNoRedirect(Baf.newIncInst(controlLocal, constantFactory.createIntConstant(Rand.getInt(3) + 1)), begUnit);
       }
 
       trapCount--;
@@ -269,10 +269,10 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
   }
 
   private void loadBooleanValue(PatchingChain<Unit> units, SootField f, Unit insert) {
-    units.insertBefore(myBaf.newStaticGetInst(f.makeRef()), insert);
+    units.insertBefore(Baf.newStaticGetInst(f.makeRef()), insert);
     if (f.getType() instanceof RefType) {
       SootMethod boolInit = ((RefType) f.getType()).getSootClass().getMethod("boolean booleanValue()");
-      units.insertBefore(myBaf.newVirtualInvokeInst(boolInit.makeRef()), insert);
+      units.insertBefore(Baf.newVirtualInvokeInst(boolInit.makeRef()), insert);
     }
   }
 

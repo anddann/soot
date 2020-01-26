@@ -106,7 +106,7 @@ public class Scene // extends AbstractHost
   private ThrowAnalysis myDalvikThrowAnalysis;
   private PackageNamer myPackageNamer;
   private PrimTypeCollector primTypeCollector;
-  private Baf myBaf;
+
   private ConstantFactory constantFactory;
   private FullObjectFactory fullObjectFactory;
 
@@ -115,7 +115,7 @@ public class Scene // extends AbstractHost
                PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility,
                EntryPoints myEntryPoints, PedanticThrowAnalysis myPedanticThrowAnalysis, UnitThrowAnalysis myUnitThrowAnalysis,
                DalvikThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer,
-               PrimTypeCollector primTypeCollector, Baf myBaf, ConstantFactory constantFactory, FullObjectFactory fullObjectFactory) {
+               PrimTypeCollector primTypeCollector,  ConstantFactory constantFactory, FullObjectFactory fullObjectFactory) {
     this.myOptions = myOptions;
     this.myPhaseOptions = myPhaseOptions;
     this.mySourceLocator = mySourceLocator;
@@ -128,7 +128,7 @@ public class Scene // extends AbstractHost
     this.myDalvikThrowAnalysis = myDalvikThrowAnalysis;
     this.myPackageNamer = myPackageNamer;
     this.primTypeCollector = primTypeCollector;
-    this.myBaf = myBaf;
+
     this.constantFactory = constantFactory;
     this.fullObjectFactory = fullObjectFactory;
     setReservedNames();

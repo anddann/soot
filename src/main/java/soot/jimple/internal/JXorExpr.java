@@ -43,8 +43,8 @@ public class JXorExpr extends AbstractJimpleIntLongBinopExpr implements XorExpr 
     ((ExprSwitch) sw).caseXorExpr(this);
   }
 
-  Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newXorInst(this.getOp1().getType());
+  Object makeBafInst(Type opType) {
+    return Baf.newXorInst(this.getOp1().getType());
   }
 
   public Object clone() {

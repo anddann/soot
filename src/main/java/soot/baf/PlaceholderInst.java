@@ -36,13 +36,13 @@ public class PlaceholderInst extends AbstractInst {
     return "<placeholder: " + source.toString() + ">";
   }
 
-  PlaceholderInst(Unit source, Baf myBaf) {
-    super(myBaf);
+  PlaceholderInst(Unit source) {
+    super();
     this.source = source;
   }
 
   public Object clone() {
-    return new PlaceholderInst(getSource(), myBaf);
+    return new PlaceholderInst(getSource());
   }
 
   public Unit getSource() {

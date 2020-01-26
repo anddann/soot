@@ -43,8 +43,8 @@ public class JSubExpr extends AbstractJimpleFloatBinopExpr implements SubExpr {
     ((ExprSwitch) sw).caseSubExpr(this);
   }
 
-  Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newSubInst(this.getOp1().getType());
+  Object makeBafInst(Type opType) {
+    return Baf.newSubInst(this.getOp1().getType());
   }
 
   public Object clone() {

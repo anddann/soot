@@ -141,7 +141,7 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
                           // Calling another constructor in the same class
                           break;
                         }
-                        Stmt initStmt = myJimple
+                        Stmt initStmt = Jimple
                             .newAssignStmt(Jimple.newInstanceFieldRef(body.getThisLocal(), sf.makeRef()), constant);
 
                         body.getUnits().insertAfter(initStmt, s);

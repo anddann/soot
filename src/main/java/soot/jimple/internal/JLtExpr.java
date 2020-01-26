@@ -43,10 +43,10 @@ public class JLtExpr extends AbstractJimpleIntBinopExpr implements LtExpr {
     ((ExprSwitch) sw).caseLtExpr(this);
   }
 
-  Object makeBafInst(Type opType, Baf myBaf) {
+  Object makeBafInst(Type opType) {
     throw new RuntimeException("unsupported conversion: " + this);
   }
-  // Object makeBafInst(Type opType) { return myBaf.newLtInst(this.getOp1().getType()); }
+  // Object makeBafInst(Type opType) { return Baf.newLtInst(this.getOp1().getType()); }
 
   public Object clone() {
     return new JLtExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()));

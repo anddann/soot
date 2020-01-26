@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 
@@ -149,14 +148,14 @@ public abstract class AbstractNewMultiArrayExpr implements NewMultiArrayExpr, Co
     ((ExprSwitch) sw).caseNewMultiArrayExpr(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     List<Value> sizes = getSizes();
 
     for (int i = 0; i < sizes.size(); i++) {
-      ((ConvertToBaf) (sizes.get(i))).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+      ((ConvertToBaf) (sizes.get(i))).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
     }
 
-    Unit u = myBaf.newNewMultiArrayInst(getBaseType(), sizes.size());
+    Unit u = Baf.newNewMultiArrayInst(getBaseType(), sizes.size());
     out.add(u);
     u.addAllTagsOf(context.getCurrentUnit());
   }

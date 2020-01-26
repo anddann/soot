@@ -213,7 +213,7 @@ public class DavaBody extends Body {
   private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
   private ConstantFactory constantFactory;
   ;
-  private Baf myBaf;
+
     private Scene myScene;
   private UselessLabelFinder myUselessLabelFinder;
 
@@ -225,7 +225,7 @@ public class DavaBody extends Body {
            IfFinder myIfFinder, SwitchFinder mySwitchFinder, SynchronizedBlockFinder mySynchronizedBlockFinder,
            SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            MonitorConverter myMonitorConverter, ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover,
-           PhaseOptions myPhaseOptions, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constantFactory , Baf myBaf, Scene myScene, UselessLabelFinder myUselessLabelFinder) {
+           PhaseOptions myPhaseOptions, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, Dava myDava, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ConstantFactory constantFactory ,  Scene myScene, UselessLabelFinder myUselessLabelFinder) {
     super(m, myOptions, myPrinter);
     this.myExceptionFinder = myExceptionFinder;
     this.myCycleFinder = myCycleFinder;
@@ -247,7 +247,7 @@ public class DavaBody extends Body {
     this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     this.constantFactory = constantFactory;
 
-    this.myBaf = myBaf;
+
       this.myScene = myScene;
     this.myUselessLabelFinder = myUselessLabelFinder;
 
@@ -344,10 +344,10 @@ public class DavaBody extends Body {
            ThrowNullConverter myThrowNullConverter, SequenceFinder mySequenceFinder, LabeledBlockFinder myLabeledBlockFinder,
            CycleFinder myCycleFinder, IfFinder myIfFinder, SwitchFinder mySwitchFinder, AbruptEdgeFinder myAbruptEdgeFinder,
            UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
-           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constantFactory, PhaseDumper myPhaseDumper , PrimTypeCollector primTypeCollector, Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, PackageNamer myPackageNamer, UselessLabelFinder myUselessLabelFinder) {
+           ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Dava myDava, ConstantFactory constantFactory, PhaseDumper myPhaseDumper , PrimTypeCollector primTypeCollector,  TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, PackageNamer myPackageNamer, UselessLabelFinder myUselessLabelFinder) {
     this(body.getMethod(), myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
         mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
-        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myPackageNamer, primTypeCollector, myDava, myClosestAbruptTargetFinder, constantFactory,  myBaf, myScene, myUselessLabelFinder);
+        myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myPackageNamer, primTypeCollector, myDava, myClosestAbruptTargetFinder, constantFactory,   myScene, myUselessLabelFinder);
     debug("DavaBody", "creating DavaBody for" + body.getMethod().toString());
     this.myDava.log("\nstart method " + body.getMethod().toString());
 
@@ -424,7 +424,7 @@ public class DavaBody extends Body {
       boolean force = PhaseOptions.getBoolean(options, "enabled");
       // System.out.println("force is "+force);
       if (force) {
-        AST.apply(new SuperFirstStmtHandler((ASTMethodNode) AST, myTryContentsFinder, myASTWalker, myScene, myOptions, this.myPackageNamer, this.primTypeCollector,  myBaf, constantFactory));
+        AST.apply(new SuperFirstStmtHandler((ASTMethodNode) AST, myTryContentsFinder, myASTWalker, myScene, myOptions, this.myPackageNamer, this.primTypeCollector,   constantFactory));
       }
 
       debug("DavaBody", "PreInit booleans is" + G.v().SootMethodAddedByDava);
@@ -1182,7 +1182,7 @@ public class DavaBody extends Body {
 
       if (ie instanceof VirtualInvokeExpr) {
         VirtualInvokeExpr vie = (VirtualInvokeExpr) ie;
-        vb.setValue(new DVirtualInvokeExpr(vie.getBase(), vie.getMethodRef(), vie.getArgs(), thisLocals,  myBaf, myScene));
+        vb.setValue(new DVirtualInvokeExpr(vie.getBase(), vie.getMethodRef(), vie.getArgs(), thisLocals,   myScene));
       }
 
       else if (ie instanceof SpecialInvokeExpr) {

@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.grimp.PrecedenceTest;
 import soot.jimple.*;
 import soot.util.Switch;
@@ -118,10 +117,10 @@ public abstract class AbstractInstanceFieldRef implements InstanceFieldRef, Conv
     return getField().equivHashCode() * 101 + baseBox.getValue().equivHashCode() + 17;
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-    ((ConvertToBaf) getBase()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) getBase()).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
     Unit u;
-    out.add(u = myBaf.newFieldGetInst(fieldRef));
+    out.add(u = Baf.newFieldGetInst(fieldRef));
 
     u.addAllTagsOf(context.getCurrentUnit());
   }

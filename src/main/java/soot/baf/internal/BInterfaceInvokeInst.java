@@ -25,7 +25,6 @@ package soot.baf.internal;
 
 import soot.SootMethodRef;
 import soot.UnitPrinter;
-import soot.baf.Baf;
 import soot.baf.InstSwitch;
 import soot.baf.InterfaceInvokeInst;
 import soot.util.Switch;
@@ -42,8 +41,8 @@ public class BInterfaceInvokeInst extends AbstractInvokeInst implements Interfac
     return super.getInMachineCount() + 1;
   }
 
-  public BInterfaceInvokeInst(SootMethodRef methodRef, int argCount, Baf myBaf) {
-    super(myBaf);
+  public BInterfaceInvokeInst(SootMethodRef methodRef, int argCount) {
+    super();
     if (methodRef.isStatic()) {
       throw new RuntimeException("wrong static-ness");
     }
@@ -52,7 +51,7 @@ public class BInterfaceInvokeInst extends AbstractInvokeInst implements Interfac
   }
 
   public Object clone() {
-    return new BInterfaceInvokeInst(methodRef, getArgCount(), myBaf);
+    return new BInterfaceInvokeInst(methodRef, getArgCount());
   }
 
   final public String getName() {

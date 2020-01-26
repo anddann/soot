@@ -43,8 +43,8 @@ public class JAndExpr extends AbstractJimpleIntLongBinopExpr implements AndExpr 
     ((ExprSwitch) sw).caseAndExpr(this);
   }
 
-  Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newAndInst(this.getOp1().getType());
+  Object makeBafInst(Type opType) {
+    return Baf.newAndInst(this.getOp1().getType());
   }
 
   public Object clone() {

@@ -26,7 +26,6 @@ package soot.jimple.internal;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 
@@ -132,16 +131,16 @@ public abstract class AbstractInterfaceInvokeExpr extends AbstractInstanceInvoke
     return argCount;
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-    ((ConvertToBaf) getBase()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) getBase()).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
 
     if (argBoxes != null) {
       for (ValueBox element : argBoxes) {
-        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
       }
     }
 
-    Unit u = myBaf.newInterfaceInvokeInst(methodRef, argCountOf(methodRef));
+    Unit u = Baf.newInterfaceInvokeInst(methodRef, argCountOf(methodRef));
     out.add(u);
     u.addAllTagsOf(context.getCurrentUnit());
   }

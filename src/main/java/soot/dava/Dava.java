@@ -91,7 +91,7 @@ public class Dava {
     private PhaseDumper myPhaseDumper;
     ;
     private PrimTypeCollector primTypeCollector;
-    private Baf myBaf;
+
     private TryContentsFinder myTryContentsFinder;
     private ASTWalker myASTWalker;
     private Scene myScene;
@@ -105,7 +105,7 @@ public class Dava {
                 ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
                 ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter,
                 ConstantFactory constantFactory, PhaseDumper myPhaseDumper, , PrimTypeCollector primTypeCollector,
-                Baf myBaf, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, PackageNamer myPackageNamer, UselessLabelFinder myUselessLabelFinder) {
+                 TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, PackageNamer myPackageNamer, UselessLabelFinder myUselessLabelFinder) {
         this.myExceptionFinder = myExceptionFinder;
         this.myCycleFinder = myCycleFinder;
         this.myIfFinder = myIfFinder;
@@ -125,7 +125,7 @@ public class Dava {
         this.myPhaseDumper = myPhaseDumper;
 
         this.primTypeCollector = primTypeCollector;
-        this.myBaf = myBaf;
+
         this.myTryContentsFinder = myTryContentsFinder;
         this.myASTWalker = myASTWalker;
         this.myScene = myScene;
@@ -160,7 +160,7 @@ public class Dava {
         DavaBody davaBody = new DavaBody(m, myOptions, myPrinter, myExceptionFinder, myCycleFinder, myIfFinder, mySwitchFinder,
                 mySynchronizedBlockFinder, mySequenceFinder, myLabeledBlockFinder, myAbruptEdgeFinder, myMonitorConverter,
                 myThrowNullConverter, myUselessTryRemover, myPhaseOptions, myTryContentsFinder, myASTWalker, myPackageNamer, primTypeCollector, this,
-                myClosestAbruptTargetFinder, constantFactory,  myBaf, myScene, myUselessLabelFinder);
+                myClosestAbruptTargetFinder, constantFactory,   myScene, myUselessLabelFinder);
         return davaBody;
     }
 
@@ -173,7 +173,7 @@ public class Dava {
                 myThrowNullConverter, mySequenceFinder, myLabeledBlockFinder,
                 myCycleFinder, myIfFinder, mySwitchFinder, myAbruptEdgeFinder,
                 myUselessTryRemover, myPhaseOptions,
-                myClosestAbruptTargetFinder, this, constantFactory, myPhaseDumper,  primTypeCollector, myBaf, myTryContentsFinder, myASTWalker, myScene, myPackageNamer, myUselessLabelFinder);
+                myClosestAbruptTargetFinder, this, constantFactory, myPhaseDumper,  primTypeCollector,  myTryContentsFinder, myASTWalker, myScene, myPackageNamer, myUselessLabelFinder);
 
     }
 

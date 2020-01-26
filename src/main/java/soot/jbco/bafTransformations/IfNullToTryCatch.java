@@ -91,15 +91,15 @@ public class IfNullToTryCatch extends BodyTransformer implements IJbcoTransform 
       if (u instanceof IfNullInst && Rand.getInt(10) <= weight) {
         Unit targ = ((IfNullInst) u).getTarget();
         Unit succ = units.getSuccOf(u);
-        Unit pop = myBaf.newPopInst(primTypeCollector.getRefType());
+        Unit pop = Baf.newPopInst(primTypeCollector.getRefType());
         Unit popClone = (Unit) pop.clone();
         units.insertBefore(pop, targ);
 
-        Unit gotoTarg = myBaf.newGotoInst(targ);
+        Unit gotoTarg = Baf.newGotoInst(targ);
         units.insertBefore(gotoTarg, pop);
 
         if (Rand.getInt(2) == 0) {
-          Unit methCall = myBaf.newVirtualInvokeInst(toStrg.makeRef());
+          Unit methCall = Baf.newVirtualInvokeInst(toStrg.makeRef());
           units.insertBefore(methCall, u);
 
           if (Rand.getInt(2) == 0) {
@@ -107,49 +107,49 @@ public class IfNullToTryCatch extends BodyTransformer implements IJbcoTransform 
             units.insertAfter(popClone, methCall);
           }
 
-          b.getTraps().add(myBaf.newTrap(exc, methCall, succ, pop));
+          b.getTraps().add(Baf.newTrap(exc, methCall, succ, pop));
         } else {
-          Unit throwu = myBaf.newThrowInst();
+          Unit throwu = Baf.newThrowInst();
           units.insertBefore(throwu, u);
           units.remove(u);
 
-          units.insertBefore(myBaf.newPushInst(myNullConstant), throwu);
-          Unit ifunit = myBaf.newIfCmpNeInst(primTypeCollector.getRefType(), succ);
+          units.insertBefore(Baf.newPushInst(myNullConstant), throwu);
+          Unit ifunit = Baf.newIfCmpNeInst(primTypeCollector.getRefType(), succ);
           units.insertBefore(ifunit, throwu);
-          units.insertBefore(myBaf.newPushInst(myNullConstant), throwu);
+          units.insertBefore(Baf.newPushInst(myNullConstant), throwu);
 
-          b.getTraps().add(myBaf.newTrap(exc, throwu, succ, pop));
+          b.getTraps().add(Baf.newTrap(exc, throwu, succ, pop));
         }
         count++;
         change = true;
       } else if (u instanceof IfNonNullInst && Rand.getInt(10) <= weight) {
         Unit targ = ((IfNonNullInst) u).getTarget();
 
-        Unit methCall = myBaf.newVirtualInvokeInst(eq.makeRef());
+        Unit methCall = Baf.newVirtualInvokeInst(eq.makeRef());
         units.insertBefore(methCall, u);
-        units.insertBefore(myBaf.newPushInst(myNullConstant), methCall);
+        units.insertBefore(Baf.newPushInst(myNullConstant), methCall);
         if (Rand.getInt(2) == 0) {
-          Unit pop = myBaf.newPopInst(primTypeCollector.getBooleanType());
+          Unit pop = Baf.newPopInst(primTypeCollector.getBooleanType());
           units.insertBefore(pop, u);
-          Unit gotoTarg = myBaf.newGotoInst(targ);
+          Unit gotoTarg = Baf.newGotoInst(targ);
           units.insertBefore(gotoTarg, u);
 
-          pop = myBaf.newPopInst(primTypeCollector.getRefType());
+          pop = Baf.newPopInst(primTypeCollector.getRefType());
           units.insertAfter(pop, u);
           units.remove(u);
 
           // add first, so it is always checked first in the exception table
-          b.getTraps().addFirst(myBaf.newTrap(exc, methCall, gotoTarg, pop));
+          b.getTraps().addFirst(Baf.newTrap(exc, methCall, gotoTarg, pop));
         } else {
-          Unit iffalse = myBaf.newIfEqInst(targ);
+          Unit iffalse = Baf.newIfEqInst(targ);
           units.insertBefore(iffalse, u);
-          units.insertBefore(myBaf.newPushInst(myNullConstant), u);
-          Unit pop = myBaf.newPopInst(primTypeCollector.getRefType());
+          units.insertBefore(Baf.newPushInst(myNullConstant), u);
+          Unit pop = Baf.newPopInst(primTypeCollector.getRefType());
           units.insertAfter(pop, u);
           units.remove(u);
 
           // add first, so it is always checked first in the exception table
-          b.getTraps().addFirst(myBaf.newTrap(exc, methCall, iffalse, pop));
+          b.getTraps().addFirst(Baf.newTrap(exc, methCall, iffalse, pop));
         }
         count++;
         change = true;

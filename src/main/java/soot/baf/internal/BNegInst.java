@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class BNegInst extends AbstractOpTypeInst implements NegInst {
   public BNegInst(Type opType) {
-    super(primTypeCollector.getRefType(), opType, myBaf);
+    super(primTypeCollector.getRefType());
   }
 
   public int getInCount() {

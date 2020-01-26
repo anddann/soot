@@ -36,8 +36,8 @@ public abstract class AbstractBranchInst extends AbstractInst {
 
   final List<UnitBox> targetBoxes;
 
-  AbstractBranchInst(UnitBox targetBox, Baf myBaf) {
-    super(myBaf);
+  AbstractBranchInst(UnitBox targetBox) {
+    super();
     this.targetBox = targetBox;
 
     targetBoxes = Collections.singletonList(targetBox);

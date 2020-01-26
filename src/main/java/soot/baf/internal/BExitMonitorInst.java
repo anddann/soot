@@ -22,14 +22,13 @@ package soot.baf.internal;
  * #L%
  */
 
-import soot.baf.Baf;
 import soot.baf.ExitMonitorInst;
 import soot.baf.InstSwitch;
 import soot.util.Switch;
 
 public class BExitMonitorInst extends AbstractInst implements ExitMonitorInst {
-  public BExitMonitorInst(Baf myBaf) {
-    super(myBaf);
+  public BExitMonitorInst() {
+    super();
   }
 
   public int getInCount() {
@@ -57,7 +56,7 @@ public class BExitMonitorInst extends AbstractInst implements ExitMonitorInst {
   }
 
   public Object clone() {
-    return new BExitMonitorInst(myBaf);
+    return new BExitMonitorInst();
   }
 
 }

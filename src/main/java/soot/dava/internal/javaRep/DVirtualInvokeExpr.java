@@ -38,7 +38,7 @@ public class DVirtualInvokeExpr extends GVirtualInvokeExpr {
   private HashSet<Object> thisLocals;
   private Scene myScene;
 
-  public DVirtualInvokeExpr(Value base, SootMethodRef methodRef, List args, HashSet<Object> thisLocals, , Baf myBaf, Scene myScene) {
+  public DVirtualInvokeExpr(Value base, SootMethodRef methodRef, List args, HashSet<Object> thisLocals, ,  Scene myScene) {
     super(base, methodRef, args);
 
     this.thisLocals = thisLocals;
@@ -127,6 +127,6 @@ public class DVirtualInvokeExpr extends GVirtualInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DVirtualInvokeExpr(Grimp.cloneIfNecessary(getBase()), methodRef, clonedArgs, thisLocals,  myBaf, myScene);
+    return new DVirtualInvokeExpr(Grimp.cloneIfNecessary(getBase()), methodRef, clonedArgs, thisLocals,   myScene);
   }
 }

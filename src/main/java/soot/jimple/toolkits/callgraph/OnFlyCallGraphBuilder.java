@@ -1304,7 +1304,7 @@ public class OnFlyCallGraphBuilder {
         if (options.guards().equals("print")) {
           // logger.error(exc.getMessage(), exc);
           VirtualInvokeExpr printStackTraceExpr = Jimple.newVirtualInvokeExpr(exceptionLocal, myScene
-              .getSootClass("java.lang.Throwable").getMethod("printStackTrace", Collections.<Type>emptyList()).makeRef());
+              .getSootClass("java.lang.Throwable").getMethod("printStackTrace", Collections.<Type>emptyList()).makeRef(), myOptions);
           InvokeStmt printStackTraceStmt = Jimple.newInvokeStmt(printStackTraceExpr);
           body.getUnits().insertAfter(printStackTraceStmt, initStmt);
         } else if (options.guards().equals("throw")) {

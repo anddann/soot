@@ -44,8 +44,8 @@ public class JAddExpr extends AbstractJimpleFloatBinopExpr implements AddExpr {
     ((ExprSwitch) sw).caseAddExpr(this);
   }
 
-  Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newAddInst(this.getOp1().getType());
+  Object makeBafInst(Type opType) {
+    return Baf.newAddInst(this.getOp1().getType());
   }
 
   public Object clone() {

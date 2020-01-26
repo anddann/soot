@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.baf.PlaceholderInst;
 import soot.jimple.*;
 import soot.util.Switch;
@@ -155,16 +154,16 @@ public class JTableSwitchStmt extends AbstractSwitchStmt implements TableSwitchS
     ((StmtSwitch) sw).caseTableSwitchStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     List<PlaceholderInst> targetPlaceholders = new ArrayList<PlaceholderInst>();
 
-    ((ConvertToBaf) getKey()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+    ((ConvertToBaf) getKey()).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
 
     for (Unit target : getTargets()) {
-      targetPlaceholders.add(myBaf.newPlaceholderInst(target));
+      targetPlaceholders.add(Baf.newPlaceholderInst(target));
     }
 
-    Unit u = myBaf.newTableSwitchInst(myBaf.newPlaceholderInst(getDefaultTarget()), lowIndex, highIndex,
+    Unit u = Baf.newTableSwitchInst(Baf.newPlaceholderInst(getDefaultTarget()), lowIndex, highIndex,
         targetPlaceholders);
     u.addAllTagsOf(this);
     out.add(u);

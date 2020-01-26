@@ -49,21 +49,7 @@ import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.javaToJimple.LocalGenerator;
-import soot.jimple.ArrayRef;
-import soot.jimple.AssignStmt;
-import soot.jimple.FieldRef;
-import soot.jimple.GotoStmt;
-import soot.jimple.InstanceFieldRef;
-import soot.jimple.InstanceInvokeExpr;
-import soot.jimple.InterfaceInvokeExpr;
-import soot.jimple.InvokeExpr;
-import soot.jimple.InvokeStmt;
-import soot.jimple.JimpleBody;
-import soot.jimple.NopStmt;
-import soot.jimple.SpecialInvokeExpr;
-import soot.jimple.StaticInvokeExpr;
-import soot.jimple.Stmt;
-import soot.jimple.VirtualInvokeExpr;
+import soot.jimple.*;
 import soot.jimple.toolkits.reflection.ReflectionTraceInfo.Kind;
 import soot.options.CGOptions;
 import soot.rtlib.tamiflex.DefaultHandler;
@@ -381,8 +367,8 @@ public class ReflectiveCallsInliner extends SceneTransformer {
                     .equals("<java.lang.Class: java.lang.Class forName(java.lang.String,boolean,java.lang.ClassLoader)>"))) {
           found = true;
           Value classNameValue = ie.getArg(0);
-          newUnits.add(myJimple
-              .newInvokeStmt(myJimple
+          newUnits.add(Jimple
+              .newInvokeStmt(Jimple
                   .newStaticInvokeExpr(myScene
                       .getMethod("<soot.rtlib.tamiflex.ReflectiveCalls: void knownClassForName(int,java.lang.String)>")
                       .makeRef(), constantFactory.createIntConstant(callSiteId), classNameValue)));
@@ -390,8 +376,8 @@ public class ReflectiveCallsInliner extends SceneTransformer {
             && ie.getMethodRef().getSignature().equals("<java.lang.Class: java.lang.Object newInstance()>")) {
           found = true;
           Local classLocal = (Local) ((InstanceInvokeExpr) ie).getBase();
-          newUnits.add(myJimple
-              .newInvokeStmt(myJimple
+          newUnits.add(Jimple
+              .newInvokeStmt(Jimple
                   .newStaticInvokeExpr(myScene
                       .getMethod("<soot.rtlib.tamiflex.ReflectiveCalls: void knownClassNewInstance(int,java.lang.Class)>")
                       .makeRef(), constantFactory.createIntConstant(callSiteId), classLocal)));

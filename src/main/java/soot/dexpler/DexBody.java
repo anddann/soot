@@ -208,7 +208,6 @@ public class DexBody {
    * @param code
    *          the codeitem that is contained in this body
    * @param method
-   * @param myJimple
    * @param constantFactory
    * @param dalivkTyper
    * @param primTypeCollector
@@ -336,7 +335,7 @@ public class DexBody {
   protected void extractDexInstructions(MethodImplementation code) {
     int address = 0;
     for (Instruction instruction : code.getInstructions()) {
-      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address, myJimple, constantFactory, dalivkTyper, primTypeCollector, myScene, myJimple, myOptions, myDalvikTyper, mySootResolver);
+      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address,  constantFactory, dalivkTyper, primTypeCollector, myScene, myOptions, myDalvikTyper, mySootResolver);
       instructions.add(dexInstruction);
       instructionAtAddress.put(address, dexInstruction);
       address += instruction.getCodeUnits();
@@ -482,7 +481,6 @@ public class DexBody {
    */
   public Body jimplify(Body b, SootMethod m) {
 
-    final Jimple jimple = myJimple;
     final UnknownType unknownType = primTypeCollector.getUnknownType();
     final NullConstant nullConstant = constantFactory.getNullConstant();
     final Options options = myOptions;
@@ -1058,7 +1056,6 @@ public class DexBody {
    * Should only be called at the end jimplify.
    */
   private void addTraps() {
-    final Jimple jimple = myJimple;
     for (TryBlock<? extends ExceptionHandler> tryItem : tries) {
       int startAddress = tryItem.getStartCodeAddress();
       int length = tryItem.getCodeUnitCount();// .getTryLength();

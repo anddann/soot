@@ -76,9 +76,9 @@ public class UnreachableMethodTransformer extends BodyTransformer {
 
     toCall = myScene.getMethod("<java.io.PrintStream: void println(java.lang.String)>");
     list.add(Jimple.newInvokeStmt(Jimple.newVirtualInvokeExpr(tmpRef, toCall.makeRef(),
-        constantFactory.createStringConstant("Executing supposedly unreachable method:"))));
+        constantFactory.createStringConstant("Executing supposedly unreachable method:"), myOptions)));
     list.add(Jimple.newInvokeStmt(Jimple.newVirtualInvokeExpr(tmpRef, toCall.makeRef(),
-        constantFactory.createStringConstant("\t" + method.getDeclaringClass().getName() + "." + method.getName()))));
+        constantFactory.createStringConstant("\t" + method.getDeclaringClass().getName() + "." + method.getName()), myOptions)));
 
     toCall = myScene.getMethod("<java.lang.System: void exit(int)>");
     list.add(Jimple.newInvokeStmt(Jimple.newStaticInvokeExpr(toCall.makeRef(), constantFactory.createIntConstant(1))));

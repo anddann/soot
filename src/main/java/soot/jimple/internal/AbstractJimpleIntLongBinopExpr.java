@@ -43,13 +43,13 @@ abstract public class AbstractJimpleIntLongBinopExpr extends AbstractIntLongBino
 
     }
 
-    public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-        ((ConvertToBaf) this.getOp1()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
-        ((ConvertToBaf) this.getOp2()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
-        Unit u = (Unit) makeBafInst(this.getOp1().getType(), myBaf);
+    public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+        ((ConvertToBaf) this.getOp1()).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) this.getOp2()).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
+        Unit u = (Unit) makeBafInst(this.getOp1().getType());
         out.add(u);
         u.addAllTagsOf(context.getCurrentUnit());
     }
 
-    abstract Object makeBafInst(Type opType, Baf myBaf);
+    abstract Object makeBafInst(Type opType);
 }

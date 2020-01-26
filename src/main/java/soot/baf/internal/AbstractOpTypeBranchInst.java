@@ -32,14 +32,12 @@ import soot.UnitPrinter;
 import soot.baf.Baf;
 
 public abstract class AbstractOpTypeBranchInst extends AbstractBranchInst {
-  protected final PrimTypeCollector primTypeCollector;
   protected Type opType;
 
-  AbstractOpTypeBranchInst(Type opType, UnitBox targetBox, Baf myBaf, PrimTypeCollector primTypeCollector) {
-    super(targetBox, myBaf);
-    this.primTypeCollector = primTypeCollector;
+  AbstractOpTypeBranchInst(Type opType, UnitBox targetBox) {
+    super(targetBox);
     if (opType instanceof NullType || opType instanceof ArrayType || opType instanceof RefType) {
-      opType = this.primTypeCollector.getRefType();
+      opType = opType.getMyScene().getPrimTypeCollector().getRefType();
     }
 
     this.opType = opType;
@@ -60,7 +58,7 @@ public abstract class AbstractOpTypeBranchInst extends AbstractBranchInst {
   public void setOpType(Type t) {
     opType = t;
     if (opType instanceof NullType || opType instanceof ArrayType || opType instanceof RefType) {
-      opType = primTypeCollector.getRefType();
+      opType = opType.getMyScene().getPrimTypeCollector().getRefType();
     }
   }
 

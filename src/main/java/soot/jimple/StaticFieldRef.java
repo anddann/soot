@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.util.Switch;
 
 public class StaticFieldRef implements FieldRef, ConvertToBaf {
@@ -90,8 +89,8 @@ public class StaticFieldRef implements FieldRef, ConvertToBaf {
     return getField().equivHashCode();
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-    Unit u = context.getBafBody().getMyBaf().newStaticGetInst(fieldRef);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    Unit u = Baf.newStaticGetInst(fieldRef);
     u.addAllTagsOf(context.getCurrentUnit());
     out.add(u);
   }

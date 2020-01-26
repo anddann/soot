@@ -121,10 +121,10 @@ public class MoveLoadsAboveIfs extends BodyTransformer implements IJbcoTransform
         }
 
         units.insertBefore(clone, u);
-        units.insertBefore(myBaf.newSwapInst(primTypeCollector.getRefType(), clone.getOpType()), u);
+        units.insertBefore(Baf.newSwapInst(primTypeCollector.getRefType(), clone.getOpType()), u);
 
         // units.insertAfter(clone,p);
-        // units.insertAfter(myBaf.newSwapInst(primTypeCollector.getRefType(),clone.getOpType()),clone);
+        // units.insertAfter(Baf.newSwapInst(primTypeCollector.getRefType(),clone.getOpType()),clone);
       } else if (u instanceof OpTypeArgInst) {
         Type t = ((OpTypeArgInst) u).getOpType();
         if (category(t) == 2 || Rand.getInt(10) > weight) {
@@ -135,16 +135,16 @@ public class MoveLoadsAboveIfs extends BodyTransformer implements IJbcoTransform
         Type t2 = clone.getOpType();
         Unit dup;
         if (category(t2) == 2) {
-          dup = myBaf.newDup2_x2Inst(t2, null, t, t);
+          dup = Baf.newDup2_x2Inst(t2, null, t, t);
         } else {
-          dup = myBaf.newDup1_x2Inst(t2, t, t);
+          dup = Baf.newDup1_x2Inst(t2, t, t);
         }
         units.insertBefore(dup, u);
-        units.insertBefore(myBaf.newPopInst(t2), u);
+        units.insertBefore(Baf.newPopInst(t2), u);
         /*
          * units.insertAfter(clone,p); Type t2 = clone.getOpType(); Unit dup; if (category(t2)==2) { dup =
-         * myBaf.newDup2_x2Inst(t2,null,t,t); } else { dup = myBaf.newDup1_x2Inst(t2,t,t); }
-         * units.insertAfter(dup,clone); units.insertAfter(myBaf.newPopInst(t2),dup);
+         * Baf.newDup2_x2Inst(t2,null,t,t); } else { dup = Baf.newDup1_x2Inst(t2,t,t); }
+         * units.insertAfter(dup,clone); units.insertAfter(Baf.newPopInst(t2),dup);
          */
       } else {
         if (category(clone.getOpType()) == 2 || Rand.getInt(10) > weight) {
@@ -152,10 +152,10 @@ public class MoveLoadsAboveIfs extends BodyTransformer implements IJbcoTransform
         }
 
         units.insertBefore(clone, u);
-        units.insertBefore(myBaf.newSwapInst(primTypeCollector.getIntType(), clone.getOpType()), u);
+        units.insertBefore(Baf.newSwapInst(primTypeCollector.getIntType(), clone.getOpType()), u);
 
         // units.insertAfter(clone,p);
-        // units.insertAfter(myBaf.newSwapInst(primTypeCollector.getIntType(),clone.getOpType()),clone);
+        // units.insertAfter(Baf.newSwapInst(primTypeCollector.getIntType(),clone.getOpType()),clone);
       }
 
       movedloads++;
@@ -169,7 +169,7 @@ public class MoveLoadsAboveIfs extends BodyTransformer implements IJbcoTransform
           if (suc == ((TargetArgInst) u).getTarget()) {
             ((TargetArgInst) u).setTarget((Unit) bug.getSuccsOf(suc).get(0));
           } else {
-            units.insertAfter(myBaf.newGotoInst((Unit) bug.getSuccsOf(suc).get(0)), u);
+            units.insertAfter(Baf.newGotoInst((Unit) bug.getSuccsOf(suc).get(0)), u);
           }
         } else {
           units.remove(suc);

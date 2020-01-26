@@ -35,7 +35,6 @@ import soot.Unit;
 import soot.UnitPrinter;
 import soot.Value;
 import soot.ValueBox;
-import soot.baf.Baf;
 import soot.jimple.*;
 import soot.tagkit.Tag;
 import soot.util.Switch;
@@ -151,15 +150,15 @@ public class JArrayRef implements ArrayRef, ConvertToBaf {
         ((RefSwitch) sw).caseArrayRef(this);
     }
 
-    public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-        ((ConvertToBaf) getBase()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
-        ((ConvertToBaf) getIndex()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+    public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+        ((ConvertToBaf) getBase()).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) getIndex()).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
 
         Unit currentUnit = context.getCurrentUnit();
 
         Unit x;
 
-        out.add(x = myBaf.newArrayReadInst(getType()));
+        out.add(x = Baf.newArrayReadInst(getType()));
 
         Iterator it = currentUnit.getTags().iterator();
         while (it.hasNext()) {

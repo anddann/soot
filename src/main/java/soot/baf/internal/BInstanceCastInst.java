@@ -34,8 +34,8 @@ public class BInstanceCastInst extends AbstractInst implements InstanceCastInst 
 
   protected Type castType;
 
-  public BInstanceCastInst(Type opType, Baf myBaf) {
-    super(myBaf);
+  public BInstanceCastInst(Type opType) {
+    super();
 
     if (!(opType instanceof RefType) && !(opType instanceof ArrayType)) {
       throw new RuntimeException("invalid InstanceCastInst: " + opType);
@@ -49,7 +49,7 @@ public class BInstanceCastInst extends AbstractInst implements InstanceCastInst 
 
   public Object clone() {
 
-    return new BInstanceCastInst(castType, myBaf);
+    return new BInstanceCastInst(castType);
 
   }
 

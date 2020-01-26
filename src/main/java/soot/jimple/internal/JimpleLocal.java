@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.jimple.ConstantFactory;
 import soot.jimple.ConvertToBaf;
 import soot.jimple.JimpleToBafContext;
@@ -134,8 +133,8 @@ public class JimpleLocal implements Local, ConvertToBaf {
     }
 
     @Override
-    public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-        Unit u = myBaf.newLoadInst(getType(), context.getBafLocalOfJimpleLocal(this));
+    public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+        Unit u = Baf.newLoadInst(getType(), context.getBafLocalOfJimpleLocal(this));
         u.addAllTagsOf(context.getCurrentUnit());
         out.add(u);
     }

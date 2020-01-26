@@ -34,8 +34,8 @@ import soot.util.Switch;
 public class BFieldGetInst extends AbstractInst implements FieldGetInst {
   SootFieldRef fieldRef;
 
-  public BFieldGetInst(SootFieldRef fieldRef, Baf myBaf) {
-    super(myBaf);
+  public BFieldGetInst(SootFieldRef fieldRef) {
+    super();
     if (fieldRef.isStatic()) {
       throw new RuntimeException("wrong static-ness");
     }
@@ -47,7 +47,7 @@ public class BFieldGetInst extends AbstractInst implements FieldGetInst {
   }
 
   public Object clone() {
-    return new BFieldGetInst(fieldRef, myBaf);
+    return new BFieldGetInst(fieldRef);
   }
 
   public int getInMachineCount() {

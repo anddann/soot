@@ -29,7 +29,7 @@ import soot.util.Switch;
 
 public class BIfLeInst extends AbstractBranchInst implements IfLeInst {
   public BIfLeInst(Unit target) {
-    super(myBaf.newInstBox(target), myBaf);
+    super(Baf.newInstBox(target));
   }
 
   public int getInCount() {

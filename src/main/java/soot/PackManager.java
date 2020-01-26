@@ -232,7 +232,7 @@ public class PackManager {
   private Shimple myShimple;
   ;
   private Dava myDava;
-  private Baf myBaf;
+
   private Printer myPrinter;
   private XMLPrinter myXMLPrinter;
   private TemplatePrinter myTemplatePrinter;
@@ -277,7 +277,7 @@ public class PackManager {
                      PhaseDumper myPhaseDumper, ShimpleTransformer myShimpleTransformer, ThrowFinder myThrowFinder,
                      PackageNamer myPackageNamer, InnerClassTagAggregator myInnerClassTagAggregator,
                      DavaStaticBlockCleaner myDavaStaticBlockCleaner, DavaPrinter myDavaPrinter, Shimple myShimpl,
-                     Dava myDava, Baf myBaf, Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter,
+                     Dava myDava,  Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter,
                      NullCheckEliminator myNullCheckEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer,
                      EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter,
                      ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer,
@@ -357,7 +357,7 @@ public class PackManager {
     this.myShimple = myShimple;
 
     this.myDava = myDava;
-    this.myBaf = myBaf;
+
     this.myPrinter = myPrinter;
     this.myXMLPrinter = myXMLPrinter;
     this.myTemplatePrinter = myTemplatePrinter;
@@ -1258,7 +1258,7 @@ public class PackManager {
     // myUnreachableCodeEliminator.transform(body);
     // myDeadAssignmentEliminator.transform(body);
     // myUnusedLocalEliminator.transform(body);
-    BafBody bafBody = myBaf.newBody(body);
+    BafBody bafBody = Baf.newBody(body);
     getPack("bop").apply(bafBody);
     getPack("tag").apply(bafBody);
     if (myOptions.validate()) {

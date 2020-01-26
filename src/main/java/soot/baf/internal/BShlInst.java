@@ -23,16 +23,14 @@ package soot.baf.internal;
  */
 
 import soot.AbstractJasminClass;
-import soot.PrimTypeCollector;
 import soot.Type;
-import soot.baf.Baf;
 import soot.baf.InstSwitch;
 import soot.baf.ShlInst;
 import soot.util.Switch;
 
 public class BShlInst extends AbstractOpTypeInst implements ShlInst {
-  public BShlInst(Type opType, Baf myBaf, PrimTypeCollector primTypeCollector) {
-    super(opType, myBaf, primTypeCollector);
+  public BShlInst(Type opType) {
+    super(opType);
   }
 
   public int getInCount() {
@@ -40,7 +38,7 @@ public class BShlInst extends AbstractOpTypeInst implements ShlInst {
   }
 
   public Object clone() {
-    return new BShlInst(getOpType(), myBaf, primTypeCollector);
+    return new BShlInst(getOpType());
   }
 
   public int getInMachineCount() {

@@ -69,13 +69,13 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
   int count = 0;
 
   public static String dependancies[] = new String[] { "bb.jbco_iii", "bb.jbco_ful", "bb.lp" };
-  private Baf myBaf;
+
   private FieldRenamer myFieldRenamer;
   private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
 
-  public IndirectIfJumpsToCaughtGotos(Baf myBaf, FieldRenamer myFieldRenamer, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
-    this.myBaf = myBaf;
+  public IndirectIfJumpsToCaughtGotos( FieldRenamer myFieldRenamer, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
+
     this.myFieldRenamer = myFieldRenamer;
     this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
@@ -106,7 +106,7 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
     Unit nonTrap = findNonTrappedUnit(units, b.getTraps());
     if (nonTrap == null) {
       Unit last = null;
-      nonTrap = myBaf.newNopInst();
+      nonTrap = Baf.newNopInst();
       for (Iterator<Unit> it = units.iterator(); it.hasNext();) {
         Unit u = (Unit) it.next();
         if (u instanceof IdentityInst && ((IdentityInst) u).getLeftOp() instanceof Local) {
@@ -131,7 +131,7 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
       Unit u = (Unit) it.next();
       if (isIf(u) && Rand.getInt(10) <= weight) {
         TargetArgInst ifu = (TargetArgInst) u;
-        Unit newTarg = myBaf.newGotoInst(ifu.getTarget());
+        Unit newTarg = Baf.newGotoInst(ifu.getTarget());
         units.add(newTarg);
         ifu.setTarget(newTarg);
         addedUnits.add(newTarg);
@@ -142,7 +142,7 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
       return;
     }
 
-    Unit nop = myBaf.newNopInst();
+    Unit nop = Baf.newNopInst();
     units.add(nop);
 
     ArrayList<Unit> toinsert = new ArrayList<Unit>();
@@ -154,52 +154,52 @@ public class IndirectIfJumpsToCaughtGotos extends BodyTransformer implements IJb
     }
 
     if (field != null && Rand.getInt(3) > 0) {
-      toinsert.add(myBaf.newStaticGetInst(field.makeRef()));
+      toinsert.add(Baf.newStaticGetInst(field.makeRef()));
       if (field.getType() instanceof IntegerType) {
-        toinsert.add(myBaf.newIfGeInst((Unit) units.getSuccOf(nonTrap)));
+        toinsert.add(Baf.newIfGeInst((Unit) units.getSuccOf(nonTrap)));
       } else {
         SootMethod boolInit = ((RefType) field.getType()).getSootClass().getMethod("boolean booleanValue()");
-        toinsert.add(myBaf.newVirtualInvokeInst(boolInit.makeRef()));
-        toinsert.add(myBaf.newIfGeInst((Unit) units.getSuccOf(nonTrap)));
+        toinsert.add(Baf.newVirtualInvokeInst(boolInit.makeRef()));
+        toinsert.add(Baf.newIfGeInst((Unit) units.getSuccOf(nonTrap)));
       }
     } else {
-      toinsert.add(myBaf.newPushInst(constantFactory.createIntConstant(BodyBuilder.getIntegerNine())));
-      toinsert.add(myBaf.newPrimitiveCastInst(primTypeCollector.getIntType(), primTypeCollector.getByteType()));
-      toinsert.add(myBaf.newPushInst(constantFactory.createIntConstant(Rand.getInt() % 2 == 0 ? 9 : 3)));
-      toinsert.add(myBaf.newRemInst(primTypeCollector.getByteType()));
+      toinsert.add(Baf.newPushInst(constantFactory.createIntConstant(BodyBuilder.getIntegerNine())));
+      toinsert.add(Baf.newPrimitiveCastInst(primTypeCollector.getIntType(), primTypeCollector.getByteType()));
+      toinsert.add(Baf.newPushInst(constantFactory.createIntConstant(Rand.getInt() % 2 == 0 ? 9 : 3)));
+      toinsert.add(Baf.newRemInst(primTypeCollector.getByteType()));
 
       /*
-       * toinsert.add(myBaf.newDup1Inst(primTypeCollector.getByteType()));
-       * toinsert.add(myBaf.newPrimitiveCastInst(primTypeCollector.getByteType(),primTypeCollector.getIntType()));
-       * toinsert.add(myBaf.newStaticGetInst(sys.getFieldByName("out").makeRef()));
-       * toinsert.add(myBaf.newSwapInst(primTypeCollector.getIntType(),primTypeCollector.getRefType())); ArrayList parms = new ArrayList();
-       * parms.add(primTypeCollector.getIntType()); toinsert.add(myBaf.newVirtualInvokeInst(out.getMethod("println",parms).makeRef()));
+       * toinsert.add(Baf.newDup1Inst(primTypeCollector.getByteType()));
+       * toinsert.add(Baf.newPrimitiveCastInst(primTypeCollector.getByteType(),primTypeCollector.getIntType()));
+       * toinsert.add(Baf.newStaticGetInst(sys.getFieldByName("out").makeRef()));
+       * toinsert.add(Baf.newSwapInst(primTypeCollector.getIntType(),primTypeCollector.getRefType())); ArrayList parms = new ArrayList();
+       * parms.add(primTypeCollector.getIntType()); toinsert.add(Baf.newVirtualInvokeInst(out.getMethod("println",parms).makeRef()));
        */
-      toinsert.add(myBaf.newIfEqInst((Unit) units.getSuccOf(nonTrap)));
+      toinsert.add(Baf.newIfEqInst((Unit) units.getSuccOf(nonTrap)));
     }
 
     ArrayList<Unit> toinserttry = new ArrayList<Unit>();
     while (stack.size() > 0) {
-      toinserttry.add(myBaf.newPopInst(stack.pop()));
+      toinserttry.add(Baf.newPopInst(stack.pop()));
     }
-    toinserttry.add(myBaf.newPushInst(constantFactory.getNullConstant()));
+    toinserttry.add(Baf.newPushInst(constantFactory.getNullConstant()));
 
-    Unit handler = myBaf.newThrowInst();
+    Unit handler = Baf.newThrowInst();
     int rand = Rand.getInt(toinserttry.size());
     while (rand++ < toinserttry.size()) {
       toinsert.add(toinserttry.get(0));
       toinserttry.remove(0);
     }
     if (toinserttry.size() > 0) {
-      toinserttry.add(myBaf.newGotoInst(handler));
-      toinsert.add(myBaf.newGotoInst(toinserttry.get(0)));
+      toinserttry.add(Baf.newGotoInst(handler));
+      toinsert.add(Baf.newGotoInst(toinserttry.get(0)));
       units.insertBefore(toinserttry, nop);
     }
 
     toinsert.add(handler);
     units.insertAfter(toinsert, nonTrap);
 
-    b.getTraps().add(myBaf.newTrap(ThrowSet.getRandomThrowable(), addedUnits.get(0), nop, handler));
+    b.getTraps().add(Baf.newTrap(ThrowSet.getRandomThrowable(), addedUnits.get(0), nop, handler));
 
     count += addedUnits.size();
     // fixme debug??

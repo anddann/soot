@@ -315,7 +315,7 @@ public class SynchronizerManager {
       // add "$r5 = virtualinvoke r1.<java.lang.Throwable:
       // java.lang.String getMessage()>();"
       units.add(Jimple.newAssignStmt(l_r5, Jimple.newVirtualInvokeExpr(l_r1,
-          myScene.getMethod("<java.lang.Throwable: java.lang.String getMessage()>").makeRef(), new LinkedList())));
+          myScene.getMethod("<java.lang.Throwable: java.lang.String getMessage()>").makeRef(), new LinkedList(), myOptions)));
 
       // add .specialinvoke $r4.<java.lang.NoClassDefFoundError: .void
       // <init>(java.lang.String)>($r5);

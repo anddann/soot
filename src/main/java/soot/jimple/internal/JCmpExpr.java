@@ -43,8 +43,8 @@ public class JCmpExpr extends AbstractJimpleIntBinopExpr implements CmpExpr {
     ((ExprSwitch) sw).caseCmpExpr(this);
   }
 
-  Object makeBafInst(Type opType, Baf myBaf) {
-    return opType.getMyScene().getMyBaf().newCmpInst(this.getOp1().getType());
+  Object makeBafInst(Type opType) {
+    return Baf.newCmpInst(this.getOp1().getType());
   }
 
   public Object clone() {

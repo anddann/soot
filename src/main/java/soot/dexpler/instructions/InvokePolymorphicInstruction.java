@@ -126,7 +126,7 @@ public class InvokePolymorphicInstruction extends MethodInvocationInstruction {
     if (ref.declaringClass().isInterface()) {
       invocation = Jimple.newInterfaceInvokeExpr(invoker, ref, parms);
     } else {
-      invocation = Jimple.newVirtualInvokeExpr(invoker, ref, parms);
+      invocation = Jimple.newVirtualInvokeExpr(invoker, ref, parms, myOptions);
     }
     body.setDanglingInstruction(this);
   }

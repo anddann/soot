@@ -42,12 +42,12 @@ public class BLookupSwitchInst extends AbstractInst implements LookupSwitchInst 
   List unitBoxes;
 
   public BLookupSwitchInst(Unit defaultTarget, List lookupValues, List targets) {
-    this.defaultTargetBox = myBaf.newInstBox(defaultTarget);
+    this.defaultTargetBox = Baf.newInstBox(defaultTarget);
 
     this.targetBoxes = new UnitBox[targets.size()];
 
     for (int i = 0; i < targetBoxes.length; i++) {
-      this.targetBoxes[i] = myBaf.newInstBox((Unit) targets.get(i));
+      this.targetBoxes[i] = Baf.newInstBox((Unit) targets.get(i));
     }
 
     this.lookupValues = new ArrayList();

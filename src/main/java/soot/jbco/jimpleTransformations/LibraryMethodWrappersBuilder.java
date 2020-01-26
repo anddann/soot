@@ -190,7 +190,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
                 Type pType = parameterTypes.get(argsCount);
                 Local newLocal = Jimple.newLocal("newLocal" + localName++, pType);
                 body.getLocals().add(newLocal);
-                body.getUnits().insertBeforeNoRedirect(Jimple.newAssignStmt(newLocal, getConstantType(pType, constantFactory,myJimple, primTypeCollector)), first);
+                body.getUnits().insertBeforeNoRedirect(Jimple.newAssignStmt(newLocal, getConstantType(pType, constantFactory, primTypeCollector)), first);
                 args.add(newLocal);
                 argsCount++;
               }
@@ -282,7 +282,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
       if (origIE instanceof InterfaceInvokeExpr) {
         ie = Jimple.newInterfaceInvokeExpr(libObj, sm.makeRef(), args);
       } else if (origIE instanceof VirtualInvokeExpr) {
-        ie = Jimple.newVirtualInvokeExpr(libObj, sm.makeRef(), args);
+        ie = Jimple.newVirtualInvokeExpr(libObj, sm.makeRef(), args, myOptions);
       }
     }
     if (sm.getReturnType() instanceof VoidType) {

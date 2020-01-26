@@ -188,7 +188,7 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
       locals.add(B);
       units.insertBefore(Jimple.newAssignStmt(B, Jimple.newStaticFieldRef(ops[0].makeRef())), u);
       units.insertBefore(
-          Jimple.newAssignStmt(b1, Jimple.newVirtualInvokeExpr(B, m.makeRef(), Collections.<Value>emptyList())), u);
+          Jimple.newAssignStmt(b1, Jimple.newVirtualInvokeExpr(B, m.makeRef(), Collections.<Value>emptyList(), myOptions)), u);
     }
     if (ops[1].getType() instanceof PrimType) {
       units.insertBefore(Jimple.newAssignStmt(b2, Jimple.newStaticFieldRef(ops[1].makeRef())), u);
@@ -199,7 +199,7 @@ public class AddSwitches extends BodyTransformer implements IJbcoTransform {
       locals.add(B);
       units.insertBefore(Jimple.newAssignStmt(B, Jimple.newStaticFieldRef(ops[1].makeRef())), u);
       units.insertBefore(
-          Jimple.newAssignStmt(b2, Jimple.newVirtualInvokeExpr(B, m.makeRef(), Collections.<Value>emptyList())), u);
+          Jimple.newAssignStmt(b2, Jimple.newVirtualInvokeExpr(B, m.makeRef(), Collections.<Value>emptyList(), myOptions)), u);
     }
 
     IfStmt ifstmt = Jimple.newIfStmt(Jimple.newNeExpr(b1, b2), u);

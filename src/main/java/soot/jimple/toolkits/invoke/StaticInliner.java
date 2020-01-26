@@ -189,7 +189,7 @@ public class StaticInliner extends SceneTransformer {
         if (InlinerSafetyManager.ensureInlinability(inlinee, invokeStmt, container, modifierOptions)) {
           // Not that it is important to check right before inlining if the site is still valid.
 
-          new SiteInliner(myJimple, myScene, constantFactory, mySynchronizerManager, myLocalNameStandardizer).inlineSite(inlinee, invokeStmt, container, options);
+          new SiteInliner( myScene, constantFactory, mySynchronizerManager, myLocalNameStandardizer).inlineSite(inlinee, invokeStmt, container, options);
           if (rerunJb) {
             myPackManager.getPack("jb").apply(container.getActiveBody());
           }

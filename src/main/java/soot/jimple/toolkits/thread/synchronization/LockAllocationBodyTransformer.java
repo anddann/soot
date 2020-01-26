@@ -45,14 +45,7 @@ import soot.SootMethod;
 import soot.Trap;
 import soot.Unit;
 import soot.Value;
-import soot.jimple.ArrayRef;
-import soot.jimple.FieldRef;
-import soot.jimple.InstanceFieldRef;
-import soot.jimple.InstanceInvokeExpr;
-import soot.jimple.JimpleBody;
-import soot.jimple.Ref;
-import soot.jimple.StaticFieldRef;
-import soot.jimple.Stmt;
+import soot.jimple.*;
 import soot.jimple.toolkits.infoflow.FakeJimpleLocal;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.Pair;
@@ -174,7 +167,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
           SootClass objectClass = myScene.loadClassAndSupport("java.lang.Object");
           RefType type = RefType.v(objectClass);
           SootMethod initMethod = objectClass.getMethod("void <init>()");
-          Stmt initStmt = myJimple
+          Stmt initStmt = Jimple
               .newInvokeStmt(Jimple.newSpecialInvokeExpr(lockObj[i], initMethod.makeRef(), Collections.EMPTY_LIST));
           if (addingNewClinit) {
             clinitUnits.add(initStmt);
@@ -510,7 +503,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       {
         for (Unit uNotify : tn.notifys) {
           Stmt sNotify = (Stmt) uNotify;
-          Stmt newNotify = myJimple
+          Stmt newNotify = Jimple
               .newInvokeStmt(Jimple.newVirtualInvokeExpr(clo,
                   sNotify.getInvokeExpr().getMethodRef().declaringClass().getMethod("void notifyAll()").makeRef(),
                   Collections.EMPTY_LIST));
@@ -663,7 +656,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       SootClass objectClass = myScene.loadClassAndSupport("java.lang.Object");
       RefType type = RefType.v(objectClass);
       SootMethod initMethod = objectClass.getMethod("void <init>()");
-      Stmt initStmt = myJimple
+      Stmt initStmt = Jimple
           .newInvokeStmt(Jimple.newSpecialInvokeExpr(lockLocal, initMethod.makeRef(), Collections.EMPTY_LIST));
       if (addingNewClinit) {
         clinitUnits.add(initStmt);

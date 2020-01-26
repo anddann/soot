@@ -51,16 +51,16 @@ public class MonitorConverter {
   private final PackageNamer myPackageNamer;
   private final Options myOptions;
   ;
-  private Baf myBaf;
+
 
   @Inject
   public MonitorConverter(Scene myScene, PackageNamer myPackageNamer, Options myOptions,
-                          , Baf myBaf, PrimTypeCollector primTypeCollector) {
+                          ,  PrimTypeCollector primTypeCollector) {
     this.myScene = myScene;
     this.myPackageNamer = myPackageNamer;
     this.myOptions = myOptions;
 
-    this.myBaf = myBaf;
+
     SootClass davaMonitor = new SootClass("soot.dava.toolkits.base.DavaMonitor.DavaMonitor", this.myOptions, Modifier.PUBLIC,
         this.myScene, this.myPackageNamer);
     davaMonitor.setSuperclass(this.myScene.loadClassAndSupport("java.lang.Object"));
@@ -93,10 +93,10 @@ public class MonitorConverter {
 
       if (ms instanceof EnterMonitorStmt) {
         mas.set_Stmt(new GInvokeStmt(new DVirtualInvokeExpr(new DStaticInvokeExpr(v.makeRef(), new ArrayList(), ),
-            enter.makeRef(), arg, new HashSet<Object>(),  myBaf, myScene)));
+            enter.makeRef(), arg, new HashSet<Object>(),   myScene)));
       } else {
         mas.set_Stmt(new GInvokeStmt(new DVirtualInvokeExpr(new DStaticInvokeExpr(v.makeRef(), new ArrayList(), ),
-            exit.makeRef(), arg, new HashSet<Object>(),  myBaf, myScene)));
+            exit.makeRef(), arg, new HashSet<Object>(),   myScene)));
       }
     }
   }

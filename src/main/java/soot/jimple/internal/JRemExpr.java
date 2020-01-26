@@ -44,8 +44,8 @@ public class JRemExpr extends AbstractJimpleFloatBinopExpr implements RemExpr {
     ((ExprSwitch) sw).caseRemExpr(this);
   }
 
-  Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newRemInst(this.getOp1().getType());
+  Object makeBafInst(Type opType) {
+    return Baf.newRemInst(this.getOp1().getType());
   }
 
   public Object clone() {

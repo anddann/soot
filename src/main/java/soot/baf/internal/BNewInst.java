@@ -29,8 +29,8 @@ import soot.baf.NewInst;
 import soot.util.Switch;
 
 public class BNewInst extends AbstractRefTypeInst implements NewInst {
-  public BNewInst(RefType opType, Baf myBaf) {
-    super(opType, myBaf);
+  public BNewInst(RefType opType) {
+    super(opType);
   }
 
   public int getInCount() {
@@ -38,7 +38,7 @@ public class BNewInst extends AbstractRefTypeInst implements NewInst {
   }
 
   public Object clone() {
-    return new BNewInst(getBaseType(), myBaf);
+    return new BNewInst(getBaseType());
   }
 
   public int getInMachineCount() {

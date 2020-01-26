@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 
@@ -82,8 +81,8 @@ public class JGotoStmt extends AbstractStmt implements GotoStmt {
     ((StmtSwitch) sw).caseGotoStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-    Unit u = myBaf.newGotoInst(myBaf.newPlaceholderInst(getTarget()));
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    Unit u = Baf.newGotoInst(Baf.newPlaceholderInst(getTarget()));
     u.addAllTagsOf(this);
     out.add(u);
   }

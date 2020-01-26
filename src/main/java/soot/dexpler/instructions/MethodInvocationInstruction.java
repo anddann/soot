@@ -391,7 +391,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
     // This is actually a VirtualInvoke
     MethodReference item = (MethodReference) ((ReferenceInstruction) instruction).getReference();
     List<Local> parameters = buildParameters(body, item.getParameterTypes(), false);
-    invocation = Jimple.newVirtualInvokeExpr(parameters.get(0), ref, parameters.subList(1, parameters.size()));
+    invocation = Jimple.newVirtualInvokeExpr(parameters.get(0), ref, parameters.subList(1, parameters.size()), myOptions);
     body.setDanglingInstruction(this);
   }
 

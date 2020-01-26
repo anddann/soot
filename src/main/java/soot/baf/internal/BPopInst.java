@@ -33,8 +33,8 @@ public class BPopInst extends AbstractInst implements PopInst {
 
   protected Type mType;
 
-  public BPopInst(Type aType, Baf myBaf) {
-    super(myBaf);
+  public BPopInst(Type aType) {
+    super();
     mType = aType;
   }
 
@@ -49,7 +49,7 @@ public class BPopInst extends AbstractInst implements PopInst {
   }
 
   public Object clone() {
-    return new BPopInst(mType, myBaf);
+    return new BPopInst(mType);
   }
 
   final public String getName() {

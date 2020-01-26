@@ -44,8 +44,8 @@ public class JShlExpr extends AbstractJimpleIntLongBinopExpr implements ShlExpr 
         ((ExprSwitch) sw).caseShlExpr(this);
     }
 
-    Object makeBafInst(Type opType, Baf myBaf) {
-        return myBaf.newShlInst(this.getOp1().getType());
+    Object makeBafInst(Type opType) {
+        return Baf.newShlInst(this.getOp1().getType());
     }
 
     public Type getType() {

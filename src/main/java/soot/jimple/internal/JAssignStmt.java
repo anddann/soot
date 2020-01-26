@@ -25,7 +25,6 @@ package soot.jimple.internal;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 
@@ -220,7 +219,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
     ((StmtSwitch) sw).caseAssignStmt(this);
   }
 
-  public void convertToBaf(final JimpleToBafContext context, final List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+  public void convertToBaf(final JimpleToBafContext context, final List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     final Value lvalue = this.getLeftOp();
     final Value rvalue = this.getRightOp();
 
@@ -247,7 +246,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
 
         if (isValidCase && x >= Short.MIN_VALUE && x <= Short.MAX_VALUE) {
           Unit u
-              = myBaf.newIncInst(context.getBafLocalOfJimpleLocal(l), constantFactory.createIntConstant((expr instanceof AddExpr) ? x : -x));
+              = Baf.newIncInst(context.getBafLocalOfJimpleLocal(l), constantFactory.createIntConstant((expr instanceof AddExpr) ? x : -x));
 
           u.addAllTagsOf(this);
           out.add(u);
@@ -261,28 +260,28 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
 
     lvalue.apply(new AbstractJimpleValueSwitch() {
       public void caseArrayRef(ArrayRef v) {
-        ((ConvertToBaf) (v.getBase())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
-        ((ConvertToBaf) (v.getIndex())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
-        ((ConvertToBaf) rvalue).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) (v.getBase())).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) (v.getIndex())).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) rvalue).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
 
-        Unit u = myBaf.newArrayWriteInst(v.getType());
+        Unit u = Baf.newArrayWriteInst(v.getType());
         u.addAllTagsOf(JAssignStmt.this);
 
         out.add(u);
       }
 
       public void caseInstanceFieldRef(InstanceFieldRef v) {
-        ((ConvertToBaf) (v.getBase())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
-        ((ConvertToBaf) rvalue).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) (v.getBase())).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) rvalue).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
 
-        Unit u = myBaf.newFieldPutInst(v.getFieldRef());
+        Unit u = Baf.newFieldPutInst(v.getFieldRef());
         u.addAllTagsOf(JAssignStmt.this);
 
         out.add(u);
       }
 
       public void caseLocal(final Local v) {
-        ((ConvertToBaf) rvalue).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) rvalue).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
 
         /*
          * Add the tags to the statement that COMPUTES the value, NOT to the statement that stores it.
@@ -293,7 +292,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
          * semantics, we should add them to every statement and let the aggregator sort them out.
          */
 
-        Unit u = myBaf.newStoreInst(v.getType(), context.getBafLocalOfJimpleLocal(v));
+        Unit u = Baf.newStoreInst(v.getType(), context.getBafLocalOfJimpleLocal(v));
         u.addAllTagsOf(JAssignStmt.this);
 
         out.add(u);
@@ -301,9 +300,9 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
       }
 
       public void caseStaticFieldRef(StaticFieldRef v) {
-        ((ConvertToBaf) rvalue).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) rvalue).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
 
-        Unit u = myBaf.newStaticPutInst(v.getFieldRef());
+        Unit u = Baf.newStaticPutInst(v.getFieldRef());
         u.addAllTagsOf(JAssignStmt.this);
 
         out.add(u);

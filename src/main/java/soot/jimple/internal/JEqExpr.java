@@ -43,10 +43,10 @@ public class JEqExpr extends AbstractJimpleIntBinopExpr implements EqExpr {
     ((ExprSwitch) sw).caseEqExpr(this);
   }
 
-  Object makeBafInst(Type opType, Baf myBaf) {
+  Object makeBafInst(Type opType) {
     throw new RuntimeException("unsupported conversion: " + this);
   }
-  // return myBaf.newEqInst(this.getOp1().getType()); }
+  // return Baf.newEqInst(this.getOp1().getType()); }
 
   public Object clone() {
     return new JEqExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()));

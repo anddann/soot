@@ -79,7 +79,7 @@ public class UpdateConstantsToFields extends BodyTransformer implements IJbcoTra
       if (u instanceof PushInst) {
         SootField f = CollectConstants.constantsToFields.get(((PushInst) u).getConstant());
         if (f != null && Rand.getInt(10) <= weight) {
-          Unit get = myBaf.newStaticGetInst(f.makeRef());
+          Unit get = Baf.newStaticGetInst(f.makeRef());
           units.insertBefore(get, u);
           BodyBuilder.updateTraps(get, u, b.getTraps());
           units.remove(u);

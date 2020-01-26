@@ -11,12 +11,12 @@ package soot.baf;
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -105,445 +105,432 @@ import soot.baf.internal.BafLocal;
 import soot.baf.internal.BafLocalBox;
 import soot.jimple.*;
 import soot.jimple.internal.IdentityRefBox;
-import soot.options.Options;
 
 public class Baf {
-  private PhaseOptions myPhaseOptions;
-  private PackManager myPackmanager;
-  private Options myOptions;
-  private Printer myPrinter;
-  private ConstantFactory constantFactory;
-  private Scene myScene;
 
-  public PrimTypeCollector getPrimTypeCollector() {
-    return primTypeCollector;
-  }
 
-  private PrimTypeCollector primTypeCollector;
+    @Inject
+    public  Baf() {
 
-  @Inject
-  public Baf(PhaseOptions myPhaseOptions, PackManager myPackmanager, Options myOptions, Printer myPrinter,
-             ConstantFactory constantFactory, Scene myScene, PrimTypeCollector primTypeCollector) {
-    this.myPhaseOptions = myPhaseOptions;
-    this.myPackmanager = myPackmanager;
-    this.myOptions = myOptions;
-    this.myPrinter = myPrinter;
-    this.constantFactory = constantFactory;
-    this.myScene = myScene;
-    this.primTypeCollector = primTypeCollector;
-  }
-
-  public static Type getDescriptorTypeOf(Type opType) {
-    if (opType instanceof NullType || opType instanceof ArrayType || opType instanceof RefType) {
-      opType = opType.getMyScene().getPrimTypeCollector().getRefType();
     }
 
-    return opType;
-  }
-
-  /**
-   * Constructs a Local with the given name and type.
-   */
-
-  public Local newLocal(String name, Type t) {
-    return new BafLocal(name, t);
-  }
-
-  /**
-   * Constructs a new BTrap for the given exception on the given Unit range with the given Unit handler.
-   */
-
-  public Trap newTrap(SootClass exception, Unit beginUnit, Unit endUnit, Unit handlerUnit) {
-    return new BTrap(exception, beginUnit, endUnit, handlerUnit);
-  }
-
-  /**
-   * Constructs a ExitMonitorInst() grammar chunk
-   */
-
-  public ExitMonitorInst newExitMonitorInst() {
-    return new BExitMonitorInst(this);
-  }
-
-  /**
-   * Constructs a EnterMonitorInst() grammar chunk.
-   */
-
-  public EnterMonitorInst newEnterMonitorInst() {
-    return new BEnterMonitorInst();
-  }
-
-  public ReturnVoidInst newReturnVoidInst() {
-    return new BReturnVoidInst();
-  }
-
-  public NopInst newNopInst() {
-    return new BNopInst();
-  }
-
-  public GotoInst newGotoInst(Unit unit) {
-    return new BGotoInst(unit, this);
-  }
-
-  public JSRInst newJSRInst(Unit unit) {
-    return new BJSRInst(unit);
-  }
-
-  public PlaceholderInst newPlaceholderInst(Unit source) {
-    return new PlaceholderInst(source, this);
-  }
-
-  public UnitBox newInstBox(Unit unit) {
-    return new InstBox((Inst) unit);
-  }
-
-  public PushInst newPushInst(Constant c) {
-    return new BPushInst(c);
-  }
-
-  public IdentityInst newIdentityInst(Value local, Value identityRef) {
-    return new BIdentityInst(local, identityRef, this);
-  }
-
-  public ValueBox newLocalBox(Value value) {
-    return new BafLocalBox(value);
-  }
-
-  public ValueBox newIdentityRefBox(Value value) {
-    return new IdentityRefBox(value);
-  }
-
-  /**
-   * Constructs a ThisRef(RefType) grammar chunk.
-   */
-
-  public ThisRef newThisRef(RefType t) {
-    return new ThisRef(t);
-  }
-
-  /**
-   * Constructs a ParameterRef(SootMethod, int) grammar chunk.
-   */
-
-  public ParameterRef newParameterRef(Type paramType, int number) {
-    return new ParameterRef(paramType, number);
-  }
-
-  public StoreInst newStoreInst(Type opType, Local l) {
-    return new BStoreInst(opType, l);
-  }
-
-  public LoadInst newLoadInst(Type opType, Local l) {
-    return new BLoadInst(opType, l);
-  }
-
-  public ArrayWriteInst newArrayWriteInst(Type opType) {
-    return new BArrayWriteInst(opType);
-  }
-
-  public ArrayReadInst newArrayReadInst(Type opType) {
-    return new BArrayReadInst(opType, this, primTypeCollector);
-  }
-
-  public StaticGetInst newStaticGetInst(SootFieldRef fieldRef) {
-    return new BStaticGetInst(fieldRef, this);
-  }
-
-  public StaticPutInst newStaticPutInst(SootFieldRef fieldRef) {
-    return new BStaticPutInst(fieldRef);
-  }
-
-  public FieldGetInst newFieldGetInst(SootFieldRef fieldRef) {
-    return new BFieldGetInst(fieldRef, this);
-  }
-
-  public FieldPutInst newFieldPutInst(SootFieldRef fieldRef) {
-    return new BFieldPutInst(fieldRef);
-  }
-
-  public AddInst newAddInst(Type opType) {
-    return new BAddInst(opType);
-  }
-
-  public PopInst newPopInst(Type aType) {
-    return new BPopInst(aType, this);
-  }
-
-  public SubInst newSubInst(Type opType) {
-    return new BSubInst(opType);
-  }
-
-  public MulInst newMulInst(Type opType) {
-    return new BMulInst(opType, this, primTypeCollector);
-  }
-
-  public DivInst newDivInst(Type opType) {
-    return new BDivInst(opType);
-  }
-
-  public AndInst newAndInst(Type opType) {
-    return new BAndInst(opType);
-  }
-
-  public ArrayLengthInst newArrayLengthInst() {
-    return new BArrayLengthInst(this);
-  }
-
-  public NegInst newNegInst(Type opType) {
-    return new BNegInst(opType);
-  }
-
-  public OrInst newOrInst(Type opType) {
-    return new BOrInst(opType);
-  }
-
-  public RemInst newRemInst(Type opType) {
-    return new BRemInst(opType);
-  }
-
-  public ShlInst newShlInst(Type opType) {
-    return new BShlInst(opType, this, primTypeCollector);
-  }
-
-  public ShrInst newShrInst(Type opType) {
-    return new BShrInst(opType);
-  }
-
-  public UshrInst newUshrInst(Type opType) {
-    return new BUshrInst(opType, this, primTypeCollector);
-  }
-
-  public XorInst newXorInst(Type opType) {
-    return new BXorInst(opType, primTypeCollector, this);
-  }
-
-  public InstanceCastInst newInstanceCastInst(Type opType) {
-    return new BInstanceCastInst(opType, this);
-  }
-
-  public InstanceOfInst newInstanceOfInst(Type opType) {
-    return new BInstanceOfInst(opType, this);
-  }
-
-  public PrimitiveCastInst newPrimitiveCastInst(Type fromType, Type toType) {
-    return new BPrimitiveCastInst(fromType, toType);
-  }
-
-  public NewInst newNewInst(RefType opType) {
-    return new BNewInst(opType, this);
-  }
-
-  public NewArrayInst newNewArrayInst(Type opType) {
-    return new BNewArrayInst(opType);
-  }
-
-  public NewMultiArrayInst newNewMultiArrayInst(ArrayType opType, int dimensions) {
-    return new BNewMultiArrayInst(opType, dimensions);
-  }
-
-  public DynamicInvokeInst newDynamicInvokeInst(SootMethodRef bsmMethodRef, List<Value> bsmArgs, SootMethodRef methodRef,
-      int tag) {
-    return new BDynamicInvokeInst(bsmMethodRef, bsmArgs, methodRef, tag);
-  }
-
-  public StaticInvokeInst newStaticInvokeInst(SootMethodRef methodRef) {
-    return new BStaticInvokeInst(methodRef);
-  }
-
-  public SpecialInvokeInst newSpecialInvokeInst(SootMethodRef methodRef) {
-    return new BSpecialInvokeInst(methodRef, this);
-  }
-
-  public VirtualInvokeInst newVirtualInvokeInst(SootMethodRef methodRef) {
-    return new BVirtualInvokeInst(methodRef);
-  }
-
-  public InterfaceInvokeInst newInterfaceInvokeInst(SootMethodRef methodRef, int argCount) {
-    return new BInterfaceInvokeInst(methodRef, argCount, this);
-  }
-
-  public ReturnInst newReturnInst(Type opType) {
-    return new BReturnInst(opType,  this, primTypeCollector);
-  }
-
-  public IfCmpEqInst newIfCmpEqInst(Type opType, Unit unit) {
-    return new BIfCmpEqInst(opType, unit);
-  }
-
-  public IfCmpGeInst newIfCmpGeInst(Type opType, Unit unit) {
-    return new BIfCmpGeInst(opType, unit);
-  }
-
-  public IfCmpGtInst newIfCmpGtInst(Type opType, Unit unit) {
-    return new BIfCmpGtInst(opType, unit, primTypeCollector, this);
-  }
-
-  public IfCmpLeInst newIfCmpLeInst(Type opType, Unit unit) {
-    return new BIfCmpLeInst(opType, unit);
-  }
-
-  public IfCmpLtInst newIfCmpLtInst(Type opType, Unit unit) {
-    return new BIfCmpLtInst(opType, unit, this, primTypeCollector);
-  }
+    public  static Type getDescriptorTypeOf(Type opType) {
+        if (opType instanceof NullType || opType instanceof ArrayType || opType instanceof RefType) {
+            opType = opType.getMyScene().getPrimTypeCollector().getRefType();
+        }
 
-  public IfCmpNeInst newIfCmpNeInst(Type opType, Unit unit) {
-    return new BIfCmpNeInst(opType, unit);
-  }
-
-  public CmpInst newCmpInst(Type opType) {
-    return new BCmpInst(opType);
-  }
-
-  public CmpgInst newCmpgInst(Type opType) {
-    return new BCmpgInst(opType);
-  }
-
-  public CmplInst newCmplInst(Type opType) {
-    return new BCmplInst(opType);
-  }
-
-  public IfEqInst newIfEqInst(Unit unit) {
-    return new BIfEqInst(unit);
-  }
-
-  public IfGeInst newIfGeInst(Unit unit) {
-    return new BIfGeInst(unit);
-  }
-
-  public IfGtInst newIfGtInst(Unit unit) {
-    return new BIfGtInst(unit, this);
-  }
-
-  public IfLeInst newIfLeInst(Unit unit) {
-    return new BIfLeInst(unit);
-  }
-
-  public IfLtInst newIfLtInst(Unit unit) {
-    return new BIfLtInst(unit);
-  }
-
-  public IfNeInst newIfNeInst(Unit unit) {
-    return new BIfNeInst(unit, this);
-  }
-
-  public IfNullInst newIfNullInst(Unit unit) {
-    return new BIfNullInst(unit);
-  }
+        return opType;
+    }
+
+    /**
+     * Constructs a Local with the given name and type.
+     */
+
+    public  static Local newLocal(String name, Type t) {
+        return new BafLocal(name, t);
+    }
+
+    /**
+     * Constructs a new BTrap for the given exception on the given Unit range with the given Unit handler.
+     */
+
+    public  static Trap newTrap(SootClass exception, Unit beginUnit, Unit endUnit, Unit handlerUnit) {
+        return new BTrap(exception, beginUnit, endUnit, handlerUnit);
+    }
+
+    /**
+     * Constructs a ExitMonitorInst() grammar chunk
+     */
+
+    public static ExitMonitorInst newExitMonitorInst() {
+        return new BExitMonitorInst();
+    }
+
+    /**
+     * Constructs a EnterMonitorInst() grammar chunk.
+     */
+
+    public static EnterMonitorInst newEnterMonitorInst() {
+        return new BEnterMonitorInst();
+    }
+
+    public static ReturnVoidInst newReturnVoidInst() {
+        return new BReturnVoidInst();
+    }
+
+    public static NopInst newNopInst() {
+        return new BNopInst();
+    }
+
+    public static GotoInst newGotoInst(Unit unit) {
+        return new BGotoInst(unit);
+    }
+
+    public static JSRInst newJSRInst(Unit unit) {
+        return new BJSRInst(unit);
+    }
+
+    public static PlaceholderInst newPlaceholderInst(Unit source) {
+        return new PlaceholderInst(source);
+    }
+
+    public static UnitBox newInstBox(Unit unit) {
+        return new InstBox((Inst) unit);
+    }
+
+    public static PushInst newPushInst(Constant c) {
+        return new BPushInst(c);
+    }
+
+    public static IdentityInst newIdentityInst(Value local, Value identityRef) {
+        return new BIdentityInst(local, identityRef);
+    }
+
+    public static ValueBox newLocalBox(Value value) {
+        return new BafLocalBox(value);
+    }
+
+    public static ValueBox newIdentityRefBox(Value value) {
+        return new IdentityRefBox(value);
+    }
+
+    /**
+     * Constructs a ThisRef(RefType) grammar chunk.
+     */
+
+    public static ThisRef newThisRef(RefType t) {
+        return new ThisRef(t);
+    }
+
+    /**
+     * Constructs a ParameterRef(SootMethod, int) grammar chunk.
+     */
+
+    public static ParameterRef newParameterRef(Type paramType, int number) {
+        return new ParameterRef(paramType, number);
+    }
+
+    public static StoreInst newStoreInst(Type opType, Local l) {
+        return new BStoreInst(opType, l);
+    }
+
+    public static LoadInst newLoadInst(Type opType, Local l) {
+        return new BLoadInst(opType, l);
+    }
+
+    public static ArrayWriteInst newArrayWriteInst(Type opType) {
+        return new BArrayWriteInst(opType);
+    }
+
+    public static ArrayReadInst newArrayReadInst(Type opType) {
+        return new BArrayReadInst(opType);
+    }
+
+    public static StaticGetInst newStaticGetInst(SootFieldRef fieldRef) {
+        return new BStaticGetInst(fieldRef);
+    }
+
+    public static StaticPutInst newStaticPutInst(SootFieldRef fieldRef) {
+        return new BStaticPutInst(fieldRef);
+    }
+
+    public static FieldGetInst newFieldGetInst(SootFieldRef fieldRef) {
+        return new BFieldGetInst(fieldRef);
+    }
+
+    public static FieldPutInst newFieldPutInst(SootFieldRef fieldRef) {
+        return new BFieldPutInst(fieldRef);
+    }
+
+    public static AddInst newAddInst(Type opType) {
+        return new BAddInst(opType);
+    }
+
+    public static PopInst newPopInst(Type aType) {
+        return new BPopInst(aType);
+    }
+
+    public static SubInst newSubInst(Type opType) {
+        return new BSubInst(opType);
+    }
+
+    public static MulInst newMulInst(Type opType) {
+        return new BMulInst(opType);
+    }
+
+    public static DivInst newDivInst(Type opType) {
+        return new BDivInst(opType);
+    }
+
+    public static AndInst newAndInst(Type opType) {
+        return new BAndInst(opType);
+    }
+
+    public static ArrayLengthInst newArrayLengthInst() {
+        return new BArrayLengthInst();
+    }
+
+    public static NegInst newNegInst(Type opType) {
+        return new BNegInst(opType);
+    }
+
+    public static OrInst newOrInst(Type opType) {
+        return new BOrInst(opType);
+    }
+
+    public static RemInst newRemInst(Type opType) {
+        return new BRemInst(opType);
+    }
+
+    public static ShlInst newShlInst(Type opType) {
+        return new BShlInst(opType);
+    }
+
+    public static ShrInst newShrInst(Type opType) {
+        return new BShrInst(opType);
+    }
+
+    public static UshrInst newUshrInst(Type opType) {
+        return new BUshrInst(opType);
+    }
+
+    public static XorInst newXorInst(Type opType) {
+        return new BXorInst(opType);
+    }
+
+    public static InstanceCastInst newInstanceCastInst(Type opType) {
+        return new BInstanceCastInst(opType);
+    }
+
+    public static InstanceOfInst newInstanceOfInst(Type opType) {
+        return new BInstanceOfInst(opType);
+    }
+
+    public static PrimitiveCastInst newPrimitiveCastInst(Type fromType, Type toType) {
+        return new BPrimitiveCastInst(fromType, toType);
+    }
+
+    public static NewInst newNewInst(RefType opType) {
+        return new BNewInst(opType);
+    }
+
+    public static NewArrayInst newNewArrayInst(Type opType) {
+        return new BNewArrayInst(opType);
+    }
+
+    public static NewMultiArrayInst newNewMultiArrayInst(ArrayType opType, int dimensions) {
+        return new BNewMultiArrayInst(opType, dimensions);
+    }
+
+    public static DynamicInvokeInst newDynamicInvokeInst(SootMethodRef bsmMethodRef, List<Value> bsmArgs, SootMethodRef methodRef,
+                                                         int tag) {
+        return new BDynamicInvokeInst(bsmMethodRef, bsmArgs, methodRef, tag);
+    }
+
+    public static StaticInvokeInst newStaticInvokeInst(SootMethodRef methodRef) {
+        return new BStaticInvokeInst(methodRef);
+    }
+
+    public static SpecialInvokeInst newSpecialInvokeInst(SootMethodRef methodRef) {
+        return new BSpecialInvokeInst(methodRef);
+    }
+
+    public static VirtualInvokeInst newVirtualInvokeInst(SootMethodRef methodRef) {
+        return new BVirtualInvokeInst(methodRef);
+    }
+
+    public static InterfaceInvokeInst newInterfaceInvokeInst(SootMethodRef methodRef, int argCount) {
+        return new BInterfaceInvokeInst(methodRef, argCount);
+    }
+
+    public static ReturnInst newReturnInst(Type opType) {
+        return new BReturnInst(opType);
+    }
+
+    public static IfCmpEqInst newIfCmpEqInst(Type opType, Unit unit) {
+        return new BIfCmpEqInst(opType, unit);
+    }
+
+    public static IfCmpGeInst newIfCmpGeInst(Type opType, Unit unit) {
+        return new BIfCmpGeInst(opType, unit);
+    }
+
+    public static IfCmpGtInst newIfCmpGtInst(Type opType, Unit unit) {
+        return new BIfCmpGtInst(opType, unit);
+    }
+
+    public static IfCmpLeInst newIfCmpLeInst(Type opType, Unit unit) {
+        return new BIfCmpLeInst(opType, unit);
+    }
+
+    public static IfCmpLtInst newIfCmpLtInst(Type opType, Unit unit) {
+        return new BIfCmpLtInst(opType, unit);
+    }
 
-  public IfNonNullInst newIfNonNullInst(Unit unit) {
-    return new BIfNonNullInst(unit, this);
-  }
+    public static IfCmpNeInst newIfCmpNeInst(Type opType, Unit unit) {
+        return new BIfCmpNeInst(opType, unit);
+    }
+
+    public static CmpInst newCmpInst(Type opType) {
+        return new BCmpInst(opType);
+    }
+
+    public static CmpgInst newCmpgInst(Type opType) {
+        return new BCmpgInst(opType);
+    }
+
+    public static CmplInst newCmplInst(Type opType) {
+        return new BCmplInst(opType);
+    }
+
+    public static IfEqInst newIfEqInst(Unit unit) {
+        return new BIfEqInst(unit);
+    }
+
+    public static IfGeInst newIfGeInst(Unit unit) {
+        return new BIfGeInst(unit);
+    }
+
+    public static IfGtInst newIfGtInst(Unit unit) {
+        return new BIfGtInst(unit);
+    }
+
+    public static IfLeInst newIfLeInst(Unit unit) {
+        return new BIfLeInst(unit);
+    }
+
+    public static IfLtInst newIfLtInst(Unit unit) {
+        return new BIfLtInst(unit);
+    }
+
+    public static IfNeInst newIfNeInst(Unit unit) {
+        return new BIfNeInst(unit);
+    }
+
+    public static IfNullInst newIfNullInst(Unit unit) {
+        return new BIfNullInst(unit);
+    }
 
-  public ThrowInst newThrowInst() {
-    return new BThrowInst(this);
-  }
+    public static IfNonNullInst newIfNonNullInst(Unit unit) {
+        return new BIfNonNullInst(unit);
+    }
 
-  public SwapInst newSwapInst(Type fromType, Type toType) {
-    return new BSwapInst(fromType, toType, this);
-  }
-
-  /*
-   * public DupInst newDupInst(Type type) { return new BDupInst(new ArrayList(), Arrays.asList(new Type[] {type})); }
-   */
-
-  public Dup1Inst newDup1Inst(Type type) {
-    return new BDup1Inst(type);
-  }
-
-  public Dup2Inst newDup2Inst(Type aOp1Type, Type aOp2Type) {
-    return new BDup2Inst(aOp1Type, aOp2Type);
-  }
-
-  public Dup1_x1Inst newDup1_x1Inst(Type aOpType, Type aUnderType) {
-    return new BDup1_x1Inst(aOpType, aUnderType);
-  }
-
-  public Dup1_x2Inst newDup1_x2Inst(Type aOpType, Type aUnder1Type, Type aUnder2Type) {
-    return new BDup1_x2Inst(aOpType, aUnder1Type, aUnder2Type);
-  }
-
-  public Dup2_x1Inst newDup2_x1Inst(Type aOp1Type, Type aOp2Type, Type aUnderType) {
-    return new BDup2_x1Inst(aOp1Type, aOp2Type, aUnderType);
-  }
-
-  public Dup2_x2Inst newDup2_x2Inst(Type aOp1Type, Type aOp2Type, Type aUnder1Type, Type aUnder2Type) {
-    return new BDup2_x2Inst(aOp1Type, aOp2Type, aUnder1Type, aUnder2Type);
-  }
-
-  public IncInst newIncInst(Local aLocal, Constant aConstant) {
-    return new BIncInst(aLocal, aConstant);
-  }
-
-  public LookupSwitchInst newLookupSwitchInst(Unit defaultTarget, List<IntConstant> lookupValues, List targets) {
-    return new BLookupSwitchInst(defaultTarget, lookupValues, targets);
-  }
-
-  public TableSwitchInst newTableSwitchInst(Unit defaultTarget, int lowIndex, int highIndex, List targets) {
-    return new BTableSwitchInst(defaultTarget, lowIndex, highIndex, targets, this);
-  }
-
-  public static String bafDescriptorOf(Type type) {
-    TypeSwitch sw;
-
-    type.apply(sw = new TypeSwitch() {
-      public void caseBooleanType(BooleanType t) {
-        setResult("b");
-      }
-
-      public void caseByteType(ByteType t) {
-        setResult("b");
-      }
-
-      public void caseCharType(CharType t) {
-        setResult("c");
-      }
-
-      public void caseDoubleType(DoubleType t) {
-        setResult("d");
-      }
-
-      public void caseFloatType(FloatType t) {
-        setResult("f");
-      }
-
-      public void caseIntType(IntType t) {
-        setResult("i");
-      }
-
-      public void caseLongType(LongType t) {
-        setResult("l");
-      }
-
-      public void caseShortType(ShortType t) {
-        setResult("s");
-      }
-
-      public void defaultCase(Type t) {
-        throw new RuntimeException("Invalid type: " + t);
-      }
-
-      public void caseRefType(RefType t) {
-        setResult("r");
-      }
-
-    });
-
-    return (String) sw.getResult();
-  }
-
-  /** Returns an empty BafBody associated with method m. */
-  public BafBody newBody(SootMethod m) {
-    return new BafBody(m, myOptions, myPrinter, this);
-  }
-
-  /** Returns a BafBody constructed from b. */
-  public BafBody newBody(JimpleBody b) {
-    return new BafBody(b, Collections.<String, String>emptyMap(), myOptions, myPrinter, this, myPackmanager, myScene, primTypeCollector, constantFactory);
-  }
-
-  /** Returns a BafBody constructed from b. */
-  public BafBody newBody(JimpleBody b, String phase) {
-    Map<String, String> options = myPhaseOptions.getPhaseOptions(phase);
-    return new BafBody(b, options, myOptions, myPrinter, this, myPackmanager, myScene, primTypeCollector, constantFactory);
-  }
+    public static ThrowInst newThrowInst() {
+        return new BThrowInst();
+    }
+
+    public static SwapInst newSwapInst(Type fromType, Type toType) {
+        return new BSwapInst(fromType, toType);
+    }
+
+    /*
+     *public static DupInst newDupInst(Type type) { return new BDupInst(new ArrayList(), Arrays.asList(new Type[] {type})); }
+     */
+
+    public static Dup1Inst newDup1Inst(Type type) {
+        return new BDup1Inst(type);
+    }
+
+    public static Dup2Inst newDup2Inst(Type aOp1Type, Type aOp2Type) {
+        return new BDup2Inst(aOp1Type, aOp2Type);
+    }
+
+    public static Dup1_x1Inst newDup1_x1Inst(Type aOpType, Type aUnderType) {
+        return new BDup1_x1Inst(aOpType, aUnderType);
+    }
+
+    public static Dup1_x2Inst newDup1_x2Inst(Type aOpType, Type aUnder1Type, Type aUnder2Type) {
+        return new BDup1_x2Inst(aOpType, aUnder1Type, aUnder2Type);
+    }
+
+    public static Dup2_x1Inst newDup2_x1Inst(Type aOp1Type, Type aOp2Type, Type aUnderType) {
+        return new BDup2_x1Inst(aOp1Type, aOp2Type, aUnderType);
+    }
+
+    public static Dup2_x2Inst newDup2_x2Inst(Type aOp1Type, Type aOp2Type, Type aUnder1Type, Type aUnder2Type) {
+        return new BDup2_x2Inst(aOp1Type, aOp2Type, aUnder1Type, aUnder2Type);
+    }
+
+    public static IncInst newIncInst(Local aLocal, Constant aConstant) {
+        return new BIncInst(aLocal, aConstant);
+    }
+
+    public static LookupSwitchInst newLookupSwitchInst(Unit defaultTarget, List<IntConstant> lookupValues, List targets) {
+        return new BLookupSwitchInst(defaultTarget, lookupValues, targets);
+    }
+
+    public static TableSwitchInst newTableSwitchInst(Unit defaultTarget, int lowIndex, int highIndex, List targets) {
+        return new BTableSwitchInst(defaultTarget, lowIndex, highIndex, targets);
+    }
+
+    public  static String bafDescriptorOf(Type type) {
+        TypeSwitch sw;
+
+        type.apply(sw = new TypeSwitch() {
+            public  void caseBooleanType(BooleanType t) {
+                setResult("b");
+            }
+
+            public  void caseByteType(ByteType t) {
+                setResult("b");
+            }
+
+            public  void caseCharType(CharType t) {
+                setResult("c");
+            }
+
+            public  void caseDoubleType(DoubleType t) {
+                setResult("d");
+            }
+
+            public  void caseFloatType(FloatType t) {
+                setResult("f");
+            }
+
+            public  void caseIntType(IntType t) {
+                setResult("i");
+            }
+
+            public  void caseLongType(LongType t) {
+                setResult("l");
+            }
+
+            public  void caseShortType(ShortType t) {
+                setResult("s");
+            }
+
+            public  void defaultCase(Type t) {
+                throw new RuntimeException("Invalid type: " + t);
+            }
+
+            public  void caseRefType(RefType t) {
+                setResult("r");
+            }
+
+        });
+
+        return (String) sw.getResult();
+    }
+
+    /**
+     * Returns an empty BafBody associated with method m.
+     */
+    public static BafBody newBody(SootMethod m) {
+        return new BafBody(m, myOptions, myPrinter);
+    }
+
+    /**
+     * Returns a BafBody constructed from b.
+     */
+    public static BafBody newBody(JimpleBody b) {
+        return new BafBody(b, Collections.<String, String>emptyMap(), myOptions, myPrinter, myPackmanager, myScene, primTypeCollector, constantFactory);
+    }
+
+    /**
+     * Returns a BafBody constructed from b.
+     */
+    public static BafBody newBody(JimpleBody b, String phase) {
+        Map<String, String> options = myPhaseOptions.getPhaseOptions(phase);
+        return new BafBody(b, options, myOptions, myPrinter, myPackmanager, myScene, primTypeCollector, constantFactory);
+    }
 }

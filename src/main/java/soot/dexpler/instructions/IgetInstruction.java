@@ -51,7 +51,6 @@ public class IgetInstruction extends FieldInstruction {
     int dest = i.getRegisterA();
     int object = i.getRegisterB();
     FieldReference f = (FieldReference) ((ReferenceInstruction) instruction).getReference();
-    final Jimple jimple = myJimple;
     InstanceFieldRef r = Jimple.newInstanceFieldRef(body.getRegisterLocal(object), getSootFieldRef(f));
     AssignStmt assign = Jimple.newAssignStmt(body.getRegisterLocal(dest), r);
     setUnit(assign);
@@ -59,7 +58,7 @@ public class IgetInstruction extends FieldInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(assign.getLeftOpBox(), r.getType(), false);
+      myDalvikTyper.setType(assign.getLeftOpBox(), r.getType(), false);
     }
   }
 

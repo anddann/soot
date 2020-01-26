@@ -25,7 +25,6 @@ package soot.jimple.internal;
 import java.util.List;
 
 import soot.*;
-import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 
@@ -57,10 +56,10 @@ public class JReturnStmt extends AbstractOpStmt implements ReturnStmt {
     ((StmtSwitch) sw).caseReturnStmt(this);
   }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-    ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+    ((ConvertToBaf) (getOp())).convertToBaf(context, out, primTypeCollector, constantFactory, myScene);
 
-    Unit u = myBaf.newReturnInst(getOp().getType());
+    Unit u = Baf.newReturnInst(getOp().getType());
     u.addAllTagsOf(this);
     out.add(u);
   }

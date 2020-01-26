@@ -38,11 +38,7 @@ import soot.options.Options;
 public class BafBody extends Body {
   private static final Logger logger = LoggerFactory.getLogger(BafBody.class);
 
-  public Baf getMyBaf() {
-    return myBaf;
-  }
 
-  private final Baf myBaf;
   private JimpleToBafContext jimpleToBafContext;
 
   public JimpleToBafContext getContext() {
@@ -51,20 +47,18 @@ public class BafBody extends Body {
 
   @Override
   public Object clone() {
-    Body b = new BafBody(getMethod(), getMyOptions(), getMyPrinter(), myBaf);
+    Body b = new BafBody(getMethod(), getMyOptions(), getMyPrinter());
     b.importBodyContentsFrom(this);
     return b;
   }
 
-  BafBody(SootMethod m, Options myOptions, Printer myPrinter, Baf myBaf) {
+  BafBody(SootMethod m, Options myOptions, Printer myPrinter) {
     super(m, myOptions, myPrinter);
-    this.myBaf = myBaf;
   }
 
-  public BafBody(JimpleBody body, Map<String, String> options, Options myOptions, Printer myPrinter, Baf myBaf,
+  public BafBody(JimpleBody body, Map<String, String> options, Options myOptions, Printer myPrinter,
                  PackManager myPackManager, Scene myScene, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     super(body.getMethod(), myOptions, myPrinter);
-    this.myBaf = myBaf;
     if (myOptions.verbose()) {
       logger.debug("[" + getMethod().getName() + "] Constructing BafBody...");
     }
@@ -77,12 +71,12 @@ public class BafBody extends Body {
     {
       for (Local l : jimpleBody.getLocals()) {
         Type t = l.getType();
-        Local newLocal = myBaf.newLocal(l.getName(), myBaf.getPrimTypeCollector().getUnknownType());
+        Local newLocal = Baf.newLocal(l.getName(), primTypeCollector.getUnknownType());
 
-        if (t.equals(myBaf.getPrimTypeCollector().getDoubleType()) || t.equals(myBaf.getPrimTypeCollector().getLongType())) {
-          newLocal.setType(myBaf.getPrimTypeCollector().getDoubleWordType());
+        if (t.equals(primTypeCollector.getDoubleType()) || t.equals(primTypeCollector.getLongType())) {
+          newLocal.setType(primTypeCollector.getDoubleWordType());
         } else {
-          newLocal.setType(myBaf.getPrimTypeCollector().getWordType());
+          newLocal.setType(primTypeCollector.getWordType());
         }
 
         context.setBafLocalOfJimpleLocal(l, newLocal);
@@ -104,7 +98,7 @@ public class BafBody extends Body {
         List<Unit> conversionList = new ArrayList<Unit>();
 
         context.setCurrentUnit(s);
-        ((ConvertToBaf) s).convertToBaf(context, conversionList, myBaf, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) s).convertToBaf(context, conversionList, primTypeCollector, constantFactory, myScene);
 
         stmtToFirstInstruction.put(s, conversionList.get(0));
         getUnits().addAll(conversionList);
@@ -124,7 +118,7 @@ public class BafBody extends Body {
     // Convert all traps
     {
       for (Trap trap : jimpleBody.getTraps()) {
-        getTraps().add(myBaf.newTrap(trap.getException(), stmtToFirstInstruction.get(trap.getBeginUnit()),
+        getTraps().add(Baf.newTrap(trap.getException(), stmtToFirstInstruction.get(trap.getBeginUnit()),
             stmtToFirstInstruction.get(trap.getEndUnit()), stmtToFirstInstruction.get(trap.getHandlerUnit())));
       }
     }

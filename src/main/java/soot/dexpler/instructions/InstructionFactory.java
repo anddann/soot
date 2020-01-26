@@ -53,13 +53,12 @@ public class InstructionFactory {
    * @param dalivkTyper
    * @param primTypeCollector
    * @param myScene
-   * @param myJimple
    * @param myOptions
    * @param myDalvikTyper
    * @param mySootResolver
    */
   public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress, Jimple jimple, ConstantFactory constantFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene,  Options myOptions, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
-    return fromOpcode(instruction.getOpcode(), instruction, codeAddress, constantFactory, jimple, dalivkTyper, primTypeCollector,  myScene, myOptions, myJimple, myDalvikTyper, mySootResolver);
+    return fromOpcode(instruction.getOpcode(), instruction, codeAddress, constantFactory, jimple, dalivkTyper, primTypeCollector,  myScene, myOptions, myDalvikTyper, mySootResolver);
   }
 
   /**
@@ -75,7 +74,6 @@ public class InstructionFactory {
    * @param primTypeCollector
    * @param myScene
    * @param myOptions
-   * @param myJimple
    * @param myDalvikTyper
    * @param mySootResolver
    */

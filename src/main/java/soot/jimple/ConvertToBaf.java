@@ -27,8 +27,7 @@ import java.util.List;
 import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.Unit;
-import soot.baf.Baf;
 
 public interface ConvertToBaf {
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene);
+  public void convertToBaf(JimpleToBafContext context, List<Unit> out, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene);
 }
