@@ -48,16 +48,30 @@ public class JimpleAST {
   private Start mTree = null;
   private HashMap<SootMethod, JimpleBody> methodToParsedBodyMap = null;
   private SootResolver mySootResolver;
+  private ConstantFactory constantFactory;
+  private Scene myScene;
+  private Options myOptions;
+  private PackageNamer myPackageNamer;
+  private Printer myPrinter;
 
   /**
    * Constructs a JimpleAST and generates its parse tree from the given InputStream.
-   *
-   * @param aJIS
+   *  @param aJIS
    *          The InputStream to parse.
    * @param mySootResolver
+   * @param constantFactory
+   * @param myScene
+   * @param myOptions
+   * @param myPackageNamer
+   * @param myPrinter
    */
-  public JimpleAST(InputStream aJIS, SootResolver mySootResolver) throws ParserException, LexerException, IOException {
+  public JimpleAST(InputStream aJIS, SootResolver mySootResolver, ConstantFactory constantFactory, Scene myScene, Options myOptions, PackageNamer myPackageNamer, Printer myPrinter) throws ParserException, LexerException, IOException {
     this.mySootResolver = mySootResolver;
+    this.constantFactory = constantFactory;
+    this.myScene = myScene;
+    this.myOptions = myOptions;
+    this.myPackageNamer = myPackageNamer;
+    this.myPrinter = myPrinter;
     Parser p = new Parser(new Lexer(new PushbackReader(new BufferedReader(new InputStreamReader(aJIS)), 1024)));
     mTree = p.parse();
   }

@@ -93,8 +93,8 @@ public abstract class Body extends AbstractHost implements Serializable {
     return myPrinter;
   }
 
-  private Options myOptions;
-  private Printer myPrinter;
+  protected Options myOptions;
+  protected Printer myPrinter;
 
   /** Creates a deep copy of this Body. */
   @Override

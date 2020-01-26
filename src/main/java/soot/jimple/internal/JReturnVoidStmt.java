@@ -28,6 +28,7 @@ import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.Unit;
 import soot.UnitPrinter;
+import soot.baf.Baf;
 import soot.jimple.*;
 import soot.util.Switch;
 

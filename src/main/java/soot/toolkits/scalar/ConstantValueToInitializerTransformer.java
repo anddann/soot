@@ -28,28 +28,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import soot.Body;
-import soot.Scene;
-import soot.SceneTransformer;
-import soot.SootClass;
-import soot.SootField;
-import soot.SootMethod;
-import soot.Type;
-import soot.Unit;
-import soot.ValueBox;
-import soot.VoidType;
-import soot.jimple.Constant;
-import soot.jimple.DoubleConstant;
-import soot.jimple.FieldRef;
-import soot.jimple.FloatConstant;
-import soot.jimple.IntConstant;
-import soot.jimple.InvokeExpr;
-import soot.jimple.Jimple;
-import soot.jimple.LongConstant;
-import soot.jimple.ReturnVoidStmt;
-import soot.jimple.SpecialInvokeExpr;
-import soot.jimple.Stmt;
-import soot.jimple.StringConstant;
+import soot.*;
+import soot.jimple.*;
 import soot.tagkit.DoubleConstantValueTag;
 import soot.tagkit.FloatConstantValueTag;
 import soot.tagkit.IntegerConstantValueTag;
@@ -66,8 +46,19 @@ import soot.util.Chain;
  */
 public class ConstantValueToInitializerTransformer extends SceneTransformer {
 
+  private Scene myScene;
+  private ConstantFactory constantFactory;
+  private PrimTypeCollector primTypeCollector;
+
+  public ConstantValueToInitializerTransformer(Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
+    this.myScene = myScene;
+    this.constantFactory = constantFactory;
+    this.primTypeCollector = primTypeCollector;
+  }
+
+  //FIXME: make singleton
   public static ConstantValueToInitializerTransformer v() {
-    return new ConstantValueToInitializerTransformer();
+    return new ConstantValueToInitializerTransformer(myScene, constantFactory, primTypeCollector);
   }
 
   @Override

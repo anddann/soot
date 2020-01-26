@@ -477,6 +477,7 @@ public class Scene // extends AbstractHost
   }
 
   public PrimTypeCollector getPrimTypeCollector() {
+    //DO not DELETE
     return this.primTypeCollector;
   }
 

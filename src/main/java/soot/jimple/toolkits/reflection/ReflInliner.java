@@ -29,11 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.CompilationDeathException;
-import soot.PackManager;
-import soot.Scene;
 import soot.SootClass;
 import soot.Transform;
-import soot.options.Options;
 import soot.rtlib.tamiflex.DefaultHandler;
 import soot.rtlib.tamiflex.IUnexpectedReflectiveCallHandler;
 import soot.rtlib.tamiflex.OpaquePredicate;
@@ -45,7 +42,7 @@ public class ReflInliner {
   private static final Logger logger = LoggerFactory.getLogger(ReflInliner.class);
 
   public static void main(String[] args) {
-    myPackManager.getPack("wjpp").add(new Transform("wjpp.inlineReflCalls", new ReflectiveCallsInliner()));
+    myPackManager.getPack("wjpp").add(new Transform("wjpp.inlineReflCalls", new ReflectiveCallsInliner(myScene, myPackageNamer, myOptions, myPhaseOptions, myCopyPropagator, myDeadAssignmentEliminator, myUnusedLocalEliminator, myNopEliminator, primTypeCollector, constantFactory, myPrinter)));
     myScene.addBasicClass(Object.class.getName());
     myScene.addBasicClass(SootSig.class.getName(), SootClass.BODIES);
     myScene.addBasicClass(UnexpectedReflectiveCall.class.getName(), SootClass.BODIES);

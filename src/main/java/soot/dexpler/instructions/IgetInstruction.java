@@ -42,7 +42,7 @@ import soot.jimple.Jimple;
 public class IgetInstruction extends FieldInstruction {
 
   public IgetInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress, myOptions, myScene);
+    super(instruction, codeAdress, myOptions, myScene, mySootResolver);
   }
 
   @Override

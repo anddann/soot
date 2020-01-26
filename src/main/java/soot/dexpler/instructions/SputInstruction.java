@@ -45,7 +45,7 @@ import soot.jimple.StaticFieldRef;
 public class SputInstruction extends FieldInstruction {
 
   public SputInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress, myOptions, myScene);
+    super(instruction, codeAdress, myOptions, myScene, mySootResolver);
   }
 
   @Override

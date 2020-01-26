@@ -245,6 +245,7 @@ public class PackManager {
   private UnreachableMethodTransformer myUnreachableMethodTransformer;
     private ConstantFactory constantFactory;
   private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
+  private PrimTypeCollector primTypeCollector;
 
   @Inject
   public PackManager(PhaseOptions myPhaseOptions, FieldTagger myFieldTagger, Options myOptions,
@@ -277,11 +278,11 @@ public class PackManager {
                      PhaseDumper myPhaseDumper, ShimpleTransformer myShimpleTransformer, ThrowFinder myThrowFinder,
                      PackageNamer myPackageNamer, InnerClassTagAggregator myInnerClassTagAggregator,
                      DavaStaticBlockCleaner myDavaStaticBlockCleaner, DavaPrinter myDavaPrinter, Shimple myShimpl,
-                     Dava myDava,  Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter,
+                     Dava myDava, Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter,
                      NullCheckEliminator myNullCheckEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer,
                      EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter,
                      ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer,
-                     UnreachableMethodTransformer myUnreachableMethodTransformer, ConstantFactory constantFactory, ClosestAbruptTargetFinder myClosestAbruptTargetFinder) {
+                     UnreachableMethodTransformer myUnreachableMethodTransformer, ConstantFactory constantFactory, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, PrimTypeCollector primTypeCollector) {
     this.myPhaseOptions = myPhaseOptions;
     this.myOptions = myOptions;
     // myPhaseOptions.setPackManager(this);
@@ -354,6 +355,7 @@ public class PackManager {
     this.myDavaStaticBlockCleaner = myDavaStaticBlockCleaner;
     this.myDavaPrinter = myDavaPrinter;
     this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
+    this.primTypeCollector = primTypeCollector;
     this.myShimple = myShimple;
 
     this.myDava = myDava;
@@ -1258,7 +1260,7 @@ public class PackManager {
     // myUnreachableCodeEliminator.transform(body);
     // myDeadAssignmentEliminator.transform(body);
     // myUnusedLocalEliminator.transform(body);
-    BafBody bafBody = Baf.newBody(body);
+    BafBody bafBody = Baf.newBody(body, myOptions, myPrinter, this, myScene, primTypeCollector, constantFactory);
     getPack("bop").apply(bafBody);
     getPack("tag").apply(bafBody);
     if (myOptions.validate()) {

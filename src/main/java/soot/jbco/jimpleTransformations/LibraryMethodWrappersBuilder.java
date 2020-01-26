@@ -32,29 +32,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.Body;
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FastHierarchy;
-import soot.FloatType;
-import soot.IntType;
-import soot.Local;
-import soot.LongType;
-import soot.Modifier;
-import soot.PatchingChain;
-import soot.PrimTypeCollector;
-import soot.Scene;
-import soot.SceneTransformer;
-import soot.SootClass;
-import soot.SootMethod;
-import soot.SootMethodRef;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
-import soot.ValueBox;
-import soot.VoidType;
+import soot.*;
 import soot.jbco.IJbcoTransform;
 import soot.jbco.util.BodyBuilder;
 import soot.jbco.util.Rand;
@@ -68,6 +46,7 @@ import soot.jimple.JimpleBody;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.StaticInvokeExpr;
 import soot.jimple.VirtualInvokeExpr;
+import soot.options.Options;
 import soot.util.Chain;
 
 /**
@@ -92,11 +71,15 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
   private Scene myScene;
   private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
+  private Printer myPrinter;
+  private Options myOptions;
 
-  public LibraryMethodWrappersBuilder(Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
+  public LibraryMethodWrappersBuilder(Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Printer myPrinter, Options myOptions) {
     this.myScene = myScene;
     this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
+    this.myPrinter = myPrinter;
+    this.myOptions = myOptions;
   }
 
   @Override
@@ -119,7 +102,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
       logger.info("Building Library Wrapper Methods...");
     }
 
-    BodyBuilder.retrieveAllBodies(soot.myScene);
+    BodyBuilder.retrieveAllBodies(myScene);
     // iterate through application classes to find library calls
     final Iterator<SootClass> applicationClassesIterator = myScene.getApplicationClasses().snapshotIterator();
     while (applicationClassesIterator.hasNext()) {

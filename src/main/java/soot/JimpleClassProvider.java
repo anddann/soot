@@ -32,17 +32,21 @@ public class JimpleClassProvider implements ClassProvider {
 
   private SourceLocator mySourceLocator;
   private Options myOptions;
+  private SootResolver mySootResolver;
+  private Scene myScene;
 
-  public JimpleClassProvider(SourceLocator mySourceLocator, Options myOptions) {
+  public JimpleClassProvider(SourceLocator mySourceLocator, Options myOptions, SootResolver mySootResolver, Scene myScene) {
 
     this.mySourceLocator = mySourceLocator;
     this.myOptions = myOptions;
+    this.mySootResolver = mySootResolver;
+    this.myScene = myScene;
   }
 
   /**
    * Look for the specified class. Return a ClassSource for it if found, or null if it was not found.
    */
-  public ClassSource find(String className, Scene myScene, SootResolver mySootResolver) {
+  public ClassSource find(String className) {
     // String fileName = className.replace('.', '/') + ".jimple";
     String fileName = className + ".jimple";
     FoundFile file = mySourceLocator.lookupInClassPath(fileName);

@@ -104,7 +104,7 @@ public class Dava {
                 LabeledBlockFinder myLabeledBlockFinder, AbruptEdgeFinder myAbruptEdgeFinder, MonitorConverter myMonitorConverter,
                 ThrowNullConverter myThrowNullConverter, UselessTryRemover myUselessTryRemover, PhaseOptions myPhaseOptions,
                 ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Options myOptions, Printer myPrinter,
-                ConstantFactory constantFactory, PhaseDumper myPhaseDumper, , PrimTypeCollector primTypeCollector,
+                ConstantFactory constantFactory, PhaseDumper myPhaseDumper , PrimTypeCollector primTypeCollector,
                  TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, PackageNamer myPackageNamer, UselessLabelFinder myUselessLabelFinder) {
         this.myExceptionFinder = myExceptionFinder;
         this.myCycleFinder = myCycleFinder;

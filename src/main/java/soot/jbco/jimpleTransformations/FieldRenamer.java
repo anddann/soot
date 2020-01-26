@@ -35,22 +35,7 @@ import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.Body;
-import soot.IntegerType;
-import soot.Local;
-import soot.Modifier;
-import soot.PatchingChain;
-import soot.RefType;
-import soot.Scene;
-import soot.SceneTransformer;
-import soot.SootClass;
-import soot.SootField;
-import soot.SootFieldRef;
-import soot.SootMethod;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.jbco.IJbcoTransform;
 import soot.jbco.name.JunkNameGenerator;
 import soot.jbco.name.NameGenerator;
@@ -59,6 +44,7 @@ import soot.jbco.util.Rand;
 import soot.jimple.ConstantFactory;
 import soot.jimple.FieldRef;
 import soot.jimple.Jimple;
+import soot.options.Options;
 import soot.tagkit.SignatureTag;
 
 /**
@@ -92,6 +78,8 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
     private final Object fieldNamesLock = new Object();
     private Scene myScene;
     private ConstantFactory constantFactory;
+    private Printer myPrinter;
+    private Options myOptions;
 
     /**
      * Singleton constructor.
@@ -100,13 +88,17 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
      *
      * @param myScene
      * @param constantFactory
+     * @param myPrinter
+     * @param myOptions
      * @throws NullPointerException when {@code global} argument is {@code null}
      */
 
     @Inject
-    public FieldRenamer(Scene myScene, ConstantFactory constantFactory) {
+    public FieldRenamer(Scene myScene, ConstantFactory constantFactory, Printer myPrinter, Options myOptions) {
         this.myScene = myScene;
         this.constantFactory = constantFactory;
+        this.myPrinter = myPrinter;
+        this.myOptions = myOptions;
 
 
         this.nameGenerator = new JunkNameGenerator();
@@ -158,7 +150,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
 
         final RefType booleanWrapperRefType = myScene.getRefType(BOOLEAN_CLASS_NAME);
 
-        BodyBuilder.retrieveAllBodies(soot.myScene);
+        BodyBuilder.retrieveAllBodies(myScene);
         BodyBuilder.retrieveAllNames(myScene);
 
         for (SootClass applicationClass : myScene.getApplicationClasses()) {

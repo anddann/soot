@@ -40,12 +40,9 @@ import org.jf.dexlib2.iface.value.TypeEncodedValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.Body;
-import soot.MethodSource;
-import soot.Modifier;
-import soot.SootClass;
-import soot.SootMethod;
-import soot.Type;
+import soot.*;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 /**
  * DexMethod is a container for all methods that are declared in a class. It holds information about its name, the class it
@@ -57,10 +54,14 @@ public class DexMethod {
 
   protected final DexFile dexFile;
   protected final SootClass declaringClass;
+  private Scene myScene;
+  private Options myOptions;
 
-  public DexMethod(final DexFile dexFile, final SootClass declaringClass) {
+  public DexMethod(final DexFile dexFile, final SootClass declaringClass, Scene myScene, Options myOptions) {
     this.dexFile = dexFile;
     this.declaringClass = declaringClass;
+    this.myScene = myScene;
+    this.myOptions = myOptions;
   }
 
   /**
@@ -119,7 +120,7 @@ public class DexMethod {
           Util.addExceptionAfterUnit(b, "java.lang.RuntimeException", b.getUnits().getLast(),
               "Soot has detected that this method contains invalid Dalvik bytecode,"
                   + " which would have throw an exception at runtime. [" + msg + "]", myScene, constantFactory);
-          TypemyAssigner.transform(b);
+          myTypeAssigner.transform(b);
         }
         m.setActiveBody(b);
 

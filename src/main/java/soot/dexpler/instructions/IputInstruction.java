@@ -45,7 +45,7 @@ import soot.jimple.Jimple;
 public class IputInstruction extends FieldInstruction {
 
   public IputInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress, myOptions, myScene);
+    super(instruction, codeAdress, myOptions, myScene, mySootResolver);
   }
 
   @Override

@@ -105,16 +105,17 @@ import soot.baf.internal.BafLocal;
 import soot.baf.internal.BafLocalBox;
 import soot.jimple.*;
 import soot.jimple.internal.IdentityRefBox;
+import soot.options.Options;
 
 public class Baf {
 
 
     @Inject
-    public  Baf() {
+    public Baf() {
 
     }
 
-    public  static Type getDescriptorTypeOf(Type opType) {
+    public static Type getDescriptorTypeOf(Type opType) {
         if (opType instanceof NullType || opType instanceof ArrayType || opType instanceof RefType) {
             opType = opType.getMyScene().getPrimTypeCollector().getRefType();
         }
@@ -126,7 +127,7 @@ public class Baf {
      * Constructs a Local with the given name and type.
      */
 
-    public  static Local newLocal(String name, Type t) {
+    public static Local newLocal(String name, Type t) {
         return new BafLocal(name, t);
     }
 
@@ -134,7 +135,7 @@ public class Baf {
      * Constructs a new BTrap for the given exception on the given Unit range with the given Unit handler.
      */
 
-    public  static Trap newTrap(SootClass exception, Unit beginUnit, Unit endUnit, Unit handlerUnit) {
+    public static Trap newTrap(SootClass exception, Unit beginUnit, Unit endUnit, Unit handlerUnit) {
         return new BTrap(exception, beginUnit, endUnit, handlerUnit);
     }
 
@@ -463,47 +464,47 @@ public class Baf {
         return new BTableSwitchInst(defaultTarget, lowIndex, highIndex, targets);
     }
 
-    public  static String bafDescriptorOf(Type type) {
+    public static String bafDescriptorOf(Type type) {
         TypeSwitch sw;
 
         type.apply(sw = new TypeSwitch() {
-            public  void caseBooleanType(BooleanType t) {
+            public void caseBooleanType(BooleanType t) {
                 setResult("b");
             }
 
-            public  void caseByteType(ByteType t) {
+            public void caseByteType(ByteType t) {
                 setResult("b");
             }
 
-            public  void caseCharType(CharType t) {
+            public void caseCharType(CharType t) {
                 setResult("c");
             }
 
-            public  void caseDoubleType(DoubleType t) {
+            public void caseDoubleType(DoubleType t) {
                 setResult("d");
             }
 
-            public  void caseFloatType(FloatType t) {
+            public void caseFloatType(FloatType t) {
                 setResult("f");
             }
 
-            public  void caseIntType(IntType t) {
+            public void caseIntType(IntType t) {
                 setResult("i");
             }
 
-            public  void caseLongType(LongType t) {
+            public void caseLongType(LongType t) {
                 setResult("l");
             }
 
-            public  void caseShortType(ShortType t) {
+            public void caseShortType(ShortType t) {
                 setResult("s");
             }
 
-            public  void defaultCase(Type t) {
+            public void defaultCase(Type t) {
                 throw new RuntimeException("Invalid type: " + t);
             }
 
-            public  void caseRefType(RefType t) {
+            public void caseRefType(RefType t) {
                 setResult("r");
             }
 
@@ -515,21 +516,21 @@ public class Baf {
     /**
      * Returns an empty BafBody associated with method m.
      */
-    public static BafBody newBody(SootMethod m) {
+    public static BafBody newBody(SootMethod m, Options myOptions, Printer myPrinter) {
         return new BafBody(m, myOptions, myPrinter);
     }
 
     /**
      * Returns a BafBody constructed from b.
      */
-    public static BafBody newBody(JimpleBody b) {
+    public static BafBody newBody(JimpleBody b, Options myOptions, Printer myPrinter, PackManager myPackmanager, Scene myScene, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
         return new BafBody(b, Collections.<String, String>emptyMap(), myOptions, myPrinter, myPackmanager, myScene, primTypeCollector, constantFactory);
     }
 
     /**
      * Returns a BafBody constructed from b.
      */
-    public static BafBody newBody(JimpleBody b, String phase) {
+    public static BafBody newBody(JimpleBody b, String phase, PhaseOptions myPhaseOptions, Options myOptions, Printer myPrinter, PackManager myPackmanager, Scene myScene, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
         Map<String, String> options = myPhaseOptions.getPhaseOptions(phase);
         return new BafBody(b, options, myOptions, myPrinter, myPackmanager, myScene, primTypeCollector, constantFactory);
     }

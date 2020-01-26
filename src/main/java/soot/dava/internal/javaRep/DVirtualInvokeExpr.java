@@ -38,7 +38,7 @@ public class DVirtualInvokeExpr extends GVirtualInvokeExpr {
   private HashSet<Object> thisLocals;
   private Scene myScene;
 
-  public DVirtualInvokeExpr(Value base, SootMethodRef methodRef, List args, HashSet<Object> thisLocals, ,  Scene myScene) {
+  public DVirtualInvokeExpr(Value base, SootMethodRef methodRef, List args, HashSet<Object> thisLocals ,  Scene myScene) {
     super(base, methodRef, args);
 
     this.thisLocals = thisLocals;

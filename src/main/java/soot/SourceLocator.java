@@ -258,7 +258,7 @@ public class SourceLocator {
         switch (myOptions.src_prec()) {
             case Options.src_prec_class:
                 classProviders.add(classFileClassProvider);
-                classProviders.add(new JimpleClassProvider(this, myOptions));
+                classProviders.add(new JimpleClassProvider(this, myOptions, mySootResolver, myScene));
                 //classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
                 break;
             case Options.src_prec_only_class:
@@ -267,10 +267,10 @@ public class SourceLocator {
             case Options.src_prec_java:
 //        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
                 classProviders.add(classFileClassProvider);
-                classProviders.add(new JimpleClassProvider(this, myOptions));
+                classProviders.add(new JimpleClassProvider(this, myOptions, mySootResolver, myScene));
                 break;
             case Options.src_prec_jimple:
-                classProviders.add(new JimpleClassProvider(this, myOptions));
+                classProviders.add(new JimpleClassProvider(this, myOptions, mySootResolver, myScene));
                 classProviders.add(classFileClassProvider);
 //        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
                 break;
@@ -278,12 +278,12 @@ public class SourceLocator {
                 classProviders.add(new DexClassProvider(this, myOptions, myDexFileProvider));
                 classProviders.add(classFileClassProvider);
 //        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
-                classProviders.add(new JimpleClassProvider(this, myOptions));
+                classProviders.add(new JimpleClassProvider(this, myOptions, mySootResolver, myScene));
                 break;
             case Options.src_prec_apk_c_j:
                 classProviders.add(new DexClassProvider(this, myOptions, myDexFileProvider));
                 classProviders.add(classFileClassProvider);
-                classProviders.add(new JimpleClassProvider(this, myOptions));
+                classProviders.add(new JimpleClassProvider(this, myOptions, mySootResolver, myScene));
                 break;
             default:
                 throw new RuntimeException("Other source precedences are not currently supported.");
