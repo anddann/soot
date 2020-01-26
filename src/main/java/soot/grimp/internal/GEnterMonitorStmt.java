@@ -28,7 +28,7 @@ import soot.jimple.internal.JEnterMonitorStmt;
 
 public class GEnterMonitorStmt extends JEnterMonitorStmt {
   public GEnterMonitorStmt(Value op) {
-    super(myGrimp.newExprBox(op));
+    super(Grimp.newExprBox(op));
   }
 
   public Object clone() {

@@ -41,10 +41,10 @@ public abstract class ASTControlFlowNode extends ASTLabeledNode {
     return myTryContentsFinder;
   }
 
-  public ASTControlFlowNode(SETNodeLabel label, ConditionExpr condition, TryContentsFinder myTryContentsFinder, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
+  public ASTControlFlowNode(SETNodeLabel label, ConditionExpr condition, TryContentsFinder myTryContentsFinder, PrimTypeCollector primTypeCollector) {
     super(label);
     // this.conditionBox = Jimple.newConditionExprBox(condition);
-    this.condition = new ASTBinaryCondition(condition, myGrimp, primTypeCollector);
+    this.condition = new ASTBinaryCondition(condition,  primTypeCollector);
     this.myTryContentsFinder = myTryContentsFinder;
   }
 

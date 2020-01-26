@@ -40,11 +40,11 @@ import soot.jimple.ThrowStmt;
 
 public class ThrowNullConverter {
 
-  private Grimp myGrimp;
+  ;
 
   @Inject
-  public ThrowNullConverter(Grimp myGrimp, Scene myScene) {
-    this.myGrimp = myGrimp;
+  public ThrowNullConverter(, Scene myScene) {
+
     this.myScene = myScene;
   }
 
@@ -61,7 +61,7 @@ public class ThrowNullConverter {
         Value op = opBox.getValue();
 
         if (op.getType() instanceof NullType) {
-          opBox.setValue(new DNewInvokeExpr(npeRef, null, new ArrayList(), myGrimp, myScene));
+          opBox.setValue(new DNewInvokeExpr(npeRef, null, new ArrayList(),  myScene));
         }
       }
     }

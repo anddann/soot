@@ -48,7 +48,7 @@ public class AbruptEdgeFinder implements FactFinder {
     this.myDava = myDava;
   }
 
-  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException {
+  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, ) throws RetriggerAnalysisException {
     myDava.log("AbruptEdgeFinder::find()");
 
     SET.find_AbruptEdges(this);

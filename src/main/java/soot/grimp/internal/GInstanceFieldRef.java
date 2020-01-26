@@ -30,11 +30,9 @@ import soot.grimp.Precedence;
 import soot.jimple.internal.AbstractInstanceFieldRef;
 
 public class GInstanceFieldRef extends AbstractInstanceFieldRef implements Precedence {
-  private final Grimp myGrimp;
 
-  public GInstanceFieldRef(Value base, SootFieldRef fieldRef, Grimp myGrimp) {
-    super(myGrimp.newObjExprBox(base), fieldRef);
-    this.myGrimp = myGrimp;
+  public GInstanceFieldRef(Value base, SootFieldRef fieldRef) {
+    super(Grimp.newObjExprBox(base), fieldRef);
   }
 
   private String toString(Value op, String opString, String rightString) {
@@ -55,7 +53,7 @@ public class GInstanceFieldRef extends AbstractInstanceFieldRef implements Prece
   }
 
   public Object clone() {
-    return new GInstanceFieldRef(Grimp.cloneIfNecessary(getBase()), fieldRef, myGrimp);
+    return new GInstanceFieldRef(Grimp.cloneIfNecessary(getBase()), fieldRef);
   }
 
 }

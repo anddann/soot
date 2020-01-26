@@ -56,16 +56,16 @@ import soot.util.PhaseDumper;
 public class ConstructorFolder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ConstructorFolder.class);
   private Options myOptions;
-  private Grimp myGrimp;
+  ;
   private InteractionHandler myInteractionHandler;
   private ThrowAnalysis throwAnalysis;
   private PhaseDumper myPhaseDumper;
   private ThrowableSet.Manager myManager;
 
   @Inject
-  public ConstructorFolder(Options myOptions, Grimp myGrimp, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, PhaseDumper myPhaseDumper, ThrowableSet.Manager myManager) {
+  public ConstructorFolder(Options myOptions, , InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, PhaseDumper myPhaseDumper, ThrowableSet.Manager myManager) {
     this.myOptions = myOptions;
-    this.myGrimp = myGrimp;
+
     this.myInteractionHandler = myInteractionHandler;
     this.throwAnalysis = throwAnalysis;
     this.myPhaseDumper = myPhaseDumper;
@@ -136,9 +136,9 @@ public class ConstructorFolder extends BodyTransformer {
           invokeArgs.add(oldInvoke.getArg(i));
         }
 
-        AssignStmt constructStmt = myGrimp.newAssignStmt((AssignStmt) s);
+        AssignStmt constructStmt = Grimp.newAssignStmt((AssignStmt) s);
         constructStmt
-            .setRightOp(myGrimp.newNewInvokeExpr(((NewExpr) rhs).getBaseType(), oldInvoke.getMethodRef(), invokeArgs));
+            .setRightOp(Grimp.newNewInvokeExpr(((NewExpr) rhs).getBaseType(), oldInvoke.getMethodRef(), invokeArgs));
         MadeNewInvokeExpr = true;
 
         use.redirectJumpsToThisTo(constructStmt);

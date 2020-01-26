@@ -190,7 +190,7 @@ public class LocalObjectsAnalysis {
         /* Couldn't get thisLocal */ }
 
       if (ifr.getBase() == thisLocal) {
-        boolean isLocal = mergedContext.isFieldLocal(InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField(), ));
+        boolean isLocal = mergedContext.isFieldLocal(InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField() ));
         if (dfa.printDebug()) {
           if (isLocal) {
             logger.debug("      LOCAL  (this  .localField  from " + context.getDeclaringClass().getShortName() + "."
@@ -202,7 +202,7 @@ public class LocalObjectsAnalysis {
         }
         return isLocal;
       } else {
-        boolean isLocal = SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, sm, mergedContext, ifr.getBase(),);
+        boolean isLocal = SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, sm, mergedContext, ifr.getBase());
         if (isLocal) {
           ClassLocalObjectsAnalysis cloa = getClassLocalObjectsAnalysis(context.getDeclaringClass());
           isLocal = !cloa.getInnerSharedFields().contains(ifr.getField());
@@ -226,7 +226,7 @@ public class LocalObjectsAnalysis {
       }
     }
 
-    boolean isLocal = SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, sm, mergedContext, localOrRef,);
+    boolean isLocal = SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, sm, mergedContext, localOrRef);
     if (dfa.printDebug()) {
       if (isLocal) {
         logger.debug("      LOCAL  ( local             from " + context.getDeclaringClass().getShortName() + "."

@@ -42,7 +42,7 @@ import soot.jimple.StaticFieldRef;
 public class SgetInstruction extends FieldInstruction {
 
   public SgetInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions, myScene);
   }
 
   @Override

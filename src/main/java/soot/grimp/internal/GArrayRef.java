@@ -31,7 +31,7 @@ import soot.jimple.internal.JArrayRef;
 
 public class GArrayRef extends JArrayRef implements Precedence {
   public GArrayRef(Value base, Value index) {
-    super(myGrimp.newObjExprBox(base), myGrimp.newExprBox(index));
+    super(Grimp.newObjExprBox(base), Grimp.newExprBox(index));
   }
 
   public int getPrecedence() {

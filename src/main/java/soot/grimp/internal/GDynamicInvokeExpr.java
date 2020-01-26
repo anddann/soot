@@ -51,10 +51,10 @@ public class GDynamicInvokeExpr extends AbstractInvokeExpr implements DynamicInv
     this.bsmRef = bootStrapMethodRef;
     this.tag = tag;
     for (int i = 0; i < args.size(); i++) {
-      this.argBoxes[i] = myGrimp.newExprBox((Value) args.get(i));
+      this.argBoxes[i] = Grimp.newExprBox((Value) args.get(i));
     }
     for (int i = 0; i < bootstrapArgs.size(); i++) {
-      this.bsmArgBoxes[i] = myGrimp.newExprBox((Value) bootstrapArgs.get(i));
+      this.bsmArgBoxes[i] = Grimp.newExprBox((Value) bootstrapArgs.get(i));
     }
   }
 

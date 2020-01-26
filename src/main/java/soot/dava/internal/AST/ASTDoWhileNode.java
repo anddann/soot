@@ -37,8 +37,8 @@ import soot.jimple.ConditionExpr;
 public class ASTDoWhileNode extends ASTControlFlowNode {
   private List<Object> body;
 
-  public ASTDoWhileNode(SETNodeLabel label, ConditionExpr ce, List<Object> body, TryContentsFinder myTryContentsFinder, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(label, ce, myTryContentsFinder, myGrimp, primTypeCollector);
+  public ASTDoWhileNode(SETNodeLabel label, ConditionExpr ce, List<Object> body, TryContentsFinder myTryContentsFinder, , PrimTypeCollector primTypeCollector) {
+    super(label, ce, myTryContentsFinder,  primTypeCollector);
     this.body = body;
 
     subBodies.add(body);

@@ -46,7 +46,7 @@ import soot.jimple.Jimple;
 public class AputInstruction extends FieldInstruction {
 
   public AputInstruction(Instruction instruction, int codeAdress) {
-    super(instruction, codeAdress);
+    super(instruction, codeAdress, myOptions, myScene);
   }
 
   @Override

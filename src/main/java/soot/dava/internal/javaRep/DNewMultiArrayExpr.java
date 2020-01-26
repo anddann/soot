@@ -34,14 +34,14 @@ import soot.grimp.Grimp;
 import soot.jimple.internal.AbstractNewMultiArrayExpr;
 
 public class DNewMultiArrayExpr extends AbstractNewMultiArrayExpr {
-  private final Grimp myGrimp;
+  ;
 
-  public DNewMultiArrayExpr(ArrayType type, List sizes, Grimp myGrimp) {
+  public DNewMultiArrayExpr(ArrayType type, List sizes, ) {
     super(type, new ValueBox[sizes.size()]);
-    this.myGrimp = myGrimp;
+
 
     for (int i = 0; i < sizes.size(); i++) {
-      sizeBoxes[i] = myGrimp.newExprBox((Value) sizes.get(i));
+      sizeBoxes[i] = Grimp.newExprBox((Value) sizes.get(i));
     }
   }
 
@@ -52,7 +52,7 @@ public class DNewMultiArrayExpr extends AbstractNewMultiArrayExpr {
       clonedSizes.add(i, Grimp.cloneIfNecessary(getSize(i)));
     }
 
-    return new DNewMultiArrayExpr(getBaseType(), clonedSizes, myGrimp);
+    return new DNewMultiArrayExpr(getBaseType(), clonedSizes, );
   }
 
   public void toString(UnitPrinter up) {

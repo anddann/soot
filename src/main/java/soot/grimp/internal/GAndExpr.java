@@ -22,7 +22,6 @@ package soot.grimp.internal;
  * #L%
  */
 
-import soot.PrimTypeCollector;
 import soot.Value;
 import soot.grimp.Grimp;
 import soot.jimple.AndExpr;
@@ -30,11 +29,9 @@ import soot.jimple.ExprSwitch;
 import soot.util.Switch;
 
 public class GAndExpr extends AbstractGrimpIntLongBinopExpr implements AndExpr {
-  private final Grimp myGrimp;
 
-  public GAndExpr(Value op1, Value op2, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(op1, op2,myGrimp,primTypeCollector);
-    this.myGrimp = myGrimp;
+  public GAndExpr(Value op1, Value op2) {
+    super(op1, op2);
   }
 
   public final String getSymbol() {
@@ -50,7 +47,7 @@ public class GAndExpr extends AbstractGrimpIntLongBinopExpr implements AndExpr {
   }
 
   public Object clone() {
-    return new GAndExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()),myGrimp,primTypeCollector);
+    return new GAndExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()));
   }
 
 }

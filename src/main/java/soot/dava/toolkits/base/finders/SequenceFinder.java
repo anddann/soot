@@ -47,7 +47,7 @@ public class SequenceFinder implements FactFinder {
   }
 
 
-  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException {
+  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, ) throws RetriggerAnalysisException {
     myDava.log("SequenceFinder::find()");
 
     SET.find_StatementSequences(this, body);

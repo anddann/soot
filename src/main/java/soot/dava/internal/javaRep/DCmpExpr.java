@@ -35,11 +35,11 @@ import soot.util.Switch;
  * TODO
  */
 public class DCmpExpr extends AbstractGrimpIntBinopExpr implements CmpExpr {
-  private final Grimp myGrimp;
+  ;
 
-  public DCmpExpr(Value op1, Value op2, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(op1, op2, myGrimp,primTypeCollector);
-    this.myGrimp = myGrimp;
+  public DCmpExpr(Value op1, Value op2, , PrimTypeCollector primTypeCollector) {
+    super(op1, op2);
+
   }
 
   public final String getSymbol() {
@@ -55,7 +55,7 @@ public class DCmpExpr extends AbstractGrimpIntBinopExpr implements CmpExpr {
   }
 
   public Object clone() {
-    return new DCmpExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()), myGrimp, primTypeCollector);
+    return new DCmpExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()),  primTypeCollector);
   }
 
   public Type getType() {

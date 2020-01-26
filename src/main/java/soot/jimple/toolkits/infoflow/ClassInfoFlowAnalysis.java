@@ -111,7 +111,7 @@ public class ClassInfoFlowAnalysis {
       if (method.isConcrete()) {
         Body b = method.retrieveActiveBody();
         UnitGraph g = new ExceptionalUnitGraph(b, myManager,myOptions.omit_excepting_unit_edges(),myPhaseDumper, myScene );
-        SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(myJimple, primTypeCollector, myScene, g, dfa);
+        SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(primTypeCollector, myScene, g, dfa);
 
         methodToInfoFlowAnalysis.put(method, smdfa);
         methodToInfoFlowSummary.remove(method);
@@ -144,7 +144,7 @@ public class ClassInfoFlowAnalysis {
       {
         Body b = method.retrieveActiveBody();
         UnitGraph g = new ExceptionalUnitGraph(b, myManager,myOptions.omit_excepting_unit_edges(),myPhaseDumper, myScene);
-        SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis(myJimple, primTypeCollector, myScene, g, dfa);
+        SmartMethodInfoFlowAnalysis smdfa = new SmartMethodInfoFlowAnalysis( primTypeCollector, myScene, g, dfa);
 
         methodToInfoFlowAnalysis.put(method, smdfa);
         methodToInfoFlowSummary.remove(method);
@@ -219,7 +219,7 @@ public class ClassInfoFlowAnalysis {
           // This should be added to the list of fields accessed
           // static fields "belong to everyone"
           StaticFieldRef sfr = (StaticFieldRef) ref;
-          fieldsStaticsParamsAccessed.add(InfoFlowAnalysis.getNodeForFieldRef(sm, sfr.getField(), ));
+          fieldsStaticsParamsAccessed.add(InfoFlowAnalysis.getNodeForFieldRef(sm, sfr.getField() ));
         } else if (ref instanceof InstanceFieldRef) {
           // If this field is a field of this class,
           // then this should be added to the list of fields accessed
@@ -227,7 +227,7 @@ public class ClassInfoFlowAnalysis {
           Value base = ifr.getBase();
           if (base instanceof Local) {
             if (dfa.includesInnerFields() || ((!sm.isStatic()) && base.equivTo(b.getThisLocal()))) {
-              fieldsStaticsParamsAccessed.add(InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField(), ));
+              fieldsStaticsParamsAccessed.add(InfoFlowAnalysis.getNodeForFieldRef(sm, ifr.getField() ));
             }
           }
         }
@@ -254,7 +254,7 @@ public class ClassInfoFlowAnalysis {
     // Add every relevant field of this class (static methods don't get non-static fields)
     for (SootField sf : sm.getDeclaringClass().getFields()) {
       if (sf.isStatic() || !sm.isStatic()) {
-        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, );
+        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf );
         if (!dataFlowGraph.containsNode(fieldRefEqVal)) {
           dataFlowGraph.addNode(fieldRefEqVal);
         }
@@ -270,7 +270,7 @@ public class ClassInfoFlowAnalysis {
     {
       for (SootField scField : superclass.getFields()) {
         if (scField.isStatic() || !sm.isStatic()) {
-          EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, );
+          EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField );
           if (!dataFlowGraph.containsNode(fieldRefEqVal)) {
             dataFlowGraph.addNode(fieldRefEqVal);
           }
@@ -339,7 +339,7 @@ public class ClassInfoFlowAnalysis {
     for (Iterator<SootField> it = sm.getDeclaringClass().getFields().iterator(); it.hasNext();) {
       SootField sf = it.next();
       if (sf.isStatic() || !sm.isStatic()) {
-        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, );
+        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf );
         fieldsStaticsParamsAccessed.add(fieldRefEqVal);
       }
     }
@@ -355,7 +355,7 @@ public class ClassInfoFlowAnalysis {
       while (scFieldsIt.hasNext()) {
         SootField scField = scFieldsIt.next();
         if (scField.isStatic() || !sm.isStatic()) {
-          EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, );
+          EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField );
           fieldsStaticsParamsAccessed.add(fieldRefEqVal);
         }
       }

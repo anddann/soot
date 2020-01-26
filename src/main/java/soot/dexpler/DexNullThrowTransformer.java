@@ -26,21 +26,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-import soot.Body;
-import soot.BodyTransformer;
-import soot.Local;
-import soot.RefType;
-import soot.Scene;
-import soot.SootMethodRef;
-import soot.Type;
-import soot.Unit;
-import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
-import soot.jimple.LongConstant;
-import soot.jimple.NullConstant;
-import soot.jimple.Stmt;
-import soot.jimple.StringConstant;
-import soot.jimple.ThrowStmt;
+import soot.*;
+import soot.jimple.*;
 import soot.jimple.toolkits.scalar.LocalCreation;
 
 /**
@@ -56,8 +43,16 @@ import soot.jimple.toolkits.scalar.LocalCreation;
  */
 public class DexNullThrowTransformer extends BodyTransformer {
 
-  public static DexNullThrowTransformer v() {
-    return new DexNullThrowTransformer();
+  private ConstantFactory constantFactory;
+  private Scene myScene;
+
+  public DexNullThrowTransformer(ConstantFactory constantFactory, Scene myScene) {
+    this.constantFactory = constantFactory;
+    this.myScene = myScene;
+  }
+
+  public static DexNullThrowTransformer v(ConstantFactory constantFactory, Scene myScene) {
+    return new DexNullThrowTransformer(constantFactory, myScene);
   }
 
   @Override
@@ -70,7 +65,7 @@ public class DexNullThrowTransformer extends BodyTransformer {
       // Check for a null exception
       if (u instanceof ThrowStmt) {
         ThrowStmt throwStmt = (ThrowStmt) u;
-        if (throwStmt.getOp() == myNullConstant || throwStmt.getOp().equals(constantFactory.createIntConstant(0))
+        if (throwStmt.getOp() == constantFactory.getNullConstant() || throwStmt.getOp().equals(constantFactory.createIntConstant(0))
             || throwStmt.getOp().equals(constantFactory.createLongConstant(0))) {
           createThrowStmt(b, throwStmt, lc);
         }
@@ -89,7 +84,7 @@ public class DexNullThrowTransformer extends BodyTransformer {
    *          The object for creating new locals
    */
   private void createThrowStmt(Body body, Unit oldStmt, LocalCreation lc) {
-    RefType tp = RefType.v("java.lang.NullPointerException");
+    RefType tp = RefType.v("java.lang.NullPointerException",myScene);
     Local lcEx = lc.newLocal(tp);
 
     SootMethodRef constructorRef

@@ -29,15 +29,15 @@ import soot.grimp.Grimp;
 import soot.jimple.internal.AbstractNegExpr;
 
 public class DNegExpr extends AbstractNegExpr {
-  private final Grimp myGrimp;
+  ;
 
-  public DNegExpr(Value op, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(myGrimp.newExprBox(op));
-    this.myGrimp = myGrimp;
+  public DNegExpr(Value op, , PrimTypeCollector primTypeCollector) {
+    super(Grimp.newExprBox(op));
+
   }
 
   public Object clone() {
-    return new DNegExpr(Grimp.cloneIfNecessary(getOp()), myGrimp, primTypeCollector);
+    return new DNegExpr(Grimp.cloneIfNecessary(getOp()),  primTypeCollector);
   }
 
   public void toString(UnitPrinter up) {

@@ -32,12 +32,12 @@ import soot.jimple.Jimple;
 
 public class ASTBinaryCondition extends ASTUnaryBinaryCondition {
   ConditionExpr condition;
-  private Grimp myGrimp;
+  ;
   private PrimTypeCollector primTypeCollector;
 
-  public ASTBinaryCondition(ConditionExpr condition, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
+  public ASTBinaryCondition(ConditionExpr condition, , PrimTypeCollector primTypeCollector) {
     this.condition = condition;
-    this.myGrimp = myGrimp;
+
     this.primTypeCollector = primTypeCollector;
   }
 
@@ -54,11 +54,11 @@ public class ASTBinaryCondition extends ASTUnaryBinaryCondition {
   }
 
   public void toString(UnitPrinter up) {
-    (myGrimp.newConditionExprBox(condition)).toString(up);
+    (Grimp.newConditionExprBox(condition)).toString(up);
   }
 
   public void flip() {
-    this.condition = ConditionFlipper.flip(condition, myGrimp, primTypeCollector);
+    this.condition = ConditionFlipper.flip(condition,  primTypeCollector);
   }
 
   /*

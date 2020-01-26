@@ -96,7 +96,7 @@ public class SimpleMethodInfoFlowAnalysis
   public static int counter = 0;
 
   public SimpleMethodInfoFlowAnalysis(UnitGraph g, InfoFlowAnalysis dfa, boolean ignoreNonRefTypeFlow,  Options myOptions, InteractionHandler myInteractionHandler) {
-    this(g, dfa, ignoreNonRefTypeFlow,true, myOptions,myInteractionHandler, );
+    this(g, dfa, ignoreNonRefTypeFlow,true, myOptions,myInteractionHandler );
 
     counter++;
 
@@ -112,7 +112,7 @@ public class SimpleMethodInfoFlowAnalysis
 
     // Add every field of this class
     for (SootField sf : sm.getDeclaringClass().getFields()) {
-      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, );
+      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf );
       if (!infoFlowGraph.containsNode(fieldRefEqVal)) {
         infoFlowGraph.addNode(fieldRefEqVal);
       }
@@ -126,7 +126,7 @@ public class SimpleMethodInfoFlowAnalysis
     while (superclass.hasSuperclass()) // we don't want to process Object
     {
       for (SootField scField : superclass.getFields()) {
-        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, );
+        EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField );
         if (!infoFlowGraph.containsNode(fieldRefEqVal)) {
           infoFlowGraph.addNode(fieldRefEqVal);
         }
@@ -157,10 +157,10 @@ public class SimpleMethodInfoFlowAnalysis
 
   /** A constructor that doesn't run the analysis */
   protected SimpleMethodInfoFlowAnalysis(UnitGraph g, InfoFlowAnalysis dfa, boolean ignoreNonRefTypeFlow,
-                                         boolean dummyDontRunAnalysisYet, Options myOptions, InteractionHandler myInteractionHandler, ) {
+                                         boolean dummyDontRunAnalysisYet, Options myOptions, InteractionHandler myInteractionHandler ) {
     super(g,myOptions.interactive_mode(),  myInteractionHandler);
     this.sm = g.getBody().getMethod();
-    ;
+
     if (sm.isStatic()) {
       this.thisLocal = null;
     } else {

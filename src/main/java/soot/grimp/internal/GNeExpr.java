@@ -30,7 +30,7 @@ import soot.util.Switch;
 
 public class GNeExpr extends AbstractGrimpIntBinopExpr implements NeExpr {
   public GNeExpr(Value op1, Value op2) {
-    super(op1, op2, myGrimp);
+    super(op1, op2);
   }
 
   public final String getSymbol() {

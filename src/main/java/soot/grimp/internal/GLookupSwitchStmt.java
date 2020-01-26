@@ -38,14 +38,14 @@ public class GLookupSwitchStmt extends JLookupSwitchStmt {
     UnitBox[] targetBoxes = new UnitBox[targets.size()];
 
     for (int i = 0; i < targetBoxes.length; i++) {
-      targetBoxes[i] = myGrimp.newStmtBox((Stmt) targets.get(i));
+      targetBoxes[i] = Grimp.newStmtBox((Stmt) targets.get(i));
     }
 
     return targetBoxes;
   }
 
   public GLookupSwitchStmt(Value key, List lookupValues, List targets, Unit defaultTarget) {
-    super(myGrimp.newExprBox(key), lookupValues, getTargetBoxesArray(targets), myGrimp.newStmtBox(defaultTarget), constantFactory);
+    super(Grimp.newExprBox(key), lookupValues, getTargetBoxesArray(targets), Grimp.newStmtBox(defaultTarget), constantFactory);
   }
 
   public Object clone() {

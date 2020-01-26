@@ -28,7 +28,7 @@ import soot.jimple.internal.JThrowStmt;
 
 public class GThrowStmt extends JThrowStmt {
   public GThrowStmt(Value op) {
-    super(myGrimp.newExprBox(op));
+    super(Grimp.newExprBox(op));
   }
 
   public Object clone() {

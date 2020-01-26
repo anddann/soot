@@ -229,7 +229,7 @@ public class PackManager {
   private DavaStaticBlockCleaner myDavaStaticBlockCleaner;
   private DavaPrinter myDavaPrinter;
   private Shimple myShimple;
-  private Grimp myGrimp;
+  ;
   private Dava myDava;
   private Baf myBaf;
   private Printer myPrinter;
@@ -274,7 +274,7 @@ public class PackManager {
                      FieldTagAggregator myFieldTagAggregator, LineNumberAdder myLineNumberAdder, InteractionHandler myInteractionHandler,
                      PhaseDumper myPhaseDumper, ShimpleTransformer myShimpleTransformer, ThrowFinder myThrowFinder,
                      PackageNamer myPackageNamer, InnerClassTagAggregator myInnerClassTagAggregator,
-                     DavaStaticBlockCleaner myDavaStaticBlockCleaner, DavaPrinter myDavaPrinter, Shimple myShimple, Grimp myGrimp,
+                     DavaStaticBlockCleaner myDavaStaticBlockCleaner, DavaPrinter myDavaPrinter, Shimple myShimple, ,
                      Dava myDava, Baf myBaf, Printer myPrinter, XMLPrinter myXMLPrinter, TemplatePrinter myTemplatePrinter,
                      NullCheckEliminator myNullCheckEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer,
                      EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter,
@@ -352,7 +352,7 @@ public class PackManager {
     this.myDavaStaticBlockCleaner = myDavaStaticBlockCleaner;
     this.myDavaPrinter = myDavaPrinter;
     this.myShimple = myShimple;
-    this.myGrimp = myGrimp;
+
     this.myDava = myDava;
     this.myBaf = myBaf;
     this.myPrinter = myPrinter;
@@ -993,7 +993,7 @@ public class PackManager {
      * HAVE TO invoke this analysis since this invokes the renamer!!
      */
     if (transformations) {
-      InterProceduralAnalyses.applyInterProceduralAnalyses(myScene, myPhaseOptions, constantFactory, myScene.getPrimTypeCollector(), myClosestAbruptTargetFinder, myGrimp);
+      InterProceduralAnalyses.applyInterProceduralAnalyses(myScene, myPhaseOptions, constantFactory, myScene.getPrimTypeCollector(), myClosestAbruptTargetFinder, );
     }
   }
 
@@ -1206,7 +1206,7 @@ public class PackManager {
       // myPackManager.getPack("cfg").apply(m.retrieveActiveBody());
 
       if (produceGrimp) {
-        m.setActiveBody(myGrimp.newBody(m.getActiveBody(), "gb", myOptions, myPrinter, myGrimp, this));
+        m.setActiveBody(Grimp.newBody(m.getActiveBody(), "gb", myOptions, myPrinter,  this));
         getPack("gop").apply(m.getActiveBody());
       } else if (produceBaf) {
         m.setActiveBody(convertJimpleBodyToBaf(m));

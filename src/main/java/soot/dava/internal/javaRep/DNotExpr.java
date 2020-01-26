@@ -30,15 +30,15 @@ import soot.util.Switch;
 //import soot.jimple.*;
 
 public class DNotExpr extends AbstractUnopExpr {
-  private Grimp myGrimp;
+  ;
 
-  public DNotExpr(Value op, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(myGrimp.newExprBox(op));
-    this.myGrimp = myGrimp;
+  public DNotExpr(Value op) {
+    super(Grimp.newExprBox(op));
+
   }
 
   public Object clone() {
-    return new DNotExpr(Grimp.cloneIfNecessary(getOpBox().getValue()), myGrimp, primTypeCollector);
+    return new DNotExpr(Grimp.cloneIfNecessary(getOpBox().getValue()));
   }
 
   public void toString(UnitPrinter up) {
@@ -53,7 +53,7 @@ public class DNotExpr extends AbstractUnopExpr {
 
   public Type getType() {
     Value op = getOpBox().getValue();
-
+    PrimTypeCollector primTypeCollector = op.getType().getMyScene().getPrimTypeCollector();
     if (op.getType().equals(primTypeCollector.getIntType()) || op.getType().equals(primTypeCollector.getByteType()) || op.getType().equals(primTypeCollector.getShortType())
         || op.getType().equals(primTypeCollector.getBooleanType()) || op.getType().equals(primTypeCollector.getCharType())) {
       return primTypeCollector.getIntType();

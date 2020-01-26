@@ -31,11 +31,11 @@ import soot.grimp.PrecedenceTest;
 import soot.jimple.internal.AbstractLengthExpr;
 
 public class DLengthExpr extends AbstractLengthExpr implements Precedence {
-  private final Grimp myGrimp;
+  ;
 
-  public DLengthExpr(Value op, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(myGrimp.newObjExprBox(op));
-    this.myGrimp = myGrimp;
+  public DLengthExpr(Value op, , PrimTypeCollector primTypeCollector) {
+    super(Grimp.newObjExprBox(op));
+
   }
 
   public int getPrecedence() {
@@ -43,7 +43,7 @@ public class DLengthExpr extends AbstractLengthExpr implements Precedence {
   }
 
   public Object clone() {
-    return new DLengthExpr(Grimp.cloneIfNecessary(getOp()), myGrimp, primTypeCollector);
+    return new DLengthExpr(Grimp.cloneIfNecessary(getOp()),  primTypeCollector);
   }
 
   public void toString(UnitPrinter up) {

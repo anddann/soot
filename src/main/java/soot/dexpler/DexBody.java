@@ -708,7 +708,7 @@ public class DexBody {
 
       DexReturnValuePropagator.v().transform(jBody);
       getCopyPopagator().transform(jBody);
-      DexNullThrowTransformer.v().transform(jBody);
+      DexNullThrowTransformer.v(DexNullThrowTransformer.constantFactory, DexNullThrowTransformer.myScene).transform(jBody);
       myDalvikTyper.typeUntypedConstrantInDiv(jBody);
       myDeadAssignmentEliminator.transform(jBody);
       myUnusedLocalEliminator.transform(jBody);
@@ -730,7 +730,7 @@ public class DexBody {
       DexReturnValuePropagator.v().transform(jBody);
       getCopyPopagator().transform(jBody);
 
-      DexNullThrowTransformer.v().transform(jBody);
+      DexNullThrowTransformer.v(DexNullThrowTransformer.constantFactory, DexNullThrowTransformer.myScene).transform(jBody);
 
       // t_null.start();
       DexNullTransformer.v().transform(jBody);

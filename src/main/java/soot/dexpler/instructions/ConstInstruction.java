@@ -41,12 +41,13 @@ import soot.jimple.AssignStmt;
 import soot.jimple.Constant;
 import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
+import soot.options.Options;
 
 public class ConstInstruction extends DexlibAbstractInstruction {
 
   private ConstantFactory constantFactory;
 
-  public ConstInstruction(Instruction instruction, int codeAdress, ConstantFactory constantFactory) {
+  public ConstInstruction(Instruction instruction, int codeAdress, ConstantFactory constantFactory, Options myOptions) {
     super(instruction, codeAdress, myOptions);
     this.constantFactory = constantFactory;
   }
@@ -63,9 +64,9 @@ public class ConstInstruction extends DexlibAbstractInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       if (cst instanceof UntypedConstant) {
-        myDalvikTyper().addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
+        myDalvikTyper.addConstraint(assign.getLeftOpBox(), assign.getRightOpBox());
       } else {
-        myDalvikTyper().setType(assign.getLeftOpBox(), cst.getType(), false);
+        myDalvikTyper.setType(assign.getLeftOpBox(), cst.getType(), false);
       }
     }
   }

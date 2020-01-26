@@ -377,7 +377,7 @@ public class ClassLocalObjectsAnalysis {
             dataFlowSummary = dfa.getMethodInfoFlowSummary(method);
           }
 
-          EquivalentValue node = InfoFlowAnalysis.getNodeForFieldRef(method, localField, );
+          EquivalentValue node = InfoFlowAnalysis.getNodeForFieldRef(method, localField );
           if (dataFlowSummary.containsNode(node)) {
             sourcesAndSinks.addAll(dataFlowSummary.getSuccsOf(node));
             sourcesAndSinks.addAll(dataFlowSummary.getPredsOf(node));
@@ -438,7 +438,7 @@ public class ClassLocalObjectsAnalysis {
             dataFlowSummary = dfa.getMethodInfoFlowSummary(method);
           }
 
-          EquivalentValue node = InfoFlowAnalysis.getNodeForFieldRef(method, localInnerField, );
+          EquivalentValue node = InfoFlowAnalysis.getNodeForFieldRef(method, localInnerField );
           if (dataFlowSummary.containsNode(node)) {
             sourcesAndSinks.addAll(dataFlowSummary.getSuccsOf(node));
             sourcesAndSinks.addAll(dataFlowSummary.getPredsOf(node));
@@ -635,7 +635,7 @@ public class ClassLocalObjectsAnalysis {
             Ref r = (Ref) rEqVal.getValue();
             if (r instanceof InstanceFieldRef) {
               EquivalentValue newRefEqVal
-                  = InfoFlowAnalysis.getNodeForFieldRef(callingMethod, ((FieldRef) r).getFieldRef().resolve(), );
+                  = InfoFlowAnalysis.getNodeForFieldRef(callingMethod, ((FieldRef) r).getFieldRef().resolve() );
               if (callingContext.containsField(newRefEqVal)) {
                 callingContext.setFieldLocal(newRefEqVal); // must make a new eqval for the method getting called
               }
@@ -643,7 +643,7 @@ public class ClassLocalObjectsAnalysis {
               callingContext.setThisLocal();
             }
           }
-        } else if (SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, containingMethod, containingContext, iie.getBase(),)) {
+        } else if (SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, containingMethod, containingContext, iie.getBase())) {
           // calling a method on a local object
           callingContext.setAllFieldsLocal();
           callingContext.setThisLocal();
@@ -662,7 +662,7 @@ public class ClassLocalObjectsAnalysis {
         callingContext.setAllParamsShared();
       } else {
         for (int param = 0; param < ie.getArgCount(); param++) {
-          if (SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, containingMethod, containingContext, ie.getArg(param),)) {
+          if (SmartMethodLocalObjectsAnalysis.isObjectLocal(dfa, containingMethod, containingContext, ie.getArg(param))) {
             callingContext.setParamLocal(param);
           } else {
             callingContext.setParamShared(param);
@@ -702,12 +702,12 @@ public class ClassLocalObjectsAnalysis {
     }
 
     for (SootField sf : getLocalFields()) {
-      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, );
+      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf );
       context.setFieldLocal(fieldRefEqVal);
     }
 
     for (SootField sf : getSharedFields()) {
-      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, );
+      EquivalentValue fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf );
       context.setFieldShared(fieldRefEqVal);
     }
     return context;
@@ -766,12 +766,12 @@ public class ClassLocalObjectsAnalysis {
     if (includePrimitiveDataFlowIfAvailable && primitiveDfa != null) {
       Body b = sm.retrieveActiveBody();
       UnitGraph g = new ExceptionalUnitGraph(b, throwAnalysis,myOptions.omit_excepting_unit_edges(),myManager,myPhaseDumper);
-      return new SmartMethodLocalObjectsAnalysis(g, primitiveDfa, );
+      return new SmartMethodLocalObjectsAnalysis(g, primitiveDfa );
     } else if (!methodToMethodLocalObjectsAnalysis.containsKey(sm)) {
       // Analyze this method
       Body b = sm.retrieveActiveBody();
       UnitGraph g = new ExceptionalUnitGraph(b, throwAnalysis,myOptions.omit_excepting_unit_edges(),myManager,myPhaseDumper);
-      SmartMethodLocalObjectsAnalysis smloa = new SmartMethodLocalObjectsAnalysis(g, dfa, );
+      SmartMethodLocalObjectsAnalysis smloa = new SmartMethodLocalObjectsAnalysis(g, dfa );
       methodToMethodLocalObjectsAnalysis.put(sm, smloa);
     }
     return methodToMethodLocalObjectsAnalysis.get(sm);

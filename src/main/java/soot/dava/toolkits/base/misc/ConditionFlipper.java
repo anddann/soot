@@ -39,29 +39,29 @@ import soot.jimple.LtExpr;
 import soot.jimple.NeExpr;
 
 public class ConditionFlipper {
-  public static ConditionExpr flip(ConditionExpr ce, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
+  public static ConditionExpr flip(ConditionExpr ce, , PrimTypeCollector primTypeCollector) {
     if (ce instanceof EqExpr) {
       return new GNeExpr(ce.getOp1(), ce.getOp2());
     }
 
     if (ce instanceof NeExpr) {
-      return new GEqExpr(ce.getOp1(), ce.getOp2(), myGrimp, primTypeCollector);
+      return new GEqExpr(ce.getOp1(), ce.getOp2());
     }
 
     if (ce instanceof GtExpr) {
-      return new GLeExpr(ce.getOp1(), ce.getOp2(), myGrimp, primTypeCollector);
+      return new GLeExpr(ce.getOp1(), ce.getOp2(),  primTypeCollector);
     }
 
     if (ce instanceof LtExpr) {
-      return new GGeExpr(ce.getOp1(), ce.getOp2(), myGrimp, primTypeCollector);
+      return new GGeExpr(ce.getOp1(), ce.getOp2());
     }
 
     if (ce instanceof GeExpr) {
-      return new GLtExpr(ce.getOp1(), ce.getOp2(), myGrimp, primTypeCollector);
+      return new GLtExpr(ce.getOp1(), ce.getOp2());
     }
 
     if (ce instanceof LeExpr) {
-      return new GGtExpr(ce.getOp1(), ce.getOp2(), myGrimp, primTypeCollector);
+      return new GGtExpr(ce.getOp1(), ce.getOp2());
     }
 
     return null;

@@ -40,20 +40,21 @@ import org.jf.dexlib2.iface.instruction.formats.Instruction22c;
 import org.jf.dexlib2.iface.instruction.formats.Instruction23x;
 import org.jf.dexlib2.iface.reference.FieldReference;
 
-import soot.Local;
-import soot.SootClass;
-import soot.SootFieldRef;
-import soot.Type;
-import soot.UnknownType;
+import soot.*;
 import soot.dexpler.DexBody;
 import soot.dexpler.DexType;
 import soot.jimple.AssignStmt;
 import soot.jimple.ConcreteRef;
+import soot.jimple.Jimple;
+import soot.options.Options;
 
 public abstract class FieldInstruction extends DexlibAbstractInstruction {
 
-  public FieldInstruction(Instruction instruction, int codeAdress) {
+  private Scene myScene;
+
+  public FieldInstruction(Instruction instruction, int codeAdress, Options myOptions, Scene myScene) {
     super(instruction, codeAdress, myOptions);
+    this.myScene = myScene;
   }
 
   /**

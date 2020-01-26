@@ -22,7 +22,6 @@ package soot.grimp.internal;
  * #L%
  */
 
-import soot.PrimTypeCollector;
 import soot.Value;
 import soot.ValueBox;
 import soot.dava.internal.javaRep.DCmpExpr;
@@ -35,11 +34,11 @@ import soot.jimple.SubExpr;
 import soot.jimple.internal.AbstractIntBinopExpr;
 
 abstract public class AbstractGrimpIntBinopExpr extends AbstractIntBinopExpr implements Precedence {
-  public AbstractGrimpIntBinopExpr(Value op1, Value op2, Grimp myGrimp,PrimTypeCollector primTypeCollector) {
-    this(myGrimp.newArgBox(op1), myGrimp.newArgBox(op2),primTypeCollector);
+  public AbstractGrimpIntBinopExpr(Value op1, Value op2) {
+    this(Grimp.newArgBox(op1), Grimp.newArgBox(op2));
   }
 
-  protected AbstractGrimpIntBinopExpr(ValueBox op1Box, ValueBox op2Box, PrimTypeCollector primTypeCollector) {
+  protected AbstractGrimpIntBinopExpr(ValueBox op1Box, ValueBox op2Box) {
     super(op1Box,op2Box);
   }
 

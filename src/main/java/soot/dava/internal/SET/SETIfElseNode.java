@@ -39,16 +39,16 @@ import soot.util.IterableSet;
 public class SETIfElseNode extends SETDagNode {
   private IterableSet ifBody, elseBody;
   private TryContentsFinder myTryContentsFinder;
-  private Grimp myGrimp;
+
   private PrimTypeCollector primTypeCollector;
 
-  public SETIfElseNode(AugmentedStmt characterizingStmt, IterableSet body, IterableSet ifBody, IterableSet elseBody, TryContentsFinder myTryContentsFinder, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
+  public SETIfElseNode(AugmentedStmt characterizingStmt, IterableSet body, IterableSet ifBody, IterableSet elseBody, TryContentsFinder myTryContentsFinder,  PrimTypeCollector primTypeCollector) {
     super(characterizingStmt, body);
 
     this.ifBody = ifBody;
     this.elseBody = elseBody;
     this.myTryContentsFinder = myTryContentsFinder;
-    this.myGrimp = myGrimp;
+
     this.primTypeCollector = primTypeCollector;
 
     add_SubBody(ifBody);
@@ -82,13 +82,13 @@ public class SETIfElseNode extends SETDagNode {
       astBody0 = astBody1;
       astBody1 = tbody;
 
-      ce = ConditionFlipper.flip(ce, this.myGrimp, this.primTypeCollector);
+      ce = ConditionFlipper.flip(ce,  this.primTypeCollector);
     }
 
     if (astBody1.isEmpty()) {
-      return new ASTIfNode(get_Label(), ce, astBody0, this.myTryContentsFinder, this.myGrimp, this.primTypeCollector);
+      return new ASTIfNode(get_Label(), ce, astBody0, this.myTryContentsFinder, this.primTypeCollector);
     } else {
-      return new ASTIfElseNode(get_Label(), ce, astBody0, astBody1, this.myTryContentsFinder, this.myGrimp, this.primTypeCollector);
+      return new ASTIfElseNode(get_Label(), ce, astBody0, astBody1, this.myTryContentsFinder, this.primTypeCollector);
     }
   }
 }

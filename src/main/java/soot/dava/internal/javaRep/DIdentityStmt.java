@@ -28,7 +28,7 @@ import soot.grimp.Grimp;
 import soot.grimp.internal.GIdentityStmt;
 
 public class DIdentityStmt extends GIdentityStmt {
-  public DIdentityStmt(Value local, Value identityValue, Grimp myGrimp) {
+  public DIdentityStmt(Value local, Value identityValue, ) {
     super(local, identityValue);
   }
 

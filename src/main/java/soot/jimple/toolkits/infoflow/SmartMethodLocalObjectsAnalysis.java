@@ -52,7 +52,7 @@ public class SmartMethodLocalObjectsAnalysis {
   SmartMethodInfoFlowAnalysis smdfa;
 
 
-  public SmartMethodLocalObjectsAnalysis(SootMethod method, InfoFlowAnalysis dfa, ) {
+  public SmartMethodLocalObjectsAnalysis(SootMethod method, InfoFlowAnalysis dfa ) {
     this.method = method;
     this.dfa = dfa;
     ;
@@ -62,8 +62,8 @@ public class SmartMethodLocalObjectsAnalysis {
     counter++;
   }
 
-  public SmartMethodLocalObjectsAnalysis(UnitGraph g, InfoFlowAnalysis dfa, ) {
-    this(g.getBody().getMethod(), dfa, );
+  public SmartMethodLocalObjectsAnalysis(UnitGraph g, InfoFlowAnalysis dfa ) {
+    this(g.getBody().getMethod(), dfa );
   }
 
   public Value getThisLocal() {
@@ -76,7 +76,7 @@ public class SmartMethodLocalObjectsAnalysis {
   {
     EquivalentValue localEqVal;
     if (local instanceof InstanceFieldRef) {
-      localEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, ((FieldRef) local).getField(), );
+      localEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, ((FieldRef) local).getField() );
     } else {
       localEqVal = new CachedEquivalentValue(local);
     }
@@ -105,12 +105,12 @@ public class SmartMethodLocalObjectsAnalysis {
     return true;
   }
 
-  public static boolean isObjectLocal(InfoFlowAnalysis dfa, SootMethod method, CallLocalityContext context, Value local, ) {
+  public static boolean isObjectLocal(InfoFlowAnalysis dfa, SootMethod method, CallLocalityContext context, Value local ) {
     SmartMethodInfoFlowAnalysis smdfa = dfa.getMethodInfoFlowAnalysis(method);
 
     EquivalentValue localEqVal;
     if (local instanceof InstanceFieldRef) {
-      localEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, ((FieldRef) local).getField(), );
+      localEqVal = InfoFlowAnalysis.getNodeForFieldRef(method, ((FieldRef) local).getField() );
     } else {
       localEqVal = new CachedEquivalentValue(local);
     }

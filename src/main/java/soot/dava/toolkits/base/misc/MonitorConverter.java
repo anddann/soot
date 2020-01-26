@@ -50,16 +50,16 @@ public class MonitorConverter {
   private final Scene myScene;
   private final PackageNamer myPackageNamer;
   private final Options myOptions;
-  private Grimp myGrimp;
+  ;
   private Baf myBaf;
 
   @Inject
   public MonitorConverter(Scene myScene, PackageNamer myPackageNamer, Options myOptions,
-                          Grimp myGrimp, Baf myBaf, PrimTypeCollector primTypeCollector) {
+                          , Baf myBaf, PrimTypeCollector primTypeCollector) {
     this.myScene = myScene;
     this.myPackageNamer = myPackageNamer;
     this.myOptions = myOptions;
-    this.myGrimp = myGrimp;
+
     this.myBaf = myBaf;
     SootClass davaMonitor = new SootClass("soot.dava.toolkits.base.DavaMonitor.DavaMonitor", this.myOptions, Modifier.PUBLIC,
         this.myScene, this.myPackageNamer);
@@ -92,11 +92,11 @@ public class MonitorConverter {
       arg.add(ms.getOp());
 
       if (ms instanceof EnterMonitorStmt) {
-        mas.set_Stmt(new GInvokeStmt(new DVirtualInvokeExpr(new DStaticInvokeExpr(v.makeRef(), new ArrayList(), myGrimp),
-            enter.makeRef(), arg, new HashSet<Object>(), myGrimp, myBaf, myScene)));
+        mas.set_Stmt(new GInvokeStmt(new DVirtualInvokeExpr(new DStaticInvokeExpr(v.makeRef(), new ArrayList(), ),
+            enter.makeRef(), arg, new HashSet<Object>(),  myBaf, myScene)));
       } else {
-        mas.set_Stmt(new GInvokeStmt(new DVirtualInvokeExpr(new DStaticInvokeExpr(v.makeRef(), new ArrayList(), myGrimp),
-            exit.makeRef(), arg, new HashSet<Object>(), myGrimp, myBaf, myScene)));
+        mas.set_Stmt(new GInvokeStmt(new DVirtualInvokeExpr(new DStaticInvokeExpr(v.makeRef(), new ArrayList(), ),
+            exit.makeRef(), arg, new HashSet<Object>(),  myBaf, myScene)));
       }
     }
   }

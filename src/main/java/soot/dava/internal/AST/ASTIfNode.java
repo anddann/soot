@@ -37,8 +37,8 @@ import soot.jimple.ConditionExpr;
 public class ASTIfNode extends ASTControlFlowNode {
   private List<Object> body;
 
-  public ASTIfNode(SETNodeLabel label, ConditionExpr condition, List<Object> body, TryContentsFinder myTryContentsFinder, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(label, condition, myTryContentsFinder, myGrimp, primTypeCollector);
+  public ASTIfNode(SETNodeLabel label, ConditionExpr condition, List<Object> body, TryContentsFinder myTryContentsFinder,  PrimTypeCollector primTypeCollector) {
+    super(label, condition, myTryContentsFinder,  primTypeCollector);
     this.body = body;
 
     subBodies.add(body);

@@ -34,12 +34,12 @@ import soot.grimp.internal.GSpecialInvokeExpr;
 
 public class DSpecialInvokeExpr extends GSpecialInvokeExpr {
   private Scene myScene;
-  private final Grimp myGrimp;
+  ;
 
-  public DSpecialInvokeExpr(Value base, SootMethodRef methodRef, List args, Scene myScene, Grimp myGrimp) {
-    super(base, methodRef, args, myGrimp);
+  public DSpecialInvokeExpr(Value base, SootMethodRef methodRef, List args, Scene myScene, ) {
+    super(base, methodRef, args);
     this.myScene = myScene;
-    this.myGrimp = myGrimp;
+
   }
 
   public void toString(UnitPrinter up) {
@@ -124,6 +124,6 @@ public class DSpecialInvokeExpr extends GSpecialInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DSpecialInvokeExpr(getBase(), methodRef, clonedArgs, myScene, myGrimp);
+    return new DSpecialInvokeExpr(getBase(), methodRef, clonedArgs, myScene, );
   }
 }

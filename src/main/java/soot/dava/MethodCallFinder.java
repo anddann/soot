@@ -66,7 +66,7 @@ public class MethodCallFinder extends DepthFirstAdapter {
   //FIXME
   private Scene myScene;
   private ConstantFactory constantFactory;
-  private Grimp myGrimp;
+  ;
   private TryContentsFinder myTryContentsFinder;
   private ASTWalker myASTWalker;
 
@@ -144,7 +144,7 @@ public class MethodCallFinder extends DepthFirstAdapter {
             List list = new ArrayList();
             list.add(tempString);
 
-            GNewInvokeExpr newInvokeExpr = new GNewInvokeExpr(myRefType, methodRef, list, myGrimp);
+            GNewInvokeExpr newInvokeExpr = new GNewInvokeExpr(myRefType, methodRef, list);
 
             GThrowStmt throwStmt = new GThrowStmt(newInvokeExpr);
 

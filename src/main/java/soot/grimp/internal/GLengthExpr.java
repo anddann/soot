@@ -28,7 +28,7 @@ import soot.jimple.internal.AbstractLengthExpr;
 
 public class GLengthExpr extends AbstractLengthExpr {
   public GLengthExpr(Value op) {
-    super(myGrimp.newObjExprBox(op));
+    super(Grimp.newObjExprBox(op));
   }
 
   public Object clone() {

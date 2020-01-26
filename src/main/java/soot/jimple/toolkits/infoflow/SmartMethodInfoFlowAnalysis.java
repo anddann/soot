@@ -133,7 +133,7 @@ public class SmartMethodInfoFlowAnalysis {
         if (!sm.isStatic()) {
           fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, sm.retrieveActiveBody().getThisLocal());
         } else {
-          fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf, );
+          fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, sf );
         }
 
         if (!infoFlowSummary.containsNode(fieldRefEqVal)) {
@@ -155,7 +155,7 @@ public class SmartMethodInfoFlowAnalysis {
           if (!sm.isStatic()) {
             fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, sm.retrieveActiveBody().getThisLocal());
           } else {
-            fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField, );
+            fieldRefEqVal = InfoFlowAnalysis.getNodeForFieldRef(sm, scField );
           }
           if (!infoFlowSummary.containsNode(fieldRefEqVal)) {
             infoFlowSummary.addNode(fieldRefEqVal);

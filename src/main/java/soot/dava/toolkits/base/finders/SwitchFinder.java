@@ -62,7 +62,7 @@ public class SwitchFinder implements FactFinder {
   private LinkedList targetList, snTargetList, tSuccList;
   private HashMap index2target, tSucc2indexSet, tSucc2target, tSucc2Body;
 
-  public void find(DavaBody davaBody, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException {
+  public void find(DavaBody davaBody, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, ) throws RetriggerAnalysisException {
     myDava.log("SwitchFinder::find()");
 
     final String defaultStr = "default";

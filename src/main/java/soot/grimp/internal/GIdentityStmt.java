@@ -29,7 +29,7 @@ import soot.jimple.internal.JIdentityStmt;
 public class GIdentityStmt extends JIdentityStmt {
 
     public GIdentityStmt(Value local, Value identityValue) {
-        super(myGrimp.newLocalBox(local), myGrimp.newIdentityRefBox(identityValue));
+        super(Grimp.newLocalBox(local), Grimp.newIdentityRefBox(identityValue));
     }
 
     public Object clone() {

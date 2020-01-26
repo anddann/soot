@@ -30,7 +30,7 @@ import soot.jimple.internal.AbstractCastExpr;
 
 public class GCastExpr extends AbstractCastExpr implements Precedence {
   public GCastExpr(Value op, Type type) {
-    super(myGrimp.newExprBox(op), type);
+    super(Grimp.newExprBox(op), type);
   }
 
   public int getPrecedence() {

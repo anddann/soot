@@ -28,15 +28,15 @@ import soot.grimp.Grimp;
 import soot.grimp.internal.GAssignStmt;
 
 public class DDecrementStmt extends GAssignStmt {
-  private final Grimp myGrimp;
+  ;
 
-  public DDecrementStmt(Value variable, Value rvalue, Grimp myGrimp) {
+  public DDecrementStmt(Value variable, Value rvalue ) {
     super(variable, rvalue);
-    this.myGrimp = myGrimp;
+
   }
 
   public Object clone() {
-    return new DDecrementStmt(Grimp.cloneIfNecessary(getLeftOp()), Grimp.cloneIfNecessary(getRightOp()), myGrimp);
+    return new DDecrementStmt(Grimp.cloneIfNecessary(getLeftOp()), Grimp.cloneIfNecessary(getRightOp()) );
 
   }
 

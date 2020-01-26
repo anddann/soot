@@ -65,7 +65,7 @@ public abstract class CFGIntermediateRep extends CFGOptionMatcher.CFGOption {
 //
 //  public static final CFGIntermediateRep GRIMP_IR = new CFGIntermediateRep("grimp") {
 //    public Body getBody(JimpleBody b) {
-//      return myGrimp.newBody(b, "gb");
+//      return Grimp.newBody(b, "gb");
 //    }
 //  };
 //

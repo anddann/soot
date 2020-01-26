@@ -35,8 +35,8 @@ import soot.grimp.internal.GInterfaceInvokeExpr;
 public class DInterfaceInvokeExpr extends GInterfaceInvokeExpr {
   private Scene myScene;
 
-  public DInterfaceInvokeExpr(Value base, SootMethodRef methodRef, List args, Grimp myGrimp, Scene myScene) {
-    super(base, methodRef, args, myGrimp);
+  public DInterfaceInvokeExpr(Value base, SootMethodRef methodRef, List args, Scene myScene) {
+    super(base, methodRef, args);
     this.myScene = myScene;
   }
 
@@ -122,6 +122,6 @@ public class DInterfaceInvokeExpr extends GInterfaceInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DInterfaceInvokeExpr(getBase(), methodRef, clonedArgs, myGrimp, myScene);
+    return new DInterfaceInvokeExpr(getBase(), methodRef, clonedArgs,  myScene);
   }
 }

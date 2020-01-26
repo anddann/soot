@@ -10,19 +10,18 @@ package soot.grimp.internal;
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
  */
 
-import soot.PrimTypeCollector;
 import soot.Value;
 import soot.grimp.Grimp;
 import soot.jimple.ExprSwitch;
@@ -30,27 +29,25 @@ import soot.jimple.LtExpr;
 import soot.util.Switch;
 
 public class GLtExpr extends AbstractGrimpIntBinopExpr implements LtExpr {
-  private final Grimp myGrimp;
 
-  public GLtExpr(Value op1, Value op2, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(op1, op2, myGrimp,primTypeCollector);
-    this.myGrimp =myGrimp;
-  }
+    public GLtExpr(Value op1, Value op2) {
+        super(op1, op2);
+    }
 
-  public final String getSymbol() {
-    return " < ";
-  }
+    public final String getSymbol() {
+        return " < ";
+    }
 
-  public final int getPrecedence() {
-    return 600;
-  }
+    public final int getPrecedence() {
+        return 600;
+    }
 
-  public void apply(Switch sw) {
-    ((ExprSwitch) sw).caseLtExpr(this);
-  }
+    public void apply(Switch sw) {
+        ((ExprSwitch) sw).caseLtExpr(this);
+    }
 
-  public Object clone() {
-    return new GLtExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()),myGrimp,primTypeCollector);
-  }
+    public Object clone() {
+        return new GLtExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()));
+    }
 
 }

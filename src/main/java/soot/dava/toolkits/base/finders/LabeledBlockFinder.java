@@ -58,7 +58,7 @@ public class LabeledBlockFinder implements FactFinder {
 
   private final HashMap<SETNode, Integer> orderNumber = new HashMap();
 
-  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, Grimp myGrimp) throws RetriggerAnalysisException {
+  public void find(DavaBody body, AugmentedStmtGraph asg, SETNode SET, PrimTypeCollector primTypeCollector, ) throws RetriggerAnalysisException {
     myDava.log("LabeledBlockFinder::find()");
 
     Iterator bit = SET.get_Body().iterator();

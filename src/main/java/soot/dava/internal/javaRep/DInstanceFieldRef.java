@@ -33,13 +33,13 @@ import soot.grimp.internal.GInstanceFieldRef;
 
 public class DInstanceFieldRef extends GInstanceFieldRef {
   private HashSet<Object> thisLocals;
-  private final Grimp myGrimp;
+  ;
 
-  public DInstanceFieldRef(Value base, SootFieldRef fieldRef, HashSet<Object> thisLocals, Grimp myGrimp) {
-    super(base, fieldRef, myGrimp);
+  public DInstanceFieldRef(Value base, SootFieldRef fieldRef, HashSet<Object> thisLocals, ) {
+    super(base, fieldRef);
 
     this.thisLocals = thisLocals;
-    this.myGrimp = myGrimp;
+
   }
 
   public void toString(UnitPrinter up) {
@@ -59,6 +59,6 @@ public class DInstanceFieldRef extends GInstanceFieldRef {
   }
 
   public Object clone() {
-    return new DInstanceFieldRef(getBase(), fieldRef, thisLocals, myGrimp);
+    return new DInstanceFieldRef(getBase(), fieldRef, thisLocals, );
   }
 }

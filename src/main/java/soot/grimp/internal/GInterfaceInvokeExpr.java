@@ -11,12 +11,12 @@ package soot.grimp.internal;
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -36,83 +36,81 @@ import soot.grimp.PrecedenceTest;
 import soot.jimple.internal.AbstractInterfaceInvokeExpr;
 
 public class GInterfaceInvokeExpr extends AbstractInterfaceInvokeExpr implements Precedence {
-  protected Grimp myGrimp;
 
-  public GInterfaceInvokeExpr(Value base, SootMethodRef methodRef, List args, Grimp myGrimp) {
-    super(myGrimp.newObjExprBox(base), methodRef, new ValueBox[args.size()]);
-    this.myGrimp = myGrimp;
+    public GInterfaceInvokeExpr(Value base, SootMethodRef methodRef, List args) {
+        super(Grimp.newObjExprBox(base), methodRef, new ValueBox[args.size()]);
 
-    for (int i = 0; i < args.size(); i++) {
-      this.argBoxes[i] = myGrimp.newExprBox((Value) args.get(i));
+        for (int i = 0; i < args.size(); i++) {
+            this.argBoxes[i] = Grimp.newExprBox((Value) args.get(i));
+        }
     }
-  }
 
-  public int getPrecedence() {
-    return 950;
-  }
-
-  private String toString(Value op, String opString, String rightString) {
-    String leftOp = opString;
-
-    if (getBase() instanceof Precedence && ((Precedence) getBase()).getPrecedence() < getPrecedence()) {
-      leftOp = "(" + leftOp + ")";
+    public int getPrecedence() {
+        return 950;
     }
-    return leftOp + rightString;
-  }
 
-  public String toString() {
-    StringBuffer buffer = new StringBuffer();
+    private String toString(Value op, String opString, String rightString) {
+        String leftOp = opString;
 
-    buffer.append("." + methodRef.getSignature() + "(");
+        if (getBase() instanceof Precedence && ((Precedence) getBase()).getPrecedence() < getPrecedence()) {
+            leftOp = "(" + leftOp + ")";
+        }
+        return leftOp + rightString;
+    }
 
-    if (argBoxes != null) {
-      for (int i = 0; i < argBoxes.length; i++) {
-        if (i != 0) {
-          buffer.append(", ");
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append("." + methodRef.getSignature() + "(");
+
+        if (argBoxes != null) {
+            for (int i = 0; i < argBoxes.length; i++) {
+                if (i != 0) {
+                    buffer.append(", ");
+                }
+
+                buffer.append(argBoxes[i].getValue().toString());
+            }
         }
 
-        buffer.append(argBoxes[i].getValue().toString());
-      }
+        buffer.append(")");
+
+        return toString(getBase(), getBase().toString(), buffer.toString());
     }
 
-    buffer.append(")");
+    public void toString(UnitPrinter up) {
+        if (PrecedenceTest.needsBrackets(baseBox, this)) {
+            up.literal("(");
+        }
+        baseBox.toString(up);
+        if (PrecedenceTest.needsBrackets(baseBox, this)) {
+            up.literal(")");
+        }
+        up.literal(".");
+        up.methodRef(methodRef);
+        up.literal("(");
 
-    return toString(getBase(), getBase().toString(), buffer.toString());
-  }
+        if (argBoxes != null) {
+            for (int i = 0; i < argBoxes.length; i++) {
+                if (i != 0) {
+                    up.literal(", ");
+                }
 
-  public void toString(UnitPrinter up) {
-    if (PrecedenceTest.needsBrackets(baseBox, this)) {
-      up.literal("(");
-    }
-    baseBox.toString(up);
-    if (PrecedenceTest.needsBrackets(baseBox, this)) {
-      up.literal(")");
-    }
-    up.literal(".");
-    up.methodRef(methodRef);
-    up.literal("(");
-
-    if (argBoxes != null) {
-      for (int i = 0; i < argBoxes.length; i++) {
-        if (i != 0) {
-          up.literal(", ");
+                argBoxes[i].toString(up);
+            }
         }
 
-        argBoxes[i].toString(up);
-      }
+        up.literal(")");
     }
 
-    up.literal(")");
-  }
+    public Object clone() {
+        List argList = new ArrayList(getArgCount());
 
-  public Object clone() {
-    List argList = new ArrayList(getArgCount());
+        for (int i = 0; i < getArgCount(); i++) {
+            argList.add(i, Grimp.cloneIfNecessary(getArg(i)));
+        }
 
-    for (int i = 0; i < getArgCount(); i++) {
-      argList.add(i, Grimp.cloneIfNecessary(getArg(i)));
+        return new GInterfaceInvokeExpr(Grimp.cloneIfNecessary(getBase()), methodRef, argList);
     }
-
-    return new GInterfaceInvokeExpr(Grimp.cloneIfNecessary(getBase()), methodRef, argList, myGrimp);
-  }
 
 }

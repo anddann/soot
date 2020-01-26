@@ -125,7 +125,7 @@ public class InstructionFactory {
       case CONST_WIDE_16:
       case CONST_WIDE_32:
       case CONST_WIDE_HIGH16:
-        return new ConstInstruction(instruction, codeAddress, constantFactory);
+        return new ConstInstruction(instruction, codeAddress, constantFactory, myOptions);
 
       case CONST_STRING:
       case CONST_STRING_JUMBO:

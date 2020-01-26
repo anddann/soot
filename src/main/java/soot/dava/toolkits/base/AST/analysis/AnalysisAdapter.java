@@ -52,7 +52,7 @@ import soot.jimple.*;
 public class AnalysisAdapter implements Analysis {
 
     protected Scene myScene;
-    protected Grimp myGrimp;
+
     protected ConstantFactory constantFactory;
     protected PrimTypeCollector primTypeCollector;
     protected UselessLabelFinder myUselessLabelFinder;

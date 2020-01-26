@@ -29,7 +29,7 @@ import soot.jimple.internal.JIfStmt;
 
 public class GIfStmt extends JIfStmt {
   public GIfStmt(Value condition, Unit target) {
-    super(myGrimp.newConditionExprBox(condition), myGrimp.newStmtBox(target));
+    super(Grimp.newConditionExprBox(condition), Grimp.newStmtBox(target));
   }
 
   public Object clone() {
