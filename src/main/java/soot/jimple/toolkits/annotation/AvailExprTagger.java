@@ -66,7 +66,7 @@ public class AvailExprTagger extends BodyTransformer {
 
     SideEffectTester sideEffect;
     if (myScene.hasCallGraph() && !PhaseOptions.getBoolean(opts, "naive-side-effect")) {
-      sideEffect = new PASideEffectTester();
+      sideEffect = new PASideEffectTester(myScene);
     } else {
       sideEffect = new NaiveSideEffectTester();
     }

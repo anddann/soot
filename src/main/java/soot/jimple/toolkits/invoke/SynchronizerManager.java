@@ -33,6 +33,7 @@ import com.google.inject.Inject;
 import soot.Body;
 import soot.Local;
 import soot.Modifier;
+import soot.Printer;
 import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
@@ -51,6 +52,7 @@ import soot.jimple.JimpleBody;
 import soot.jimple.ParameterRef;
 import soot.jimple.ReturnStmt;
 import soot.jimple.Stmt;
+import soot.options.Options;
 import soot.util.Chain;
 
 /** Utility methods for dealing with synchronization. */
@@ -59,12 +61,16 @@ public class SynchronizerManager {
   private Scene myScene;
 
   private ConstantFactory constantFactory;
+  private Printer myPrinter;
+  private Options myOptions;
 
   @Inject
-  public SynchronizerManager(Scene myScene,  ConstantFactory constantFactory) {
+  public SynchronizerManager(Scene myScene, ConstantFactory constantFactory, Printer myPrinter, Options myOptions) {
     this.myScene = myScene;
-    ;
+
     this.constantFactory = constantFactory;
+    this.myPrinter = myPrinter;
+    this.myOptions = myOptions;
   }
 
 

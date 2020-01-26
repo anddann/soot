@@ -108,6 +108,8 @@ public class TypeResolver {
   private ThrowAnalysis throwAnalysis;
   private ThrowableSet.Manager myManager;
   private PhaseDumper phaseDumper;
+  private PrimTypeCollector primTypeCollector;
+  private Scene myScene;
 
 
   public ClassHierarchy hierarchy() {
@@ -178,13 +180,15 @@ public class TypeResolver {
     return result;
   }
 
-  private TypeResolver(JimpleBody stmtBody, Scene scene, Options myOptions, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper) {
+  private TypeResolver(JimpleBody stmtBody, Scene scene, Options myOptions, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, PrimTypeCollector primTypeCollector, Scene myScene) {
     this.stmtBody = stmtBody;
     this.myOptions = myOptions;
     this.myInteractionHandler = myInteractionHandler;
     this.throwAnalysis = throwAnalysis;
     this.myManager = myManager;
     this.phaseDumper = phaseDumper;
+    this.primTypeCollector = primTypeCollector;
+    this.myScene = myScene;
     ;
     hierarchy = ClassHierarchy.classHierarchy(scene, myOptions);
     this.scene = scene;
@@ -200,13 +204,13 @@ public class TypeResolver {
     }
   }
 
-  public static void resolve(JimpleBody stmtBody, Scene scene, Options myOptions, soot.jimple.toolkits.typing.integer.ClassHierarchy myClassHierarchy, PrimTypeCollector primTypeCollector, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper) {
+  public static void resolve(JimpleBody stmtBody, Scene scene, Options myOptions, soot.jimple.toolkits.typing.integer.ClassHierarchy myClassHierarchy, PrimTypeCollector primTypeCollector, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper phaseDumper, Scene myScene) {
     if (DEBUG) {
       logger.debug("" + stmtBody.getMethod());
     }
 
     try {
-      TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper);
+      TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper, primTypeCollector, myScene);
       resolver.resolve_step_1();
     } catch (TypeException e1) {
       if (DEBUG) {
@@ -215,7 +219,7 @@ public class TypeResolver {
       }
 
       try {
-        TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper);
+        TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper, primTypeCollector, myScene);
         resolver.resolve_step_2();
       } catch (TypeException e2) {
         if (DEBUG) {
@@ -224,7 +228,7 @@ public class TypeResolver {
         }
 
         try {
-          TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper);
+          TypeResolver resolver = new TypeResolver(stmtBody, scene, myOptions, myInteractionHandler, throwAnalysis, myManager, phaseDumper, primTypeCollector, myScene);
           resolver.resolve_step_3();
         } catch (TypeException e3) {
           StringWriter st = new StringWriter();

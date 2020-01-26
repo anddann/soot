@@ -202,7 +202,7 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
       logger.info("Transforming method names...");
     }
 
-    BodyBuilder.retrieveAllBodies(soot.myScene);
+    BodyBuilder.retrieveAllBodies(myScene);
     BodyBuilder.retrieveAllNames(myScene);
 
     myScene.releaseActiveHierarchy();

@@ -154,7 +154,7 @@ public class DexMethod {
         Body b = Jimple.newBody(m,myPrinter,myOptions);
         try {
           // add the body of this code item
-          DexBody dexBody = new DexBody(dexFile, method, declaringClass.getType(), constantFactory, primTypeCollector, myScene, myOptions, myPhaseOptions, myDalvikTyper, myDeadAssignmentEliminator, myUnusedLocalEliminator, myTypeAssigner, myLocalPacker, myPackManager, myFieldStaticnessCorrector, myMethodStaticnessCorrector, myTrapTightener, myTrapMinimizer, myAggregator, myConditionalBranchFolder, myConstantCastEliminator, myIdentityCastEliminator, myIdentityOperationEliminator, myUnreachableCodeEliminator, myNopEliminator, myDalvikThrowAnalysis, myManager, myPhaseDumper, myInteractionHandler, myPedanticThrowAnalysis, mySootResolver, myLocalSplitter);
+          DexBody dexBody = new DexBody(dexFile, method, declaringClass.getType(), constantFactory, primTypeCollector, myScene, myOptions, myPhaseOptions, myDalvikTyper, myDeadAssignmentEliminator, myUnusedLocalEliminator, myTypeAssigner, myLocalPacker, myPackManager, myFieldStaticnessCorrector, myMethodStaticnessCorrector, myTrapTightener, myTrapMinimizer, myAggregator, myConditionalBranchFolder, myConstantCastEliminator, myIdentityCastEliminator, myIdentityOperationEliminator, myUnreachableCodeEliminator, myNopEliminator, myDalvikThrowAnalysis, myManager, myPhaseDumper, myInteractionHandler, myPedanticThrowAnalysis, mySootResolver, myLocalSplitter, myDexNullTransformer);
           dexBody.jimplify(b, m);
         } catch (InvalidDalvikBytecodeException e) {
           String msg = "Warning: Invalid bytecode in method " + m + ": " + e;

@@ -49,6 +49,7 @@ import soot.jimple.BinopExpr;
 import soot.jimple.CastExpr;
 import soot.jimple.ClassConstant;
 import soot.jimple.ConditionExpr;
+import soot.jimple.ConstantFactory;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.EnterMonitorStmt;
 import soot.jimple.ExitMonitorStmt;
@@ -83,10 +84,13 @@ public class DexNullTransformer extends AbstractNullTransformer {
 
   private boolean usedAsObject;
   private boolean doBreak = false;
+  private ConstantFactory constantFactory;
 
-  public static DexNullTransformer v() {
-    return new DexNullTransformer();
+  public DexNullTransformer(ConstantFactory constantFactory) {
+    super(primTypeCollector, constantFactory);
+    this.constantFactory = constantFactory;
   }
+
 
   private Local l = null;
 
@@ -366,7 +370,7 @@ public class DexNullTransformer extends AbstractNullTransformer {
 
     // Check for inlined zero values
     AbstractStmtSwitch inlinedZeroValues = new AbstractStmtSwitch() {
-      final NullConstant nullConstant = myNullConstant;
+      final NullConstant nullConstant = constantFactory.getNullConstant();
 
       @Override
       public void caseAssignStmt(AssignStmt stmt) {
@@ -428,7 +432,7 @@ public class DexNullTransformer extends AbstractNullTransformer {
 
     };
 
-    final NullConstant nullConstant = myNullConstant;
+    final NullConstant nullConstant = constantFactory.getNullConstant();
     for (Unit u : body.getUnits()) {
       u.apply(inlinedZeroValues);
       if (u instanceof Stmt) {

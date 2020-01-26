@@ -89,7 +89,7 @@ public class CommonSubexpressionEliminator extends BodyTransformer {
 
     SideEffectTester sideEffect;
     if (myScene.hasCallGraph() && !PhaseOptions.getBoolean(options, "naive-side-effect")) {
-      sideEffect = new PASideEffectTester();
+      sideEffect = new PASideEffectTester(myScene);
     } else {
       sideEffect = new NaiveSideEffectTester();
     }

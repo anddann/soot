@@ -59,7 +59,7 @@ public class ThrowManager {
    * Creates if necessary.
    */
 
-  public static Stmt getNullPointerExceptionThrower(JimpleBody b) {
+  public static Stmt getNullPointerExceptionThrower(JimpleBody b, Scene myScene) {
     Chain<Unit> units = b.getUnits();
     Set<Unit> trappedUnits = TrapManager.getTrappedUnitsOf(b);
 
@@ -107,7 +107,7 @@ public class ThrowManager {
         }
 
         Type newType = ((NewExpr) ro).getBaseType();
-        if (!newType.equals(RefType.v("java.lang.NullPointerException"))) {
+        if (!newType.equals(RefType.v("java.lang.NullPointerException", myScene))) {
           continue;
         }
 
@@ -119,10 +119,10 @@ public class ThrowManager {
     // Create.
     Stmt last = (Stmt) units.getLast();
 
-    return addThrowAfter(b, last);
+    return addThrowAfter(b, last, myScene);
   }
 
-  static Stmt addThrowAfter(JimpleBody b, Stmt target) {
+  static Stmt addThrowAfter(JimpleBody b, Stmt target, Scene myScene) {
     Chain<Unit> units = b.getUnits();
     Collection<Local> locals = b.getLocals();
     int i = 0;
@@ -143,10 +143,10 @@ public class ThrowManager {
       }
     } while (!canAddI);
 
-    Local l = Jimple.newLocal("__throwee" + i, RefType.v("java.lang.NullPointerException"));
+    Local l = Jimple.newLocal("__throwee" + i, RefType.v("java.lang.NullPointerException", myScene));
     b.getLocals().add(l);
 
-    Stmt newStmt = Jimple.newAssignStmt(l, Jimple.newNewExpr(RefType.v("java.lang.NullPointerException")));
+    Stmt newStmt = Jimple.newAssignStmt(l, Jimple.newNewExpr(RefType.v("java.lang.NullPointerException", myScene)));
 
     Stmt invStmt = Jimple.newInvokeStmt(Jimple.newSpecialInvokeExpr(l,
         myScene.getMethod("<java.lang.NullPointerException: void <init>()>").makeRef()));

@@ -70,6 +70,7 @@ public class SootClassBuilder extends ClassVisitor {
   private PackManager myPackManager;
   private Util myCoffiUtil;
   private PhaseOptions myPhaseOptions;
+  private Printer myPrinter;
 
   /**
    * Constructs a new Soot class builder.
@@ -84,8 +85,9 @@ public class SootClassBuilder extends ClassVisitor {
    * @param myPackManager
    * @param myCoffiUtil
    * @param myPhaseOptions
+   * @param myPrinter
    */
-  protected SootClassBuilder(SootClass klass, Scene myScene, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions) {
+  protected SootClassBuilder(SootClass klass, Scene myScene, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions, Printer myPrinter) {
     super(Opcodes.ASM5);
     this.klass = klass;
     this.myScene = myScene;
@@ -97,6 +99,7 @@ public class SootClassBuilder extends ClassVisitor {
     this.myPackManager = myPackManager;
     this.myCoffiUtil = myCoffiUtil;
     this.myPhaseOptions = myPhaseOptions;
+    this.myPrinter = myPrinter;
     this.deps = new HashSet();
   }
 

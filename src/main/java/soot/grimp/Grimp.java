@@ -596,11 +596,11 @@ public class Grimp {
      */
 
     public static Trap newTrap(SootClass exception, Unit beginStmt, Unit endStmt, Unit handlerStmt) {
-        return new GTrap(exception, beginStmt, endStmt, handlerStmt);
+        return new GTrap(exception, beginStmt, endStmt, handlerStmt, myScene);
     }
 
     public static Trap newTrap(Trap trap) {
-        return new GTrap(trap.getException(), trap.getBeginUnit(), trap.getEndUnit(), trap.getHandlerUnit());
+        return new GTrap(trap.getException(), trap.getBeginUnit(), trap.getEndUnit(), trap.getHandlerUnit(), myScene);
     }
 
     /**

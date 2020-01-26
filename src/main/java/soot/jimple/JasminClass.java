@@ -46,7 +46,9 @@ import soot.Local;
 import soot.LongType;
 import soot.Modifier;
 import soot.NullType;
+import soot.PrimTypeCollector;
 import soot.RefType;
+import soot.Scene;
 import soot.ShortType;
 import soot.SootClass;
 import soot.SootFieldRef;
@@ -65,11 +67,15 @@ import soot.grimp.NewInvokeExpr;
 import soot.jimple.internal.StmtBox;
 import soot.options.Options;
 import soot.tagkit.LineNumberTag;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.FastColorer;
 import soot.toolkits.scalar.LocalDefs;
 import soot.toolkits.scalar.LocalUses;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 /*
  * TODO This is the right JasminClass
@@ -79,6 +85,11 @@ import soot.util.Chain;
 public class JasminClass extends AbstractJasminClass {
   private static final Logger logger = LoggerFactory.getLogger(JasminClass.class);
   private Options myOptions;
+  private PedanticThrowAnalysis myPedanticThrowAnalysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
+  private InteractionHandler myInteractionHandler;
+  private PrimTypeCollector primTypeCollector;
 
   void emit(String s, int stackChange) {
     modifyStackHeight(stackChange);
@@ -101,9 +112,14 @@ public class JasminClass extends AbstractJasminClass {
     }
   }
 
-  public JasminClass(SootClass sootClass, Options myOptions) {
+  public JasminClass(SootClass sootClass, Options myOptions, Scene myScene, PedanticThrowAnalysis myPedanticThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollector) {
     super(sootClass, myOptions, myScene);
     this.myOptions = myOptions;
+    this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
+    this.primTypeCollector = primTypeCollector;
   }
 
   protected void assignColorsToLocals(Body body) {
@@ -156,7 +172,8 @@ public class JasminClass extends AbstractJasminClass {
     boolean disablePeephole = true;
 
     if (!disablePeephole) {
-      stmtGraph = new ExceptionalUnitGraph(body, myManager);
+//      FIXME
+//      stmtGraph = new ExceptionalUnitGraph(body, myManager);
       ld = LocalDefs.Factory.newLocalDefs(stmtGraph, myOptions, myInteractionHandler);
       lu = LocalUses.Factory.newLocalUses(body, ld);
 

@@ -61,7 +61,8 @@ public class WrapSwitchesInTrys extends BodyTransformer implements IJbcoTransfor
   }
 
   public void outputSummary() {
-    out.println("Switches wrapped in Tries: " + totaltraps);
+//    FIXME
+//    out.println("Switches wrapped in Tries: " + totaltraps);
   }
 
   protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
@@ -115,7 +116,8 @@ public class WrapSwitchesInTrys extends BodyTransformer implements IJbcoTransfor
     }
 
     totaltraps += i;
-    if (i > 0 && debug) {
+//FIXME: debug??
+    if (i > 0 && true) {
       StackTypeHeightCalculator.calculateStackHeights(b);
     }
   }

@@ -107,13 +107,14 @@ public class Scene // extends AbstractHost
 
   private ConstantFactory constantFactory;
   private FullObjectFactory fullObjectFactory;
+  private Printer myPrinter;
 
   @Inject
   public Scene(Options myOptions, PhaseOptions myPhaseOptions, SourceLocator mySourceLocator, SootResolver mySootResolver,
                PointsToAnalysis myDumbPointerAnalysis, ClientAccessibilityOracle myPublicAndProtectedAccessibility,
                EntryPoints myEntryPoints, PedanticThrowAnalysis myPedanticThrowAnalysis, UnitThrowAnalysis myUnitThrowAnalysis,
                DalvikThrowAnalysis myDalvikThrowAnalysis, PackageNamer myPackageNamer,
-               PrimTypeCollector primTypeCollector,  ConstantFactory constantFactory, FullObjectFactory fullObjectFactory) {
+               PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, FullObjectFactory fullObjectFactory, Printer myPrinter) {
     this.myOptions = myOptions;
     this.myPhaseOptions = myPhaseOptions;
     this.mySourceLocator = mySourceLocator;
@@ -129,6 +130,7 @@ public class Scene // extends AbstractHost
 
     this.constantFactory = constantFactory;
     this.fullObjectFactory = fullObjectFactory;
+    this.myPrinter = myPrinter;
     setReservedNames();
     // load soot.class.path system property, if defined
     String scp = System.getProperty("soot.class.path");

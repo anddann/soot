@@ -22,12 +22,14 @@ package soot.dexpler;
  * #L%
  */
 
+import soot.PrimTypeCollector;
 import soot.RefLikeType;
 import soot.Type;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.AssignStmt;
 import soot.jimple.ConditionExpr;
+import soot.jimple.ConstantFactory;
 import soot.jimple.EqExpr;
 import soot.jimple.IfStmt;
 import soot.jimple.InstanceFieldRef;
@@ -42,8 +44,11 @@ import soot.jimple.NeExpr;
  */
 public abstract class AbstractNullTransformer extends DexTransformer {
 
-  public AbstractNullTransformer() {
+  private ConstantFactory constantFactory;
+
+  public AbstractNullTransformer(PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
     super(primTypeCollector);
+    this.constantFactory = constantFactory;
   }
 
   /**
@@ -74,7 +79,7 @@ public abstract class AbstractNullTransformer extends DexTransformer {
     if (u instanceof IfStmt) {
       ConditionExpr expr = (ConditionExpr) ((IfStmt) u).getCondition();
       if (isZeroComparison(expr)) {
-        expr.setOp2(myNullConstant);
+        expr.setOp2(constantFactory.getNullConstant());
       }
     } else if (u instanceof AssignStmt) {
       AssignStmt s = (AssignStmt) u;
@@ -86,7 +91,7 @@ public abstract class AbstractNullTransformer extends DexTransformer {
         // being an int.
         if (!(s.getLeftOp() instanceof InstanceFieldRef)
             || ((InstanceFieldRef) s.getLeftOp()).getFieldRef().type() instanceof RefLikeType) {
-          s.setRightOp(myNullConstant);
+          s.setRightOp(constantFactory.getNullConstant());
         }
       }
     }

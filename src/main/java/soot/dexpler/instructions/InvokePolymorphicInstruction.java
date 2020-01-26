@@ -39,20 +39,30 @@ import soot.Body;
 import soot.Local;
 import soot.PatchingChain;
 import soot.RefType;
+import soot.Scene;
 import soot.SootMethodRef;
+import soot.SootResolver;
 import soot.Unit;
 import soot.dexpler.DexBody;
 import soot.dexpler.typing.DalvikTyper;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
 import soot.jimple.internal.JArrayRef;
 import soot.jimple.internal.JAssignStmt;
 import soot.jimple.internal.JNewArrayExpr;
 import soot.jimple.internal.JimpleLocal;
+import soot.options.Options;
 
 public class InvokePolymorphicInstruction extends MethodInvocationInstruction {
 
-  public InvokePolymorphicInstruction(Instruction instruction, int codeAddress) {
+
+  private final Scene myScene;
+  private ConstantFactory constantFactory;
+
+  public InvokePolymorphicInstruction(Instruction instruction, int codeAddress, Options myOptions, DalvikTyper myDalvikTyper, Scene myScene, SootResolver mySootResolver, ConstantFactory constantFactory) {
     super(instruction, codeAddress, myOptions, myDalvikTyper, myScene, mySootResolver);
+    this.myScene = myScene;
+    this.constantFactory = constantFactory;
   }
 
   /* Instruction Format for invoke-polymorphic

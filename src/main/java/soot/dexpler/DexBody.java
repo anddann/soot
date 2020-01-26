@@ -58,6 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.Body;
+import soot.BodyTransformer;
 import soot.DoubleType;
 import soot.Local;
 import soot.LongType;
@@ -192,6 +193,7 @@ public class DexBody {
   private PedanticThrowAnalysis myPedanticThrowAnalysis;
   private SootResolver mySootResolver;
   private LocalSplitter myLocalSplitter;
+  private BodyTransformer myDexNullTransformer;
 
   PseudoInstruction isAddressInData(int a) {
     for (PseudoInstruction pi : pseudoInstructionData) {
@@ -236,8 +238,9 @@ public class DexBody {
    * @param myPedanticThrowAnalysis
    * @param mySootResolver
    * @param myLocalSplitter
+   * @param myDexNullTransformer
    */
-  protected DexBody(DexFile dexFile, Method method, RefType declaringClassType, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, PhaseOptions myPhaseOptions, DalvikTyper myDalvikTyper, DeadAssignmentEliminator myDeadAssignmentEliminator, UnusedLocalEliminator myUnusedLocalEliminator, TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, PackManager myPackManager, FieldStaticnessCorrector myFieldStaticnessCorrector, MethodStaticnessCorrector myMethodStaticnessCorrector, TrapTightener myTrapTightener, TrapMinimizer myTrapMinimizer, Aggregator myAggregator, ConditionalBranchFolder myConditionalBranchFolder, ConstantCastEliminator myConstantCastEliminator, IdentityCastEliminator myIdentityCastEliminator, IdentityOperationEliminator myIdentityOperationEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator, DalvikThrowAnalysis myDalvikThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, PedanticThrowAnalysis myPedanticThrowAnalysis, SootResolver mySootResolver, LocalSplitter myLocalSplitter) {
+  protected DexBody(DexFile dexFile, Method method, RefType declaringClassType, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, PhaseOptions myPhaseOptions, DalvikTyper myDalvikTyper, DeadAssignmentEliminator myDeadAssignmentEliminator, UnusedLocalEliminator myUnusedLocalEliminator, TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, PackManager myPackManager, FieldStaticnessCorrector myFieldStaticnessCorrector, MethodStaticnessCorrector myMethodStaticnessCorrector, TrapTightener myTrapTightener, TrapMinimizer myTrapMinimizer, Aggregator myAggregator, ConditionalBranchFolder myConditionalBranchFolder, ConstantCastEliminator myConstantCastEliminator, IdentityCastEliminator myIdentityCastEliminator, IdentityOperationEliminator myIdentityOperationEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator, DalvikThrowAnalysis myDalvikThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, PedanticThrowAnalysis myPedanticThrowAnalysis, SootResolver mySootResolver, LocalSplitter myLocalSplitter, BodyTransformer myDexNullTransformer) {
     this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
     this.myScene = myScene;
@@ -268,6 +271,7 @@ public class DexBody {
     this.constantFactory = constantFactory;
     this.mySootResolver = mySootResolver;
     this.myLocalSplitter = myLocalSplitter;
+    this.myDexNullTransformer = myDexNullTransformer;
     MethodImplementation code = method.getImplementation();
     if (code == null) {
       throw new RuntimeException("error: no code for method " + method.getName());
@@ -730,7 +734,7 @@ public class DexBody {
       DexNullThrowTransformer.v(constantFactory, myScene).transform(jBody);
 
       // t_null.start();
-      DexNullTransformer.v().transform(jBody);
+      myDexNullTransformer.transform(jBody);
       // t_null.end();
 
       DexIfTransformer.v().transform(jBody);

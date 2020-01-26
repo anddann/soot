@@ -196,4 +196,5 @@
   <class>soot.dexpler.typing.DalvikTyper</class>
   <class>soot.toolkits.scalar.ConstantValueToInitializerTransformer.ConstantValueToInitializerTransformer</class>
   <class>soot.jimple.toolkits.thread.synchronization.LockAllocationBodyTransformer</class>
+  <class>soot.dexpler.DexNullTransformer</class>
 </singletons>

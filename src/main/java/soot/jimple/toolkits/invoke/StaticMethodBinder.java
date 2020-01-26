@@ -283,9 +283,9 @@ public class StaticMethodBinder extends SceneTransformer {
               // This sucks (but less than before).
               ((IfStmt) insertee).setTarget(s);
 
-              ThrowManager.addThrowAfter(b, insertee);
+              ThrowManager.addThrowAfter(b, insertee, myScene);
             } else {
-              Stmt throwPoint = ThrowManager.getNullPointerExceptionThrower(b);
+              Stmt throwPoint = ThrowManager.getNullPointerExceptionThrower(b, myScene);
               b.getUnits().insertBefore(Jimple
                   .newIfStmt(Jimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), myConstantfactory.getNullConstant()), throwPoint), s);
             }

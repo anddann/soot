@@ -59,7 +59,7 @@ public abstract class DexlibAbstractInstruction {
   // protected Unit beginUnit;
   // protected Unit endUnit;
   protected Unit unit;
-  private Options myOptions;
+  protected Options myOptions;
 
   public Instruction getInstruction() {
     return instruction;

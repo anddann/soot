@@ -26,7 +26,6 @@ package soot.options;
 
 import soot.*;
 import java.util.*;
- import com.google.inject.Inject;
 
 /**
  * Soot command-line options parser.
@@ -109,6 +108,10 @@ public class Options extends OptionsBase {
     public static final int check_init_throw_analysis_pedantic = 2;
     public static final int check_init_throw_analysis_unit = 3;
     public static final int check_init_throw_analysis_dalvik = 4;
+
+    public Options() {
+        super(myOptions, myPhaseOptions, myPhaseDumper, myPackManager);
+    }
 
     @SuppressWarnings("unused")
     public boolean parse(String[] argv) {

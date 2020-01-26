@@ -53,14 +53,15 @@ import soot.jimple.Stmt;
 //  StaticFieldRef
 
 public class PASideEffectTester implements SideEffectTester {
-  PointsToAnalysis pa = myScene.getPointsToAnalysis();
-  SideEffectAnalysis sea = myScene.getSideEffectAnalysis();
+  PointsToAnalysis pa;
+  SideEffectAnalysis sea;
   HashMap<Unit, RWSet> unitToRead;
   HashMap<Unit, RWSet> unitToWrite;
   HashMap<Local, PointsToSet> localToReachingObjects;
   SootMethod currentMethod;
 
-  public PASideEffectTester() {
+  public PASideEffectTester(Scene myScene) {
+//    FIXME
     if (G.v().Union_factory == null) {
       G.v().Union_factory = new UnionFactory() {
         public Union newUnion() {
@@ -68,6 +69,8 @@ public class PASideEffectTester implements SideEffectTester {
         }
       };
     }
+    pa = myScene.getPointsToAnalysis();
+    sea = myScene.getSideEffectAnalysis();
   }
 
   /** Call this when starting to analyze a new method to setup the cache. */

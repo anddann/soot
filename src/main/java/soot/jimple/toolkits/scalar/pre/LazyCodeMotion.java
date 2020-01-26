@@ -143,7 +143,7 @@ public class LazyCodeMotion extends BodyTransformer {
     /* if a more precise sideeffect-tester comes out, please change it here! */
     SideEffectTester sideEffect;
     if (myScene.hasCallGraph() && !options.naive_side_effect()) {
-      sideEffect = new PASideEffectTester();
+      sideEffect = new PASideEffectTester(myScene);
     } else {
       sideEffect = new NaiveSideEffectTester();
     }

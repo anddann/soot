@@ -40,6 +40,7 @@ import soot.Local;
 import soot.PointsToAnalysis;
 import soot.PointsToSet;
 import soot.PrimType;
+import soot.Scene;
 import soot.SootMethod;
 import soot.Type;
 import soot.Unit;
@@ -50,6 +51,7 @@ import soot.jimple.Constant;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.InvokeExpr;
+import soot.jimple.Jimple;
 import soot.jimple.NewExpr;
 import soot.jimple.Ref;
 import soot.jimple.ReturnStmt;
@@ -60,6 +62,9 @@ import soot.toolkits.scalar.Pair;
 @SuppressWarnings("serial")
 public class IFDSPossibleTypes
     extends DefaultJimpleIFDSTabulationProblem<Pair<Value, Type>, InterproceduralCFG<Unit, SootMethod>> {
+
+  //FIXME
+  private Scene myScene;
 
   public IFDSPossibleTypes(InterproceduralCFG<Unit, SootMethod> icfg) {
     super(icfg);
@@ -215,6 +220,8 @@ public class IFDSPossibleTypes
   }
 
   public Pair<Value, Type> createZeroValue() {
-    return new Pair<Value, Type>(Jimple.newLocal("<dummy>", UnknownType.v()), UnknownType.v());
+//    FIXME
+    //return new Pair<Value, Type>(Jimple.newLocal("<dummy>", UnknownType.v()), UnknownType.v());
+    return null;
   }
 }

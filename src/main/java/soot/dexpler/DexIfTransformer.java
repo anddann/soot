@@ -82,7 +82,11 @@ public class DexIfTransformer extends AbstractNullTransformer {
   private boolean usedAsObject;
   private boolean doBreak = false;
 
-  public static DexIfTransformer v() {
+    public DexIfTransformer() {
+        super(primTypeCollector, constantFactory);
+    }
+
+    public static DexIfTransformer v() {
     return new DexIfTransformer();
   }
 

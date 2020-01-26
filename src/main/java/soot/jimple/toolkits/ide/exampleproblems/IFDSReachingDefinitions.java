@@ -38,11 +38,13 @@ import java.util.Set;
 
 import soot.EquivalentValue;
 import soot.Local;
+import soot.Scene;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.InvokeExpr;
+import soot.jimple.Jimple;
 import soot.jimple.ReturnStmt;
 import soot.jimple.ReturnVoidStmt;
 import soot.jimple.Stmt;
@@ -52,6 +54,10 @@ import soot.toolkits.scalar.Pair;
 
 public class IFDSReachingDefinitions
     extends DefaultJimpleIFDSTabulationProblem<Pair<Value, Set<DefinitionStmt>>, InterproceduralCFG<Unit, SootMethod>> {
+
+//FIXME
+  private Scene myScene;
+
   public IFDSReachingDefinitions(InterproceduralCFG<Unit, SootMethod> icfg) {
     super(icfg);
   }
@@ -180,8 +186,9 @@ public class IFDSReachingDefinitions
   }
 
   public Pair<Value, Set<DefinitionStmt>> createZeroValue() {
-    return new Pair<Value, Set<DefinitionStmt>>(new JimpleLocal("<<zero>>", primTypeCollector.getNullType()),
-        Collections.<DefinitionStmt>emptySet());
+//    return new Pair<Value, Set<DefinitionStmt>>(new JimpleLocal("<<zero>>", primTypeCollector.getNullType()),
+//        Collections.<DefinitionStmt>emptySet());
+    return null;
   }
 
 }

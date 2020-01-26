@@ -71,7 +71,7 @@ import soot.toolkits.scalar.UnitValueBoxPair;
 
 public abstract class DexTransformer extends BodyTransformer {
 
-  private PrimTypeCollector primTypeCollector;
+  protected PrimTypeCollector primTypeCollector;
 
   protected DexTransformer(PrimTypeCollector primTypeCollector) {
     this.primTypeCollector = primTypeCollector;

@@ -23,16 +23,18 @@ package soot.grimp.internal;
  */
 
 import soot.AbstractTrap;
+import soot.Scene;
 import soot.SootClass;
 import soot.Unit;
+import soot.grimp.Grimp;
 
 public class GTrap extends AbstractTrap {
-  public GTrap(SootClass exception, Unit beginStmt, Unit endStmt, Unit handlerStmt) {
+  public GTrap(SootClass exception, Unit beginStmt, Unit endStmt, Unit handlerStmt, Scene myScene) {
     super(exception, Grimp.newStmtBox(beginStmt), Grimp.newStmtBox(endStmt), Grimp.newStmtBox(handlerStmt), myScene);
   }
 
   public Object clone() {
-    return new GTrap(exception, getBeginUnit(), getEndUnit(), getHandlerUnit());
+    return new GTrap(exception, getBeginUnit(), getEndUnit(), getHandlerUnit(), myScene);
   }
 
 }

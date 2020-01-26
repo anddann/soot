@@ -134,6 +134,8 @@ import soot.toDex.FastDexTrapTightener;
 import soot.toDex.SynchronizedMethodTransformer;
 import soot.toDex.TrapSplitter;
 import soot.toolkits.exceptions.DuplicateCatchAllTrapRemover;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.exceptions.TrapTightener;
 import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ConstantInitializerToTagTransformer;
@@ -247,6 +249,8 @@ public class PackManager {
   private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
   private PrimTypeCollector primTypeCollector;
   private ConstantValueToInitializerTransformer myConstantValueToInitializerTransformer;
+  private PedanticThrowAnalysis myPedanticThrowAnalysis;
+  private ThrowableSet.Manager myManager;
 
   @Inject
   public PackManager(PhaseOptions myPhaseOptions, FieldTagger myFieldTagger, Options myOptions,
@@ -283,7 +287,7 @@ public class PackManager {
                      NullCheckEliminator myNullCheckEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer,
                      EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter,
                      ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer,
-                     UnreachableMethodTransformer myUnreachableMethodTransformer, ConstantFactory constantFactory, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, PrimTypeCollector primTypeCollector, ConstantValueToInitializerTransformer myConstantValueToInitializerTransformer) {
+                     UnreachableMethodTransformer myUnreachableMethodTransformer, ConstantFactory constantFactory, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, PrimTypeCollector primTypeCollector, ConstantValueToInitializerTransformer myConstantValueToInitializerTransformer, PedanticThrowAnalysis myPedanticThrowAnalysis, ThrowableSet.Manager myManager) {
     this.myPhaseOptions = myPhaseOptions;
     this.myOptions = myOptions;
     // myPhaseOptions.setPackManager(this);
@@ -358,6 +362,8 @@ public class PackManager {
     this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     this.primTypeCollector = primTypeCollector;
     this.myConstantValueToInitializerTransformer = myConstantValueToInitializerTransformer;
+    this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
+    this.myManager = myManager;
     this.myShimple = myShimple;
 
     this.myDava = myDava;
@@ -1392,9 +1398,9 @@ public class PackManager {
    */
   private AbstractJasminClass createJasminBackend(SootClass c) {
     if (c.containsBafBody()) {
-      return new soot.baf.JasminClass(c, myScene, myOptions, myPackManager, myPhaseDumper, primTypeCollector);
+      return new soot.baf.JasminClass(c, myScene, myOptions, this, myPhaseDumper, primTypeCollector);
     } else {
-      return new soot.jimple.JasminClass(c, myOptions);
+      return new soot.jimple.JasminClass(c, myOptions, myScene, myPedanticThrowAnalysis, myManager, myPhaseDumper, myInteractionHandler, primTypeCollector);
     }
   }
 

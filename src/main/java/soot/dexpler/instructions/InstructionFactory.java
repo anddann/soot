@@ -271,7 +271,7 @@ public class InstructionFactory {
         
       case INVOKE_POLYMORPHIC:
       case INVOKE_POLYMORPHIC_RANGE:
-        return new InvokePolymorphicInstruction(instruction, codeAddress);
+        return new InvokePolymorphicInstruction(instruction, codeAddress, myOptions, myDalvikTyper, myScene, mySootResolver, constantFactory);
  
       case INVOKE_CUSTOM:
       case INVOKE_CUSTOM_RANGE:

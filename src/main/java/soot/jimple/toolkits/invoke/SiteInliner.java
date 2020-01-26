@@ -179,9 +179,9 @@ public class SiteInliner {
           // This sucks (but less than before).
           ((IfStmt) insertee).setTarget(toInline);
 
-          ThrowManager.addThrowAfter(containerB, insertee);
+          ThrowManager.addThrowAfter(containerB, insertee, myScene);
         } else {
-          Stmt throwPoint = ThrowManager.getNullPointerExceptionThrower(containerB);
+          Stmt throwPoint = ThrowManager.getNullPointerExceptionThrower(containerB, myScene);
           containerB.getUnits().insertBefore(
               Jimple.newIfStmt(Jimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), value), throwPoint), toInline);
         }
