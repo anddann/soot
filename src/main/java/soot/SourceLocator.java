@@ -185,7 +185,7 @@ public class SourceLocator {
     JarException ex = null;
     for (ClassProvider cp : classProviders) {
       try {
-        ClassSource ret = cp.find(className, myScene, myOptions, mySootResolver);
+        ClassSource ret = cp.find(className);
         if (ret != null) {
           return ret;
         }
@@ -245,7 +245,7 @@ public class SourceLocator {
 
   protected void setupClassProviders() {
     classProviders = new LinkedList<ClassProvider>();
-    ClassProvider classFileClassProvider = new AsmClassProvider(this, primTypeCollector, constantFactory);
+    ClassProvider classFileClassProvider = new AsmClassProvider(this, primTypeCollector, constantFactory, myScene, myLambdaMetaFactory, myOptions, mySootResolver, myPackManager, myCoffiUtil, myPhaseOptions);
     switch (myOptions.src_prec()) {
       case Options.src_prec_class:
         classProviders.add(classFileClassProvider);

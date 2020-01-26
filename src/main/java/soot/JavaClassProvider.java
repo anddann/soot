@@ -51,7 +51,7 @@ public class JavaClassProvider implements ClassProvider {
   /**
    * Look for the specified class. Return a ClassSource for it if found, or null if it was not found.
    */
-  public ClassSource find(String className, Scene myScene,  Options myOptions, SootResolver mySootResolver) {
+  public ClassSource find(String className) {
 
     // jastAdd; or polyglot AST not yet produced
       /*

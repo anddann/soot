@@ -22,8 +22,6 @@ package soot;
  * #L%
  */
 
-import soot.options.Options;
-
 /**
  * A class provider looks for a file of a specific format for a specified class, and returns a ClassSource for it if it finds
  * it.
@@ -32,5 +30,5 @@ public interface ClassProvider {
   /**
    * Look for the specified class. Return a ClassSource for it if found, or null if it was not found.
    */
-  public abstract ClassSource find(String className, Scene myScene, Options myOptions, SootResolver mySootResolver);
+  public abstract ClassSource find(String className);
 }

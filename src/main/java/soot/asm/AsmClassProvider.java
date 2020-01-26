@@ -23,6 +23,7 @@ package soot.asm;
  */
 
 import soot.*;
+import soot.coffi.Util;
 import soot.jimple.ConstantFactory;
 import soot.options.Options;
 
@@ -36,15 +37,29 @@ public class AsmClassProvider implements ClassProvider {
   private SourceLocator mySourceLocator;
   private PrimTypeCollector primTypeCollector;
   private ConstantFactory constantFactory;
+  private Scene myScene;
+  private LambdaMetaFactory myLambdaMetaFactory;
+  private Options myOptions;
+  private SootResolver mySootResolver;
+  private PackManager myPackManager;
+  private Util myCoffiUtil;
+  private PhaseOptions myPhaseOptions;
 
-  public AsmClassProvider(SourceLocator mySourceLocator, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+  public AsmClassProvider(SourceLocator mySourceLocator, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, Scene myScene, LambdaMetaFactory myLambdaMetaFactory, Options myOptions, SootResolver mySootResolver, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions) {
 
     this.mySourceLocator = mySourceLocator;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+    this.myScene = myScene;
+    this.myLambdaMetaFactory = myLambdaMetaFactory;
+    this.myOptions = myOptions;
+    this.mySootResolver = mySootResolver;
+    this.myPackManager = myPackManager;
+    this.myCoffiUtil = myCoffiUtil;
+    this.myPhaseOptions = myPhaseOptions;
   }
 
-  public ClassSource find(String cls, Scene myScene,  Options myOptions, SootResolver mySootResolver) {
+  public ClassSource find(String cls) {
     String clsFile = cls.replace('.', '/') + ".class";
     FoundFile file = mySourceLocator.lookupInClassPath(clsFile);
     return file == null ? null : new AsmClassSource(cls, file, myScene, mySootResolver, myOptions, primTypeCollector, constantFactory, myLambdaMetaFactory, myPackManager, myCoffiUtil, myPhaseOptions);
