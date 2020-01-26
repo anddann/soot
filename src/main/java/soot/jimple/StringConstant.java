@@ -58,7 +58,7 @@ public class StringConstant extends Constant {
     return StringTools.getQuotedStringOf(value);
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return RefType.v("java.lang.String", this.myScene);
   }
 

@@ -56,7 +56,7 @@ public class EmptySwitchEliminator extends BodyTransformer {
       if (u instanceof LookupSwitchStmt) {
         LookupSwitchStmt sw = (LookupSwitchStmt) u;
         if (sw.getTargetCount() == 0 && sw.getDefaultTarget() != null) {
-          b.getUnits().swapWith(sw, myJimple.newGotoStmt(sw.getDefaultTarget()));
+          b.getUnits().swapWith(sw, Jimple.newGotoStmt(sw.getDefaultTarget()));
         }
       }
     }

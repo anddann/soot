@@ -72,7 +72,7 @@ public class ConstClassInstruction extends DexlibAbstractInstruction {
     Constant cst = constantFactory.createClassConstant(tidi.getType());
 
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
-    AssignStmt assign = this.myJimple.newAssignStmt(body.getRegisterLocal(dest), cst);
+    AssignStmt assign = Jimple.newAssignStmt(body.getRegisterLocal(dest), cst);
     setUnit(assign);
     addTags(assign);
     body.add(assign);
@@ -80,7 +80,7 @@ public class ConstClassInstruction extends DexlibAbstractInstruction {
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // myDalvikTyper().captureAssign((JAssignStmt)assign, op); //TODO:
       // classtype could be null!
-      this.myDalvikTyper.setType(assign.getLeftOpBox(), cst.getType(myScene), false);
+      this.myDalvikTyper.setType(assign.getLeftOpBox(), cst.getType(), false);
     }
   }
 

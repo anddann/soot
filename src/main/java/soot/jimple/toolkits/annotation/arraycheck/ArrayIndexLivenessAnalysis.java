@@ -302,7 +302,7 @@ class ArrayIndexLivenessAnalysis extends BackwardFlowAnalysis {
 
   private void retrieveAllArrayLocals(Body body, Set<Local> container) {
     for (Local local : body.getLocals()) {
-      Type type = local.getType(myScene);
+      Type type = local.getType();
 
       if (type instanceof IntType || type instanceof ArrayType) {
         container.add(local);
@@ -312,7 +312,7 @@ class ArrayIndexLivenessAnalysis extends BackwardFlowAnalysis {
 
   private void retrieveMultiArrayLocals(Body body, Set<Local> container) {
     for (Local local : body.getLocals()) {
-      Type type = local.getType(myScene);
+      Type type = local.getType();
 
       if (type instanceof ArrayType) {
         if (((ArrayType) type).numDimensions > 1) {

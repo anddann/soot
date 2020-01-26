@@ -575,7 +575,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
     Local baseLocal;
     if (base instanceof InstanceFieldRef) {
       Value newBase = reconstruct(b, units, (InstanceFieldRef) base, insertBefore, redirect);
-      baseLocal = myJimple.newLocal("baseLocal" + (baseLocalNum++), newBase.getType(myScene));
+      baseLocal = myJimple.newLocal("baseLocal" + (baseLocalNum++), newBase.getType());
       b.getLocals().add(baseLocal);
 
       // make it equal to the right value
@@ -589,7 +589,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
       baseLocal = (Local) base;
     } else {
       throw new RuntimeException("InstanceFieldRef cannot be reconstructed because it's base is of an unsupported type"
-          + base.getType(myScene) + ": " + base);
+          + base.getType() + ": " + base);
     }
 
     InstanceFieldRef newLock = myJimple.newInstanceFieldRef(baseLocal, lock.getField().makeRef());

@@ -95,7 +95,7 @@ public class LocalPacker extends BodyTransformer {
     // Assign each local to a group, and set that group's color count to 0.
     {
       for (Local l : body.getLocals()) {
-        Type g = l.getType(myScene);
+        Type g = l.getType();
 
         localToGroup.put(l, g);
 

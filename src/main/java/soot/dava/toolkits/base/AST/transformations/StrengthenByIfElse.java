@@ -37,6 +37,8 @@ import soot.dava.internal.AST.ASTWhileNode;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DAbruptStmt;
+import soot.dava.toolkits.base.AST.ASTWalker;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.jimple.ReturnStmt;
 import soot.jimple.ReturnVoidStmt;
 import soot.jimple.Stmt;
@@ -81,7 +83,7 @@ public class StrengthenByIfElse {
   /*
    * We know this method is called when there is a loop node which has a body consisting entirely of one ASTIfElseNode
    */
-  public static List<ASTNode> getNewNode(ASTNode loopNode, ASTIfElseNode ifElseNode) {
+  public static List<ASTNode> getNewNode(ASTNode loopNode, ASTIfElseNode ifElseNode, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker) {
     // make sure that elsebody has only a stmtseq node
     List<Object> elseBody = (ifElseNode).getElseBody();
     if (elseBody.size() != 1) {
@@ -132,7 +134,7 @@ public class StrengthenByIfElse {
               }
 
               // pattern matched
-              ASTWhileNode newWhileNode = makeWhileNode(ifElseNode, loopNode);
+              ASTWhileNode newWhileNode = makeWhileNode(ifElseNode, loopNode, myTryContentsFinder);
               if (newWhileNode == null) {
                 return null;
               }
@@ -173,7 +175,7 @@ public class StrengthenByIfElse {
         }
 
         // pattern matched
-        ASTWhileNode newWhileNode = makeWhileNode(ifElseNode, loopNode);
+        ASTWhileNode newWhileNode = makeWhileNode(ifElseNode, loopNode, myTryContentsFinder);
         if (newWhileNode == null) {
           return null;
         }
@@ -189,7 +191,7 @@ public class StrengthenByIfElse {
     return null;
   } // end of method
 
-  private static ASTWhileNode makeWhileNode(ASTIfElseNode ifElseNode, ASTNode loopNode) {
+  private static ASTWhileNode makeWhileNode(ASTIfElseNode ifElseNode, ASTNode loopNode, TryContentsFinder myTryContentsFinder) {
     ASTCondition outerCond = null;
     ASTCondition innerCond = ifElseNode.get_Condition();
     ASTCondition newCond = null;

@@ -265,7 +265,7 @@ public class DexAnnotation {
             return ARRAY_TYPE;
           }
 
-          return ArrayType.v(type, 1,myScene);
+          return ArrayType.v(type, 1);
         }
         break;
       case 's': // string

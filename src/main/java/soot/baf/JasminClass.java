@@ -223,7 +223,7 @@ public class JasminClass extends AbstractJasminClass {
         for (Local local : body.getLocals()) {
           if (assignedLocals.add(local)) {
             localToSlot.put(local, new Integer(localCount));
-            localCount += sizeOfType(local.getType(myScene));
+            localCount += sizeOfType(local.getType());
           }
         }
 
@@ -1363,7 +1363,7 @@ public class JasminClass extends AbstractJasminClass {
         String bsmArgString = "";
         for (Iterator<Value> iterator = i.getBootstrapArgs().iterator(); iterator.hasNext();) {
           Value val = iterator.next();
-          bsmArgString += "(" + jasminDescriptorOf(val.getType(myScene)) + ")";
+          bsmArgString += "(" + jasminDescriptorOf(val.getType()) + ")";
           bsmArgString += escape(val.toString());
 
           if (iterator.hasNext()) {

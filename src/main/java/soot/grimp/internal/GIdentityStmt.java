@@ -32,7 +32,7 @@ public class GIdentityStmt extends JIdentityStmt {
     private final Jimple myJimple;
 
     public GIdentityStmt(Value local, Value identityValue, Grimp myGrimp, Jimple myJimple) {
-        super(myGrimp.newLocalBox(local), myGrimp.newIdentityRefBox(identityValue), myJimple);
+        super(myGrimp.newLocalBox(local), myGrimp.newIdentityRefBox(identityValue));
         this.myGrimp = myGrimp;
         this.myJimple = myJimple;
     }

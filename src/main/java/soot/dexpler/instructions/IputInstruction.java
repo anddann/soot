@@ -54,7 +54,7 @@ public class IputInstruction extends FieldInstruction {
     int source = i.getRegisterA();
     int object = i.getRegisterB();
     FieldReference f = (FieldReference) ((ReferenceInstruction) instruction).getReference();
-    InstanceFieldRef instanceField = myJimple.newInstanceFieldRef(body.getRegisterLocal(object), getSootFieldRef(f));
+    InstanceFieldRef instanceField = Jimple.newInstanceFieldRef(body.getRegisterLocal(object), getSootFieldRef(f));
     Local sourceValue = body.getRegisterLocal(source);
     AssignStmt assign = getAssignStmt(body, sourceValue, instanceField);
     setUnit(assign);
@@ -63,7 +63,7 @@ public class IputInstruction extends FieldInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // Debug.printDbg(IDalvikTyper.DEBUG, "constraint: "+ assign);
-      myDalvikTyper().setType(assign.getRightOpBox(), instanceField.getType(myScene), true);
+      myDalvikTyper().setType(assign.getRightOpBox(), instanceField.getType(), true);
     }
   }
 

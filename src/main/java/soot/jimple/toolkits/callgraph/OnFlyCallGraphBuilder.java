@@ -641,7 +641,7 @@ public class OnFlyCallGraphBuilder {
             targetsQueue.add(target);
           }
         } else {
-          virtualCalls.resolve(type, receiver.getType(myScene), site.subSig(), site.container(), targetsQueue, appOnly);
+          virtualCalls.resolve(type, receiver.getType(), site.subSig(), site.container(), targetsQueue, appOnly);
           if (!targets.hasNext() && options.resolve_all_abstract_invokes()) {
             /*
              * In the situation where we find nothing to resolve an invoke to in the first call, this might be because the
@@ -657,7 +657,7 @@ public class OnFlyCallGraphBuilder {
              * Where as, it used to not resolve any targets in this situation, I want to at least resolve the method in the
              * parent class if there is one (as this is technically a possibility and the only information we have).
              */
-            virtualCalls.resolveSuperType(type, receiver.getType(myScene), site.subSig(), targetsQueue, appOnly);
+            virtualCalls.resolveSuperType(type, receiver.getType(), site.subSig(), targetsQueue, appOnly);
           }
         }
         while (targets.hasNext()) {
@@ -952,7 +952,7 @@ public class OnFlyCallGraphBuilder {
             addEdge(source, s, clinit, Kind.CLINIT);
           }
         } else if (rhs instanceof NewArrayExpr || rhs instanceof NewMultiArrayExpr) {
-          Type t = rhs.getType(myScene);
+          Type t = rhs.getType();
           if (t instanceof ArrayType) {
             t = ((ArrayType) t).baseType;
           }
@@ -1289,10 +1289,10 @@ public class OnFlyCallGraphBuilder {
 
         // exc = new Error
         RefType runtimeExceptionType = RefType.v("java.lang.Error", myScene);
-        NewExpr newExpr = myJimple.newNewExpr(runtimeExceptionType);
+        NewExpr newExpr = Jimple.newNewExpr(runtimeExceptionType);
         LocalGenerator lg = new LocalGenerator(body, myScene.getPrimTypeCollector(), myJimple);
         Local exceptionLocal = lg.generateLocal(runtimeExceptionType);
-        AssignStmt assignStmt = myJimple.newAssignStmt(exceptionLocal, newExpr);
+        AssignStmt assignStmt = Jimple.newAssignStmt(exceptionLocal, newExpr);
         body.getUnits().insertBefore(assignStmt, insertionPoint);
 
         // exc.<init>(message)
@@ -1300,17 +1300,17 @@ public class OnFlyCallGraphBuilder {
             .getMethod("<init>", Collections.<Type>singletonList(RefType.v("java.lang.String", myScene))).makeRef();
         SpecialInvokeExpr constructorInvokeExpr
             = myJimple.newSpecialInvokeExpr(exceptionLocal, cref, constantFactory.createStringConstant(guard.message));
-        InvokeStmt initStmt = myJimple.newInvokeStmt(constructorInvokeExpr);
+        InvokeStmt initStmt = Jimple.newInvokeStmt(constructorInvokeExpr);
         body.getUnits().insertAfter(initStmt, assignStmt);
 
         if (options.guards().equals("print")) {
           // logger.error(exc.getMessage(), exc);
           VirtualInvokeExpr printStackTraceExpr = myJimple.newVirtualInvokeExpr(exceptionLocal, myScene
               .getSootClass("java.lang.Throwable").getMethod("printStackTrace", Collections.<Type>emptyList()).makeRef());
-          InvokeStmt printStackTraceStmt = myJimple.newInvokeStmt(printStackTraceExpr);
+          InvokeStmt printStackTraceStmt = Jimple.newInvokeStmt(printStackTraceExpr);
           body.getUnits().insertAfter(printStackTraceStmt, initStmt);
         } else if (options.guards().equals("throw")) {
-          body.getUnits().insertAfter(myJimple.newThrowStmt(exceptionLocal), initStmt);
+          body.getUnits().insertAfter(Jimple.newThrowStmt(exceptionLocal), initStmt);
         } else {
           throw new RuntimeException("Invalid value for phase option (guarding): " + options.guards());
         }

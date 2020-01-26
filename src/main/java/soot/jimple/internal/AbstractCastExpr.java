@@ -35,18 +35,16 @@ import soot.util.Switch;
 abstract public class AbstractCastExpr implements CastExpr, ConvertToBaf {
   final ValueBox opBox;
   Type type;
-  private Baf myBaf;
 
-  AbstractCastExpr(Value op, Type type, Jimple myJimple, Baf myBaf) {
-    this(myJimple.newImmediateBox(op), type, myBaf);
+  AbstractCastExpr(Value op, Type type) {
+    this(Jimple.newImmediateBox(op), type);
   }
 
   public abstract Object clone();
 
-  protected AbstractCastExpr(ValueBox opBox, Type type, Baf myBaf) {
+  protected AbstractCastExpr(ValueBox opBox, Type type) {
     this.opBox = opBox;
     this.type = type;
-    this.myBaf = myBaf;
   }
 
   public boolean equivTo(Object o) {
@@ -112,7 +110,7 @@ abstract public class AbstractCastExpr implements CastExpr, ConvertToBaf {
     this.type = castType;
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return type;
   }
 
@@ -122,18 +120,18 @@ abstract public class AbstractCastExpr implements CastExpr, ConvertToBaf {
 
   public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     final Type toType = getCastType();
-    final Type fromType = getOp().getType(myScene);
+    final Type fromType = getOp().getType();
 
-    ((ConvertToBaf) getOp()).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
+    ((ConvertToBaf) getOp()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
 
     Unit u;
     if (toType instanceof ArrayType || toType instanceof RefType) {
-      u = this.myBaf.newInstanceCastInst(toType);
+      u = myBaf.newInstanceCastInst(toType);
     } else {
       if (!fromType.equals(toType)) {
-        u = this.myBaf.newPrimitiveCastInst(fromType, toType);
+        u = myBaf.newPrimitiveCastInst(fromType, toType);
       } else {
-        u = this.myBaf.newNopInst();
+        u = myBaf.newNopInst();
       }
     }
 

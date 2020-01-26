@@ -39,6 +39,7 @@ import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 import soot.dava.toolkits.base.AST.traversals.ASTParentNodeFinder;
 import soot.dava.toolkits.base.AST.traversals.ASTUsesAndDefs;
+import soot.dava.toolkits.base.AST.traversals.ClosestAbruptTargetFinder;
 import soot.jimple.Constant;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.Stmt;
@@ -85,7 +86,7 @@ public class LocalVariableCleaner extends DepthFirstAdapter {
   public void outASTMethodNode(ASTMethodNode node) {
     boolean redo = false;
 
-    useDefs = new ASTUsesAndDefs(AST); // create the uD and dU chains
+    useDefs = new ASTUsesAndDefs(myClosestAbruptTargetFinder, AST); // create the uD and dU chains
     AST.apply(useDefs);
 
     // get all local variables declared in this method

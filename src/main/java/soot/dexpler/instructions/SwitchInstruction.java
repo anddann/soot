@@ -55,7 +55,7 @@ public abstract class SwitchInstruction extends PseudoInstruction implements Def
   protected abstract Stmt switchStatement(DexBody body, Instruction targetData, Local key);
 
   public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
-    markerUnit = this.myJimple.newNopStmt();
+    markerUnit = Jimple.newNopStmt();
     unit = markerUnit;
     body.add(markerUnit);
     body.addDeferredJimplification(this);

@@ -104,7 +104,7 @@ public class CastCheckEliminator extends ForwardBranchedFlowAnalysis<LocalTypeSe
     List<Local> refLocals = new ArrayList<Local>();
     for (Iterator<Local> lIt = locals.iterator(); lIt.hasNext();) {
       final Local l = (Local) lIt.next();
-      if (l.getType(myScene) instanceof RefType) {
+      if (l.getType() instanceof RefType) {
         refLocals.add(l);
       }
     }
@@ -148,7 +148,7 @@ public class CastCheckEliminator extends ForwardBranchedFlowAnalysis<LocalTypeSe
     for (Iterator<ValueBox> bIt = stmt.getDefBoxes().iterator(); bIt.hasNext();) {
       final ValueBox b = (ValueBox) bIt.next();
       Value v = b.getValue();
-      if (v instanceof Local && v.getType(myScene) instanceof RefType) {
+      if (v instanceof Local && v.getType() instanceof RefType) {
         out.killLocal((Local) v);
       }
     }
@@ -158,10 +158,10 @@ public class CastCheckEliminator extends ForwardBranchedFlowAnalysis<LocalTypeSe
       AssignStmt astmt = (AssignStmt) stmt;
       Value rhs = astmt.getRightOp();
       Value lhs = astmt.getLeftOp();
-      if (lhs instanceof Local && rhs.getType(myScene) instanceof RefType) {
+      if (lhs instanceof Local && rhs.getType() instanceof RefType) {
         Local l = (Local) lhs;
         if (rhs instanceof NewExpr) {
-          out.localMustBeSubtypeOf(l, (RefType) rhs.getType(myScene));
+          out.localMustBeSubtypeOf(l, (RefType) rhs.getType());
         } else if (rhs instanceof CastExpr) {
           CastExpr cast = (CastExpr) rhs;
           Type castType = cast.getCastType();

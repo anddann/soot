@@ -186,7 +186,7 @@ public class TypeAssigner extends BodyTransformer {
 
     // check if any local has null_type
     for (Local l : b.getLocals()) {
-      if (l.getType(myScene) instanceof NullType) {
+      if (l.getType() instanceof NullType) {
         localsToRemove.add(l);
         hasNullType = true;
       }
@@ -208,7 +208,7 @@ public class TypeAssigner extends BodyTransformer {
     List<Unit> unitToReplaceByException = new ArrayList<Unit>();
     for (Unit u : b.getUnits()) {
       for (ValueBox vb : u.getUseBoxes()) {
-        if (vb.getValue() instanceof Local && ((Local) vb.getValue()).getType(myScene) instanceof NullType) {
+        if (vb.getValue() instanceof Local && ((Local) vb.getValue()).getType() instanceof NullType) {
 
           Local l = (Local) vb.getValue();
           Stmt s = (Stmt) u;
@@ -304,7 +304,7 @@ public class TypeAssigner extends BodyTransformer {
       while (localIt.hasNext()) {
         Local l = localIt.next();
 
-        if (l.getType(myScene).equals(unknownType) || l.getType(myScene).equals(errornousType)) {
+        if (l.getType().equals(unknownType) || l.getType().equals(errornousType)) {
           return true;
         }
       }
@@ -319,7 +319,7 @@ public class TypeAssigner extends BodyTransformer {
 
     Iterator<Local> ib = b.getLocals().iterator();
     for (Local v : a.getLocals()) {
-      Type ta = v.getType(myScene), tb = ib.next().getType(myScene);
+      Type ta = v.getType(), tb = ib.next().getType();
 
       if (soot.jimple.toolkits.typing.fast.TypeResolver.typesEqual(ta, tb)) {
         continue;

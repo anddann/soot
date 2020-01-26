@@ -69,7 +69,7 @@ public class UnopInstruction extends TaggedInstruction {
     Local source = body.getRegisterLocal(cmpInstr.getRegisterB());
     Value expr = getExpression(source);
 
-    AssignStmt assign = this.myJimple.newAssignStmt(body.getRegisterLocal(dest), expr);
+    AssignStmt assign = Jimple.newAssignStmt(body.getRegisterLocal(dest), expr);
     assign.addTag(getTag());
 
     setUnit(assign);
@@ -94,16 +94,16 @@ public class UnopInstruction extends TaggedInstruction {
     switch (opcode) {
       case NEG_INT:
         setTag(new IntOpTag());
-        return myJimple.newNegExpr(source);
+        return Jimple.newNegExpr(source);
       case NEG_LONG:
         setTag(new LongOpTag());
-        return myJimple.newNegExpr(source);
+        return Jimple.newNegExpr(source);
       case NEG_FLOAT:
         setTag(new FloatOpTag());
-        return myJimple.newNegExpr(source);
+        return Jimple.newNegExpr(source);
       case NEG_DOUBLE:
         setTag(new DoubleOpTag());
-        return myJimple.newNegExpr(source);
+        return Jimple.newNegExpr(source);
       case NOT_LONG:
         setTag(new LongOpTag());
         return getNotLongExpr(source);
@@ -123,7 +123,7 @@ public class UnopInstruction extends TaggedInstruction {
    * @return
    */
   private Value getNotIntExpr(Local source) {
-    return myJimple.newXorExpr(source, constantFactory.createIntConstant(-1));
+    return Jimple.newXorExpr(source, constantFactory.createIntConstant(-1));
 
   }
 
@@ -134,7 +134,7 @@ public class UnopInstruction extends TaggedInstruction {
    * @return
    */
   private Value getNotLongExpr(Local source) {
-    return myJimple.newXorExpr(source, constantFactory.createLongConstant(-1l));
+    return Jimple.newXorExpr(source, constantFactory.createLongConstant(-1l));
 
   }
 

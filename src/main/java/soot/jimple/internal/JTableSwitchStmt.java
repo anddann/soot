@@ -39,7 +39,7 @@ public class JTableSwitchStmt extends AbstractSwitchStmt implements TableSwitchS
   private static UnitBox[] getTargetBoxesArray(List<? extends Unit> targets) {
     UnitBox[] targetBoxes = new UnitBox[targets.size()];
     for (int i = 0; i < targetBoxes.length; i++) {
-      targetBoxes[i] = myJimple.newStmtBox(targets.get(i));
+      targetBoxes[i] = Jimple.newStmtBox(targets.get(i));
     }
     return targetBoxes;
   }
@@ -49,12 +49,12 @@ public class JTableSwitchStmt extends AbstractSwitchStmt implements TableSwitchS
   }
 
   public JTableSwitchStmt(Value key, int lowIndex, int highIndex, List<? extends Unit> targets, Unit defaultTarget) {
-    this(myJimple.newImmediateBox(key), lowIndex, highIndex, getTargetBoxesArray(targets),
-        myJimple.newStmtBox(defaultTarget));
+    this(Jimple.newImmediateBox(key), lowIndex, highIndex, getTargetBoxesArray(targets),
+        Jimple.newStmtBox(defaultTarget));
   }
 
   public JTableSwitchStmt(Value key, int lowIndex, int highIndex, List<? extends UnitBox> targets, UnitBox defaultTarget) {
-    this(myJimple.newImmediateBox(key), lowIndex, highIndex, targets.toArray(new UnitBox[targets.size()]), defaultTarget);
+    this(Jimple.newImmediateBox(key), lowIndex, highIndex, targets.toArray(new UnitBox[targets.size()]), defaultTarget);
   }
 
   protected JTableSwitchStmt(ValueBox keyBox, int lowIndex, int highIndex, UnitBox[] targetBoxes, UnitBox defaultTargetBox) {

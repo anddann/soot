@@ -161,10 +161,10 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
       final public void caseAssignStmt(AssignStmt as) {
         Value l = as.getLeftOp();
         Value r = as.getRightOp();
-        if (!(l.getType(myScene) instanceof RefLikeType)) {
+        if (!(l.getType() instanceof RefLikeType)) {
           return;
         }
-        assert r.getType(myScene) instanceof RefLikeType : "Type mismatch in assignment " + as + " in method "
+        assert r.getType() instanceof RefLikeType : "Type mismatch in assignment " + as + " in method "
             + method.getSignature();
         l.apply(MethodNodeFactory.this);
         Node dest = getNode();
@@ -203,7 +203,7 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
 
       @Override
       final public void caseReturnStmt(ReturnStmt rs) {
-        if (!(rs.getOp().getType(myScene) instanceof RefLikeType)) {
+        if (!(rs.getOp().getType() instanceof RefLikeType)) {
           return;
         }
         rs.getOp().apply(MethodNodeFactory.this);
@@ -213,7 +213,7 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
 
       @Override
       final public void caseIdentityStmt(IdentityStmt is) {
-        if (!(is.getLeftOp().getType(myScene) instanceof RefLikeType)) {
+        if (!(is.getLeftOp().getType() instanceof RefLikeType)) {
           return;
         }
         Value leftOp = is.getLeftOp();
@@ -230,7 +230,7 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
         int libOption = pag.getCGOpts().library();
         if (libOption != CGOptions.library_disabled && (accessibilityOracle.isAccessible(method))) {
           if (rightOp instanceof IdentityRef) {
-            Type rt = rightOp.getType(myScene);
+            Type rt = rightOp.getType();
             rt.apply(new SparkLibraryHelper(pag, src, method, myArrayElement));
           }
         }
@@ -255,8 +255,8 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
   private boolean isReflectionNewInstance(InvokeExpr iexpr) {
     if (iexpr instanceof VirtualInvokeExpr) {
       VirtualInvokeExpr vie = (VirtualInvokeExpr) iexpr;
-      if (vie.getBase().getType(myScene) instanceof RefType) {
-        RefType rt = (RefType) vie.getBase().getType(myScene);
+      if (vie.getBase().getType() instanceof RefType) {
+        RefType rt = (RefType) vie.getBase().getType();
         if (rt.getSootClass().getName().equals("java.lang.Class")) {
           if (vie.getMethodRef().name().equals("newInstance") && vie.getMethodRef().parameterTypes().size() == 0) {
             return true;
@@ -288,7 +288,7 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
   @Override
   final public void casePhiExpr(PhiExpr e) {
     Pair<Expr, String> phiPair = new Pair<Expr, String>(e, PointsToAnalysis.PHI_NODE);
-    Node phiNode = pag.makeLocalVarNode(phiPair, e.getType(myScene), method);
+    Node phiNode = pag.makeLocalVarNode(phiPair, e.getType(), method);
     for (Value op : e.getValues()) {
       op.apply(MethodNodeFactory.this);
       Node opNode = getNode();
@@ -338,18 +338,18 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
     if (pag.getOpts().field_based() || pag.getOpts().vta()) {
       setResult(pag.makeGlobalVarNode(ifr.getField(), ifr.getField().getType()));
     } else {
-      setResult(pag.makeLocalFieldRefNode(ifr.getBase(), ifr.getBase().getType(myScene), ifr.getField(), method));
+      setResult(pag.makeLocalFieldRefNode(ifr.getBase(), ifr.getBase().getType(), ifr.getField(), method));
     }
   }
 
   @Override
   final public void caseLocal(Local l) {
-    setResult(pag.makeLocalVarNode(l, l.getType(myScene), method));
+    setResult(pag.makeLocalVarNode(l, l.getType(), method));
   }
 
   @Override
   final public void caseNewArrayExpr(NewArrayExpr nae) {
-    setResult(pag.makeAllocNode(nae, nae.getType(myScene), method));
+    setResult(pag.makeAllocNode(nae, nae.getType(), method));
   }
 
   private boolean isStringBuffer(Type t) {
@@ -369,16 +369,16 @@ public class MethodNodeFactory extends AbstractShimpleValueSwitch {
 
   @Override
   final public void caseNewExpr(NewExpr ne) {
-    if (pag.getOpts().merge_stringbuffer() && isStringBuffer(ne.getType(myScene))) {
-      setResult(pag.makeAllocNode(ne.getType(myScene), ne.getType(myScene), null));
+    if (pag.getOpts().merge_stringbuffer() && isStringBuffer(ne.getType())) {
+      setResult(pag.makeAllocNode(ne.getType(), ne.getType(), null));
     } else {
-      setResult(pag.makeAllocNode(ne, ne.getType(myScene), method));
+      setResult(pag.makeAllocNode(ne, ne.getType(), method));
     }
   }
 
   @Override
   final public void caseNewMultiArrayExpr(NewMultiArrayExpr nmae) {
-    ArrayType type = (ArrayType) nmae.getType(myScene);
+    ArrayType type = (ArrayType) nmae.getType();
     AllocNode prevAn = pag.makeAllocNode(new Pair<Expr, Integer>(nmae, new Integer(type.numDimensions)), type, method);
     VarNode prevVn = pag.makeLocalVarNode(prevAn, prevAn.getType(), method);
     mpag.addInternalEdge(prevAn, prevVn);

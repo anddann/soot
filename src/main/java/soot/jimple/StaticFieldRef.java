@@ -70,7 +70,7 @@ public class StaticFieldRef implements FieldRef, ConvertToBaf {
     return Collections.emptyList();
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return fieldRef.type();
   }
 

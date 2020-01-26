@@ -110,7 +110,7 @@ public class CollectConstants extends SceneTransformer implements IJbcoTransform
           final Value value = useBox.getValue();
           if (value instanceof Constant) {
             final Constant constant = (Constant) value;
-            Type type = constant.getType(myScene);
+            Type type = constant.getType();
             List<Constant> constants = typeToConstants.computeIfAbsent(type, t -> new ArrayList<>());
 
             if (!constants.contains(constant)) {

@@ -150,7 +150,7 @@ public class NullnessAssumptionAnalysis extends BackwardFlowAnalysis {
       // so this copy becomes the in-set to handleRefTypeAssignment
       AnalysisInfo temp = new AnalysisInfo(out);
       DefinitionStmt defStmt = (DefinitionStmt) s;
-      if (defStmt.getLeftOp().getType(myScene) instanceof RefLikeType) {
+      if (defStmt.getLeftOp().getType() instanceof RefLikeType) {
         handleRefTypeAssignment(defStmt, temp, out);
       }
     }

@@ -387,8 +387,8 @@ public class TypeResolverBV {
     if (max > 1) {
       // hack for J2ME library, reported by Stephen Cheng
       if (!myOptions.j2me()) {
-        typeVariable(ArrayType.v(RefType.v("java.lang.Cloneable",myScene), max - 1,myScene));
-        typeVariable(ArrayType.v(RefType.v("java.io.Serializable",myScene), max - 1,myScene));
+        typeVariable(ArrayType.v(RefType.v("java.lang.Cloneable",myScene), max - 1));
+        typeVariable(ArrayType.v(RefType.v("java.io.Serializable",myScene), max - 1));
       }
     }
 
@@ -684,15 +684,15 @@ public class TypeResolverBV {
           if (t instanceof IntType) {
             local.setType(var.approx().type());
           } else {
-            local.setType(ArrayType.v(t, var.depth(),myScene));
+            local.setType(ArrayType.v(t, var.depth()));
           }
         }
       }
 
       if (DEBUG) {
         if ((var != null) && (var.approx() != null) && (var.approx().type() != null) && (local != null)
-            && (local.getType(myScene) != null) && !local.getType(myScene).equals(var.approx().type())) {
-          logger.debug("local: " + local + ", type: " + local.getType(myScene) + ", approx: " + var.approx().type());
+            && (local.getType() != null) && !local.getType().equals(var.approx().type())) {
+          logger.debug("local: " + local + ", type: " + local.getType() + ", approx: " + var.approx().type());
         }
       }
     }
@@ -906,12 +906,12 @@ public class TypeResolverBV {
                 } else if (assign.getRightOp() instanceof NewExpr) {
                   // We split the local.
                   // logger.debug("split: [" + assign + "] and [" + stmt + "]");
-                  Local newlocal = myJimple.newLocal("tmp", null);
+                  Local newlocal = Jimple.newLocal("tmp", null);
                   stmtBody.getLocals().add(newlocal);
 
                   special.setBase(newlocal);
 
-                  units.insertAfter(myJimple.newAssignStmt(assign.getLeftOp(), newlocal), assign);
+                  units.insertAfter(Jimple.newAssignStmt(assign.getLeftOp(), newlocal), assign);
                   assign.setLeftOp(newlocal);
                 }
               }

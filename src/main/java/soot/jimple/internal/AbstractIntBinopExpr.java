@@ -26,11 +26,13 @@ import soot.*;
 
 @SuppressWarnings("serial")
 abstract public class AbstractIntBinopExpr extends AbstractBinopExpr {
-  public AbstractIntBinopExpr(ValueBox op1Box, ValueBox op2Box, PrimTypeCollector primTypeCollector) {
-    super(op1Box, op2Box, primTypeCollector);
+  public AbstractIntBinopExpr(ValueBox op1Box, ValueBox op2Box) {
+    super(op1Box, op2Box);
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
+    PrimTypeCollector primTypeCollector =op1Box.getValue().getType().getMyScene().getPrimTypeCollector();
+
     return primTypeCollector.getIntType();
   }
 }

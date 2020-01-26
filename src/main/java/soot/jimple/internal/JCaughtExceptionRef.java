@@ -31,7 +31,10 @@ import soot.jimple.RefSwitch;
 import soot.util.Switch;
 
 public class JCaughtExceptionRef implements CaughtExceptionRef {
-  public JCaughtExceptionRef() {
+  private Scene myScene;
+
+  public JCaughtExceptionRef(Scene myScene) {
+    this.myScene = myScene;
   }
 
   public boolean equivTo(Object c) {
@@ -44,7 +47,7 @@ public class JCaughtExceptionRef implements CaughtExceptionRef {
   }
 
   public Object clone() {
-    return new JCaughtExceptionRef();
+    return new JCaughtExceptionRef(myScene);
   }
 
   public String toString() {
@@ -59,7 +62,8 @@ public class JCaughtExceptionRef implements CaughtExceptionRef {
     return Collections.emptyList();
   }
 
-  public Type getType(Scene myScene) {
+  //FIXME:
+  public Type getType() {
     return RefType.v("java.lang.Throwable",myScene);
   }
 

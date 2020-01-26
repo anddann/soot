@@ -134,7 +134,7 @@ public class ClassConstant extends Constant {
       throw new RuntimeException("Unsupported class constant: " + value);
     }
 
-    return numDimensions > 0 ? ArrayType.v(baseType, numDimensions, myScene) : baseType;
+    return numDimensions > 0 ? ArrayType.v(baseType, numDimensions) : baseType;
   }
 
   /**
@@ -178,7 +178,7 @@ public class ClassConstant extends Constant {
     return value;
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return RefType.v("java.lang.Class", this.myScene);
   }
 

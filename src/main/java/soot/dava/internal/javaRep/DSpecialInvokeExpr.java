@@ -34,14 +34,16 @@ import soot.grimp.internal.GSpecialInvokeExpr;
 
 public class DSpecialInvokeExpr extends GSpecialInvokeExpr {
   private Scene myScene;
+  private final Grimp myGrimp;
 
-  public DSpecialInvokeExpr(Value base, SootMethodRef methodRef, List args, Scene myScene) {
+  public DSpecialInvokeExpr(Value base, SootMethodRef methodRef, List args, Scene myScene, Grimp myGrimp) {
     super(base, methodRef, args, myGrimp);
     this.myScene = myScene;
+    this.myGrimp = myGrimp;
   }
 
   public void toString(UnitPrinter up) {
-    if (getBase().getType(myScene) instanceof NullType) {
+    if (getBase().getType() instanceof NullType) {
       // OL: I don't know what this is for; I'm just refactoring the
       // original code. An explanation here would be welcome.
       up.literal("((");
@@ -79,7 +81,7 @@ public class DSpecialInvokeExpr extends GSpecialInvokeExpr {
   }
 
   public String toString() {
-    if (getBase().getType(myScene) instanceof NullType) {
+    if (getBase().getType() instanceof NullType) {
       StringBuffer b = new StringBuffer();
 
       b.append("((");
@@ -122,6 +124,6 @@ public class DSpecialInvokeExpr extends GSpecialInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DSpecialInvokeExpr(getBase(), methodRef, clonedArgs, myScene);
+    return new DSpecialInvokeExpr(getBase(), methodRef, clonedArgs, myScene, myGrimp);
   }
 }

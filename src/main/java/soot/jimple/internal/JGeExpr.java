@@ -22,17 +22,17 @@ package soot.jimple.internal;
  * #L%
  */
 
-import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Value;
+import soot.baf.Baf;
 import soot.jimple.ExprSwitch;
 import soot.jimple.GeExpr;
 import soot.jimple.Jimple;
 import soot.util.Switch;
 
 public class JGeExpr extends AbstractJimpleIntBinopExpr implements GeExpr {
-  public JGeExpr(Value op1, Value op2, PrimTypeCollector primTypeCollector) {
-    super(op1, op2, primTypeCollector);
+  public JGeExpr(Value op1, Value op2) {
+    super(op1, op2);
   }
 
   public final String getSymbol() {
@@ -43,13 +43,13 @@ public class JGeExpr extends AbstractJimpleIntBinopExpr implements GeExpr {
     ((ExprSwitch) sw).caseGeExpr(this);
   }
 
-  Object makeBafInst(Type opType) {
+  Object makeBafInst(Type opType, Baf myBaf) {
     throw new RuntimeException("unsupported conversion: " + this);
   }
   // Object makeBafInst(Type opType) { return myBaf.newGeInst(this.getOp1().getType()); }
 
   public Object clone() {
-    return new JGeExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()), primTypeCollector);
+    return new JGeExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()));
   }
 
 }

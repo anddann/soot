@@ -28,15 +28,18 @@ import java.util.HashSet;
 import soot.SootFieldRef;
 import soot.UnitPrinter;
 import soot.Value;
+import soot.grimp.Grimp;
 import soot.grimp.internal.GInstanceFieldRef;
 
 public class DInstanceFieldRef extends GInstanceFieldRef {
   private HashSet<Object> thisLocals;
+  private final Grimp myGrimp;
 
-  public DInstanceFieldRef(Value base, SootFieldRef fieldRef, HashSet<Object> thisLocals) {
+  public DInstanceFieldRef(Value base, SootFieldRef fieldRef, HashSet<Object> thisLocals, Grimp myGrimp) {
     super(base, fieldRef, myGrimp);
 
     this.thisLocals = thisLocals;
+    this.myGrimp = myGrimp;
   }
 
   public void toString(UnitPrinter up) {
@@ -56,6 +59,6 @@ public class DInstanceFieldRef extends GInstanceFieldRef {
   }
 
   public Object clone() {
-    return new DInstanceFieldRef(getBase(), fieldRef, thisLocals);
+    return new DInstanceFieldRef(getBase(), fieldRef, thisLocals, myGrimp);
   }
 }

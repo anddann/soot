@@ -37,12 +37,13 @@ public class JLookupSwitchStmt extends AbstractSwitchStmt implements LookupSwitc
    * List of lookup values from the corresponding bytecode instruction, represented as IntConstants.
    */
   List<IntConstant> lookupValues;
+  private ConstantFactory constantFactory;
 
   // This method is necessary to deal with constructor-must-be-first-ism.
   private static UnitBox[] getTargetBoxesArray(List<? extends Unit> targets) {
     UnitBox[] targetBoxes = new UnitBox[targets.size()];
     for (int i = 0; i < targetBoxes.length; i++) {
-      targetBoxes[i] = myJimple.newStmtBox(targets.get(i));
+      targetBoxes[i] = Jimple.newStmtBox(targets.get(i));
     }
     return targetBoxes;
   }
@@ -55,23 +56,25 @@ public class JLookupSwitchStmt extends AbstractSwitchStmt implements LookupSwitc
       clonedLookupValues.add(i, constantFactory.createIntConstant(getLookupValue(i)));
     }
 
-    return new JLookupSwitchStmt(getKey(), clonedLookupValues, getTargets(), getDefaultTarget());
+    return new JLookupSwitchStmt(getKey(), clonedLookupValues, getTargets(), getDefaultTarget(), constantFactory);
   }
 
   /** Constructs a new JLookupSwitchStmt. lookupValues should be a list of IntConst s. */
-  public JLookupSwitchStmt(Value key, List<IntConstant> lookupValues, List<? extends Unit> targets, Unit defaultTarget) {
-    this(myJimple.newImmediateBox(key), lookupValues, getTargetBoxesArray(targets), myJimple.newStmtBox(defaultTarget));
+  public JLookupSwitchStmt(Value key, List<IntConstant> lookupValues, List<? extends Unit> targets, Unit defaultTarget, ConstantFactory constantFactory) {
+    this(Jimple.newImmediateBox(key), lookupValues, getTargetBoxesArray(targets), Jimple.newStmtBox(defaultTarget), constantFactory);
+    this.constantFactory = constantFactory;
   }
 
   /** Constructs a new JLookupSwitchStmt. lookupValues should be a list of IntConst s. */
   public JLookupSwitchStmt(Value key, List<IntConstant> lookupValues, List<? extends UnitBox> targets,
-      UnitBox defaultTarget) {
-    this(myJimple.newImmediateBox(key), lookupValues, targets.toArray(new UnitBox[targets.size()]), defaultTarget);
+                           UnitBox defaultTarget, ConstantFactory constantFactory) {
+    this(Jimple.newImmediateBox(key), lookupValues, targets.toArray(new UnitBox[targets.size()]), defaultTarget, constantFactory);
   }
 
   protected JLookupSwitchStmt(ValueBox keyBox, List<IntConstant> lookupValues, UnitBox[] targetBoxes,
-      UnitBox defaultTargetBox) {
+                              UnitBox defaultTargetBox, ConstantFactory constantFactory) {
     super(keyBox, defaultTargetBox, targetBoxes);
+    this.constantFactory = constantFactory;
     setLookupValues(lookupValues);
   }
 

@@ -136,7 +136,7 @@ public class PurityIntraproceduralAnalysis extends ForwardFlowAnalysis<Unit, Pur
         }
 
         // ignore primitive types
-        if (!(left.getType(myScene) instanceof RefLikeType)) {
+        if (!(left.getType() instanceof RefLikeType)) {
         }
 
         // v = v
@@ -188,7 +188,7 @@ public class PurityIntraproceduralAnalysis extends ForwardFlowAnalysis<Unit, Pur
         // v[i] = v
         if (rightOp instanceof Local) {
           Local right = (Local) rightOp;
-          if (right.getType(myScene) instanceof RefLikeType) {
+          if (right.getType() instanceof RefLikeType) {
             outValue.g.assignLocalToField(right, left, "[]");
           } else {
             outValue.g.mutateField(left, "[]");
@@ -212,7 +212,7 @@ public class PurityIntraproceduralAnalysis extends ForwardFlowAnalysis<Unit, Pur
         if (rightOp instanceof Local) {
           Local right = (Local) rightOp;
           // ignore primitive types
-          if (right.getType(myScene) instanceof RefLikeType) {
+          if (right.getType() instanceof RefLikeType) {
             outValue.g.assignLocalToField(right, left, field);
           } else {
             outValue.g.mutateField(left, field);
@@ -234,7 +234,7 @@ public class PurityIntraproceduralAnalysis extends ForwardFlowAnalysis<Unit, Pur
         // C.f = v
         if (rightOp instanceof Local) {
           Local right = (Local) rightOp;
-          if (right.getType(myScene) instanceof RefLikeType) {
+          if (right.getType() instanceof RefLikeType) {
             outValue.g.assignLocalToStaticField(right, field);
           } else {
             outValue.g.mutateStaticField(field);
@@ -264,7 +264,7 @@ public class PurityIntraproceduralAnalysis extends ForwardFlowAnalysis<Unit, Pur
       } else if (rightOp instanceof ParameterRef) {
         ParameterRef p = (ParameterRef) rightOp;
         // ignore primitive types
-        if (p.getType(myScene) instanceof RefLikeType) {
+        if (p.getType() instanceof RefLikeType) {
           outValue.g.assignParamToLocal(p.getIndex(), left);
         }
       } else if (rightOp instanceof CaughtExceptionRef) {
@@ -301,7 +301,7 @@ public class PurityIntraproceduralAnalysis extends ForwardFlowAnalysis<Unit, Pur
 
       if (v instanceof Local) {
         // ignore primitive types
-        if (v.getType(myScene) instanceof RefLikeType) {
+        if (v.getType() instanceof RefLikeType) {
           outValue.g.returnLocal((Local) v);
         }
       } else if (v instanceof Constant) {

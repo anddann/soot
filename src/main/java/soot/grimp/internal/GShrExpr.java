@@ -46,18 +46,18 @@ public class GShrExpr extends AbstractGrimpIntLongBinopExpr implements ShrExpr {
   }
 
   @Override
-  public Type getType(Scene myScene) {
+  public Type getType() {
     Value op1 = op1Box.getValue();
     Value op2 = op2Box.getValue();
 
-    if (!isIntLikeType(op2.getType(myScene))) {
+    if (!isIntLikeType(op2.getType())) {
       return UnknownType.v();
     }
 
-    if (isIntLikeType(op1.getType(myScene))) {
+    if (isIntLikeType(op1.getType())) {
       return primTypeCollector.getIntType();
     }
-    if (op1.getType(myScene).equals(primTypeCollector.getLongType())) {
+    if (op1.getType().equals(primTypeCollector.getLongType())) {
       return primTypeCollector.getLongType();
     }
 

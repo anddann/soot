@@ -97,7 +97,7 @@ public abstract class AbstractInstanceFieldRef implements InstanceFieldRef, Conv
     return useBoxes;
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return fieldRef.type();
   }
 

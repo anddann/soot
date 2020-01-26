@@ -66,7 +66,7 @@ public class GNewInvokeExpr extends AbstractInvokeExpr implements NewInvokeExpr,
     this.type = type;
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return type;
   }
 

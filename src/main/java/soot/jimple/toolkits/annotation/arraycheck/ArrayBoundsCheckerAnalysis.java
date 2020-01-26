@@ -575,7 +575,7 @@ class ArrayBoundsCheckerAnalysis {
 
           for (int i = 0; i < parameters.size(); i++) {
             Value para = (Value) parameters.get(i);
-            Type type = para.getType(myScene);
+            Type type = para.getType();
             if (type instanceof RefType) {
               SootClass pclass = ((RefType) type).getSootClass();
 
@@ -584,7 +584,7 @@ class ArrayBoundsCheckerAnalysis {
               while (keyIt.hasNext()) {
                 Value local = (Value) keyIt.next();
 
-                Type ltype = local.getType(myScene);
+                Type ltype = local.getType();
 
                 SootClass lclass = ((RefType) ltype).getSootClass();
 
@@ -599,7 +599,7 @@ class ArrayBoundsCheckerAnalysis {
 
           if (expr instanceof InstanceInvokeExpr) {
             Value base = ((InstanceInvokeExpr) expr).getBase();
-            Type type = base.getType(myScene);
+            Type type = base.getType();
             if (type instanceof RefType) {
               SootClass pclass = ((RefType) type).getSootClass();
 
@@ -608,7 +608,7 @@ class ArrayBoundsCheckerAnalysis {
               while (keyIt.hasNext()) {
                 Value local = (Value) keyIt.next();
 
-                Type ltype = local.getType(myScene);
+                Type ltype = local.getType();
 
                 SootClass lclass = ((RefType) ltype).getSootClass();
 
@@ -628,7 +628,7 @@ class ArrayBoundsCheckerAnalysis {
           } else {
             for (int i = 0; i < parameters.size(); i++) {
               Value para = (Value) parameters.get(i);
-              if (para.getType(myScene) instanceof RefType) {
+              if (para.getType() instanceof RefType) {
                 killall = true;
                 break;
               }

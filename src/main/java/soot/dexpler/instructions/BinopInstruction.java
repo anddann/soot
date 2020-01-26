@@ -63,7 +63,7 @@ public class BinopInstruction extends TaggedInstruction {
 
     Value expr = getExpression(source1, source2);
 
-    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), expr);
+    AssignStmt assign = Jimple.newAssignStmt(body.getRegisterLocal(dest), expr);
     assign.addTag(getTag());
 
     setUnit(assign);

@@ -30,8 +30,9 @@ import soot.jimple.*;
 import soot.util.Switch;
 
 public class JExitMonitorStmt extends AbstractOpStmt implements ExitMonitorStmt {
+
   public JExitMonitorStmt(Value op) {
-    this(myJimple.newImmediateBox(op));
+    this(Jimple.newImmediateBox(op));
   }
 
   protected JExitMonitorStmt(ValueBox opBox) {

@@ -131,7 +131,7 @@ class TypeNode {
     if (type.numDimensions == 1) {
       element = hierarchy.typeNode(type.baseType);
     } else {
-      element = hierarchy.typeNode(ArrayType.v(type.baseType, type.numDimensions - 1, myScene));
+      element = hierarchy.typeNode(ArrayType.v(type.baseType, type.numDimensions - 1));
     }
 
     if (element != hierarchy.INT) {
@@ -149,7 +149,7 @@ class TypeNode {
         SootClass sClass = baseType.getSootClass();
         SootClass superClass = sClass.getSuperclassUnsafe();
         if (superClass != null && !superClass.getName().equals("java.lang.Object")) {
-          TypeNode parent = hierarchy.typeNode(ArrayType.v(RefType.v(sClass.getSuperclass().getName(),myScene), type.numDimensions,myScene));
+          TypeNode parent = hierarchy.typeNode(ArrayType.v(RefType.v(sClass.getSuperclass().getName(),myScene), type.numDimensions));
           plist.add(parent);
           parentClass = parent;
         } else if (type.numDimensions == 1) {
@@ -163,19 +163,19 @@ class TypeNode {
 
           parentClass = hierarchy.OBJECT;
         } else {
-          plist.add(hierarchy.typeNode(ArrayType.v(hierarchy.OBJECT.type(), type.numDimensions - 1,myScene)));
+          plist.add(hierarchy.typeNode(ArrayType.v(hierarchy.OBJECT.type(), type.numDimensions - 1)));
 
           // hack for J2ME library, reported by Stephen Cheng
           if (!myOptions.j2me()) {
-            plist.add(hierarchy.typeNode(ArrayType.v(hierarchy.CLONEABLE.type(), type.numDimensions - 1,myScene)));
-            plist.add(hierarchy.typeNode(ArrayType.v(hierarchy.SERIALIZABLE.type(), type.numDimensions - 1,myScene)));
+            plist.add(hierarchy.typeNode(ArrayType.v(hierarchy.CLONEABLE.type(), type.numDimensions - 1)));
+            plist.add(hierarchy.typeNode(ArrayType.v(hierarchy.SERIALIZABLE.type(), type.numDimensions - 1)));
           }
 
-          parentClass = hierarchy.typeNode(ArrayType.v(hierarchy.OBJECT.type(), type.numDimensions - 1,myScene));
+          parentClass = hierarchy.typeNode(ArrayType.v(hierarchy.OBJECT.type(), type.numDimensions - 1));
         }
 
         for (Iterator<SootClass> i = sClass.getInterfaces().iterator(); i.hasNext();) {
-          TypeNode parent = hierarchy.typeNode(ArrayType.v(RefType.v((i.next()).getName(),myScene), type.numDimensions,myScene));
+          TypeNode parent = hierarchy.typeNode(ArrayType.v(RefType.v((i.next()).getName(),myScene), type.numDimensions));
           plist.add(parent);
         }
       } else if (type.numDimensions == 1) {
@@ -189,14 +189,14 @@ class TypeNode {
 
         parentClass = hierarchy.OBJECT;
       } else {
-        plist.add(hierarchy.typeNode(ArrayType.v(hierarchy.OBJECT.type(), type.numDimensions - 1,myScene)));
+        plist.add(hierarchy.typeNode(ArrayType.v(hierarchy.OBJECT.type(), type.numDimensions - 1)));
         // hack for J2ME library, reported by Stephen Cheng
         if (!myOptions.j2me()) {
-          plist.add(hierarchy.typeNode(ArrayType.v(hierarchy.CLONEABLE.type(), type.numDimensions - 1,myScene)));
-          plist.add(hierarchy.typeNode(ArrayType.v(hierarchy.SERIALIZABLE.type(), type.numDimensions - 1,myScene)));
+          plist.add(hierarchy.typeNode(ArrayType.v(hierarchy.CLONEABLE.type(), type.numDimensions - 1)));
+          plist.add(hierarchy.typeNode(ArrayType.v(hierarchy.SERIALIZABLE.type(), type.numDimensions - 1)));
         }
 
-        parentClass = hierarchy.typeNode(ArrayType.v(hierarchy.OBJECT.type(), type.numDimensions - 1,myScene));
+        parentClass = hierarchy.typeNode(ArrayType.v(hierarchy.OBJECT.type(), type.numDimensions - 1));
       }
 
       parents = Collections.unmodifiableList(plist);
@@ -366,12 +366,12 @@ class TypeNode {
 
     if (type instanceof ArrayType) {
       ArrayType atype = (ArrayType) type;
-      array = hierarchy.typeNode(ArrayType.v(atype.baseType, atype.numDimensions + 1,myScene));
+      array = hierarchy.typeNode(ArrayType.v(atype.baseType, atype.numDimensions + 1));
       return array;
     }
 
     if (type instanceof PrimType || type instanceof RefType) {
-      array = hierarchy.typeNode(ArrayType.v(type, 1,myScene));
+      array = hierarchy.typeNode(ArrayType.v(type, 1));
       return array;
     }
 

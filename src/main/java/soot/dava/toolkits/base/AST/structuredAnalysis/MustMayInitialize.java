@@ -77,7 +77,8 @@ public class MustMayInitialize extends StructuredAnalysis {
   int MUSTMAY;
 
   public MustMayInitialize(Object analyze, int MUSTorMAY) {
-    super();
+    //FIXME AD
+    super(null,null);
     mapping = new HashMap<Object, List>();
     MUSTMAY = MUSTorMAY;
 

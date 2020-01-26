@@ -44,12 +44,7 @@ import soot.dava.internal.AST.ASTWhileNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DStaticFieldRef;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
-import soot.jimple.DoubleConstant;
-import soot.jimple.FloatConstant;
-import soot.jimple.IntConstant;
-import soot.jimple.LongConstant;
-import soot.jimple.Stmt;
-import soot.jimple.StringConstant;
+import soot.jimple.*;
 import soot.tagkit.DoubleConstantValueTag;
 import soot.tagkit.FloatConstantValueTag;
 import soot.tagkit.IntegerConstantValueTag;
@@ -250,7 +245,7 @@ public class DeInliningFinalFields extends DepthFirstAdapter {
           return null;
         }
 
-        Type valType = ((IntConstant) val).getType(myScene);
+        Type valType = ((IntConstant) val).getType();
 
         Integer myInt = null;
         try {
@@ -313,7 +308,7 @@ public class DeInliningFinalFields extends DepthFirstAdapter {
     }
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       Iterator tempIt = s.getUseBoxes().iterator();

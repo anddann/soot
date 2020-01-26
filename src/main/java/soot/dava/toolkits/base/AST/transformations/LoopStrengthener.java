@@ -27,10 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import soot.G;
-import soot.Local;
-import soot.SootClass;
-import soot.Type;
+import soot.*;
 import soot.dava.internal.AST.ASTDoWhileNode;
 import soot.dava.internal.AST.ASTIfElseNode;
 import soot.dava.internal.AST.ASTIfNode;
@@ -117,7 +114,7 @@ public class LoopStrengthener extends DepthFirstAdapter {
             if (oneNode instanceof ASTIfNode) {
               newNode = StrengthenByIf.getNewNode(temp, (ASTIfNode) oneNode, myTryContentsFinder, myASTWalker);
             } else if (oneNode instanceof ASTIfElseNode) {
-              newNode = StrengthenByIfElse.getNewNode(temp, (ASTIfElseNode) oneNode);
+              newNode = StrengthenByIfElse.getNewNode(temp, (ASTIfElseNode) oneNode, myTryContentsFinder, myASTWalker);
             }
 
             if (newNode != null) {
@@ -155,7 +152,7 @@ public class LoopStrengthener extends DepthFirstAdapter {
           if (oneNode instanceof ASTIfNode) {
             newNode = StrengthenByIf.getNewNode(temp, (ASTIfNode) oneNode, myTryContentsFinder, myASTWalker);
           } else if (oneNode instanceof ASTIfElseNode) {
-            newNode = StrengthenByIfElse.getNewNode(temp, (ASTIfElseNode) oneNode);
+            newNode = StrengthenByIfElse.getNewNode(temp, (ASTIfElseNode) oneNode, myTryContentsFinder, myASTWalker);
           }
 
           if (newNode != null) {
@@ -215,7 +212,7 @@ public class LoopStrengthener extends DepthFirstAdapter {
             if (oneNode instanceof ASTIfNode) {
               newNode = StrengthenByIf.getNewNode(temp, (ASTIfNode) oneNode, myTryContentsFinder, myASTWalker);
             } else if (oneNode instanceof ASTIfElseNode) {
-              newNode = StrengthenByIfElse.getNewNode(temp, (ASTIfElseNode) oneNode);
+              newNode = StrengthenByIfElse.getNewNode(temp, (ASTIfElseNode) oneNode, myTryContentsFinder, myASTWalker);
             }
 
             if (newNode != null) {
@@ -269,7 +266,7 @@ public class LoopStrengthener extends DepthFirstAdapter {
               if (oneNode instanceof ASTIfNode) {
                 newNode = StrengthenByIf.getNewNode(temp, (ASTIfNode) oneNode, myTryContentsFinder, myASTWalker);
               } else if (oneNode instanceof ASTIfElseNode) {
-                newNode = StrengthenByIfElse.getNewNode(temp, (ASTIfElseNode) oneNode);
+                newNode = StrengthenByIfElse.getNewNode(temp, (ASTIfElseNode) oneNode, myTryContentsFinder, myASTWalker);
               }
 
               if (newNode != null) {

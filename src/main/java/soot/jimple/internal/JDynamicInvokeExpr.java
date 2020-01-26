@@ -38,7 +38,7 @@ public class JDynamicInvokeExpr extends AbstractInvokeExpr implements DynamicInv
   protected int tag;
 
   public JDynamicInvokeExpr(SootMethodRef bootstrapMethodRef, List<? extends Value> bootstrapArgs, SootMethodRef methodRef,
-      int tag, List<? extends Value> methodArgs) {
+                            int tag, List<? extends Value> methodArgs) {
     super(methodRef, new ValueBox[methodArgs.size()]);
 
     if (!methodRef.getSignature().startsWith("<" + SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME + ": ")) {
@@ -51,15 +51,15 @@ public class JDynamicInvokeExpr extends AbstractInvokeExpr implements DynamicInv
     this.tag = tag;
 
     for (int i = 0; i < bootstrapArgs.size(); i++) {
-      this.bsmArgBoxes[i] = myJimple.newImmediateBox(bootstrapArgs.get(i));
+      this.bsmArgBoxes[i] = Jimple.newImmediateBox(bootstrapArgs.get(i));
     }
     for (int i = 0; i < methodArgs.size(); i++) {
-      this.argBoxes[i] = myJimple.newImmediateBox(methodArgs.get(i));
+      this.argBoxes[i] = Jimple.newImmediateBox(methodArgs.get(i));
     }
   }
 
   public JDynamicInvokeExpr(SootMethodRef bootstrapMethodRef, List<? extends Value> bootstrapArgs, SootMethodRef methodRef,
-      List<? extends Value> methodArgs) {
+                            List<? extends Value> methodArgs) {
     /*
      * Here the static-handle is chosen as default value, because this works for Java.
      */

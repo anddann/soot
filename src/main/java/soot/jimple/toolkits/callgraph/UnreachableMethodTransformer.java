@@ -68,22 +68,22 @@ public class UnreachableMethodTransformer extends BodyTransformer {
     PatchingChain units = body.getUnits();
     List<Unit> list = new Vector<Unit>();
 
-    Local tmpRef = myJimple.newLocal("tmpRef", RefType.v("java.io.PrintStream",myScene));
+    Local tmpRef = Jimple.newLocal("tmpRef", RefType.v("java.io.PrintStream",myScene));
     body.getLocals().add(tmpRef);
-    list.add(myJimple.newAssignStmt(tmpRef,
-        myJimple.newStaticFieldRef(myScene.getField("<java.lang.System: java.io.PrintStream out>").makeRef())));
+    list.add(Jimple.newAssignStmt(tmpRef,
+        Jimple.newStaticFieldRef(myScene.getField("<java.lang.System: java.io.PrintStream out>").makeRef())));
 
     SootMethod toCall = myScene.getMethod("<java.lang.Thread: void dumpStack()>");
-    list.add(myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(toCall.makeRef())));
+    list.add(Jimple.newInvokeStmt(myJimple.newStaticInvokeExpr(toCall.makeRef())));
 
     toCall = myScene.getMethod("<java.io.PrintStream: void println(java.lang.String)>");
-    list.add(myJimple.newInvokeStmt(myJimple.newVirtualInvokeExpr(tmpRef, toCall.makeRef(),
+    list.add(Jimple.newInvokeStmt(myJimple.newVirtualInvokeExpr(tmpRef, toCall.makeRef(),
         constantFactory.createStringConstant("Executing supposedly unreachable method:"))));
-    list.add(myJimple.newInvokeStmt(myJimple.newVirtualInvokeExpr(tmpRef, toCall.makeRef(),
+    list.add(Jimple.newInvokeStmt(myJimple.newVirtualInvokeExpr(tmpRef, toCall.makeRef(),
         constantFactory.createStringConstant("\t" + method.getDeclaringClass().getName() + "." + method.getName()))));
 
     toCall = myScene.getMethod("<java.lang.System: void exit(int)>");
-    list.add(myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(toCall.makeRef(), constantFactory.createIntConstant(1))));
+    list.add(Jimple.newInvokeStmt(myJimple.newStaticInvokeExpr(toCall.makeRef(), constantFactory.createIntConstant(1))));
 
     /*
      * Stmt r; if( method.getReturnType() instanceof VoidType ) { list.add( r=myJimple.newReturnVoidStmt() ); } else if(

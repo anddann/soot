@@ -40,7 +40,7 @@ abstract public class AbstractGrimpIntBinopExpr extends AbstractIntBinopExpr imp
   }
 
   protected AbstractGrimpIntBinopExpr(ValueBox op1Box, ValueBox op2Box, PrimTypeCollector primTypeCollector) {
-    super(op1Box,op2Box,primTypeCollector);
+    super(op1Box,op2Box);
   }
 
   abstract public int getPrecedence();

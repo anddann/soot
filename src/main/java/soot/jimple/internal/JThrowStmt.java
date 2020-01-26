@@ -32,7 +32,7 @@ import soot.util.Switch;
 public class JThrowStmt extends AbstractOpStmt implements ThrowStmt {
 
   public JThrowStmt(Value op) {
-    this(myJimple.newImmediateBox(op));
+    this(Jimple.newImmediateBox(op));
   }
 
   protected JThrowStmt(ValueBox opBox) {

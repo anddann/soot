@@ -212,7 +212,7 @@ public class AsmUtil {
     if (!(baseType instanceof RefLikeType) && desc.length() > 1) {
       throw new AssertionError("Invalid primitive type descriptor: " + desc);
     }
-    return nrDims > 0 ? ArrayType.v(baseType, nrDims,myScene) : baseType;
+    return nrDims > 0 ? ArrayType.v(baseType, nrDims) : baseType;
   }
 
   /**
@@ -280,7 +280,7 @@ public class AsmUtil {
         }
       }
       if (baseType != null && nrDims > 0) {
-        types.add(ArrayType.v(baseType, nrDims, myScene));
+        types.add(ArrayType.v(baseType, nrDims));
       } else {
         types.add(baseType);
       }

@@ -112,7 +112,7 @@ public class NullPointerColorer extends BodyTransformer {
   private void addColorTags(ValueBox vBox, FlowSet set, Stmt s, BranchedRefVarsAnalysis analysis) {
 
     Value val = vBox.getValue();
-    if (val.getType(myScene) instanceof RefLikeType) {
+    if (val.getType() instanceof RefLikeType) {
       // logger.debug(""+val+": "+val.getClass().toString());
 
       int vInfo = analysis.anyRefInfo(val, set);

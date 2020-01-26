@@ -296,7 +296,7 @@ public class DalvikThrowAnalysis extends UnitThrowAnalysis {
           // No exception are thrown for primitive casts
           return;
         }
-        Type fromType = expr.getOp().getType(myScene);
+        Type fromType = expr.getOp().getType();
         Type toType = expr.getCastType();
         result = result.add(mgr.RESOLVE_CLASS_ERRORS);
         if (toType instanceof RefLikeType) {

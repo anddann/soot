@@ -58,7 +58,7 @@ class StmtTemplatePrinter implements StmtSwitch {
 
   public StmtTemplatePrinter(TemplatePrinter templatePrinter, PatchingChain<Unit> units) {
     this.p = templatePrinter;
-    this.vtp = new ValueTemplatePrinter(p, myScene);
+    this.vtp = new ValueTemplatePrinter(p);
 
     for (Unit u : units) {
       for (UnitBox ub : u.getUnitBoxes()) {

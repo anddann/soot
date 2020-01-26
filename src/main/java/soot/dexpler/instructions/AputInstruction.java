@@ -60,7 +60,7 @@ public class AputInstruction extends FieldInstruction {
 
     Local arrayBase = body.getRegisterLocal(aPutInstr.getRegisterB());
     Local index = body.getRegisterLocal(aPutInstr.getRegisterC());
-    ArrayRef arrayRef = myJimple.newArrayRef(arrayBase, index);
+    ArrayRef arrayRef = Jimple.newArrayRef(arrayBase, index);
 
     Local sourceValue = body.getRegisterLocal(source);
     AssignStmt assign = getAssignStmt(body, sourceValue, arrayRef);
@@ -81,7 +81,7 @@ public class AputInstruction extends FieldInstruction {
   @Override
   protected Type getTargetType(DexBody body) {
     Instruction23x aPutInstr = (Instruction23x) instruction;
-    Type t = body.getRegisterLocal(aPutInstr.getRegisterB()).getType(myScene);
+    Type t = body.getRegisterLocal(aPutInstr.getRegisterB()).getType();
     if (t instanceof ArrayType) {
       return ((ArrayType) t).getElementType();
     } else {

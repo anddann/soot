@@ -22,7 +22,6 @@ package soot.jimple.internal;
  * #L%
  */
 
-import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Value;
 import soot.baf.Baf;
@@ -32,11 +31,9 @@ import soot.jimple.MulExpr;
 import soot.util.Switch;
 
 public class JMulExpr extends AbstractJimpleFloatBinopExpr implements MulExpr {
-  private final Jimple myJimple;
 
-  public JMulExpr(Value op1, Value op2, Jimple myJimple, PrimTypeCollector primTypeCollector) {
-    super(op1, op2, myJimple, primTypeCollector);
-    this.myJimple = myJimple;
+  public JMulExpr(Value op1, Value op2) {
+    super(op1, op2);
   }
 
   public final String getSymbol() {
@@ -48,11 +45,11 @@ public class JMulExpr extends AbstractJimpleFloatBinopExpr implements MulExpr {
   }
 
   Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newMulInst(this.getOp1().getType(myScene));
+    return myBaf.newMulInst(this.getOp1().getType());
   }
 
   public Object clone() {
-    return new JMulExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()),myJimple, primTypeCollector);
+    return new JMulExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()));
   }
 
 }

@@ -42,7 +42,7 @@ public class ShortcutIfGenerator extends DepthFirstAdapter {
     super(verbose);
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       if (!(s instanceof DefinitionStmt)) {
@@ -67,7 +67,7 @@ public class ShortcutIfGenerator extends DepthFirstAdapter {
         rightType = ((CastExpr) right).getCastType();
         OpBox = ((CastExpr) right).getOpBox();
       } else {
-        rightType = ds.getLeftOp().getType(myScene);
+        rightType = ds.getLeftOp().getType();
         OpBox = rightBox;
       }
 
@@ -76,7 +76,7 @@ public class ShortcutIfGenerator extends DepthFirstAdapter {
       }
 
       Value Op = OpBox.getValue();
-      if (!(Op.getType(myScene) instanceof BooleanType)) {
+      if (!(Op.getType() instanceof BooleanType)) {
         continue;
       }
 

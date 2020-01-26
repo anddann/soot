@@ -49,7 +49,7 @@ public class MoveInstruction extends DexlibAbstractInstruction {
 
     int dest = i.getRegisterA();
     int source = i.getRegisterB();
-    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), body.getRegisterLocal(source));
+    AssignStmt assign = Jimple.newAssignStmt(body.getRegisterLocal(dest), body.getRegisterLocal(source));
     setUnit(assign);
     addTags(assign);
     body.add(assign);

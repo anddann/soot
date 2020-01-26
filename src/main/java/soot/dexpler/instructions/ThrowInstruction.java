@@ -46,7 +46,7 @@ public class ThrowInstruction extends DexlibAbstractInstruction {
   @Override
   public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     Instruction11x throwInstruction = (Instruction11x) instruction;
-    ThrowStmt throwStmt = myJimple.newThrowStmt(body.getRegisterLocal(throwInstruction.getRegisterA()));
+    ThrowStmt throwStmt = Jimple.newThrowStmt(body.getRegisterLocal(throwInstruction.getRegisterA()));
     setUnit(throwStmt);
     addTags(throwStmt);
     body.add(throwStmt);

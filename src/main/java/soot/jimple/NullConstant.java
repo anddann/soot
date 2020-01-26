@@ -24,7 +24,6 @@ package soot.jimple;
 
 import com.google.inject.Inject;
 import soot.PrimTypeCollector;
-import soot.Scene;
 import soot.Type;
 import soot.util.Switch;
 
@@ -49,7 +48,7 @@ public class NullConstant extends Constant {
     return Jimple.NULL;
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return primTypeCollector.getNullType();
   }
 

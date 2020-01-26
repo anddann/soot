@@ -49,6 +49,6 @@ public class DNewInvokeExpr extends GNewInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DNewInvokeExpr((RefType) getType(myScene), methodRef, clonedArgs, myGrimp, myScene);
+    return new DNewInvokeExpr((RefType) getType(), methodRef, clonedArgs, myGrimp, myScene);
   }
 }

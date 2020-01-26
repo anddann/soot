@@ -37,7 +37,7 @@ abstract public class AbstractGrimpFloatBinopExpr extends AbstractFloatBinopExpr
   }
 
   protected AbstractGrimpFloatBinopExpr(ValueBox op1Box, ValueBox op2Box, PrimTypeCollector primTypeCollector) {
-    super(op1Box,op2Box,primTypeCollector);
+    super(op1Box,op2Box);
   }
 
   abstract public int getPrecedence();

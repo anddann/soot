@@ -24,6 +24,7 @@ package soot.jimple.internal;
 
 import soot.Type;
 import soot.Value;
+import soot.baf.Baf;
 import soot.jimple.CmpExpr;
 import soot.jimple.ExprSwitch;
 import soot.jimple.Jimple;
@@ -31,7 +32,7 @@ import soot.util.Switch;
 
 public class JCmpExpr extends AbstractJimpleIntBinopExpr implements CmpExpr {
   public JCmpExpr(Value op1, Value op2) {
-    super(op1, op2, primTypeCollector);
+    super(op1, op2);
   }
 
   public final String getSymbol() {
@@ -42,8 +43,8 @@ public class JCmpExpr extends AbstractJimpleIntBinopExpr implements CmpExpr {
     ((ExprSwitch) sw).caseCmpExpr(this);
   }
 
-  Object makeBafInst(Type opType) {
-    return opType.getMyScene().getMyBaf().newCmpInst(this.getOp1().getType(myScene));
+  Object makeBafInst(Type opType, Baf myBaf) {
+    return opType.getMyScene().getMyBaf().newCmpInst(this.getOp1().getType());
   }
 
   public Object clone() {

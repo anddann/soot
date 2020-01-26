@@ -33,8 +33,6 @@ import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.AST.ASTStatementSequenceNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DAbruptStmt;
-import soot.dava.toolkits.base.AST.ASTWalker;
-import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.finders.ExceptionFinder;
 import soot.jimple.*;
 import soot.util.IterableSet;
@@ -71,7 +69,7 @@ public class SETStatementSequenceNode extends SETNode {
     return c;
   }
 
-  public ASTNode emit_AST(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
+  public ASTNode emit_AST() {
     List<AugmentedStmt> l = new LinkedList<AugmentedStmt>();
 
     boolean isStaticInitializer = davaBody.getMethod().getName().equals(SootMethod.staticInitializerName);

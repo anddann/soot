@@ -213,8 +213,8 @@ public class StaticMethodBinder extends SceneTransformer {
                 if (st instanceof IdentityStmt) {
                   IdentityStmt is = (IdentityStmt) st;
                   if (is.getRightOp() instanceof ThisRef) {
-                    units.swapWith(st, myJimple.newIdentityStmt(is.getLeftOp(),
-                        myJimple.newParameterRef(is.getRightOp().getType(myScene), 0)));
+                    units.swapWith(st, Jimple.newIdentityStmt(is.getLeftOp(),
+                        Jimple.newParameterRef(is.getRightOp().getType(), 0)));
                   } else {
                     if (is.getRightOp() instanceof ParameterRef) {
                       ParameterRef ro = (ParameterRef) is.getRightOp();
@@ -240,14 +240,14 @@ public class StaticMethodBinder extends SceneTransformer {
             // For instance, Bottle.price_static takes a cost.
             // Cost is an interface implemented by Bottle.
             SootClass localType, parameterType;
-            localType = ((RefType) ((InstanceInvokeExpr) ie).getBase().getType(myScene)).getSootClass();
+            localType = ((RefType) ((InstanceInvokeExpr) ie).getBase().getType()).getSootClass();
             parameterType = target.getDeclaringClass();
 
             if (localType.isInterface() || hierarchy.isClassSuperclassOf(localType, parameterType)) {
-              Local castee = myJimple.newLocal("__castee", parameterType.getType());
+              Local castee = Jimple.newLocal("__castee", parameterType.getType());
               b.getLocals().add(castee);
-              b.getUnits().insertBefore(myJimple.newAssignStmt(castee,
-                  myJimple.newCastExpr(((InstanceInvokeExpr) ie).getBase(), parameterType.getType())), s);
+              b.getUnits().insertBefore(Jimple.newAssignStmt(castee,
+                  Jimple.newCastExpr(((InstanceInvokeExpr) ie).getBase(), parameterType.getType())), s);
               thisToAdd = castee;
             }
           }
@@ -258,7 +258,7 @@ public class StaticMethodBinder extends SceneTransformer {
             newArgs.add(thisToAdd);
             newArgs.addAll(ie.getArgs());
 
-            StaticInvokeExpr sie = myJimple.newStaticInvokeExpr(clonedTarget.makeRef(), newArgs);
+            StaticInvokeExpr sie = Jimple.newStaticInvokeExpr(clonedTarget.makeRef(), newArgs);
 
             ValueBox ieBox = s.getInvokeExprBox();
             ieBox.setValue(sie);
@@ -276,7 +276,7 @@ public class StaticMethodBinder extends SceneTransformer {
                * In this case, we don't use throwPoint; instead, put the code right there.
                */
               Stmt insertee
-                  = myJimple.newIfStmt(myJimple.newNeExpr(((InstanceInvokeExpr) ie).getBase(), myConstantfactory.getNullConstant()), s);
+                  = Jimple.newIfStmt(Jimple.newNeExpr(((InstanceInvokeExpr) ie).getBase(), myConstantfactory.getNullConstant()), s);
 
               b.getUnits().insertBefore(insertee, s);
 
@@ -286,8 +286,8 @@ public class StaticMethodBinder extends SceneTransformer {
               ThrowManager.addThrowAfter(b, insertee);
             } else {
               Stmt throwPoint = ThrowManager.getNullPointerExceptionThrower(b);
-              b.getUnits().insertBefore(myJimple
-                  .newIfStmt(myJimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), myConstantfactory.getNullConstant()), throwPoint), s);
+              b.getUnits().insertBefore(Jimple
+                  .newIfStmt(Jimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), myConstantfactory.getNullConstant()), throwPoint), s);
             }
           }
 

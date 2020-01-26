@@ -25,11 +25,12 @@ package soot.jimple.internal;
 
 import soot.SootFieldRef;
 import soot.Value;
+import soot.ValueBox;
 import soot.jimple.Jimple;
 
 public class JInstanceFieldRef extends AbstractInstanceFieldRef {
   public JInstanceFieldRef(Value base, SootFieldRef fieldRef) {
-    super(myJimple.newLocalBox(base), fieldRef);
+    super(Jimple.newLocalBox(base), fieldRef);
   }
 
   public Object clone() {

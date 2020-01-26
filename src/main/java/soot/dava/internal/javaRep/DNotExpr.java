@@ -33,7 +33,7 @@ public class DNotExpr extends AbstractUnopExpr {
   private Grimp myGrimp;
 
   public DNotExpr(Value op, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(myGrimp.newExprBox(op), primTypeCollector);
+    super(myGrimp.newExprBox(op));
     this.myGrimp = myGrimp;
   }
 
@@ -51,17 +51,17 @@ public class DNotExpr extends AbstractUnopExpr {
     return " ! (" + (getOpBox().getValue()).toString() + ")";
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     Value op = getOpBox().getValue();
 
-    if (op.getType(myScene).equals(primTypeCollector.getIntType()) || op.getType(myScene).equals(primTypeCollector.getByteType()) || op.getType(myScene).equals(primTypeCollector.getShortType())
-        || op.getType(myScene).equals(primTypeCollector.getBooleanType()) || op.getType(myScene).equals(primTypeCollector.getCharType())) {
+    if (op.getType().equals(primTypeCollector.getIntType()) || op.getType().equals(primTypeCollector.getByteType()) || op.getType().equals(primTypeCollector.getShortType())
+        || op.getType().equals(primTypeCollector.getBooleanType()) || op.getType().equals(primTypeCollector.getCharType())) {
       return primTypeCollector.getIntType();
-    } else if (op.getType(myScene).equals(primTypeCollector.getLongType())) {
+    } else if (op.getType().equals(primTypeCollector.getLongType())) {
       return primTypeCollector.getLongType();
-    } else if (op.getType(myScene).equals(primTypeCollector.getDoubleType())) {
+    } else if (op.getType().equals(primTypeCollector.getDoubleType())) {
       return primTypeCollector.getDoubleType();
-    } else if (op.getType(myScene).equals(primTypeCollector.getFloatType())) {
+    } else if (op.getType().equals(primTypeCollector.getFloatType())) {
       return primTypeCollector.getFloatType();
     } else {
       return primTypeCollector.getUnknownType();

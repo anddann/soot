@@ -32,7 +32,7 @@ public class GInstanceOfExpr extends AbstractInstanceOfExpr {
   private Grimp myGrimp;
 
   public GInstanceOfExpr(Value op, Type checkType, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(myGrimp.newObjExprBox(op), checkType, primTypeCollector);
+    super(myGrimp.newObjExprBox(op), checkType);
     this.myGrimp = myGrimp;
   }
 

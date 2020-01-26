@@ -35,12 +35,10 @@ import soot.util.Switch;
 public abstract class AbstractInstanceOfExpr implements InstanceOfExpr {
   final ValueBox opBox;
   Type checkType;
-  protected PrimTypeCollector primTypeCollector;
 
-  protected AbstractInstanceOfExpr(ValueBox opBox, Type checkType, PrimTypeCollector primTypeCollector) {
+  protected AbstractInstanceOfExpr(ValueBox opBox, Type checkType) {
     this.opBox = opBox;
     this.checkType = checkType;
-    this.primTypeCollector = primTypeCollector;
   }
 
   public boolean equivTo(Object o) {
@@ -95,7 +93,10 @@ public abstract class AbstractInstanceOfExpr implements InstanceOfExpr {
     return list;
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
+
+    PrimTypeCollector primTypeCollector = this.opBox.getValue().getType().getMyScene().getPrimTypeCollector();
+
     return primTypeCollector.getBooleanType();
   }
 

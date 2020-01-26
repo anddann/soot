@@ -64,12 +64,12 @@ public class ConstantCastEliminator extends BodyTransformer {
           CastExpr ce = (CastExpr) assign.getRightOp();
           if (ce.getOp() instanceof Constant) {
             // a = (float) 42
-            if (ce.getType(myScene) instanceof FloatType && ce.getOp() instanceof IntConstant) {
+            if (ce.getType() instanceof FloatType && ce.getOp() instanceof IntConstant) {
               IntConstant it = (IntConstant) ce.getOp();
               assign.setRightOp(constantFactory.createFloatConstant(it.value));
             }
             // a = (double) 42
-            else if (ce.getType(myScene) instanceof DoubleType && ce.getOp() instanceof IntConstant) {
+            else if (ce.getType() instanceof DoubleType && ce.getOp() instanceof IntConstant) {
               IntConstant it = (IntConstant) ce.getOp();
               assign.setRightOp(constantFactory.createDoubleConstant(it.value));
             }

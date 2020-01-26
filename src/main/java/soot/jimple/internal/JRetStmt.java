@@ -35,21 +35,19 @@ import soot.util.Switch;
 
 public class JRetStmt extends AbstractStmt implements RetStmt {
   final ValueBox stmtAddressBox;
-  private Jimple myJimple;
   // List useBoxes;
 
-  public JRetStmt(Value stmtAddress,  Jimple myJimple) {
-    this(myJimple.newLocalBox(stmtAddress), myJimple);
+  public JRetStmt(Value stmtAddress) {
+    this(Jimple.newLocalBox(stmtAddress));
   }
 
-  protected JRetStmt(ValueBox stmtAddressBox, Jimple myJimple) {
+  protected JRetStmt(ValueBox stmtAddressBox) {
     this.stmtAddressBox = stmtAddressBox;
 
-    this.myJimple = myJimple;
   }
 
   public Object clone() {
-    return new JRetStmt(Jimple.cloneIfNecessary(getStmtAddress()),myJimple);
+    return new JRetStmt(Jimple.cloneIfNecessary(getStmtAddress()));
   }
 
   public String toString() {

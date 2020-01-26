@@ -99,9 +99,9 @@ public class IdentityOperationEliminator extends BodyTransformer {
         if (assignStmt.getRightOp() instanceof MulExpr) {
           BinopExpr aer = (BinopExpr) assignStmt.getRightOp();
           if (isConstZero(aer.getOp1())) {
-            assignStmt.setRightOp(getZeroConst(assignStmt.getLeftOp().getType(myScene)));
+            assignStmt.setRightOp(getZeroConst(assignStmt.getLeftOp().getType()));
           } else if (isConstZero(aer.getOp2())) {
-            assignStmt.setRightOp(getZeroConst(assignStmt.getLeftOp().getType(myScene)));
+            assignStmt.setRightOp(getZeroConst(assignStmt.getLeftOp().getType()));
           }
         }
 

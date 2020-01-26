@@ -40,7 +40,7 @@ public class GVirtualInvokeExpr extends AbstractVirtualInvokeExpr implements Pre
   protected Grimp myGrimp;
 
   public GVirtualInvokeExpr(Value base, SootMethodRef methodRef, List args, Baf myBaf, Grimp myGrimp) {
-    super(myGrimp.newObjExprBox(base), methodRef, new ValueBox[args.size()], myBaf);
+    super(myGrimp.newObjExprBox(base), methodRef, new ValueBox[args.size()]);
     this.myGrimp = myGrimp;
     for (int i = 0; i < args.size(); i++) {
       this.argBoxes[i] = myGrimp.newExprBox((Value) args.get(i));

@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import soot.Local;
-import soot.Scene;
 import soot.Value;
 import soot.ValueBox;
 import soot.dava.internal.AST.ASTAggregatedCondition;
@@ -113,7 +112,7 @@ public class CopyPropagation extends DepthFirstAdapter {
     if (DEBUG) {
       System.out.println("computing usesAnd Defs");
     }
-    useDefs = new ASTUsesAndDefs(AST);
+    useDefs = new ASTUsesAndDefs(myClosestAbruptTargetFinder, AST);
     AST.apply(useDefs);
 
     if (DEBUG) {
@@ -144,7 +143,7 @@ public class CopyPropagation extends DepthFirstAdapter {
     }
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       if (isCopyStmt(s)) {

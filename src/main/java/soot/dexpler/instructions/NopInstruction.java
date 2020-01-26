@@ -45,7 +45,7 @@ public class NopInstruction extends DexlibAbstractInstruction {
   }
 
   public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
-    NopStmt nop = this.myJimple.newNopStmt();
+    NopStmt nop = Jimple.newNopStmt();
     setUnit(nop);
     addTags(nop);
     body.add(nop);

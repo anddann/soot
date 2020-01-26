@@ -52,14 +52,14 @@ public class IgetInstruction extends FieldInstruction {
     int object = i.getRegisterB();
     FieldReference f = (FieldReference) ((ReferenceInstruction) instruction).getReference();
     final Jimple jimple = myJimple;
-    InstanceFieldRef r = jimple.newInstanceFieldRef(body.getRegisterLocal(object), getSootFieldRef(f));
-    AssignStmt assign = jimple.newAssignStmt(body.getRegisterLocal(dest), r);
+    InstanceFieldRef r = Jimple.newInstanceFieldRef(body.getRegisterLocal(object), getSootFieldRef(f));
+    AssignStmt assign = Jimple.newAssignStmt(body.getRegisterLocal(dest), r);
     setUnit(assign);
     addTags(assign);
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(assign.getLeftOpBox(), r.getType(myScene), false);
+      myDalvikTyper().setType(assign.getLeftOpBox(), r.getType(), false);
     }
   }
 

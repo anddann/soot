@@ -33,10 +33,8 @@ import soot.jimple.UnopExpr;
 @SuppressWarnings("serial")
 abstract public class AbstractUnopExpr implements UnopExpr {
   final ValueBox opBox;
-  protected final PrimTypeCollector primTypeCollector;
-  protected AbstractUnopExpr(ValueBox opBox, PrimTypeCollector primTypeCollector) {
+  protected AbstractUnopExpr(ValueBox opBox) {
     this.opBox = opBox;
-    this.primTypeCollector = primTypeCollector;
   }
 
   public abstract Object clone();

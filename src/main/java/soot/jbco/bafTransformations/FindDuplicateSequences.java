@@ -340,7 +340,7 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
 
         controlLocal = myBaf.newLocal("controlLocalfordups" + controlLocalIndex, primTypeCollector.getIntType());
         bLocals.add(controlLocal);
-        bafToJLocals.put(controlLocal, myJimple.newLocal("controlLocalfordups" + controlLocalIndex++, primTypeCollector.getIntType()));
+        bafToJLocals.put(controlLocal, Jimple.newLocal("controlLocalfordups" + controlLocalIndex++, primTypeCollector.getIntType()));
 
         counts[key.size()] += avalues.size();
 
@@ -584,8 +584,8 @@ public class FindDuplicateSequences extends BodyTransformer implements IJbcoTran
   }
 
   private boolean equalConstants(Constant c1, Constant c2) {
-    Type t = c1.getType(myScene);
-    if (t != c2.getType(myScene)) {
+    Type t = c1.getType();
+    if (t != c2.getType()) {
       return false;
     }
 

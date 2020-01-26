@@ -76,7 +76,7 @@ public class BafBody extends Body {
     // Convert all locals
     {
       for (Local l : jimpleBody.getLocals()) {
-        Type t = l.getType(myScene);
+        Type t = l.getType();
         Local newLocal = myBaf.newLocal(l.getName(), myBaf.getPrimTypeCollector().getUnknownType());
 
         if (t.equals(myBaf.getPrimTypeCollector().getDoubleType()) || t.equals(myBaf.getPrimTypeCollector().getLongType())) {

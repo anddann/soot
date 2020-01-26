@@ -49,12 +49,12 @@ public class MethodType extends Constant {
     this.myScene = myScene;
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return RefType.v("java.lang.invoke.MethodType", this.myScene);
   }
 
   public String toString() {
-    return "methodtype: " + SootMethod.getSubSignature("__METHODTYPE__", parameterTypes, returnType, myScene);
+    return "methodtype: " + SootMethod.getSubSignature("__METHODTYPE__", parameterTypes, returnType);
   }
 
   public List<Type> getParameterTypes() {

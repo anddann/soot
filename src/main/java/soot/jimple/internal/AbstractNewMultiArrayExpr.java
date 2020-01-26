@@ -141,7 +141,7 @@ public abstract class AbstractNewMultiArrayExpr implements NewMultiArrayExpr, Co
     return list;
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return baseType;
   }
 

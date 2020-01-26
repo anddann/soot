@@ -445,7 +445,7 @@ public class CycleFinder implements FactFinder {
         while (epit.hasNext()) {
             AugmentedStmt entryPoint = epit.next();
 
-            GotoStmt gotoStmt = new JGotoStmt(entryPoint.get_Stmt(), myJimple);
+            GotoStmt gotoStmt = new JGotoStmt(entryPoint.get_Stmt());
             AugmentedStmt indirectionStmt = new AugmentedStmt(gotoStmt);
 
             indirectionStmtSet.add(indirectionStmt);

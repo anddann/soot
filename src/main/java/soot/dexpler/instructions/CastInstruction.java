@@ -55,15 +55,15 @@ public class CastInstruction extends TaggedInstruction {
     int dest = i.getRegisterA();
     int source = i.getRegisterB();
     Type targetType = getTargetType();
-    CastExpr cast = myJimple.newCastExpr(body.getRegisterLocal(source), targetType);
-    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), cast);
+    CastExpr cast = Jimple.newCastExpr(body.getRegisterLocal(source), targetType);
+    AssignStmt assign = Jimple.newAssignStmt(body.getRegisterLocal(dest), cast);
     assign.addTag(getTag());
     setUnit(assign);
     addTags(assign);
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(assign.getLeftOpBox(), cast.getType(myScene), false);
+      myDalvikTyper().setType(assign.getLeftOpBox(), cast.getType(), false);
       // myDalvikTyper().captureAssign((JAssignStmt)assign, op);
     }
   }

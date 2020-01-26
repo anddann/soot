@@ -261,8 +261,8 @@ public final class MethodPAG {
 
   private Scene myScene;
   private final String mainSubSignature = SootMethod.getSubSignature("main",
-      Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String", myScene), 1, myScene)),
-      myScene.getPrimTypeCollector().getVoidType(), myScene);
+      Collections.<Type>singletonList(ArrayType.v(RefType.v("java.lang.String", myScene), 1)),
+      myScene.getPrimTypeCollector().getVoidType());
 
   protected void addMiscEdges() {
     // Add node for parameter (String[]) in main method

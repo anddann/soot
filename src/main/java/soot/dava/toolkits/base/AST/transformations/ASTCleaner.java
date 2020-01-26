@@ -26,10 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import soot.G;
-import soot.Local;
-import soot.SootClass;
-import soot.Type;
+import soot.*;
 import soot.dava.internal.AST.ASTIfElseNode;
 import soot.dava.internal.AST.ASTIfNode;
 import soot.dava.internal.AST.ASTLabeledBlockNode;
@@ -122,7 +119,7 @@ public class ASTCleaner extends DepthFirstAdapter {
             ASTNode nextNode = (ASTNode) ((List) subBody).get(nodeNumber + 1);
             if (nextNode instanceof ASTIfNode) {
               // found an If followed by another if might match Patter 3.
-              OrAggregatorThree.checkAndTransform(node, (ASTIfNode) temp, (ASTIfNode) nextNode, nodeNumber, subBodyNumber);
+              OrAggregatorThree.checkAndTransform(node, (ASTIfNode) temp, (ASTIfNode) nextNode, nodeNumber, subBodyNumber, myTryContentsFinder);
               if (G.v().ASTTransformations_modified) {
                 // if we modified something we want to stop since the tree is stale
                 // System.out.println("here");
@@ -187,7 +184,7 @@ public class ASTCleaner extends DepthFirstAdapter {
           if (nextNode instanceof ASTIfNode) {
             // found an If followed by another if might match Patter 3.
             List<Object> newBody
-                = OrAggregatorThree.createNewNodeBody(tryBody, nodeNumber, (ASTIfNode) temp, (ASTIfNode) nextNode);
+                = OrAggregatorThree.createNewNodeBody(tryBody, nodeNumber, (ASTIfNode) temp, (ASTIfNode) nextNode, myTryContentsFinder);
             if (newBody != null) {
               // something did not go wrong and pattern was matched
               node.replaceTryBody(newBody);
@@ -272,7 +269,7 @@ public class ASTCleaner extends DepthFirstAdapter {
             if (nextNode instanceof ASTIfNode) {
               // found an If followed by another if might match Patter 3.
               List<Object> newBody
-                  = OrAggregatorThree.createNewNodeBody(body, nodeNumber, (ASTIfNode) temp, (ASTIfNode) nextNode);
+                  = OrAggregatorThree.createNewNodeBody(body, nodeNumber, (ASTIfNode) temp, (ASTIfNode) nextNode, myTryContentsFinder);
               if (newBody != null) {
                 // something did not go wrong and pattern was matched
                 catchBody.replaceBody(newBody);
@@ -356,7 +353,7 @@ public class ASTCleaner extends DepthFirstAdapter {
               if (nextNode instanceof ASTIfNode) {
                 // found an If followed by another if might match Patter 3.
                 List<Object> newBody
-                    = OrAggregatorThree.createNewNodeBody(body, nodeNumber, (ASTIfNode) temp, (ASTIfNode) nextNode);
+                    = OrAggregatorThree.createNewNodeBody(body, nodeNumber, (ASTIfNode) temp, (ASTIfNode) nextNode, myTryContentsFinder);
                 if (newBody != null) {
                   // something did not go wrong and pattern was matched
 

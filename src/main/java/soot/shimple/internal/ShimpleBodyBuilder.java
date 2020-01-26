@@ -432,7 +432,7 @@ public class ShimpleBodyBuilder {
     Local newLocal = newLocals.get(name);
 
     if (newLocal == null) {
-      newLocal = new JimpleLocal(name, oldLocal.getType(myScene), myScene);
+      newLocal = new JimpleLocal(name, oldLocal.getType());
       newLocals.put(name, newLocal);
       newLocalsToOldLocal.put(newLocal, oldLocal);
 

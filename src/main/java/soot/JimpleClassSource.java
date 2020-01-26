@@ -66,8 +66,8 @@ public class JimpleClassSource extends ClassSource {
     try {
       // Parse jimple file
       classFile = foundFile.inputStream();
-      soot.jimple.parser.JimpleAST jimpAST = new soot.jimple.parser.JimpleAST(classFile);
-      jimpAST.getSkeleton(sc);
+      soot.jimple.parser.JimpleAST jimpAST = new soot.jimple.parser.JimpleAST(classFile, mySootResolver);
+      jimpAST.getSkeleton(sc, mySootResolver, constantFactory, myScene, myPackageNamer, myOptions, myPrinter);
 
       // Set method source for all methods
       JimpleMethodSource mtdSrc = new JimpleMethodSource(jimpAST);

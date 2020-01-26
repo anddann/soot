@@ -64,8 +64,8 @@ public class CheckTypesValidator implements BodyValidator {
       if (u instanceof DefinitionStmt) {
         DefinitionStmt astmt = (DefinitionStmt) u;
         if (!(astmt.getRightOp() instanceof CaughtExceptionRef)) {
-          Type leftType = astmt.getLeftOp().getType(myScene).toMachineType();
-          Type rightType = astmt.getRightOp().getType(myScene).toMachineType();
+          Type leftType = astmt.getLeftOp().getType().toMachineType();
+          Type rightType = astmt.getRightOp().getType().toMachineType();
 
           checkCopy(astmt, body, exception, leftType, rightType, errorSuffix, myScene);
         }
@@ -79,7 +79,7 @@ public class CheckTypesValidator implements BodyValidator {
 
           if (iexpr instanceof InstanceInvokeExpr) {
             InstanceInvokeExpr iiexpr = (InstanceInvokeExpr) iexpr;
-            checkCopy(stmt, body, exception, called.declaringClass().getType(), iiexpr.getBase().getType(myScene),
+            checkCopy(stmt, body, exception, called.declaringClass().getType(), iiexpr.getBase().getType(),
                 " in receiver of call" + errorSuffix, myScene);
           }
 
@@ -90,7 +90,7 @@ public class CheckTypesValidator implements BodyValidator {
           } else {
             for (int i = 0; i < iexpr.getArgCount(); i++) {
               checkCopy(stmt, body, exception, called.parameterType(i).toMachineType(),
-                  iexpr.getArg(i).getType(myScene).toMachineType(),
+                  iexpr.getArg(i).getType().toMachineType(),
                   " in argument " + i + " of call" + errorSuffix + " (Note: Parameters are zero-indexed)", myScene);
             }
           }

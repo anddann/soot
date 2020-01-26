@@ -205,7 +205,7 @@ public class ShimpleBody extends StmtBody {
 
     sBody.eliminateNodes();
     Jimple myJimple = myJimplePar;
-    JimpleBody jBody = myJimple.newBody(sBody.getMethod());
+    JimpleBody jBody = Jimple.newBody(sBody.getMethod(), myPrinter, myOptions);
     jBody.importBodyContentsFrom(sBody);
     return jBody;
   }

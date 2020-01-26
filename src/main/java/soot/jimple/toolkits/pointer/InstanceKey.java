@@ -142,7 +142,7 @@ public class InstanceKey {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-    if (stmtAfterAssignStmt != null && (assignedLocal.getType(myScene) instanceof RefLikeType)) {
+    if (stmtAfterAssignStmt != null && (assignedLocal.getType() instanceof RefLikeType)) {
       // compute hash code based on instance key string
       result = prime * result + lmaa.instanceKeyString(assignedLocal, stmtAfterAssignStmt).hashCode();
     } else if (stmtAfterAssignStmt == null) {
@@ -182,7 +182,7 @@ public class InstanceKey {
   }
 
   public boolean isOfReferenceType() {
-    assert assignedLocal.getType(myScene) instanceof RefLikeType;
+    assert assignedLocal.getType() instanceof RefLikeType;
     return true;
   }
 

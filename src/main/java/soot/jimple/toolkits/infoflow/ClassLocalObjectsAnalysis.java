@@ -821,7 +821,7 @@ public class ClassLocalObjectsAnalysis {
 
     // Check if param is primitive or ref type
     ParameterRef param = (ParameterRef) parameterRef.getValue();
-    if (!(param.getType(myScene) instanceof RefLikeType) && (!dfa.includesPrimitiveInfoFlow() || method.getName().equals("<init>")))
+    if (!(param.getType() instanceof RefLikeType) && (!dfa.includesPrimitiveInfoFlow() || method.getName().equals("<init>")))
     // TODO
     // fix
     {

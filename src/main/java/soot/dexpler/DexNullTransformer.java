@@ -105,7 +105,7 @@ public class DexNullTransformer extends AbstractNullTransformer {
           return;
         } else if (r instanceof ArrayRef) {
           ArrayRef ar = (ArrayRef) r;
-          if (ar.getType(myScene) instanceof UnknownType) {
+          if (ar.getType() instanceof UnknownType) {
             usedAsObject = stmt.hasTag("ObjectOpTag"); // isObject
             // (findArrayType
             // (g,
@@ -113,7 +113,7 @@ public class DexNullTransformer extends AbstractNullTransformer {
             // localUses,
             // stmt));
           } else {
-            usedAsObject = isObject(ar.getType(myScene));
+            usedAsObject = isObject(ar.getType());
           }
           doBreak = true;
           return;
@@ -127,7 +127,7 @@ public class DexNullTransformer extends AbstractNullTransformer {
           doBreak = true;
           return;
         } else if (r instanceof InvokeExpr) {
-          usedAsObject = isObject(((InvokeExpr) r).getType(myScene));
+          usedAsObject = isObject(((InvokeExpr) r).getType());
           doBreak = true;
           return;
         } else if (r instanceof LengthExpr) {
@@ -142,7 +142,7 @@ public class DexNullTransformer extends AbstractNullTransformer {
       @Override
       public void caseIdentityStmt(IdentityStmt stmt) {
         if (stmt.getLeftOp() == l) {
-          usedAsObject = isObject(stmt.getRightOp().getType(myScene));
+          usedAsObject = isObject(stmt.getRightOp().getType());
           doBreak = true;
           return;
         }
@@ -218,7 +218,7 @@ public class DexNullTransformer extends AbstractNullTransformer {
             doBreak = true;
             return;
           } else if (l instanceof ArrayRef) {
-            Type aType = ((ArrayRef) l).getType(myScene);
+            Type aType = ((ArrayRef) l).getType();
             if (aType instanceof UnknownType) {
               usedAsObject = stmt.hasTag("ObjectOpTag"); // isObject(
               // findArrayType(g,
@@ -371,7 +371,7 @@ public class DexNullTransformer extends AbstractNullTransformer {
       @Override
       public void caseAssignStmt(AssignStmt stmt) {
         // Case a = 0 with a being an object
-        if (isObject(stmt.getLeftOp().getType(myScene)) && isConstZero(stmt.getRightOp())) {
+        if (isObject(stmt.getLeftOp().getType()) && isConstZero(stmt.getRightOp())) {
           stmt.setRightOp(nullConstant);
           return;
         }
@@ -461,8 +461,8 @@ public class DexNullTransformer extends AbstractNullTransformer {
             }
           } else if (assign.getRightOp() instanceof FieldRef) {
             FieldRef fr = (FieldRef) assign.getRightOp();
-            if (fr.getType(myScene) instanceof ArrayType) {
-              if (isObject(((ArrayType) fr.getType(myScene)).getArrayElementType())) {
+            if (fr.getType() instanceof ArrayType) {
+              if (isObject(((ArrayType) fr.getType()).getArrayElementType())) {
                 return true;
               }
             }

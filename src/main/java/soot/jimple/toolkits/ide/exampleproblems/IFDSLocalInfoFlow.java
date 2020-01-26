@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.Set;
 
 import soot.Local;
-import soot.NullType;
 import soot.SootMethod;
 import soot.Unit;
 import soot.Value;
@@ -155,7 +154,7 @@ public class IFDSLocalInfoFlow extends DefaultJimpleIFDSTabulationProblem<Local,
 
   @Override
   public Local createZeroValue() {
-    return new JimpleLocal("zero", primTypeCollector.getNullType(), myScene);
+    return new JimpleLocal("zero", primTypeCollector.getNullType());
   }
 
   @Override

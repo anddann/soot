@@ -66,7 +66,7 @@ public class ArrayType extends RefLikeType {
    *          the dimension count to parametrize the ArrayType.
    * @return an ArrayType parametrized accrodingly.
    */
-  public static ArrayType v(Type baseType, int numDimensions, Scene myScene) {
+  public static ArrayType v(Type baseType, int numDimensions) {
     if (numDimensions < 0) {
       throw new RuntimeException("Invalid number of array dimensions: " + numDimensions);
     }
@@ -76,7 +76,7 @@ public class ArrayType extends RefLikeType {
     while (numDimensions > 0) {
       ArrayType ret = elementType.getArrayType();
       if (ret == null) {
-        ret = new ArrayType(baseType, orgDimensions - numDimensions + 1, myScene);
+        ret = new ArrayType(baseType, orgDimensions - numDimensions + 1, baseType.getMyScene());
         elementType.setArrayType(ret);
       }
       elementType = ret;
@@ -160,14 +160,14 @@ public class ArrayType extends RefLikeType {
    */
   public Type getElementType() {
     if (numDimensions > 1) {
-      return ArrayType.v(baseType, numDimensions - 1, getMyScene());
+      return ArrayType.v(baseType, numDimensions - 1);
     } else {
       return baseType;
     }
   }
 
   public ArrayType makeArrayType() {
-    return ArrayType.v(baseType, numDimensions + 1, getMyScene());
+    return ArrayType.v(baseType, numDimensions + 1);
   }
 
   public boolean isAllowedInFinalCode() {

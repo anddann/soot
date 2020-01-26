@@ -29,13 +29,14 @@ import java.util.List;
 import soot.Local;
 import soot.SootMethodRef;
 import soot.Value;
+import soot.jimple.Jimple;
 
 public class JSpecialInvokeExpr extends AbstractSpecialInvokeExpr {
   public JSpecialInvokeExpr(Local base, SootMethodRef methodRef, List<? extends Value> args) {
-    super(base.getType(myScene).getMyScene().getMyJimple().newLocalBox(base), methodRef, new ImmediateBox[args.size()]);
+    super(Jimple.newLocalBox(base), methodRef, new ImmediateBox[args.size()]);
 
     for (int i = 0; i < args.size(); i++) {
-      this.argBoxes[i] = base.getType(myScene).getMyScene().getMyJimple().newImmediateBox(args.get(i));
+      this.argBoxes[i] = Jimple.newImmediateBox(args.get(i));
     }
   }
 

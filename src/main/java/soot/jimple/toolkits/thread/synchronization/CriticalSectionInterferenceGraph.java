@@ -146,8 +146,8 @@ public class CriticalSectionInterferenceGraph {
               }
 
               // Check if types are compatible
-              RefLikeType typeOne = (RefLikeType) tn1.origLock.getType(myScene);
-              RefLikeType typeTwo = (RefLikeType) tn2.origLock.getType(myScene);
+              RefLikeType typeOne = (RefLikeType) tn1.origLock.getType();
+              RefLikeType typeTwo = (RefLikeType) tn2.origLock.getType();
               classOne = (typeOne instanceof RefType) ? ((RefType) typeOne).getSootClass() : null;
               classTwo = (typeTwo instanceof RefType) ? ((RefType) typeTwo).getSootClass() : null;
               if (classOne != null && classTwo != null) {

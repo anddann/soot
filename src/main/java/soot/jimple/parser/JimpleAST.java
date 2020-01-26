@@ -30,16 +30,16 @@ import java.io.PushbackReader;
 import java.util.HashMap;
 import java.util.Set;
 
-import soot.Body;
-import soot.SootClass;
-import soot.SootMethod;
-import soot.SootResolver;
+import soot.*;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
 import soot.jimple.JimpleBody;
 import soot.jimple.parser.lexer.Lexer;
 import soot.jimple.parser.lexer.LexerException;
 import soot.jimple.parser.node.Start;
 import soot.jimple.parser.parser.Parser;
 import soot.jimple.parser.parser.ParserException;
+import soot.options.Options;
 
 /**
  * This class encapsulates a JimpleAST instance and provides methods to act on it.
@@ -47,14 +47,17 @@ import soot.jimple.parser.parser.ParserException;
 public class JimpleAST {
   private Start mTree = null;
   private HashMap<SootMethod, JimpleBody> methodToParsedBodyMap = null;
+  private SootResolver mySootResolver;
 
   /**
    * Constructs a JimpleAST and generates its parse tree from the given InputStream.
    *
    * @param aJIS
    *          The InputStream to parse.
+   * @param mySootResolver
    */
-  public JimpleAST(InputStream aJIS) throws ParserException, LexerException, IOException {
+  public JimpleAST(InputStream aJIS, SootResolver mySootResolver) throws ParserException, LexerException, IOException {
+    this.mySootResolver = mySootResolver;
     Parser p = new Parser(new Lexer(new PushbackReader(new BufferedReader(new InputStreamReader(aJIS)), 1024)));
     mTree = p.parse();
   }
@@ -62,11 +65,12 @@ public class JimpleAST {
   /**
    * Reads an entire class from jimple, creates the Soot objects & returns it.
    */
-  public SootClass createSootClass() {
-    Walker w = new Walker(constantFactory, mySootResolver, myScene, myOptions, myPackageNamer, myJimple);
-    mTree.apply(w);
-    return w.getSootClass();
-  }
+  // FIXME
+//  public SootClass createSootClass() {
+//    Walker w = new Walker(constantFactory, mySootResolver, myScene, myOptions, myPackageNamer, myJimple);
+//    mTree.apply(w);
+//    return w.getSootClass();
+//  }
 
   /**
    * Applies a SkeletonExtractorWalker to the given SootClass, using the given Resolver to resolve the reference types it
@@ -75,9 +79,15 @@ public class JimpleAST {
    *
    * @param sc
    *          a SootClass to fill in.
+   * @param mySootResolver
+   * @param constantFactory
+   * @param myScene
+   * @param myPackageNamer
+   * @param myOptions
+   * @param myPrinter
    */
-  public void getSkeleton(SootClass sc) {
-    Walker w = new SkeletonExtractorWalker(mySootResolver, sc);
+  public void getSkeleton(SootClass sc, SootResolver mySootResolver, ConstantFactory constantFactory, Scene myScene, PackageNamer myPackageNamer, Options myOptions, Printer myPrinter) {
+    Walker w = new SkeletonExtractorWalker(mySootResolver, sc, constantFactory, myScene, myPackageNamer, myOptions, myPrinter);
     mTree.apply(w);
   }
 
@@ -122,7 +132,7 @@ public class JimpleAST {
   private void stashBodiesForClass(SootClass sc) {
     HashMap<SootMethod, JimpleBody> methodToBodyMap = new HashMap<SootMethod, JimpleBody>();
 
-    Walker w = new BodyExtractorWalker(sc, mySootResolver, methodToBodyMap);
+    Walker w = new BodyExtractorWalker(sc, mySootResolver, methodToBodyMap, constantFactory, myScene, myOptions, myPackageNamer, myPrinter);
 
     boolean oldPhantomValue = myScene.getPhantomRefs();
 

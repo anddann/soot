@@ -80,7 +80,7 @@ public class NewValidator implements BodyValidator {
 
         // First seek for a JNewExpr.
         if (assign.getRightOp() instanceof NewExpr) {
-          if (!(assign.getLeftOp().getType(myScene) instanceof RefType)) {
+          if (!(assign.getLeftOp().getType() instanceof RefType)) {
             exceptions.add(new ValidationException(u, "A new-expression must be used on reference type locals",
                 String.format("Body of method %s contains a new-expression, which is assigned to a non-reference local",
                     body.getMethod().getSignature())));

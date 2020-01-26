@@ -147,14 +147,14 @@ public class SiteInliner {
         // For instance, Bottle.price_static takes a cost.
         // Cost is an interface implemented by Bottle.
         SootClass localType, parameterType;
-        localType = ((RefType) ((InstanceInvokeExpr) ie).getBase().getType(myScene)).getSootClass();
+        localType = ((RefType) ((InstanceInvokeExpr) ie).getBase().getType()).getSootClass();
         parameterType = inlinee.getDeclaringClass();
 
         if (localType.isInterface() || hierarchy.isClassSuperclassOf(localType, parameterType)) {
-          Local castee = myJimple.newLocal("__castee", parameterType.getType());
+          Local castee = Jimple.newLocal("__castee", parameterType.getType());
           containerB.getLocals().add(castee);
-          containerB.getUnits().insertBefore(myJimple.newAssignStmt(castee,
-              myJimple.newCastExpr(((InstanceInvokeExpr) ie).getBase(), parameterType.getType())), toInline);
+          containerB.getUnits().insertBefore(Jimple.newAssignStmt(castee,
+              Jimple.newCastExpr(((InstanceInvokeExpr) ie).getBase(), parameterType.getType())), toInline);
           thisToAdd = castee;
         }
       }
@@ -172,7 +172,7 @@ public class SiteInliner {
           /*
            * In this case, we don't use throwPoint; instead, put the code right there.
            */
-          Stmt insertee = myJimple.newIfStmt(myJimple.newNeExpr(((InstanceInvokeExpr) ie).getBase(), value), toInline);
+          Stmt insertee = Jimple.newIfStmt(Jimple.newNeExpr(((InstanceInvokeExpr) ie).getBase(), value), toInline);
 
           containerB.getUnits().insertBefore(insertee, toInline);
 
@@ -183,7 +183,7 @@ public class SiteInliner {
         } else {
           Stmt throwPoint = ThrowManager.getNullPointerExceptionThrower(containerB);
           containerB.getUnits().insertBefore(
-              myJimple.newIfStmt(myJimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), value), throwPoint), toInline);
+              Jimple.newIfStmt(Jimple.newEqExpr(((InstanceInvokeExpr) ie).getBase(), value), throwPoint), toInline);
         }
       }
     }
@@ -283,7 +283,7 @@ public class SiteInliner {
           throw new RuntimeException("couldn't map trap!");
         }
 
-        Trap trap = myJimple.newTrap(t.getException(), newBegin, newEnd, newHandler);
+        Trap trap = Jimple.newTrap(t.getException(), newBegin, newEnd, newHandler);
         if (prevTrap == null) {
           containerB.getTraps().addFirst(trap);
         } else {
@@ -314,15 +314,15 @@ public class SiteInliner {
               throw new RuntimeException("thisref with no receiver!");
             }
 
-            containerUnits.swapWith(s, myJimple.newAssignStmt(((IdentityStmt) s).getLeftOp(), thisToAdd));
+            containerUnits.swapWith(s, Jimple.newAssignStmt(((IdentityStmt) s).getLeftOp(), thisToAdd));
           } else if (rhs instanceof ParameterRef) {
             ParameterRef pref = (ParameterRef) rhs;
-            containerUnits.swapWith(s, myJimple.newAssignStmt(((IdentityStmt) s).getLeftOp(), ie.getArg(pref.getIndex())));
+            containerUnits.swapWith(s, Jimple.newAssignStmt(((IdentityStmt) s).getLeftOp(), ie.getArg(pref.getIndex())));
           }
         } else if (s instanceof ReturnStmt) {
           if (toInline instanceof InvokeStmt) {
             // munch, munch.
-            containerUnits.swapWith(s, myJimple.newGotoStmt(exitPoint));
+            containerUnits.swapWith(s, Jimple.newGotoStmt(exitPoint));
             continue;
           }
 
@@ -331,11 +331,11 @@ public class SiteInliner {
           }
           Value ro = ((ReturnStmt) s).getOp();
           Value lhs = ((AssignStmt) toInline).getLeftOp();
-          AssignStmt as = myJimple.newAssignStmt(lhs, ro);
+          AssignStmt as = Jimple.newAssignStmt(lhs, ro);
           containerUnits.insertBefore(as, s);
-          containerUnits.swapWith(s, myJimple.newGotoStmt(exitPoint));
+          containerUnits.swapWith(s, Jimple.newGotoStmt(exitPoint));
         } else if (s instanceof ReturnVoidStmt) {
-          containerUnits.swapWith(s, myJimple.newGotoStmt(exitPoint));
+          containerUnits.swapWith(s, Jimple.newGotoStmt(exitPoint));
         }
       }
     }

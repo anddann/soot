@@ -100,16 +100,16 @@ public class OnTheFlyJimpleBasedICFG extends AbstractJimpleBasedICFG {
                 return Collections.singleton(singleTargetMethod);
               } else {
                 SootClass baseTypeClass;
-                if (base.getType(myScene) instanceof RefType) {
-                  RefType refType = (RefType) base.getType(myScene);
+                if (base.getType() instanceof RefType) {
+                  RefType refType = (RefType) base.getType();
                   baseTypeClass = refType.getSootClass();
-                } else if (base.getType(myScene) instanceof ArrayType) {
+                } else if (base.getType() instanceof ArrayType) {
                   baseTypeClass = myScene.getSootClass("java.lang.Object");
-                } else if (base.getType(myScene) instanceof NullType) {
+                } else if (base.getType() instanceof NullType) {
                   // if the base is definitely null then there is no call target
                   return Collections.emptySet();
                 } else {
-                  throw new InternalError("Unexpected base type:" + base.getType(myScene));
+                  throw new InternalError("Unexpected base type:" + base.getType());
                 }
                 return fastHierarchy.resolveAbstractDispatch(baseTypeClass, iie.getMethod());
               }

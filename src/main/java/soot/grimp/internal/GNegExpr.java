@@ -22,7 +22,6 @@ package soot.grimp.internal;
  * #L%
  */
 
-import soot.PrimType;
 import soot.PrimTypeCollector;
 import soot.Value;
 import soot.grimp.Grimp;
@@ -32,7 +31,7 @@ public class GNegExpr extends AbstractNegExpr {
   private final Grimp myGrimp;
 
   public GNegExpr(Value op, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(myGrimp.newExprBox(op),primTypeCollector);
+    super(myGrimp.newExprBox(op));
     this.myGrimp = myGrimp;
   }
 

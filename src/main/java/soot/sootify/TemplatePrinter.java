@@ -106,7 +106,7 @@ public class TemplatePrinter {
       for (Local l : b.getLocals()) {
 
         // TODO properly treat primitive types
-        println("locals.add(myJimple.newLocal(\"" + l.getName() + "\", RefType.v(\"" + l.getType(myScene) + "\")));");
+        println("locals.add(myJimple.newLocal(\"" + l.getName() + "\", RefType.v(\"" + l.getType() + "\")));");
 
       }
 

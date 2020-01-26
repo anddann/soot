@@ -55,11 +55,11 @@ public class NormalUnitPrinter extends LabeledUnitPrinter {
     handleIndent();
     if (r instanceof ThisRef) {
       literal("@this: ");
-      type(r.getType(myScene));
+      type(r.getType());
     } else if (r instanceof ParameterRef) {
       ParameterRef pr = (ParameterRef) r;
       literal("@parameter" + pr.getIndex() + ": ");
-      type(r.getType(myScene));
+      type(r.getType());
     } else if (r instanceof CaughtExceptionRef) {
       literal("@caughtexception");
     } else {

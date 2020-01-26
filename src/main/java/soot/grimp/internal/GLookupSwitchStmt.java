@@ -29,7 +29,6 @@ import soot.Unit;
 import soot.UnitBox;
 import soot.Value;
 import soot.grimp.Grimp;
-import soot.jimple.IntConstant;
 import soot.jimple.Stmt;
 import soot.jimple.internal.JLookupSwitchStmt;
 
@@ -46,7 +45,7 @@ public class GLookupSwitchStmt extends JLookupSwitchStmt {
   }
 
   public GLookupSwitchStmt(Value key, List lookupValues, List targets, Unit defaultTarget) {
-    super(myGrimp.newExprBox(key), lookupValues, getTargetBoxesArray(targets), myGrimp.newStmtBox(defaultTarget));
+    super(myGrimp.newExprBox(key), lookupValues, getTargetBoxesArray(targets), myGrimp.newStmtBox(defaultTarget), constantFactory);
   }
 
   public Object clone() {

@@ -42,8 +42,10 @@ import soot.dava.toolkits.base.AST.transformations.SimplifyExpressions;
 import soot.dava.toolkits.base.AST.transformations.UnreachableCodeEliminator;
 import soot.dava.toolkits.base.AST.transformations.UselessLabelFinder;
 import soot.dava.toolkits.base.AST.transformations.VoidReturnRemover;
+import soot.dava.toolkits.base.AST.traversals.ClosestAbruptTargetFinder;
 import soot.dava.toolkits.base.renamer.Renamer;
 import soot.dava.toolkits.base.renamer.infoGatheringAnalysis;
+import soot.grimp.Grimp;
 import soot.jimple.ConstantFactory;
 import soot.util.Chain;
 
@@ -55,7 +57,7 @@ public class InterProceduralAnalyses {
    *
    * All interproceduralAnalyses should be applied in here
    */
-  public static void applyInterProceduralAnalyses(Scene myScene, PhaseOptions myPhaseOptions, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
+  public static void applyInterProceduralAnalyses(Scene myScene, PhaseOptions myPhaseOptions, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Grimp myGrimp) {
     Chain classes = myScene.getApplicationClasses();
 
     if (DEBUG) {
@@ -101,7 +103,7 @@ public class InterProceduralAnalyses {
             System.out.println("\nSTART CP Class:" + s.getName() + " Method: " + m.getName());
           }
           CPApplication CPApp = new CPApplication((ASTMethodNode) AST, constantValueFields,
-              finder.getClassNameFieldNameToSootFieldMapping());
+              finder.getClassNameFieldNameToSootFieldMapping(), myClosestAbruptTargetFinder,myScene);
           AST.apply(CPApp);
 
           if (DEBUG) {
@@ -140,7 +142,7 @@ public class InterProceduralAnalyses {
         boolean renamer = PhaseOptions.getBoolean(options, "enabled");
         // System.out.println("renaming is"+renamer);
         if (renamer) {
-          applyRenamerAnalyses(AST, body);
+          applyRenamerAnalyses(AST, body, myScene);
         }
 
         // remove returns from void methods
@@ -157,7 +159,7 @@ public class InterProceduralAnalyses {
    *
    *
    */
-  private static void applyRenamerAnalyses(ASTNode AST, DavaBody body) {
+  private static void applyRenamerAnalyses(ASTNode AST, DavaBody body, Scene myScene) {
     // intra procedural heuristic gathering
     infoGatheringAnalysis info = new infoGatheringAnalysis(body);
     AST.apply(info);

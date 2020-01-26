@@ -75,12 +75,12 @@ public class ExceptionChecker extends BodyTransformer {
   }
 
   protected void checkThrow(Body b, ThrowStmt ts) {
-    if (isThrowDeclared(b, ((RefType) ts.getOp().getType(myScene)).getSootClass()) || isThrowFromCompiler(ts)
-        || isExceptionCaught(b, ts, (RefType) ts.getOp().getType(myScene))) {
+    if (isThrowDeclared(b, ((RefType) ts.getOp().getType()).getSootClass()) || isThrowFromCompiler(ts)
+        || isExceptionCaught(b, ts, (RefType) ts.getOp().getType())) {
       return;
     }
     if (reporter != null) {
-      reporter.reportError(new ExceptionCheckerError(b.getMethod(), ((RefType) ts.getOp().getType(myScene)).getSootClass(), ts,
+      reporter.reportError(new ExceptionCheckerError(b.getMethod(), ((RefType) ts.getOp().getType()).getSootClass(), ts,
           (SourceLnPosTag) ts.getOpBox().getTag("SourceLnPosTag")));
     }
   }
@@ -198,7 +198,7 @@ public class ExceptionChecker extends BodyTransformer {
   }
 
   protected void checkInvokeExpr(Body b, InvokeExpr ie, Stmt s) {
-    if (ie instanceof InstanceInvokeExpr && ((InstanceInvokeExpr) ie).getBase().getType(myScene) instanceof ArrayType
+    if (ie instanceof InstanceInvokeExpr && ((InstanceInvokeExpr) ie).getBase().getType() instanceof ArrayType
         && ie.getMethodRef().name().equals("clone") && ie.getMethodRef().parameterTypes().size() == 0) {
       return; // the call is to the clone() method of an array type, which
               // is defined not to throw any exceptions; if we left this to

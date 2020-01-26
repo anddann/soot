@@ -31,8 +31,11 @@ import soot.grimp.Grimp;
 import soot.grimp.internal.GStaticInvokeExpr;
 
 public class DStaticInvokeExpr extends GStaticInvokeExpr {
-  public DStaticInvokeExpr(SootMethodRef methodRef, java.util.List args) {
+  private final Grimp myGrimp;
+
+  public DStaticInvokeExpr(SootMethodRef methodRef, java.util.List args, Grimp myGrimp) {
     super(methodRef, args, myGrimp);
+    this.myGrimp = myGrimp;
   }
 
   public void toString(UnitPrinter up) {
@@ -48,6 +51,6 @@ public class DStaticInvokeExpr extends GStaticInvokeExpr {
       clonedArgs.add(i, Grimp.cloneIfNecessary(getArg(i)));
     }
 
-    return new DStaticInvokeExpr(methodRef, clonedArgs);
+    return new DStaticInvokeExpr(methodRef, clonedArgs, myGrimp);
   }
 }

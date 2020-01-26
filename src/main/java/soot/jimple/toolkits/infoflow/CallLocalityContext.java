@@ -262,7 +262,7 @@ public class CallLocalityContext {
     for (int i = 0; i < nodes.size(); i++) {
       if ((!refsOnly) && isNodeLocal.get(i).booleanValue()) {
         return false;
-      } else if (((EquivalentValue) nodes.get(i)).getValue().getType(myScene) instanceof RefLikeType
+      } else if (((EquivalentValue) nodes.get(i)).getValue().getType() instanceof RefLikeType
           && isNodeLocal.get(i).booleanValue()) {
         return false;
       }

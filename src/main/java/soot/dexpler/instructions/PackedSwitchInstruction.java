@@ -34,7 +34,6 @@ import org.jf.dexlib2.iface.instruction.Instruction;
 import org.jf.dexlib2.iface.instruction.SwitchElement;
 import org.jf.dexlib2.iface.instruction.formats.PackedSwitchPayload;
 
-import soot.IntType;
 import soot.Local;
 import soot.Unit;
 import soot.dexpler.DexBody;
@@ -65,7 +64,7 @@ public class PackedSwitchInstruction extends SwitchInstruction {
       int offset = se.getOffset();
       targets.add(body.instructionAtAddress(codeAddress + offset).getUnit());
     }
-    LookupSwitchStmt switchStmt = myJimple.newLookupSwitchStmt(key, lookupValues, targets, defaultTarget);
+    LookupSwitchStmt switchStmt = myJimple.newLookupSwitchStmt(key, lookupValues, targets, defaultTarget, constantFactory);
     setUnit(switchStmt);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {

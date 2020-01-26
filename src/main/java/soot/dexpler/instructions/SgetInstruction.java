@@ -49,14 +49,14 @@ public class SgetInstruction extends FieldInstruction {
   public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     int dest = ((OneRegisterInstruction) instruction).getRegisterA();
     FieldReference f = (FieldReference) ((ReferenceInstruction) instruction).getReference();
-    StaticFieldRef r = myJimple.newStaticFieldRef(getStaticSootFieldRef(f));
-    AssignStmt assign = myJimple.newAssignStmt(body.getRegisterLocal(dest), r);
+    StaticFieldRef r = Jimple.newStaticFieldRef(getStaticSootFieldRef(f));
+    AssignStmt assign = Jimple.newAssignStmt(body.getRegisterLocal(dest), r);
     setUnit(assign);
     addTags(assign);
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(assign.getLeftOpBox(), r.getType(myScene), false);
+      myDalvikTyper().setType(assign.getLeftOpBox(), r.getType(), false);
     }
   }
 

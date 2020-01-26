@@ -68,7 +68,7 @@ public abstract class AbstractNewExpr implements NewExpr {
     this.type = type;
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return type;
   }
 

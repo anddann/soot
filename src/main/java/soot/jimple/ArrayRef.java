@@ -38,7 +38,7 @@ public interface ArrayRef extends ConcreteRef {
 
   public ValueBox getIndexBox();
 
-  public Type getType(Scene myScene);
+  public Type getType();
 
   public void apply(Switch sw);
 }

@@ -185,8 +185,8 @@ public class InlinerSafetyManager {
     InvokeExpr ie = toInline.getInvokeExpr();
     Value base = (ie instanceof InstanceInvokeExpr) ? ((InstanceInvokeExpr) ie).getBase() : null;
 
-    if (base != null && base.getType(myScene) instanceof RefType
-        && invokeThrowsAccessErrorIn(((RefType) base.getType(myScene)).getSootClass(), inlinee, container)) {
+    if (base != null && base.getType() instanceof RefType
+        && invokeThrowsAccessErrorIn(((RefType) base.getType()).getSootClass(), inlinee, container)) {
       return false;
     }
 

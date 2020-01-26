@@ -130,10 +130,10 @@ public class NullCheckEliminator extends BodyTransformer {
         }
         Stmt newstmt = null;
         if (elim == -1) {
-          newstmt = myJimple.newNopStmt();
+          newstmt = Jimple.newNopStmt();
         }
         if (elim == 1) {
-          newstmt = myJimple.newGotoStmt(is.getTarget());
+          newstmt = Jimple.newGotoStmt(is.getTarget());
         }
         if (newstmt != null) {
           units.swapWith(s, newstmt);

@@ -170,7 +170,7 @@ public class DeadAssignmentEliminator extends BodyTransformer {
         }
 
         if (lhs instanceof Local
-            && (!eliminateOnlyStackLocals || ((Local) lhs).getName().startsWith("$") || lhs.getType(myScene) instanceof NullType)) {
+            && (!eliminateOnlyStackLocals || ((Local) lhs).getName().startsWith("$") || lhs.getType() instanceof NullType)) {
 
           isEssential = false;
 
@@ -211,8 +211,8 @@ public class DeadAssignmentEliminator extends BodyTransformer {
           } else if (rhs instanceof DivExpr || rhs instanceof RemExpr) {
             BinopExpr expr = (BinopExpr) rhs;
 
-            Type t1 = expr.getOp1().getType(myScene);
-            Type t2 = expr.getOp2().getType(myScene);
+            Type t1 = expr.getOp1().getType();
+            Type t2 = expr.getOp2().getType();
 
             // Can trigger a division by zero
 
@@ -304,7 +304,7 @@ public class DeadAssignmentEliminator extends BodyTransformer {
         final Jimple jimple = myJimple;
         for (AssignStmt s : postProcess) {
           // Transform it into a simple invoke.
-          Stmt newInvoke = jimple.newInvokeStmt(s.getInvokeExpr());
+          Stmt newInvoke = Jimple.newInvokeStmt(s.getInvokeExpr());
           newInvoke.addAllTagsOf(s);
           units.swapWith(s, newInvoke);
 

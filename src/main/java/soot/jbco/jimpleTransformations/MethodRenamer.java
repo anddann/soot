@@ -159,7 +159,7 @@ public class MethodRenamer extends SceneTransformer implements IJbcoTransform {
   public MethodRenamer(Scene myScene, PrimTypeCollector primTypeCollector) {
     this.myScene = myScene;
     MAIN_METHOD_SUB_SIGNATURE
-            = SootMethod.getSubSignature("main", singletonList(ArrayType.v(RefType.v("java.lang.String",myScene), 1,myScene)), primTypeCollector.getVoidType(),myScene);
+            = SootMethod.getSubSignature("main", singletonList(ArrayType.v(RefType.v("java.lang.String",myScene), 1)), primTypeCollector.getVoidType());
 
     nameGenerator = new JunkNameGenerator();
   }

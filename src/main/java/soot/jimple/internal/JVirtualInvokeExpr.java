@@ -31,11 +31,16 @@ import soot.SootMethod;
 import soot.SootMethodRef;
 import soot.Value;
 import soot.ValueBox;
+import soot.jimple.Jimple;
+import soot.options.Options;
 import soot.tagkit.SourceFileTag;
 
 public class JVirtualInvokeExpr extends AbstractVirtualInvokeExpr {
-  public JVirtualInvokeExpr(Value base, SootMethodRef methodRef, List<? extends Value> args) {
-    super(myJimple.newLocalBox(base), methodRef, new ValueBox[args.size()], myBaf);
+  private Options myOptions;
+
+  public JVirtualInvokeExpr(Value base, SootMethodRef methodRef, List<? extends Value> args, Options myOptions) {
+    super(Jimple.newLocalBox(base), methodRef, new ValueBox[args.size()]);
+    this.myOptions = myOptions;
 
     if (!myOptions.ignore_resolution_errors()) {
       // Check that the method's class is resolved enough
@@ -50,7 +55,7 @@ public class JVirtualInvokeExpr extends AbstractVirtualInvokeExpr {
     }
 
     for (int i = 0; i < args.size(); i++) {
-      this.argBoxes[i] = myJimple.newImmediateBox(args.get(i));
+      this.argBoxes[i] = Jimple.newImmediateBox(args.get(i));
     }
   }
 
@@ -66,7 +71,7 @@ public class JVirtualInvokeExpr extends AbstractVirtualInvokeExpr {
       clonedArgs.add(i, getArg(i));
     }
 
-    return new JVirtualInvokeExpr(getBase(), methodRef, clonedArgs);
+    return new JVirtualInvokeExpr(getBase(), methodRef, clonedArgs, myOptions);
   }
 
 }

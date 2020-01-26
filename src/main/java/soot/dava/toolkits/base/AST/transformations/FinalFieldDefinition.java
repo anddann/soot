@@ -271,12 +271,12 @@ public class FinalFieldDefinition {
       if (((SootField) field).isStatic()) {
         ref = new DStaticFieldRef(tempFieldRef, true);
       } else {
-        ref = new DInstanceFieldRef(new JimpleLocal("this", fieldType, myScene), tempFieldRef, new HashSet<Object>());
+        ref = new DInstanceFieldRef(new JimpleLocal("this", fieldType), tempFieldRef, new HashSet<Object>(), myGrimp);
       }
 
     } else if (field instanceof Local) {
       ref = (Local) field;
-      fieldType = ((Local) field).getType(myScene);
+      fieldType = ((Local) field).getType();
     }
 
     GAssignStmt assignStmt = null;
@@ -360,7 +360,7 @@ public class FinalFieldDefinition {
 
         // Creating STMT0
         Type localType = field.getType();
-        Local newLocal = new JimpleLocal("DavaTemp_" + field.getName(), localType, myScene);
+        Local newLocal = new JimpleLocal("DavaTemp_" + field.getName(), localType);
 
         DVariableDeclarationStmt varStmt = new DVariableDeclarationStmt(localType, davaBody);
 
@@ -434,7 +434,7 @@ public class FinalFieldDefinition {
         if (field.isStatic()) {
           ref = new DStaticFieldRef(tempFieldRef, true);
         } else {
-          ref = new DInstanceFieldRef(new JimpleLocal("this", field.getType(), myScene), tempFieldRef, new HashSet<Object>());
+          ref = new DInstanceFieldRef(new JimpleLocal("this", field.getType()), tempFieldRef, new HashSet<Object>(), myGrimp);
           // throw new RuntimeException("STOPPED");
         }
 

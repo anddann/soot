@@ -726,7 +726,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
     @Override
     public void caseAssignStmt(AssignStmt s) {
       Value lhs = s.getLeftOp();
-      if (lhs instanceof ArrayRef && (lhs.getType(myScene) instanceof UnknownType || lhs.getType(myScene) instanceof RefType)) {
+      if (lhs instanceof ArrayRef && (lhs.getType() instanceof UnknownType || lhs.getType() instanceof RefType)) {
         // This corresponds to an aastore byte code.
         result = result.add(mgr.ARRAY_STORE_EXCEPTION);
       }
@@ -960,7 +960,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
 
     public void caseCastExpr(CastExpr expr) {
       result = result.add(mgr.RESOLVE_CLASS_ERRORS);
-      Type fromType = expr.getOp().getType(myScene);
+      Type fromType = expr.getOp().getType();
       Type toType = expr.getCastType();
       if (toType instanceof RefLikeType) {
         // fromType might still be unknown when we are called,
@@ -1080,7 +1080,7 @@ public class UnitThrowAnalysis extends AbstractThrowAnalysis {
       // The checks against constant divisors would perhaps be
       // better performed in a later pass, post-constant-propagation.
       Value divisor = expr.getOp2();
-      Type divisorType = divisor.getType(myScene);
+      Type divisorType = divisor.getType();
       if (divisorType instanceof UnknownType) {
         result = result.add(mgr.ARITHMETIC_EXCEPTION);
       } else if ((divisorType instanceof IntegerType)

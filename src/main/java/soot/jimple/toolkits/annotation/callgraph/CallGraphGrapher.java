@@ -184,7 +184,7 @@ public class CallGraphGrapher extends SceneTransformer {
 
   private SootMethod getFirstMethod(SootClass sc) {
     ArrayList paramTypes = new ArrayList();
-    paramTypes.add(soot.ArrayType.v(soot.RefType.v("java.lang.String",myScene), 1,myScene));
+    paramTypes.add(soot.ArrayType.v(soot.RefType.v("java.lang.String",myScene), 1));
     SootMethod sm = sc.getMethodUnsafe("main", paramTypes, primTypeCollector.getVoidType());
     if (sm != null) {
       return sm;

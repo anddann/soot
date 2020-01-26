@@ -10,12 +10,12 @@ package soot.jimple.internal;
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -23,7 +23,6 @@ package soot.jimple.internal;
  */
 
 import soot.PrimTypeCollector;
-import soot.Scene;
 import soot.Type;
 import soot.Value;
 import soot.baf.Baf;
@@ -33,41 +32,42 @@ import soot.jimple.ShlExpr;
 import soot.util.Switch;
 
 public class JShlExpr extends AbstractJimpleIntLongBinopExpr implements ShlExpr {
-  public JShlExpr(Value op1, Value op2, PrimTypeCollector primTypeCollector, Jimple jimple) {
-    super(op1, op2, primTypeCollector, jimple);
-  }
-
-  public String getSymbol() {
-    return " << ";
-  }
-
-  public void apply(Switch sw) {
-    ((ExprSwitch) sw).caseShlExpr(this);
-  }
-
-  Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newShlInst(this.getOp1().getType(myScene));
-  }
-
-  public Type getType(Scene myScene) {
-    Value op1 = op1Box.getValue();
-    Value op2 = op2Box.getValue();
-
-    if (!isIntLikeType(op2.getType(myScene), primTypeCollector)) {
-      return primTypeCollector.getUnknownType();
+    public JShlExpr(Value op1, Value op2) {
+        super(op1, op2);
     }
 
-    if (isIntLikeType(op1.getType(myScene), primTypeCollector)) {
-      return primTypeCollector.getIntType();
-    }
-    if (op1.getType(myScene).equals(primTypeCollector.getLongType())) {
-      return primTypeCollector.getLongType();
+    public String getSymbol() {
+        return " << ";
     }
 
-    return primTypeCollector.getUnknownType();
-  }
+    public void apply(Switch sw) {
+        ((ExprSwitch) sw).caseShlExpr(this);
+    }
 
-  public Object clone() {
-    return new JShlExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()), primTypeCollector, myJimple);
-  }
+    Object makeBafInst(Type opType, Baf myBaf) {
+        return myBaf.newShlInst(this.getOp1().getType());
+    }
+
+    public Type getType() {
+        Value op1 = op1Box.getValue();
+        Value op2 = op2Box.getValue();
+        PrimTypeCollector primTypeCollector = op1.getType().getMyScene().getPrimTypeCollector();
+
+        if (!isIntLikeType(op2.getType())) {
+            return primTypeCollector.getUnknownType();
+        }
+
+        if (isIntLikeType(op1.getType())) {
+            return primTypeCollector.getIntType();
+        }
+        if (op1.getType().equals(primTypeCollector.getLongType())) {
+            return primTypeCollector.getLongType();
+        }
+
+        return primTypeCollector.getUnknownType();
+    }
+
+    public Object clone() {
+        return new JShlExpr(Jimple.cloneIfNecessary(getOp1()), Jimple.cloneIfNecessary(getOp2()));
+    }
 }

@@ -126,7 +126,7 @@ public class ConstantArrayAnalysis extends ForwardFlowAnalysis<Unit, ConstantArr
     for (Unit u : b.getUnits()) {
       Stmt s = (Stmt) u;
       if (s instanceof DefinitionStmt) {
-        Type ty = ((DefinitionStmt) s).getRightOp().getType(this.myScene);
+        Type ty = ((DefinitionStmt) s).getRightOp().getType();
         if (!typeToInt.containsKey(ty)) {
           int key = typeSize++;
           typeToInt.put(ty, key);
@@ -174,7 +174,7 @@ public class ConstantArrayAnalysis extends ForwardFlowAnalysis<Unit, ConstantArr
             out.state[varRef].typeState[i] = new BitSet(typeSize);
           }
         }
-      } else if (lhs instanceof Local && lhs.getType(myScene) instanceof ArrayType && rhs instanceof NullConstant) {
+      } else if (lhs instanceof Local && lhs.getType() instanceof ArrayType && rhs instanceof NullConstant) {
         int varRef = localToInt.get(lhs);
         out.active.clear(varRef);
         out.state[varRef] = null;
@@ -222,7 +222,7 @@ public class ConstantArrayAnalysis extends ForwardFlowAnalysis<Unit, ConstantArr
           out.state[localRef] = null;
           out.active.set(localRef);
         } else if (out.state[localRef] != null) {
-          Type assignType = rhs.getType(myScene);
+          Type assignType = rhs.getType();
           int index = ((IntConstant) indexVal).value;
           assert index < out.state[localRef].typeState.length;
           out.deepCloneLocalValueSlot(localRef, index);

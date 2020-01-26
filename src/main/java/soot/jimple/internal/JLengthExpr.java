@@ -35,10 +35,8 @@ import soot.jimple.Jimple;
 import soot.jimple.JimpleToBafContext;
 
 public class JLengthExpr extends AbstractLengthExpr implements ConvertToBaf {
- private Jimple myJimple;
-  public JLengthExpr(Value op, Jimple myJimple, PrimTypeCollector primTypeCollector) {
-    super(myJimple.newImmediateBox(op), primTypeCollector);
-    this.myJimple = myJimple;
+  public JLengthExpr(Value op) {
+    super(Jimple.newImmediateBox(op));
   }
 
   public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
@@ -50,7 +48,7 @@ public class JLengthExpr extends AbstractLengthExpr implements ConvertToBaf {
   }
 
   public Object clone() {
-    return new JLengthExpr(Jimple.cloneIfNecessary(getOp()), myJimple, primTypeCollector);
+    return new JLengthExpr(Jimple.cloneIfNecessary(getOp()));
   }
 
 }

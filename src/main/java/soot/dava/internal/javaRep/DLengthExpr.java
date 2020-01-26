@@ -34,7 +34,7 @@ public class DLengthExpr extends AbstractLengthExpr implements Precedence {
   private final Grimp myGrimp;
 
   public DLengthExpr(Value op, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(myGrimp.newObjExprBox(op), primTypeCollector);
+    super(myGrimp.newObjExprBox(op));
     this.myGrimp = myGrimp;
   }
 

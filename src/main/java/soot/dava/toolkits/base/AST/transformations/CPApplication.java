@@ -44,6 +44,7 @@ import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 import soot.dava.toolkits.base.AST.structuredAnalysis.CP;
 import soot.dava.toolkits.base.AST.structuredAnalysis.CPFlowSet;
 import soot.dava.toolkits.base.AST.structuredAnalysis.CPHelper;
+import soot.dava.toolkits.base.AST.traversals.ClosestAbruptTargetFinder;
 import soot.jimple.FieldRef;
 import soot.jimple.Stmt;
 
@@ -73,16 +74,16 @@ public class CPApplication extends DepthFirstAdapter {
   String className = null;
 
   public CPApplication(ASTMethodNode AST, HashMap<String, Object> constantValueFields,
-      HashMap<String, SootField> classNameFieldNameToSootFieldMapping) {
+                       HashMap<String, SootField> classNameFieldNameToSootFieldMapping, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Scene myScene) {
     className = AST.getDavaBody().getMethod().getDeclaringClass().getName();
-    cp = new CP(AST, constantValueFields, classNameFieldNameToSootFieldMapping);
+    cp = new CP(AST, constantValueFields, classNameFieldNameToSootFieldMapping, myClosestAbruptTargetFinder, myScene);
   }
 
   public CPApplication(boolean verbose, ASTMethodNode AST, HashMap<String, Object> constantValueFields,
-      HashMap<String, SootField> classNameFieldNameToSootFieldMapping) {
+                       HashMap<String, SootField> classNameFieldNameToSootFieldMapping, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Scene myScene) {
     super(verbose);
     className = AST.getDavaBody().getMethod().getDeclaringClass().getName();
-    cp = new CP(AST, constantValueFields, classNameFieldNameToSootFieldMapping);
+    cp = new CP(AST, constantValueFields, classNameFieldNameToSootFieldMapping, myClosestAbruptTargetFinder, myScene);
   }
 
   public void inASTSwitchNode(ASTSwitchNode node) {
@@ -349,7 +350,7 @@ public class CPApplication extends DepthFirstAdapter {
     }
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
 

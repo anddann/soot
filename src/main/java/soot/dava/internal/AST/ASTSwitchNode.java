@@ -50,7 +50,7 @@ public class ASTSwitchNode extends ASTLabeledNode {
     super(label);
     this.myJimple = myJimple;
 
-    this.keyBox = this.myJimple.newRValueBox(key);
+    this.keyBox = Jimple.newRValueBox(key);
     this.indexList = indexList;
     this.index2BodyList = index2BodyList;
     this.myASTWalker = myASTWalker;
@@ -100,7 +100,7 @@ public class ASTSwitchNode extends ASTLabeledNode {
   }
 
   public void set_Key(Value key) {
-    this.keyBox = myJimple.newRValueBox(key);
+    this.keyBox = Jimple.newRValueBox(key);
   }
 
   public Object clone() {

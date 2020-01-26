@@ -772,15 +772,15 @@ public class ReflectiveCallsInliner extends SceneTransformer {
 
   private void insertCastOrUnboxingCode(Local lhs, Local rhs, Chain<Unit> newUnits) {
     // if assigning to a reference type then there's nothing to do
-    if (lhs.getType(myScene) instanceof PrimType) {
-      if ((rhs.getType(myScene) instanceof PrimType)) {
+    if (lhs.getType() instanceof PrimType) {
+      if ((rhs.getType() instanceof PrimType)) {
         // insert cast
-        newUnits.add(myJimple.newAssignStmt(lhs, myJimple.newCastExpr(rhs, lhs.getType(myScene))));
+        newUnits.add(myJimple.newAssignStmt(lhs, myJimple.newCastExpr(rhs, lhs.getType())));
       } else {
         // reference type in rhs; insert unboxing code
-        RefType boxedType = (RefType) rhs.getType(myScene);
-        SootMethodRef ref = myScene.makeMethodRef(boxedType.getSootClass(), lhs.getType(myScene).toString() + "Value",
-            Collections.<Type>emptyList(), lhs.getType(myScene), false);
+        RefType boxedType = (RefType) rhs.getType();
+        SootMethodRef ref = myScene.makeMethodRef(boxedType.getSootClass(), lhs.getType().toString() + "Value",
+            Collections.<Type>emptyList(), lhs.getType(), false);
         newUnits.add(myJimple.newAssignStmt(lhs, myJimple.newVirtualInvokeExpr(rhs, ref)));
       }
     }
@@ -788,15 +788,15 @@ public class ReflectiveCallsInliner extends SceneTransformer {
 
   private void insertCastOrBoxingCode(Local lhs, Local rhs, Chain<Unit> newUnits) {
     // if assigning to a primitive type then there's nothing to do
-    if (lhs.getType(myScene) instanceof RefLikeType) {
-      if ((rhs.getType(myScene) instanceof RefLikeType)) {
+    if (lhs.getType() instanceof RefLikeType) {
+      if ((rhs.getType() instanceof RefLikeType)) {
         // insert cast
-        newUnits.add(myJimple.newAssignStmt(lhs, myJimple.newCastExpr(rhs, lhs.getType(myScene))));
+        newUnits.add(myJimple.newAssignStmt(lhs, myJimple.newCastExpr(rhs, lhs.getType())));
       } else {
         // primitive type in rhs; insert boxing code
-        RefType boxedType = ((PrimType) rhs.getType(myScene)).boxedType();
+        RefType boxedType = ((PrimType) rhs.getType()).boxedType();
         SootMethodRef ref = myScene.makeMethodRef(boxedType.getSootClass(), "valueOf",
-            Collections.<Type>singletonList(rhs.getType(myScene)), boxedType, true);
+            Collections.<Type>singletonList(rhs.getType()), boxedType, true);
         newUnits.add(myJimple.newAssignStmt(lhs, myJimple.newStaticInvokeExpr(ref, rhs)));
       }
     }

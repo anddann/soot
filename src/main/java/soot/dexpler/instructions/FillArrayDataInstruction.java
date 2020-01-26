@@ -95,12 +95,12 @@ public class FillArrayDataInstruction extends PseudoInstruction {
 
     Stmt firstAssign = null;
     for (int i = 0; i < numElements; i++) {
-      ArrayRef arrayRef = myJimple.newArrayRef(arrayReference, constantFactory.createIntConstant(i));
+      ArrayRef arrayRef = Jimple.newArrayRef(arrayReference, constantFactory.createIntConstant(i));
       NumericConstant element = getArrayElement(elements.get(i), body, destRegister);
       if (element == null) {
         break;
       }
-      AssignStmt assign = myJimple.newAssignStmt(arrayRef, element);
+      AssignStmt assign = Jimple.newAssignStmt(arrayRef, element);
       addTags(assign);
       body.add(assign);
       if (i == 0) {
@@ -108,7 +108,7 @@ public class FillArrayDataInstruction extends PseudoInstruction {
       }
     }
     if (firstAssign == null) { // if numElements == 0. Is it possible?
-      firstAssign = myJimple.newNopStmt();
+      firstAssign = Jimple.newNopStmt();
       body.add(firstAssign);
     }
 

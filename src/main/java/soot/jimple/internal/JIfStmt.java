@@ -36,29 +36,25 @@ public class JIfStmt extends AbstractStmt implements IfStmt {
   final UnitBox targetBox;
 
   final List<UnitBox> targetBoxes;
-  private Jimple myJimple;
-  private Baf myBaf;
 
-  public JIfStmt(Value condition, Unit target, Jimple myJimple, Baf myBaf) {
-    this(condition, myJimple.newStmtBox(target), myJimple, myBaf);
+  public JIfStmt(Value condition, Unit target) {
+    this(condition, Jimple.newStmtBox(target));
   }
 
-  public JIfStmt(Value condition, UnitBox target, Jimple myJimple, Baf myBaf) {
-    this(myJimple.newConditionExprBox(condition), target, myJimple, myBaf);
+  public JIfStmt(Value condition, UnitBox target) {
+    this(Jimple.newConditionExprBox(condition), target);
   }
 
-  protected JIfStmt(ValueBox conditionBox, UnitBox targetBox, Jimple myJimple, Baf myBaf) {
+  protected JIfStmt(ValueBox conditionBox, UnitBox targetBox) {
     this.conditionBox = conditionBox;
     this.targetBox = targetBox;
 
     targetBoxes = Collections.singletonList(targetBox);
-    this.myJimple = myJimple;
-    this.myBaf = myBaf;
   }
 
   @Override
   public Object clone() {
-    return new JIfStmt(Jimple.cloneIfNecessary(getCondition()), getTarget(), myJimple, myBaf);
+    return new JIfStmt(Jimple.cloneIfNecessary(getCondition()), getTarget());
   }
 
   @Override
@@ -144,16 +140,16 @@ public class JIfStmt extends AbstractStmt implements IfStmt {
     // Handle simple subcase where op1 is null
     if (op2 instanceof NullConstant || op1 instanceof NullConstant) {
       if (op2 instanceof NullConstant) {
-        ((ConvertToBaf) op1).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) op1).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
       } else {
-        ((ConvertToBaf) op2).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) op2).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
       }
       Unit u;
 
       if (cond instanceof EqExpr) {
-        u = this.myBaf.newIfNullInst(this.myBaf.newPlaceholderInst(getTarget()));
+        u = myBaf.newIfNullInst(myBaf.newPlaceholderInst(getTarget()));
       } else if (cond instanceof NeExpr) {
-        u = this.myBaf.newIfNonNullInst(this.myBaf.newPlaceholderInst(getTarget()));
+        u = myBaf.newIfNonNullInst(myBaf.newPlaceholderInst(getTarget()));
       } else {
         throw new RuntimeException("invalid condition");
       }
@@ -165,7 +161,7 @@ public class JIfStmt extends AbstractStmt implements IfStmt {
 
     // Handle simple subcase where op2 is 0
     if (op2 instanceof IntConstant && ((IntConstant) op2).value == 0) {
-      ((ConvertToBaf) op1).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
+      ((ConvertToBaf) op1).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
 
       cond.apply(new AbstractJimpleValueSwitch() {
         private void add(Unit u) {
@@ -175,32 +171,32 @@ public class JIfStmt extends AbstractStmt implements IfStmt {
 
         @Override
         public void caseEqExpr(EqExpr expr) {
-          add(JIfStmt.this.myBaf.newIfEqInst(JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+          add(myBaf.newIfEqInst(myBaf.newPlaceholderInst(getTarget())));
         }
 
         @Override
         public void caseNeExpr(NeExpr expr) {
-          add(JIfStmt.this.myBaf.newIfNeInst(JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+          add(myBaf.newIfNeInst(myBaf.newPlaceholderInst(getTarget())));
         }
 
         @Override
         public void caseLtExpr(LtExpr expr) {
-          add(JIfStmt.this.myBaf.newIfLtInst(JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+          add(myBaf.newIfLtInst(myBaf.newPlaceholderInst(getTarget())));
         }
 
         @Override
         public void caseLeExpr(LeExpr expr) {
-          add(JIfStmt.this.myBaf.newIfLeInst(JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+          add(myBaf.newIfLeInst(myBaf.newPlaceholderInst(getTarget())));
         }
 
         @Override
         public void caseGtExpr(GtExpr expr) {
-          add(JIfStmt.this.myBaf.newIfGtInst(JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+          add(myBaf.newIfGtInst(myBaf.newPlaceholderInst(getTarget())));
         }
 
         @Override
         public void caseGeExpr(GeExpr expr) {
-          add(JIfStmt.this.myBaf.newIfGeInst(JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+          add(myBaf.newIfGeInst(myBaf.newPlaceholderInst(getTarget())));
         }
       });
 
@@ -209,7 +205,7 @@ public class JIfStmt extends AbstractStmt implements IfStmt {
 
     // Handle simple subcase where op1 is 0 (flip directions)
     if (op1 instanceof IntConstant && ((IntConstant) op1).value == 0) {
-      ((ConvertToBaf) op2).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
+      ((ConvertToBaf) op2).convertToBaf(context, out,myBaf,primTypeCollector,constantFactory,myScene);
 
       cond.apply(new AbstractJimpleValueSwitch() {
         private void add(Unit u) {
@@ -219,40 +215,40 @@ public class JIfStmt extends AbstractStmt implements IfStmt {
 
         @Override
         public void caseEqExpr(EqExpr expr) {
-          add(JIfStmt.this.myBaf.newIfEqInst(JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+          add(myBaf.newIfEqInst(myBaf.newPlaceholderInst(getTarget())));
         }
 
         @Override
         public void caseNeExpr(NeExpr expr) {
-          add(JIfStmt.this.myBaf.newIfNeInst(JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+          add(myBaf.newIfNeInst(myBaf.newPlaceholderInst(getTarget())));
         }
 
         @Override
         public void caseLtExpr(LtExpr expr) {
-          add(JIfStmt.this.myBaf.newIfGtInst(JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+          add(myBaf.newIfGtInst(myBaf.newPlaceholderInst(getTarget())));
         }
 
         @Override
         public void caseLeExpr(LeExpr expr) {
-          add(JIfStmt.this.myBaf.newIfGeInst(JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+          add(myBaf.newIfGeInst(myBaf.newPlaceholderInst(getTarget())));
         }
 
         @Override
         public void caseGtExpr(GtExpr expr) {
-          add(JIfStmt.this.myBaf.newIfLtInst(JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+          add(myBaf.newIfLtInst(myBaf.newPlaceholderInst(getTarget())));
         }
 
         @Override
         public void caseGeExpr(GeExpr expr) {
-          add(JIfStmt.this.myBaf.newIfLeInst(JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+          add(myBaf.newIfLeInst(myBaf.newPlaceholderInst(getTarget())));
         }
       });
 
       return;
     }
 
-    ((ConvertToBaf) op1).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
-    ((ConvertToBaf) op2).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
+    ((ConvertToBaf) op1).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+    ((ConvertToBaf) op2).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
 
     cond.apply(new AbstractJimpleValueSwitch() {
       private void add(Unit u) {
@@ -262,32 +258,32 @@ public class JIfStmt extends AbstractStmt implements IfStmt {
 
       @Override
       public void caseEqExpr(EqExpr expr) {
-        add(JIfStmt.this.myBaf.newIfCmpEqInst(op1.getType(myScene), JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+        add(myBaf.newIfCmpEqInst(op1.getType(), myBaf.newPlaceholderInst(getTarget())));
       }
 
       @Override
       public void caseNeExpr(NeExpr expr) {
-        add(JIfStmt.this.myBaf.newIfCmpNeInst(op1.getType(myScene), JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+        add(myBaf.newIfCmpNeInst(op1.getType(), myBaf.newPlaceholderInst(getTarget())));
       }
 
       @Override
       public void caseLtExpr(LtExpr expr) {
-        add(JIfStmt.this.myBaf.newIfCmpLtInst(op1.getType(myScene), JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+        add(myBaf.newIfCmpLtInst(op1.getType(), myBaf.newPlaceholderInst(getTarget())));
       }
 
       @Override
       public void caseLeExpr(LeExpr expr) {
-        add(JIfStmt.this.myBaf.newIfCmpLeInst(op1.getType(myScene), JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+        add(myBaf.newIfCmpLeInst(op1.getType(), myBaf.newPlaceholderInst(getTarget())));
       }
 
       @Override
       public void caseGtExpr(GtExpr expr) {
-        add(JIfStmt.this.myBaf.newIfCmpGtInst(op1.getType(myScene), JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+        add(myBaf.newIfCmpGtInst(op1.getType(), myBaf.newPlaceholderInst(getTarget())));
       }
 
       @Override
       public void caseGeExpr(GeExpr expr) {
-        add(JIfStmt.this.myBaf.newIfCmpGeInst(op1.getType(myScene), JIfStmt.this.myBaf.newPlaceholderInst(getTarget())));
+        add(myBaf.newIfCmpGeInst(op1.getType(), myBaf.newPlaceholderInst(getTarget())));
       }
     });
 

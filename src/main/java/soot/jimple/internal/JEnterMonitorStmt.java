@@ -30,10 +30,9 @@ import soot.jimple.*;
 import soot.util.Switch;
 
 public class JEnterMonitorStmt extends AbstractOpStmt implements EnterMonitorStmt {
-    private Jimple myJimple;
 
-    public JEnterMonitorStmt(Value op, Jimple myJimple) {
-    this(myJimple.newImmediateBox(op));
+    public JEnterMonitorStmt(Value op) {
+    this(Jimple.newImmediateBox(op));
   }
 
   protected JEnterMonitorStmt(ValueBox opBox) {
@@ -41,7 +40,7 @@ public class JEnterMonitorStmt extends AbstractOpStmt implements EnterMonitorStm
   }
 
   public Object clone() {
-    return new JEnterMonitorStmt(Jimple.cloneIfNecessary(getOp()), myJimple);
+    return new JEnterMonitorStmt(Jimple.cloneIfNecessary(getOp()));
   }
 
   public String toString() {

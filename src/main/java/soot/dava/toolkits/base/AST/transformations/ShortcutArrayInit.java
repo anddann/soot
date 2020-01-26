@@ -65,7 +65,7 @@ public class ShortcutArrayInit extends DepthFirstAdapter {
     }
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
     debug("inASTStatementSequenceNode");
     boolean success = false;
     ArrayList<AugmentedStmt> toRemove = new ArrayList<AugmentedStmt>();
@@ -85,10 +85,10 @@ public class ShortcutArrayInit extends DepthFirstAdapter {
       }
 
       debug("Found a new ArrayExpr" + rightValue);
-      debug("Type of array is:" + rightValue.getType(myScene));
+      debug("Type of array is:" + rightValue.getType());
 
       // get type out
-      Type arrayType = rightValue.getType(myScene);
+      Type arrayType = rightValue.getType();
 
       // get size....need to know this statically for sure!!!
       Value size = ((NewArrayExpr) rightValue).getSize();
@@ -200,7 +200,7 @@ public class ShortcutArrayInit extends DepthFirstAdapter {
       node.setStatements(newStmtList);
 
       // make sure any other possible simplifications are done
-      inASTStatementSequenceNode(node, myScene);
+      inASTStatementSequenceNode(node);
       G.v().ASTTransformations_modified = true;
     }
 
@@ -277,11 +277,11 @@ public class ShortcutArrayInit extends DepthFirstAdapter {
 
       if (DEBUG) {
         System.out.println("Found a new ArrayExpr" + rightValue);
-        System.out.println("Type of array is:" + rightValue.getType(myScene));
+        System.out.println("Type of array is:" + rightValue.getType());
       }
 
       // get type out
-      Type arrayType = rightValue.getType(myScene);
+      Type arrayType = rightValue.getType();
 
       // get size....need to know this statically for sure!!!
       Value size = ((NewArrayExpr) rightValue).getSize();
@@ -403,7 +403,7 @@ public class ShortcutArrayInit extends DepthFirstAdapter {
       node.setStatements(newStmtList);
 
       // make sure any other possible simplifications are done
-      inASTStatementSequenceNode(node, myScene);
+      inASTStatementSequenceNode(node);
       G.v().ASTTransformations_modified = true;
     }
 

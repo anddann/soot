@@ -32,11 +32,11 @@ import soot.util.Switch;
 
 @SuppressWarnings("serial")
 public abstract class AbstractStaticInvokeExpr extends AbstractInvokeExpr implements StaticInvokeExpr, ConvertToBaf {
-  AbstractStaticInvokeExpr(SootMethodRef methodRef, List<Value> args, Jimple myJimple) {
+  AbstractStaticInvokeExpr(SootMethodRef methodRef, List<Value> args, Jimple Jimple) {
     this(methodRef, new ValueBox[args.size()]);
 
     for (int i = 0; i < args.size(); i++) {
-      this.argBoxes[i] = myJimple.newImmediateBox(args.get(i));
+      this.argBoxes[i] = Jimple.newImmediateBox(args.get(i));
     }
   }
 

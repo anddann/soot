@@ -114,7 +114,7 @@ public class GlobalNodeFactory {
   }
 
   final public Node caseArgv() {
-    ArrayType strArray = ArrayType.v(rtString, 1,myScene);
+    ArrayType strArray = ArrayType.v(rtString, 1);
     AllocNode argv = pag.makeAllocNode(PointsToAnalysis.STRING_ARRAY_NODE, strArray, null);
     VarNode sanl = pag.makeGlobalVarNode(PointsToAnalysis.STRING_ARRAY_NODE_LOCAL, strArray);
     AllocNode stringNode = pag.makeAllocNode(PointsToAnalysis.STRING_NODE, rtString, null);

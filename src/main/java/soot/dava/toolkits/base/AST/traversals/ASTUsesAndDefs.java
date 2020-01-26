@@ -27,10 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import soot.Local;
-import soot.Scene;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.dava.internal.AST.ASTAggregatedCondition;
 import soot.dava.internal.AST.ASTBinaryCondition;
 import soot.dava.internal.AST.ASTCondition;
@@ -72,22 +69,25 @@ import soot.jimple.Stmt;
  */
 public class ASTUsesAndDefs extends DepthFirstAdapter {
   public static boolean DEBUG = false;
+  private final ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
   HashMap<Object, List<DefinitionStmt>> uD; // mapping a use to all possible
   // definitions
   HashMap<Object, List> dU; // mapping a def to all possible uses
   ReachingDefs reaching; // using structural analysis information
 
-  public ASTUsesAndDefs(ASTNode AST) {
+  public ASTUsesAndDefs(ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ASTNode AST) {
+    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     uD = new HashMap<Object, List<DefinitionStmt>>();
     dU = new HashMap<Object, List>();
-    reaching = new ReachingDefs(myClosestAbruptTargetFinder, AST);
+    reaching = new ReachingDefs(this.myClosestAbruptTargetFinder, AST);
   }
 
-  public ASTUsesAndDefs(boolean verbose, ASTNode AST) {
+  public ASTUsesAndDefs(boolean verbose, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, ASTNode AST) {
     super(verbose);
+    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     uD = new HashMap<Object, List<DefinitionStmt>>();
     dU = new HashMap<Object, List>();
-    reaching = new ReachingDefs(myClosestAbruptTargetFinder, AST);
+    reaching = new ReachingDefs(this.myClosestAbruptTargetFinder, AST);
   }
 
   /*
@@ -314,7 +314,7 @@ public class ASTUsesAndDefs extends DepthFirstAdapter {
     }
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       // in the case of stmtts in a stmtt sequence each stmt is considered

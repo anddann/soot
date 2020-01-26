@@ -45,6 +45,7 @@ import soot.dava.internal.AST.ASTUnconditionalLoopNode;
 import soot.dava.internal.AST.ASTWhileNode;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.internal.javaRep.DAbruptStmt;
+import soot.dava.toolkits.base.AST.traversals.ClosestAbruptTargetFinder;
 import soot.jimple.RetStmt;
 import soot.jimple.ReturnStmt;
 import soot.jimple.ReturnVoidStmt;
@@ -69,10 +70,11 @@ import soot.toolkits.scalar.FlowSet;
 
 public class UnreachableCodeFinder extends StructuredAnalysis {
   public static boolean DEBUG = false;
+  private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
 
   public class UnreachableCodeFlowSet extends DavaFlowSet {
 
-      public UnreachableCodeFlowSet() {
+      public UnreachableCodeFlowSet(ClosestAbruptTargetFinder myClosestAbruptTargetFinder) {
           super(myClosestAbruptTargetFinder);
       }
 
@@ -81,7 +83,7 @@ public class UnreachableCodeFinder extends StructuredAnalysis {
         throw new DecompilationException("unreachableCodeFlow set size should always be 1");
       }
       Boolean temp = (Boolean) this.elements[0];
-      UnreachableCodeFlowSet toReturn = new UnreachableCodeFlowSet();
+      UnreachableCodeFlowSet toReturn = new UnreachableCodeFlowSet(myClosestAbruptTargetFinder);
       toReturn.add(new Boolean(temp.booleanValue()));
       toReturn.copyInternalDataFrom(this);
       return toReturn;
@@ -103,7 +105,7 @@ public class UnreachableCodeFinder extends StructuredAnalysis {
       UnreachableCodeFlowSet workingSet;
 
       if (dest == other || dest == this) {
-        workingSet = new UnreachableCodeFlowSet();
+        workingSet = new UnreachableCodeFlowSet(myClosestAbruptTargetFinder);
       } else {
         workingSet = dest;
         workingSet.clear();
@@ -139,8 +141,9 @@ public class UnreachableCodeFinder extends StructuredAnalysis {
 
   } // end UnreachableCodeFlowSet
 
-  public UnreachableCodeFinder(Object analyze) {
+  public UnreachableCodeFinder(Object analyze, ClosestAbruptTargetFinder myClosestAbruptTargetFinder) {
     super();
+    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     // the input to the process method is newInitialFlow
     DavaFlowSet temp = (DavaFlowSet) process(analyze, newInitialFlow());
   }
@@ -166,7 +169,7 @@ public class UnreachableCodeFinder extends StructuredAnalysis {
   }
 
   public DavaFlowSet emptyFlowSet() {
-    return new UnreachableCodeFlowSet();
+    return new UnreachableCodeFlowSet(myClosestAbruptTargetFinder);
   }
 
   @Override
@@ -204,7 +207,7 @@ public class UnreachableCodeFinder extends StructuredAnalysis {
     }
     if (s instanceof ReturnStmt || s instanceof RetStmt || s instanceof ReturnVoidStmt) {
       // dont need to remember this path
-      UnreachableCodeFlowSet toReturn = new UnreachableCodeFlowSet();
+      UnreachableCodeFlowSet toReturn = new UnreachableCodeFlowSet(myClosestAbruptTargetFinder);
       toReturn.add(new Boolean(false));
       toReturn.copyInternalDataFrom(input);
       // false indicates NOPATH
@@ -221,7 +224,7 @@ public class UnreachableCodeFinder extends StructuredAnalysis {
         throw new RuntimeException("Found a DAbruptStmt which is neither break nor continue!!");
       }
 
-      DavaFlowSet temp = new UnreachableCodeFlowSet();
+      DavaFlowSet temp = new UnreachableCodeFlowSet(myClosestAbruptTargetFinder);
       SETNodeLabel nodeLabel = abStmt.getLabel();
 
       // notice we ignore continues for this analysis
@@ -382,7 +385,7 @@ public class UnreachableCodeFinder extends StructuredAnalysis {
     } else {
       DavaFlowSet output = processSingleSubBodyNode(node, input);
 
-      UnreachableCodeFlowSet toReturn = new UnreachableCodeFlowSet();
+      UnreachableCodeFlowSet toReturn = new UnreachableCodeFlowSet(myClosestAbruptTargetFinder);
       toReturn.add(new Boolean(true));
       toReturn.copyInternalDataFrom(output);
       return toReturn;

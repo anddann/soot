@@ -207,13 +207,13 @@ public class LazyCodeMotion extends BodyTransformer {
           /* get the unic helper-name for this expression */
           Local helper = expToHelper.get(equiVal);
           if (helper == null) {
-            helper = localCreation.newLocal(equiVal.getType(myScene));
+            helper = localCreation.newLocal(equiVal.getType());
             expToHelper.put(equiVal, helper);
           }
 
           /* insert a new Assignment-stmt before the currentUnit */
           Value insertValue = Jimple.cloneIfNecessary(equiVal.getValue());
-          Unit firstComp = myJimple.newAssignStmt(helper, insertValue);
+          Unit firstComp = Jimple.newAssignStmt(helper, insertValue);
           unitChain.insertBefore(firstComp, currentUnit);
         }
       }

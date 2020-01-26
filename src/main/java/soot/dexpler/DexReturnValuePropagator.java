@@ -91,7 +91,7 @@ public class DexReturnValuePropagator extends BodyTransformer {
                 if (localCreation == null) {
                   localCreation = new LocalCreation(body.getLocals(), "ret");
                 }
-                Local newLocal = localCreation.newLocal(leftOp.getType(myScene));
+                Local newLocal = localCreation.newLocal(leftOp.getType());
                 assign.setLeftOp(newLocal);
                 retStmt.setOp(newLocal);
               }

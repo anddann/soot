@@ -1463,7 +1463,7 @@ public class DexPrinter {
     } while (true);
 
     // Create a jump instruction from the middle to the end
-    NopStmt nop = myJimple.newNopStmt();
+    NopStmt nop = Jimple.newNopStmt();
     Insn30t newJump = new Insn30t(Opcode.GOTO_32);
     newJump.setTarget(stmtV.getStmtForInstruction(instructions.get(targetInsPos)));
     BuilderInstruction newJumpInstruction = newJump.getRealInsn(labelAssigner);
@@ -1495,13 +1495,13 @@ public class DexPrinter {
     jumpAround.setTarget(afterNewJump);
     BuilderInstruction jumpAroundInstruction = jumpAround.getRealInsn(labelAssigner);
     instructions.add(newJumpIdx, jumpAroundInstruction);
-    stmtV.fakeNewInsn(myJimple.newNopStmt(), jumpAround, jumpAroundInstruction);
+    stmtV.fakeNewInsn(Jimple.newNopStmt(), jumpAround, jumpAroundInstruction);
   }
 
   private void addRegisterAssignmentDebugInfo(LocalRegisterAssignmentInformation registerAssignment,
       Map<Local, Integer> seenRegisters, MethodImplementationBuilder builder) {
     Local local = registerAssignment.getLocal();
-    String dexLocalType = SootToDexUtils.getDexTypeDescriptor(local.getType(myScene));
+    String dexLocalType = SootToDexUtils.getDexTypeDescriptor(local.getType());
     StringReference localName = new ImmutableStringReference(local.getName());
     Register reg = registerAssignment.getRegister();
     int register = reg.getNumber();

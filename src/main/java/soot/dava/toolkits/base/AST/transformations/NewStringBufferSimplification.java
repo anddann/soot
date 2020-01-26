@@ -134,7 +134,7 @@ public class NewStringBufferSimplification extends DepthFirstAdapter {
         newVal = temp;
       } else {
         // create newVal + temp
-        newVal = new GAddExpr(newVal, temp);
+        newVal = new GAddExpr(newVal, temp,myGrimp,primTypeCollector);
       }
 
     }

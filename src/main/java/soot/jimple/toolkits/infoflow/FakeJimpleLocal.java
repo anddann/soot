@@ -45,7 +45,7 @@ public class FakeJimpleLocal extends JimpleLocal {
   }
 
   public FakeJimpleLocal(String name, Type t, Local realLocal, Object info) {
-    super(name, t, myScene);
+    super(name, t);
     this.realLocal = realLocal;
     this.info = info;
   }
@@ -56,14 +56,14 @@ public class FakeJimpleLocal extends JimpleLocal {
       return false;
     }
     if (o instanceof JimpleLocal) {
-      if (getName() != null && getType(myScene) != null) {
-        return getName().equals(((Local) o).getName()) && getType(myScene).equals(((Local) o).getType(myScene));
+      if (getName() != null && getType() != null) {
+        return getName().equals(((Local) o).getName()) && getType().equals(((Local) o).getType());
       } else if (getName() != null) {
-        return getName().equals(((Local) o).getName()) && ((Local) o).getType(myScene) == null;
-      } else if (getType(myScene) != null) {
-        return ((Local) o).getName() == null && getType(myScene).equals(((Local) o).getType(myScene));
+        return getName().equals(((Local) o).getName()) && ((Local) o).getType() == null;
+      } else if (getType() != null) {
+        return ((Local) o).getName() == null && getType().equals(((Local) o).getType());
       } else {
-        return ((Local) o).getName() == null && ((Local) o).getType(myScene) == null;
+        return ((Local) o).getName() == null && ((Local) o).getType() == null;
       }
     }
     return false;
@@ -75,7 +75,7 @@ public class FakeJimpleLocal extends JimpleLocal {
 
   /** Returns a clone of the current JimpleLocal. */
   public Object clone() {
-    return new FakeJimpleLocal(getName(), getType(myScene), realLocal, info);
+    return new FakeJimpleLocal(getName(), getType(), realLocal, info);
   }
 
   public Local getRealLocal() {

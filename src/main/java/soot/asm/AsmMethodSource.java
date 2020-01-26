@@ -209,7 +209,7 @@ final class AsmMethodSource implements MethodSource {
       } else {
         name = "l" + idx;
       }
-      l = myJimple.newLocal(name, myScene.getPrimTypeCollector().getUnknownType());
+      l = Jimple.newLocal(name, myScene.getPrimTypeCollector().getUnknownType());
       locals.put(i, l);
     }
     return l;
@@ -261,7 +261,7 @@ final class AsmMethodSource implements MethodSource {
     Local l = o.stack;
     if (l == null && !(v instanceof Local)) {
       l = o.stack = newStackLocal();
-      setUnit(o.insn, myJimple.newAssignStmt(l, v));
+      setUnit(o.insn, Jimple.newAssignStmt(l, v));
       o.updateBoxes();
     }
     return o;
@@ -272,7 +272,7 @@ final class AsmMethodSource implements MethodSource {
     Local l = o.stack;
     if (l == null && !(v instanceof Local) && !(v instanceof Constant)) {
       l = o.stack = newStackLocal();
-      setUnit(o.insn, myJimple.newAssignStmt(l, v));
+      setUnit(o.insn, Jimple.newAssignStmt(l, v));
       o.updateBoxes();
     }
     return o;
@@ -283,7 +283,7 @@ final class AsmMethodSource implements MethodSource {
     Local l = o.stack;
     if (l == null && !(v instanceof Constant)) {
       l = o.stack = newStackLocal();
-      setUnit(o.insn, myJimple.newAssignStmt(l, v));
+      setUnit(o.insn, Jimple.newAssignStmt(l, v));
       o.updateBoxes();
     }
     return o;
@@ -354,7 +354,7 @@ final class AsmMethodSource implements MethodSource {
 
   Local newStackLocal() {
     Integer idx = nextLocal++;
-    Local l = myJimple.newLocal("$stack" + idx, myScene.getPrimTypeCollector().getUnknownType());
+    Local l = Jimple.newLocal("$stack" + idx, myScene.getPrimTypeCollector().getUnknownType());
     locals.put(idx, l);
     return l;
   }
@@ -392,7 +392,7 @@ final class AsmMethodSource implements MethodSource {
       }
       Local stack = newStackLocal();
       opr.stack = stack;
-      AssignStmt as = myJimple.newAssignStmt(stack, opr.value);
+      AssignStmt as = Jimple.newAssignStmt(stack, opr.value);
       opr.updateBoxes();
       setUnit(opr.insn, as);
     }
@@ -410,11 +410,11 @@ final class AsmMethodSource implements MethodSource {
       SootFieldRef ref;
       if (insn.getOpcode() == GETSTATIC) {
         ref = myScene.makeFieldRef(declClass, insn.name, type, true);
-        val = myJimple.newStaticFieldRef(ref);
+        val = Jimple.newStaticFieldRef(ref);
       } else {
         Operand base = popLocal();
         ref = myScene.makeFieldRef(declClass, insn.name, type, false);
-        InstanceFieldRef ifr = myJimple.newInstanceFieldRef(base.stackOrValue(), ref);
+        InstanceFieldRef ifr = Jimple.newInstanceFieldRef(base.stackOrValue(), ref);
         val = ifr;
         base.addBox(ifr.getBaseBox());
         frame.in(base);
@@ -446,19 +446,19 @@ final class AsmMethodSource implements MethodSource {
       rvalue = popImmediate(type);
       if (!instance) {
         ref = myScene.makeFieldRef(declClass, insn.name, type, true);
-        val = myJimple.newStaticFieldRef(ref);
+        val = Jimple.newStaticFieldRef(ref);
         frame.in(rvalue);
       } else {
         Operand base = popLocal();
         ref = myScene.makeFieldRef(declClass, insn.name, type, false);
-        InstanceFieldRef ifr = myJimple.newInstanceFieldRef(base.stackOrValue(), ref);
+        InstanceFieldRef ifr = Jimple.newInstanceFieldRef(base.stackOrValue(), ref);
         val = ifr;
         base.addBox(ifr.getBaseBox());
         frame.in(rvalue, base);
       }
       opr = new Operand(insn, val);
       frame.out(opr);
-      AssignStmt as = myJimple.newAssignStmt(val, rvalue.stackOrValue());
+      AssignStmt as = Jimple.newAssignStmt(val, rvalue.stackOrValue());
       rvalue.addBox(as.getRightOpBox());
       if (!instance) {
         frame.boxes(as.getRightOpBox());
@@ -498,8 +498,8 @@ final class AsmMethodSource implements MethodSource {
     Local local = getLocal(insn.var);
     assignReadOps(local);
     if (!units.containsKey(insn)) {
-      AddExpr add = myJimple.newAddExpr(local, constantFactory.createIntConstant(insn.incr));
-      setUnit(insn, myJimple.newAssignStmt(local, add));
+      AddExpr add = Jimple.newAddExpr(local, constantFactory.createIntConstant(insn.incr));
+      setUnit(insn, Jimple.newAssignStmt(local, add));
     }
   }
 
@@ -554,7 +554,7 @@ final class AsmMethodSource implements MethodSource {
     if (out == null) {
       Operand indx = popImmediate();
       Operand base = popImmediate();
-      ArrayRef ar = myJimple.newArrayRef(base.stackOrValue(), indx.stackOrValue());
+      ArrayRef ar = Jimple.newArrayRef(base.stackOrValue(), indx.stackOrValue());
       indx.addBox(ar.getIndexBox());
       base.addBox(ar.getBaseBox());
       opr = new Operand(insn, ar);
@@ -581,10 +581,10 @@ final class AsmMethodSource implements MethodSource {
       Operand valu = dword ? popImmediateDual() : popImmediate();
       Operand indx = popImmediate();
       Operand base = popLocal();
-      ArrayRef ar = myJimple.newArrayRef(base.stackOrValue(), indx.stackOrValue());
+      ArrayRef ar = Jimple.newArrayRef(base.stackOrValue(), indx.stackOrValue());
       indx.addBox(ar.getIndexBox());
       base.addBox(ar.getBaseBox());
-      AssignStmt as = myJimple.newAssignStmt(ar, valu.stackOrValue());
+      AssignStmt as = Jimple.newAssignStmt(ar, valu.stackOrValue());
       valu.addBox(as.getRightOpBox());
       frame.in(valu, indx, base);
       frame.boxes(as.getRightOpBox(), ar.getIndexBox(), ar.getBaseBox());
@@ -674,33 +674,33 @@ final class AsmMethodSource implements MethodSource {
       Value v2 = op2.stackOrValue();
       BinopExpr binop;
       if (op >= IADD && op <= DADD) {
-        binop = myJimple.newAddExpr(v1, v2);
+        binop = Jimple.newAddExpr(v1, v2);
       } else if (op >= ISUB && op <= DSUB) {
-        binop = myJimple.newSubExpr(v1, v2);
+        binop = Jimple.newSubExpr(v1, v2);
       } else if (op >= IMUL && op <= DMUL) {
-        binop = myJimple.newMulExpr(v1, v2);
+        binop = Jimple.newMulExpr(v1, v2);
       } else if (op >= IDIV && op <= DDIV) {
-        binop = myJimple.newDivExpr(v1, v2);
+        binop = Jimple.newDivExpr(v1, v2);
       } else if (op >= IREM && op <= DREM) {
-        binop = myJimple.newRemExpr(v1, v2);
+        binop = Jimple.newRemExpr(v1, v2);
       } else if (op >= ISHL && op <= LSHL) {
-        binop = myJimple.newShlExpr(v1, v2);
+        binop = Jimple.newShlExpr(v1, v2);
       } else if (op >= ISHR && op <= LSHR) {
-        binop = myJimple.newShrExpr(v1, v2);
+        binop = Jimple.newShrExpr(v1, v2);
       } else if (op >= IUSHR && op <= LUSHR) {
-        binop = myJimple.newUshrExpr(v1, v2);
+        binop = Jimple.newUshrExpr(v1, v2);
       } else if (op >= IAND && op <= LAND) {
-        binop = myJimple.newAndExpr(v1, v2);
+        binop = Jimple.newAndExpr(v1, v2);
       } else if (op >= IOR && op <= LOR) {
-        binop = myJimple.newOrExpr(v1, v2);
+        binop = Jimple.newOrExpr(v1, v2);
       } else if (op >= IXOR && op <= LXOR) {
-        binop = myJimple.newXorExpr(v1, v2);
+        binop = Jimple.newXorExpr(v1, v2);
       } else if (op == LCMP) {
-        binop = myJimple.newCmpExpr(v1, v2);
+        binop = Jimple.newCmpExpr(v1, v2);
       } else if (op == FCMPL || op == DCMPL) {
-        binop = myJimple.newCmplExpr(v1, v2);
+        binop = Jimple.newCmplExpr(v1, v2);
       } else if (op == FCMPG || op == DCMPG) {
-        binop = myJimple.newCmpgExpr(v1, v2);
+        binop = Jimple.newCmpgExpr(v1, v2);
       } else {
         throw new AssertionError("Unknown binop: " + op);
       }
@@ -740,9 +740,9 @@ final class AsmMethodSource implements MethodSource {
       Value v1 = op1.stackOrValue();
       UnopExpr unop;
       if (op >= INEG && op <= DNEG) {
-        unop = myJimple.newNegExpr(v1);
+        unop = Jimple.newNegExpr(v1);
       } else if (op == ARRAYLENGTH) {
-        unop = myJimple.newLengthExpr(v1);
+        unop = Jimple.newLengthExpr(v1);
       } else {
         throw new AssertionError("Unknown unop: " + op);
       }
@@ -789,7 +789,7 @@ final class AsmMethodSource implements MethodSource {
         throw new AssertionError("Unknonw prim cast op: " + op);
       }
       Operand val = fromd ? popImmediateDual() : popImmediate();
-      CastExpr cast = myJimple.newCastExpr(val.stackOrValue(), totype);
+      CastExpr cast = Jimple.newCastExpr(val.stackOrValue(), totype);
       opr = new Operand(insn, cast);
       val.addBox(cast.getOpBox());
       frame.in(val);
@@ -812,7 +812,7 @@ final class AsmMethodSource implements MethodSource {
     StackFrame frame = getFrame(insn);
     if (!units.containsKey(insn)) {
       Operand val = dword ? popImmediateDual() : popImmediate();
-      ReturnStmt ret = myJimple.newReturnStmt(val.stackOrValue());
+      ReturnStmt ret = Jimple.newReturnStmt(val.stackOrValue());
       val.addBox(ret.getOpBox());
       frame.in(val);
       frame.boxes(ret.getOpBox());
@@ -829,7 +829,7 @@ final class AsmMethodSource implements MethodSource {
        * We can ignore NOP instructions, but for completeness, we handle them
        */
       if (!units.containsKey(insn)) {
-        units.put(insn, myJimple.newNopStmt());
+        units.put(insn, Jimple.newNopStmt());
       }
     } else if (op >= ACONST_NULL && op <= DCONST_1) {
       convertConstInsn(insn);
@@ -863,14 +863,14 @@ final class AsmMethodSource implements MethodSource {
       convertReturnInsn(insn);
     } else if (op == RETURN) {
       if (!units.containsKey(insn)) {
-        setUnit(insn, myJimple.newReturnVoidStmt());
+        setUnit(insn, Jimple.newReturnVoidStmt());
       }
     } else if (op == ATHROW) {
       StackFrame frame = getFrame(insn);
       Operand opr;
       if (!units.containsKey(insn)) {
         opr = popImmediate();
-        ThrowStmt ts = myJimple.newThrowStmt(opr.stackOrValue());
+        ThrowStmt ts = Jimple.newThrowStmt(opr.stackOrValue());
         opr.addBox(ts.getOpBox());
         frame.in(opr);
         frame.out(opr);
@@ -885,8 +885,8 @@ final class AsmMethodSource implements MethodSource {
       StackFrame frame = getFrame(insn);
       if (!units.containsKey(insn)) {
         Operand opr = popStackConst();
-        MonitorStmt ts = op == MONITORENTER ? myJimple.newEnterMonitorStmt(opr.stackOrValue())
-            : myJimple.newExitMonitorStmt(opr.stackOrValue());
+        MonitorStmt ts = op == MONITORENTER ? Jimple.newEnterMonitorStmt(opr.stackOrValue())
+            : Jimple.newExitMonitorStmt(opr.stackOrValue());
         opr.addBox(ts.getOpBox());
         frame.in(opr);
         frame.boxes(ts.getOpBox());
@@ -939,7 +939,7 @@ final class AsmMethodSource implements MethodSource {
             throw new AssertionError("Unknown NEWARRAY type!");
         }
         Operand size = popImmediate();
-        NewArrayExpr anew = myJimple.newNewArrayExpr(type, size.stackOrValue());
+        NewArrayExpr anew = Jimple.newNewArrayExpr(type, size.stackOrValue());
         size.addBox(anew.getSizeBox());
         frame.in(size);
         frame.boxes(anew.getSizeBox());
@@ -960,9 +960,9 @@ final class AsmMethodSource implements MethodSource {
     int op = insn.getOpcode();
     if (op == GOTO) {
       if (!units.containsKey(insn)) {
-        UnitBox box = myJimple.newStmtBox(null);
+        UnitBox box = Jimple.newStmtBox(null);
         labels.put(insn.label, box);
-        setUnit(insn, myJimple.newGotoStmt(box));
+        setUnit(insn, Jimple.newGotoStmt(box));
       }
       return;
     }
@@ -976,21 +976,21 @@ final class AsmMethodSource implements MethodSource {
         Operand val1 = popImmediate();
         Value v1 = val1.stackOrValue();
         if (op == IF_ICMPEQ) {
-          cond = myJimple.newEqExpr(v1, v);
+          cond = Jimple.newEqExpr(v1, v);
         } else if (op == IF_ICMPNE) {
-          cond = myJimple.newNeExpr(v1, v);
+          cond = Jimple.newNeExpr(v1, v);
         } else if (op == IF_ICMPLT) {
-          cond = myJimple.newLtExpr(v1, v);
+          cond = Jimple.newLtExpr(v1, v);
         } else if (op == IF_ICMPGE) {
-          cond = myJimple.newGeExpr(v1, v);
+          cond = Jimple.newGeExpr(v1, v);
         } else if (op == IF_ICMPGT) {
-          cond = myJimple.newGtExpr(v1, v);
+          cond = Jimple.newGtExpr(v1, v);
         } else if (op == IF_ICMPLE) {
-          cond = myJimple.newLeExpr(v1, v);
+          cond = Jimple.newLeExpr(v1, v);
         } else if (op == IF_ACMPEQ) {
-          cond = myJimple.newEqExpr(v1, v);
+          cond = Jimple.newEqExpr(v1, v);
         } else if (op == IF_ACMPNE) {
-          cond = myJimple.newNeExpr(v1, v);
+          cond = Jimple.newNeExpr(v1, v);
         } else {
           throw new AssertionError("Unknown if op: " + op);
         }
@@ -1000,21 +1000,21 @@ final class AsmMethodSource implements MethodSource {
         frame.in(val, val1);
       } else {
         if (op == IFEQ) {
-          cond = myJimple.newEqExpr(v, constantFactory.createIntConstant(0));
+          cond = Jimple.newEqExpr(v, constantFactory.createIntConstant(0));
         } else if (op == IFNE) {
-          cond = myJimple.newNeExpr(v, constantFactory.createIntConstant(0));
+          cond = Jimple.newNeExpr(v, constantFactory.createIntConstant(0));
         } else if (op == IFLT) {
-          cond = myJimple.newLtExpr(v, constantFactory.createIntConstant(0));
+          cond = Jimple.newLtExpr(v, constantFactory.createIntConstant(0));
         } else if (op == IFGE) {
-          cond = myJimple.newGeExpr(v, constantFactory.createIntConstant(0));
+          cond = Jimple.newGeExpr(v, constantFactory.createIntConstant(0));
         } else if (op == IFGT) {
-          cond = myJimple.newGtExpr(v, constantFactory.createIntConstant(0));
+          cond = Jimple.newGtExpr(v, constantFactory.createIntConstant(0));
         } else if (op == IFLE) {
-          cond = myJimple.newLeExpr(v, constantFactory.createIntConstant(0));
+          cond = Jimple.newLeExpr(v, constantFactory.createIntConstant(0));
         } else if (op == IFNULL) {
-          cond = myJimple.newEqExpr(v, constantFactory.getNullConstant());
+          cond = Jimple.newEqExpr(v, constantFactory.getNullConstant());
         } else if (op == IFNONNULL) {
-          cond = myJimple.newNeExpr(v, constantFactory.getNullConstant());
+          cond = Jimple.newNeExpr(v, constantFactory.getNullConstant());
         } else {
           throw new AssertionError("Unknown if op: " + op);
         }
@@ -1022,9 +1022,9 @@ final class AsmMethodSource implements MethodSource {
         frame.boxes(cond.getOp1Box());
         frame.in(val);
       }
-      UnitBox box = myJimple.newStmtBox(null);
+      UnitBox box = Jimple.newStmtBox(null);
       labels.put(insn.label, box);
-      setUnit(insn, myJimple.newIfStmt(cond, box));
+      setUnit(insn, Jimple.newIfStmt(cond, box));
     } else {
       if (op >= IF_ICMPEQ && op <= IF_ACMPNE) {
         frame.mergeIn(pop(), pop());
@@ -1095,12 +1095,12 @@ final class AsmMethodSource implements MethodSource {
       return;
     }
     Operand key = popImmediate();
-    UnitBox dflt = myJimple.newStmtBox(null);
+    UnitBox dflt = Jimple.newStmtBox(null);
 
     List<UnitBox> targets = new ArrayList<UnitBox>(insn.labels.size());
     labels.put(insn.dflt, dflt);
     for (LabelNode ln : insn.labels) {
-      UnitBox box = myJimple.newStmtBox(null);
+      UnitBox box = Jimple.newStmtBox(null);
       targets.add(box);
       labels.put(ln, box);
     }
@@ -1110,7 +1110,7 @@ final class AsmMethodSource implements MethodSource {
       keys.add(constantFactory.createIntConstant(i));
     }
 
-    LookupSwitchStmt lss = myJimple.newLookupSwitchStmt(key.stackOrValue(), keys, targets, dflt);
+    LookupSwitchStmt lss = Jimple.newLookupSwitchStmt(key.stackOrValue(), keys, targets, dflt, constantFactory);
     key.addBox(lss.getKeyBox());
     frame.in(key);
     frame.boxes(lss.getKeyBox());
@@ -1160,16 +1160,16 @@ final class AsmMethodSource implements MethodSource {
       ValueBox[] boxes = args == null ? null : new ValueBox[args.length];
       InvokeExpr invoke;
       if (!instance) {
-        invoke = myJimple.newStaticInvokeExpr(ref, argList);
+        invoke = Jimple.newStaticInvokeExpr(ref, argList);
       } else {
         Local base = (Local) args[args.length - 1].stackOrValue();
         InstanceInvokeExpr iinvoke;
         if (op == INVOKESPECIAL) {
-          iinvoke = myJimple.newSpecialInvokeExpr(base, ref, argList);
+          iinvoke = Jimple.newSpecialInvokeExpr(base, ref, argList);
         } else if (op == INVOKEVIRTUAL) {
-          iinvoke = myJimple.newVirtualInvokeExpr(base, ref, argList);
+          iinvoke = Jimple.newVirtualInvokeExpr(base, ref, argList);
         } else if (op == INVOKEINTERFACE) {
-          iinvoke = myJimple.newInterfaceInvokeExpr(base, ref, argList);
+          iinvoke = Jimple.newInterfaceInvokeExpr(base, ref, argList);
         } else {
           throw new AssertionError("Unknown invoke op:" + op);
         }
@@ -1215,7 +1215,7 @@ final class AsmMethodSource implements MethodSource {
     } else if (!(returnType instanceof VoidType)) {
       push(opr);
     } else if (!units.containsKey(insn)) {
-      setUnit(insn, myJimple.newInvokeStmt(opr.value));
+      setUnit(insn, Jimple.newInvokeStmt(opr.value));
     }
     /*
      * assign all read ops in case the method modifies any of the fields
@@ -1275,13 +1275,13 @@ final class AsmMethodSource implements MethodSource {
       InvokeExpr indy;
 
       if (bootstrap_model != null) {
-        indy = myJimple.newStaticInvokeExpr(bootstrap_model, methodArgs);
+        indy = Jimple.newStaticInvokeExpr(bootstrap_model, methodArgs);
       } else {
         // if not mimicking the LambdaMetaFactory, we model invokeDynamic method refs as static method references
         // of methods on the type SootClass.INVOKEDYNAMIC_DUMMY_CLASS_NAME
         SootMethodRef methodRef = myScene.makeMethodRef(bclass, insn.name, parameterTypes, returnType, true);
 
-        indy = myJimple.newDynamicInvokeExpr(bsmMethodRef, bsmMethodArgs, methodRef, insn.bsm.getTag(), methodArgs);
+        indy = Jimple.newDynamicInvokeExpr(bsmMethodRef, bsmMethodArgs, methodRef, insn.bsm.getTag(), methodArgs);
       }
 
       if (boxes != null) {
@@ -1323,7 +1323,7 @@ final class AsmMethodSource implements MethodSource {
     } else if (!(returnType instanceof VoidType)) {
       push(opr);
     } else if (!units.containsKey(insn)) {
-      setUnit(insn, myJimple.newInvokeStmt(opr.value));
+      setUnit(insn, Jimple.newInvokeStmt(opr.value));
     }
     /*
      * assign all read ops in case the method modifies any of the fields
@@ -1363,7 +1363,7 @@ final class AsmMethodSource implements MethodSource {
         sizes[dims] = popImmediate();
         sizeVals[dims] = sizes[dims].stackOrValue();
       }
-      NewMultiArrayExpr nm = myJimple.newNewMultiArrayExpr(t, Arrays.asList(sizeVals));
+      NewMultiArrayExpr nm = Jimple.newNewMultiArrayExpr(t, Arrays.asList(sizeVals));
       for (int i = 0; i != boxes.length; i++) {
         ValueBox vb = nm.getSizeBox(i);
         sizes[i].addBox(vb);
@@ -1392,15 +1392,15 @@ final class AsmMethodSource implements MethodSource {
       return;
     }
     Operand key = popImmediate();
-    UnitBox dflt = myJimple.newStmtBox(null);
+    UnitBox dflt = Jimple.newStmtBox(null);
     List<UnitBox> targets = new ArrayList<UnitBox>(insn.labels.size());
     labels.put(insn.dflt, dflt);
     for (LabelNode ln : insn.labels) {
-      UnitBox box = myJimple.newStmtBox(null);
+      UnitBox box = Jimple.newStmtBox(null);
       targets.add(box);
       labels.put(ln, box);
     }
-    TableSwitchStmt tss = myJimple.newTableSwitchStmt(key.stackOrValue(), insn.min, insn.max, targets, dflt);
+    TableSwitchStmt tss = Jimple.newTableSwitchStmt(key.stackOrValue(), insn.min, insn.max, targets, dflt);
     key.addBox(tss.getKeyBox());
     frame.in(key);
     frame.boxes(tss.getKeyBox());
@@ -1416,21 +1416,21 @@ final class AsmMethodSource implements MethodSource {
       Type t = AsmUtil.toJimpleRefType(insn.desc, myScene, primTypeCollector);
       Value val;
       if (op == NEW) {
-        val = myJimple.newNewExpr((RefType) t);
+        val = Jimple.newNewExpr((RefType) t);
       } else {
         Operand op1 = popImmediate();
         Value v1 = op1.stackOrValue();
         ValueBox vb;
         if (op == ANEWARRAY) {
-          NewArrayExpr expr = myJimple.newNewArrayExpr(t, v1);
+          NewArrayExpr expr = Jimple.newNewArrayExpr(t, v1);
           vb = expr.getSizeBox();
           val = expr;
         } else if (op == CHECKCAST) {
-          CastExpr expr = myJimple.newCastExpr(v1, t);
+          CastExpr expr = Jimple.newCastExpr(v1, t);
           vb = expr.getOpBox();
           val = expr;
         } else if (op == INSTANCEOF) {
-          InstanceOfExpr expr = myJimple.newInstanceOfExpr(v1, t);
+          InstanceOfExpr expr = Jimple.newInstanceOfExpr(v1, t);
           vb = expr.getOpBox();
           val = expr;
         } else {
@@ -1477,7 +1477,7 @@ final class AsmMethodSource implements MethodSource {
     Operand opr = dword ? popDual() : pop();
     Local local = getLocal(insn.var);
     if (!units.containsKey(insn)) {
-      DefinitionStmt as = myJimple.newAssignStmt(local, opr.stackOrValue());
+      DefinitionStmt as = Jimple.newAssignStmt(local, opr.stackOrValue());
       opr.addBox(as.getRightOpBox());
       frame.boxes(as.getRightOpBox());
       frame.in(opr);
@@ -1497,7 +1497,7 @@ final class AsmMethodSource implements MethodSource {
     } else if (op == RET) {
       /* we handle it, even thought it should be removed */
       if (!units.containsKey(insn)) {
-        setUnit(insn, myJimple.newRetStmt(getLocal(insn.var)));
+        setUnit(insn, Jimple.newRetStmt(getLocal(insn.var)));
       }
     } else {
       throw new AssertionError("Unknown var op: " + op);
@@ -1516,7 +1516,7 @@ final class AsmMethodSource implements MethodSource {
     // code
     if (inlineExceptionLabels.contains(ln)) {
       if (!units.containsKey(ln)) {
-        NopStmt nop = myJimple.newNopStmt();
+        NopStmt nop = Jimple.newNopStmt();
         setUnit(ln, nop);
       }
       return;
@@ -1526,9 +1526,9 @@ final class AsmMethodSource implements MethodSource {
     Operand[] out = frame.out();
     Operand opr;
     if (out == null) {
-      CaughtExceptionRef ref = myJimple.newCaughtExceptionRef();
+      CaughtExceptionRef ref = Jimple.newCaughtExceptionRef(myScene);
       Local stack = newStackLocal();
-      DefinitionStmt as = myJimple.newIdentityStmt(stack, ref);
+      DefinitionStmt as = Jimple.newIdentityStmt(stack, ref);
       opr = new Operand(ln, ref);
       opr.stack = stack;
       frame.out(opr);
@@ -1671,9 +1671,9 @@ final class AsmMethodSource implements MethodSource {
 
   private void handleInlineExceptionHandler(LabelNode ln, ArrayDeque<Edge> worklist) {
     // Catch the exception
-    CaughtExceptionRef ref = myJimple.newCaughtExceptionRef();
+    CaughtExceptionRef ref = Jimple.newCaughtExceptionRef(myScene);
     Local local = newStackLocal();
-    DefinitionStmt as = myJimple.newIdentityStmt(local, ref);
+    DefinitionStmt as = Jimple.newIdentityStmt(local, ref);
 
     Operand opr = new Operand(ln, ref);
     opr.stack = local;
@@ -1721,13 +1721,13 @@ final class AsmMethodSource implements MethodSource {
     int iloc = 0;
     if (!m.isStatic()) {
       Local l = getLocal(iloc++);
-      jbu.add(myJimple.newIdentityStmt(l, myJimple.newThisRef(m.getDeclaringClass().getType())));
+      jbu.add(Jimple.newIdentityStmt(l, Jimple.newThisRef(m.getDeclaringClass().getType())));
     }
     int nrp = 0;
     for (Object ot : m.getParameterTypes()) {
       Type t = (Type) ot;
       Local l = getLocal(iloc);
-      jbu.add(myJimple.newIdentityStmt(l, myJimple.newParameterRef(t, nrp++)));
+      jbu.add(Jimple.newIdentityStmt(l, Jimple.newParameterRef(t, nrp++)));
       if (AsmUtil.isDWord(t)) {
         iloc += 2;
       } else {
@@ -1744,8 +1744,8 @@ final class AsmMethodSource implements MethodSource {
     SootClass throwable = myScene.getSootClass("java.lang.Throwable");
     Map<LabelNode, Iterator<UnitBox>> handlers = new HashMap<LabelNode, Iterator<UnitBox>>(tryCatchBlocks.size());
     for (TryCatchBlockNode tc : tryCatchBlocks) {
-      UnitBox start = myJimple.newStmtBox(null);
-      UnitBox end = myJimple.newStmtBox(null);
+      UnitBox start = Jimple.newStmtBox(null);
+      UnitBox end = Jimple.newStmtBox(null);
       Iterator<UnitBox> hitr = handlers.get(tc.handler);
       if (hitr == null) {
         hitr = trapHandlers.get(tc.handler).iterator();
@@ -1753,7 +1753,7 @@ final class AsmMethodSource implements MethodSource {
       }
       UnitBox handler = hitr.next();
       SootClass cls = tc.type == null ? throwable : myScene.getSootClass(AsmUtil.toQualifiedName(tc.type));
-      Trap trap = myJimple.newTrap(cls, start, end, handler);
+      Trap trap = Jimple.newTrap(cls, start, end, handler);
       traps.add(trap);
       labels.put(tc.start, start);
       labels.put(tc.end, end);
@@ -1832,7 +1832,7 @@ final class AsmMethodSource implements MethodSource {
 
       // We need to jump to the original implementation
       Unit targetUnit = units.get(ln);
-      GotoStmt gotoImpl = myJimple.newGotoStmt(targetUnit);
+      GotoStmt gotoImpl = Jimple.newGotoStmt(targetUnit);
       body.getUnits().add(gotoImpl);
     }
 
@@ -1840,7 +1840,7 @@ final class AsmMethodSource implements MethodSource {
     if (labls.isEmpty()) {
       return;
     }
-    Unit end = myJimple.newNopStmt();
+    Unit end = Jimple.newNopStmt();
     body.getUnits().add(end);
     while (!labls.isEmpty()) {
       LabelNode ln = labls.poll();
@@ -1869,7 +1869,7 @@ final class AsmMethodSource implements MethodSource {
     if (!m.isConcrete()) {
       return null;
     }
-    JimpleBody jb = myJimple.newBody(m);
+    JimpleBody jb = Jimple.newBody(m, myPrinter, myOptions);
     /* initialize */
     int nrInsn = instructions.size();
     nextLocal = maxLocals;
@@ -1881,7 +1881,7 @@ final class AsmMethodSource implements MethodSource {
     body = jb;
     /* retrieve all trap handlers */
     for (TryCatchBlockNode tc : tryCatchBlocks) {
-      trapHandlers.put(tc.handler, myJimple.newStmtBox(null));
+      trapHandlers.put(tc.handler, Jimple.newStmtBox(null));
     }
     /* convert instructions */
     try {

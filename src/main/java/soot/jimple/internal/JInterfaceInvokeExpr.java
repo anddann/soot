@@ -33,11 +33,9 @@ import soot.ValueBox;
 import soot.jimple.Jimple;
 
 public class JInterfaceInvokeExpr extends AbstractInterfaceInvokeExpr {
-  private final Jimple myJimple;
 
-  public JInterfaceInvokeExpr(Value base, SootMethodRef methodRef, List<? extends Value> args, Jimple myJimple) {
-    super(myJimple.newLocalBox(base), methodRef, new ValueBox[args.size()]);
-    this.myJimple = myJimple;
+  public JInterfaceInvokeExpr(Value base, SootMethodRef methodRef, List<? extends Value> args) {
+    super(Jimple.newLocalBox(base), methodRef, new ValueBox[args.size()]);
 
     // Check that the method's class is resolved enough
     // CheckLevel returns without doing anything because we can be not 'done' resolving
@@ -49,7 +47,7 @@ public class JInterfaceInvokeExpr extends AbstractInterfaceInvokeExpr {
     }
 
     for (int i = 0; i < args.size(); i++) {
-      this.argBoxes[i] = myJimple.newImmediateBox(args.get(i));
+      this.argBoxes[i] = Jimple.newImmediateBox(args.get(i));
     }
   }
 
@@ -60,7 +58,7 @@ public class JInterfaceInvokeExpr extends AbstractInterfaceInvokeExpr {
       argList.add(i, Jimple.cloneIfNecessary(getArg(i)));
     }
 
-    return new JInterfaceInvokeExpr(Jimple.cloneIfNecessary(getBase()), methodRef, argList,myJimple);
+    return new JInterfaceInvokeExpr(Jimple.cloneIfNecessary(getBase()), methodRef, argList);
   }
 
 }

@@ -328,7 +328,7 @@ public class ExprVisitor implements ExprSwitch {
 
     // Double-check that we are not carrying out any arithmetic operations
     // on non-primitive values
-    if (!(secondOperand.getType(myScene) instanceof PrimType)) {
+    if (!(secondOperand.getType() instanceof PrimType)) {
       throw new RuntimeException("Invalid value type for primitibe operation");
     }
 
@@ -449,7 +449,7 @@ public class ExprVisitor implements ExprSwitch {
       Register orgDestReg = destinationReg;
 
       // We may need a temporary register if we need a typecast
-      if (isBiggerThan(PrimitiveType.getByName(secondOperand.getType(myScene).toString()), destRegType)) {
+      if (isBiggerThan(PrimitiveType.getByName(secondOperand.getType().toString()), destRegType)) {
         destinationReg = regAlloc.asTmpReg(myScene.getPrimTypeCollector().getIntType());
       }
 
@@ -584,7 +584,7 @@ public class ExprVisitor implements ExprSwitch {
     } else if (firstReg.isDouble()) {
       opc = Opcode.valueOf(opcodePrefix + "_DOUBLE");
     } else {
-      throw new RuntimeException("unsupported type of operands for cmp* opcode: " + firstOperand.getType(myScene));
+      throw new RuntimeException("unsupported type of operands for cmp* opcode: " + firstOperand.getType());
     }
     return new Insn23x(opc, destinationReg, firstReg, secondReg);
   }
@@ -605,7 +605,7 @@ public class ExprVisitor implements ExprSwitch {
     constantV.setOrigStmt(origStmt);
     Register sourceReg = regAlloc.asImmediate(source, constantV);
     Opcode opc;
-    Type type = source.getType(myScene);
+    Type type = source.getType();
     if (type instanceof IntegerType) {
       opc = Opcode.NEG_INT;
     } else if (type instanceof FloatType) {
@@ -678,13 +678,13 @@ public class ExprVisitor implements ExprSwitch {
     // Fix null_types on the fly. This should not be necessary, but better
     // be safe
     // than sorry and it's easy to fix it here.
-    if (castType == PrimitiveType.INT && source.getType(myScene) instanceof NullType) {
+    if (castType == PrimitiveType.INT && source.getType() instanceof NullType) {
       source = constantFactory.createIntConstant(0);
     }
 
     // select fitting conversion opcode, depending on the source and cast
     // type
-    Type srcType = source.getType(myScene);
+    Type srcType = source.getType();
     if (srcType instanceof RefType) {
       throw new RuntimeException("Trying to cast reference type " + srcType + " to a primitive");
     }
@@ -794,7 +794,7 @@ public class ExprVisitor implements ExprSwitch {
       baseType = at.getElementType();
       numDimensions++;
     }
-    ArrayType arrayType = ArrayType.v(baseType, numDimensions,myScene);
+    ArrayType arrayType = ArrayType.v(baseType, numDimensions);
 
     TypeReference arrayTypeItem = DexPrinter.toTypeReference(arrayType);
     stmtV.addInsn(new Insn22c(Opcode.NEW_ARRAY, destinationReg, sizeReg, arrayTypeItem), origStmt);
@@ -810,7 +810,7 @@ public class ExprVisitor implements ExprSwitch {
     }
     short dimensions = (short) nmae.getSizeCount();
     // get array base type
-    ArrayType arrayType = ArrayType.v(nmae.getBaseType().baseType, dimensions,myScene);
+    ArrayType arrayType = ArrayType.v(nmae.getBaseType().baseType, dimensions);
     TypeReference arrayTypeItem = DexPrinter.toTypeReference(arrayType);
     // get the dimension size registers
     List<Register> dimensionSizeRegs = new ArrayList<Register>();

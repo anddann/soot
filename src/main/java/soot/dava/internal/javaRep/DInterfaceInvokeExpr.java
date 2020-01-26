@@ -41,7 +41,7 @@ public class DInterfaceInvokeExpr extends GInterfaceInvokeExpr {
   }
 
   public void toString(UnitPrinter up) {
-    if (getBase().getType(myScene) instanceof NullType) {
+    if (getBase().getType() instanceof NullType) {
       // OL: I don't know what this is for; I'm just refactoring the
       // original code. An explanation here would be welcome.
       up.literal("((");
@@ -79,7 +79,7 @@ public class DInterfaceInvokeExpr extends GInterfaceInvokeExpr {
   }
 
   public String toString() {
-    if (getBase().getType(myScene) instanceof NullType) {
+    if (getBase().getType() instanceof NullType) {
       StringBuffer b = new StringBuffer();
 
       b.append("((");

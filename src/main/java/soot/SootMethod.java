@@ -676,7 +676,8 @@ public class SootMethod extends AbstractHost implements ClassMember, Numberable,
     return subSig;
   }
 
-  public static String getSubSignature(String name, List<Type> params, Type returnType,Scene myScene) {
+  public static String getSubSignature(String name, List<Type> params, Type returnType) {
+    Scene myScene = returnType.getMyScene();
     return getSubSignatureImpl(name, params, returnType,myScene);
   }
 

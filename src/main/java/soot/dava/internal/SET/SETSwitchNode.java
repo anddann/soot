@@ -32,10 +32,7 @@ import soot.Value;
 import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.AST.ASTSwitchNode;
 import soot.dava.internal.asg.AugmentedStmt;
-import soot.dava.toolkits.base.AST.ASTWalker;
-import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.finders.SwitchNode;
-import soot.jimple.Jimple;
 import soot.util.IterableSet;
 
 public class SETSwitchNode extends SETDagNode {
@@ -60,7 +57,7 @@ public class SETSwitchNode extends SETDagNode {
     return new IterableSet();
   }
 
-  public ASTNode emit_AST(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
+  public ASTNode emit_AST() {
     LinkedList<Object> indexList = new LinkedList<Object>();
     Map<Object, List<Object>> index2ASTBody = new HashMap<Object, List<Object>>();
 

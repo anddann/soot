@@ -58,7 +58,7 @@ public abstract class ConditionalJumpInstruction extends JumpInstruction impleme
     } else {
       // set marker unit to swap real gotostmt with otherwise
       body.addDeferredJimplification(this);
-      markerUnit = myJimple.newNopStmt();
+      markerUnit = Jimple.newNopStmt();
       unit = markerUnit;
       // beginUnit = markerUnit;
       // endUnit = markerUnit;

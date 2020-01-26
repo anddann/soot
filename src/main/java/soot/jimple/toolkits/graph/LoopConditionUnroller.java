@@ -118,7 +118,7 @@ public class LoopConditionUnroller extends BodyTransformer {
    * @return the newly inserted <code>Goto</code>
    */
   private Unit insertGotoAfter(Unit node, Unit target) {
-    Unit newGoto = myJimple.newGotoStmt(target);
+    Unit newGoto = Jimple.newGotoStmt(target);
     body.getUnits().insertAfter(newGoto, node);
     return newGoto;
   }

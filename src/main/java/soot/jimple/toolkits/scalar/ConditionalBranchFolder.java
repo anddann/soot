@@ -38,7 +38,6 @@ import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
 import soot.jimple.Stmt;
 import soot.jimple.StmtBody;
-import soot.options.Options;
 import soot.util.Chain;
 
 public class ConditionalBranchFolder extends BodyTransformer {
@@ -74,7 +73,7 @@ public class ConditionalBranchFolder extends BodyTransformer {
 
           if (((IntConstant) cond).value == 1) {
             // if condition always true, convert if to goto
-            Stmt newStmt = myJimple.newGotoStmt(ifs.getTarget());
+            Stmt newStmt = Jimple.newGotoStmt(ifs.getTarget());
             units.insertAfter(newStmt, stmt);
             numTrue++;
           } else {

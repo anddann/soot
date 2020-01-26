@@ -25,7 +25,6 @@ package soot.jimple;
 import com.google.inject.assistedinject.Assisted;
 
 import soot.PrimTypeCollector;
-import soot.Scene;
 import soot.Type;
 import soot.util.Switch;
 
@@ -174,7 +173,7 @@ public class IntConstant extends ArithmeticConstant {
     return new Integer(value).toString();
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return primTypeCollector.getIntType();
   }
 

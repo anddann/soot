@@ -135,7 +135,7 @@ public class AllVariableUses extends DepthFirstAdapter {
     } // end of going through all FieldRef uses in switch key
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       // in the case of stmtts in a stmtt sequence each stmt is considered

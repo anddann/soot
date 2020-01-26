@@ -44,7 +44,7 @@ public class TypeCastingError extends DepthFirstAdapter {
     this.primTypeCollector = primTypeCollector;
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       if (!(s instanceof DefinitionStmt)) {
@@ -62,7 +62,7 @@ public class TypeCastingError extends DepthFirstAdapter {
       Value right = rightBox.getValue();
       Value left = leftBox.getValue();
 
-      if (!(left.getType(myScene) instanceof PrimType && right.getType(myScene) instanceof PrimType)) {
+      if (!(left.getType() instanceof PrimType && right.getType() instanceof PrimType)) {
         // only interested in prim type casting errors
         if (myDebug) {
           System.out.println("\tDefinition stmt does not contain prims no need to modify");
@@ -70,8 +70,8 @@ public class TypeCastingError extends DepthFirstAdapter {
         continue;
       }
 
-      Type leftType = left.getType(myScene);
-      Type rightType = right.getType(myScene);
+      Type leftType = left.getType();
+      Type rightType = right.getType();
       if (myDebug) {
         System.out.println("Left type is: " + leftType);
       }

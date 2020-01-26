@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import soot.Local;
+import soot.Scene;
 import soot.Value;
 import soot.dava.internal.AST.ASTAggregatedCondition;
 import soot.dava.internal.AST.ASTCondition;
@@ -50,6 +51,7 @@ import soot.dava.internal.AST.ASTWhileNode;
 import soot.dava.internal.SET.SETNodeLabel;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DAbruptStmt;
+import soot.dava.toolkits.base.AST.traversals.ClosestAbruptTargetFinder;
 import soot.jimple.RetStmt;
 import soot.jimple.ReturnStmt;
 import soot.jimple.ReturnVoidStmt;
@@ -70,6 +72,10 @@ public abstract class StructuredAnalysis<E> {
   public static boolean DEBUG_WHILE = false;
   public static boolean DEBUG_STATEMENTS = false;
   public static boolean DEBUG_TRY = false;
+
+  //FIXME constructor and child
+  protected Scene myScene;
+  protected ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
   /*
    * public static boolean DEBUG = true; public static boolean DEBUG_IF = true; public static boolean DEBUG_WHILE = true;
    * public static boolean DEBUG_STATEMENTS = true; public static boolean DEBUG_TRY = true; /* /** Whenever an abrupt edge is
@@ -86,7 +92,7 @@ public abstract class StructuredAnalysis<E> {
   // storing before and after sets for each stmt or ASTNode
   HashMap<Object, DavaFlowSet<E>> beforeSets, afterSets;
 
-  public StructuredAnalysis() {
+  public StructuredAnalysis(Scene myScene, ClosestAbruptTargetFinder myClosestAbruptTargetFinder) {
     beforeSets = new HashMap<Object, DavaFlowSet<E>>();
     afterSets = new HashMap<Object, DavaFlowSet<E>>();
     MERGETYPE = UNDEFINED;
@@ -97,6 +103,8 @@ public abstract class StructuredAnalysis<E> {
     if (MERGETYPE == UNDEFINED) {
       throw new RuntimeException("MERGETYPE UNDEFINED");
     }
+    this.myScene = myScene;
+    this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
   }
 
   /*

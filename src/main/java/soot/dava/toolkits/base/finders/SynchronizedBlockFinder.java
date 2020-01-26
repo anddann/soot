@@ -753,7 +753,7 @@ public class SynchronizedBlockFinder implements FactFinder {
                   while (localIt.hasNext()) {
                     Local local = (Local) localIt.next();
                     if (local.toString().compareTo(leftOp.toString()) == 0) {
-                      Type t = local.getType(myScene);
+                      Type t = local.getType();
 
                       typeName = t.toString();
                       break;
@@ -976,7 +976,7 @@ public class SynchronizedBlockFinder implements FactFinder {
 
     // if not a caught exception of type throwable we have a problem
     if (!((asnFrom instanceof CaughtExceptionRef)
-        && (((RefType) ((CaughtExceptionRef) asnFrom).getType(myScene)).getSootClass().getName().equals(THROWABLE)))) {
+        && (((RefType) ((CaughtExceptionRef) asnFrom).getType()).getSootClass().getName().equals(THROWABLE)))) {
       // System.out.println("here4");
       return false;
     }

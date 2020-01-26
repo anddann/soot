@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.Set;
 
 import soot.Local;
-import soot.NullType;
 import soot.PrimTypeCollector;
 import soot.Scene;
 import soot.SootMethod;
@@ -230,7 +229,7 @@ public class IFDSUninitializedVariables
 
   @Override
   public Local createZeroValue() {
-    return new JimpleLocal("<<zero>>", primTypeCollector.getNullType(), myScene);
+    return new JimpleLocal("<<zero>>", primTypeCollector.getNullType());
   }
 
 }

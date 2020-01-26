@@ -62,7 +62,7 @@ public class IdentityCastEliminator extends BodyTransformer {
         if (assignStmt.getLeftOp() instanceof Local && assignStmt.getRightOp() instanceof CastExpr) {
           CastExpr ce = (CastExpr) assignStmt.getRightOp();
 
-          Type orgType = ce.getOp().getType(myScene);
+          Type orgType = ce.getOp().getType();
           Type newType = ce.getCastType();
 
           // If this a cast such as a = (X) a, we can remove the whole line.

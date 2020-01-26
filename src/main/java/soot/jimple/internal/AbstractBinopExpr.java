@@ -36,12 +36,10 @@ import soot.jimple.Expr;
 public abstract class AbstractBinopExpr implements Expr {
   protected ValueBox op1Box;
   protected ValueBox op2Box;
-  protected final PrimTypeCollector primTypeCollector;
 
-  public AbstractBinopExpr(ValueBox op1Box, ValueBox op2Box, PrimTypeCollector primTypeCollector) {
+  public AbstractBinopExpr(ValueBox op1Box, ValueBox op2Box) {
     this.op1Box = op1Box;
     this.op2Box = op2Box;
-    this.primTypeCollector = primTypeCollector;
   }
 
   public Value getOp1() {

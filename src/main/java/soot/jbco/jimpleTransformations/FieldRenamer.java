@@ -292,7 +292,7 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
       final SootMethod staticInitializerMethod = myScene.makeSootMethod(SootMethod.staticInitializerName,
           Collections.emptyList(),  myScene.getPrimTypeCollector().getVoidType(), Modifier.STATIC);
       sootClass.addMethod(staticInitializerMethod);
-      body = myJimple.newBody(staticInitializerMethod);
+      body = Jimple.newBody(staticInitializerMethod, myPrinter, myOptions);
       staticInitializerMethod.setActiveBody(body);
     } else {
       body = sootClass.getMethodByName(SootMethod.staticInitializerName).getActiveBody();
@@ -300,19 +300,19 @@ public class FieldRenamer extends SceneTransformer implements IJbcoTransform {
 
     final PatchingChain<Unit> units = body.getUnits();
     if (field.getType() instanceof IntegerType) {
-      units.addFirst(myJimple.newAssignStmt(myJimple.newStaticFieldRef(field.makeRef()), constantFactory.createIntConstant(value ? 1 : 0)));
+      units.addFirst(Jimple.newAssignStmt(Jimple.newStaticFieldRef(field.makeRef()), constantFactory.createIntConstant(value ? 1 : 0)));
     } else {
-      Local bool = myJimple.newLocal("boolLcl", booleanWrapperRefType);
+      Local bool = Jimple.newLocal("boolLcl", booleanWrapperRefType);
       body.getLocals().add(bool);
 
       final SootMethod booleanWrapperConstructor = booleanWrapperRefType.getSootClass().getMethod("void <init>(boolean)");
-      units.addFirst(myJimple.newAssignStmt(myJimple.newStaticFieldRef(field.makeRef()), bool));
-      units.addFirst(myJimple.newInvokeStmt(
+      units.addFirst(Jimple.newAssignStmt(Jimple.newStaticFieldRef(field.makeRef()), bool));
+      units.addFirst(Jimple.newInvokeStmt(
           myJimple.newSpecialInvokeExpr(bool, booleanWrapperConstructor.makeRef(), constantFactory.createIntConstant(value ? 1 : 0))));
-      units.addFirst(myJimple.newAssignStmt(bool, myJimple.newNewExpr(booleanWrapperRefType)));
+      units.addFirst(Jimple.newAssignStmt(bool, Jimple.newNewExpr(booleanWrapperRefType)));
     }
     if (addStaticInitializer) {
-      units.addLast(myJimple.newReturnVoidStmt());
+      units.addLast(Jimple.newReturnVoidStmt());
     }
   }
 

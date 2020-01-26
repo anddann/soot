@@ -24,6 +24,7 @@ package soot.dava.toolkits.base.AST.structuredAnalysis;
 
 import soot.Local;
 import soot.PrimType;
+import soot.Scene;
 import soot.SootField;
 import soot.dava.DavaFlowAnalysisException;
 
@@ -44,11 +45,11 @@ public class CPVariable {
     }
   }
 
-  public CPVariable(Local local) {
+  public CPVariable(Local local, Scene myScene) {
     this.field = null;
     this.local = local;
 
-    if (!(local.getType(myScene) instanceof PrimType)) {
+    if (!(local.getType() instanceof PrimType)) {
       throw new DavaFlowAnalysisException("Variables managed for CP should only be primitives");
     }
 

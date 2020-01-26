@@ -283,7 +283,7 @@ public class RectangularArrayFinder extends SceneTransformer {
     while (localIt.hasNext()) {
       Local local = localIt.next();
 
-      Type type = local.getType(myScene);
+      Type type = local.getType();
 
       if (type instanceof ArrayType) {
         if (((ArrayType) type).numDimensions > 1) {
@@ -347,7 +347,7 @@ public class RectangularArrayFinder extends SceneTransformer {
         Value leftOp = ((DefinitionStmt) s).getLeftOp();
         Value rightOp = ((DefinitionStmt) s).getRightOp();
 
-        if (!(leftOp.getType(myScene) instanceof ArrayType) && !(rightOp.getType(myScene) instanceof ArrayType)) {
+        if (!(leftOp.getType() instanceof ArrayType) && !(rightOp.getType() instanceof ArrayType)) {
           continue;
         }
 
@@ -357,8 +357,8 @@ public class RectangularArrayFinder extends SceneTransformer {
         /* kick out the possible cast. */
         if ((leftOp instanceof Local) && (rightOp instanceof Local)) {
           if (arrayLocal.contains(leftOp) && arrayLocal.contains(rightOp)) {
-            int leftDims = ((ArrayType) ((Local) leftOp).getType(myScene)).numDimensions;
-            int rightDims = ((ArrayType) ((Local) rightOp).getType(myScene)).numDimensions;
+            int leftDims = ((ArrayType) ((Local) leftOp).getType()).numDimensions;
+            int rightDims = ((ArrayType) ((Local) rightOp).getType()).numDimensions;
 
             to = new MethodLocal(method, (Local) leftOp);
             from = new MethodLocal(method, (Local) rightOp);
@@ -451,8 +451,8 @@ public class RectangularArrayFinder extends SceneTransformer {
         } else if ((leftOp instanceof FieldRef) && (rightOp instanceof Local)) {
           /* For field reference, we can make conservative assumption that all instance fieldRef use the same node. */
           if (arrayLocal.contains(rightOp)) {
-            Type ftype = ((FieldRef) leftOp).getType(myScene);
-            Type ltype = ((Local) rightOp).getType(myScene);
+            Type ftype = ((FieldRef) leftOp).getType();
+            Type ltype = ((Local) rightOp).getType();
 
             to = ((FieldRef) leftOp).getField();
             from = new MethodLocal(method, (Local) rightOp);
@@ -467,8 +467,8 @@ public class RectangularArrayFinder extends SceneTransformer {
           }
         } else if ((leftOp instanceof Local) && (rightOp instanceof FieldRef)) {
           if (arrayLocal.contains(leftOp)) {
-            Type ftype = ((FieldRef) rightOp).getType(myScene);
-            Type ltype = ((Local) leftOp).getType(myScene);
+            Type ftype = ((FieldRef) rightOp).getType();
+            Type ltype = ((Local) leftOp).getType();
 
             to = new MethodLocal(method, (Local) leftOp);
             from = ((FieldRef) rightOp).getField();
@@ -495,8 +495,8 @@ public class RectangularArrayFinder extends SceneTransformer {
           from = new MethodLocal(method, rOp);
 
           if (arrayLocal.contains(leftOp) && arrayLocal.contains(rOp)) {
-            ArrayType lat = (ArrayType) leftOp.getType(myScene);
-            ArrayType rat = (ArrayType) rOp.getType(myScene);
+            ArrayType lat = (ArrayType) leftOp.getType();
+            ArrayType rat = (ArrayType) rOp.getType();
 
             if (lat.numDimensions == rat.numDimensions) {
               ehmdg.addMutualEdge(from, to);
@@ -536,7 +536,7 @@ public class RectangularArrayFinder extends SceneTransformer {
     Iterator<Local> localsIt = locals.iterator();
     while (localsIt.hasNext()) {
       Local local = localsIt.next();
-      Type type = local.getType(myScene);
+      Type type = local.getType();
       if (!(type instanceof ArrayType)) {
         continue;
       }
@@ -591,7 +591,7 @@ public class RectangularArrayFinder extends SceneTransformer {
           break searchblock;
         }
 
-        ArrayType localtype = (ArrayType) local.getType(myScene);
+        ArrayType localtype = (ArrayType) local.getType();
         Type basetype = localtype.baseType;
 
         Local[] tmplocals = new Local[firstdim];
@@ -733,7 +733,7 @@ public class RectangularArrayFinder extends SceneTransformer {
     /* sequentially search and replace the sub dimension assignment */
     {
       /* change the first one, reset the right op */
-      ArrayType atype = (ArrayType) local.getType(myScene);
+      ArrayType atype = (ArrayType) local.getType();
       List sizes = new ArrayList(2);
       sizes.add(constantFactory.createIntConstant(firstdim));
       sizes.add(constantFactory.createIntConstant(seconddim));
@@ -753,7 +753,7 @@ public class RectangularArrayFinder extends SceneTransformer {
         Value rightOp = ((AssignStmt) curstmt).getRightOp();
 
         if (tmplocals[curdim].equals(leftOp) && (rightOp instanceof NewArrayExpr)) {
-          ArrayRef arexpr = new JArrayRef(local, constantFactory.createIntConstant(curdim), myJimple, primTypeCollector, myScene);
+          ArrayRef arexpr = new JArrayRef(local, constantFactory.createIntConstant(curdim));
           ((AssignStmt) curstmt).setRightOp(arexpr);
           tmpcur = (Local) leftOp;
         } else if ((leftOp instanceof ArrayRef) && (rightOp.equals(tmpcur))) {

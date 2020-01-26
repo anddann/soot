@@ -84,7 +84,7 @@ abstract public class AbstractInvokeExpr implements InvokeExpr {
     return argBoxes[index];
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return methodRef.returnType();
   }
 

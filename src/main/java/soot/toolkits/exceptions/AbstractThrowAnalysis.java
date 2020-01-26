@@ -52,7 +52,7 @@ public abstract class AbstractThrowAnalysis implements ThrowAnalysis {
 
   public ThrowableSet mightThrowExplicitly(ThrowStmt t) {
     Value thrownExpression = t.getOp();
-    Type thrownType = thrownExpression.getType(myScene);
+    Type thrownType = thrownExpression.getType();
     if (thrownType == null || thrownType instanceof UnknownType) {
       // We can't identify the type of thrownExpression, so...
       return myManager.ALL_THROWABLES;

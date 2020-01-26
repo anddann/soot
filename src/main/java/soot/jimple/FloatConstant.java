@@ -26,7 +26,6 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import soot.PrimTypeCollector;
-import soot.Scene;
 import soot.Type;
 import soot.util.Switch;
 
@@ -166,7 +165,7 @@ public class FloatConstant extends RealConstant {
   }
 
   @Override
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return primTypeCollector.getFloatType();
   }
 

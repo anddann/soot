@@ -137,7 +137,7 @@ public class ConstructorConfuser extends BodyTransformer implements IJbcoTransfo
           Local bl = ((LoadInst) prev).getLocal();
           Map<Local, Local> locals = soot.jbco.Main.methods2Baf2JLocals.get(b.getMethod());
           if (locals != null && locals.containsKey(bl)) {
-            Type t = ((Local) locals.get(bl)).getType(myScene);
+            Type t = ((Local) locals.get(bl)).getType();
             if (t instanceof RefType && ((RefType) t).getSootClass().getName().equals(origClass.getName())) {
               units.insertBefore(myBaf.newDup1Inst(primTypeCollector.getRefType()), sii);
               Unit ifinst = myBaf.newIfNullInst(sii);

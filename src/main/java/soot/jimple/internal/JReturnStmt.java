@@ -30,19 +30,17 @@ import soot.jimple.*;
 import soot.util.Switch;
 
 public class JReturnStmt extends AbstractOpStmt implements ReturnStmt {
-  private Jimple myJimple;
 
-  public JReturnStmt(Value returnValue, Jimple myJimple) {
-    this(myJimple.newImmediateBox(returnValue), myJimple);
+  public JReturnStmt(Value returnValue) {
+    this(Jimple.newImmediateBox(returnValue));
   }
 
-  protected JReturnStmt(ValueBox returnValueBox, Jimple myJimple) {
+  protected JReturnStmt(ValueBox returnValueBox) {
     super(returnValueBox);
-    this.myJimple = myJimple;
   }
 
   public Object clone() {
-    return new JReturnStmt(Jimple.cloneIfNecessary(getOp()),myJimple);
+    return new JReturnStmt(Jimple.cloneIfNecessary(getOp()));
   }
 
   public String toString() {
@@ -62,7 +60,7 @@ public class JReturnStmt extends AbstractOpStmt implements ReturnStmt {
   public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
     ((ConvertToBaf) (getOp())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
 
-    Unit u = myBaf.newReturnInst(getOp().getType(myScene));
+    Unit u = myBaf.newReturnInst(getOp().getType());
     u.addAllTagsOf(this);
     out.add(u);
   }

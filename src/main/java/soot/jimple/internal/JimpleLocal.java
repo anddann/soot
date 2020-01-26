@@ -10,12 +10,12 @@ package soot.jimple.internal;
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -35,109 +35,120 @@ import soot.util.Numberer;
 import soot.util.Switch;
 
 public class JimpleLocal implements Local, ConvertToBaf {
-  protected String name;
-  Type type;
-  private Scene myScene;
+    protected String name;
+    Type type;
 
-  /** Constructs a JimpleLocal of the given name and type. */
-  public JimpleLocal(String name, Type type, Scene myScene) {
-    this.myScene = myScene;
-    setName(name);
-    setType(type);
-    Numberer<Local> numberer = myScene.getLocalNumberer();
-    if (numberer != null) {
-      numberer.add(this);
+    /**
+     * Constructs a JimpleLocal of the given name and type.
+     */
+    public JimpleLocal(String name, Type type) {
+        setName(name);
+        setType(type);
+        Numberer<Local> numberer = type.getMyScene().getLocalNumberer();
+        if (numberer != null) {
+            numberer.add(this);
+        }
     }
-  }
 
-  /** Returns true if the given object is structurally equal to this one. */
-  @Override
-  public boolean equivTo(Object o) {
-    return this.equals(o);
-  }
+    /**
+     * Returns true if the given object is structurally equal to this one.
+     */
+    @Override
+    public boolean equivTo(Object o) {
+        return this.equals(o);
+    }
 
-  /**
-   * Returns a hash code for this object, consistent with structural equality.
-   */
-  @Override
-  public int equivHashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((name == null) ? 0 : name.hashCode());
-    result = prime * result + ((type == null) ? 0 : type.hashCode());
-    return result;
-  }
+    /**
+     * Returns a hash code for this object, consistent with structural equality.
+     */
+    @Override
+    public int equivHashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
 
-  /** Returns a clone of the current JimpleLocal. */
-  @Override
-  public Object clone() {
-    // do not intern the name again
-    JimpleLocal local = new JimpleLocal(null, type, myScene);
-    local.name = name;
-    return local;
-  }
+    /**
+     * Returns a clone of the current JimpleLocal.
+     */
+    @Override
+    public Object clone() {
+        // do not intern the name again
+        JimpleLocal local = new JimpleLocal(null, type);
+        local.name = name;
+        return local;
+    }
 
-  /** Returns the name of this object. */
-  @Override
-  public String getName() {
-    return name;
-  }
+    /**
+     * Returns the name of this object.
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
 
-  /** Sets the name of this object as given. */
-  @Override
-  public void setName(String name) {
-    this.name = (name == null) ? null : name.intern();
-  }
+    /**
+     * Sets the name of this object as given.
+     */
+    @Override
+    public void setName(String name) {
+        this.name = (name == null) ? null : name.intern();
+    }
 
-  /** Returns the type of this local.
-   * @param myScene*/
-  @Override
-  public Type getType(Scene myScene) {
-    return type;
-  }
+    /**
+     * Returns the type of this local.
+     */
+    @Override
+    public Type getType() {
+        return type;
+    }
 
-  /** Sets the type of this local. */
-  @Override
-  public void setType(Type t) {
-    this.type = t;
-  }
+    /**
+     * Sets the type of this local.
+     */
+    @Override
+    public void setType(Type t) {
+        this.type = t;
+    }
 
-  @Override
-  public String toString() {
-    return getName();
-  }
+    @Override
+    public String toString() {
+        return getName();
+    }
 
-  @Override
-  public void toString(UnitPrinter up) {
-    up.local(this);
-  }
+    @Override
+    public void toString(UnitPrinter up) {
+        up.local(this);
+    }
 
-  @Override
-  public final List<ValueBox> getUseBoxes() {
-    return Collections.emptyList();
-  }
+    @Override
+    public final List<ValueBox> getUseBoxes() {
+        return Collections.emptyList();
+    }
 
-  @Override
-  public void apply(Switch sw) {
-    ((JimpleValueSwitch) sw).caseLocal(this);
-  }
+    @Override
+    public void apply(Switch sw) {
+        ((JimpleValueSwitch) sw).caseLocal(this);
+    }
 
-  @Override
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-    Unit u = myBaf.newLoadInst(getType(this.myScene), context.getBafLocalOfJimpleLocal(this));
-    u.addAllTagsOf(context.getCurrentUnit());
-    out.add(u);
-  }
+    @Override
+    public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+        Unit u = myBaf.newLoadInst(getType(), context.getBafLocalOfJimpleLocal(this));
+        u.addAllTagsOf(context.getCurrentUnit());
+        out.add(u);
+    }
 
-  @Override
-  public final int getNumber() {
-    return number;
-  }
+    @Override
+    public final int getNumber() {
+        return number;
+    }
 
-  @Override
-  public void setNumber(int number) {
-    this.number = number;
-  }
+    @Override
+    public void setNumber(int number) {
+        this.number = number;
+    }
 
-  private volatile int number = 0;
+    private volatile int number = 0;
 }

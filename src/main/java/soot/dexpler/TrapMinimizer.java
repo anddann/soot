@@ -140,7 +140,7 @@ public class TrapMinimizer extends TrapTransformer {
             // updateTrap to true
             continue;
           }
-          Trap t = myJimple.newTrap(tr.getException(), firstTrapStmt, u, tr.getHandlerUnit());
+          Trap t = Jimple.newTrap(tr.getException(), firstTrapStmt, u, tr.getHandlerUnit());
           newTraps.add(t);
         } else {
           // if the current unit has an edge to the current trap's
@@ -149,7 +149,7 @@ public class TrapMinimizer extends TrapTransformer {
           // and if the
           // next unit is outside the current trap.
           if (b.getUnits().getSuccOf(u) == tr.getEndUnit() && updateTrap) {
-            Trap t = myJimple.newTrap(tr.getException(), firstTrapStmt, tr.getEndUnit(), tr.getHandlerUnit());
+            Trap t = Jimple.newTrap(tr.getException(), firstTrapStmt, tr.getEndUnit(), tr.getHandlerUnit());
             newTraps.add(t);
           }
         }

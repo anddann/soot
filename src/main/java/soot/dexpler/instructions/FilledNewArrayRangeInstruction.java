@@ -74,16 +74,16 @@ public class FilledNewArrayRangeInstruction extends FilledArrayInstruction {
     Type t = DexType.toSoot((TypeReference) filledNewArrayInstr.getReference());
     // NewArrayExpr needs the ElementType as it increases the array dimension by 1
     Type arrayType = ((ArrayType) t).getElementType();
-    NewArrayExpr arrayExpr = myJimple.newNewArrayExpr(arrayType, constantFactory.createIntConstant(usedRegister));
+    NewArrayExpr arrayExpr = Jimple.newNewArrayExpr(arrayType, constantFactory.createIntConstant(usedRegister));
     Local arrayLocal = body.getStoreResultLocal();
-    AssignStmt assignStmt = myJimple.newAssignStmt(arrayLocal, arrayExpr);
+    AssignStmt assignStmt = Jimple.newAssignStmt(arrayLocal, arrayExpr);
     body.add(assignStmt);
 
     for (int i = 0; i < usedRegister; i++) {
-      ArrayRef arrayRef = myJimple.newArrayRef(arrayLocal, constantFactory.createIntConstant(i));
+      ArrayRef arrayRef = Jimple.newArrayRef(arrayLocal, constantFactory.createIntConstant(i));
 
       AssignStmt assign
-          = myJimple.newAssignStmt(arrayRef, body.getRegisterLocal(i + filledNewArrayInstr.getStartRegister()));
+          = Jimple.newAssignStmt(arrayRef, body.getRegisterLocal(i + filledNewArrayInstr.getStartRegister()));
       addTags(assign);
       body.add(assign);
     }
@@ -97,7 +97,7 @@ public class FilledNewArrayRangeInstruction extends FilledArrayInstruction {
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
       // Debug.printDbg(IDalvikTyper.DEBUG, "constraint: "+ assignStmt);
-      myDalvikTyper.setType(assignStmt.getLeftOpBox(), arrayExpr.getType(myScene), false);
+      myDalvikTyper.setType(assignStmt.getLeftOpBox(), arrayExpr.getType(), false);
       // myDalvikTyper().addConstraint(assignStmt.getLeftOpBox(), assignStmt.getRightOpBox());
     }
 

@@ -120,11 +120,11 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
         Local l = (Local) v;
         Local jl = (Local) bafToJLocals.get(l);
         if (jl != null) {
-          t = jl.getType(myScene);
+          t = jl.getType();
         } else {
           // We should hopefully never get here. There should be a jimple
           // local unless it's one of our ControlDups
-          t = l.getType(myScene);
+          t = l.getType();
           if (u instanceof OpTypeArgInst) {
             OpTypeArgInst ota = (OpTypeArgInst) u;
             t = ota.getOpType();

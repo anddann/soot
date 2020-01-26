@@ -115,8 +115,8 @@ public class SPiExpr implements PiExpr {
     up.literal("])");
   }
 
-  public Type getType(Scene myScene) {
-    return getValue().getType(myScene);
+  public Type getType() {
+    return getValue().getType();
   }
 
   public List getUseBoxes() {

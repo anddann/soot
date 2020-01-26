@@ -111,9 +111,9 @@ public class BodyBuilder {
 
   public static Local buildThisLocal(PatchingChain<Unit> units, ThisRef tr, Collection<Local> locals, Jimple jimple) {
     Jimple myJimple = jimple;
-    Local ths = myJimple.newLocal("ths", tr.getType(myScene));
+    Local ths = Jimple.newLocal("ths", tr.getType());
     locals.add(ths);
-    units.add(myJimple.newIdentityStmt(ths, myJimple.newThisRef((RefType) tr.getType(myScene))));
+    units.add(Jimple.newIdentityStmt(ths, Jimple.newThisRef((RefType) tr.getType())));
     return ths;
   }
 
@@ -124,10 +124,10 @@ public class BodyBuilder {
     List<Local> args = new ArrayList<Local>();
     for (int k = 0; k < paramTypes.size(); k++) {
       Type type = paramTypes.get(k);
-      Local loc = myJimple.newLocal("l" + k, type);
+      Local loc = Jimple.newLocal("l" + k, type);
       locals.add(loc);
 
-      units.add(myJimple.newIdentityStmt(loc, myJimple.newParameterRef(type, k)));
+      units.add(Jimple.newIdentityStmt(loc, Jimple.newParameterRef(type, k)));
 
       args.add(loc);
     }

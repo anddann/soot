@@ -220,7 +220,7 @@ public class LocalGenerator {
 
   // this should be used for generated locals only
   protected soot.Local createLocal(String name, soot.Type sootType) {
-    soot.Local sootLocal = myJimple.newLocal(name, sootType);
+    soot.Local sootLocal = Jimple.newLocal(name, sootType);
     body.getLocals().add(sootLocal);
     return sootLocal;
   }

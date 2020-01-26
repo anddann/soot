@@ -110,7 +110,8 @@ public class ReachingCopies extends StructuredAnalysis {
   /****************************** END OF LOCAL PAIR CLASS ***********************/
 
   public ReachingCopies(Object analyze) {
-    super();
+    //FIXME AD
+    super(null, null);
     // the input to the process method is an empty DavaFlow Set meaning
     // out(start) ={}
     DavaFlowSet temp = (DavaFlowSet) process(analyze, new DavaFlowSet(myClosestAbruptTargetFinder));

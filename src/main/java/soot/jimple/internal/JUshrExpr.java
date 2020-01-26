@@ -22,7 +22,7 @@ package soot.jimple.internal;
  * #L%
  */
 
-import soot.Scene;
+import soot.PrimTypeCollector;
 import soot.Type;
 import soot.Value;
 import soot.baf.Baf;
@@ -33,7 +33,7 @@ import soot.util.Switch;
 
 public class JUshrExpr extends AbstractJimpleIntLongBinopExpr implements UshrExpr {
   public JUshrExpr(Value op1, Value op2) {
-    super(op1, op2, primTypeCollector, jimple);
+    super(op1, op2);
   }
 
   public final String getSymbol() {
@@ -45,21 +45,21 @@ public class JUshrExpr extends AbstractJimpleIntLongBinopExpr implements UshrExp
   }
 
   Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newUshrInst(this.getOp1().getType(myScene));
+    return myBaf.newUshrInst(this.getOp1().getType());
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     Value op1 = op1Box.getValue();
     Value op2 = op2Box.getValue();
-
-    if (!isIntLikeType(op2.getType(myScene))) {
+    PrimTypeCollector primTypeCollector = op1.getType().getMyScene().getPrimTypeCollector();
+    if (!isIntLikeType(op2.getType())) {
       return primTypeCollector.getUnknownType();
     }
 
-    if (isIntLikeType(op1.getType(myScene))) {
+    if (isIntLikeType(op1.getType())) {
       return primTypeCollector.getIntType();
     }
-    if (op1.getType(myScene).equals(primTypeCollector.getLongType())) {
+    if (op1.getType().equals(primTypeCollector.getLongType())) {
       return primTypeCollector.getLongType();
     }
 

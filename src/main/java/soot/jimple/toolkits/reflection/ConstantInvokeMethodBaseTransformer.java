@@ -88,9 +88,9 @@ public class ConstantInvokeMethodBaseTransformer extends SceneTransformer {
               if (invokeExpr.getArg(0) instanceof StringConstant) {
 
                 StringConstant constant = (StringConstant) invokeExpr.getArg(0);
-                Local newLocal = myJimple.newLocal("sc" + body.getLocalCount(), constant.getType(myScene));
+                Local newLocal = Jimple.newLocal("sc" + body.getLocalCount(), constant.getType());
                 body.getLocals().add(newLocal);
-                body.getUnits().insertBefore(myJimple.newAssignStmt(newLocal, constant), u);
+                body.getUnits().insertBefore(Jimple.newAssignStmt(newLocal, constant), u);
                 invokeExpr.setArg(0, newLocal);
 
                 if (verbose) {

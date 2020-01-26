@@ -22,12 +22,11 @@ package soot.jimple;
  * #L%
  */
 
-import soot.Scene;
 import soot.Type;
 import soot.util.Switch;
 
 public interface StaticInvokeExpr extends InvokeExpr {
-  public Type getType(Scene myScene);
+  public Type getType();
 
   public void apply(Switch sw);
 }

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import soot.Local;
-import soot.Scene;
 import soot.SootClass;
 import soot.Type;
 import soot.dava.internal.AST.ASTNode;
@@ -58,12 +57,12 @@ public class UnreachableCodeEliminator extends DepthFirstAdapter {
   }
 
   private void setup() {
-    codeFinder = new UnreachableCodeFinder(AST);
+    codeFinder = new UnreachableCodeFinder(AST, myClosestAbruptTargetFinder);
     // parentOf = new ASTParentNodeFinder();
     // AST.apply(parentOf);
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
     List<AugmentedStmt> toRemove = new ArrayList<AugmentedStmt>();
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();

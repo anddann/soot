@@ -90,14 +90,14 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
       // i.setExpr(invocation);
       // if (lineNumber != -1)
       // i.setTag(new SourceLineNumberTag(lineNumber));
-      assign = myJimple.newAssignStmt(body.getStoreResultLocal(), invocation);
+      assign = Jimple.newAssignStmt(body.getStoreResultLocal(), invocation);
       setUnit(assign);
       addTags(assign);
       body.add(assign);
       unit = assign;
       // this is a invoke statement (the MoveResult had to be the direct successor for an expression)
     } else {
-      InvokeStmt invoke = myJimple.newInvokeStmt(invocation);
+      InvokeStmt invoke = Jimple.newInvokeStmt(invocation);
       setUnit(invoke);
       addTags(invoke);
       body.add(invoke);
@@ -117,7 +117,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
         myDalvikTyper.setType(invocation.getArgBox(i++), pt, true);
       }
       if (assign != null) {
-        myDalvikTyper.setType(assign.getLeftOpBox(), invocation.getType(myScene), false);
+        myDalvikTyper.setType(assign.getLeftOpBox(), invocation.getType(), false);
       }
 
     }
@@ -392,7 +392,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
     // This is actually a VirtualInvoke
     MethodReference item = (MethodReference) ((ReferenceInstruction) instruction).getReference();
     List<Local> parameters = buildParameters(body, item.getParameterTypes(), false);
-    invocation = myJimple.newVirtualInvokeExpr(parameters.get(0), ref, parameters.subList(1, parameters.size()));
+    invocation = Jimple.newVirtualInvokeExpr(parameters.get(0), ref, parameters.subList(1, parameters.size()));
     body.setDanglingInstruction(this);
   }
 
@@ -409,7 +409,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
 
     MethodReference item = (MethodReference) ((ReferenceInstruction) instruction).getReference();
     List<Local> parameters = buildParameters(body, item.getParameterTypes(), false);
-    invocation = myJimple.newInterfaceInvokeExpr(parameters.get(0), ref,
+    invocation = Jimple.newInterfaceInvokeExpr(parameters.get(0), ref,
         parameters.subList(1, parameters.size()));
     body.setDanglingInstruction(this);
   }
@@ -419,7 +419,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
   protected void jimplifySpecial(DexBody body) {
     MethodReference item = (MethodReference) ((ReferenceInstruction) instruction).getReference();
     List<Local> parameters = buildParameters(body, item.getParameterTypes(), false);
-    invocation = myJimple.newSpecialInvokeExpr(parameters.get(0), getVirtualSootMethodRef(), 
+    invocation = Jimple.newSpecialInvokeExpr(parameters.get(0), getVirtualSootMethodRef(),
         parameters.subList(1, parameters.size()));
     body.setDanglingInstruction(this);
   }
@@ -428,7 +428,7 @@ public abstract class MethodInvocationInstruction extends DexlibAbstractInstruct
    */
   protected void jimplifyStatic(DexBody body) {
     MethodReference item = (MethodReference) ((ReferenceInstruction) instruction).getReference();
-    invocation = myJimple.newStaticInvokeExpr(getStaticSootMethodRef(), 
+    invocation = Jimple.newStaticInvokeExpr(getStaticSootMethodRef(),
         buildParameters(body, item.getParameterTypes(), true));
     body.setDanglingInstruction(this);
   }

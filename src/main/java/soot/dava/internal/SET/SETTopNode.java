@@ -28,17 +28,12 @@ import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.toolkits.base.AST.ASTWalker;
 import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.finders.ExceptionFinder;
-import soot.jimple.Jimple;
 import soot.util.IterableSet;
 
 public class SETTopNode extends SETNode {
-  private TryContentsFinder myTryContentsFinder;
-  private ASTWalker myASTWalker;
 
   public SETTopNode(IterableSet body, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker) {
     super(body);
-    this.myTryContentsFinder = myTryContentsFinder;
-    this.myASTWalker = myASTWalker;
     add_SubBody(body);
   }
 
@@ -46,7 +41,7 @@ public class SETTopNode extends SETNode {
     return new IterableSet();
   }
 
-  public ASTNode emit_AST(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
+  public ASTNode emit_AST() {
     return new ASTMethodNode(emit_ASTBody(body2childChain.get(subBodies.get(0)), myTryContentsFinder, myASTWalker, myJimple), this.myTryContentsFinder, this.myASTWalker);
   }
 

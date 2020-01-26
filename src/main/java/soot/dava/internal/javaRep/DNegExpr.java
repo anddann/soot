@@ -32,7 +32,7 @@ public class DNegExpr extends AbstractNegExpr {
   private final Grimp myGrimp;
 
   public DNegExpr(Value op, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
-    super(myGrimp.newExprBox(op), primTypeCollector);
+    super(myGrimp.newExprBox(op));
     this.myGrimp = myGrimp;
   }
 

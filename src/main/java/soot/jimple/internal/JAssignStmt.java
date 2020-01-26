@@ -231,7 +231,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
       Value op1 = expr.getOp1();
       Value op2 = expr.getOp2();
 
-      if (l.getType(myScene).equals(primTypeCollector.getIntType())) {
+      if (l.getType().equals(primTypeCollector.getIntType())) {
         boolean isValidCase = false;
         int x = 0;
 
@@ -265,7 +265,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
         ((ConvertToBaf) (v.getIndex())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
         ((ConvertToBaf) rvalue).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
 
-        Unit u = myBaf.newArrayWriteInst(v.getType(myScene));
+        Unit u = myBaf.newArrayWriteInst(v.getType());
         u.addAllTagsOf(JAssignStmt.this);
 
         out.add(u);
@@ -293,7 +293,7 @@ public class JAssignStmt extends AbstractDefinitionStmt implements AssignStmt {
          * semantics, we should add them to every statement and let the aggregator sort them out.
          */
 
-        Unit u = myBaf.newStoreInst(v.getType(myScene), context.getBafLocalOfJimpleLocal(v));
+        Unit u = myBaf.newStoreInst(v.getType(), context.getBafLocalOfJimpleLocal(v));
         u.addAllTagsOf(JAssignStmt.this);
 
         out.add(u);

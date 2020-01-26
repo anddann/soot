@@ -90,7 +90,7 @@ public class DexRefsChecker extends DexTransformer {
         }
         String fname = fr.toString().split(">")[0].split(" ")[2];
         int modifiers = soot.Modifier.PUBLIC;
-        Type ftype = fr.getType(myScene);
+        Type ftype = fr.getType();
         sc.addField(myScene.makeSootField(fname, ftype, modifiers));
       } else {
         // System.out.println("field "+ sf.getName() +" '"+ sf +"'

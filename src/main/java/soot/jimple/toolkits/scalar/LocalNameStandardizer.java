@@ -114,7 +114,7 @@ public class LocalNameStandardizer extends BodyTransformer {
 
         @Override
         public int compare(Local arg0, Local arg1) {
-          int ret = arg0.getType(myScene).toString().compareTo(arg1.getType(myScene).toString());
+          int ret = arg0.getType().toString().compareTo(arg1.getType().toString());
           if (ret == 0) {
             ret = Integer.compare(getFirstOccurance(arg0), getFirstOccurance(arg1));
           }
@@ -151,7 +151,7 @@ public class LocalNameStandardizer extends BodyTransformer {
       int maxDigits = sortLocals ? digits(locals.size()) : 1;
       for (Local l : locals) {
         String prefix = l.getName().startsWith("$") ? "$" : "";
-        final Type type = l.getType(myScene);
+        final Type type = l.getType();
 
         if (type.equals(booleanType)) {
           l.setName(genName(prefix, "z", intCount++, maxDigits));

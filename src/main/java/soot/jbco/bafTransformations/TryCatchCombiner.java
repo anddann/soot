@@ -233,7 +233,7 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
 
       while (varsToLoad.size() > 0) {
         Local varLocal = (Local) varsToLoad.pop();
-        units.insertBefore(myBaf.newLoadInst(varLocal.getType(myScene), varLocal), begUnit);
+        units.insertBefore(myBaf.newLoadInst(varLocal.getType(), varLocal), begUnit);
       }
 
       try {

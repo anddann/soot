@@ -38,9 +38,8 @@ public interface Value extends Switchable, EquivTo, Serializable {
    */
   public List<ValueBox> getUseBoxes();
 
-  /** Returns the Soot type of this Value.
-   * @param myScene*/
-  public Type getType(Scene myScene);
+  /** Returns the Soot type of this Value.  */
+  public Type getType();
 
   /** Returns a clone of this Value. */
   public Object clone();

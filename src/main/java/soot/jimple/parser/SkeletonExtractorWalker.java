@@ -26,15 +26,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import soot.Modifier;
-import soot.SootClass;
-import soot.SootMethod;
-import soot.SootResolver;
-import soot.Type;
+import soot.*;
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
 import soot.jimple.parser.node.AFile;
 import soot.jimple.parser.node.AMethodMember;
 import soot.jimple.parser.node.AThrowsClause;
 import soot.jimple.parser.node.PModifier;
+import soot.options.Options;
 
 /*
    Walks a jimple AST and extracts the fields, and method signatures and produces
@@ -42,13 +41,13 @@ import soot.jimple.parser.node.PModifier;
 */
 public class SkeletonExtractorWalker extends Walker {
 
-  public SkeletonExtractorWalker(SootResolver aResolver, SootClass aSootClass) {
-    super(aSootClass, constantFactory, aResolver, myScene, myOptions, myPackageNamer, myJimple);
+  public SkeletonExtractorWalker(SootResolver aResolver, SootClass aSootClass, ConstantFactory constantFactory, Scene myScene, PackageNamer packageNamer, Options myOptions, Printer myPrinter) {
+    super(aSootClass, constantFactory, aResolver, myScene, myOptions, packageNamer, myPrinter);
   }
 
-  public SkeletonExtractorWalker(SootResolver aResolver) {
-    super(constantFactory, aResolver, myScene, myOptions, myPackageNamer, myJimple);
-  }
+//  public SkeletonExtractorWalker(SootResolver aResolver) {
+//    super(constantFactory, aResolver, myScene, myOptions, myPackageNamer, myJimple);
+//  }
 
   public void caseAFile(AFile node) {
     inAFile(node);

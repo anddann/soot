@@ -30,19 +30,17 @@ import soot.jimple.*;
 import soot.util.Switch;
 
 public class JIdentityStmt extends AbstractDefinitionStmt implements IdentityStmt {
-  private final Jimple myJimple;
 
-  public JIdentityStmt(Value local, Value identityValue, Jimple myJimple) {
-    this(myJimple.newLocalBox(local), myJimple.newIdentityRefBox(identityValue), myJimple);
+  public JIdentityStmt(Value local, Value identityValue) {
+    this(Jimple.newLocalBox(local), Jimple.newIdentityRefBox(identityValue));
   }
 
-  protected JIdentityStmt(ValueBox localBox, ValueBox identityValueBox, Jimple myJimple) {
+  protected JIdentityStmt(ValueBox localBox, ValueBox identityValueBox) {
     super(localBox, identityValueBox);
-    this.myJimple = myJimple;
   }
 
   public Object clone() {
-    return new JIdentityStmt(Jimple.cloneIfNecessary(getLeftOp()), Jimple.cloneIfNecessary(getRightOp()), myJimple);
+    return new JIdentityStmt(Jimple.cloneIfNecessary(getLeftOp()), Jimple.cloneIfNecessary(getRightOp()));
   }
 
   public String toString() {
@@ -72,9 +70,9 @@ public class JIdentityStmt extends AbstractDefinitionStmt implements IdentityStm
     Value newRhs;
 
     if (currentRhs instanceof ThisRef) {
-      newRhs = myBaf.newThisRef((RefType) ((ThisRef) currentRhs).getType(myScene));
+      newRhs = myBaf.newThisRef((RefType) ((ThisRef) currentRhs).getType());
     } else if (currentRhs instanceof ParameterRef) {
-      newRhs = myBaf.newParameterRef(((ParameterRef) currentRhs).getType(myScene), ((ParameterRef) currentRhs).getIndex());
+      newRhs = myBaf.newParameterRef(((ParameterRef) currentRhs).getType(), ((ParameterRef) currentRhs).getIndex());
     } else if (currentRhs instanceof CaughtExceptionRef) {
       Unit u = myBaf.newStoreInst(myBaf.getPrimTypeCollector().getRefType(),
           context.getBafLocalOfJimpleLocal((Local) getLeftOp()));

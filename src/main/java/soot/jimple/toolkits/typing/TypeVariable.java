@@ -630,8 +630,8 @@ class TypeVariable implements Comparable<Object> {
         if (var.type() == null) {
           // hack for J2ME library, reported by Stephen Cheng
           if (!myOptions.j2me()) {
-            var.addChild(resolver.typeVariable(ArrayType.v(RefType.v("java.lang.Cloneable",myScene), var.depth(),myScene)));
-            var.addChild(resolver.typeVariable(ArrayType.v(RefType.v("java.io.Serializable",myScene), var.depth(),myScene)));
+            var.addChild(resolver.typeVariable(ArrayType.v(RefType.v("java.lang.Cloneable",myScene), var.depth())));
+            var.addChild(resolver.typeVariable(ArrayType.v(RefType.v("java.io.Serializable",myScene), var.depth())));
           }
         }
       }

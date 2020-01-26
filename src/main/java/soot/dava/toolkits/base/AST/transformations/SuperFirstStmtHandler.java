@@ -114,43 +114,28 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
 
   List<Local> mustInitialize;
   int mustInitializeIndex = 0;
-  private TryContentsFinder myTryContentsFinder;
-  private ASTWalker myASTWalker;
   private Scene myScene;
   private Options myOptions;
   private PackageNamer myPackageNamer;
-  private PrimTypeCollector primTypeCollector;
-  private Grimp myGrimp;
   private Baf myBaf;
-  private ConstantFactory constantFactory;
+  //FIXME
   private Dava myDava;
 
   public SuperFirstStmtHandler(ASTMethodNode AST, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, Options myOptions, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, Grimp myGrimp, Baf myBaf, ConstantFactory constantFactory) {
     this.originalASTMethod = AST;
-    this.myTryContentsFinder = myTryContentsFinder;
-    this.myASTWalker = myASTWalker;
-    this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
-    this.primTypeCollector = primTypeCollector;
-    this.myGrimp = myGrimp;
     this.myBaf = myBaf;
-    this.constantFactory = constantFactory;
+
     initialize();
   }
 
   public SuperFirstStmtHandler(boolean verbose, ASTMethodNode AST, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Scene myScene, Options myOptions, PackageNamer myPackageNamer, PrimTypeCollector primTypeCollector, Grimp myGrimp, Baf myBaf, ConstantFactory constantFactory) {
     super(verbose);
     this.originalASTMethod = AST;
-    this.myTryContentsFinder = myTryContentsFinder;
-    this.myASTWalker = myASTWalker;
-    this.myScene = myScene;
     this.myOptions = myOptions;
     this.myPackageNamer = myPackageNamer;
-    this.primTypeCollector = primTypeCollector;
-    this.myGrimp = myGrimp;
     this.myBaf = myBaf;
-    this.constantFactory = constantFactory;
     initialize();
   }
 
@@ -170,7 +155,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
       Iterator valIt = argsTwoValues.iterator();
       while (valIt.hasNext()) {
         Value val = (Value) valIt.next();
-        Type type = val.getType(myScene);
+        Type type = val.getType();
         argsTwoTypes.add(type);
       }
     }
@@ -196,7 +181,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
   /*
    * looking for an init stmt
    */
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
     for (AugmentedStmt as : node.getStatements()) {
       Unit u = as.get_Stmt();
 
@@ -367,13 +352,13 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     List thisArgList = new ArrayList();
     thisArgList.addAll(argsOneValues);
 
-    DStaticInvokeExpr newInvokeExpr = new DStaticInvokeExpr(newSootPreInitMethod.makeRef(), argsOneValues);
+    DStaticInvokeExpr newInvokeExpr = new DStaticInvokeExpr(newSootPreInitMethod.makeRef(), argsOneValues, myGrimp);
     thisArgList.add(newInvokeExpr);
 
     // the methodRef of themethod to be called is the new constructor we
     // created
     InstanceInvokeExpr tempExpr
-        = new DSpecialInvokeExpr(originalConstructorExpr.getBase(), newConstructor.makeRef(), thisArgList, myScene);
+        = new DSpecialInvokeExpr(originalConstructorExpr.getBase(), newConstructor.makeRef(), thisArgList, myScene, myGrimp);
 
     originalDavaBody.set_ConstructorExpr(tempExpr);
 
@@ -447,7 +432,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     RefType type = (new SootClass("DavaSuperHandler", myScene, myOptions, myPackageNamer)).getType();
 
     // make JimpleLocal to be used in each arg
-    Local jimpleLocal = new JimpleLocal("handler", type, myScene);// takes care of
+    Local jimpleLocal = new JimpleLocal("handler", type);// takes care of
     // handler
 
     // make reference to a method of name get takes one int arg belongs to
@@ -683,7 +668,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     RefType type = (new SootClass("DavaSuperHandler", myScene, myOptions, myPackageNamer)).getType();
 
     // make JimpleLocal to be used in each arg
-    Local jimpleLocal = new JimpleLocal("handler", type, myScene);// takes care of
+    Local jimpleLocal = new JimpleLocal("handler", type);// takes care of
     // handler
 
     // make reference to a method of name get takes one int arg belongs to
@@ -697,7 +682,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
       Iterator<Local> initIt = mustInitialize.iterator();
       while (initIt.hasNext()) {
         Local initLocal = initIt.next();
-        Type tempType = initLocal.getType(myScene);
+        Type tempType = initLocal.getType();
 
         DIntConstant arg = constantFactory.createDIntConstant(mustInitializeIndex, primTypeCollector.getIntType());// takes
         // care
@@ -1083,7 +1068,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     SootClass sootClass = new SootClass("DavaSuperHandler", myScene, myOptions, myPackageNamer);
 
     Type localType = sootClass.getType();
-    Local newLocal = new JimpleLocal("handler", localType, myScene);
+    Local newLocal = new JimpleLocal("handler", localType);
 
     /*
      * Create * DavaSuperHandler handler; *
@@ -1152,7 +1137,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     Iterator<Local> localIt = uniqueLocals.iterator();
     while (localIt.hasNext()) {
       Local local = localIt.next();
-      AugmentedStmt toAdd = createStmtAccordingToType(local.getType(myScene), local, newLocal, getMethodRef);
+      AugmentedStmt toAdd = createStmtAccordingToType(local.getType(), local, newLocal, getMethodRef);
       davaHandlerStmts.add(toAdd);
     }
 
@@ -1359,7 +1344,7 @@ public class SuperFirstStmtHandler extends DepthFirstAdapter {
     // find all the uses of these definitions in the original method body
     toRemoveDefs = new ArrayList<DefinitionStmt>();
 
-    ASTUsesAndDefs uDdU = new ASTUsesAndDefs(originalASTMethod);
+    ASTUsesAndDefs uDdU = new ASTUsesAndDefs(myClosestAbruptTargetFinder, originalASTMethod);
     originalASTMethod.apply(uDdU);
 
     it = uniqueLocalDefs.iterator();

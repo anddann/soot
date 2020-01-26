@@ -148,7 +148,7 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
       locals++;
       Local jlocal = bafToJLocals.get(bl);
       if (jlocal != null) {
-        Type t = jlocal.getType(myScene);
+        Type t = jlocal.getType();
         if (t instanceof PrimType && !(t instanceof DoubleType || t instanceof LongType) && Rand.getInt(10) <= weight) {
           if (t instanceof BooleanType) {
             booleans.add(bl);
@@ -254,7 +254,7 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
           int size = sizes.get(bafLoc);
           long longmask = ~((size == 1 ? 0x1L : size == 8 ? 0xFFL : size == 16 ? 0xFFFFL : 0xFFFFFFFFL) << index);
 
-          u.insertBefore(myBaf.newPrimitiveCastInst(jloc.getType(myScene), primeTypecollecotr.getLongType()), unit);
+          u.insertBefore(myBaf.newPrimitiveCastInst(jloc.getType(), primeTypecollecotr.getLongType()), unit);
           if (index > 0) {
             u.insertBefore(myBaf.newPushInst(constantFactory.createIntConstant(index)), unit);
             u.insertBefore(myBaf.newShlInst(primeTypecollecotr.getLongType()), unit);
@@ -285,7 +285,7 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
             u.insertBefore(myBaf.newShrInst(primeTypecollecotr.getLongType()), unit);
           }
 
-          Type origType = bafToJLocals.get(bafLoc).getType(myScene);
+          Type origType = bafToJLocals.get(bafLoc).getType();
           Type t = getType(origType);
           u.insertBefore(myBaf.newPrimitiveCastInst(primeTypecollecotr.getLongType(), t), unit);
           if (!(origType instanceof IntType) && !(origType instanceof BooleanType)) {
@@ -298,7 +298,7 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
         Local bafLoc = ii.getLocal();
         Local nloc = bafToNewLocs.get(bafLoc);
         if (nloc != null) {
-          Type jlocType = getType(bafToJLocals.get(bafLoc).getType(myScene));
+          Type jlocType = getType(bafToJLocals.get(bafLoc).getType());
 
           int index = newLocs.get(nloc).get(bafLoc);
           int size = sizes.get(bafLoc);
@@ -312,8 +312,8 @@ public class LocalsToBitField extends BodyTransformer implements IJbcoTransform 
             u.insertBefore(myBaf.newPushInst(constantFactory.createIntConstant(index)), unit);
             u.insertBefore(myBaf.newShrInst(primeTypecollecotr.getLongType()), unit);
           }
-          u.insertBefore(myBaf.newPrimitiveCastInst(primeTypecollecotr.getLongType(), ii.getConstant().getType(myScene)), unit);
-          u.insertBefore(myBaf.newAddInst(ii.getConstant().getType(myScene)), unit);
+          u.insertBefore(myBaf.newPrimitiveCastInst(primeTypecollecotr.getLongType(), ii.getConstant().getType()), unit);
+          u.insertBefore(myBaf.newAddInst(ii.getConstant().getType()), unit);
           u.insertBefore(myBaf.newPrimitiveCastInst(jlocType, primeTypecollecotr.getLongType()), unit);
           if (index > 0) {
             u.insertBefore(myBaf.newPushInst(constantFactory.createIntConstant(index)), unit);

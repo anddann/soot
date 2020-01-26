@@ -162,20 +162,20 @@ public class InfoFlowAnalysis {
 
   public static EquivalentValue getNodeForFieldRef(SootMethod sm, SootField sf, Local realLocal, Jimple myJimple) {
     if (sf.isStatic()) {
-      return new CachedEquivalentValue(myJimple.newStaticFieldRef(sf.makeRef()));
+      return new CachedEquivalentValue(Jimple.newStaticFieldRef(sf.makeRef()));
     } else {
       // myJimple.newThisRef(sf.getDeclaringClass().getType())
       if (sm.isConcrete() && !sm.isStatic() && sm.getDeclaringClass() == sf.getDeclaringClass() && realLocal == null) {
         JimpleLocal fakethis
             = new FakeJimpleLocal("fakethis", sf.getDeclaringClass().getType(), sm.retrieveActiveBody().getThisLocal());
 
-        return new CachedEquivalentValue(myJimple.newInstanceFieldRef(fakethis, sf.makeRef())); // fake thisLocal
+        return new CachedEquivalentValue(Jimple.newInstanceFieldRef(fakethis, sf.makeRef())); // fake thisLocal
       } else {
         // Pretends to be a this.<somefield> ref for a method without a body,
         // for a static method, or for an inner field
         JimpleLocal fakethis = new FakeJimpleLocal("fakethis", sf.getDeclaringClass().getType(), realLocal);
 
-        return new CachedEquivalentValue(myJimple.newInstanceFieldRef(fakethis, sf.makeRef())); // fake thisLocal
+        return new CachedEquivalentValue(Jimple.newInstanceFieldRef(fakethis, sf.makeRef())); // fake thisLocal
       }
     }
   }

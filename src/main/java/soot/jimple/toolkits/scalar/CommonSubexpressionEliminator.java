@@ -132,7 +132,7 @@ public class CommonSubexpressionEliminator extends BodyTransformer {
                 counter++;
               }
 
-              Local l = myJimple.newLocal(newName, v.getType(myScene).toMachineType());
+              Local l = Jimple.newLocal(newName, v.getType().toMachineType());
 
               b.getLocals().add(l);
 
@@ -142,7 +142,7 @@ public class CommonSubexpressionEliminator extends BodyTransformer {
 
               origCalc.setLeftOp(l);
 
-              Unit copier = myJimple.newAssignStmt(origLHS, l);
+              Unit copier = Jimple.newAssignStmt(origLHS, l);
               units.insertAfter(copier, origCalc);
 
               ((AssignStmt) s).setRightOp(l);

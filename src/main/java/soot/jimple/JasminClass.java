@@ -276,7 +276,7 @@ public class JasminClass extends AbstractJasminClass {
               slot = groupColorPairToSlot.get(pair).intValue();
             } else {
               slot = localCount;
-              localCount += sizeOfType(local.getType(myScene));
+              localCount += sizeOfType(local.getType());
 
               groupColorPairToSlot.put(pair, new Integer(slot));
             }
@@ -456,7 +456,7 @@ public class JasminClass extends AbstractJasminClass {
 
           /* this should be redundant, but we do it */
           /* just in case. */
-          if (lvalue.getType(myScene) != primTypeCollector.getIntType()) {
+          if (lvalue.getType() != primTypeCollector.getIntType()) {
             break;
           }
 
@@ -533,7 +533,7 @@ public class JasminClass extends AbstractJasminClass {
       }
       // end of peephole
 
-      if (l.getType(myScene).equals(primTypeCollector.getIntType())) {
+      if (l.getType().equals(primTypeCollector.getIntType())) {
         boolean isValidCase = false;
         int x = 0;
 
@@ -560,7 +560,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getIndex());
         emitValue(rvalue);
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           public void caseArrayType(ArrayType t) {
             emit("aastore", -3);
           }
@@ -618,7 +618,7 @@ public class JasminClass extends AbstractJasminClass {
       public void caseLocal(final Local v) {
         final int slot = localToSlot.get(v).intValue();
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntegerType(IntegerType t) {
             emitValue(rvalue);
 
@@ -835,7 +835,7 @@ public class JasminClass extends AbstractJasminClass {
 
     cond.apply(new AbstractJimpleValueSwitch() {
       public void caseEqExpr(EqExpr expr) {
-        op1.getType(myScene).apply(new TypeSwitch() {
+        op1.getType().apply(new TypeSwitch() {
           public void caseIntType(IntType t) {
             emit("if_icmpeq " + label, -2);
           }
@@ -890,7 +890,7 @@ public class JasminClass extends AbstractJasminClass {
       }
 
       public void caseNeExpr(NeExpr expr) {
-        op1.getType(myScene).apply(new TypeSwitch() {
+        op1.getType().apply(new TypeSwitch() {
           public void caseIntType(IntType t) {
             emit("if_icmpne " + label, -2);
           }
@@ -945,7 +945,7 @@ public class JasminClass extends AbstractJasminClass {
       }
 
       public void caseLtExpr(LtExpr expr) {
-        op1.getType(myScene).apply(new TypeSwitch() {
+        op1.getType().apply(new TypeSwitch() {
           public void caseIntType(IntType t) {
             emit("if_icmplt " + label, -2);
           }
@@ -988,7 +988,7 @@ public class JasminClass extends AbstractJasminClass {
       }
 
       public void caseLeExpr(LeExpr expr) {
-        op1.getType(myScene).apply(new TypeSwitch() {
+        op1.getType().apply(new TypeSwitch() {
           public void caseIntType(IntType t) {
             emit("if_icmple " + label, -2);
           }
@@ -1031,7 +1031,7 @@ public class JasminClass extends AbstractJasminClass {
       }
 
       public void caseGtExpr(GtExpr expr) {
-        op1.getType(myScene).apply(new TypeSwitch() {
+        op1.getType().apply(new TypeSwitch() {
           public void caseIntType(IntType t) {
             emit("if_icmpgt " + label, -2);
           }
@@ -1074,7 +1074,7 @@ public class JasminClass extends AbstractJasminClass {
       }
 
       public void caseGeExpr(GeExpr expr) {
-        op1.getType(myScene).apply(new TypeSwitch() {
+        op1.getType().apply(new TypeSwitch() {
           public void caseIntType(IntType t) {
             emit("if_icmpge " + label, -2);
           }
@@ -1216,7 +1216,7 @@ public class JasminClass extends AbstractJasminClass {
 
         Value returnValue = s.getOp();
 
-        returnValue.getType(myScene).apply(new TypeSwitch() {
+        returnValue.getType().apply(new TypeSwitch() {
           public void defaultCase(Type t) {
             throw new RuntimeException("invalid return type " + t.toString());
           }
@@ -1307,7 +1307,7 @@ public class JasminClass extends AbstractJasminClass {
     final int slot = localToSlot.get(v).intValue();
     final Local vAlias = v;
 
-    v.getType(myScene).apply(new TypeSwitch() {
+    v.getType().apply(new TypeSwitch() {
       public void caseArrayType(ArrayType t) {
         if (slot >= 0 && slot <= 3) {
           emit("aload_" + slot, 1);
@@ -1466,7 +1466,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntCase() {
             emit("iadd", -1);
           }
@@ -1514,7 +1514,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntCase() {
             emit("iand", -1);
           }
@@ -1553,7 +1553,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getBase());
         emitValue(v.getIndex());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           public void caseArrayType(ArrayType ty) {
             emit("aaload", -1);
           }
@@ -1606,7 +1606,7 @@ public class JasminClass extends AbstractJasminClass {
 
       public void caseCastExpr(final CastExpr v) {
         final Type toType = v.getCastType();
-        final Type fromType = v.getOp().getType(myScene);
+        final Type fromType = v.getOp().getType();
 
         emitValue(v.getOp());
 
@@ -1723,7 +1723,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        if (v.getOp1().getType(myScene).equals(primTypeCollector.getFloatType())) {
+        if (v.getOp1().getType().equals(primTypeCollector.getFloatType())) {
           emit("fcmpg", -1);
         } else {
           emit("dcmpg", -3);
@@ -1734,7 +1734,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        if (v.getOp1().getType(myScene).equals(primTypeCollector.getFloatType())) {
+        if (v.getOp1().getType().equals(primTypeCollector.getFloatType())) {
           emit("fcmpl", -1);
         } else {
           emit("dcmpl", -3);
@@ -1745,7 +1745,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntCase() {
             emit("idiv", -1);
           }
@@ -1884,7 +1884,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntCase() {
             emit("imul", -1);
           }
@@ -1931,7 +1931,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getOp1().getType(myScene).apply(new TypeSwitch() {
+        v.getOp1().getType().apply(new TypeSwitch() {
           public void caseDoubleType(DoubleType t) {
             emit("dcmpg", -3);
             emitBooleanBranch("iflt");
@@ -1981,7 +1981,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getOp1().getType(myScene).apply(new TypeSwitch() {
+        v.getOp1().getType().apply(new TypeSwitch() {
           public void caseDoubleType(DoubleType t) {
             emit("dcmpg", -3);
             emitBooleanBranch("ifle");
@@ -2031,7 +2031,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getOp1().getType(myScene).apply(new TypeSwitch() {
+        v.getOp1().getType().apply(new TypeSwitch() {
           public void caseDoubleType(DoubleType t) {
             emit("dcmpg", -3);
             emitBooleanBranch("ifgt");
@@ -2081,7 +2081,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getOp1().getType(myScene).apply(new TypeSwitch() {
+        v.getOp1().getType().apply(new TypeSwitch() {
           public void caseDoubleType(DoubleType t) {
             emit("dcmpg", -3);
             emitBooleanBranch("ifge");
@@ -2131,7 +2131,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getOp1().getType(myScene).apply(new TypeSwitch() {
+        v.getOp1().getType().apply(new TypeSwitch() {
           public void caseDoubleType(DoubleType t) {
             emit("dcmpg", -3);
             emit("iconst_0", 1);
@@ -2192,7 +2192,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getOp1().getType(myScene).apply(new TypeSwitch() {
+        v.getOp1().getType().apply(new TypeSwitch() {
           public void caseDoubleType(DoubleType t) {
             emit("dcmpg", -3);
             emit("iconst_0", 1);
@@ -2248,7 +2248,7 @@ public class JasminClass extends AbstractJasminClass {
       public void caseNegExpr(final NegExpr v) {
         emitValue(v.getOp());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntCase() {
             emit("ineg", 0);
           }
@@ -2344,7 +2344,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntCase() {
             emit("ior", -1);
           }
@@ -2383,7 +2383,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntCase() {
             emit("irem", -1);
           }
@@ -2430,7 +2430,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntCase() {
             emit("ishl", -1);
           }
@@ -2469,7 +2469,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntCase() {
             emit("ishr", -1);
           }
@@ -2545,7 +2545,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntCase() {
             emit("isub", -1);
           }
@@ -2593,7 +2593,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntCase() {
             emit("iushr", -1);
           }
@@ -2645,7 +2645,7 @@ public class JasminClass extends AbstractJasminClass {
         emitValue(v.getOp1());
         emitValue(v.getOp2());
 
-        v.getType(myScene).apply(new TypeSwitch() {
+        v.getType().apply(new TypeSwitch() {
           private void handleIntCase() {
             emit("ixor", -1);
           }

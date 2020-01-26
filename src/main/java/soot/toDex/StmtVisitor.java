@@ -593,7 +593,7 @@ public class StmtVisitor implements StmtSwitch {
     Value index = destRef.getIndex();
     Register indexReg = regAlloc.asImmediate(index, constantV);
     Register sourceReg = regAlloc.asImmediate(source, constantV);
-    String arrayTypeDescriptor = SootToDexUtils.getArrayTypeDescriptor((ArrayType) array.getType(myScene));
+    String arrayTypeDescriptor = SootToDexUtils.getArrayTypeDescriptor((ArrayType) array.getType());
     Opcode opc = getPutGetOpcodeWithTypeSuffix(APUT_OPCODE, arrayTypeDescriptor);
     return new Insn23x(opc, sourceReg, arrayReg, indexReg);
   }
@@ -624,21 +624,21 @@ public class StmtVisitor implements StmtSwitch {
     }
 
     // For some local types, we know the size upfront
-    if (destRef.getType(myScene) instanceof BooleanType) {
+    if (destRef.getType() instanceof BooleanType) {
       elementSize = 1;
-    } else if (destRef.getType(myScene) instanceof ByteType) {
+    } else if (destRef.getType() instanceof ByteType) {
       elementSize = 1;
-    } else if (destRef.getType(myScene) instanceof CharType) {
+    } else if (destRef.getType() instanceof CharType) {
       elementSize = 2;
-    } else if (destRef.getType(myScene) instanceof ShortType) {
+    } else if (destRef.getType() instanceof ShortType) {
       elementSize = 2;
-    } else if (destRef.getType(myScene) instanceof IntType) {
+    } else if (destRef.getType() instanceof IntType) {
       elementSize = 4;
-    } else if (destRef.getType(myScene) instanceof FloatType) {
+    } else if (destRef.getType() instanceof FloatType) {
       elementSize = 4;
-    } else if (destRef.getType(myScene) instanceof LongType) {
+    } else if (destRef.getType() instanceof LongType) {
       elementSize = 8;
-    } else if (destRef.getType(myScene) instanceof DoubleType) {
+    } else if (destRef.getType() instanceof DoubleType) {
       elementSize = 8;
     }
 
@@ -668,7 +668,7 @@ public class StmtVisitor implements StmtSwitch {
     Register indexReg = regAlloc.asImmediate(index, constantV);
     Local array = (Local) sourceRef.getBase();
     Register arrayReg = regAlloc.asLocal(array);
-    String arrayTypeDescriptor = SootToDexUtils.getArrayTypeDescriptor((ArrayType) array.getType(myScene));
+    String arrayTypeDescriptor = SootToDexUtils.getArrayTypeDescriptor((ArrayType) array.getType());
     Opcode opc = getPutGetOpcodeWithTypeSuffix(AGET_OPCODE, arrayTypeDescriptor);
     return new Insn23x(opc, destinationReg, arrayReg, indexReg);
   }
@@ -724,7 +724,7 @@ public class StmtVisitor implements StmtSwitch {
     constantV.setOrigStmt(stmt);
     Register returnReg = regAlloc.asImmediate(returnValue, constantV);
     Opcode opc;
-    Type retType = returnValue.getType(myScene);
+    Type retType = returnValue.getType();
     if (SootToDexUtils.isObject(retType)) {
       opc = Opcode.RETURN_OBJECT;
     } else if (SootToDexUtils.isWide(retType)) {

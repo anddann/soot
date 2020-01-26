@@ -108,7 +108,7 @@ public class heuristicSet {
       Object local = it.next();
       heuristicTuple temp = set.get(local);
       String tuple = temp.getPrint();
-      System.out.println(local + "  " + tuple + " DefinedType: " + ((Local) local).getType(myScene));
+      System.out.println(local + "  " + tuple + " DefinedType: " + ((Local) local).getType());
     }
   }
 

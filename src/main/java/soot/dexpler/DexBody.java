@@ -515,11 +515,11 @@ public class DexBody {
     if (!isStatic) {
       int thisRegister = numRegisters - numParameterRegisters - 1;
 
-      Local thisLocal = jimple.newLocal("$u" + thisRegister, unknownType); // generateLocal(UnknownType.v());
+      Local thisLocal = Jimple.newLocal("$u" + thisRegister, unknownType); // generateLocal(UnknownType.v());
       jBody.getLocals().add(thisLocal);
 
       registerLocals[thisRegister] = thisLocal;
-      JIdentityStmt idStmt = (JIdentityStmt) jimple.newIdentityStmt(thisLocal, jimple.newThisRef(declaringClassType));
+      JIdentityStmt idStmt = (JIdentityStmt) Jimple.newIdentityStmt(thisLocal, Jimple.newThisRef(declaringClassType));
       add(idStmt);
       paramLocals.add(thisLocal);
       if (IDalvikTyper.ENABLE_DVKTYPER) {
@@ -553,11 +553,11 @@ public class DexBody {
           localType = unknownType;
         }
 
-        Local gen = jimple.newLocal(localName, localType);
+        Local gen = Jimple.newLocal(localName, localType);
         jBody.getLocals().add(gen);
 
         registerLocals[parameterRegister] = gen;
-        JIdentityStmt idStmt = (JIdentityStmt) jimple.newIdentityStmt(gen, jimple.newParameterRef(t, i++));
+        JIdentityStmt idStmt = (JIdentityStmt) Jimple.newIdentityStmt(gen, Jimple.newParameterRef(t, i++));
         add(idStmt);
         paramLocals.add(gen);
         if (IDalvikTyper.ENABLE_DVKTYPER) {
@@ -573,7 +573,7 @@ public class DexBody {
           parameterRegister++;
           // may only use UnknownType here because the local may be reused with a different 
           // type later (before splitting)
-          Local g = jimple.newLocal("$u" + parameterRegister, unknownType);
+          Local g = Jimple.newLocal("$u" + parameterRegister, unknownType);
           jBody.getLocals().add(g);
           registerLocals[parameterRegister] = g;
         }
@@ -584,12 +584,12 @@ public class DexBody {
     }
 
     for (int i = 0; i < (numRegisters - numParameterRegisters - (isStatic ? 0 : 1)); i++) {
-      registerLocals[i] = jimple.newLocal("$u" + i, unknownType);
+      registerLocals[i] = Jimple.newLocal("$u" + i, unknownType);
       jBody.getLocals().add(registerLocals[i]);
     }
 
     // add local to store intermediate results
-    storeResultLocal = jimple.newLocal("$u-1", unknownType);
+    storeResultLocal = Jimple.newLocal("$u-1", unknownType);
     jBody.getLocals().add(storeResultLocal);
 
     // process bytecode instructions
@@ -766,7 +766,7 @@ public class DexBody {
             Value op2 = expr.getOp2();
             if (op1 instanceof Constant && op2 instanceof Local) {
               Local l = (Local) op2;
-              Type ltype = l.getType(myScene);
+              Type ltype = l.getType();
               if (ltype instanceof PrimType) {
                 continue;
               }
@@ -784,7 +784,7 @@ public class DexBody {
               expr.setOp1(nullConstant);
             } else if (op1 instanceof Local && op2 instanceof Constant) {
               Local l = (Local) op1;
-              Type ltype = l.getType(myScene);
+              Type ltype = l.getType();
               if (ltype instanceof PrimType) {
                 continue;
               }
@@ -832,7 +832,7 @@ public class DexBody {
       List<Local> toRemove = new ArrayList<Local>();
       for (Local l : jBody.getLocals()) {
 
-        if (l.getType(myScene) instanceof NullType) {
+        if (l.getType() instanceof NullType) {
           toRemove.add(l);
           for (ValueBox vb : uses) {
             Value v = vb.getValue();
@@ -915,7 +915,7 @@ public class DexBody {
         AssignStmt ass = (AssignStmt) u;
         if (ass.getRightOp() instanceof CastExpr) {
           CastExpr c = (CastExpr) ass.getRightOp();
-          if (c.getType(myScene) instanceof NullType) {
+          if (c.getType() instanceof NullType) {
             ass.setRightOp(nullConstant);
           }
         }
@@ -926,7 +926,7 @@ public class DexBody {
         // CaughtExceptionRef,
         // we must manually fix the hierarchy
         if (def.getLeftOp() instanceof Local && def.getRightOp() instanceof CaughtExceptionRef) {
-          Type t = def.getLeftOp().getType(myScene);
+          Type t = def.getLeftOp().getType();
           if (t instanceof RefType) {
             RefType rt = (RefType) t;
             if (rt.getSootClass().isPhantom() && !rt.getSootClass().hasSuperclass()
@@ -948,7 +948,7 @@ public class DexBody {
     // java.lang.Object get()>();
     //
     for (Local l : jBody.getLocals()) {
-      Type t = l.getType(myScene);
+      Type t = l.getType();
       if (t instanceof NullType) {
         l.setType(objectType);
       }
@@ -1077,7 +1077,7 @@ public class DexBody {
       // nop instruction so Soot can include
       // the last instruction in the try block.
       if (jBody.getUnits().getLast() == endStmt && instructionAtAddress(endAddress - 1).getUnit() == endStmt) {
-        Unit nop = jimple.newNopStmt();
+        Unit nop = Jimple.newNopStmt();
         jBody.getUnits().insertAfter(nop, endStmt);
         endStmt = nop;
       }
@@ -1100,7 +1100,7 @@ public class DexBody {
             ((MoveExceptionInstruction) instruction).setRealType(this, exception.getType());
           }
 
-          Trap trap = jimple.newTrap(exception, beginStmt, endStmt, instruction.getUnit());
+          Trap trap = Jimple.newTrap(exception, beginStmt, endStmt, instruction.getUnit());
           jBody.getTraps().add(trap);
         }
       }

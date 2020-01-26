@@ -190,13 +190,13 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
 
               while (argsCount < paramCount) {
                 Type pType = parameterTypes.get(argsCount);
-                Local newLocal = myJimple.newLocal("newLocal" + localName++, pType);
+                Local newLocal = Jimple.newLocal("newLocal" + localName++, pType);
                 body.getLocals().add(newLocal);
-                body.getUnits().insertBeforeNoRedirect(myJimple.newAssignStmt(newLocal, getConstantType(pType, constantFactory,myJimple, primTypeCollector)), first);
+                body.getUnits().insertBeforeNoRedirect(Jimple.newAssignStmt(newLocal, getConstantType(pType, constantFactory,myJimple, primTypeCollector)), first);
                 args.add(newLocal);
                 argsCount++;
               }
-              valueBox.setValue(myJimple.newStaticInvokeExpr(invokedMethodRef, args));
+              valueBox.setValue(Jimple.newStaticInvokeExpr(invokedMethodRef, args));
             }
             methodcalls++;
           }
@@ -266,7 +266,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
     SootMethod newMethod = myScene.makeSootMethod(methodNewName, smParamTypes, sm.getReturnType(), mods);
     randomClass.addMethod(newMethod);
 
-    JimpleBody body = myJimple.newBody(newMethod);
+    JimpleBody body = Jimple.newBody(newMethod, myPrinter, myOptions);
     newMethod.setActiveBody(body);
     Chain<Local> locals = body.getLocals();
     PatchingChain<Unit> units = body.getUnits();
@@ -278,23 +278,23 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
 
     InvokeExpr ie = null;
     if (sm.isStatic()) {
-      ie = myJimple.newStaticInvokeExpr(sm.makeRef(), args);
+      ie = Jimple.newStaticInvokeExpr(sm.makeRef(), args);
     } else {
       Local libObj = args.remove(args.size() - 1);
       if (origIE instanceof InterfaceInvokeExpr) {
-        ie = myJimple.newInterfaceInvokeExpr(libObj, sm.makeRef(), args);
+        ie = Jimple.newInterfaceInvokeExpr(libObj, sm.makeRef(), args);
       } else if (origIE instanceof VirtualInvokeExpr) {
-        ie = myJimple.newVirtualInvokeExpr(libObj, sm.makeRef(), args);
+        ie = Jimple.newVirtualInvokeExpr(libObj, sm.makeRef(), args);
       }
     }
     if (sm.getReturnType() instanceof VoidType) {
-      units.add(myJimple.newInvokeStmt(ie));
-      units.add(myJimple.newReturnVoidStmt());
+      units.add(Jimple.newInvokeStmt(ie));
+      units.add(Jimple.newReturnVoidStmt());
     } else {
-      Local assign = myJimple.newLocal("returnValue", sm.getReturnType());
+      Local assign = Jimple.newLocal("returnValue", sm.getReturnType());
       locals.add(assign);
-      units.add(myJimple.newAssignStmt(assign, ie));
-      units.add(myJimple.newReturnStmt(assign));
+      units.add(Jimple.newAssignStmt(assign, ie));
+      units.add(Jimple.newReturnStmt(assign));
     }
 
     if (isVerbose()) {
@@ -339,10 +339,10 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
       return constantFactory.createIntConstant(Rand.getInt());
     }
     if (t instanceof CharType) {
-      return myJimple.newCastExpr(constantFactory.createIntConstant(Rand.getInt()), primTypeCollector.getCharType());
+      return Jimple.newCastExpr(constantFactory.createIntConstant(Rand.getInt()), primTypeCollector.getCharType());
     }
     if (t instanceof ByteType) {
-      return myJimple.newCastExpr(constantFactory.createIntConstant(Rand.getInt()), primTypeCollector.getByteType());
+      return Jimple.newCastExpr(constantFactory.createIntConstant(Rand.getInt()), primTypeCollector.getByteType());
     }
     if (t instanceof LongType) {
       return constantFactory.createLongConstant(Rand.getLong());
@@ -354,7 +354,7 @@ public class LibraryMethodWrappersBuilder extends SceneTransformer implements IJ
       return constantFactory.createDoubleConstant(Rand.getDouble());
     }
 
-    return myJimple.newCastExpr(constantFactory.getNullConstant(), t);
+    return Jimple.newCastExpr(constantFactory.getNullConstant(), t);
   }
 
   private static Body getBodySafely(SootMethod method) {

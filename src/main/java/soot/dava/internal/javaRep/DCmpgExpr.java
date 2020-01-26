@@ -53,9 +53,9 @@ public class DCmpgExpr extends AbstractGrimpIntBinopExpr implements CmpgExpr {
     return new DCmpgExpr(Grimp.cloneIfNecessary(getOp1()), Grimp.cloneIfNecessary(getOp2()), myGrimp,primTypeCollector);
   }
 
-  public Type getType(Scene myScene) {
-    if (getOp1().getType(myScene).equals(getOp2().getType(myScene))) {
-      return getOp1().getType(myScene);
+  public Type getType() {
+    if (getOp1().getType().equals(getOp2().getType())) {
+      return getOp1().getType();
     }
 
     return primTypeCollector.getIntType();

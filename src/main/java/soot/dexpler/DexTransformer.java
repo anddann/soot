@@ -192,7 +192,7 @@ public abstract class DexTransformer extends BodyTransformer {
           }
         } else if (r instanceof ArrayRef) {
           ArrayRef ar = (ArrayRef) r;
-          if (ar.getType(myScene).toString().equals(".unknown") || ar.getType(myScene).toString().equals("unknown")) { // ||
+          if (ar.getType().toString().equals(".unknown") || ar.getType().toString().equals("unknown")) { // ||
             // ar.getType())
             // {
             Type t = findArrayType(localDefs, stmt, ++depth, newVisitedDefs); // TODO: which type should be
@@ -208,7 +208,7 @@ public abstract class DexTransformer extends BodyTransformer {
               return t;
             }
           } else {
-            ArrayType at = (ArrayType) stmt.getRightOp().getType(myScene);
+            ArrayType at = (ArrayType) stmt.getRightOp().getType();
             Type t = at.getArrayElementType();
             if (depth == 0) {
               aType = t;
@@ -283,7 +283,7 @@ public abstract class DexTransformer extends BodyTransformer {
 
       } else if (baseDef instanceof IdentityStmt) {
         IdentityStmt stmt = (IdentityStmt) baseDef;
-        ArrayType at = (ArrayType) stmt.getRightOp().getType(myScene);
+        ArrayType at = (ArrayType) stmt.getRightOp().getType();
         Type t = at.getArrayElementType();
         if (depth == 0) {
           aType = t;

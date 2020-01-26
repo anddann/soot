@@ -43,7 +43,7 @@ public class DumbPointerAnalysis implements PointsToAnalysis {
 
   /** Returns the set of objects pointed to by variable l. */
   public PointsToSet reachingObjects(Local l) {
-    Type t = l.getType(myScene);
+    Type t = l.getType();
     if (t instanceof RefType) {
       return myFullObjectSet.createFullObjectSet((RefType) t);
     }

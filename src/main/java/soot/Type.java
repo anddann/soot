@@ -89,7 +89,7 @@ public abstract class Type implements Switchable, Serializable, Numberable {
   }
 
   public ArrayType makeArrayType() {
-    return ArrayType.v(this, 1, getMyScene());
+    return ArrayType.v(this, 1);
   }
 
   /**

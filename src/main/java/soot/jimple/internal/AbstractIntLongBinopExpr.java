@@ -27,22 +27,24 @@ import soot.*;
 @SuppressWarnings("serial")
 abstract public class AbstractIntLongBinopExpr extends AbstractBinopExpr {
 
-  public AbstractIntLongBinopExpr(ValueBox op1Box, ValueBox op2Box, PrimTypeCollector primTypeCollector) {
-    super(op1Box, op2Box, primTypeCollector);
+  public AbstractIntLongBinopExpr(ValueBox op1Box, ValueBox op2Box) {
+    super(op1Box, op2Box);
   }
 
-  public static boolean isIntLikeType(Type t, PrimTypeCollector primTypeCollector) {
+  public static boolean isIntLikeType(Type t) {
+    PrimTypeCollector primTypeCollector =t.getMyScene().getPrimTypeCollector();
     return t.equals(primTypeCollector.getIntType()) || t.equals(primTypeCollector.getByteType()) || t.equals(primTypeCollector.getShortType()) || t.equals(primTypeCollector.getCharType())
         || t.equals(primTypeCollector.getBooleanType());
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     Value op1 = op1Box.getValue();
     Value op2 = op2Box.getValue();
+    PrimTypeCollector primTypeCollector =op1.getType().getMyScene().getPrimTypeCollector();
 
-    if (isIntLikeType(op1.getType(myScene),primTypeCollector) && isIntLikeType(op2.getType(myScene),primTypeCollector)) {
+    if (isIntLikeType(op1.getType()) && isIntLikeType(op2.getType())) {
       return primTypeCollector.getIntType();
-    } else if (op1.getType(myScene).equals(primTypeCollector.getLongType()) && op2.getType(myScene).equals(primTypeCollector.getLongType())) {
+    } else if (op1.getType().equals(primTypeCollector.getLongType()) && op2.getType().equals(primTypeCollector.getLongType())) {
       return primTypeCollector.getLongType();
     } else {
       return primTypeCollector.getUnknownType();

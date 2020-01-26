@@ -224,7 +224,7 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
 
   // isAlwaysNull returns true if the reference r is known to be always null
   private final boolean isAlwaysNull(Value r) {
-    return ((r instanceof NullConstant) || (r.getType(myScene) instanceof NullType));
+    return ((r instanceof NullConstant) || (r.getType() instanceof NullType));
   } // end isAlwaysNull
 
   // isAlwaysTop returns true if the reference r is known to be always top for this analysis
@@ -265,7 +265,7 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
     if (isAlwaysNull(r) || isAlwaysTop(r)) {
       return false;
     } else if (r instanceof Local || r instanceof InstanceFieldRef || r instanceof StaticFieldRef) {
-      Type rType = r.getType(myScene);
+      Type rType = r.getType();
 
       return (rType instanceof RefType || rType instanceof ArrayType);
     } else {
@@ -431,7 +431,7 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
     while (it.hasNext()) {
       Local l = (Local) (it.next());
 
-      if (l.getType(myScene) instanceof RefType || l.getType(myScene) instanceof ArrayType) {
+      if (l.getType() instanceof RefType || l.getType() instanceof ArrayType) {
         refTypeLocals.add(getEquivalentValue(l));
       }
     }
@@ -475,7 +475,7 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
 
       InstanceFieldRef ir = (InstanceFieldRef) val;
 
-      opType = ir.getType(myScene);
+      opType = ir.getType();
       if (opType instanceof RefType || opType instanceof ArrayType) {
 
         EquivalentValue eir = getEquivalentValue(ir);
@@ -493,7 +493,7 @@ public class BranchedRefVarsAnalysis extends ForwardBranchedFlowAnalysis {
     } else if (val instanceof StaticFieldRef) {
 
       StaticFieldRef sr = (StaticFieldRef) val;
-      opType = sr.getType(myScene);
+      opType = sr.getType();
 
       if (opType instanceof RefType || opType instanceof ArrayType) {
 

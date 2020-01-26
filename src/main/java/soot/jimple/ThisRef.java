@@ -59,7 +59,7 @@ public class ThisRef implements IdentityRef {
     return Collections.emptyList();
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return thisType;
   }
 

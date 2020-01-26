@@ -77,6 +77,9 @@ public class RefType extends RefLikeType implements Comparable<RefType> {
     this.className = className;
   }
 
+
+
+
   /**
    * Create a RefType for a class.
    *

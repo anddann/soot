@@ -26,10 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import soot.G;
-import soot.Local;
-import soot.SootClass;
-import soot.Type;
+import soot.*;
 import soot.dava.internal.AST.ASTDoWhileNode;
 import soot.dava.internal.AST.ASTForLoopNode;
 import soot.dava.internal.AST.ASTIfElseNode;
@@ -63,17 +60,13 @@ import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
 
 public class ForLoopCreator extends DepthFirstAdapter {
 
-  private TryContentsFinder myTryContentsFinder;
-  private ASTWalker myASTWalker;
 
-  public ForLoopCreator(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker) {
-    this.myTryContentsFinder = myTryContentsFinder;
+  public ForLoopCreator(ASTWalker myASTWalker) {
     this.myASTWalker = myASTWalker;
   }
 
-  public ForLoopCreator(boolean verbose, TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker) {
+  public ForLoopCreator(boolean verbose,  ASTWalker myASTWalker) {
     super(verbose);
-    this.myTryContentsFinder = myTryContentsFinder;
     this.myASTWalker = myASTWalker;
   }
 

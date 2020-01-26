@@ -37,7 +37,7 @@ abstract public class AbstractGrimpIntLongBinopExpr extends AbstractIntLongBinop
   }
 
   protected AbstractGrimpIntLongBinopExpr(ValueBox op1Box, ValueBox op2Box, PrimTypeCollector primTypeCollector) {
-    super(op1Box,op2Box, primTypeCollector);
+    super(op1Box,op2Box);
     this.op1Box = op1Box;
     this.op2Box = op2Box;
   }

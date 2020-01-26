@@ -41,6 +41,7 @@ import soot.dava.internal.AST.ASTUnconditionalLoopNode;
 import soot.dava.internal.AST.ASTWhileNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DAbruptStmt;
+import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.jimple.ReturnStmt;
 import soot.jimple.ReturnVoidStmt;
 import soot.jimple.Stmt;
@@ -71,7 +72,7 @@ import soot.jimple.Stmt;
 */
 public class OrAggregatorThree {
 
-  public static void checkAndTransform(ASTNode node, ASTIfNode ifOne, ASTIfNode ifTwo, int nodeNumber, int subBodyNumber) {
+  public static void checkAndTransform(ASTNode node, ASTIfNode ifOne, ASTIfNode ifTwo, int nodeNumber, int subBodyNumber, TryContentsFinder myTryContentsFinder) {
 
     if (!(node instanceof ASTIfElseNode)) {
       // these are the nodes which always have one subBody
@@ -87,7 +88,7 @@ public class OrAggregatorThree {
        */
 
       // match the pattern and get the newBody
-      List<Object> newBody = createNewNodeBody(onlySubBody, nodeNumber, ifOne, ifTwo);
+      List<Object> newBody = createNewNodeBody(onlySubBody, nodeNumber, ifOne, ifTwo, myTryContentsFinder);
 
       if (newBody == null) {
         // something went wrong, pattern didnt match or some other problem
@@ -145,7 +146,7 @@ public class OrAggregatorThree {
        * The toModifySubBody contains the two consective if nodes in question at location given by the nodeNumber and
        * nodeNumer+1
        */
-      List<Object> newBody = createNewNodeBody(toModifySubBody, nodeNumber, ifOne, ifTwo);
+      List<Object> newBody = createNewNodeBody(toModifySubBody, nodeNumber, ifOne, ifTwo, myTryContentsFinder);
       if (newBody == null) {
         // something went wrong, the pattern didnt match or something else
         return;
@@ -171,7 +172,7 @@ public class OrAggregatorThree {
    * condition ORED with that of ifTwo b, ifTwo has been removed from the subBody
    */
 
-  public static List<Object> createNewNodeBody(List<Object> oldSubBody, int nodeNumber, ASTIfNode ifOne, ASTIfNode ifTwo) {
+  public static List<Object> createNewNodeBody(List<Object> oldSubBody, int nodeNumber, ASTIfNode ifOne, ASTIfNode ifTwo, TryContentsFinder myTryContentsFinder) {
     if (!matchPattern(ifOne, ifTwo)) {
       // pattern did not match
       return null;
@@ -228,7 +229,7 @@ public class OrAggregatorThree {
 
     ASTCondition newCond = new ASTOrCondition(firstCond, secondCond);
 
-    ASTIfNode newNode = new ASTIfNode(firstOne.get_Label(), newCond, firstOne.getIfBody(), myTryContentsFinder);
+    ASTIfNode newNode = new ASTIfNode(firstOne.get_Label(), newCond, firstOne.getIfBody(),myTryContentsFinder);
 
     // add the new node
     newSubBody.add(newNode);

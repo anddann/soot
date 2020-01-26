@@ -257,12 +257,12 @@ public class TypeResolver {
            * By the time we have countOnly == false, all variables must by typed with concrete Jimple types, and never
            * [0..1], [0..127] or [0..32767].
            */
-          vold = jimple.newLocal("tmp", t);
+          vold = Jimple.newLocal("tmp", t);
           vold.setName("tmp$" + System.identityHashCode(vold));
           this.tg.set(vold, t);
           this.jb.getLocals().add(vold);
           Unit u = Util.findFirstNonIdentityUnit(jb, stmt);
-          this.jb.getUnits().insertBefore(jimple.newAssignStmt(vold, op), u);
+          this.jb.getUnits().insertBefore(Jimple.newAssignStmt(vold, op), u);
         } else {
           vold = (Local) op;
         }
@@ -285,12 +285,12 @@ public class TypeResolver {
      */
     protected Local createCast(Type useType, Stmt stmt, Local old) {
       Jimple jimple = myJimple;
-      Local vnew = jimple.newLocal("tmp", useType);
+      Local vnew = Jimple.newLocal("tmp", useType);
       vnew.setName("tmp$" + System.identityHashCode(vnew));
       this.tg.set(vnew, useType);
       this.jb.getLocals().add(vnew);
       Unit u = Util.findFirstNonIdentityUnit(jb, stmt);
-      this.jb.getUnits().insertBefore(jimple.newAssignStmt(vnew, jimple.newCastExpr(old, useType)), u);
+      this.jb.getUnits().insertBefore(Jimple.newAssignStmt(vnew, Jimple.newCastExpr(old, useType)), u);
       return vnew;
     }
 
@@ -611,13 +611,13 @@ public class TypeResolver {
                   deflist = defs.getDefsOfAt((Local) assign.getRightOp(), assign);
                   continue;
                 } else if (assign.getRightOp() instanceof NewExpr) {
-                  Local newlocal = jimple.newLocal("tmp", null);
+                  Local newlocal = Jimple.newLocal("tmp", null);
                   newlocal.setName("tmp$" + System.identityHashCode(newlocal));
                   this.jb.getLocals().add(newlocal);
 
                   special.setBase(newlocal);
 
-                  DefinitionStmt assignStmt = jimple.newAssignStmt(assign.getLeftOp(), newlocal);
+                  DefinitionStmt assignStmt = Jimple.newAssignStmt(assign.getLeftOp(), newlocal);
                   Unit u = Util.findLastIdentityUnit(jb, assign);
                   units.insertAfter(assignStmt, u);
                   assign.setLeftOp(newlocal);

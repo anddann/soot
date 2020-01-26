@@ -33,8 +33,6 @@ import soot.dava.internal.AST.ASTNode;
 import soot.dava.internal.AST.ASTTryNode;
 import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.asg.AugmentedStmtGraph;
-import soot.dava.toolkits.base.AST.ASTWalker;
-import soot.dava.toolkits.base.AST.TryContentsFinder;
 import soot.dava.toolkits.base.finders.ExceptionFinder;
 import soot.dava.toolkits.base.finders.ExceptionNode;
 import soot.jimple.*;
@@ -113,7 +111,7 @@ public class SETTryNode extends SETNode {
     return c;
   }
 
-  public ASTNode emit_AST(TryContentsFinder myTryContentsFinder, ASTWalker myASTWalker, Jimple myJimple) {
+  public ASTNode emit_AST() {
     LinkedList<Object> catchList = new LinkedList<Object>();
     HashMap<Object, Object> exceptionMap = new HashMap<Object, Object>(), paramMap = new HashMap<Object, Object>();
 

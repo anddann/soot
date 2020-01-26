@@ -10,12 +10,12 @@ package soot.jimple.internal;
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
@@ -34,23 +34,22 @@ import soot.jimple.JimpleToBafContext;
 @SuppressWarnings("serial")
 abstract public class AbstractJimpleIntLongBinopExpr extends AbstractIntLongBinopExpr implements ConvertToBaf {
 
-  protected final Jimple myJimple;
+    protected AbstractJimpleIntLongBinopExpr(ValueBox op1, ValueBox op2) {
+        super(op1, op2);
+    }
 
-  protected AbstractJimpleIntLongBinopExpr(Value op1, Value op2, PrimTypeCollector primTypeCollector, Jimple jimple) {
-    super(null, null, primTypeCollector);
-    myJimple = jimple;
-    this.op1Box = myJimple.newArgBox(op1);
-    this.op2Box = myJimple.newArgBox(op2);
+    protected AbstractJimpleIntLongBinopExpr(Value op1, Value op2) {
+        this(Jimple.newArgBox(op1), Jimple.newArgBox(op2));
 
-  }
+    }
 
-  public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-    ((ConvertToBaf) this.getOp1()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
-    ((ConvertToBaf) this.getOp2()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
-    Unit u = (Unit) makeBafInst(this.getOp1().getType(myScene), myBaf);
-    out.add(u);
-    u.addAllTagsOf(context.getCurrentUnit());
-  }
+    public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
+        ((ConvertToBaf) this.getOp1()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) this.getOp2()).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
+        Unit u = (Unit) makeBafInst(this.getOp1().getType(), myBaf);
+        out.add(u);
+        u.addAllTagsOf(context.getCurrentUnit());
+    }
 
-  abstract Object makeBafInst(Type opType, Baf myBaf);
+    abstract Object makeBafInst(Type opType, Baf myBaf);
 }

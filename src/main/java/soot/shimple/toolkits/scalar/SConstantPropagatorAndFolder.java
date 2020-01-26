@@ -418,7 +418,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
 
         if (constant.equals(trueC)) {
           branch = true;
-          GotoStmt gotoStmt = myJimple.newGotoStmt(ifStmt.getTargetBox());
+          GotoStmt gotoStmt = Jimple.newGotoStmt(ifStmt.getTargetBox());
           stmtToReplacement.put(ifStmt, gotoStmt);
         }
 
@@ -467,7 +467,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
           branchBox = table.getTargetBox(index);
         }
 
-        GotoStmt gotoStmt = myJimple.newGotoStmt(branchBox);
+        GotoStmt gotoStmt = Jimple.newGotoStmt(branchBox);
         stmtToReplacement.put(table, gotoStmt);
 
         List unitBoxes = table.getUnitBoxes();
@@ -511,7 +511,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
           branchBox = lookup.getTargetBox(index);
         }
 
-        GotoStmt gotoStmt = myJimple.newGotoStmt(branchBox);
+        GotoStmt gotoStmt = Jimple.newGotoStmt(branchBox);
         stmtToReplacement.put(lookup, gotoStmt);
 
         List unitBoxes = lookup.getUnitBoxes();

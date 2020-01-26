@@ -338,7 +338,7 @@ public final class LambdaMetaFactory {
       }
 
       SootClass tclass = m.getDeclaringClass();
-      JimpleBody jb = myJimple.newBody(m);
+      JimpleBody jb = Jimple.newBody(m, myPrinter, myOptions);
 
       if (m.getName().equals("<init>")) {
         getInitBody(tclass, jb);
@@ -366,20 +366,20 @@ public final class LambdaMetaFactory {
 
       // @this
       Local l = lc.generateLocal(tclass.getType());
-      us.add(myJimple.newIdentityStmt(l, myJimple.newThisRef(tclass.getType())));
+      us.add(Jimple.newIdentityStmt(l, Jimple.newThisRef(tclass.getType())));
 
       // @parameters
       Chain<Local> capLocals = new HashChain<>();
       int i = 0;
       for (SootField f : capFields) {
         Local l2 = lc.generateLocal(f.getType());
-        us.add(myJimple.newIdentityStmt(l2, myJimple.newParameterRef(f.getType(), i)));
+        us.add(Jimple.newIdentityStmt(l2, Jimple.newParameterRef(f.getType(), i)));
         capLocals.add(l2);
         i++;
       }
 
       // super java.lang.Object.<init>
-      us.add(myJimple.newInvokeStmt(myJimple.newSpecialInvokeExpr(l,
+      us.add(Jimple.newInvokeStmt(Jimple.newSpecialInvokeExpr(l,
           myScene.makeConstructorRef(myScene.getObjectType().getSootClass(), Collections.<Type>emptyList()),
           Collections.<Value>emptyList())));
 
@@ -387,10 +387,10 @@ public final class LambdaMetaFactory {
       Iterator<Local> localItr = capLocals.iterator();
       for (SootField f : capFields) {
         Local l2 = localItr.next();
-        us.add(myJimple.newAssignStmt(myJimple.newInstanceFieldRef(l, f.makeRef()), l2));
+        us.add(Jimple.newAssignStmt(Jimple.newInstanceFieldRef(l, f.makeRef()), l2));
       }
 
-      us.add(myJimple.newReturnVoidStmt());
+      us.add(Jimple.newReturnVoidStmt());
     }
 
     private void getBootstrapBody(SootClass tclass, JimpleBody jb) {
@@ -404,17 +404,17 @@ public final class LambdaMetaFactory {
         Type type = capField.getType();
         capTypes.add(type);
         Local p = lc.generateLocal(type);
-        ParameterRef pref = myJimple.newParameterRef(type, i);
-        us.add(myJimple.newIdentityStmt(p, pref));
+        ParameterRef pref = Jimple.newParameterRef(type, i);
+        us.add(Jimple.newIdentityStmt(p, pref));
         capValues.add(p);
         i++;
       }
       Local l = lc.generateLocal(tclass.getType());
-      Value val = myJimple.newNewExpr(tclass.getType());
-      us.add(myJimple.newAssignStmt(l, val));
+      Value val = Jimple.newNewExpr(tclass.getType());
+      us.add(Jimple.newAssignStmt(l, val));
       us.add(
-          myJimple.newInvokeStmt(myJimple.newSpecialInvokeExpr(l, myScene.makeConstructorRef(tclass, capTypes), capValues)));
-      us.add(myJimple.newReturnStmt(l));
+          Jimple.newInvokeStmt(Jimple.newSpecialInvokeExpr(l, myScene.makeConstructorRef(tclass, capTypes), capValues)));
+      us.add(Jimple.newReturnStmt(l));
     }
 
     /**
@@ -429,14 +429,14 @@ public final class LambdaMetaFactory {
 
       // @this
       Local this_ = lc.generateLocal(tclass.getType());
-      us.add(myJimple.newIdentityStmt(this_, myJimple.newThisRef(tclass.getType())));
+      us.add(Jimple.newIdentityStmt(this_, Jimple.newThisRef(tclass.getType())));
 
       // @parameter for direct arguments
       Chain<Local> samParamLocals = new HashChain<>();
       int i = 0;
       for (Type ty : implMethodType.getParameterTypes()) {
         Local l = lc.generateLocal(ty);
-        us.add(myJimple.newIdentityStmt(l, myJimple.newParameterRef(ty, i)));
+        us.add(Jimple.newIdentityStmt(l, Jimple.newParameterRef(ty, i)));
         samParamLocals.add(l);
         i++;
       }
@@ -455,7 +455,7 @@ public final class LambdaMetaFactory {
       // captured arguments
       for (SootField f : capFields) {
         Local l = lc.generateLocal(f.getType());
-        us.add(myJimple.newAssignStmt(l, myJimple.newInstanceFieldRef(this_, f.makeRef())));
+        us.add(Jimple.newAssignStmt(l, Jimple.newInstanceFieldRef(this_, f.makeRef())));
         args.add(l);
       }
 
@@ -498,7 +498,7 @@ public final class LambdaMetaFactory {
 
     private Local adapt(Local fromLocal, Type to, JimpleBody jb, PatchingChain<Unit> us, LocalGenerator lc) {
 
-      Type from = fromLocal.getType(myScene);
+      Type from = fromLocal.getType();
 
       // Implements JLS 5.3 Method Invocation Context for adapting arguments from lambda expression to
       // formal arguments of target implementation
@@ -550,7 +550,7 @@ public final class LambdaMetaFactory {
           // Insert the cast
           RefType boxedType = wrapper.primitiveTypes.get(to);
           Local castLocal = lc.generateLocal(boxedType);
-          us.add(myJimple.newAssignStmt(castLocal, myJimple.newCastExpr(fromLocal, boxedType)));
+          us.add(Jimple.newAssignStmt(castLocal, Jimple.newCastExpr(fromLocal, boxedType)));
           fromLocal = castLocal;
         }
 
@@ -569,7 +569,7 @@ public final class LambdaMetaFactory {
      * @return
      */
     private Local box(Local fromLocal, JimpleBody jb, PatchingChain<Unit> us, LocalGenerator lc) {
-      PrimType primitiveType = (PrimType) fromLocal.getType(myScene);
+      PrimType primitiveType = (PrimType) fromLocal.getType();
       RefType wrapperType = primitiveType.boxedType();
 
       SootMethod valueOfMethod = wrapper.valueOf.get(primitiveType);
@@ -579,7 +579,7 @@ public final class LambdaMetaFactory {
         throw new NullPointerException(String.format("%s,%s,%s,%s", valueOfMethod, primitiveType, wrapper.valueOf.entrySet(),
             wrapper.valueOf.get(primitiveType)));
       }
-      us.add(myJimple.newAssignStmt(lBox, myJimple.newStaticInvokeExpr(valueOfMethod.makeRef(), fromLocal)));
+      us.add(Jimple.newAssignStmt(lBox, myJimple.newStaticInvokeExpr(valueOfMethod.makeRef(), fromLocal)));
 
       return lBox;
     }
@@ -594,13 +594,13 @@ public final class LambdaMetaFactory {
      * @return
      */
     private Local unbox(Local fromLocal, JimpleBody jb, PatchingChain<Unit> us, LocalGenerator lc) {
-      RefType wrapperType = (RefType) fromLocal.getType(myScene);
+      RefType wrapperType = (RefType) fromLocal.getType();
       PrimType primitiveType = wrapper.wrapperTypes.get(wrapperType);
 
       SootMethod primitiveValueMethod = wrapper.primitiveValue.get(wrapperType);
 
       Local lUnbox = lc.generateLocal(primitiveType);
-      us.add(myJimple.newAssignStmt(lUnbox, myJimple.newVirtualInvokeExpr(fromLocal, primitiveValueMethod.makeRef())));
+      us.add(Jimple.newAssignStmt(lUnbox, myJimple.newVirtualInvokeExpr(fromLocal, primitiveValueMethod.makeRef())));
 
       return lUnbox;
     }
@@ -622,11 +622,11 @@ public final class LambdaMetaFactory {
      */
     private Local narrowingReferenceConversion(Local fromLocal, Type to, JimpleBody jb, PatchingChain<Unit> us,
         LocalGenerator lc) {
-      if (fromLocal.getType(myScene).equals(to)) {
+      if (fromLocal.getType().equals(to)) {
         return fromLocal;
       }
 
-      if (!(fromLocal.getType(myScene) instanceof RefType || fromLocal.getType(myScene) instanceof ArrayType)) {
+      if (!(fromLocal.getType() instanceof RefType || fromLocal.getType() instanceof ArrayType)) {
         return fromLocal;
       }
       // throw new IllegalArgumentException("Expected source to have reference type");
@@ -636,7 +636,7 @@ public final class LambdaMetaFactory {
       }
 
       Local l2 = lc.generateLocal(to);
-      us.add(myJimple.newAssignStmt(l2, myJimple.newCastExpr(fromLocal, to)));
+      us.add(Jimple.newAssignStmt(l2, Jimple.newCastExpr(fromLocal, to)));
       return l2;
     }
 
@@ -651,7 +651,7 @@ public final class LambdaMetaFactory {
      */
     private Local wideningPrimitiveConversion(Local fromLocal, Type to, JimpleBody jb, PatchingChain<Unit> us,
         LocalGenerator lc) {
-      if (!(fromLocal.getType(myScene) instanceof PrimType)) {
+      if (!(fromLocal.getType() instanceof PrimType)) {
         throw new IllegalArgumentException("Expected source to have primitive type");
       }
       if (!(to instanceof PrimType)) {
@@ -659,7 +659,7 @@ public final class LambdaMetaFactory {
       }
 
       Local l2 = lc.generateLocal(to);
-      us.add(myJimple.newAssignStmt(l2, myJimple.newCastExpr(fromLocal, to)));
+      us.add(Jimple.newAssignStmt(l2, Jimple.newCastExpr(fromLocal, to)));
       return l2;
     }
 
@@ -676,21 +676,21 @@ public final class LambdaMetaFactory {
       if (value instanceof InvokeExpr
           && LambdaMetaFactory.this.primTypeCollector.getVoidType().equals(implMethod.getMethodRef().getReturnType())) {
         // implementation method is void
-        us.add(myJimple.newInvokeStmt(value));
-        us.add(myJimple.newReturnVoidStmt());
+        us.add(Jimple.newInvokeStmt(value));
+        us.add(Jimple.newReturnVoidStmt());
       } else if (LambdaMetaFactory.this.primTypeCollector.getVoidType().equals(implMethodType.getReturnType())) {
         // dispatch method is void
-        us.add(myJimple.newInvokeStmt(value));
-        us.add(myJimple.newReturnVoidStmt());
+        us.add(Jimple.newInvokeStmt(value));
+        us.add(Jimple.newReturnVoidStmt());
       } else {
         // neither is void, must pass through return value
 
-        Local ret = lc.generateLocal(value.getType(myScene));
-        us.add(myJimple.newAssignStmt(ret, value));
+        Local ret = lc.generateLocal(value.getType());
+        us.add(Jimple.newAssignStmt(ret, value));
 
         // adapt return value
         Local retAdapted = adapt(ret, implMethodType.getReturnType(), jb, us, lc);
-        us.add(myJimple.newReturnStmt(retAdapted));
+        us.add(Jimple.newReturnStmt(retAdapted));
       }
     }
 
@@ -704,18 +704,18 @@ public final class LambdaMetaFactory {
       MethodHandle.Kind k = MethodHandle.Kind.getKind(implMethod.getKind());
       switch (k) {
         case REF_INVOKE_STATIC:
-          return myJimple.newStaticInvokeExpr(methodRef, args);
+          return Jimple.newStaticInvokeExpr(methodRef, args);
         case REF_INVOKE_INTERFACE:
-          return myJimple.newInterfaceInvokeExpr(args.get(0), methodRef, rest(args));
+          return Jimple.newInterfaceInvokeExpr(args.get(0), methodRef, rest(args));
         case REF_INVOKE_VIRTUAL:
-          return myJimple.newVirtualInvokeExpr(args.get(0), methodRef, rest(args));
+          return Jimple.newVirtualInvokeExpr(args.get(0), methodRef, rest(args));
         case REF_INVOKE_SPECIAL:
           final SootClass currentClass = jb.getMethod().getDeclaringClass();
           final SootClass calledClass = methodRef.getDeclaringClass();
           // It can be the case that the method is not in the same class (or a super class).
           // As such, we need a virtual call in these cases.
           if (myScene.getOrMakeFastHierarchy().canStoreClass(currentClass, calledClass)) {
-            return myJimple.newSpecialInvokeExpr(args.get(0), methodRef, rest(args));
+            return Jimple.newSpecialInvokeExpr(args.get(0), methodRef, rest(args));
           } else {
             SootMethod m = implMethod.getMethodRef().resolve();
             if (!m.isPublic()) {
@@ -727,19 +727,19 @@ public final class LambdaMetaFactory {
             }
             // In some versions of the (Open)JDK, we seem to have an interface instead of a class for some reason
             if (methodRef.getDeclaringClass().isInterface()) {
-              return myJimple.newInterfaceInvokeExpr(args.get(0), methodRef, rest(args));
+              return Jimple.newInterfaceInvokeExpr(args.get(0), methodRef, rest(args));
             } else {
-              return myJimple.newVirtualInvokeExpr(args.get(0), methodRef, rest(args));
+              return Jimple.newVirtualInvokeExpr(args.get(0), methodRef, rest(args));
             }
           }
         case REF_INVOKE_CONSTRUCTOR:
           RefType type = methodRef.getDeclaringClass().getType();
-          NewExpr newRef = myJimple.newNewExpr(type);
+          NewExpr newRef = Jimple.newNewExpr(type);
           Local newLocal = lc.generateLocal(type);
-          us.add(myJimple.newAssignStmt(newLocal, newRef));
+          us.add(Jimple.newAssignStmt(newLocal, newRef));
           // NOTE: args does not include the receiver
-          SpecialInvokeExpr specialInvokeExpr = myJimple.newSpecialInvokeExpr(newLocal, methodRef, args);
-          InvokeStmt invokeStmt = myJimple.newInvokeStmt(specialInvokeExpr);
+          SpecialInvokeExpr specialInvokeExpr = Jimple.newSpecialInvokeExpr(newLocal, methodRef, args);
+          InvokeStmt invokeStmt = Jimple.newInvokeStmt(specialInvokeExpr);
           us.add(invokeStmt);
 
           return newLocal;

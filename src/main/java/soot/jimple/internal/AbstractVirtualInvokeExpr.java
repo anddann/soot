@@ -33,11 +33,9 @@ import soot.util.Switch;
 @SuppressWarnings("serial")
 public abstract class AbstractVirtualInvokeExpr extends AbstractInstanceInvokeExpr
     implements VirtualInvokeExpr, ConvertToBaf {
-  protected Baf myBaf;
 
-  protected AbstractVirtualInvokeExpr(ValueBox baseBox, SootMethodRef methodRef, ValueBox[] argBoxes, Baf myBaf) {
+  protected AbstractVirtualInvokeExpr(ValueBox baseBox, SootMethodRef methodRef, ValueBox[] argBoxes) {
     super(methodRef, baseBox, argBoxes);
-    this.myBaf = myBaf;
     if (methodRef.isStatic()) {
       throw new RuntimeException("wrong static-ness");
     }
@@ -117,15 +115,15 @@ public abstract class AbstractVirtualInvokeExpr extends AbstractInstanceInvokeEx
   }
 
   public void convertToBaf(JimpleToBafContext context, List<Unit> out, Baf myBaf, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, final Scene myScene) {
-    ((ConvertToBaf) (getBase())).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
+    ((ConvertToBaf) (getBase())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
 
     if (argBoxes != null) {
       for (ValueBox element : argBoxes) {
-        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, this.myBaf, primTypeCollector, constantFactory, myScene);
+        ((ConvertToBaf) (element.getValue())).convertToBaf(context, out, myBaf, primTypeCollector, constantFactory, myScene);
       }
     }
 
-    Unit u = this.myBaf.newVirtualInvokeInst(methodRef);
+    Unit u = myBaf.newVirtualInvokeInst(methodRef);
     out.add(u);
     u.addAllTagsOf(context.getCurrentUnit());
   }

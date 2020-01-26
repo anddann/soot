@@ -213,7 +213,7 @@ public class UseChecker extends AbstractStmtSwitch {
               if (defU instanceof AssignStmt) {
                 AssignStmt defUas = (AssignStmt) defU;
                 if (defUas.getRightOp() instanceof NewArrayExpr) {
-                  at = (ArrayType) defUas.getRightOp().getType(myScene);
+                  at = (ArrayType) defUas.getRightOp().getType();
                   break;
                 }
               }
@@ -377,8 +377,8 @@ public class UseChecker extends AbstractStmtSwitch {
 
   private Type getTargetType(final Value other) {
     if (other instanceof Constant) {
-      if (other.getType(myScene) != primTypeCollector.getNullType()) {
-        return other.getType(myScene);
+      if (other.getType() != primTypeCollector.getNullType()) {
+        return other.getType();
       }
     } else if (other instanceof Local) {
       Type tgTp = tg.get((Local) other);

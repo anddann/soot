@@ -30,8 +30,8 @@ import soot.util.Switch;
 
 @SuppressWarnings("serial")
 public abstract class AbstractLengthExpr extends AbstractUnopExpr implements LengthExpr {
-  protected AbstractLengthExpr(ValueBox opBox, PrimTypeCollector primTypeCollector) {
-    super(opBox, primTypeCollector);
+  protected AbstractLengthExpr(ValueBox opBox) {
+    super(opBox);
   }
 
   public boolean equivTo(Object o) {
@@ -58,7 +58,8 @@ public abstract class AbstractLengthExpr extends AbstractUnopExpr implements Len
     opBox.toString(up);
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
+    PrimTypeCollector primTypeCollector = this.opBox.getValue().getType().getMyScene().getPrimTypeCollector();
     return primTypeCollector.getIntType();
   }
 

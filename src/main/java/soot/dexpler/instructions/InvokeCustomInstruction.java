@@ -99,7 +99,7 @@ public class InvokeCustomInstruction extends MethodInvocationInstruction {
       // The method prototype only includes the method arguments and no invoking object so treat like static
       List<Local> methodArgs = buildParameters(body, callSiteReference.getMethodProto().getParameterTypes(), true);
       
-      invocation = this.myJimple.newDynamicInvokeExpr(bootstrapMethodRef, bootstrapValues, methodRef, bootStrapKind.getValue(),
+      invocation = Jimple.newDynamicInvokeExpr(bootstrapMethodRef, bootstrapValues, methodRef, bootStrapKind.getValue(),
           methodArgs);
       body.setDanglingInstruction(this);
     } else if (bootstrapRef instanceof FieldReference) {

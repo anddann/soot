@@ -26,10 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import soot.G;
-import soot.Local;
-import soot.SootClass;
-import soot.Type;
+import soot.*;
 import soot.dava.internal.AST.ASTDoWhileNode;
 import soot.dava.internal.AST.ASTForLoopNode;
 import soot.dava.internal.AST.ASTIfElseNode;

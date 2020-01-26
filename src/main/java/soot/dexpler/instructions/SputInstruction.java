@@ -52,7 +52,7 @@ public class SputInstruction extends FieldInstruction {
   public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     int source = ((OneRegisterInstruction) instruction).getRegisterA();
     FieldReference f = (FieldReference) ((ReferenceInstruction) instruction).getReference();
-    StaticFieldRef instanceField = myJimple.newStaticFieldRef(getStaticSootFieldRef(f));
+    StaticFieldRef instanceField = Jimple.newStaticFieldRef(getStaticSootFieldRef(f));
     Local sourceValue = body.getRegisterLocal(source);
     AssignStmt assign = getAssignStmt(body, sourceValue, instanceField);
     setUnit(assign);
@@ -60,7 +60,7 @@ public class SputInstruction extends FieldInstruction {
     body.add(assign);
 
     if (IDalvikTyper.ENABLE_DVKTYPER) {
-      myDalvikTyper().setType(assign.getRightOpBox(), instanceField.getType(myScene), true);
+      myDalvikTyper().setType(assign.getRightOpBox(), instanceField.getType(), true);
     }
   }
 

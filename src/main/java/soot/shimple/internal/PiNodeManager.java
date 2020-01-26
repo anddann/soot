@@ -219,8 +219,8 @@ public class PiNodeManager {
 
     PiExpr pit = myShimple.newPiExpr(local, u, Boolean.TRUE);
     PiExpr pif = myShimple.newPiExpr(local, u, Boolean.FALSE);
-    Unit addt = myJimple.newAssignStmt(local, pit);
-    Unit addf = myJimple.newAssignStmt(local, pif);
+    Unit addt = Jimple.newAssignStmt(local, pit);
+    Unit addf = Jimple.newAssignStmt(local, pif);
 
     PatchingChain<Unit> units = body.getUnits();
 
@@ -248,7 +248,7 @@ public class PiNodeManager {
       }
 
       if (predOfTarget.fallsThrough()) {
-        GotoStmt gotoStmt = myJimple.newGotoStmt(target);
+        GotoStmt gotoStmt = Jimple.newGotoStmt(target);
         units.insertAfter(gotoStmt, predOfTarget);
       }
     }
@@ -293,7 +293,7 @@ public class PiNodeManager {
       Object targetKey = targetKeys.get(count);
 
       PiExpr pi1 = myShimple.newPiExpr(local, u, targetKey);
-      Unit add1 = myJimple.newAssignStmt(local, pi1);
+      Unit add1 = Jimple.newAssignStmt(local, pi1);
 
       PatchingChain<Unit> units = body.getUnits();
 
@@ -316,7 +316,7 @@ public class PiNodeManager {
         }
 
         if (predOfTarget.fallsThrough()) {
-          GotoStmt gotoStmt = myJimple.newGotoStmt(target);
+          GotoStmt gotoStmt = Jimple.newGotoStmt(target);
           units.insertAfter(gotoStmt, predOfTarget);
         }
       }

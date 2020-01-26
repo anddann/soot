@@ -64,7 +64,7 @@ public class DArrayInitExpr implements Value {
     return this;
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return type;
   }
 

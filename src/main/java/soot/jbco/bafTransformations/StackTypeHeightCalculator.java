@@ -178,7 +178,7 @@ public class StackTypeHeightCalculator {
 
     public void casePushInst(PushInst i) {
       remove_types = null;
-      add_types = new Type[] { i.getConstant().getType(myScene) };
+      add_types = new Type[] { i.getConstant().getType() };
     }
 
     public void casePopInst(PopInst i) {
@@ -202,7 +202,7 @@ public class StackTypeHeightCalculator {
       if (bafToJLocals != null) {
         Local jl = (Local) bafToJLocals.get(i.getLocal());
         if (jl != null) {
-          add_types = new Type[] { jl.getType(myScene) };
+          add_types = new Type[] { jl.getType() };
         }
       }
 

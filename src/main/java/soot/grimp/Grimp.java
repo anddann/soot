@@ -359,7 +359,7 @@ public class Grimp {
    */
 
   NewExpr newNewExpr(RefType type) {
-    return myJimple.newNewExpr(type);
+    return Jimple.newNewExpr(type);
   }
 
   /**
@@ -467,11 +467,11 @@ public class Grimp {
    */
 
   public BreakpointStmt newBreakpointStmt() {
-    return myJimple.newBreakpointStmt();
+    return Jimple.newBreakpointStmt();
   }
 
   public BreakpointStmt newBreakpointStmt(BreakpointStmt s) {
-    return myJimple.newBreakpointStmt();
+    return Jimple.newBreakpointStmt();
   }
 
   /**
@@ -479,11 +479,11 @@ public class Grimp {
    */
 
   public GotoStmt newGotoStmt(Unit target) {
-    return myJimple.newGotoStmt(target);
+    return Jimple.newGotoStmt(target);
   }
 
   public GotoStmt newGotoStmt(GotoStmt s) {
-    return myJimple.newGotoStmt(s.getTarget());
+    return Jimple.newGotoStmt(s.getTarget());
   }
 
   /**
@@ -491,11 +491,11 @@ public class Grimp {
    */
 
   public NopStmt newNopStmt() {
-    return myJimple.newNopStmt();
+    return Jimple.newNopStmt();
   }
 
   public NopStmt newNopStmt(NopStmt s) {
-    return myJimple.newNopStmt();
+    return Jimple.newNopStmt();
   }
 
   /**
@@ -503,11 +503,11 @@ public class Grimp {
    */
 
   public ReturnVoidStmt newReturnVoidStmt() {
-    return myJimple.newReturnVoidStmt();
+    return Jimple.newReturnVoidStmt();
   }
 
   public ReturnVoidStmt newReturnVoidStmt(ReturnVoidStmt s) {
-    return myJimple.newReturnVoidStmt();
+    return Jimple.newReturnVoidStmt();
   }
 
   /**
@@ -599,7 +599,7 @@ public class Grimp {
    */
 
   public Local newLocal(String name, Type t) {
-    return myJimple.newLocal(name, t);
+    return Jimple.newLocal(name, t);
   }
 
   /**
@@ -619,7 +619,7 @@ public class Grimp {
    */
 
   public StaticFieldRef newStaticFieldRef(SootFieldRef f) {
-    return myJimple.newStaticFieldRef(f);
+    return Jimple.newStaticFieldRef(f);
   }
 
   /**
@@ -627,7 +627,7 @@ public class Grimp {
    */
 
   public ThisRef newThisRef(RefType t) {
-    return myJimple.newThisRef(t);
+    return Jimple.newThisRef(t);
   }
 
   /**
@@ -635,7 +635,7 @@ public class Grimp {
    */
 
   public ParameterRef newParameterRef(Type paramType, int number) {
-    return myJimple.newParameterRef(paramType, number);
+    return Jimple.newParameterRef(paramType, number);
   }
 
   /**
@@ -651,7 +651,7 @@ public class Grimp {
    */
 
   public CaughtExceptionRef newCaughtExceptionRef() {
-    return myJimple.newCaughtExceptionRef();
+    return Jimple.newCaughtExceptionRef(myScene);
   }
 
   /**
@@ -663,11 +663,11 @@ public class Grimp {
   }
 
   public ValueBox newVariableBox(Value value) {
-    return myJimple.newVariableBox(value);
+    return Jimple.newVariableBox(value);
   }
 
   public ValueBox newLocalBox(Value value) {
-    return myJimple.newLocalBox(value);
+    return Jimple.newLocalBox(value);
   }
 
   public ValueBox newRValueBox(Value value) {
@@ -675,7 +675,7 @@ public class Grimp {
   }
 
   public ValueBox newImmediateBox(Value value) {
-    return myJimple.newImmediateBox(value);
+    return Jimple.newImmediateBox(value);
   }
 
   public ValueBox newExprBox(Value value) {
@@ -691,19 +691,19 @@ public class Grimp {
   }
 
   public ValueBox newIdentityRefBox(Value value) {
-    return myJimple.newIdentityRefBox(value);
+    return Jimple.newIdentityRefBox(value);
   }
 
   public ValueBox newConditionExprBox(Value value) {
-    return myJimple.newConditionExprBox(value);
+    return Jimple.newConditionExprBox(value);
   }
 
   public ValueBox newInvokeExprBox(Value value) {
-    return myJimple.newInvokeExprBox(value);
+    return Jimple.newInvokeExprBox(value);
   }
 
   public UnitBox newStmtBox(Unit unit) {
-    return myJimple.newStmtBox(unit);
+    return Jimple.newStmtBox(unit);
   }
 
   /** Carries out the mapping from other Value's to Grimp Value's */
@@ -833,7 +833,7 @@ public class Grimp {
         }
 
         public void caseCastExpr(CastExpr v) {
-          returnedExpr.setValue(newCastExpr(newExpr(v.getOp()), v.getType(myScene)));
+          returnedExpr.setValue(newCastExpr(newExpr(v.getOp()), v.getType()));
         }
 
         public void caseInstanceOfExpr(InstanceOfExpr v) {

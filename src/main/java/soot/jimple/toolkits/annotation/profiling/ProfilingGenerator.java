@@ -77,7 +77,7 @@ public class ProfilingGenerator extends BodyTransformer {
       Chain units = body.getUnits();
 
       if (isMainMethod) {
-        units.addFirst(myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(reset.makeRef())));
+        units.addFirst(Jimple.newInvokeStmt(myJimple.newStaticInvokeExpr(reset.makeRef())));
       }
 
       Iterator stmtIt = body.getUnits().snapshotIterator();
@@ -91,12 +91,12 @@ public class ProfilingGenerator extends BodyTransformer {
             SootMethod tempm = ((StaticInvokeExpr) iexpr).getMethod();
 
             if (tempm.getSignature().equals("<java.lang.System: void exit(int)>")) {
-              units.insertBefore(myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(report.makeRef())), stmt);
+              units.insertBefore(Jimple.newInvokeStmt(myJimple.newStaticInvokeExpr(report.makeRef())), stmt);
 
             }
           }
         } else if (isMainMethod && (stmt instanceof ReturnStmt || stmt instanceof ReturnVoidStmt)) {
-          units.insertBefore(myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(report.makeRef())), stmt);
+          units.insertBefore(Jimple.newInvokeStmt(myJimple.newStaticInvokeExpr(report.makeRef())), stmt);
         }
       }
     }

@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import soot.Local;
-import soot.Scene;
 import soot.Type;
 import soot.Unit;
 import soot.UnitPrinter;
@@ -639,7 +638,7 @@ public class ValueGraph {
       return Collections.<ValueBox>emptyList();
     }
 
-    public Type getType(Scene myScene) {
+    public Type getType() {
       return type;
     }
 
@@ -660,11 +659,11 @@ public class ValueGraph {
         return false;
       }
 
-      return getType(myScene).equals(((TypeValueWrapper) o).getType(myScene));
+      return getType().equals(((TypeValueWrapper) o).getType());
     }
 
     public int hashCode() {
-      return getType(myScene).hashCode();
+      return getType().hashCode();
     }
 
     public boolean equivTo(Object o) {

@@ -132,7 +132,7 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
 //              out.println("Considering: " + as + "\r");
 //            }
 
-            Type opType = op.getType(myScene);
+            Type opType = op.getType();
             int max = opType instanceof IntType ? 32 : opType instanceof LongType ? 64 : 0;
 
             if (max != 0) {
@@ -150,11 +150,11 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
 
                 Expr e;
                 if (shft_rem[1] != null) { // if there is an additive floating component
-                  Local tmp2 = null, tmp1 = myJimple.newLocal("__tmp_shft_lcl" + localCount++, opType);
+                  Local tmp2 = null, tmp1 = Jimple.newLocal("__tmp_shft_lcl" + localCount++, opType);
                   locals.add(tmp1);
 
                   // shift the integral portion
-                  Unit newU = myJimple.newAssignStmt(tmp1, myJimple.newShlExpr(op, constantFactory.createIntConstant(shift)));
+                  Unit newU = Jimple.newAssignStmt(tmp1, Jimple.newShlExpr(op, constantFactory.createIntConstant(shift)));
                   unitsBuilt.add(newU);
                   units.insertBefore(newU, u);
 
@@ -170,54 +170,54 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
                     }
 
                     if (nc instanceof DoubleConstant) {
-                      tmp2 = myJimple.newLocal("__tmp_shft_lcl" + localCount++, primTypeCollector.getDoubleType());
+                      tmp2 = Jimple.newLocal("__tmp_shft_lcl" + localCount++, primTypeCollector.getDoubleType());
                       locals.add(tmp2);
 
-                      newU = myJimple.newAssignStmt(tmp2, myJimple.newCastExpr(op, primTypeCollector.getDoubleType()));
+                      newU = Jimple.newAssignStmt(tmp2, Jimple.newCastExpr(op, primTypeCollector.getDoubleType()));
                       unitsBuilt.add(newU);
                       units.insertBefore(newU, u);
 
-                      newU = myJimple.newAssignStmt(tmp2, myJimple.newMulExpr(tmp2, nc));
+                      newU = Jimple.newAssignStmt(tmp2, Jimple.newMulExpr(tmp2, nc));
                     } else {
-                      tmp2 = myJimple.newLocal("__tmp_shft_lcl" + localCount++, nc.getType(myScene));
+                      tmp2 = Jimple.newLocal("__tmp_shft_lcl" + localCount++, nc.getType());
                       locals.add(tmp2);
-                      newU = myJimple.newAssignStmt(tmp2, myJimple.newMulExpr(op, nc));
+                      newU = Jimple.newAssignStmt(tmp2, Jimple.newMulExpr(op, nc));
                     }
                     unitsBuilt.add(newU);
                     units.insertBefore(newU, u);
                   }
                   if (tmp2 == null) {
-                    e = myJimple.newAddExpr(tmp1, op);
-                  } else if (tmp2.getType(myScene).getClass() != tmp1.getType(myScene).getClass()) {
-                    Local tmp3 = myJimple.newLocal("__tmp_shft_lcl" + localCount++, tmp2.getType(myScene));
+                    e = Jimple.newAddExpr(tmp1, op);
+                  } else if (tmp2.getType().getClass() != tmp1.getType().getClass()) {
+                    Local tmp3 = Jimple.newLocal("__tmp_shft_lcl" + localCount++, tmp2.getType());
                     locals.add(tmp3);
 
-                    newU = myJimple.newAssignStmt(tmp3, myJimple.newCastExpr(tmp1, tmp2.getType(myScene)));
+                    newU = Jimple.newAssignStmt(tmp3, Jimple.newCastExpr(tmp1, tmp2.getType()));
                     unitsBuilt.add(newU);
                     units.insertBefore(newU, u);
 
-                    e = myJimple.newAddExpr(tmp3, tmp2);
+                    e = Jimple.newAddExpr(tmp3, tmp2);
                   } else {
-                    e = myJimple.newAddExpr(tmp1, tmp2);
+                    e = Jimple.newAddExpr(tmp1, tmp2);
                   }
                 } else {
-                  e = myJimple.newShlExpr(op, constantFactory.createIntConstant(shift));
+                  e = Jimple.newShlExpr(op, constantFactory.createIntConstant(shift));
                 }
 
-                if (e.getType(myScene).getClass() != as.getLeftOp().getType(myScene).getClass()) {
-                  Local tmp = myJimple.newLocal("__tmp_shft_lcl" + localCount++, e.getType(myScene));
+                if (e.getType().getClass() != as.getLeftOp().getType().getClass()) {
+                  Local tmp = Jimple.newLocal("__tmp_shft_lcl" + localCount++, e.getType());
                   locals.add(tmp);
-                  Unit newU = myJimple.newAssignStmt(tmp, e);
+                  Unit newU = Jimple.newAssignStmt(tmp, e);
                   unitsBuilt.add(newU);
                   units.insertAfter(newU, u);
 
-                  e = myJimple.newCastExpr(tmp, as.getLeftOp().getType(myScene));
+                  e = Jimple.newCastExpr(tmp, as.getLeftOp().getType());
                 }
 
                 as.setRightOp(e);
                 unitsBuilt.add(as);
                 if (neg) {
-                  Unit newU = myJimple.newAssignStmt(as.getLeftOp(), myJimple.newNegExpr(as.getLeftOp()));
+                  Unit newU = Jimple.newAssignStmt(as.getLeftOp(), Jimple.newNegExpr(as.getLeftOp()));
                   unitsBuilt.add(newU);
                   units.insertAfter(newU, u);
                 }
@@ -236,7 +236,7 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
           if (op2 instanceof NumericConstant) {
             nc = (NumericConstant) op2;
 
-            Type opType = de.getOp1().getType(myScene);
+            Type opType = de.getOp1().getType();
             int max = opType instanceof IntType ? 32 : opType instanceof LongType ? 64 : 0;
 
             if (max != 0) {
@@ -253,22 +253,22 @@ public class ArithmeticTransformer extends BodyTransformer implements IJbcoTrans
                   shift -= rand * max;
                 }
 
-                Expr e = myJimple.newShrExpr(de.getOp1(), constantFactory.createIntConstant(shift));
+                Expr e = Jimple.newShrExpr(de.getOp1(), constantFactory.createIntConstant(shift));
 
-                if (e.getType(myScene).getClass() != as.getLeftOp().getType(myScene).getClass()) {
-                  Local tmp = myJimple.newLocal("__tmp_shft_lcl" + localCount++, e.getType(myScene));
+                if (e.getType().getClass() != as.getLeftOp().getType().getClass()) {
+                  Local tmp = Jimple.newLocal("__tmp_shft_lcl" + localCount++, e.getType());
                   locals.add(tmp);
-                  Unit newU = myJimple.newAssignStmt(tmp, e);
+                  Unit newU = Jimple.newAssignStmt(tmp, e);
                   unitsBuilt.add(newU);
                   units.insertAfter(newU, u);
 
-                  e = myJimple.newCastExpr(tmp, as.getLeftOp().getType(myScene));
+                  e = Jimple.newCastExpr(tmp, as.getLeftOp().getType());
                 }
 
                 as.setRightOp(e);
                 unitsBuilt.add(as);
                 if (neg) {
-                  Unit newU = myJimple.newAssignStmt(as.getLeftOp(), myJimple.newNegExpr(as.getLeftOp()));
+                  Unit newU = Jimple.newAssignStmt(as.getLeftOp(), Jimple.newNegExpr(as.getLeftOp()));
                   unitsBuilt.add(newU);
                   units.insertAfter(newU, u);
                 }

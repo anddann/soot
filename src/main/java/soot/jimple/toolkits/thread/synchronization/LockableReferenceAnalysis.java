@@ -557,7 +557,7 @@ public class LockableReferenceAnalysis extends BackwardFlowAnalysis<Unit, Lockse
             InstanceFieldRef ifr = (InstanceFieldRef) use;
             Local oldbase = (Local) ifr.getBase();
             if (!(oldbase instanceof FakeJimpleLocal)) {
-              Local newbase = new FakeJimpleLocal("fakethis", oldbase.getType(myScene), oldbase, this);
+              Local newbase = new FakeJimpleLocal("fakethis", oldbase.getType(), oldbase, this);
               Value node = myJimple.newInstanceFieldRef(newbase, ifr.getField().makeRef());
               EquivalentValue nodeEqVal = new EquivalentValue(node); // fake thisLocal
 
@@ -569,9 +569,9 @@ public class LockableReferenceAnalysis extends BackwardFlowAnalysis<Unit, Lockse
             Local oldbase = (Local) ar.getBase();
             Value oldindex = ar.getIndex();
             if (!(oldbase instanceof FakeJimpleLocal)) {
-              Local newbase = new FakeJimpleLocal("fakethis", oldbase.getType(myScene), oldbase, this);
+              Local newbase = new FakeJimpleLocal("fakethis", oldbase.getType(), oldbase, this);
               Value newindex = (oldindex instanceof Local)
-                  ? new FakeJimpleLocal("fakeindex", oldindex.getType(myScene), (Local) oldindex, this)
+                  ? new FakeJimpleLocal("fakeindex", oldindex.getType(), (Local) oldindex, this)
                   : oldindex;
               Value node = myJimple.newArrayRef(newbase, newindex);
               EquivalentValue nodeEqVal = new EquivalentValue(node); // fake thisLocal
@@ -608,7 +608,7 @@ public class LockableReferenceAnalysis extends BackwardFlowAnalysis<Unit, Lockse
         InstanceFieldRef ifr = (InstanceFieldRef) ds.getLeftOp();
         Local oldbase = (Local) ifr.getBase();
         if (!(oldbase instanceof FakeJimpleLocal)) {
-          Local newbase = new FakeJimpleLocal("fakethis", oldbase.getType(myScene), oldbase, this);
+          Local newbase = new FakeJimpleLocal("fakethis", oldbase.getType(), oldbase, this);
           Value node = myJimple.newInstanceFieldRef(newbase, ifr.getField().makeRef());
           EquivalentValue nodeEqVal = new EquivalentValue(node); // fake thisLocal
 
@@ -620,9 +620,9 @@ public class LockableReferenceAnalysis extends BackwardFlowAnalysis<Unit, Lockse
         Local oldbase = (Local) ar.getBase();
         Value oldindex = ar.getIndex();
         if (!(oldbase instanceof FakeJimpleLocal)) {
-          Local newbase = new FakeJimpleLocal("fakethis", oldbase.getType(myScene), oldbase, this);
+          Local newbase = new FakeJimpleLocal("fakethis", oldbase.getType(), oldbase, this);
           Value newindex
-              = (oldindex instanceof Local) ? new FakeJimpleLocal("fakeindex", oldindex.getType(myScene), (Local) oldindex, this)
+              = (oldindex instanceof Local) ? new FakeJimpleLocal("fakeindex", oldindex.getType(), (Local) oldindex, this)
                   : oldindex;
           Value node = myJimple.newArrayRef(newbase, newindex);
           EquivalentValue nodeEqVal = new EquivalentValue(node); // fake thisLocal
@@ -640,7 +640,7 @@ public class LockableReferenceAnalysis extends BackwardFlowAnalysis<Unit, Lockse
         InstanceFieldRef ifr = (InstanceFieldRef) ds.getRightOp();
         Local oldbase = (Local) ifr.getBase();
         if (!(oldbase instanceof FakeJimpleLocal)) {
-          Local newbase = new FakeJimpleLocal("fakethis", oldbase.getType(myScene), oldbase, this);
+          Local newbase = new FakeJimpleLocal("fakethis", oldbase.getType(), oldbase, this);
           Value node = myJimple.newInstanceFieldRef(newbase, ifr.getField().makeRef());
           EquivalentValue nodeEqVal = new EquivalentValue(node); // fake thisLocal
 
@@ -652,9 +652,9 @@ public class LockableReferenceAnalysis extends BackwardFlowAnalysis<Unit, Lockse
         Local oldbase = (Local) ar.getBase();
         Value oldindex = ar.getIndex();
         if (!(oldbase instanceof FakeJimpleLocal)) {
-          Local newbase = new FakeJimpleLocal("fakethis", oldbase.getType(myScene), oldbase, this);
+          Local newbase = new FakeJimpleLocal("fakethis", oldbase.getType(), oldbase, this);
           Value newindex
-              = (oldindex instanceof Local) ? new FakeJimpleLocal("fakeindex", oldindex.getType(myScene), (Local) oldindex, this)
+              = (oldindex instanceof Local) ? new FakeJimpleLocal("fakeindex", oldindex.getType(), (Local) oldindex, this)
                   : oldindex;
           Value node = myJimple.newArrayRef(newbase, newindex);
           EquivalentValue nodeEqVal = new EquivalentValue(node); // fake thisLocal

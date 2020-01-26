@@ -77,7 +77,7 @@ public class IFDSPossibleTypes
           final Value right = defnStmt.getRightOp();
           final Value left = defnStmt.getLeftOp();
           // won't track primitive-typed variables
-          if (right.getType(myScene) instanceof PrimType) {
+          if (right.getType() instanceof PrimType) {
             return Identity.v();
           }
 
@@ -86,7 +86,7 @@ public class IFDSPossibleTypes
               public Set<Pair<Value, Type>> computeTargets(Pair<Value, Type> source) {
                 if (source == zeroValue()) {
                   Set<Pair<Value, Type>> res = new LinkedHashSet<Pair<Value, Type>>();
-                  res.add(new Pair<Value, Type>(left, right.getType(myScene)));
+                  res.add(new Pair<Value, Type>(left, right.getType()));
                   res.add(zeroValue());
                   return res;
                 } else if (source.getO1() instanceof Local && source.getO1().equivTo(left)) {

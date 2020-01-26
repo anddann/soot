@@ -191,7 +191,7 @@ public class ClassFieldAnalysis {
       Iterator<Local> localIt = locals.iterator();
       while (localIt.hasNext()) {
         Local local = localIt.next();
-        Type type = local.getType(myScene);
+        Type type = local.getType();
 
         if (type instanceof ArrayType) {
           hasArrayLocal = true;

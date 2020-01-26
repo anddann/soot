@@ -234,7 +234,7 @@ public class Util {
             // Determine type
             Type t;
             if (isArray) {
-                t = ArrayType.v(baseType, numDimensions,myScene);
+                t = ArrayType.v(baseType, numDimensions);
             } else {
                 t = baseType;
             }
@@ -294,7 +294,7 @@ public class Util {
 
         // Return type
         if (isArray) {
-            return ArrayType.v(baseType, numDimensions,myScene);
+            return ArrayType.v(baseType, numDimensions);
         } else {
             return baseType;
         }
@@ -379,11 +379,11 @@ public class Util {
     Local getLocalCreatingIfNecessary(JimpleBody listBody, String name, Type type) {
         Local l = getLocalUnsafe(listBody, name);
         if (l != null) {
-            if (!l.getType(myScene).equals(type)) {
+            if (!l.getType().equals(type)) {
                 throw new RuntimeException("The body already declares this local name with a different type.");
             }
         } else {
-            l = myJimple.newLocal(name, type);
+            l = Jimple.newLocal(name, type);
             listBody.getLocals().add(l);
         }
         return l;

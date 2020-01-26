@@ -49,27 +49,8 @@ import soot.dava.internal.asg.AugmentedStmt;
 import soot.dava.internal.javaRep.DInstanceFieldRef;
 import soot.dava.internal.javaRep.DThisRef;
 import soot.dava.internal.javaRep.DVariableDeclarationStmt;
-import soot.jimple.ArrayRef;
-import soot.jimple.BinopExpr;
-import soot.jimple.CastExpr;
-import soot.jimple.ConditionExpr;
-import soot.jimple.Constant;
-import soot.jimple.DefinitionStmt;
-import soot.jimple.Expr;
-import soot.jimple.InstanceFieldRef;
-import soot.jimple.InstanceInvokeExpr;
-import soot.jimple.InstanceOfExpr;
-import soot.jimple.IntConstant;
-import soot.jimple.InvokeExpr;
-import soot.jimple.InvokeStmt;
-import soot.jimple.NewArrayExpr;
-import soot.jimple.NewMultiArrayExpr;
-import soot.jimple.Ref;
-import soot.jimple.ReturnStmt;
-import soot.jimple.StaticFieldRef;
-import soot.jimple.Stmt;
-import soot.jimple.ThrowStmt;
-import soot.jimple.UnopExpr;
+import soot.dava.toolkits.base.AST.traversals.ClosestAbruptTargetFinder;
+import soot.jimple.*;
 
 /*
  * CHANGE LOG: 18th MArch 2006: Need a reference to the ValueBox holding a BinOp for SimplifyExpressions
@@ -79,6 +60,7 @@ import soot.jimple.UnopExpr;
 public class DepthFirstAdapter extends AnalysisAdapter {
 
   public boolean DEBUG = false;
+  protected ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
 
   boolean verbose = false;
 
@@ -559,7 +541,7 @@ public class DepthFirstAdapter extends AnalysisAdapter {
     } // end of going over subBodies
   }
 
-  public void inASTStatementSequenceNode(ASTStatementSequenceNode node, Scene myScene) {
+  public void inASTStatementSequenceNode(ASTStatementSequenceNode node) {
     if (verbose) {
       System.out.println("inASTStatementSequenceNode");
     }
@@ -572,7 +554,7 @@ public class DepthFirstAdapter extends AnalysisAdapter {
   }
 
   public void caseASTStatementSequenceNode(ASTStatementSequenceNode node) {
-    inASTStatementSequenceNode(node, myScene);
+    inASTStatementSequenceNode(node);
     for (AugmentedStmt as : node.getStatements()) {
       Stmt s = as.get_Stmt();
       /*

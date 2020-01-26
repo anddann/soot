@@ -170,7 +170,7 @@ public class Util {
       idx++;
     }
     if (returnType != null && arraySize > 0) {
-      returnType = ArrayType.v(returnType, arraySize,myScene);
+      returnType = ArrayType.v(returnType, arraySize);
     }
     return returnType;
   }
@@ -249,32 +249,32 @@ public class Util {
 
     Type rType = jBody.getMethod().getReturnType();
 
-    jBody.getUnits().add(myJimple.newNopStmt());
+    jBody.getUnits().add(Jimple.newNopStmt());
 
     if (rType instanceof VoidType) {
-      jBody.getUnits().add(myJimple.newReturnVoidStmt());
+      jBody.getUnits().add(Jimple.newReturnVoidStmt());
     } else {
       Type t = jBody.getMethod().getReturnType();
       Local l = lg.generateLocal(t);
 
       AssignStmt ass = null;
       if (t instanceof RefType || t instanceof ArrayType) {
-        ass = myJimple.newAssignStmt(l, constantFactory.getNullConstant());
+        ass = Jimple.newAssignStmt(l, constantFactory.getNullConstant());
       } else if (t instanceof LongType) {
-        ass = myJimple.newAssignStmt(l, constantFactory.createLongConstant(0));
+        ass = Jimple.newAssignStmt(l, constantFactory.createLongConstant(0));
       } else if (t instanceof FloatType) {
-        ass = myJimple.newAssignStmt(l, constantFactory.createFloatConstant(0.0f));
+        ass = Jimple.newAssignStmt(l, constantFactory.createFloatConstant(0.0f));
       } else if (t instanceof IntType) {
-        ass = myJimple.newAssignStmt(l, constantFactory.createIntConstant(0));
+        ass = Jimple.newAssignStmt(l, constantFactory.createIntConstant(0));
       } else if (t instanceof DoubleType) {
-        ass = myJimple.newAssignStmt(l, constantFactory.createDoubleConstant(0));
+        ass = Jimple.newAssignStmt(l, constantFactory.createDoubleConstant(0));
       } else if (t instanceof BooleanType || t instanceof ByteType || t instanceof CharType || t instanceof ShortType) {
-        ass = myJimple.newAssignStmt(l, constantFactory.createIntConstant(0));
+        ass = Jimple.newAssignStmt(l, constantFactory.createIntConstant(0));
       } else {
         throw new RuntimeException("error: return type unknown: " + t + " class: " + t.getClass());
       }
       jBody.getUnits().add(ass);
-      jBody.getUnits().add(myJimple.newReturnStmt(l));
+      jBody.getUnits().add(Jimple.newReturnStmt(l));
     }
 
   }
@@ -288,14 +288,14 @@ public class Util {
     Local l = lc.newLocal(RefType.v(exceptionType,myScene));
 
     List<Unit> newUnits = new ArrayList<Unit>();
-    Unit u1 = myJimple.newAssignStmt(l, myJimple.newNewExpr(RefType.v(exceptionType,myScene)));
+    Unit u1 = Jimple.newAssignStmt(l, Jimple.newNewExpr(RefType.v(exceptionType,myScene)));
     Unit u2
-        = myJimple
+        = Jimple
             .newInvokeStmt(myJimple.newSpecialInvokeExpr(l,
                 myScene.makeMethodRef(myScene.getSootClass(exceptionType), "<init>",
                     Collections.singletonList((Type) RefType.v("java.lang.String",myScene)), myScene.getPrimTypeCollector().getVoidType(), false),
                 constantFactory.createStringConstant(m)));
-    Unit u3 = myJimple.newThrowStmt(l);
+    Unit u3 = Jimple.newThrowStmt(l);
     newUnits.add(u1);
     newUnits.add(u2);
     newUnits.add(u3);

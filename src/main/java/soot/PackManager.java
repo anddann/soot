@@ -995,7 +995,7 @@ public class PackManager {
      * HAVE TO invoke this analysis since this invokes the renamer!!
      */
     if (transformations) {
-      InterProceduralAnalyses.applyInterProceduralAnalyses(myScene, myPhaseOptions, constantFactory, myScene.getPrimTypeCollector());
+      InterProceduralAnalyses.applyInterProceduralAnalyses(myScene, myPhaseOptions, constantFactory, myScene.getPrimTypeCollector(), myClosestAbruptTargetFinder, myGrimp);
     }
   }
 

@@ -75,7 +75,7 @@ public class AbstractDataSource implements Value {
   public void toString(UnitPrinter up) {
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return primTypeCollector.getNullType();
   }
 

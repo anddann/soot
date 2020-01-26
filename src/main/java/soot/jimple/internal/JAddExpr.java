@@ -31,8 +31,9 @@ import soot.jimple.Jimple;
 import soot.util.Switch;
 
 public class JAddExpr extends AbstractJimpleFloatBinopExpr implements AddExpr {
+
   public JAddExpr(Value op1, Value op2) {
-    super(op1, op2, myJimple);
+    super(op1, op2);
   }
 
   public final String getSymbol() {
@@ -44,7 +45,7 @@ public class JAddExpr extends AbstractJimpleFloatBinopExpr implements AddExpr {
   }
 
   Object makeBafInst(Type opType, Baf myBaf) {
-    return myBaf.newAddInst(this.getOp1().getType(myScene));
+    return myBaf.newAddInst(this.getOp1().getType());
   }
 
   public Object clone() {

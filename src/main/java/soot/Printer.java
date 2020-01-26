@@ -444,7 +444,7 @@ public class Printer {
 
           List<Local> localList;
 
-          Type t = local.getType(myScene);
+          Type t = local.getType();
 
           if (typeToLocals.containsKey(t)) {
             localList = typeToLocals.get(t);

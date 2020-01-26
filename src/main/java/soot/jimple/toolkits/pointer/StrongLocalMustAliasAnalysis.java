@@ -67,7 +67,7 @@ public class StrongLocalMustAliasAnalysis extends LocalMustAliasAnalysis {
           Value defValue = vb.getValue();
           if (defValue instanceof Local) {
             Local defLocal = (Local) defValue;
-            if (defLocal.getType(myScene) instanceof RefLikeType) {
+            if (defLocal.getType() instanceof RefLikeType) {
               Object instanceKey = getFlowBefore(unit).get(defLocal);
               // if key is not already UNKNOWN
               if (instanceKey instanceof Integer) {

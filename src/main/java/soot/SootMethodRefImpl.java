@@ -153,7 +153,7 @@ public class SootMethodRefImpl implements SootMethodRef {
 
   @Override
   public NumberedString getSubSignature() {
-    return myScene.getSubSigNumberer().findOrAdd(SootMethod.getSubSignature(name, parameterTypes, returnType,myScene));
+    return myScene.getSubSigNumberer().findOrAdd(SootMethod.getSubSignature(name, parameterTypes, returnType));
   }
 
   @Override
@@ -319,7 +319,7 @@ public class SootMethodRefImpl implements SootMethodRef {
       modifiers |= Modifier.STATIC;
     }
     m.setModifiers(modifiers);
-    JimpleBody body = myJimple.newBody(m);
+    JimpleBody body = Jimple.newBody(m, myPrinter, myOptions);
     m.setActiveBody(body);
 
     final LocalGenerator lg = new LocalGenerator(body, myScene.getPrimTypeCollector(), myJimple);
@@ -330,9 +330,9 @@ public class SootMethodRefImpl implements SootMethodRef {
 
     // exc = new Error
     RefType runtimeExceptionType = RefType.v("java.lang.Error",myScene);
-    NewExpr newExpr = myJimple.newNewExpr(runtimeExceptionType);
+    NewExpr newExpr = Jimple.newNewExpr(runtimeExceptionType);
     Local exceptionLocal = lg.generateLocal(runtimeExceptionType);
-    AssignStmt assignStmt = myJimple.newAssignStmt(exceptionLocal, newExpr);
+    AssignStmt assignStmt = Jimple.newAssignStmt(exceptionLocal, newExpr);
     body.getUnits().add(assignStmt);
 
     // exc.<init>(message)
@@ -340,11 +340,11 @@ public class SootMethodRefImpl implements SootMethodRef {
         Collections.<Type>singletonList(RefType.v("java.lang.String",myScene)));
     SpecialInvokeExpr constructorInvokeExpr = myJimple.newSpecialInvokeExpr(exceptionLocal, cref,
         constantFactory.createStringConstant("Unresolved compilation error: Method " + getSignature() + " does not exist!"));
-    InvokeStmt initStmt = myJimple.newInvokeStmt(constructorInvokeExpr);
+    InvokeStmt initStmt = Jimple.newInvokeStmt(constructorInvokeExpr);
     body.getUnits().insertAfter(initStmt, assignStmt);
 
     // throw exc
-    body.getUnits().insertAfter(myJimple.newThrowStmt(exceptionLocal), initStmt);
+    body.getUnits().insertAfter(Jimple.newThrowStmt(exceptionLocal), initStmt);
 
     return declaringClass.getOrAddMethod(m);
   }

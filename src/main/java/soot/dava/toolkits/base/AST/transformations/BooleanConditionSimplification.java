@@ -22,9 +22,7 @@ package soot.dava.toolkits.base.AST.transformations;
  * #L%
  */
 
-import soot.BooleanType;
-import soot.Type;
-import soot.Value;
+import soot.*;
 import soot.dava.internal.AST.ASTBinaryCondition;
 import soot.dava.internal.AST.ASTCondition;
 import soot.dava.internal.AST.ASTDoWhileNode;
@@ -36,6 +34,7 @@ import soot.dava.internal.AST.ASTWhileNode;
 import soot.dava.internal.javaRep.DIntConstant;
 import soot.dava.internal.javaRep.DNotExpr;
 import soot.dava.toolkits.base.AST.analysis.DepthFirstAdapter;
+import soot.grimp.Grimp;
 import soot.jimple.ConditionExpr;
 import soot.jimple.EqExpr;
 import soot.jimple.NeExpr;
@@ -64,7 +63,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
     ASTCondition condition = node.get_Condition();
     if (condition instanceof ASTBinaryCondition) {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
-      Value unary = checkBooleanUse(condExpr);
+      Value unary = checkBooleanUse(condExpr, myGrimp, primTypeCollector);
       if (unary != null) {
         node.set_Condition(new ASTUnaryCondition(unary, myGrimp, primTypeCollector));
       }
@@ -75,7 +74,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
     ASTCondition condition = node.get_Condition();
     if (condition instanceof ASTBinaryCondition) {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
-      Value unary = checkBooleanUse(condExpr);
+      Value unary = checkBooleanUse(condExpr, myGrimp, primTypeCollector);
       if (unary != null) {
         node.set_Condition(new ASTUnaryCondition(unary, myGrimp, primTypeCollector));
       }
@@ -86,7 +85,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
     ASTCondition condition = node.get_Condition();
     if (condition instanceof ASTBinaryCondition) {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
-      Value unary = checkBooleanUse(condExpr);
+      Value unary = checkBooleanUse(condExpr, myGrimp, primTypeCollector);
       if (unary != null) {
         node.set_Condition(new ASTUnaryCondition(unary, myGrimp, primTypeCollector));
       }
@@ -97,14 +96,14 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
     ASTCondition condition = node.get_Condition();
     if (condition instanceof ASTBinaryCondition) {
       ConditionExpr condExpr = ((ASTBinaryCondition) condition).getConditionExpr();
-      Value unary = checkBooleanUse(condExpr);
+      Value unary = checkBooleanUse(condExpr, myGrimp, primTypeCollector);
       if (unary != null) {
         node.set_Condition(new ASTUnaryCondition(unary, myGrimp, primTypeCollector));
       }
     }
   }
 
-  private Value checkBooleanUse(ConditionExpr condition) {
+  private Value checkBooleanUse(ConditionExpr condition, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
     // check whether the condition qualifies as a boolean use
     if (condition instanceof NeExpr || condition instanceof EqExpr) {
       Value op1 = condition.getOp1();
@@ -112,12 +111,12 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
       if (op1 instanceof DIntConstant) {
         Type op1Type = ((DIntConstant) op1).type;
         if (op1Type instanceof BooleanType) {
-          return decideCondition(op2, ((DIntConstant) op1).toString(), condition);
+          return decideCondition(op2, ((DIntConstant) op1).toString(), condition, myGrimp, primTypeCollector);
         }
       } else if (op2 instanceof DIntConstant) {
         Type op2Type = ((DIntConstant) op2).type;
         if (op2Type instanceof BooleanType) {
-          return decideCondition(op1, ((DIntConstant) op2).toString(), condition);
+          return decideCondition(op1, ((DIntConstant) op2).toString(), condition, myGrimp, primTypeCollector);
         }
       } else {
         return null;// meaning no Value used as boolean found
@@ -130,7 +129,7 @@ public class BooleanConditionSimplification extends DepthFirstAdapter {
    * Used to decide what the condition should be if we are converting from ConditionExpr to Value A != false/0 --> A A !=
    * true/1 --> !A A == false/0 --> !A A == true/1 --> A
    */
-  private Value decideCondition(Value A, String truthString, ConditionExpr condition) {
+  private Value decideCondition(Value A, String truthString, ConditionExpr condition, Grimp myGrimp, PrimTypeCollector primTypeCollector) {
     int truthValue = 0;
     boolean notEqual = false;
 

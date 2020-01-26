@@ -124,12 +124,12 @@ public class DexNumTransformer extends DexTransformer {
               doBreak = true;
             } else if (r instanceof NewArrayExpr) {
               NewArrayExpr nae = (NewArrayExpr) r;
-              Type t = nae.getType(myScene);
+              Type t = nae.getType();
               usedAsFloatingPoint = isFloatingPointLike(t);
               doBreak = true;
             } else if (r instanceof ArrayRef) {
               ArrayRef ar = (ArrayRef) r;
-              Type arType = ar.getType(myScene);
+              Type arType = ar.getType();
               if (arType instanceof UnknownType) {
                 Type t = findArrayType(localDefs, stmt, 0, Collections.<Unit>emptySet()); // TODO:
                 // check
@@ -140,14 +140,14 @@ public class DexNumTransformer extends DexTransformer {
                 // if(ArrayRef...
                 usedAsFloatingPoint = isFloatingPointLike(t);
               } else {
-                usedAsFloatingPoint = isFloatingPointLike(ar.getType(myScene));
+                usedAsFloatingPoint = isFloatingPointLike(ar.getType());
               }
               doBreak = true;
             } else if (r instanceof CastExpr) {
               usedAsFloatingPoint = isFloatingPointLike(((CastExpr) r).getCastType());
               doBreak = true;
             } else if (r instanceof InvokeExpr) {
-              usedAsFloatingPoint = isFloatingPointLike(((InvokeExpr) r).getType(myScene));
+              usedAsFloatingPoint = isFloatingPointLike(((InvokeExpr) r).getType());
               doBreak = true;
             } else if (r instanceof LengthExpr) {
               usedAsFloatingPoint = false;
@@ -159,7 +159,7 @@ public class DexNumTransformer extends DexTransformer {
           @Override
           public void caseIdentityStmt(IdentityStmt stmt) {
             if (stmt.getLeftOp() == l) {
-              usedAsFloatingPoint = isFloatingPointLike(stmt.getRightOp().getType(myScene));
+              usedAsFloatingPoint = isFloatingPointLike(stmt.getRightOp().getType());
               doBreak = true;
             }
           }
@@ -226,14 +226,14 @@ public class DexNumTransformer extends DexTransformer {
               } else if (r instanceof Local && r == l) {
                 if (left instanceof FieldRef) {
                   FieldRef fr = (FieldRef) left;
-                  if (isFloatingPointLike(fr.getType(myScene))) {
+                  if (isFloatingPointLike(fr.getType())) {
                     usedAsFloatingPoint = true;
                   }
                   doBreak = true;
                   return;
                 } else if (left instanceof ArrayRef) {
                   ArrayRef ar = (ArrayRef) left;
-                  Type arType = ar.getType(myScene);
+                  Type arType = ar.getType();
                   if (arType instanceof UnknownType) {
                     arType = findArrayType(localDefs, stmt, 0, Collections.<Unit>emptySet());
                   }

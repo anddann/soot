@@ -469,7 +469,7 @@ public class GeomEvaluator {
         if (st instanceof AssignStmt) {
           Value rhs = ((AssignStmt) st).getRightOp();
           Value lhs = ((AssignStmt) st).getLeftOp();
-          if (rhs instanceof CastExpr && lhs.getType(myScene) instanceof RefLikeType) {
+          if (rhs instanceof CastExpr && lhs.getType() instanceof RefLikeType) {
 
             Value v = ((CastExpr) rhs).getOp();
             VarNode node = ptsProvider.findLocalVarNode(v);

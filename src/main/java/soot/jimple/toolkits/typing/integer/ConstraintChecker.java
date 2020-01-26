@@ -138,8 +138,8 @@ class ConstraintChecker extends AbstractStmtSwitch {
     for (int i = 0; i < ie.getArgCount(); i++) {
       if (ie.getArg(i) instanceof Local) {
         Local local = (Local) ie.getArg(i);
-        if (local.getType(myScene) instanceof IntegerType) {
-          if (!myClassHierarchy.typeNode(local.getType(myScene))
+        if (local.getType() instanceof IntegerType) {
+          if (!myClassHierarchy.typeNode(local.getType())
               .hasAncestor_1(myClassHierarchy.typeNode(method.parameterType(i)))) {
             if (fix) {
               ie.setArg(i, insertCast(local, method.parameterType(i), invokestmt));
@@ -157,8 +157,8 @@ class ConstraintChecker extends AbstractStmtSwitch {
       for (int i = 0; i < die.getBootstrapArgCount(); i++) {
         if (die.getBootstrapArg(i) instanceof Local) {
           Local local = (Local) die.getBootstrapArg(i);
-          if (local.getType(myScene) instanceof IntegerType) {
-            if (!myClassHierarchy.typeNode(local.getType(myScene))
+          if (local.getType() instanceof IntegerType) {
+            if (!myClassHierarchy.typeNode(local.getType())
                 .hasAncestor_1(myClassHierarchy.typeNode(bootstrapMethod.parameterType(i)))) {
               if (fix) {
                 die.setArg(i, insertCast(local, bootstrapMethod.parameterType(i), invokestmt));
@@ -191,7 +191,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
 
     if (l instanceof ArrayRef) {
       ArrayRef ref = (ArrayRef) l;
-      Type baset = ((Local) ref.getBase()).getType(myScene);
+      Type baset = ((Local) ref.getBase()).getType();
       if (baset instanceof ArrayType) {
         ArrayType base = (ArrayType) baset;
         Value index = ref.getIndex();
@@ -201,7 +201,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
         }
 
         if (index instanceof Local) {
-          if (!myClassHierarchy.typeNode(((Local) index).getType(myScene)).hasAncestor_1(myClassHierarchy.INT)) {
+          if (!myClassHierarchy.typeNode(((Local) index).getType()).hasAncestor_1(myClassHierarchy.INT)) {
             if (fix) {
               ref.setIndex(insertCast((Local) index, primTypeCollector.getIntType(), stmt));
             } else {
@@ -211,8 +211,8 @@ class ConstraintChecker extends AbstractStmtSwitch {
         }
       }
     } else if (l instanceof Local) {
-      if (((Local) l).getType(myScene) instanceof IntegerType) {
-        left = myClassHierarchy.typeNode(((Local) l).getType(myScene));
+      if (((Local) l).getType() instanceof IntegerType) {
+        left = myClassHierarchy.typeNode(((Local) l).getType());
       }
     } else if (l instanceof InstanceFieldRef) {
       InstanceFieldRef ref = (InstanceFieldRef) l;
@@ -234,7 +234,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
 
     if (r instanceof ArrayRef) {
       ArrayRef ref = (ArrayRef) r;
-      Type baset = ((Local) ref.getBase()).getType(myScene);
+      Type baset = ((Local) ref.getBase()).getType();
       if (!(baset instanceof NullType)) {
         ArrayType base = (ArrayType) baset;
         Value index = ref.getIndex();
@@ -244,7 +244,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
         }
 
         if (index instanceof Local) {
-          if (!myClassHierarchy.typeNode(((Local) index).getType(myScene)).hasAncestor_1(myClassHierarchy.INT)) {
+          if (!myClassHierarchy.typeNode(((Local) index).getType()).hasAncestor_1(myClassHierarchy.INT)) {
             if (fix) {
               ref.setIndex(insertCast((Local) index, primTypeCollector.getIntType(), stmt));
             } else {
@@ -292,8 +292,8 @@ class ConstraintChecker extends AbstractStmtSwitch {
 
       // ******** LEFT ********
       if (lv instanceof Local) {
-        if (((Local) lv).getType(myScene) instanceof IntegerType) {
-          lop = myClassHierarchy.typeNode(((Local) lv).getType(myScene));
+        if (((Local) lv).getType() instanceof IntegerType) {
+          lop = myClassHierarchy.typeNode(((Local) lv).getType());
         }
       } else if (lv instanceof DoubleConstant) {
       } else if (lv instanceof FloatConstant) {
@@ -327,8 +327,8 @@ class ConstraintChecker extends AbstractStmtSwitch {
 
       // ******** RIGHT ********
       if (rv instanceof Local) {
-        if (((Local) rv).getType(myScene) instanceof IntegerType) {
-          rop = myClassHierarchy.typeNode(((Local) rv).getType(myScene));
+        if (((Local) rv).getType() instanceof IntegerType) {
+          rop = myClassHierarchy.typeNode(((Local) rv).getType());
         }
       } else if (rv instanceof DoubleConstant) {
       } else if (rv instanceof FloatConstant) {
@@ -491,7 +491,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
       Value size = nae.getSize();
 
       if (size instanceof Local) {
-        if (!myClassHierarchy.typeNode(((Local) size).getType(myScene)).hasAncestor_1(myClassHierarchy.INT)) {
+        if (!myClassHierarchy.typeNode(((Local) size).getType()).hasAncestor_1(myClassHierarchy.INT)) {
           if (fix) {
             nae.setSize(insertCast((Local) size, primTypeCollector.getIntType(), stmt));
           } else {
@@ -507,7 +507,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
         Value size = nmae.getSize(i);
 
         if (size instanceof Local) {
-          if (!myClassHierarchy.typeNode(((Local) size).getType(myScene)).hasAncestor_1(myClassHierarchy.INT)) {
+          if (!myClassHierarchy.typeNode(((Local) size).getType()).hasAncestor_1(myClassHierarchy.INT)) {
             if (fix) {
               nmae.setSize(i, insertCast((Local) size, primTypeCollector.getIntType(), stmt));
             } else {
@@ -524,8 +524,8 @@ class ConstraintChecker extends AbstractStmtSwitch {
       if (ne.getOp() instanceof Local) {
         Local local = (Local) ne.getOp();
 
-        if (local.getType(myScene) instanceof IntegerType) {
-          TypeNode ltype = myClassHierarchy.typeNode(local.getType(myScene));
+        if (local.getType() instanceof IntegerType) {
+          TypeNode ltype = myClassHierarchy.typeNode(local.getType());
           if (!ltype.hasAncestor_1(myClassHierarchy.INT)) {
             if (fix) {
               ne.setOp(insertCast(local, primTypeCollector.getIntType(), stmt));
@@ -548,8 +548,8 @@ class ConstraintChecker extends AbstractStmtSwitch {
     } else if (r instanceof Local) {
       Local local = (Local) r;
 
-      if (local.getType(myScene) instanceof IntegerType) {
-        right = myClassHierarchy.typeNode(local.getType(myScene));
+      if (local.getType() instanceof IntegerType) {
+        right = myClassHierarchy.typeNode(local.getType());
       }
     } else if (r instanceof InstanceFieldRef) {
       InstanceFieldRef ref = (InstanceFieldRef) r;
@@ -606,9 +606,9 @@ class ConstraintChecker extends AbstractStmtSwitch {
     Value r = stmt.getRightOp();
 
     if (l instanceof Local) {
-      if (((Local) l).getType(myScene) instanceof IntegerType) {
-        TypeNode left = myClassHierarchy.typeNode((((Local) l).getType(myScene)));
-        TypeNode right = myClassHierarchy.typeNode(r.getType(myScene));
+      if (((Local) l).getType() instanceof IntegerType) {
+        TypeNode left = myClassHierarchy.typeNode((((Local) l).getType()));
+        TypeNode right = myClassHierarchy.typeNode(r.getType());
 
         if (!right.hasAncestor_1(left)) {
           if (fix) {
@@ -643,8 +643,8 @@ class ConstraintChecker extends AbstractStmtSwitch {
 
     // ******** LEFT ********
     if (lv instanceof Local) {
-      if (((Local) lv).getType(myScene) instanceof IntegerType) {
-        lop = myClassHierarchy.typeNode(((Local) lv).getType(myScene));
+      if (((Local) lv).getType() instanceof IntegerType) {
+        lop = myClassHierarchy.typeNode(((Local) lv).getType());
       }
     } else if (lv instanceof DoubleConstant) {
     } else if (lv instanceof FloatConstant) {
@@ -678,8 +678,8 @@ class ConstraintChecker extends AbstractStmtSwitch {
 
     // ******** RIGHT ********
     if (rv instanceof Local) {
-      if (((Local) rv).getType(myScene) instanceof IntegerType) {
-        rop = myClassHierarchy.typeNode(((Local) rv).getType(myScene));
+      if (((Local) rv).getType() instanceof IntegerType) {
+        rop = myClassHierarchy.typeNode(((Local) rv).getType());
       }
     } else if (rv instanceof DoubleConstant) {
     } else if (rv instanceof FloatConstant) {
@@ -732,7 +732,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
     Value key = stmt.getKey();
 
     if (key instanceof Local) {
-      if (!myClassHierarchy.typeNode(((Local) key).getType(myScene)).hasAncestor_1(myClassHierarchy.INT)) {
+      if (!myClassHierarchy.typeNode(((Local) key).getType()).hasAncestor_1(myClassHierarchy.INT)) {
         if (fix) {
           stmt.setKey(insertCast((Local) key, primTypeCollector.getIntType(), stmt));
         } else {
@@ -747,8 +747,8 @@ class ConstraintChecker extends AbstractStmtSwitch {
 
   public void caseReturnStmt(ReturnStmt stmt) {
     if (stmt.getOp() instanceof Local) {
-      if (((Local) stmt.getOp()).getType(myScene) instanceof IntegerType) {
-        if (!myClassHierarchy.typeNode(((Local) stmt.getOp()).getType(myScene))
+      if (((Local) stmt.getOp()).getType() instanceof IntegerType) {
+        if (!myClassHierarchy.typeNode(((Local) stmt.getOp()).getType())
             .hasAncestor_1(myClassHierarchy.typeNode(stmtBody.getMethod().getReturnType()))) {
           if (fix) {
             stmt.setOp(insertCast((Local) stmt.getOp(), stmtBody.getMethod().getReturnType(), stmt));
@@ -767,7 +767,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
     Value key = stmt.getKey();
 
     if (key instanceof Local) {
-      if (!myClassHierarchy.typeNode(((Local) key).getType(myScene)).hasAncestor_1(myClassHierarchy.INT)) {
+      if (!myClassHierarchy.typeNode(((Local) key).getType()).hasAncestor_1(myClassHierarchy.INT)) {
         if (fix) {
           stmt.setKey(insertCast((Local) key, primTypeCollector.getIntType(), stmt));
         } else {

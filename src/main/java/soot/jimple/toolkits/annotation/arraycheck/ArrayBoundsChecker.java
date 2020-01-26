@@ -220,7 +220,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
               }
 
               units.insertBefore(
-                  myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constantFactory.createIntConstant(lowercounter))),
+                  Jimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constantFactory.createIntConstant(lowercounter))),
                   stmt);
 
               int uppercounter = 2;
@@ -229,7 +229,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
               }
 
               units.insertBefore(
-                  myJimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constantFactory.createIntConstant(uppercounter))),
+                  Jimple.newInvokeStmt(myJimple.newStaticInvokeExpr(increase.makeRef(), constantFactory.createIntConstant(uppercounter))),
                   stmt);
 
               /*
@@ -257,7 +257,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
           if (!(v instanceof Local)) {
             continue;
           }
-          Type t = v.getType(myScene);
+          Type t = v.getType();
           if (!(t instanceof ArrayType)) {
             continue;
           }
@@ -283,7 +283,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
 
     while (localIt.hasNext()) {
       Local local = (Local) localIt.next();
-      if (local.getType(myScene) instanceof ArrayType) {
+      if (local.getType() instanceof ArrayType) {
         return true;
       }
     }

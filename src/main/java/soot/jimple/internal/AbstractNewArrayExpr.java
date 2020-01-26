@@ -109,11 +109,11 @@ public abstract class AbstractNewArrayExpr implements NewArrayExpr, ConvertToBaf
     return useBoxes;
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     if (baseType instanceof ArrayType) {
-      return ArrayType.v(((ArrayType) baseType).baseType, ((ArrayType) baseType).numDimensions + 1, myScene);
+      return ArrayType.v(((ArrayType) baseType).baseType, ((ArrayType) baseType).numDimensions + 1);
     } else {
-      return ArrayType.v(baseType, 1, myScene);
+      return ArrayType.v(baseType, 1);
     }
   }
 

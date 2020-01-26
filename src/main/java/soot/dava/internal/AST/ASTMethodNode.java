@@ -107,7 +107,7 @@ public class ASTMethodNode extends ASTNode {
       List<Local> localList;
 
       String typeName;
-      Type t = local.getType(myScene);
+      Type t = local.getType();
 
       typeName = t.toString();
 

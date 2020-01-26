@@ -144,14 +144,14 @@ public class RegisterAllocator {
       rArray = stringConstantReg;
       iI = stringI;
     } else {
-      throw new RuntimeException("Error. Unknown constant type: '" + c.getType(myScene) + "'");
+      throw new RuntimeException("Error. Unknown constant type: '" + c.getType() + "'");
     }
 
     boolean inConflict = true;
     while (inConflict) {
       if (rArray.size() == 0 || iI.intValue() >= rArray.size()) {
-        rArray.add(new Register(c.getType(myScene), nextRegNum));
-        nextRegNum += SootToDexUtils.getDexWords(c.getType(myScene));
+        rArray.add(new Register(c.getType(), nextRegNum));
+        nextRegNum += SootToDexUtils.getDexWords(c.getType());
       }
 
       constantRegister = rArray.get(iI.getAndIncrement()).clone();
@@ -184,12 +184,12 @@ public class RegisterAllocator {
     Integer oldRegNum = localToLastRegNum.get(local);
     if (oldRegNum != null) {
       // reuse the reg num last seen for this local, since this is where the content is
-      localRegister = new Register(local.getType(myScene), oldRegNum);
+      localRegister = new Register(local.getType(), oldRegNum);
     } else {
       // use a new reg num for this local
-      localRegister = new Register(local.getType(myScene), nextRegNum);
+      localRegister = new Register(local.getType(), nextRegNum);
       localToLastRegNum.put(local, nextRegNum);
-      nextRegNum += SootToDexUtils.getDexWords(local.getType(myScene));
+      nextRegNum += SootToDexUtils.getDexWords(local.getType());
     }
     return localRegister;
   }
@@ -239,7 +239,7 @@ public class RegisterAllocator {
     }
 
     localToLastRegNum.put(l, paramRegNum);
-    int wordsforParameters = SootToDexUtils.getDexWords(l.getType(myScene));
+    int wordsforParameters = SootToDexUtils.getDexWords(l.getType());
     nextRegNum = Math.max(nextRegNum + wordsforParameters, paramRegNum + wordsforParameters);
     paramRegCount += wordsforParameters;
   }

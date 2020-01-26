@@ -48,7 +48,7 @@ public class MonitorEnterInstruction extends DexlibAbstractInstruction {
   public void jimplify(DexBody body, Jimple myJimple, DalvikTyper myDalvikTyper) {
     int reg = ((OneRegisterInstruction) instruction).getRegisterA();
     Local object = body.getRegisterLocal(reg);
-    EnterMonitorStmt enterMonitorStmt = myJimple.newEnterMonitorStmt(object);
+    EnterMonitorStmt enterMonitorStmt = Jimple.newEnterMonitorStmt(object);
     setUnit(enterMonitorStmt);
     addTags(enterMonitorStmt);
     body.add(enterMonitorStmt);

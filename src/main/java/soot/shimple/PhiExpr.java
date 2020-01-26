@@ -195,9 +195,8 @@ public interface PhiExpr extends ShimpleExpr {
 
   /**
    * The type of the PhiExpr is usually the same as the type of its arguments.
-   *
-   * @param myScene*/
-  public Type getType(Scene myScene);
+   *  */
+  public Type getType();
 
   public void apply(Switch sw);
 }

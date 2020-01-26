@@ -199,7 +199,7 @@ public class PhiNodeManager {
     List<Block> preds = frontierBlock.getPreds();
     PhiExpr pe = myShimple.newPhiExpr(local, preds);
     pe.setBlockId(frontierBlock.getIndexInMethod());
-    Unit trivialPhi = myJimple.newAssignStmt(local, pe);
+    Unit trivialPhi = Jimple.newAssignStmt(local, pe);
     Unit blockHead = frontierBlock.getHead();
 
     // is it a catch block?
@@ -420,7 +420,7 @@ public class PhiNodeManager {
 
       for (int i = 0; i < phi.getArgCount(); i++) {
         Value phiValue = phi.getValue(i);
-        AssignStmt convertedPhi = myJimple.newAssignStmt(lhsLocal, phiValue);
+        AssignStmt convertedPhi = Jimple.newAssignStmt(lhsLocal, phiValue);
 
         equivStmts.add(convertedPhi);
         predBoxes.add(phi.getArgBox(i));
@@ -450,7 +450,7 @@ public class PhiNodeManager {
       if (pred.branches()) {
         boolean needPriming = false;
         Local lhsLocal = (Local) stmt.getLeftOp();
-        Local savedLocal = myJimple.newLocal(lhsLocal.getName() + "_", lhsLocal.getType(myScene));
+        Local savedLocal = Jimple.newLocal(lhsLocal.getName() + "_", lhsLocal.getType());
         Iterator<ValueBox> useBoxesIt = pred.getUseBoxes().iterator();
 
         while (useBoxesIt.hasNext()) {
@@ -464,7 +464,7 @@ public class PhiNodeManager {
 
         if (needPriming) {
           body.getLocals().add(savedLocal);
-          AssignStmt copyStmt = myJimple.newAssignStmt(savedLocal, lhsLocal);
+          AssignStmt copyStmt = Jimple.newAssignStmt(savedLocal, lhsLocal);
           units.insertBefore(copyStmt, pred);
         }
 

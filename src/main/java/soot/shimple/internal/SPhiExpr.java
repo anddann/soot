@@ -59,7 +59,7 @@ public class SPhiExpr implements PhiExpr {
    * PhiExpr.
    **/
   public SPhiExpr(Local leftLocal, List<Block> preds) {
-    type = leftLocal.getType(myScene);
+    type = leftLocal.getType();
 
     for (Block pred : preds) {
       addArg(leftLocal, pred);
@@ -78,7 +78,7 @@ public class SPhiExpr implements PhiExpr {
       throw new RuntimeException("Arg list does not match Pred list");
     }
 
-    type = args.get(0).getType(myScene);
+    type = args.get(0).getType();
     Iterator<Value> argsIt = args.iterator();
     Iterator<Unit> predsIt = preds.iterator();
 
@@ -401,7 +401,7 @@ public class SPhiExpr implements PhiExpr {
     return new ArrayList<ValueBox>(set);
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return type;
   }
 

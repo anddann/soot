@@ -42,7 +42,7 @@ public interface NewMultiArrayExpr extends Expr, AnyNewExpr {
 
   public void setSize(int index, Value size);
 
-  public Type getType(Scene myScene);
+  public Type getType();
 
   public void apply(Switch sw);
 }

@@ -93,7 +93,7 @@ public class ReachingTypeDumper {
 
       for (Local l : sortedLocals) {
         out.println("V " + m + l);
-        if (l.getType(myScene) instanceof RefLikeType) {
+        if (l.getType() instanceof RefLikeType) {
           Set<Type> types = pa.reachingObjects(l).possibleTypes();
 
           Type[] sortedTypes = types.toArray(new Type[types.size()]);

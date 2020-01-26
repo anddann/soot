@@ -186,7 +186,7 @@ public class NullnessAnalysis extends ForwardBranchedFlowAnalysis<NullnessAnalys
     // x=y, copy the info for y (for locals x,y)
     if (s instanceof DefinitionStmt) {
       DefinitionStmt defStmt = (DefinitionStmt) s;
-      if (defStmt.getLeftOp().getType(myScene) instanceof RefLikeType) {
+      if (defStmt.getLeftOp().getType() instanceof RefLikeType) {
         handleRefTypeAssignment(defStmt, out);
       }
     }

@@ -51,7 +51,7 @@ public class GotoInstruction extends JumpInstruction implements DeferableInstruc
     }
     // set marker unit to swap real gotostmt with otherwise
     body.addDeferredJimplification(this);
-    markerUnit = this.myJimple.newNopStmt();
+    markerUnit = Jimple.newNopStmt();
     addTags(markerUnit);
     unit = markerUnit;
     body.add(markerUnit);
@@ -62,7 +62,7 @@ public class GotoInstruction extends JumpInstruction implements DeferableInstruc
   }
 
   private GotoStmt gotoStatement() {
-    GotoStmt go = myJimple.newGotoStmt(targetInstruction.getUnit());
+    GotoStmt go = Jimple.newGotoStmt(targetInstruction.getUnit());
     setUnit(go);
     addTags(go);
     return go;

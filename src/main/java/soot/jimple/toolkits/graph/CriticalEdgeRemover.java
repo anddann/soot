@@ -89,7 +89,7 @@ public class CriticalEdgeRemover extends BodyTransformer {
    * @return the newly inserted <code>Goto</code>
    */
   private static Unit insertGotoAfter(Chain<Unit> unitChain, Unit node, Unit target, Jimple myJimple) {
-    Unit newGoto = myJimple.newGotoStmt(target);
+    Unit newGoto = Jimple.newGotoStmt(target);
     unitChain.insertAfter(newGoto, node);
     return newGoto;
   }
@@ -109,7 +109,7 @@ public class CriticalEdgeRemover extends BodyTransformer {
    */
   /* note, that this method has slightly more overhead than the insertGotoAfter */
   private static Unit insertGotoBefore(Chain<Unit> unitChain, Unit node, Unit target, Jimple myJimple) {
-    Unit newGoto = myJimple.newGotoStmt(target);
+    Unit newGoto = Jimple.newGotoStmt(target);
     unitChain.insertBefore(newGoto, node);
     newGoto.redirectJumpsToThisTo(node);
     return newGoto;

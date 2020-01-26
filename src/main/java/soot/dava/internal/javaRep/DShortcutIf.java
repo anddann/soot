@@ -25,7 +25,6 @@ package soot.dava.internal.javaRep;
 import java.util.ArrayList;
 import java.util.List;
 
-import soot.Scene;
 import soot.Type;
 import soot.UnitPrinter;
 import soot.ValueBox;
@@ -60,7 +59,7 @@ public class DShortcutIf implements Expr {
     return toReturn;
   }
 
-  public Type getType(Scene myScene) {
+  public Type getType() {
     return exprType;
   }
 

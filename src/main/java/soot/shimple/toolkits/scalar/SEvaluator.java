@@ -231,7 +231,7 @@ public class SEvaluator {
       this.primTypeCollector = primTypeCollector;
     }
 
-    public Type getType(Scene myScene) {
+    public Type getType() {
       return primTypeCollector.getUnknownType();
     }
 
@@ -251,7 +251,7 @@ public class SEvaluator {
       this.primTypeCollector = primTypeCollector;
     }
 
-    public Type getType(Scene myScene) {
+    public Type getType() {
       return primTypeCollector.getUnknownType();
     }
 

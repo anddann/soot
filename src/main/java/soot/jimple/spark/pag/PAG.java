@@ -1367,7 +1367,7 @@ public class PAG implements PointsToAnalysis {
     int numArgs = ie.getArgCount();
     for (int i = 0; i < numArgs; i++) {
       Value arg = ie.getArg(i);
-      if (!(arg.getType(myScene) instanceof RefLikeType)) {
+      if (!(arg.getType() instanceof RefLikeType)) {
         continue;
       }
       if (arg instanceof NullConstant) {
@@ -1407,7 +1407,7 @@ public class PAG implements PointsToAnalysis {
     }
     if (s instanceof AssignStmt) {
       Value dest = ((AssignStmt) s).getLeftOp();
-      if (dest.getType(myScene) instanceof RefLikeType && !(dest instanceof NullConstant)) {
+      if (dest.getType() instanceof RefLikeType && !(dest instanceof NullConstant)) {
 
         Node destNode = srcnf.getNode(dest);
         destNode = srcmpag.parameterize(destNode, srcContext);

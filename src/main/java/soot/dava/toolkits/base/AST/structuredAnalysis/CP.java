@@ -28,19 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import soot.BooleanType;
-import soot.ByteType;
-import soot.CharType;
-import soot.DoubleType;
-import soot.FloatType;
-import soot.IntType;
-import soot.Local;
-import soot.LongType;
-import soot.PrimType;
-import soot.ShortType;
-import soot.SootField;
-import soot.Type;
-import soot.Value;
+import soot.*;
 import soot.dava.DavaFlowAnalysisException;
 import soot.dava.internal.AST.ASTBinaryCondition;
 import soot.dava.internal.AST.ASTCondition;
@@ -51,6 +39,7 @@ import soot.dava.internal.AST.ASTUnaryBinaryCondition;
 import soot.dava.internal.AST.ASTUnaryCondition;
 import soot.dava.internal.javaRep.DNotExpr;
 import soot.dava.toolkits.base.AST.interProcedural.ConstantFieldValueFinder;
+import soot.dava.toolkits.base.AST.traversals.ClosestAbruptTargetFinder;
 import soot.jimple.BinopExpr;
 import soot.jimple.ConditionExpr;
 import soot.jimple.DefinitionStmt;
@@ -108,8 +97,8 @@ public class CP extends StructuredAnalysis {
    * The start of the analysis takes place whenever this constructor is invoked
    */
   public CP(ASTMethodNode analyze, HashMap<String, Object> constantFields,
-      HashMap<String, SootField> classNameFieldNameToSootFieldMapping) {
-    super();
+            HashMap<String, SootField> classNameFieldNameToSootFieldMapping, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, Scene myScene) {
+    super(myScene, myClosestAbruptTargetFinder);
     /*
      * DEBUG = true; DEBUG_IF = true; DEBUG_WHILE = true; DEBUG_STATEMENTS = true;
      */
@@ -125,7 +114,7 @@ public class CP extends StructuredAnalysis {
     // input to constant propagation should not be an empty flow set it is
     // the set of all constant fields, locals assigned 0 and formals
     // assigned T
-    CPFlowSet initialSet = new CPFlowSet();
+    CPFlowSet initialSet = new CPFlowSet(myClosestAbruptTargetFinder);
     Iterator<CPTuple> it = initialInput.iterator();
     while (it.hasNext()) {
       initialSet.add(it.next());
@@ -157,11 +146,11 @@ public class CP extends StructuredAnalysis {
       Object temp = it.next();
       if (temp instanceof Local) {
         Local tempLocal = (Local) temp;
-        if (!(tempLocal.getType(myScene) instanceof PrimType)) {
+        if (!(tempLocal.getType() instanceof PrimType)) {
           continue;
         }
 
-        CPVariable newVar = new CPVariable(tempLocal);
+        CPVariable newVar = new CPVariable(tempLocal, myScene);
 
         // new tuple set to top since this is a formal and we dont know
         // what value we will get into it
@@ -182,13 +171,13 @@ public class CP extends StructuredAnalysis {
       Object temp = it.next();
       if (temp instanceof Local) {
         Local tempLocal = (Local) temp;
-        Type localType = tempLocal.getType(myScene);
+        Type localType = tempLocal.getType();
 
         if (!(localType instanceof PrimType)) {
           continue;
         }
 
-        CPVariable newVar = new CPVariable(tempLocal);
+        CPVariable newVar = new CPVariable(tempLocal, myScene);
 
         // store the default value into this object
         Object value;
@@ -275,7 +264,7 @@ public class CP extends StructuredAnalysis {
 
   @Override
   public DavaFlowSet emptyFlowSet() {
-    return new CPFlowSet();
+    return new CPFlowSet(myClosestAbruptTargetFinder);
   }
 
   /*
@@ -296,7 +285,7 @@ public class CP extends StructuredAnalysis {
    */
   @Override
   public DavaFlowSet newInitialFlow() {
-    CPFlowSet flowSet = new CPFlowSet();
+    CPFlowSet flowSet = new CPFlowSet(myClosestAbruptTargetFinder);
 
     // formals and locals should be both initialized to top since we dont
     // know what has happened so far in the body
@@ -407,7 +396,7 @@ public class CP extends StructuredAnalysis {
     // x = expr;
     // confirm that the left side is a local with a primitive type
     Value left = defStmt.getLeftOp();
-    if (!(left instanceof Local && ((Local) left).getType(myScene) instanceof PrimType)) {
+    if (!(left instanceof Local && ((Local) left).getType() instanceof PrimType)) {
       return inSet;
     }
 
@@ -425,7 +414,7 @@ public class CP extends StructuredAnalysis {
     Object value = CPHelper.isAConstantValue(right);
     if (value != null) {
       // EXPR IS A CONSTANT
-      if (left.getType(myScene) instanceof BooleanType) {
+      if (left.getType() instanceof BooleanType) {
         Integer tempValue = (Integer) value;
         if (tempValue.intValue() == 0) {
           value = new Boolean(false);
@@ -466,7 +455,7 @@ public class CP extends StructuredAnalysis {
     } // going through all elements of the flow set
 
     // if this element was no where enter it with top
-    CPVariable newVar = new CPVariable(left);
+    CPVariable newVar = new CPVariable(left, myScene);
 
     // create the CPTuple
     // System.out.println("trying to kill something which was not present so added with TOP");
@@ -479,7 +468,7 @@ public class CP extends StructuredAnalysis {
    * Create a CPTuple for left with the val and update the toReturn set
    */
   private void addOrUpdate(CPFlowSet toReturn, Local left, Object val) {
-    CPVariable newVar = new CPVariable(left);
+    CPVariable newVar = new CPVariable(left, myScene);
 
     CPTuple newTuple = new CPTuple(localClassName, newVar, val);
     toReturn.addIfNotPresent(newTuple);
@@ -546,7 +535,7 @@ public class CP extends StructuredAnalysis {
 
       if (op1Val != null && op2Val != null) {
         // System.out.println("found constant values for both operands of binary expression");
-        if (left.getType(myScene) instanceof IntType && op1Val instanceof Integer && op2Val instanceof Integer) {
+        if (left.getType() instanceof IntType && op1Val instanceof Integer && op2Val instanceof Integer) {
           // only caring about operations on two integers and result
           // is an integer
 
@@ -790,7 +779,7 @@ public class CP extends StructuredAnalysis {
 
       // the unary value is a local add the value to the inset which woul
       // dbe present in the if branch
-      CPVariable variable = new CPVariable((Local) unaryValue);
+      CPVariable variable = new CPVariable((Local) unaryValue, myScene);
 
       // since NOTTED true means the if branch has variable with value
       // false and vice verse
@@ -893,21 +882,21 @@ public class CP extends StructuredAnalysis {
         // no value of a found but value of b was found <classname, a,b>
         // System.out.println("From INSET: a:"+a+" is not a constant b "+b+" is"
         // );
-        if (!(a instanceof Local && ((Local) a).getType(myScene) instanceof PrimType)) {
+        if (!(a instanceof Local && ((Local) a).getType() instanceof PrimType)) {
           // we only hanlde primitive locals
           return null;
         }
-        cpVar = new CPVariable((Local) a);
+        cpVar = new CPVariable((Local) a, myScene);
         constantToUse = av2;
       } else if (av1 != null && av2 == null) {
         // no value of b found but value of a was found <classname, b,a>
         // System.out.println("From INSET: a:"+a+" is a constant b "+b+" is not"
         // );
-        if (!(b instanceof Local && ((Local) b).getType(myScene) instanceof PrimType)) {
+        if (!(b instanceof Local && ((Local) b).getType() instanceof PrimType)) {
           // we only hanlde primitive locals
           return null;
         }
-        cpVar = new CPVariable((Local) b);
+        cpVar = new CPVariable((Local) b, myScene);
         constantToUse = av1;
       }
     } else if (aVal != null && bVal == null) {
@@ -915,26 +904,26 @@ public class CP extends StructuredAnalysis {
       // entering a tuple <className,b,a> maybe
       // System.out.println("a:"+a+" is a constant b:"+b+" is not");
 
-      if (!(b instanceof Local && ((Local) b).getType(myScene) instanceof PrimType)) {
+      if (!(b instanceof Local && ((Local) b).getType() instanceof PrimType)) {
         // we only hanlde primitive locals
         return null;
       }
 
       // able to create cpVar
-      cpVar = new CPVariable((Local) b);
+      cpVar = new CPVariable((Local) b, myScene);
       constantToUse = aVal;
     } else if (aVal == null && bVal != null) {
       // CASE 3: a is not a constant but b is a constant so we have a
       // chance of entering a tuple <className,a,b>
       // System.out.println("a:"+a+" is not a constant b:"+b+" is ");
 
-      if (!(a instanceof Local && ((Local) a).getType(myScene) instanceof PrimType)) {
+      if (!(a instanceof Local && ((Local) a).getType() instanceof PrimType)) {
         // we only hanlde primitive locals
         return null;
       }
 
       // able to create cpVar
-      cpVar = new CPVariable((Local) a);
+      cpVar = new CPVariable((Local) a, myScene);
       constantToUse = bVal;
 
     }
@@ -948,7 +937,7 @@ public class CP extends StructuredAnalysis {
 
       // need to see if constant is supposed to be a boolean
       // (isAConstantValue returns an Integer for a boolean)
-      if (cpVar.getLocal().getType(myScene) instanceof BooleanType) {
+      if (cpVar.getLocal().getType() instanceof BooleanType) {
         if (!(constantToUse instanceof Integer)) {
           // booleans are represented by Integeres in the
           // isConstantValue method what happened here???
