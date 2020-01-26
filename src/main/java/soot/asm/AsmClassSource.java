@@ -28,6 +28,7 @@ import java.io.InputStream;
 import org.objectweb.asm.ClassReader;
 
 import soot.*;
+import soot.coffi.Util;
 import soot.javaToJimple.IInitialResolver.Dependencies;
 import soot.jimple.ConstantFactory;
 import soot.options.Options;
@@ -45,24 +46,36 @@ public class AsmClassSource extends ClassSource {
   private Options myOptions;
   private PrimTypeCollector primTypeCollector;
   private ConstantFactory constantFactory;
+  private LambdaMetaFactory myLambdaMetaFactory;
+  private PackManager myPackManager;
+  private Util myCoffiUtil;
+  private PhaseOptions myPhaseOptions;
 
   /**
    * Constructs a new ASM class source.
-   *  @param cls
+   * @param cls
    *          fully qualified name of the class.
    * @param myScene
    * @param mySootResolver
    * @param myOptions
    * @param primTypeCollector
    * @param constantFactory
+   * @param myLambdaMetaFactory
+   * @param myPackManager
+   * @param myCoffiUtil
+   * @param myPhaseOptions
    */
-  protected AsmClassSource(String cls, FoundFile foundFile, Scene myScene, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory) {
+  protected AsmClassSource(String cls, FoundFile foundFile, Scene myScene, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions) {
     super(cls);
     this.myScene = myScene;
     this.mySootResolver = mySootResolver;
     this.myOptions = myOptions;
     this.primTypeCollector = primTypeCollector;
     this.constantFactory = constantFactory;
+    this.myLambdaMetaFactory = myLambdaMetaFactory;
+    this.myPackManager = myPackManager;
+    this.myCoffiUtil = myCoffiUtil;
+    this.myPhaseOptions = myPhaseOptions;
     if (foundFile == null) {
       throw new IllegalStateException("Error: The FoundFile must not be null.");
     }
