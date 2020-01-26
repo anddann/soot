@@ -131,6 +131,6 @@ abstract class OptionsBase {
    * @return {@code true} on success.
    */
   protected boolean loadPluginConfiguration(final String file) {
-    return PluginLoader.load(file);
+    return PluginLoader.load(file, myOptions, myPhaseOptions, myPhaseDumper, myPackManager);
   }
 }

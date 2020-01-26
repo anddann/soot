@@ -35,9 +35,13 @@ import soot.options.Options;
 public class JimpleMethodSource implements MethodSource {
   private static final Logger logger = LoggerFactory.getLogger(JimpleMethodSource.class);
   JimpleAST mJimpleAST;
+  private Options myOptions;
+  private PackManager myPackManager;
 
-  public JimpleMethodSource(JimpleAST aJimpleAST) {
+  public JimpleMethodSource(JimpleAST aJimpleAST, Options myOptions, PackManager myPackManager) {
     mJimpleAST = aJimpleAST;
+    this.myOptions = myOptions;
+    this.myPackManager = myPackManager;
   }
 
   public Body getBody(SootMethod m, String phaseName) {

@@ -49,16 +49,18 @@ public class DexClassProvider implements ClassProvider {
   private SourceLocator mySourceLocator;
   private Options myOptions;
   private DexFileProvider myDexFileProvider;
+  private Scene myScene;
 
-  public DexClassProvider(SourceLocator mySourceLocator, Options myOptions, DexFileProvider myDexFileProvider){
+  public DexClassProvider(SourceLocator mySourceLocator, Options myOptions, DexFileProvider myDexFileProvider, Scene myScene){
 
     this.mySourceLocator = mySourceLocator;
     this.myOptions = myOptions;
     this.myDexFileProvider = myDexFileProvider;
+    this.myScene = myScene;
   }
 
 
-  public static Set<String> classesOfDex(DexBackedDexFile dexFile) {
+  public static Set<String> classesOfDex(DexBackedDexFile dexFile, Scene myScene) {
     Set<String> classes = new HashSet<String>();
     for (ClassDef c : dexFile.getClasses()) {
       String name = Util.dottedClassName(c.getType(), myScene);
@@ -118,7 +120,7 @@ public class DexClassProvider implements ClassProvider {
         File dexFile = new File(path);
         if (dexFile.exists()) {
           for (DexFileProvider.DexContainer container : myDexFileProvider.getDexFromSource(dexFile)) {
-            for (String className : classesOfDex(container.getBase())) {
+            for (String className : classesOfDex(container.getBase(), myScene)) {
               if (!index.containsKey(className)) {
                 index.put(className, container.getFilePath());
               } else if (myOptions.verbose()) {

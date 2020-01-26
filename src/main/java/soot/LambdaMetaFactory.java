@@ -50,6 +50,7 @@ import soot.jimple.NewExpr;
 import soot.jimple.ParameterRef;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.toolkits.scalar.LocalNameStandardizer;
+import soot.options.Options;
 import soot.util.Chain;
 import soot.util.HashChain;
 
@@ -62,12 +63,14 @@ public final class LambdaMetaFactory {
   private Scene myScene;
   private LocalNameStandardizer myLocalNameStandardizer;
   private PrimTypeCollector primTypeCollector;
+  private Options myOptions;
 
   @Inject
   public LambdaMetaFactory(Scene myScene, LocalNameStandardizer myLocalNameStandardizer,
-                           PrimTypeCollector primTypeCollector) {
+                           PrimTypeCollector primTypeCollector, Options myOptions) {
     this.myLocalNameStandardizer = myLocalNameStandardizer;
     this.primTypeCollector = primTypeCollector;
+    this.myOptions = myOptions;
     uniq = 0;
     wrapper = new Wrapper();
     this.myScene = myScene;
@@ -320,6 +323,7 @@ public final class LambdaMetaFactory {
     private MethodHandle implMethod;
     /** allows restrictions on invocation */
     private MethodType instantiatedMethodType;
+    private Printer myPrinter;
 
     public ThunkMethodSource(List<SootField> capFields, MethodType implMethodType, MethodHandle implMethod,
         MethodType instantiatedMethodType) {

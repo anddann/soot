@@ -33,11 +33,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.PackManager;
+import soot.PhaseOptions;
 import soot.Transform;
+import soot.options.Options;
 import soot.plugins.SootPhasePlugin;
 import soot.plugins.model.PhasePluginDescription;
 import soot.plugins.model.PluginDescription;
 import soot.plugins.model.Plugins;
+import soot.util.PhaseDumper;
 
 /**
  * Class for loading xml-based plugin configuration files.
@@ -52,8 +55,6 @@ public class PluginLoader {
   /**
    * Each phase has to support the enabled option. We will add it if necessary.
    *
-   * @param declaredOptions
-   *          Options declared by the plugin.
    * @return option list definitly containing enabled.
    */
   private static String[] appendEnabled(final String[] options) {
@@ -112,8 +113,12 @@ public class PluginLoader {
    *
    * @param pluginDescription
    *          the plugin description instance read from configuration file.
+   * @param myOptions
+   * @param myPhaseOptions
+   * @param myPhaseDumper
+   * @param myPackManager
    */
-  private static void handlePhasePlugin(final PhasePluginDescription pluginDescription) {
+  private static void handlePhasePlugin(final PhasePluginDescription pluginDescription, Options myOptions, PhaseOptions myPhaseOptions, PhaseDumper myPhaseDumper, PackManager myPackManager) {
     try {
       final Object instance = PluginLoader.loadStrategy.create(pluginDescription.getClassName());
 
@@ -127,7 +132,7 @@ public class PluginLoader {
 
       final String packName = getPackName(pluginDescription.getPhaseName());
 
-      Transform transform = new Transform(pluginDescription.getPhaseName(), phasePlugin.getTransformer());
+      Transform transform = new Transform(pluginDescription.getPhaseName(), phasePlugin.getTransformer(), myOptions, myPhaseOptions, myPhaseDumper);
       transform.setDeclaredOptions(concat(appendEnabled(phasePlugin.getDeclaredOptions())));
       transform.setDefaultOptions(concat(phasePlugin.getDefaultOptions()));
       myPackManager.getPack(packName).add(transform);
@@ -144,9 +149,13 @@ public class PluginLoader {
    *
    * @param file
    *          the plugin configuration file.
+   * @param myOptions
+   * @param myPhaseOptions
+   * @param myPhaseDumper
+   * @param myPackManager
    * @return {@code true} on success.
    */
-  public static boolean load(final String file) {
+  public static boolean load(final String file, Options myOptions, PhaseOptions myPhaseOptions, PhaseDumper myPhaseDumper, PackManager myPackManager) {
     final File configFile = new File(file);
 
     if (!configFile.exists()) {
@@ -170,7 +179,7 @@ public class PluginLoader {
         return false;
       }
 
-      loadPlugins((Plugins) root);
+      loadPlugins((Plugins) root, myOptions, myPhaseOptions, myPhaseDumper, myPackManager);
     } catch (final RuntimeException e) {
       System.err.println("Failed to load plugin correctly.");
       logger.error(e.getMessage(), e);
@@ -190,13 +199,17 @@ public class PluginLoader {
    * @param plugins
    *          the plugins to load.
    *
+   * @param myOptions
+   * @param myPhaseOptions
+   * @param myPhaseDumper
+   * @param myPackManager
    * @throws RuntimeException
    *           if an error occurs during loading.
    */
-  public static void loadPlugins(final Plugins plugins) throws RuntimeException {
+  public static void loadPlugins(final Plugins plugins, Options myOptions, PhaseOptions myPhaseOptions, PhaseDumper myPhaseDumper, PackManager myPackManager) throws RuntimeException {
     for (final PluginDescription plugin : plugins.getPluginDescriptions()) {
       if (plugin instanceof PhasePluginDescription) {
-        handlePhasePlugin((PhasePluginDescription) plugin);
+        handlePhasePlugin((PhasePluginDescription) plugin, myOptions, myPhaseOptions, myPhaseDumper, myPackManager);
       } else {
         logger.debug("[Warning] Unhandled plugin of type '" + plugin.getClass() + "'");
       }

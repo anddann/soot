@@ -56,10 +56,7 @@ public class LockAllocationBodyTransformer extends BodyTransformer {
         this.myPrinter = myPrinter;
     }
 
-    //FIXME make singelto
-    public static LockAllocationBodyTransformer v() {
-        return instance;
-    }
+
 
     private static boolean addedGlobalLockDefs = false;
     private static int throwableNum = 0; // doesn't matter if not reinitialized

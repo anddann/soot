@@ -116,9 +116,13 @@ public class CFGViewer extends BodyTransformer {
         + "       --alt-classpath PATH :\n" //
         + "                specifies the classpath from which to load classes\n" //
         + "                that implement graph types whose names begin with 'Alt'.\n" //
-        + "       --graph={" + CFGGraphType.help(0, 70, "                ".length()) + "} :\n" //
+        + "       --graph={" + "W"
+            //FIXME
+            // CFGGraphType.help(0, 70, "                ".length()) + "} :\n" //
         + "                show the specified type of graph.\n" + "                Defaults to " + defaultGraph + ".\n" //
-        + "       --ir={" + CFGIntermediateRep.help(0, 70, "                ".length()) + "} :\n" //
+        + "       --ir={" +  "W"
+            //FIXME
+//            CFGIntermediateRep.help(0, 70, "                ".length()) + "} :\n" //
         + "                create the CFG from the specified intermediate\n" //
         + "                representation. Defaults to " + defaultIR + ".\n" //
         + "       --brief :\n" + "                label nodes with the unit or block index,\n" //
@@ -209,8 +213,9 @@ public class CFGViewer extends BodyTransformer {
       drawer.setExceptionalControlFlowAttr("color", "red");
       drawer.setExceptionEdgeAttr("color", "lightgray");
       drawer.setShowExceptions(myOptions.show_exception_dests());
-      ir = CFGIntermediateRep.getIR(PhaseOptions.getString(options, irOptionName));
-      graphtype = CFGGraphType.getGraphType(PhaseOptions.getString(options, graphTypeOptionName));
+      //FIXME
+//      ir = CFGIntermediateRep.getIR(PhaseOptions.getString(options, irOptionName));
+//      graphtype = CFGGraphType.getGraphType(PhaseOptions.getString(options, graphTypeOptionName));
 
       myAltClassLoader.setAltClassPath(PhaseOptions.getString(options, altClassPathOptionName));
       myAltClassLoader

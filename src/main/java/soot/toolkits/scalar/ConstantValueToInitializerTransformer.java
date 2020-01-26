@@ -30,6 +30,7 @@ import java.util.Set;
 
 import soot.*;
 import soot.jimple.*;
+import soot.options.Options;
 import soot.tagkit.DoubleConstantValueTag;
 import soot.tagkit.FloatConstantValueTag;
 import soot.tagkit.IntegerConstantValueTag;
@@ -49,16 +50,15 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
   private Scene myScene;
   private ConstantFactory constantFactory;
   private PrimTypeCollector primTypeCollector;
+  private Printer myOptions;
+  private Options myPrinter;
 
-  public ConstantValueToInitializerTransformer(Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector) {
+  public ConstantValueToInitializerTransformer(Scene myScene, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Printer myOptions, Options myPrinter) {
     this.myScene = myScene;
     this.constantFactory = constantFactory;
     this.primTypeCollector = primTypeCollector;
-  }
-
-  //FIXME: make singleton
-  public static ConstantValueToInitializerTransformer v() {
-    return new ConstantValueToInitializerTransformer(myScene, constantFactory, primTypeCollector);
+    this.myOptions = myOptions;
+    this.myPrinter = myPrinter;
   }
 
   @Override
@@ -162,7 +162,7 @@ public class ConstantValueToInitializerTransformer extends SceneTransformer {
     smInit = sc.getMethodByNameUnsafe(SootMethod.staticInitializerName);
     if (smInit == null) {
       smInit = myScene.makeSootMethod(SootMethod.staticInitializerName, Collections.<Type>emptyList(), primTypeCollector.getVoidType());
-      smInit.setActiveBody(Jimple.newBody(smInit));
+      smInit.setActiveBody(Jimple.newBody(smInit,myOptions,myPrinter));
       sc.addMethod(smInit);
       smInit.setModifiers(Modifier.PUBLIC | Modifier.STATIC);
     } else if (smInit.isPhantom()) {

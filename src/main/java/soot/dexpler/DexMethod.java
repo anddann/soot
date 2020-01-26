@@ -41,8 +41,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.*;
+import soot.dexpler.typing.DalvikTyper;
+import soot.jimple.ConstantFactory;
 import soot.jimple.Jimple;
+import soot.jimple.toolkits.base.Aggregator;
+import soot.jimple.toolkits.scalar.*;
+import soot.jimple.toolkits.typing.TypeAssigner;
 import soot.options.Options;
+import soot.toolkits.exceptions.PedanticThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
+import soot.toolkits.exceptions.TrapTightener;
+import soot.toolkits.graph.interaction.InteractionHandler;
+import soot.toolkits.scalar.LocalPacker;
+import soot.toolkits.scalar.LocalSplitter;
+import soot.toolkits.scalar.UnusedLocalEliminator;
+import soot.util.PhaseDumper;
 
 /**
  * DexMethod is a container for all methods that are declared in a class. It holds information about its name, the class it
@@ -56,12 +69,42 @@ public class DexMethod {
   protected final SootClass declaringClass;
   private Scene myScene;
   private Options myOptions;
+  private SootResolver mySootResolver;
+  // CHeck what is wrong here...
+  private Printer myPrinter;
+  private ConstantFactory constantFactory;
+  private PrimTypeCollector primTypeCollector;
+  private PhaseOptions myPhaseOptions;
+  private DalvikTyper myDalvikTyper;
+  private DeadAssignmentEliminator myDeadAssignmentEliminator;
+  private UnusedLocalEliminator myUnusedLocalEliminator;
+  private TypeAssigner myTypeAssigner;
+  private LocalPacker myLocalPacker;
+  private PackManager myPackManager;
+  private FieldStaticnessCorrector myFieldStaticnessCorrector;
+  private MethodStaticnessCorrector myMethodStaticnessCorrector;
+  private TrapTightener myTrapTightener;
+  private TrapMinimizer myTrapMinimizer;
+  private Aggregator myAggregator;
+  private ConditionalBranchFolder myConditionalBranchFolder;
+  private ConstantCastEliminator myConstantCastEliminator;
+  private IdentityCastEliminator myIdentityCastEliminator;
+  private IdentityOperationEliminator myIdentityOperationEliminator;
+  private UnreachableCodeEliminator myUnreachableCodeEliminator;
+  private NopEliminator myNopEliminator;
+  private DalvikThrowAnalysis myDalvikThrowAnalysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
+  private InteractionHandler myInteractionHandler;
+  private PedanticThrowAnalysis myPedanticThrowAnalysis;
+  private LocalSplitter myLocalSplitter;
 
-  public DexMethod(final DexFile dexFile, final SootClass declaringClass, Scene myScene, Options myOptions) {
+  public DexMethod(final DexFile dexFile, final SootClass declaringClass, Scene myScene, Options myOptions, SootResolver mySootResolver) {
     this.dexFile = dexFile;
     this.declaringClass = declaringClass;
     this.myScene = myScene;
     this.myOptions = myOptions;
+    this.mySootResolver = mySootResolver;
   }
 
   /**
@@ -108,10 +151,10 @@ public class DexMethod {
 
       @Override
       public Body getBody(SootMethod m, String phaseName) {
-        Body b = Jimple.newBody(m);
+        Body b = Jimple.newBody(m,myPrinter,myOptions);
         try {
           // add the body of this code item
-          DexBody dexBody = new DexBody(dexFile, method, declaringClass.getType(), constantFactory, dalivkTyper, primTypeCollector, myScene, myOptions, myPhaseOptions, myDalvikTyper, myDeadAssignmentEliminator, myUnusedLocalEliminator, myTypeAssigner, myLocalPacker, myPackManager, myFieldStaticnessCorrector, myMethodStaticnessCorrector, myTrapTightener, myTrapMinimizer, myAggregator, myConditionalBranchFolder, myConstantCastEliminator, myIdentityCastEliminator, myIdentityOperationEliminator, myUnreachableCodeEliminator, myNopEliminator, myDalvikThrowAnalysis, myManager, myPhaseDumper, myInteractionHandler, myPedanticThrowAnalysis, mySootResolver);
+          DexBody dexBody = new DexBody(dexFile, method, declaringClass.getType(), constantFactory, primTypeCollector, myScene, myOptions, myPhaseOptions, myDalvikTyper, myDeadAssignmentEliminator, myUnusedLocalEliminator, myTypeAssigner, myLocalPacker, myPackManager, myFieldStaticnessCorrector, myMethodStaticnessCorrector, myTrapTightener, myTrapMinimizer, myAggregator, myConditionalBranchFolder, myConstantCastEliminator, myIdentityCastEliminator, myIdentityOperationEliminator, myUnreachableCodeEliminator, myNopEliminator, myDalvikThrowAnalysis, myManager, myPhaseDumper, myInteractionHandler, myPedanticThrowAnalysis, mySootResolver, myLocalSplitter);
           dexBody.jimplify(b, m);
         } catch (InvalidDalvikBytecodeException e) {
           String msg = "Warning: Invalid bytecode in method " + m + ": " + e;

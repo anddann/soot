@@ -194,4 +194,6 @@
   <class>soot.PrimTypeCollector</class>
   <class>soot.jimple.toolkits.callgraph.UnreachableMethodTransformer</class>
   <class>soot.dexpler.typing.DalvikTyper</class>
+  <class>soot.toolkits.scalar.ConstantValueToInitializerTransformer.ConstantValueToInitializerTransformer</class>
+  <class>soot.jimple.toolkits.thread.synchronization.LockAllocationBodyTransformer</class>
 </singletons>

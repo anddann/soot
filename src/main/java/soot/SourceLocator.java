@@ -275,13 +275,13 @@ public class SourceLocator {
 //        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
                 break;
             case Options.src_prec_apk:
-                classProviders.add(new DexClassProvider(this, myOptions, myDexFileProvider));
+                classProviders.add(new DexClassProvider(this, myOptions, myDexFileProvider, myScene));
                 classProviders.add(classFileClassProvider);
 //        classProviders.add(new JavaClassProvider(myOptions, myInitialResolver, this));
                 classProviders.add(new JimpleClassProvider(this, myOptions, mySootResolver, myScene));
                 break;
             case Options.src_prec_apk_c_j:
-                classProviders.add(new DexClassProvider(this, myOptions, myDexFileProvider));
+                classProviders.add(new DexClassProvider(this, myOptions, myDexFileProvider, myScene));
                 classProviders.add(classFileClassProvider);
                 classProviders.add(new JimpleClassProvider(this, myOptions, mySootResolver, myScene));
                 break;
@@ -336,7 +336,7 @@ public class SourceLocator {
         if (cst == ClassSourceType.apk || cst == ClassSourceType.dex) {
             try {
                 for (DexFileProvider.DexContainer dex : myDexFileProvider.getDexFromSource(new File(aPath))) {
-                    classes.addAll(DexClassProvider.classesOfDex(dex.getBase()));
+                    classes.addAll(DexClassProvider.classesOfDex(dex.getBase(), myScene));
                 }
             } catch (IOException e) {
                 throw new CompilationDeathException("Error reading dex source", e);
@@ -372,7 +372,7 @@ public class SourceLocator {
             // we might have dex files inside the archive
             try {
                 for (DexFileProvider.DexContainer container : myDexFileProvider.getDexFromSource(new File(aPath))) {
-                    classes.addAll(DexClassProvider.classesOfDex(container.getBase()));
+                    classes.addAll(DexClassProvider.classesOfDex(container.getBase(), myScene));
                 }
             } catch (CompilationDeathException e) { // There might be cases where there is no dex file within a JAR or ZIP file...
             } catch (IOException e) {
@@ -406,7 +406,7 @@ public class SourceLocator {
                     } else if (fileName.endsWith(".dex")) {
                         try {
                             for (DexFileProvider.DexContainer container : myDexFileProvider.getDexFromSource(element)) {
-                                classes.addAll(DexClassProvider.classesOfDex(container.getBase()));
+                                classes.addAll(DexClassProvider.classesOfDex(container.getBase(), myScene));
                             }
                         } catch (IOException e) {
                             /* Ignore unreadable files */

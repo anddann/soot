@@ -60,12 +60,10 @@ import pxb.android.axml.AxmlReader;
 import pxb.android.axml.AxmlVisitor;
 import pxb.android.axml.NodeVisitor;
 
-import soot.baf.Baf;
 import soot.dava.toolkits.base.misc.PackageNamer;
 import soot.dexpler.DalvikThrowAnalysis;
 import soot.jimple.ConstantFactory;
 import soot.jimple.FullObjectFactory;
-import soot.jimple.Jimple;
 import soot.jimple.spark.internal.ClientAccessibilityOracle;
 import soot.jimple.spark.pag.SparkField;
 import soot.jimple.toolkits.callgraph.CallGraph;
@@ -1936,7 +1934,7 @@ public class Scene // extends AbstractHost
     if (PolymorphicMethodRef.handlesClass(declaringClass)) {
       return new PolymorphicMethodRef(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, constantFactory);
     }
-    return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, constantFactory);
+    return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, constantFactory, myPrinter);
   }
 
   /** Create an unresolved reference to a constructor. */

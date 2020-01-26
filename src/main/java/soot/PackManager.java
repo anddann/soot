@@ -246,6 +246,7 @@ public class PackManager {
     private ConstantFactory constantFactory;
   private ClosestAbruptTargetFinder myClosestAbruptTargetFinder;
   private PrimTypeCollector primTypeCollector;
+  private ConstantValueToInitializerTransformer myConstantValueToInitializerTransformer;
 
   @Inject
   public PackManager(PhaseOptions myPhaseOptions, FieldTagger myFieldTagger, Options myOptions,
@@ -282,7 +283,7 @@ public class PackManager {
                      NullCheckEliminator myNullCheckEliminator, SynchronizedMethodTransformer mySynchronizedMethodTransformer,
                      EntryPoints myEntryPoints, FastDexTrapTightener myFastDexTrapTightener, TrapSplitter myTrapSplitter,
                      ConstantInitializerToTagTransformer myConstantInitializerToTagTransformer,
-                     UnreachableMethodTransformer myUnreachableMethodTransformer, ConstantFactory constantFactory, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, PrimTypeCollector primTypeCollector) {
+                     UnreachableMethodTransformer myUnreachableMethodTransformer, ConstantFactory constantFactory, ClosestAbruptTargetFinder myClosestAbruptTargetFinder, PrimTypeCollector primTypeCollector, ConstantValueToInitializerTransformer myConstantValueToInitializerTransformer) {
     this.myPhaseOptions = myPhaseOptions;
     this.myOptions = myOptions;
     // myPhaseOptions.setPackManager(this);
@@ -356,6 +357,7 @@ public class PackManager {
     this.myDavaPrinter = myDavaPrinter;
     this.myClosestAbruptTargetFinder = myClosestAbruptTargetFinder;
     this.primTypeCollector = primTypeCollector;
+    this.myConstantValueToInitializerTransformer = myConstantValueToInitializerTransformer;
     this.myShimple = myShimple;
 
     this.myDava = myDava;
@@ -1274,7 +1276,7 @@ public class PackManager {
     // assignments
     if (myOptions.output_format() == Options.output_format_jimple) {
       if (!c.isPhantom) {
-        ConstantValueToInitializerTransformer.v().transformClass(c);
+        myConstantValueToInitializerTransformer.transformClass(c);
       }
     }
 

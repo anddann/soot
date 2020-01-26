@@ -238,7 +238,7 @@ public class DexClassLoader {
    * @return
    */
   protected DexMethod createDexMethodFactory(DexFile dexFile, SootClass sc) {
-    return new DexMethod(dexFile, sc, myScene, myOptions);
+    return new DexMethod(dexFile, sc, myScene, myOptions, mySootResolver);
   }
 
   /**

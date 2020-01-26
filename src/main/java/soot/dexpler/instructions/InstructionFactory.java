@@ -34,7 +34,6 @@ import soot.Scene;
 import soot.SootResolver;
 import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.ConstantFactory;
-import soot.jimple.Jimple;
 import soot.options.Options;
 
 /**
@@ -48,17 +47,15 @@ public class InstructionFactory {
    * @param instruction
    *          the corresponding dexlib instruction
    * @param codeAddress
-   * @param jimple
    * @param constantFactory
-   * @param dalivkTyper
    * @param primTypeCollector
    * @param myScene
    * @param myOptions
    * @param myDalvikTyper
    * @param mySootResolver
    */
-  public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress, Jimple jimple, ConstantFactory constantFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene,  Options myOptions, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
-    return fromOpcode(instruction.getOpcode(), instruction, codeAddress, constantFactory, jimple, dalivkTyper, primTypeCollector,  myScene, myOptions, myDalvikTyper, mySootResolver);
+  public static DexlibAbstractInstruction fromInstruction(Instruction instruction, int codeAddress, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
+    return fromOpcode(instruction.getOpcode(), instruction, codeAddress, constantFactory, primTypeCollector,  myScene, myOptions, myDalvikTyper, mySootResolver);
   }
 
   /**
@@ -69,15 +66,13 @@ public class InstructionFactory {
    *          the corresponding dexlib instruction
    * @param codeAddress
    * @param constantFactory
-   * @param jimple
-   * @param dalivkTyper
    * @param primTypeCollector
    * @param myScene
    * @param myOptions
    * @param myDalvikTyper
    * @param mySootResolver
    */
-  public static DexlibAbstractInstruction fromOpcode(Opcode op, Instruction instruction, int codeAddress, ConstantFactory constantFactory, Jimple jimple, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions,  DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
+  public static DexlibAbstractInstruction fromOpcode(Opcode op, Instruction instruction, int codeAddress, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, DalvikTyper myDalvikTyper, SootResolver mySootResolver) {
     switch (op) {
 
       case SPARSE_SWITCH_PAYLOAD:
@@ -175,7 +170,7 @@ public class InstructionFactory {
         return new PackedSwitchInstruction(instruction, codeAddress);
       case SPARSE_SWITCH:
         // case SPARSE_SWITCH_PAYLOAD:
-        return new SparseSwitchInstruction(instruction, codeAddress,jimple,constantFactory,dalivkTyper,primTypeCollector, myOptions);
+        return new SparseSwitchInstruction(instruction, codeAddress,constantFactory,myDalvikTyper,primTypeCollector, myOptions);
 
       case CMPL_FLOAT:
       case CMPG_FLOAT:
@@ -225,7 +220,7 @@ public class InstructionFactory {
       case IGET_CHAR:
       case IGET_SHORT:
       case IGET_WIDE:
-        return new IgetInstruction(instruction, codeAddress);
+        return new IgetInstruction(instruction, codeAddress, myScene, mySootResolver, myOptions);
       case IPUT:
       case IPUT_OBJECT:
       case IPUT_BOOLEAN:

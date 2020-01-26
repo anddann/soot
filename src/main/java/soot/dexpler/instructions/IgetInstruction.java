@@ -32,16 +32,19 @@ import org.jf.dexlib2.iface.instruction.ReferenceInstruction;
 import org.jf.dexlib2.iface.instruction.TwoRegisterInstruction;
 import org.jf.dexlib2.iface.reference.FieldReference;
 
+import soot.Scene;
+import soot.SootResolver;
 import soot.dexpler.DexBody;
 import soot.dexpler.IDalvikTyper;
 import soot.dexpler.typing.DalvikTyper;
 import soot.jimple.AssignStmt;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.Jimple;
+import soot.options.Options;
 
 public class IgetInstruction extends FieldInstruction {
 
-  public IgetInstruction(Instruction instruction, int codeAdress) {
+  public IgetInstruction(Instruction instruction, int codeAdress, Scene myScene, SootResolver mySootResolver, Options myOptions) {
     super(instruction, codeAdress, myOptions, myScene, mySootResolver);
   }
 

@@ -29,6 +29,8 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import soot.dava.toolkits.base.misc.PackageNamer;
+import soot.jimple.ConstantFactory;
 import soot.options.Options;
 import soot.javaToJimple.IInitialResolver.Dependencies;
 import soot.jimple.JimpleMethodSource;
@@ -45,12 +47,18 @@ public class JimpleClassSource extends ClassSource {
   private Options myOptions;
   private SootResolver mySootResolver;
   private Scene myScene;
+  private ConstantFactory constantFactory;
+  private PackageNamer myPackageNamer;
+  private Printer myPrinter;
 
-  public JimpleClassSource(String className, FoundFile foundFile, Options myOptions, SootResolver mySootResolver, Scene myScene) {
+  public JimpleClassSource(String className, FoundFile foundFile, Options myOptions, SootResolver mySootResolver, Scene myScene, ConstantFactory constantFactory, PackageNamer myPackageNamer, Printer myPrinter) {
     super(className);
     this.myOptions = myOptions;
     this.mySootResolver = mySootResolver;
     this.myScene = myScene;
+    this.constantFactory = constantFactory;
+    this.myPackageNamer = myPackageNamer;
+    this.myPrinter = myPrinter;
     if (foundFile == null) {
       throw new IllegalStateException("Error: The FoundFile must not be null.");
     }
@@ -70,7 +78,7 @@ public class JimpleClassSource extends ClassSource {
       jimpAST.getSkeleton(sc, mySootResolver, constantFactory, myScene, myPackageNamer, myOptions, myPrinter);
 
       // Set method source for all methods
-      JimpleMethodSource mtdSrc = new JimpleMethodSource(jimpAST);
+      JimpleMethodSource mtdSrc = new JimpleMethodSource(jimpAST, myOptions, myPackManager);
       Iterator<SootMethod> mtdIt = sc.methodIterator();
       while (mtdIt.hasNext()) {
         SootMethod sm = mtdIt.next();

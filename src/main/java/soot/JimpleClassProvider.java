@@ -59,6 +59,6 @@ public class JimpleClassProvider implements ClassProvider {
         return null;
       }
     }
-    return new JimpleClassSource(className, file, this.myOptions, mySootResolver, myScene);
+    return new JimpleClassSource(className, file, this.myOptions, mySootResolver, myScene, constantFactory, myPackageNamer, myPrinter);
   }
 }

@@ -59,6 +59,7 @@ public class SootMethodRefImpl implements SootMethodRef {
     protected Scene myScene;
     private Options myOptions;
   private ConstantFactory constantFactory;
+  private Printer myPrinter;
 
   /**
    * Constructor.
@@ -76,14 +77,16 @@ public class SootMethodRefImpl implements SootMethodRef {
    * @param myScene
      * @param myOptions
      * @param constantFactory
-     * @throws IllegalArgumentException
+     * @param myPrinter
+   * @throws IllegalArgumentException
    *           is thrown when {@code declaringClass}, or {@code name}, or {@code returnType} is null
    */
   public SootMethodRefImpl(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
-                           boolean isStatic, Scene myScene, Options myOptions, ConstantFactory constantFactory) {
+                           boolean isStatic, Scene myScene, Options myOptions, ConstantFactory constantFactory, Printer myPrinter) {
       this.myScene = myScene;
       this.myOptions = myOptions;
     this.constantFactory = constantFactory;
+    this.myPrinter = myPrinter;
     if (declaringClass == null) {
       throw new IllegalArgumentException("Attempt to create SootMethodRef with null class");
     }

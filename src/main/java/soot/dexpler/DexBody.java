@@ -164,7 +164,6 @@ public class DexBody {
   protected List<PseudoInstruction> pseudoInstructionData = new ArrayList<PseudoInstruction>();
 
   private ConstantFactory constantFactory;
-  private DalvikTyper dalivkTyper;
   private PrimTypeCollector primTypeCollector;
   private Scene myScene;
   private Options myOptions;
@@ -192,6 +191,7 @@ public class DexBody {
   private InteractionHandler myInteractionHandler;
   private PedanticThrowAnalysis myPedanticThrowAnalysis;
   private SootResolver mySootResolver;
+  private LocalSplitter myLocalSplitter;
 
   PseudoInstruction isAddressInData(int a) {
     for (PseudoInstruction pi : pseudoInstructionData) {
@@ -205,11 +205,9 @@ public class DexBody {
   }
 
   /**
-   * @param code
    *          the codeitem that is contained in this body
    * @param method
    * @param constantFactory
-   * @param dalivkTyper
    * @param primTypeCollector
    * @param myScene
    * @param myOptions
@@ -237,11 +235,10 @@ public class DexBody {
    * @param myInteractionHandler
    * @param myPedanticThrowAnalysis
    * @param mySootResolver
+   * @param myLocalSplitter
    */
-  protected DexBody(DexFile dexFile, Method method, RefType declaringClassType,  ConstantFactory constantFactory, DalvikTyper dalivkTyper, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, PhaseOptions myPhaseOptions, DalvikTyper myDalvikTyper, DeadAssignmentEliminator myDeadAssignmentEliminator, UnusedLocalEliminator myUnusedLocalEliminator, TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, PackManager myPackManager, FieldStaticnessCorrector myFieldStaticnessCorrector, MethodStaticnessCorrector myMethodStaticnessCorrector, TrapTightener myTrapTightener, TrapMinimizer myTrapMinimizer, Aggregator myAggregator, ConditionalBranchFolder myConditionalBranchFolder, ConstantCastEliminator myConstantCastEliminator, IdentityCastEliminator myIdentityCastEliminator, IdentityOperationEliminator myIdentityOperationEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator, DalvikThrowAnalysis myDalvikThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, PedanticThrowAnalysis myPedanticThrowAnalysis, SootResolver mySootResolver) {
-    ;
+  protected DexBody(DexFile dexFile, Method method, RefType declaringClassType, ConstantFactory constantFactory, PrimTypeCollector primTypeCollector, Scene myScene, Options myOptions, PhaseOptions myPhaseOptions, DalvikTyper myDalvikTyper, DeadAssignmentEliminator myDeadAssignmentEliminator, UnusedLocalEliminator myUnusedLocalEliminator, TypeAssigner myTypeAssigner, LocalPacker myLocalPacker, PackManager myPackManager, FieldStaticnessCorrector myFieldStaticnessCorrector, MethodStaticnessCorrector myMethodStaticnessCorrector, TrapTightener myTrapTightener, TrapMinimizer myTrapMinimizer, Aggregator myAggregator, ConditionalBranchFolder myConditionalBranchFolder, ConstantCastEliminator myConstantCastEliminator, IdentityCastEliminator myIdentityCastEliminator, IdentityOperationEliminator myIdentityOperationEliminator, UnreachableCodeEliminator myUnreachableCodeEliminator, NopEliminator myNopEliminator, DalvikThrowAnalysis myDalvikThrowAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, PedanticThrowAnalysis myPedanticThrowAnalysis, SootResolver mySootResolver, LocalSplitter myLocalSplitter) {
     this.constantFactory = constantFactory;
-    this.dalivkTyper = dalivkTyper;
     this.primTypeCollector = primTypeCollector;
     this.myScene = myScene;
     this.myOptions = myOptions;
@@ -270,6 +267,7 @@ public class DexBody {
     this.myPedanticThrowAnalysis = myPedanticThrowAnalysis;
     this.constantFactory = constantFactory;
     this.mySootResolver = mySootResolver;
+    this.myLocalSplitter = myLocalSplitter;
     MethodImplementation code = method.getImplementation();
     if (code == null) {
       throw new RuntimeException("error: no code for method " + method.getName());
@@ -335,7 +333,7 @@ public class DexBody {
   protected void extractDexInstructions(MethodImplementation code) {
     int address = 0;
     for (Instruction instruction : code.getInstructions()) {
-      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address,  constantFactory, dalivkTyper, primTypeCollector, myScene, myOptions, myDalvikTyper, mySootResolver);
+      DexlibAbstractInstruction dexInstruction = fromInstruction(instruction, address,  constantFactory,  primTypeCollector, myScene, myOptions, myDalvikTyper, mySootResolver);
       instructions.add(dexInstruction);
       instructionAtAddress.put(address, dexInstruction);
       address += instruction.getCodeUnits();
@@ -706,7 +704,7 @@ public class DexBody {
 
       DexReturnValuePropagator.v().transform(jBody);
       getCopyPopagator().transform(jBody);
-      DexNullThrowTransformer.v(DexNullThrowTransformer.constantFactory, DexNullThrowTransformer.myScene).transform(jBody);
+      DexNullThrowTransformer.v(constantFactory, myScene).transform(jBody);
       myDalvikTyper.typeUntypedConstrantInDiv(jBody);
       myDeadAssignmentEliminator.transform(jBody);
       myUnusedLocalEliminator.transform(jBody);
@@ -728,7 +726,8 @@ public class DexBody {
       DexReturnValuePropagator.v().transform(jBody);
       getCopyPopagator().transform(jBody);
 
-      DexNullThrowTransformer.v(DexNullThrowTransformer.constantFactory, DexNullThrowTransformer.myScene).transform(jBody);
+      //FIXME: use singleton?
+      DexNullThrowTransformer.v(constantFactory, myScene).transform(jBody);
 
       // t_null.start();
       DexNullTransformer.v().transform(jBody);
@@ -984,7 +983,7 @@ public class DexBody {
 
   protected LocalSplitter getLocalSplitter() {
     if (this.localSplitter == null) {
-      this.localSplitter = new LocalSplitter(myOptions,  myScene, myManager, myPhaseDumper, myInteractionHandler);
+      this.localSplitter = myLocalSplitter;
     }
     return this.localSplitter;
   }
