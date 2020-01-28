@@ -42,16 +42,12 @@ import soot.util.PhaseDumper;
  */
 abstract class OptionsBase {
 
-  private Options myOptions;
   private PhaseOptions myPhaseOptions;
   private PhaseDumper myPhaseDumper;
   private PackManager myPackManager;
-
-  protected OptionsBase(Options myOptions, PhaseOptions myPhaseOptions, PhaseDumper myPhaseDumper, PackManager myPackManager) {
-    this.myOptions = myOptions;
-    this.myPhaseOptions = myPhaseOptions;
-    this.myPhaseDumper = myPhaseDumper;
-    this.myPackManager = myPackManager;
+  private Options myOptions;
+//FIXME
+  protected OptionsBase() {
   }
 
   private String pad(int initial, String opts, int tab, String desc) {

@@ -69,7 +69,7 @@ public class SEvaluator {
       return true;
     }
 
-    return Evaluator.isValueConstantValued(op);
+    return Evaluator.isValueConstantValued(op, constantFactory);
   }
 
   /**
@@ -77,7 +77,7 @@ public class SEvaluator {
    **/
   public static Value getConstantValueOf(Value op) {
     if (!(op instanceof PhiExpr)) {
-      return Evaluator.getConstantValueOf(op);
+      return Evaluator.getConstantValueOf(op, constantFactory);
     }
 
     if (!(isValueConstantValued(op))) {

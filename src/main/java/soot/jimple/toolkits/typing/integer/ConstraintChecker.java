@@ -28,72 +28,8 @@ import java.io.StringWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.ArrayType;
-import soot.IntegerType;
-import soot.Local;
-import soot.NullType;
-import soot.SootMethodRef;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
-import soot.jimple.AbstractStmtSwitch;
-import soot.jimple.AddExpr;
-import soot.jimple.AndExpr;
-import soot.jimple.ArrayRef;
-import soot.jimple.AssignStmt;
-import soot.jimple.BinopExpr;
-import soot.jimple.BreakpointStmt;
-import soot.jimple.CastExpr;
-import soot.jimple.ClassConstant;
-import soot.jimple.CmpExpr;
-import soot.jimple.CmpgExpr;
-import soot.jimple.CmplExpr;
-import soot.jimple.ConditionExpr;
-import soot.jimple.DivExpr;
-import soot.jimple.DoubleConstant;
-import soot.jimple.DynamicInvokeExpr;
-import soot.jimple.EnterMonitorStmt;
-import soot.jimple.EqExpr;
-import soot.jimple.ExitMonitorStmt;
-import soot.jimple.FloatConstant;
-import soot.jimple.GeExpr;
-import soot.jimple.GotoStmt;
-import soot.jimple.GtExpr;
-import soot.jimple.IdentityStmt;
-import soot.jimple.IfStmt;
-import soot.jimple.InstanceFieldRef;
-import soot.jimple.InstanceOfExpr;
-import soot.jimple.IntConstant;
-import soot.jimple.InvokeExpr;
-import soot.jimple.InvokeStmt;
-import soot.jimple.JimpleBody;
-import soot.jimple.LeExpr;
-import soot.jimple.LengthExpr;
-import soot.jimple.LongConstant;
-import soot.jimple.LookupSwitchStmt;
-import soot.jimple.LtExpr;
-import soot.jimple.MulExpr;
-import soot.jimple.NeExpr;
-import soot.jimple.NegExpr;
-import soot.jimple.NewArrayExpr;
-import soot.jimple.NewExpr;
-import soot.jimple.NewMultiArrayExpr;
-import soot.jimple.NopStmt;
-import soot.jimple.NullConstant;
-import soot.jimple.OrExpr;
-import soot.jimple.RemExpr;
-import soot.jimple.ReturnStmt;
-import soot.jimple.ReturnVoidStmt;
-import soot.jimple.ShlExpr;
-import soot.jimple.ShrExpr;
-import soot.jimple.StaticFieldRef;
-import soot.jimple.Stmt;
-import soot.jimple.StringConstant;
-import soot.jimple.SubExpr;
-import soot.jimple.TableSwitchStmt;
-import soot.jimple.ThrowStmt;
-import soot.jimple.UshrExpr;
-import soot.jimple.XorExpr;
+import soot.*;
+import soot.jimple.*;
 import soot.jimple.toolkits.typing.Util;
 
 class ConstraintChecker extends AbstractStmtSwitch {
@@ -102,10 +38,14 @@ class ConstraintChecker extends AbstractStmtSwitch {
   private final boolean fix; // if true, fix constraint violations
 
   private JimpleBody stmtBody;
+  private ClassHierarchy myClassHierarchy;
+  private PrimTypeCollector primTypeCollector;
 
-  public ConstraintChecker(TypeResolver resolver, boolean fix) {
+  public ConstraintChecker(TypeResolver resolver, boolean fix, ClassHierarchy myClassHierarchy, PrimTypeCollector primTypeCollector) {
     this.resolver = resolver;
     this.fix = fix;
+    this.myClassHierarchy = myClassHierarchy;
+    this.primTypeCollector = primTypeCollector;
   }
 
   public void check(Stmt stmt, JimpleBody stmtBody) throws TypeException {
@@ -365,7 +305,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
         if (lop != null && rop != null) {
           if (!lop.hasAncestor_1(myClassHierarchy.INT)) {
             if (fix) {
-              be.setOp1(insertCast(be.getOp1(), getTypeForCast(lop), primTypeCollector.getIntType(), stmt));
+              be.setOp1(insertCast(be.getOp1(), getTypeForCast(lop, myClassHierarchy, primTypeCollector), primTypeCollector.getIntType(), stmt));
             } else {
               error("Type Error(7)");
             }
@@ -373,7 +313,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
 
           if (!rop.hasAncestor_1(myClassHierarchy.INT)) {
             if (fix) {
-              be.setOp2(insertCast(be.getOp2(), getTypeForCast(rop), primTypeCollector.getIntType(), stmt));
+              be.setOp2(insertCast(be.getOp2(), getTypeForCast(rop, myClassHierarchy, primTypeCollector), primTypeCollector.getIntType(), stmt));
             } else {
               error("Type Error(8)");
             }
@@ -388,12 +328,12 @@ class ConstraintChecker extends AbstractStmtSwitch {
           if (lca == myClassHierarchy.TOP) {
             if (fix) {
               if (!lop.hasAncestor_1(myClassHierarchy.INT)) {
-                be.setOp1(insertCast(be.getOp1(), getTypeForCast(lop), getTypeForCast(rop), stmt));
+                be.setOp1(insertCast(be.getOp1(), getTypeForCast(lop, myClassHierarchy, primTypeCollector), getTypeForCast(rop, myClassHierarchy, primTypeCollector), stmt));
                 lca = rop;
               }
 
               if (!rop.hasAncestor_1(myClassHierarchy.INT)) {
-                be.setOp2(insertCast(be.getOp2(), getTypeForCast(rop), getTypeForCast(lop), stmt));
+                be.setOp2(insertCast(be.getOp2(), getTypeForCast(rop, myClassHierarchy, primTypeCollector), getTypeForCast(lop, myClassHierarchy, primTypeCollector), stmt));
                 lca = lop;
               }
             } else {
@@ -407,7 +347,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
         if (lop != null) {
           if (!lop.hasAncestor_1(myClassHierarchy.INT)) {
             if (fix) {
-              be.setOp1(insertCast(be.getOp1(), getTypeForCast(lop), primTypeCollector.getIntType(), stmt));
+              be.setOp1(insertCast(be.getOp1(), getTypeForCast(lop, myClassHierarchy, primTypeCollector), primTypeCollector.getIntType(), stmt));
             } else {
               error("Type Error(9)");
             }
@@ -416,7 +356,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
 
         if (!rop.hasAncestor_1(myClassHierarchy.INT)) {
           if (fix) {
-            be.setOp2(insertCast(be.getOp2(), getTypeForCast(rop), primTypeCollector.getIntType(), stmt));
+            be.setOp2(insertCast(be.getOp2(), getTypeForCast(rop, myClassHierarchy, primTypeCollector), primTypeCollector.getIntType(), stmt));
           } else {
             error("Type Error(10)");
           }
@@ -427,7 +367,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
         if (lop != null) {
           if (!lop.hasAncestor_1(myClassHierarchy.INT)) {
             if (fix) {
-              be.setOp1(insertCast(be.getOp1(), getTypeForCast(lop), primTypeCollector.getByteType(), stmt));
+              be.setOp1(insertCast(be.getOp1(), getTypeForCast(lop, myClassHierarchy, primTypeCollector), primTypeCollector.getByteType(), stmt));
               lop = myClassHierarchy.BYTE;
             } else {
               error("Type Error(9)");
@@ -437,7 +377,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
 
         if (!rop.hasAncestor_1(myClassHierarchy.INT)) {
           if (fix) {
-            be.setOp2(insertCast(be.getOp2(), getTypeForCast(rop), primTypeCollector.getIntType(), stmt));
+            be.setOp2(insertCast(be.getOp2(), getTypeForCast(rop, myClassHierarchy, primTypeCollector), primTypeCollector.getIntType(), stmt));
           } else {
             error("Type Error(10)");
           }
@@ -454,11 +394,11 @@ class ConstraintChecker extends AbstractStmtSwitch {
           if (lca == myClassHierarchy.TOP) {
             if (fix) {
               if (!lop.hasAncestor_1(myClassHierarchy.INT)) {
-                be.setOp1(insertCast(be.getOp1(), getTypeForCast(lop), getTypeForCast(rop), stmt));
+                be.setOp1(insertCast(be.getOp1(), getTypeForCast(lop, myClassHierarchy, primTypeCollector), getTypeForCast(rop, myClassHierarchy, primTypeCollector), stmt));
               }
 
               if (!rop.hasAncestor_1(myClassHierarchy.INT)) {
-                be.setOp2(insertCast(be.getOp2(), getTypeForCast(rop), getTypeForCast(lop), stmt));
+                be.setOp2(insertCast(be.getOp2(), getTypeForCast(rop, myClassHierarchy, primTypeCollector), getTypeForCast(lop, myClassHierarchy, primTypeCollector), stmt));
               }
             } else {
               error("Type Error(11)");
@@ -570,7 +510,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
     if (left != null && right != null) {
       if (!right.hasAncestor_1(left)) {
         if (fix) {
-          stmt.setRightOp(insertCast(stmt.getRightOp(), getTypeForCast(right), getTypeForCast(left), stmt));
+          stmt.setRightOp(insertCast(stmt.getRightOp(), getTypeForCast(right, myClassHierarchy, primTypeCollector), getTypeForCast(left, myClassHierarchy, primTypeCollector), stmt));
         } else {
           error("Type Error(15)");
         }
@@ -578,7 +518,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
     }
   }
 
-  static Type getTypeForCast(TypeNode node)
+  static Type getTypeForCast(TypeNode node, ClassHierarchy myClassHierarchy, PrimTypeCollector primTypeCollector)
   // This method is a local kludge, for avoiding NullPointerExceptions
   // when a R0_1, R0_127, or R0_32767 node is used in a type
   // cast. A more elegant solution would work with the TypeNode
@@ -613,7 +553,7 @@ class ConstraintChecker extends AbstractStmtSwitch {
         if (!right.hasAncestor_1(left)) {
           if (fix) {
             ((soot.jimple.internal.JIdentityStmt) stmt)
-                .setLeftOp(insertCastAfter((Local) l, getTypeForCast(left), getTypeForCast(right), stmt));
+                .setLeftOp(insertCastAfter((Local) l, getTypeForCast(left, myClassHierarchy, primTypeCollector), getTypeForCast(right, myClassHierarchy, primTypeCollector), stmt));
           } else {
             error("Type Error(16)");
           }
@@ -715,11 +655,11 @@ class ConstraintChecker extends AbstractStmtSwitch {
       if (lop.lca_1(rop) == myClassHierarchy.TOP) {
         if (fix) {
           if (!lop.hasAncestor_1(myClassHierarchy.INT)) {
-            expr.setOp1(insertCast(expr.getOp1(), getTypeForCast(lop), getTypeForCast(rop), stmt));
+            expr.setOp1(insertCast(expr.getOp1(), getTypeForCast(lop, myClassHierarchy, primTypeCollector), getTypeForCast(rop, myClassHierarchy, primTypeCollector), stmt));
           }
 
           if (!rop.hasAncestor_1(myClassHierarchy.INT)) {
-            expr.setOp2(insertCast(expr.getOp2(), getTypeForCast(rop), getTypeForCast(lop), stmt));
+            expr.setOp2(insertCast(expr.getOp2(), getTypeForCast(rop, myClassHierarchy, primTypeCollector), getTypeForCast(lop, myClassHierarchy, primTypeCollector), stmt));
           }
         } else {
           error("Type Error(17)");

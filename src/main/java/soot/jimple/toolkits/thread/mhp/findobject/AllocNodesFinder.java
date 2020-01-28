@@ -26,12 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import soot.PointsToAnalysis;
-import soot.RefType;
-import soot.SootMethod;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.jimple.AssignStmt;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.NewExpr;
@@ -60,10 +55,12 @@ public class AllocNodesFinder {
   private final Set<AllocNode> multiRunAllocNodes;
   private final Set<SootMethod> multiCalledMethods;
   PAG pag;
+  private Scene myScene;
 
-  public AllocNodesFinder(PegCallGraph pcg, CallGraph cg, PAG pag) {
+  public AllocNodesFinder(PegCallGraph pcg, CallGraph cg, PAG pag, Scene myScene) {
     // System.out.println("===inside AllocNodesFinder===");
     this.pag = pag;
+    this.myScene = myScene;
     allocNodes = new HashSet<AllocNode>();
     multiRunAllocNodes = new HashSet<AllocNode>();
     multiCalledMethods = new HashSet<SootMethod>();

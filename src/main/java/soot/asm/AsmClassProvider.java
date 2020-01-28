@@ -44,8 +44,9 @@ public class AsmClassProvider implements ClassProvider {
   private PackManager myPackManager;
   private Util myCoffiUtil;
   private PhaseOptions myPhaseOptions;
+  private Printer myPrinter;
 
-  public AsmClassProvider(SourceLocator mySourceLocator, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, Scene myScene, LambdaMetaFactory myLambdaMetaFactory, Options myOptions, SootResolver mySootResolver, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions) {
+  public AsmClassProvider(SourceLocator mySourceLocator, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, Scene myScene, LambdaMetaFactory myLambdaMetaFactory, Options myOptions, SootResolver mySootResolver, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions, Printer myPrinter) {
 
     this.mySourceLocator = mySourceLocator;
     this.primTypeCollector = primTypeCollector;
@@ -57,6 +58,7 @@ public class AsmClassProvider implements ClassProvider {
     this.myPackManager = myPackManager;
     this.myCoffiUtil = myCoffiUtil;
     this.myPhaseOptions = myPhaseOptions;
+    this.myPrinter = myPrinter;
   }
 
   public ClassSource find(String cls) {

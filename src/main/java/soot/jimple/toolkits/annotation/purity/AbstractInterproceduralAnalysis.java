@@ -77,7 +77,7 @@ public abstract class AbstractInterproceduralAnalysis<S> {
   protected final Map<SootMethod, S> data; // SootMethod -> summary
   protected final Map<SootMethod, Integer> order; // SootMethod -> topo order
   protected final Map<SootMethod, S> unanalysed; // SootMethod -> summary
-  private SourceLocator mySourceLocator;
+  protected SourceLocator mySourceLocator;
 
   /**
    * The constructor performs some preprocessing, but you have to call doAnalysis to preform the real stuff.

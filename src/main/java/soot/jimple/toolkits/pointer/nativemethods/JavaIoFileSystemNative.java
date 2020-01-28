@@ -28,8 +28,11 @@ import soot.jimple.toolkits.pointer.representations.ReferenceVariable;
 import soot.jimple.toolkits.pointer.util.NativeHelper;
 
 public class JavaIoFileSystemNative extends NativeMethodClass {
-  public JavaIoFileSystemNative(NativeHelper helper) {
+  private Environment myEnvironment;
+
+  public JavaIoFileSystemNative(NativeHelper helper, Environment myEnvironment) {
     super(helper);
+    this.myEnvironment = myEnvironment;
   }
 
   /**

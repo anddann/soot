@@ -26,14 +26,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import soot.Local;
-import soot.RefLikeType;
-import soot.Unit;
-import soot.Value;
-import soot.ValueBox;
+import soot.*;
 import soot.jimple.Stmt;
+import soot.options.Options;
 import soot.toolkits.graph.StronglyConnectedComponentsFast;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 
 /**
  * A special version of the local must-alias analysis that takes redefinitions within loops into account. For variable that
@@ -54,8 +52,8 @@ public class StrongLocalMustAliasAnalysis extends LocalMustAliasAnalysis {
 
   protected Set<Integer> invalidInstanceKeys;
 
-  public StrongLocalMustAliasAnalysis(UnitGraph g) {
-    super(g, myScene, myInteractionHandler, interaticveMode);
+  public StrongLocalMustAliasAnalysis(UnitGraph g, Scene myScene, InteractionHandler myInteractionHandler, Options myOptions) {
+    super(g, myScene, myInteractionHandler, myOptions.interactive_mode());
     invalidInstanceKeys = new HashSet<Integer>();
     /*
      * Find all SCCs, then invalidate all instance keys for variable defined within an SCC.

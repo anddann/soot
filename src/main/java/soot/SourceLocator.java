@@ -131,10 +131,11 @@ public class SourceLocator {
     private PackManager myPackManager;
     private Util myCoffiUtil;
     private PhaseOptions myPhaseOptions;
+    private Printer myPrinter;
 
     @Inject
     public SourceLocator(Options myOptions, Scene myScene, DexFileProvider myDexFileProvider,
-                         SootResolver mySootResolver, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions) {
+                         SootResolver mySootResolver, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions, Printer myPrinter) {
         this.myOptions = myOptions;
         this.myScene = myScene;
         this.myDexFileProvider = myDexFileProvider;
@@ -145,6 +146,7 @@ public class SourceLocator {
         this.myPackManager = myPackManager;
         this.myCoffiUtil = myCoffiUtil;
         this.myPhaseOptions = myPhaseOptions;
+        this.myPrinter = myPrinter;
     }
 
     /**
@@ -254,7 +256,7 @@ public class SourceLocator {
 
     protected void setupClassProviders() {
         classProviders = new LinkedList<ClassProvider>();
-        ClassProvider classFileClassProvider = new AsmClassProvider(this, primTypeCollector, constantFactory, myScene, myLambdaMetaFactory, myOptions, mySootResolver, myPackManager, myCoffiUtil, myPhaseOptions);
+        ClassProvider classFileClassProvider = new AsmClassProvider(this, primTypeCollector, constantFactory, myScene, myLambdaMetaFactory, myOptions, mySootResolver, myPackManager, myCoffiUtil, myPhaseOptions, myPrinter);
         switch (myOptions.src_prec()) {
             case Options.src_prec_class:
                 classProviders.add(classFileClassProvider);

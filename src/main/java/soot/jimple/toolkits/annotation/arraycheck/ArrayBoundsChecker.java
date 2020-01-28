@@ -52,9 +52,13 @@ import soot.options.Options;
 import soot.tagkit.ColorTag;
 import soot.tagkit.KeyTag;
 import soot.tagkit.Tag;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.Orderer;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 public class ArrayBoundsChecker extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ArrayBoundsChecker.class);
@@ -64,16 +68,24 @@ public class ArrayBoundsChecker extends BodyTransformer {
   private Scene myScene;
   private Orderer<Block> mySlowPseudoTopologicalOrderer;
   private ConstantFactory constantFactory;
+  private InteractionHandler myInteractionHandler;
+  private ThrowAnalysis throwAnalysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
   @Inject
   public ArrayBoundsChecker(Options myOptions, RectangularArrayFinder myRectangularArrayFinder,
-                            ClassFieldAnalysis myClassFieldAnalysis, Scene myScene, Orderer<Block> mySlowPseudoTopologicalOrderer, ConstantFactory constantFactory) {
+                            ClassFieldAnalysis myClassFieldAnalysis, Scene myScene, Orderer<Block> mySlowPseudoTopologicalOrderer, ConstantFactory constantFactory, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
     this.myOptions = myOptions;
     this.myRectangularArrayFinder = myRectangularArrayFinder;
     this.myClassFieldAnalysis = myClassFieldAnalysis;
     this.myScene = myScene;
     this.mySlowPseudoTopologicalOrderer = mySlowPseudoTopologicalOrderer;
     this.constantFactory = constantFactory;
+    this.myInteractionHandler = myInteractionHandler;
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
   protected boolean takeClassField = false;

@@ -28,8 +28,11 @@ import soot.jimple.toolkits.pointer.representations.ReferenceVariable;
 import soot.jimple.toolkits.pointer.util.NativeHelper;
 
 public class JavaSecurityAccessControllerNative extends NativeMethodClass {
-  public JavaSecurityAccessControllerNative(NativeHelper helper) {
+  private Environment myEnvironment;
+
+  public JavaSecurityAccessControllerNative(NativeHelper helper, Environment myEnvironment) {
     super(helper);
+    this.myEnvironment = myEnvironment;
   }
 
   /**

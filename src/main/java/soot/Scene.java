@@ -1934,7 +1934,7 @@ public class Scene // extends AbstractHost
   public SootMethodRef makeMethodRef(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
       boolean isStatic) {
     if (PolymorphicMethodRef.handlesClass(declaringClass)) {
-      return new PolymorphicMethodRef(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, constantFactory);
+      return new PolymorphicMethodRef(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, constantFactory, myPrinter);
     }
     return new SootMethodRefImpl(declaringClass, name, parameterTypes, returnType, isStatic, this, myOptions, constantFactory, myPrinter);
   }

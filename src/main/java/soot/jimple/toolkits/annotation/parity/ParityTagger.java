@@ -42,6 +42,7 @@ import soot.tagkit.ColorTag;
 import soot.tagkit.KeyTag;
 import soot.tagkit.StringTag;
 import soot.toolkits.graph.BriefUnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LiveLocals;
 import soot.toolkits.scalar.SimpleLiveLocals;
 import soot.util.PhaseDumper;
@@ -53,11 +54,13 @@ public class ParityTagger extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(ParityTagger.class);
   private Options myOptions;
   private PhaseDumper myPhaseDumper;
+  private InteractionHandler myInteractionHandler;
 
   @Inject
-  public ParityTagger(Options myOptions, PhaseDumper myPhaseDumper) {
+  public ParityTagger(Options myOptions, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler) {
     this.myOptions = myOptions;
     this.myPhaseDumper = myPhaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
 
@@ -72,9 +75,9 @@ public class ParityTagger extends BodyTransformer {
       LiveLocals sll = new SimpleLiveLocals(new BriefUnitGraph(b, myPhaseDumper));
       myOptions.set_interactive_mode(isInteractive);
 
-      a = new ParityAnalysis(new BriefUnitGraph(b, myPhaseDumper), sll, myOptions, getMyInteractionHandler());
+      a = new ParityAnalysis(new BriefUnitGraph(b, myPhaseDumper), sll, myOptions, myInteractionHandler);
     } else {
-      a = new ParityAnalysis(new BriefUnitGraph(b, myPhaseDumper), myOptions, getMyInteractionHandler());
+      a = new ParityAnalysis(new BriefUnitGraph(b, myPhaseDumper), myOptions, myInteractionHandler);
     }
 
     Iterator sIt = b.getUnits().iterator();

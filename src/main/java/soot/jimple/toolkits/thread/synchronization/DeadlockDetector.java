@@ -33,10 +33,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.EquivalentValue;
-import soot.MethodOrMethodContext;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.jimple.spark.pag.PAG;
 import soot.jimple.spark.sets.HashPointsToSet;
 import soot.jimple.spark.sets.PointsToSetInternal;
@@ -56,11 +53,13 @@ public class DeadlockDetector {
   boolean optionAllowSelfEdges;
   List<CriticalSection> criticalSections;
   TransitiveTargets tt;
+  private PrimTypeCollector primTypeCollector;
 
   public DeadlockDetector(boolean optionPrintDebug, boolean optionRepairDeadlock, boolean optionAllowSelfEdges,
-      List<CriticalSection> criticalSections) {
+                          List<CriticalSection> criticalSections, PrimTypeCollector primTypeCollector) {
     this.optionPrintDebug = optionPrintDebug;
     this.optionRepairDeadlock = optionRepairDeadlock;
+    this.primTypeCollector = primTypeCollector;
     this.optionAllowSelfEdges = optionAllowSelfEdges && !optionRepairDeadlock; // can only do this if not repairing
     this.criticalSections = criticalSections;
     this.tt = new TransitiveTargets(myScene.getCallGraph(), new Filter(new CriticalSectionVisibleEdgesPred(null)));

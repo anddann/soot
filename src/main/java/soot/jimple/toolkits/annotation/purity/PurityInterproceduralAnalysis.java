@@ -42,12 +42,14 @@ import soot.jimple.InvokeExpr;
 import soot.jimple.StaticInvokeExpr;
 import soot.jimple.Stmt;
 import soot.jimple.toolkits.callgraph.CallGraph;
+import soot.options.Options;
 import soot.options.PurityOptions;
 import soot.tagkit.GenericAttribute;
 import soot.tagkit.StringTag;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.util.PhaseDumper;
 import soot.util.dot.DotGraph;
 
@@ -124,6 +126,8 @@ public class PurityInterproceduralAnalysis extends AbstractInterproceduralAnalys
   private final boolean omitExceptingUnitEdges;
   private final ThrowableSet.Manager myManager;
   private final PhaseDumper myPhaseDumper;
+  private final Options myOptions;
+  private final InteractionHandler myInteractionHandler;
 
   /**
    * Filter out some method.
@@ -157,12 +161,14 @@ public class PurityInterproceduralAnalysis extends AbstractInterproceduralAnalys
   /**
    * The constructor does it all!
    */
-  PurityInterproceduralAnalysis(CallGraph cg, Iterator<SootMethod> heads, PurityOptions opts, SourceLocator mySourceLocator, ThrowAnalysis throwAnalysis, boolean omitExceptingUnitEdges, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
+  PurityInterproceduralAnalysis(CallGraph cg, Iterator<SootMethod> heads, PurityOptions opts, SourceLocator mySourceLocator, ThrowAnalysis throwAnalysis, boolean omitExceptingUnitEdges, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Options myOptions, InteractionHandler myInteractionHandler) {
     super(cg, new Filter(), heads, opts.dump_cg(), mySourceLocator);
     this.throwAnalysis = throwAnalysis;
     this.omitExceptingUnitEdges = omitExceptingUnitEdges;
     this.myManager = myManager;
     this.myPhaseDumper = myPhaseDumper;
+    this.myOptions = myOptions;
+    this.myInteractionHandler = myInteractionHandler;
 
     if (opts.dump_cg()) {
       logger.debug("[AM] Dumping empty .dot call-graph");
@@ -198,7 +204,7 @@ public class PurityInterproceduralAnalysis extends AbstractInterproceduralAnalys
         if (opts.verbose()) {
           logger.debug("  |- " + method);
         }
-        PurityIntraproceduralAnalysis r = new PurityIntraproceduralAnalysis(graph, this, mySourceLocator, myOptions, getMyInteractionHandler());
+        PurityIntraproceduralAnalysis r = new PurityIntraproceduralAnalysis(graph, this, mySourceLocator, this.myOptions, this.myInteractionHandler);
         r.drawAsOneDot("Intra_", method.toString());
         PurityGraphBox b = new PurityGraphBox();
         r.copyResult(b);
@@ -304,7 +310,7 @@ public class PurityInterproceduralAnalysis extends AbstractInterproceduralAnalys
   protected void analyseMethod(SootMethod method, PurityGraphBox dst) {
     Body body = method.retrieveActiveBody();
     ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body, throwAnalysis,  omitExceptingUnitEdges, myManager,  myPhaseDumper);
-    new PurityIntraproceduralAnalysis(graph, this, mySourceLocator, myOptions, getMyInteractionHandler()).copyResult(dst);
+    new PurityIntraproceduralAnalysis(graph, this, mySourceLocator, myOptions, myInteractionHandler).copyResult(dst);
   }
 
   /**

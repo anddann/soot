@@ -45,21 +45,33 @@ import soot.jimple.InvokeStmt;
 import soot.jimple.NaiveSideEffectTester;
 import soot.jimple.NewExpr;
 import soot.jimple.Stmt;
+import soot.options.Options;
 import soot.tagkit.ColorTag;
 import soot.tagkit.LoopInvariantTag;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.scalar.SmartLocalDefs;
 import soot.toolkits.scalar.SmartLocalDefsPool;
+import soot.util.PhaseDumper;
 
 public class LoopInvariantFinder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(LoopInvariantFinder.class);
 
   private ArrayList constants;
   private SmartLocalDefsPool mySmartLocalDefsPool;
+  private ThrowAnalysis throwAnalysis;
+  private Options myOptions;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
   @Inject
-  public LoopInvariantFinder(SmartLocalDefsPool mySmartLocalDefsPool) {
+  public LoopInvariantFinder(SmartLocalDefsPool mySmartLocalDefsPool, ThrowAnalysis throwAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
     this.mySmartLocalDefsPool = mySmartLocalDefsPool;
+    this.throwAnalysis = throwAnalysis;
+    this.myOptions = myOptions;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
   }
 
 

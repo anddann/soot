@@ -32,7 +32,9 @@ import soot.Value;
 import soot.ValueBox;
 import soot.jimple.Constant;
 import soot.jimple.DefinitionStmt;
+import soot.options.Options;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
 
 /**
@@ -44,8 +46,8 @@ public class LocalMayAliasAnalysis extends ForwardFlowAnalysis<Unit, Set<Set<Val
 
   private Body body;
 
-  public LocalMayAliasAnalysis(UnitGraph graph) {
-    super(graph);
+  public LocalMayAliasAnalysis(UnitGraph graph, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(graph, myOptions.interactive_mode(), myInteractionHandler);
     body = graph.getBody();
     doAnalysis();
   }

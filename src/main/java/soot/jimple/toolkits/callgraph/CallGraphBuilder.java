@@ -30,12 +30,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.Local;
-import soot.MethodOrMethodContext;
-import soot.PointsToAnalysis;
-import soot.PointsToSet;
-import soot.Type;
-import soot.Value;
+import soot.*;
 import soot.jimple.IntConstant;
 import soot.jimple.NewArrayExpr;
 import soot.jimple.spark.pag.AllocNode;
@@ -71,7 +66,7 @@ public class CallGraphBuilder {
   /**
    * This constructor builds a complete call graph using the given PointsToAnalysis to resolve virtual calls.
    */
-  public CallGraphBuilder(PointsToAnalysis pa) {
+  public CallGraphBuilder(PointsToAnalysis pa, Scene myScene) {
     this.pa = pa;
     cg = myScene.internalMakeCallGraph();
     myScene.setCallGraph(cg);
@@ -80,7 +75,7 @@ public class CallGraphBuilder {
     ofcgb = createCGBuilder(cm, reachables);
   }
 
-  protected OnFlyCallGraphBuilder createCGBuilder(ContextManager cm, ReachableMethods reachables2) {
+  protected OnFlyCallGraphBuilder createCGBuilder(ContextManager cm, ReachableMethods reachables) {
     return new OnFlyCallGraphBuilder(cm, reachables, myPhaseOptions, myEntryPoints);
   }
 
@@ -88,10 +83,13 @@ public class CallGraphBuilder {
    * This constructor builds the incomplete hack call graph for the Dava ThrowFinder. It uses all application class methods
    * as entry points, and it ignores any calls by non-application class methods. Don't use this constructor if you need a
    * real call graph.
+   * @param myScene
+   * @param myDumbPointerAnalysis
+   * @param myEntryPoints
    */
-  public CallGraphBuilder() {
+  public CallGraphBuilder(Scene myScene, PointsToAnalysis myDumbPointerAnalysis, EntryPoints myEntryPoints) {
     logger.warn("using incomplete callgraph containing " + "only application classes.");
-    pa = soot.jimple.toolkits.pointer.myDumbPointerAnalysis;
+    pa = myDumbPointerAnalysis;
     cg = myScene.internalMakeCallGraph();
     myScene.setCallGraph(cg);
     List<MethodOrMethodContext> entryPoints = new ArrayList<MethodOrMethodContext>();

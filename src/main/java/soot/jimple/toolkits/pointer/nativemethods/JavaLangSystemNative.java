@@ -32,9 +32,11 @@ import soot.jimple.toolkits.pointer.util.NativeHelper;
 
 public class JavaLangSystemNative extends NativeMethodClass {
   private static final Logger logger = LoggerFactory.getLogger(JavaLangSystemNative.class);
+  private Environment myEnvironment;
 
-  public JavaLangSystemNative(NativeHelper helper) {
+  public JavaLangSystemNative(NativeHelper helper, Environment myEnvironment) {
     super(helper);
+    this.myEnvironment = myEnvironment;
   }
 
   /**

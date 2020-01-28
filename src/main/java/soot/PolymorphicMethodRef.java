@@ -80,11 +80,12 @@ public class PolymorphicMethodRef extends SootMethodRefImpl {
    * @param myScene
    * @param myOptions
    * @param constantFactory
+   * @param myPrinter
    * @throws IllegalArgumentException
    *           is thrown when {@code declaringClass}, or {@code name}, or {@code returnType} is null
    */
   public PolymorphicMethodRef(SootClass declaringClass, String name, List<Type> parameterTypes, Type returnType,
-                              boolean isStatic, Scene myScene, Options myOptions, ConstantFactory constantFactory) {
+                              boolean isStatic, Scene myScene, Options myOptions, ConstantFactory constantFactory, Printer myPrinter) {
     super(declaringClass, name, parameterTypes, returnType, isStatic, myScene, myOptions, constantFactory, myPrinter);
   }
 

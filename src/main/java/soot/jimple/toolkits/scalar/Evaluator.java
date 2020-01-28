@@ -23,53 +23,22 @@ package soot.jimple.toolkits.scalar;
  */
 
 import soot.Value;
-import soot.jimple.AddExpr;
-import soot.jimple.AndExpr;
-import soot.jimple.ArithmeticConstant;
-import soot.jimple.BinopExpr;
-import soot.jimple.ClassConstant;
-import soot.jimple.CmpExpr;
-import soot.jimple.CmpgExpr;
-import soot.jimple.CmplExpr;
-import soot.jimple.Constant;
-import soot.jimple.DivExpr;
-import soot.jimple.EqExpr;
-import soot.jimple.GeExpr;
-import soot.jimple.GtExpr;
-import soot.jimple.IntConstant;
-import soot.jimple.LeExpr;
-import soot.jimple.LongConstant;
-import soot.jimple.LtExpr;
-import soot.jimple.MulExpr;
-import soot.jimple.NeExpr;
-import soot.jimple.NegExpr;
-import soot.jimple.NullConstant;
-import soot.jimple.NumericConstant;
-import soot.jimple.OrExpr;
-import soot.jimple.RealConstant;
-import soot.jimple.RemExpr;
-import soot.jimple.ShlExpr;
-import soot.jimple.ShrExpr;
-import soot.jimple.StringConstant;
-import soot.jimple.SubExpr;
-import soot.jimple.UnopExpr;
-import soot.jimple.UshrExpr;
-import soot.jimple.XorExpr;
+import soot.jimple.*;
 
 public class Evaluator {
 
-  public static boolean isValueConstantValued(Value op) {
+  public static boolean isValueConstantValued(Value op, ConstantFactory constantFactory) {
     if (op instanceof Constant) {
       return true;
     } else if ((op instanceof UnopExpr)) {
       Value innerOp = ((UnopExpr) op).getOp();
-      if (innerOp == myNullConstant) {
+      if (innerOp == constantFactory.getNullConstant()) {
         // operations on null will throw an exception and the operation
         // is therefore not considered constant-valued; see posting on Soot list
         // on 18 September 2007 14:36
         return false;
       }
-      if (isValueConstantValued(innerOp)) {
+      if (isValueConstantValued(innerOp, constantFactory)) {
         return true;
       }
     } else if (op instanceof BinopExpr) {
@@ -78,8 +47,8 @@ public class Evaluator {
       final Value op2 = binExpr.getOp2();
 
       // Only evaluate these checks once, and use the result multiple times
-      final boolean isOp1Constant = isValueConstantValued(op1);
-      final boolean isOp2Constant = isValueConstantValued(op2);
+      final boolean isOp1Constant = isValueConstantValued(op1, constantFactory);
+      final boolean isOp2Constant = isValueConstantValued(op2, constantFactory);
 
       /* Handle weird cases. */
       if (op instanceof DivExpr || op instanceof RemExpr) {
@@ -88,7 +57,7 @@ public class Evaluator {
         }
 
         /* check for a 0 value. If so, punt. */
-        Value c2 = getConstantValueOf(op2);
+        Value c2 = getConstantValueOf(op2, constantFactory);
         if (c2 instanceof IntConstant && ((IntConstant) c2).value == 0) {
           return false;
         } else if (c2 instanceof LongConstant && ((LongConstant) c2).value == 0) {
@@ -106,15 +75,15 @@ public class Evaluator {
   /**
    * Returns the constant value of <code>op</code> if it is easy to find the constant value; else returns <code>null</code>.
    */
-  public static Value getConstantValueOf(Value op) {
-    if (!isValueConstantValued(op)) {
+  public static Value getConstantValueOf(Value op, ConstantFactory constantFactory) {
+    if (!isValueConstantValued(op, constantFactory)) {
       return null;
     }
 
     if (op instanceof Constant) {
       return op;
     } else if (op instanceof UnopExpr) {
-      Value c = getConstantValueOf(((UnopExpr) op).getOp());
+      Value c = getConstantValueOf(((UnopExpr) op).getOp(), constantFactory);
       if (op instanceof NegExpr) {
         return ((NumericConstant) c).negate();
       }
@@ -123,8 +92,8 @@ public class Evaluator {
       final Value op1 = binExpr.getOp1();
       final Value op2 = binExpr.getOp2();
 
-      final Value c1 = getConstantValueOf(op1);
-      final Value c2 = getConstantValueOf(op2);
+      final Value c1 = getConstantValueOf(op1, constantFactory);
+      final Value c2 = getConstantValueOf(op2, constantFactory);
 
       if (op instanceof AddExpr) {
         return ((NumericConstant) c1).add((NumericConstant) c2);

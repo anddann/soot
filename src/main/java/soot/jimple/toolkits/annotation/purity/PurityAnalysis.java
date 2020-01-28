@@ -32,9 +32,11 @@ import soot.Scene;
 import soot.SceneTransformer;
 import soot.SourceLocator;
 import soot.jimple.toolkits.callgraph.CallGraph;
+import soot.options.Options;
 import soot.options.PurityOptions;
 import soot.toolkits.exceptions.ThrowAnalysis;
 import soot.toolkits.exceptions.ThrowableSet;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.util.PhaseDumper;
 
 /**
@@ -51,10 +53,12 @@ public class PurityAnalysis extends SceneTransformer {
   private boolean omitExceptingUnitEdges;
   private ThrowableSet.Manager myManager;
   private PhaseDumper myPhaseDumper;
+  private Options myOptions;
+  private InteractionHandler myInteractionHandler;
 
 
   @Inject
-  public PurityAnalysis(Scene myScene, SourceLocator mySourceLocator, ThrowAnalysis throwAnalysis, boolean omitExceptingUnitEdges, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
+  public PurityAnalysis(Scene myScene, SourceLocator mySourceLocator, ThrowAnalysis throwAnalysis, boolean omitExceptingUnitEdges, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Options myOptions, InteractionHandler myInteractionHandler) {
 
     this.myScene = myScene;
     this.mySourceLocator = mySourceLocator;
@@ -62,6 +66,8 @@ public class PurityAnalysis extends SceneTransformer {
     this.omitExceptingUnitEdges = omitExceptingUnitEdges;
     this.myManager = myManager;
     this.myPhaseDumper = myPhaseDumper;
+    this.myOptions = myOptions;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
 
@@ -74,6 +80,6 @@ public class PurityAnalysis extends SceneTransformer {
     CallGraph cg = myScene.getCallGraph();
 
     // launch the analysis
-    new PurityInterproceduralAnalysis(cg, myScene.getEntryPoints().iterator(), opts, mySourceLocator, throwAnalysis, omitExceptingUnitEdges, myManager, myPhaseDumper);
+    new PurityInterproceduralAnalysis(cg, myScene.getEntryPoints().iterator(), opts, mySourceLocator, throwAnalysis, omitExceptingUnitEdges, myManager, myPhaseDumper, myOptions, myInteractionHandler);
   }
 }

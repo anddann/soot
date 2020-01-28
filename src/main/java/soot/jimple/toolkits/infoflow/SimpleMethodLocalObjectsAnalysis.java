@@ -28,11 +28,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.EquivalentValue;
-import soot.SootField;
-import soot.SootMethod;
-import soot.Value;
-import soot.jimple.Jimple;
+import soot.*;
 import soot.options.Options;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.graph.interaction.InteractionHandler;
@@ -47,7 +43,7 @@ public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalys
   private static final Logger logger = LoggerFactory.getLogger(SimpleMethodLocalObjectsAnalysis.class);
   public static int mlocounter = 0;
 
-  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, ClassLocalObjectsAnalysis cloa, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler) {
+  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, ClassLocalObjectsAnalysis cloa, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollector) {
     super(g, dfa, true, true, myOptions,myInteractionHandler); // special version doesn't run analysis yet
 
     mlocounter++;
@@ -83,7 +79,7 @@ public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalys
     }
   }
 
-  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, CallLocalityContext context, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler) {
+  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, CallLocalityContext context, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollector) {
     super(g, dfa, true, true,  myOptions,myInteractionHandler); // special version doesn't run analysis yet
 
     mlocounter++;

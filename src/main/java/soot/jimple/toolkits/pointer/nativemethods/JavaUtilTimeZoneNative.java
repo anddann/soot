@@ -28,8 +28,11 @@ import soot.jimple.toolkits.pointer.representations.ReferenceVariable;
 import soot.jimple.toolkits.pointer.util.NativeHelper;
 
 public class JavaUtilTimeZoneNative extends NativeMethodClass {
-  public JavaUtilTimeZoneNative(NativeHelper helper) {
+  private Environment myEnvironment;
+
+  public JavaUtilTimeZoneNative(NativeHelper helper, Environment myEnvironment) {
     super(helper);
+    this.myEnvironment = myEnvironment;
   }
 
   /**
