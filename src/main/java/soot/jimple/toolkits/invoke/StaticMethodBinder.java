@@ -144,7 +144,7 @@ public class StaticMethodBinder extends SceneTransformer {
 
           // Ok, we have an Interface or VirtualInvoke going to 1.
 
-          if (!AccessManager.ensureAccess(container, target, modifierOptions)) {
+          if (!AccessManager.ensureAccess(container, target, modifierOptions, myScene)) {
             continue;
           }
 

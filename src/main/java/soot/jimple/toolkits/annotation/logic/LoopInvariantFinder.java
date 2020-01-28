@@ -72,7 +72,7 @@ public class LoopInvariantFinder extends BodyTransformer {
     UnitGraph g = sld.getGraph();
     NaiveSideEffectTester nset = new NaiveSideEffectTester();
 
-    Collection<Loop> loops = new LoopFinder().getLoops(b);
+    Collection<Loop> loops = new LoopFinder(throwAnalysis, myOptions, myManager, myPhaseDumper).getLoops(b);
     constants = new ArrayList();
 
     // no loop invariants if no loops

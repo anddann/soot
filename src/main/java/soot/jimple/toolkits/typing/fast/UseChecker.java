@@ -26,17 +26,7 @@ package soot.jimple.toolkits.typing.fast;
 
 import java.util.Iterator;
 
-import soot.ArrayType;
-import soot.BooleanType;
-import soot.IntegerType;
-import soot.Local;
-import soot.NullType;
-import soot.PrimType;
-import soot.RefType;
-import soot.SootMethodRef;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.jimple.AbstractStmtSwitch;
 import soot.jimple.AddExpr;
 import soot.jimple.AndExpr;
@@ -88,9 +78,14 @@ import soot.jimple.TableSwitchStmt;
 import soot.jimple.ThrowStmt;
 import soot.jimple.UshrExpr;
 import soot.jimple.XorExpr;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.LocalDefs;
 import soot.toolkits.scalar.LocalUses;
 import soot.toolkits.scalar.UnitValueBoxPair;
+import soot.util.PhaseDumper;
 
 /**
  * This checks all uses against the rules in Jimple, except some uses are not checked where the bytecode verifier guarantees
@@ -106,9 +101,23 @@ public class UseChecker extends AbstractStmtSwitch {
 
   private LocalDefs defs = null;
   private LocalUses uses = null;
+  private PrimTypeCollector primTypeCollector;
+  private Scene myScene;
+  private ThrowableSet.Manager myManager;
+  private ThrowAnalysis throwAnalysis;
+  private Options myOptions;
+  private PhaseDumper phaseDumper;
+  private InteractionHandler myInteractionHandler;
 
-  public UseChecker(JimpleBody jb) {
+  public UseChecker(JimpleBody jb, PrimTypeCollector primTypeCollector, Scene myScene, ThrowableSet.Manager myManager, ThrowAnalysis throwAnalysis, Options myOptions, PhaseDumper phaseDumper, InteractionHandler myInteractionHandler) {
     this.jb = jb;
+    this.primTypeCollector = primTypeCollector;
+    this.myScene = myScene;
+    this.myManager = myManager;
+    this.throwAnalysis = throwAnalysis;
+    this.myOptions = myOptions;
+    this.phaseDumper = phaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
   }
 
   public void check(Typing tg, IUseVisitor uv) {
@@ -141,7 +150,7 @@ public class UseChecker extends AbstractStmtSwitch {
 
   private void handleBinopExpr(BinopExpr be, Stmt stmt, Type tlhs) {
     Value opl = be.getOp1(), opr = be.getOp2();
-    Type tl = AugEvalFunction.eval_(this.tg, opl, stmt, this.jb), tr = AugEvalFunction.eval_(this.tg, opr, stmt, this.jb);
+    Type tl = AugEvalFunction.eval_(this.tg, opl, stmt, this.jb, primTypeCollector, myScene), tr = AugEvalFunction.eval_(this.tg, opr, stmt, this.jb, primTypeCollector, myScene);
 
     if (be instanceof AddExpr || be instanceof SubExpr || be instanceof MulExpr || be instanceof DivExpr
         || be instanceof RemExpr || be instanceof GeExpr || be instanceof GtExpr || be instanceof LeExpr
@@ -204,7 +213,7 @@ public class UseChecker extends AbstractStmtSwitch {
           Type rhsType = this.tg.get((Local) rhs);
           if (rhsType instanceof PrimType) {
             if (defs == null) {
-              defs = LocalDefs.Factory.newLocalDefs(jb, myManager, myInteractionHandler);
+              defs = LocalDefs.Factory.newLocalDefs(jb,  throwAnalysis,  myManager,  myOptions,  phaseDumper,  myInteractionHandler);
               uses = LocalUses.Factory.newLocalUses(jb, defs);
             }
 
@@ -269,7 +278,7 @@ public class UseChecker extends AbstractStmtSwitch {
               || rt.getSootClass().getName().equals("java.io.Serializable")
               || rt.getSootClass().getName().equals("java.lang.Cloneable")) {
             if (defs == null) {
-              defs = LocalDefs.Factory.newLocalDefs(jb, myManager, myInteractionHandler);
+              defs = LocalDefs.Factory.newLocalDefs(jb, throwAnalysis,  myManager,  myOptions,  phaseDumper,  myInteractionHandler);
               uses = LocalUses.Factory.newLocalUses(jb, defs);
             }
 

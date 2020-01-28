@@ -31,9 +31,11 @@ import java.util.List;
 import java.util.Map;
 
 import soot.EquivalentValue;
+import soot.Scene;
 import soot.Unit;
 import soot.Value;
 import soot.toolkits.graph.ExceptionalUnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.FlowSet;
 
 /**
@@ -45,6 +47,9 @@ public class LocalRefVarsAnalysisWrapper {
   // compilation options
   private static final boolean computeChecks = true;
   private static final boolean discardKTop = true;
+  private final InteractionHandler myInteractionHandler;
+  private final boolean interactiveMode;
+  private final Scene myScene;
 
   Map<Unit, List<RefIntPair>> unitToVarsBefore;
   Map<Unit, List<RefIntPair>> unitToVarsAfterFall;
@@ -71,8 +76,11 @@ public class LocalRefVarsAnalysisWrapper {
   } // buildList
 
   // constructor, where we do all our computations
-  public LocalRefVarsAnalysisWrapper(ExceptionalUnitGraph graph) {
-    analysis = new BranchedRefVarsAnalysis(graph, myInteractionHandler, interactiveMode, myScene);
+  public LocalRefVarsAnalysisWrapper(InteractionHandler myInteractionHandler, boolean interactiveMode, Scene myScene, ExceptionalUnitGraph graph) {
+    this.myInteractionHandler = myInteractionHandler;
+    this.interactiveMode = interactiveMode;
+    this.myScene = myScene;
+    analysis = new BranchedRefVarsAnalysis(graph, this.myInteractionHandler, this.interactiveMode, this.myScene);
 
     unitToVarsBefore = new HashMap<Unit, List<RefIntPair>>(graph.size() * 2 + 1, 0.7f);
     unitToVarsAfterFall = new HashMap<Unit, List<RefIntPair>>(graph.size() * 2 + 1, 0.7f);

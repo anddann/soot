@@ -26,6 +26,8 @@ package soot.jimple.toolkits.typing.fast;
 
 import java.util.Collection;
 
+import soot.PrimTypeCollector;
+import soot.Scene;
 import soot.Type;
 import soot.Value;
 import soot.jimple.Stmt;
@@ -34,5 +36,5 @@ import soot.jimple.Stmt;
  * @author Ben Bellamy
  */
 public interface IEvalFunction {
-  Collection<Type> eval(Typing tg, Value expr, Stmt stmt);
+  Collection<Type> eval(Typing tg, Value expr, Stmt stmt, PrimTypeCollector primTypeCollector, Scene myScene);
 }

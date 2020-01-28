@@ -224,7 +224,7 @@ public class TypeResolver {
 
     @Override
     public Value visit(Value op, Type useType, Stmt stmt) {
-      Type t = AugEvalFunction.eval_(this.tg, op, stmt, this.jb);
+      Type t = AugEvalFunction.eval_(this.tg, op, stmt, this.jb, primTypeCollector, myScene);
 
       if (this.h.ancestor(useType, t)) {
         return op;
@@ -362,7 +362,7 @@ public class TypeResolver {
         return op;
       }
 
-      Type t = AugEvalFunction.eval_(this.tg, op, stmt, this.jb);
+      Type t = AugEvalFunction.eval_(this.tg, op, stmt, this.jb, primTypeCollector, myScene);
 
       if (!AugHierarchy.ancestor_(useType, t, myScene)) {
         this.fail = true;
@@ -395,7 +395,7 @@ public class TypeResolver {
     do {
       AugEvalFunction ef = new AugEvalFunction(this.jb);
       AugHierarchy h = new AugHierarchy(myScene);
-      UseChecker uc = new UseChecker(this.jb);
+      UseChecker uc = new UseChecker(this.jb, primTypeCollector, myScene, myManager, throwAnalysis, myOptions, phaseDumper, myInteractionHandler);
       TypePromotionUseVisitor uv = new TypePromotionUseVisitor(jb, tg);
       do {
         Collection<Typing> sigma = this.applyAssignmentConstraints(tg, ef, h);
@@ -430,7 +430,7 @@ public class TypeResolver {
   }
 
   private int insertCasts(Typing tg, IHierarchy h, boolean countOnly) {
-    UseChecker uc = new UseChecker(this.jb);
+    UseChecker uc = new UseChecker(this.jb, primTypeCollector, myScene, myManager, throwAnalysis, myOptions, phaseDumper, myInteractionHandler);
     CastInsertionUseVisitor uv = createCastInsertionUseVisitor(tg, h, countOnly);
     uc.check(tg, uv);
     return uv.getCount();
@@ -509,7 +509,7 @@ public class TypeResolver {
 
         Type told = tg.get(v);
 
-        Collection<Type> eval = new ArrayList<Type>(ef.eval(tg, rhs, stmt));
+        Collection<Type> eval = new ArrayList<Type>(ef.eval(tg, rhs, stmt, primTypeCollector, myScene));
 
         boolean isFirstType = true;
         for (Type t_ : eval) {

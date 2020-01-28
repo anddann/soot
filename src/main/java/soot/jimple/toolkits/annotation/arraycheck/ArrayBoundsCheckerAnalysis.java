@@ -70,17 +70,25 @@ import soot.jimple.NewMultiArrayExpr;
 import soot.jimple.Stmt;
 import soot.jimple.SubExpr;
 import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ArrayRefBlockGraph;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.Orderer;
+import soot.toolkits.graph.interaction.InteractionHandler;
+import soot.util.PhaseDumper;
 
 class ArrayBoundsCheckerAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(ArrayBoundsCheckerAnalysis.class);
   private final Options myOptions;
   private final RectangularArrayFinder myRectangularArrayFinder;
   private final ClassFieldAnalysis myClassFieldAnalysis;
+  private final InteractionHandler myInteractionHandler;
+  private final ThrowAnalysis throwAnalysis;
+  private final ThrowableSet.Manager myManager;
+  private final PhaseDumper myPhaseDumper;
   protected Map<Block, WeightedDirectedSparseGraph> blockToBeforeFlow;
   protected Map<Unit, WeightedDirectedSparseGraph> unitToBeforeFlow;
 
@@ -115,11 +123,15 @@ class ArrayBoundsCheckerAnalysis {
   private Scene myScene;
 
   /* A little bit different from ForwardFlowAnalysis */
-  public ArrayBoundsCheckerAnalysis(Options myOptions, RectangularArrayFinder myRectangularArrayFinder, ClassFieldAnalysis myClassFieldAnalysis, Body body, boolean takeClassField, boolean takeFieldRef, boolean takeArrayRef,
+  public ArrayBoundsCheckerAnalysis(Options myOptions, RectangularArrayFinder myRectangularArrayFinder, ClassFieldAnalysis myClassFieldAnalysis, InteractionHandler myInteractionHandler, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, Body body, boolean takeClassField, boolean takeFieldRef, boolean takeArrayRef,
                                     boolean takeCSE, boolean takeRectArray, Orderer<Block> mySlowPseudoTopologicalOrderer, Scene myScene) {
     this.myOptions = myOptions;
     this.myRectangularArrayFinder = myRectangularArrayFinder;
     this.myClassFieldAnalysis = myClassFieldAnalysis;
+    this.myInteractionHandler = myInteractionHandler;
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
     classfieldin = takeClassField;
     fieldin = takeFieldRef;
     arrayin = takeArrayRef;
@@ -134,7 +146,7 @@ class ArrayBoundsCheckerAnalysis {
       logger.debug("ArrayBoundsCheckerAnalysis started on  " + thismethod.getName());
     }
 
-    ailanalysis = new ArrayIndexLivenessAnalysis(new ExceptionalUnitGraph(body, myManager), fieldin, arrayin, csin, rectarray, myInteractionHandler, isInteraticveMode());
+    ailanalysis = new ArrayIndexLivenessAnalysis(new ExceptionalUnitGraph(body, this.throwAnalysis,  myOptions.omit_excepting_unit_edges(), this.myManager, this.myPhaseDumper), fieldin, arrayin, csin, rectarray, this.myInteractionHandler, myOptions.interactive_mode());
 
     if (fieldin) {
       this.localToFieldRef = ailanalysis.getLocalToFieldRef();
@@ -169,7 +181,7 @@ class ArrayBoundsCheckerAnalysis {
       this.cfield = this.myClassFieldAnalysis;
     }
 
-    this.graph = new ArrayRefBlockGraph(body);
+    this.graph = new ArrayRefBlockGraph(body, myPhaseDumper);
 
     blockToBeforeFlow = new HashMap<Block, WeightedDirectedSparseGraph>(graph.size() * 2 + 1, 0.7f);
 

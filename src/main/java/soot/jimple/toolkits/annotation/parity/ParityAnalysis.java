@@ -46,7 +46,9 @@ import soot.jimple.IntConstant;
 import soot.jimple.LongConstant;
 import soot.jimple.MulExpr;
 import soot.jimple.SubExpr;
+import soot.options.Options;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
 import soot.toolkits.scalar.LiveLocals;
 
@@ -62,6 +64,8 @@ import soot.toolkits.scalar.LiveLocals;
 //
 //
 public class ParityAnalysis extends ForwardFlowAnalysis<Unit, Map<Value, ParityAnalysis.Parity>> {
+  private Options myOptions;
+
   public enum Parity {
     TOP, BOTTOM, EVEN, ODD;
 
@@ -78,11 +82,12 @@ public class ParityAnalysis extends ForwardFlowAnalysis<Unit, Map<Value, ParityA
 
   private LiveLocals filter;
 
-  public ParityAnalysis(UnitGraph g, LiveLocals filter) {
-    super(g);
+  public ParityAnalysis(UnitGraph g, LiveLocals filter, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(g, myOptions.interactive_mode(), myInteractionHandler);
     this.g = g;
 
     this.filter = filter;
+    this.myOptions = myOptions;
 
     filterUnitToBeforeFlow = new HashMap<Unit, Map<Value, Parity>>();
     buildBeforeFilterMap();
@@ -93,8 +98,8 @@ public class ParityAnalysis extends ForwardFlowAnalysis<Unit, Map<Value, ParityA
 
   }
 
-  public ParityAnalysis(UnitGraph g) {
-    super(g);
+  public ParityAnalysis(UnitGraph g, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(g, myOptions.interactive_mode(), myInteractionHandler);
     this.g = g;
 
     doAnalysis();

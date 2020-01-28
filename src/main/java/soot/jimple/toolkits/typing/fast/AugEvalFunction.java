@@ -27,16 +27,7 @@ package soot.jimple.toolkits.typing.fast;
 import java.util.Collection;
 import java.util.Collections;
 
-import soot.ArrayType;
-import soot.BooleanType;
-import soot.ByteType;
-import soot.IntegerType;
-import soot.Local;
-import soot.RefType;
-import soot.ShortType;
-import soot.TrapManager;
-import soot.Type;
-import soot.Value;
+import soot.*;
 import soot.jimple.AddExpr;
 import soot.jimple.AndExpr;
 import soot.jimple.ArrayRef;
@@ -93,7 +84,7 @@ public class AugEvalFunction implements IEvalFunction {
     this.jb = jb;
   }
 
-  public static Type eval_(Typing tg, Value expr, Stmt stmt, JimpleBody jb) {
+  public static Type eval_(Typing tg, Value expr, Stmt stmt, JimpleBody jb, PrimTypeCollector primTypeCollector, Scene myScene) {
     if (expr instanceof ThisRef) {
       return ((ThisRef) expr).getType();
     } else if (expr instanceof ParameterRef) {
@@ -111,7 +102,7 @@ public class AugEvalFunction implements IEvalFunction {
       BinopExpr be = (BinopExpr) expr;
 
       Value opl = be.getOp1(), opr = be.getOp2();
-      Type tl = eval_(tg, opl, stmt, jb), tr = eval_(tg, opr, stmt, jb);
+      Type tl = eval_(tg, opl, stmt, jb, primTypeCollector, myScene), tr = eval_(tg, opr, stmt, jb, primTypeCollector, myScene);
 
       if (expr instanceof CmpExpr || expr instanceof CmpgExpr || expr instanceof CmplExpr) {
         return primTypeCollector.getByteType();
@@ -158,7 +149,7 @@ public class AugEvalFunction implements IEvalFunction {
         throw new RuntimeException("Unhandled binary expression: " + expr);
       }
     } else if (expr instanceof NegExpr) {
-      Type t = eval_(tg, ((NegExpr) expr).getOp(), stmt, jb);
+      Type t = eval_(tg, ((NegExpr) expr).getOp(), stmt, jb, primTypeCollector, myScene);
       if (t instanceof IntegerType) {
         /*
          * Here I repeat the behaviour of the original type assigner, but is it right? For example, -128 is a byte, but
@@ -176,7 +167,7 @@ public class AugEvalFunction implements IEvalFunction {
       }
     } else if (expr instanceof CaughtExceptionRef) {
       RefType r = null;
-      RefType throwableType = myScene.getRefType("java.lang.Throwable");
+      RefType throwableType = RefType.v("java.lang.Throwable", myScene);
 
       for (RefType t : TrapManager.getExceptionTypesOf(stmt, jb)) {
         if (r == null) {
@@ -217,10 +208,10 @@ public class AugEvalFunction implements IEvalFunction {
             || ref.getSootClass().getName().equals("java.lang.Cloneable")) {
           return ref;
         } else {
-          return BottomType.v();
+          return primTypeCollector.getBottomType();
         }
       } else {
-        return BottomType.v();
+        return primTypeCollector.getBottomType();
       }
     } else if (expr instanceof NewArrayExpr) {
       return ((NewArrayExpr) expr).getBaseType().makeArrayType();
@@ -246,13 +237,13 @@ public class AugEvalFunction implements IEvalFunction {
       int value = ((IntConstant) expr).value;
 
       if (value >= 0 && value < 2) {
-        return Integer1Type.v();
+        return primTypeCollector.getInteger1Type();
       } else if (value >= 2 && value < 128) {
-        return Integer127Type.v();
+        return primTypeCollector.getInteger127Type();
       } else if (value >= -128 && value < 0) {
         return primTypeCollector.getByteType();
       } else if (value >= 128 && value < 32768) {
-        return Integer32767Type.v();
+        return primTypeCollector.getInteger32767Type();
       } else if (value >= -32768 && value < -128) {
         return primTypeCollector.getShortType();
       } else if (value >= 32768 && value < 65536) {
@@ -265,19 +256,19 @@ public class AugEvalFunction implements IEvalFunction {
     } else if (expr instanceof NullConstant) {
       return primTypeCollector.getNullType();
     } else if (expr instanceof StringConstant) {
-      return RefType.v("java.lang.String",myScene);
+      return RefType.v("java.lang.String", myScene);
     } else if (expr instanceof ClassConstant) {
-      return RefType.v("java.lang.Class",myScene);
+      return RefType.v("java.lang.Class", myScene);
     } else if (expr instanceof MethodHandle) {
-      return RefType.v("java.lang.invoke.MethodHandle");
+      return RefType.v("java.lang.invoke.MethodHandle",myScene);
     } else if (expr instanceof MethodType) {
-      return RefType.v("java.lang.invoke.MethodType");
+      return RefType.v("java.lang.invoke.MethodType",myScene);
     } else {
       throw new RuntimeException("Unhandled expression: " + expr);
     }
   }
 
-  public Collection<Type> eval(Typing tg, Value expr, Stmt stmt) {
-    return Collections.<Type>singletonList(eval_(tg, expr, stmt, this.jb));
+  public Collection<Type> eval(Typing tg, Value expr, Stmt stmt, PrimTypeCollector primTypeCollector, Scene myScene) {
+    return Collections.<Type>singletonList(eval_(tg, expr, stmt, this.jb, primTypeCollector, myScene));
   }
 }

@@ -62,6 +62,6 @@ public class AsmClassProvider implements ClassProvider {
   public ClassSource find(String cls) {
     String clsFile = cls.replace('.', '/') + ".class";
     FoundFile file = mySourceLocator.lookupInClassPath(clsFile);
-    return file == null ? null : new AsmClassSource(cls, file, myScene, mySootResolver, myOptions, primTypeCollector, constantFactory, myLambdaMetaFactory, myPackManager, myCoffiUtil, myPhaseOptions);
+    return file == null ? null : new AsmClassSource(cls, file, myScene, mySootResolver, myOptions, primTypeCollector, constantFactory, myLambdaMetaFactory, myPackManager, myCoffiUtil, myPhaseOptions, myPrinter);
   }
 }

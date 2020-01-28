@@ -198,7 +198,7 @@ public class PurityInterproceduralAnalysis extends AbstractInterproceduralAnalys
         if (opts.verbose()) {
           logger.debug("  |- " + method);
         }
-        PurityIntraproceduralAnalysis r = new PurityIntraproceduralAnalysis(graph, this);
+        PurityIntraproceduralAnalysis r = new PurityIntraproceduralAnalysis(graph, this, mySourceLocator, myOptions, getMyInteractionHandler());
         r.drawAsOneDot("Intra_", method.toString());
         PurityGraphBox b = new PurityGraphBox();
         r.copyResult(b);
@@ -304,7 +304,7 @@ public class PurityInterproceduralAnalysis extends AbstractInterproceduralAnalys
   protected void analyseMethod(SootMethod method, PurityGraphBox dst) {
     Body body = method.retrieveActiveBody();
     ExceptionalUnitGraph graph = new ExceptionalUnitGraph(body, throwAnalysis,  omitExceptingUnitEdges, myManager,  myPhaseDumper);
-    new PurityIntraproceduralAnalysis(graph, this).copyResult(dst);
+    new PurityIntraproceduralAnalysis(graph, this, mySourceLocator, myOptions, getMyInteractionHandler()).copyResult(dst);
   }
 
   /**

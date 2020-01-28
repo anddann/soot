@@ -148,7 +148,7 @@ public class TypeAssigner extends BodyTransformer {
       compareTypeAssigners(b, opt.use_older_type_assigner());
     } else {
       if (opt.use_older_type_assigner()) {
-        TypeResolver.resolve((JimpleBody) b, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, TypeResolver.myScene);
+        TypeResolver.resolve((JimpleBody) b, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myScene);
       } else {
         (new soot.jimple.toolkits.typing.fast.TypeResolver((JimpleBody) b, myScene, primTypeCollector, myClassHierarchy,  throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler)).inferTypes();
       }
@@ -266,14 +266,14 @@ public class TypeAssigner extends BodyTransformer {
       (new soot.jimple.toolkits.typing.fast.TypeResolver(newJb, myScene, primTypeCollector, myClassHierarchy,  throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler)).inferTypes();
       newTime = System.currentTimeMillis() - newTime;
       oldTime = System.currentTimeMillis();
-      TypeResolver.resolve(jb, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, TypeResolver.myScene);
+      TypeResolver.resolve(jb, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myScene);
       oldTime = System.currentTimeMillis() - oldTime;
       oldJb = jb;
     } else {
       // Use new type assigner last
       oldJb = (JimpleBody) jb.clone();
       oldTime = System.currentTimeMillis();
-      TypeResolver.resolve(oldJb, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, TypeResolver.myScene);
+      TypeResolver.resolve(oldJb, myScene, myOptions, myClassHierarchy, primTypeCollector, myInteractionHandler, throwAnalysis, myManager, phaseDumper, myScene);
       oldTime = System.currentTimeMillis() - oldTime;
       newTime = System.currentTimeMillis();
       (new soot.jimple.toolkits.typing.fast.TypeResolver(jb, myScene, primTypeCollector, myClassHierarchy,  throwAnalysis, myManager, myOptions, phaseDumper, myInteractionHandler)).inferTypes();

@@ -72,9 +72,9 @@ public class ParityTagger extends BodyTransformer {
       LiveLocals sll = new SimpleLiveLocals(new BriefUnitGraph(b, myPhaseDumper));
       myOptions.set_interactive_mode(isInteractive);
 
-      a = new ParityAnalysis(new BriefUnitGraph(b, myPhaseDumper), sll);
+      a = new ParityAnalysis(new BriefUnitGraph(b, myPhaseDumper), sll, myOptions, getMyInteractionHandler());
     } else {
-      a = new ParityAnalysis(new BriefUnitGraph(b, myPhaseDumper));
+      a = new ParityAnalysis(new BriefUnitGraph(b, myPhaseDumper), myOptions, getMyInteractionHandler());
     }
 
     Iterator sIt = b.getUnits().iterator();

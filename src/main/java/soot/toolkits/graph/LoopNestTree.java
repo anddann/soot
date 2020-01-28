@@ -85,7 +85,7 @@ public class LoopNestTree extends TreeSet<Loop> {
   }
 
   private static Collection<Loop> computeLoops(Body b) {
-    return new LoopFinder().getLoops(b);
+    return new LoopFinder(throwAnalysis, myOptions, myManager, myPhaseDumper).getLoops(b);
   }
 
   public boolean hasNestedLoops() {

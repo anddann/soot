@@ -50,6 +50,7 @@ public class AsmClassSource extends ClassSource {
   private PackManager myPackManager;
   private Util myCoffiUtil;
   private PhaseOptions myPhaseOptions;
+  private Printer myPrinter;
 
   /**
    * Constructs a new ASM class source.
@@ -64,8 +65,9 @@ public class AsmClassSource extends ClassSource {
    * @param myPackManager
    * @param myCoffiUtil
    * @param myPhaseOptions
+   * @param myPrinter
    */
-  protected AsmClassSource(String cls, FoundFile foundFile, Scene myScene, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions) {
+  protected AsmClassSource(String cls, FoundFile foundFile, Scene myScene, SootResolver mySootResolver, Options myOptions, PrimTypeCollector primTypeCollector, ConstantFactory constantFactory, LambdaMetaFactory myLambdaMetaFactory, PackManager myPackManager, Util myCoffiUtil, PhaseOptions myPhaseOptions, Printer myPrinter) {
     super(cls);
     this.myScene = myScene;
     this.mySootResolver = mySootResolver;
@@ -76,6 +78,7 @@ public class AsmClassSource extends ClassSource {
     this.myPackManager = myPackManager;
     this.myCoffiUtil = myCoffiUtil;
     this.myPhaseOptions = myPhaseOptions;
+    this.myPrinter = myPrinter;
     if (foundFile == null) {
       throw new IllegalStateException("Error: The FoundFile must not be null.");
     }

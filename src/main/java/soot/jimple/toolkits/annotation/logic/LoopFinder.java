@@ -35,15 +35,27 @@ import soot.Body;
 import soot.BodyTransformer;
 import soot.Unit;
 import soot.jimple.Stmt;
+import soot.options.Options;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.MHGDominatorsFinder;
 import soot.toolkits.graph.UnitGraph;
+import soot.util.PhaseDumper;
 
 public class LoopFinder extends BodyTransformer {
 
   private Set<Loop> loops;
+  private ThrowAnalysis throwAnalysis;
+  private Options myOptions;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
 
-  public LoopFinder() {
+  public LoopFinder(ThrowAnalysis throwAnalysis, Options myOptions, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper) {
+    this.throwAnalysis = throwAnalysis;
+    this.myOptions = myOptions;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
     loops = null;
   }
 
@@ -55,7 +67,7 @@ public class LoopFinder extends BodyTransformer {
     if (loops != null) {
       return loops;
     }
-    return getLoops(new ExceptionalUnitGraph(b, myManager));
+    return getLoops(new ExceptionalUnitGraph(b,  throwAnalysis, myOptions.omit_excepting_unit_edges() ,  myManager,  myPhaseDumper));
   }
 
   public Set<Loop> getLoops(UnitGraph g) {

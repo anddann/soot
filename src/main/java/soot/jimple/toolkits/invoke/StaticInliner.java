@@ -43,7 +43,6 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
 import soot.jimple.ConstantFactory;
-import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 import soot.jimple.Stmt;
 import soot.jimple.toolkits.callgraph.CallGraph;
@@ -145,7 +144,7 @@ public class StaticInliner extends SceneTransformer {
             continue;
           }
 
-          if (!InlinerSafetyManager.ensureInlinability(target, s, container, modifierOptions)) {
+          if (!InlinerSafetyManager.ensureInlinability(target, s, container, modifierOptions, myScene)) {
             continue;
           }
 
@@ -186,7 +185,7 @@ public class StaticInliner extends SceneTransformer {
           continue;
         }
 
-        if (InlinerSafetyManager.ensureInlinability(inlinee, invokeStmt, container, modifierOptions)) {
+        if (InlinerSafetyManager.ensureInlinability(inlinee, invokeStmt, container, modifierOptions, myScene)) {
           // Not that it is important to check right before inlining if the site is still valid.
 
           new SiteInliner( myScene, constantFactory, mySynchronizerManager, myLocalNameStandardizer).inlineSite(inlinee, invokeStmt, container, options);

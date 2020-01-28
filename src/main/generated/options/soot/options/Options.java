@@ -110,7 +110,7 @@ public class Options extends OptionsBase {
     public static final int check_init_throw_analysis_dalvik = 4;
 
     public Options() {
-        super(myOptions, myPhaseOptions, myPhaseDumper, myPackManager);
+        super(null, myPhaseOptions, myPhaseDumper, myPackManager);
     }
 
     @SuppressWarnings("unused")

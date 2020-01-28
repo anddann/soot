@@ -114,7 +114,7 @@ public class ArrayBoundsChecker extends BodyTransformer {
       ArrayBoundsCheckerAnalysis analysis = null;
 
       if (hasArrayLocals(body)) {
-        analysis = new ArrayBoundsCheckerAnalysis(myOptions, myRectangularArrayFinder, myClassFieldAnalysis, body,
+        analysis = new ArrayBoundsCheckerAnalysis(myOptions, myRectangularArrayFinder, myClassFieldAnalysis, myInteractionHandler, throwAnalysis, myManager, myPhaseDumper, body,
             takeClassField, takeFieldRef, takeArrayRef, takeCSE, takeRectArray, mySlowPseudoTopologicalOrderer, myScene);
       }
 

@@ -24,12 +24,7 @@ package soot.jimple.toolkits.invoke;
 
 import java.util.Iterator;
 
-import soot.Body;
-import soot.Hierarchy;
-import soot.RefType;
-import soot.SootClass;
-import soot.SootMethod;
-import soot.Value;
+import soot.*;
 import soot.jimple.AssignStmt;
 import soot.jimple.FieldRef;
 import soot.jimple.InstanceInvokeExpr;
@@ -40,7 +35,7 @@ import soot.jimple.Stmt;
 /** Methods for checking safety requirements for inlining. */
 public class InlinerSafetyManager {
   // true if safe to inline
-  public static boolean checkSpecialInlineRestrictions(SootMethod container, SootMethod target, String options) {
+  public static boolean checkSpecialInlineRestrictions(SootMethod container, SootMethod target, String options, Scene myScene) {
     // Check the body of the method to inline for specialinvoke's
 
     boolean accessors = options.equals("accessors");
@@ -54,8 +49,8 @@ public class InlinerSafetyManager {
         InvokeExpr ie1 = st.getInvokeExpr();
 
         if (ie1 instanceof SpecialInvokeExpr) {
-          if ((InlinerSafetyManager.specialInvokePerformsLookupIn(ie1, container.getDeclaringClass())
-              || InlinerSafetyManager.specialInvokePerformsLookupIn(ie1, target.getDeclaringClass()))) {
+          if ((InlinerSafetyManager.specialInvokePerformsLookupIn(ie1, container.getDeclaringClass(), myScene)
+              || InlinerSafetyManager.specialInvokePerformsLookupIn(ie1, target.getDeclaringClass(), myScene))) {
             return false;
 
           }
@@ -80,7 +75,7 @@ public class InlinerSafetyManager {
     return true;
   }
 
-  public static boolean checkAccessRestrictions(SootMethod container, SootMethod target, String modifierOptions) {
+  public static boolean checkAccessRestrictions(SootMethod container, SootMethod target, String modifierOptions, Scene myScene) {
     // Check the body of the method to inline for
     // method or field access restrictions
     {
@@ -92,7 +87,7 @@ public class InlinerSafetyManager {
         if (st.containsInvokeExpr()) {
           InvokeExpr ie1 = st.getInvokeExpr();
 
-          if (!AccessManager.ensureAccess(container, ie1.getMethod(), modifierOptions)) {
+          if (!AccessManager.ensureAccess(container, ie1.getMethod(), modifierOptions, myScene)) {
             return false;
           }
         }
@@ -102,12 +97,12 @@ public class InlinerSafetyManager {
           Value rhs = ((AssignStmt) st).getRightOp();
 
           if (lhs instanceof FieldRef
-              && !AccessManager.ensureAccess(container, ((FieldRef) lhs).getField(), modifierOptions)) {
+              && !AccessManager.ensureAccess(container, ((FieldRef) lhs).getField(), modifierOptions, myScene)) {
             return false;
           }
 
           if (rhs instanceof FieldRef
-              && !AccessManager.ensureAccess(container, ((FieldRef) rhs).getField(), modifierOptions)) {
+              && !AccessManager.ensureAccess(container, ((FieldRef) rhs).getField(), modifierOptions, myScene)) {
             return false;
           }
 
@@ -126,23 +121,23 @@ public class InlinerSafetyManager {
    * Returns false otherwise.
    */
 
-  public static boolean ensureInlinability(SootMethod target, Stmt toInline, SootMethod container, String modifierOptions) {
-    if (!InlinerSafetyManager.canSafelyInlineInto(target, toInline, container)) {
+  public static boolean ensureInlinability(SootMethod target, Stmt toInline, SootMethod container, String modifierOptions, Scene myScene) {
+    if (!InlinerSafetyManager.canSafelyInlineInto(target, toInline, container, myScene)) {
       // System.out.println("canSafelyInlineInto failed");
       return false;
     }
 
-    if (!AccessManager.ensureAccess(container, target, modifierOptions)) {
+    if (!AccessManager.ensureAccess(container, target, modifierOptions, myScene)) {
       // System.out.println("ensure access failed");
       return false;
     }
 
-    if (!checkSpecialInlineRestrictions(container, target, modifierOptions)) {
+    if (!checkSpecialInlineRestrictions(container, target, modifierOptions, myScene)) {
       // System.out.println("checkSpecialInlineRestrictions failed");
       return false;
     }
 
-    if (!checkAccessRestrictions(container, target, modifierOptions)) {
+    if (!checkAccessRestrictions(container, target, modifierOptions, myScene)) {
       // System.out.println("checkAccessRestrictions failed");
       return false;
     }
@@ -153,7 +148,7 @@ public class InlinerSafetyManager {
   /**
    * Checks the safety criteria enumerated in section 3.1.4 (Safety Criteria for Method Inlining) of Vijay's thesis.
    */
-  private static boolean canSafelyInlineInto(SootMethod inlinee, Stmt toInline, SootMethod container)
+  private static boolean canSafelyInlineInto(SootMethod inlinee, Stmt toInline, SootMethod container, Scene myScene)
 
   {
     /* first, check the simple (one-line) safety criteria. */
@@ -186,7 +181,7 @@ public class InlinerSafetyManager {
     Value base = (ie instanceof InstanceInvokeExpr) ? ((InstanceInvokeExpr) ie).getBase() : null;
 
     if (base != null && base.getType() instanceof RefType
-        && invokeThrowsAccessErrorIn(((RefType) base.getType()).getSootClass(), inlinee, container)) {
+        && invokeThrowsAccessErrorIn(((RefType) base.getType()).getSootClass(), inlinee, container, myScene)) {
       return false;
     }
 
@@ -203,8 +198,8 @@ public class InlinerSafetyManager {
 
     // Rule 7: Don't change semantics of program by moving
     // an invokespecial.
-    if (ie instanceof SpecialInvokeExpr && (specialInvokePerformsLookupIn(ie, inlinee.getDeclaringClass())
-        || specialInvokePerformsLookupIn(ie, container.getDeclaringClass()))) {
+    if (ie instanceof SpecialInvokeExpr && (specialInvokePerformsLookupIn(ie, inlinee.getDeclaringClass(), myScene)
+        || specialInvokePerformsLookupIn(ie, container.getDeclaringClass(), myScene))) {
       return false;
     }
 
@@ -218,7 +213,7 @@ public class InlinerSafetyManager {
    * b. the class of the base is not a (non-strict) subclass of container's declaringClass. The base class may be null, in
    * which case 3b is omitted. (for instance, for a static method invocation.)
    */
-  private static boolean invokeThrowsAccessErrorIn(SootClass base, SootMethod inlinee, SootMethod container) {
+  private static boolean invokeThrowsAccessErrorIn(SootClass base, SootMethod inlinee, SootMethod container, Scene myScene) {
     SootClass inlineeClass = inlinee.getDeclaringClass();
     SootClass containerClass = container.getDeclaringClass();
 
@@ -256,7 +251,7 @@ public class InlinerSafetyManager {
 
   // m is the method being called; container is the class from which m
   // is being called.
-  static boolean specialInvokePerformsLookupIn(InvokeExpr ie, SootClass containerClass) {
+  static boolean specialInvokePerformsLookupIn(InvokeExpr ie, SootClass containerClass, Scene myScene) {
     // If all of the conditions are true, a lookup is performed.
     SootMethod m = ie.getMethod();
 

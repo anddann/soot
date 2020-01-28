@@ -30,6 +30,7 @@ import soot.Trap;
 import soot.Unit;
 import soot.baf.Inst;
 import soot.jimple.Stmt;
+import soot.util.PhaseDumper;
 
 /**
  * A CFG where the nodes are {@link Block} instances, and where {@link Unit}s which include array references start new
@@ -48,11 +49,11 @@ public class ArrayRefBlockGraph extends BlockGraph {
    * constructor taking the <tt>BriefUnitGraph</tt> as a parameter, as a minor optimization.
    * </p>
    *
-   * @param the
-   *          Body instance from which the graph is built.
+   * @param myPhaseDumper
+   * @param the Body instance from which the graph is built.
    */
-  public ArrayRefBlockGraph(Body body) {
-    this(new BriefUnitGraph(body, myPhaseDumper));
+  public ArrayRefBlockGraph(Body body, PhaseDumper myPhaseDumper) {
+    this(new BriefUnitGraph(body, myPhaseDumper), myPhaseDumper);
   }
 
   /**
@@ -61,11 +62,12 @@ public class ArrayRefBlockGraph extends BlockGraph {
    *
    * @param unitGraph
    *          The <tt>BriefUnitGraph</tt> for which to build an <tt>ArrayRefBlockGraph</tt>.
+   * @param myPhaseDumper
    */
-  public ArrayRefBlockGraph(BriefUnitGraph unitGraph) {
+  public ArrayRefBlockGraph(BriefUnitGraph unitGraph, PhaseDumper myPhaseDumper) {
     super(unitGraph);
 
-    soot.util.myPhaseDumper.dumpGraph(this, mBody);
+    myPhaseDumper.dumpGraph(this, mBody);
   }
 
   /**

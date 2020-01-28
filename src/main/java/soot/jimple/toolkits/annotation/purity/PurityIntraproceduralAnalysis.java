@@ -29,10 +29,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.Local;
-import soot.RefLikeType;
-import soot.Unit;
-import soot.Value;
+import soot.*;
 import soot.jimple.AnyNewExpr;
 import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
@@ -58,7 +55,9 @@ import soot.jimple.TableSwitchStmt;
 import soot.jimple.ThisRef;
 import soot.jimple.ThrowStmt;
 import soot.jimple.UnopExpr;
+import soot.options.Options;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ForwardFlowAnalysis;
 import soot.util.dot.DotGraph;
 import soot.util.dot.DotGraphEdge;
@@ -74,6 +73,7 @@ public class PurityIntraproceduralAnalysis extends ForwardFlowAnalysis<Unit, Pur
   private static final Logger logger = LoggerFactory.getLogger(PurityIntraproceduralAnalysis.class);
 
   AbstractInterproceduralAnalysis<PurityGraphBox> inter;
+  private SourceLocator mySourceLocator;
 
   @Override
   protected PurityGraphBox newInitialFlow() {
@@ -393,9 +393,10 @@ public class PurityIntraproceduralAnalysis extends ForwardFlowAnalysis<Unit, Pur
    * Perform purity analysis on the Jimple unit graph g, as part of a larger interprocedural analysis. Once constructed, you
    * may call copyResult and drawAsOneDot to query the analysis result.
    */
-  PurityIntraproceduralAnalysis(UnitGraph g, AbstractInterproceduralAnalysis<PurityGraphBox> inter) {
-    super(g);
+  PurityIntraproceduralAnalysis(UnitGraph g, AbstractInterproceduralAnalysis<PurityGraphBox> inter, SourceLocator mySourceLocator, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(g, myOptions.interactive_mode(), myInteractionHandler);
     this.inter = inter;
+    this.mySourceLocator = mySourceLocator;
     doAnalysis();
   }
 }

@@ -43,28 +43,24 @@ import soot.UnitBox;
 import soot.UnitBoxOwner;
 import soot.Value;
 import soot.ValueBox;
-import soot.jimple.Constant;
-import soot.jimple.DefinitionStmt;
-import soot.jimple.GotoStmt;
-import soot.jimple.IfStmt;
-import soot.jimple.IntConstant;
-import soot.jimple.Jimple;
-import soot.jimple.LookupSwitchStmt;
-import soot.jimple.Stmt;
-import soot.jimple.TableSwitchStmt;
+import soot.jimple.*;
 import soot.options.Options;
 import soot.shimple.ShimpleBody;
 import soot.shimple.toolkits.scalar.SEvaluator.BottomConstant;
 import soot.shimple.toolkits.scalar.SEvaluator.MetaConstant;
 import soot.shimple.toolkits.scalar.SEvaluator.TopConstant;
+import soot.toolkits.exceptions.ThrowAnalysis;
+import soot.toolkits.exceptions.ThrowableSet;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.ArraySparseSet;
 import soot.toolkits.scalar.FlowSet;
 import soot.toolkits.scalar.ForwardBranchedFlowAnalysis;
 import soot.toolkits.scalar.Pair;
 import soot.toolkits.scalar.UnitValueBoxPair;
 import soot.util.Chain;
+import soot.util.PhaseDumper;
 
 /**
  * A powerful constant propagator and folder based on an algorithm sketched by Cytron et al that takes conditional control
@@ -78,12 +74,21 @@ import soot.util.Chain;
 public class SConstantPropagatorAndFolder extends BodyTransformer {
   private static final Logger logger = LoggerFactory.getLogger(SConstantPropagatorAndFolder.class);
   private Options myOptions;
+  private ThrowAnalysis throwAnalysis;
+  private ThrowableSet.Manager myManager;
+  private PhaseDumper myPhaseDumper;
+  private InteractionHandler myInteractionHandler;
+  private ConstantFactory constantFactory;
 
 
   @Inject
-  public SConstantPropagatorAndFolder(Options myOptions) {
+  public SConstantPropagatorAndFolder(Options myOptions, ThrowAnalysis throwAnalysis, ThrowableSet.Manager myManager, PhaseDumper myPhaseDumper, InteractionHandler myInteractionHandler, ConstantFactory constantFactory) {
     this.myOptions = myOptions;
-    ;
+    this.throwAnalysis = throwAnalysis;
+    this.myManager = myManager;
+    this.myPhaseDumper = myPhaseDumper;
+    this.myInteractionHandler = myInteractionHandler;
+    this.constantFactory = constantFactory;
   }
 
   protected ShimpleBody sb;
@@ -110,7 +115,7 @@ public class SConstantPropagatorAndFolder extends BodyTransformer {
     }
 
     // *** FIXME: What happens when Shimple is built with another UnitGraph?
-    SCPFAnalysis scpf = new SCPFAnalysis(new ExceptionalUnitGraph(sb, myManager));
+    SCPFAnalysis scpf = new SCPFAnalysis(new ExceptionalUnitGraph(sb,  throwAnalysis, myOptions.omit_excepting_unit_edges() , myManager,  myPhaseDumper), myOptions, myInteractionHandler, constantFactory);
 
     propagateResults(scpf.getResults());
     if (pruneCFG) {
@@ -256,6 +261,7 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
    * A list of IfStmts that always fall through.
    **/
   protected List<IfStmt> deadStmts;
+  private ConstantFactory constantFactory;
 
 
   /**
@@ -279,9 +285,10 @@ class SCPFAnalysis extends ForwardBranchedFlowAnalysis {
     return stmtToReplacement;
   }
 
-  public SCPFAnalysis(UnitGraph graph) {
-    super(graph);
-    ;
+  public SCPFAnalysis(UnitGraph graph, Options myOptions, InteractionHandler myInteractionHandler, ConstantFactory constantFactory) {
+    super(graph, myOptions.interactive_mode(), myInteractionHandler);
+    this.constantFactory = constantFactory;
+
     emptySet = new ArraySparseSet();
     stmtToReplacement = new HashMap<Stmt, GotoStmt>();
     deadStmts = new ArrayList<IfStmt>();

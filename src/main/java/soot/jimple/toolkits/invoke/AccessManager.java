@@ -26,20 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import soot.Body;
-import soot.ClassMember;
-import soot.Hierarchy;
-import soot.Local;
-import soot.Modifier;
-import soot.SootClass;
-import soot.SootField;
-import soot.SootMethod;
-import soot.Type;
-import soot.Unit;
-import soot.Value;
-import soot.VoidType;
+import soot.*;
 import soot.javaToJimple.LocalGenerator;
 import soot.jimple.*;
+import soot.options.Options;
 
 /** Methods for checking Java scope and visibiliity requirements. */
 public class AccessManager {
@@ -49,7 +39,7 @@ public class AccessManager {
    * package-visible, and its package differs from that of container; or, 3. target is protected, and either: a. container
    * doesn't belong to target.declaringClass, or any subclass of ;
    */
-  public static boolean isAccessLegal(SootMethod container, ClassMember target) {
+  public static boolean isAccessLegal(SootMethod container, ClassMember target, Scene myScene) {
     SootClass targetClass = target.getDeclaringClass();
     SootClass containerClass = container.getDeclaringClass();
 
@@ -98,20 +88,21 @@ public class AccessManager {
    *
    * @param container
    * @param stmt
+   * @param myScene
    * @return
    */
-  public static boolean isAccessLegal(SootMethod container, Stmt stmt) {
+  public static boolean isAccessLegal(SootMethod container, Stmt stmt, Scene myScene) {
     if (stmt.containsInvokeExpr()) {
-      return AccessManager.isAccessLegal(container, stmt.getInvokeExpr().getMethod());
+      return AccessManager.isAccessLegal(container, stmt.getInvokeExpr().getMethod(), myScene);
     } else if (stmt instanceof AssignStmt) {
       AssignStmt as = (AssignStmt) stmt;
       if (as.getRightOp() instanceof FieldRef) {
         FieldRef r = (FieldRef) as.getRightOp();
-        return AccessManager.isAccessLegal(container, r.getField());
+        return AccessManager.isAccessLegal(container, r.getField(), myScene);
       }
       if (as.getLeftOp() instanceof FieldRef) {
         FieldRef r = (FieldRef) as.getLeftOp();
-        return AccessManager.isAccessLegal(container, r.getField());
+        return AccessManager.isAccessLegal(container, r.getField(), myScene);
       }
     }
     return true;
@@ -124,8 +115,12 @@ public class AccessManager {
    * @param body
    * @param before
    * @param after
+   * @param myScene
+   * @param primTypeCollector
+   * @param myPrinter
+   * @param myOptions
    */
-  public static void createAccessorMethods(Body body, Stmt before, Stmt after) {
+  public static void createAccessorMethods(Body body, Stmt before, Stmt after, Scene myScene, PrimTypeCollector primTypeCollector, Printer myPrinter, Options myOptions) {
     soot.util.Chain units = body.getUnits();
 
     if (before != null && !units.contains(before)) {
@@ -147,8 +142,8 @@ public class AccessManager {
           return;
         }
 
-        if (!isAccessLegal(body.getMethod(), s)) {
-          createAccessorMethod(body.getMethod(), s);
+        if (!isAccessLegal(body.getMethod(), s, myScene)) {
+          createAccessorMethod(body.getMethod(), s, primTypeCollector, myScene, myPrinter, myOptions);
         }
 
       } else {
@@ -197,8 +192,12 @@ public class AccessManager {
    *
    * @param container
    * @param stmt
+   * @param primTypeCollector
+   * @param myScene
+   * @param myPrinter
+   * @param myOptions
    */
-  public static void createAccessorMethod(SootMethod container, Stmt stmt) {
+  public static void createAccessorMethod(SootMethod container, Stmt stmt, PrimTypeCollector primTypeCollector, Scene myScene, Printer myPrinter, Options myOptions) {
     // System.out.println("Creating accessor method: \n" +
     // " method: " + container + " \n" +
     // " stmt: " + stmt);
@@ -210,19 +209,19 @@ public class AccessManager {
     }
 
     if (stmt.containsInvokeExpr()) {
-      createInvokeAccessor(container, stmt);
+      createInvokeAccessor(container, stmt, primTypeCollector, myPrinter, myOptions, myScene);
     } else if (stmt instanceof AssignStmt) {
       AssignStmt as = (AssignStmt) stmt;
       FieldRef ref;
       if (as.getLeftOp() instanceof FieldRef) {
         // set
         ref = (FieldRef) as.getLeftOp();
-        createSetAccessor(container, as, ref);
+        createSetAccessor(container, as, ref, primTypeCollector, myScene, myPrinter, myOptions);
 
       } else if (as.getRightOp() instanceof FieldRef) {
         // get
         ref = (FieldRef) as.getRightOp();
-        createGetAccessor(container, as, ref);
+        createGetAccessor(container, as, ref, primTypeCollector, myPrinter, myOptions,myScene );
       } else {
         throw new RuntimeException("Expected class member access");
       }
@@ -231,11 +230,11 @@ public class AccessManager {
     }
   }
 
-  private static void createGetAccessor(SootMethod container, AssignStmt as, FieldRef ref) {
+  private static void createGetAccessor(SootMethod container, AssignStmt as, FieldRef ref, PrimTypeCollector primTypeCollector, Printer myPrinter, Options myOptions, Scene myScene) {
     java.util.List parameterTypes = new LinkedList();
     java.util.List<SootClass> thrownExceptions = new LinkedList<SootClass>();
 
-    Body accessorBody = Jimple.newBody();
+    Body accessorBody = Jimple.newBody(myPrinter, myOptions);
     soot.util.Chain accStmts = accessorBody.getUnits();
     LocalGenerator lg = new LocalGenerator(accessorBody, primTypeCollector);
 
@@ -280,11 +279,11 @@ public class AccessManager {
     as.setRightOp(newExpr);
   }
 
-  private static void createSetAccessor(SootMethod container, AssignStmt as, FieldRef ref) {
+  private static void createSetAccessor(SootMethod container, AssignStmt as, FieldRef ref, PrimTypeCollector primTypeCollector, Scene myScene, Printer myPrinter, Options myOptions) {
     java.util.List parameterTypes = new LinkedList();
     java.util.List<SootClass> thrownExceptions = new LinkedList<SootClass>();
 
-    Body accessorBody = Jimple.newBody();
+    Body accessorBody = Jimple.newBody(myPrinter, myOptions);
     soot.util.Chain accStmts = accessorBody.getUnits();
     LocalGenerator lg = new LocalGenerator(accessorBody, primTypeCollector);
 
@@ -336,12 +335,12 @@ public class AccessManager {
     containerStmts.remove(as);
   }
 
-  private static void createInvokeAccessor(SootMethod container, Stmt stmt) {
+  private static void createInvokeAccessor(SootMethod container, Stmt stmt, PrimTypeCollector primTypeCollector, Printer myPrinter, Options myOptions, Scene myScene) {
     java.util.List parameterTypes = new LinkedList();
     java.util.List<SootClass> thrownExceptions = new LinkedList<SootClass>();
     Type returnType;
 
-    Body accessorBody = Jimple.newBody();
+    Body accessorBody = Jimple.newBody(myPrinter, myOptions);
     soot.util.Chain accStmts = accessorBody.getUnits();
     LocalGenerator lg = new LocalGenerator(accessorBody, primTypeCollector);
 
@@ -389,7 +388,7 @@ public class AccessManager {
       } else if (expr instanceof VirtualInvokeExpr) {
         Local thisLocal = (Local) arguments.get(0);
         arguments.remove(0);
-        accExpr = Jimple.newVirtualInvokeExpr(thisLocal, method.makeRef(), arguments);
+        accExpr = Jimple.newVirtualInvokeExpr(thisLocal, method.makeRef(), arguments,myOptions);
       } else if (expr instanceof SpecialInvokeExpr) {
         Local thisLocal = (Local) arguments.get(0);
         arguments.remove(0);
@@ -433,7 +432,7 @@ public class AccessManager {
    * The "accessors" option assumes suitable accessor methods will be created after checking.
    *
    */
-  public static boolean ensureAccess(SootMethod container, ClassMember target, String options) {
+  public static boolean ensureAccess(SootMethod container, ClassMember target, String options, Scene myScene) {
     boolean accessors = options.equals("accessors");
     boolean allowChanges = !(options.equals("none"));
     boolean safeChangesOnly = !(options.equals("unsafe"));
@@ -443,7 +442,7 @@ public class AccessManager {
       return false;
     }
 
-    if (isAccessLegal(container, target)) {
+    if (isAccessLegal(container, target, myScene)) {
       return true;
     }
 

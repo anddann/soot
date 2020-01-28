@@ -43,7 +43,9 @@ import soot.jimple.InvokeExpr;
 import soot.jimple.MonitorStmt;
 import soot.jimple.Stmt;
 import soot.jimple.internal.JCastExpr;
+import soot.options.Options;
 import soot.toolkits.graph.UnitGraph;
+import soot.toolkits.graph.interaction.InteractionHandler;
 import soot.toolkits.scalar.BackwardFlowAnalysis;
 
 /**
@@ -86,9 +88,11 @@ public class NullnessAssumptionAnalysis extends BackwardFlowAnalysis {
    *
    * @param graph
    *          any unit graph
+   * @param myOptions
+   * @param myInteractionHandler
    */
-  public NullnessAssumptionAnalysis(UnitGraph graph) {
-    super(graph);
+  public NullnessAssumptionAnalysis(UnitGraph graph, Options myOptions, InteractionHandler myInteractionHandler) {
+    super(graph, myOptions.interactive_mode(), myInteractionHandler);
 
     doAnalysis();
   }
