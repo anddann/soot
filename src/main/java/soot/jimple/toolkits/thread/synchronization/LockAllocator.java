@@ -343,7 +343,7 @@ public class LockAllocator extends SceneTransformer {
 
         // *** Detect the Possibility of Deadlock ***
         logger.debug("[wjtp.tn] *** Detect the Possibility of Deadlock *** " + (new Date()));
-        DeadlockDetector dd = new DeadlockDetector(optionPrintDebug, optionAvoidDeadlock, true, criticalSections);
+        DeadlockDetector dd = new DeadlockDetector(optionPrintDebug, optionAvoidDeadlock, true, criticalSections, primTypeCollector);
         if (!optionUseLocksets) {
             deadlockGraph = dd.detectComponentBasedDeadlock();
         }

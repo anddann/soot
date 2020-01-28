@@ -167,7 +167,7 @@ public class SparkTransformer extends SceneTransformer {
     }
 
     if (!opts.on_fly_cg() || opts.vta()) {
-      CallGraphBuilder cgb = new CallGraphBuilder(pag);
+      CallGraphBuilder cgb = new CallGraphBuilder(pag, myScene);
       cgb.build();
     }
 

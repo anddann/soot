@@ -66,8 +66,8 @@ public class ConditionalBranchFolder extends BodyTransformer {
         IfStmt ifs = (IfStmt) stmt;
         // check for constant-valued conditions
         Value cond = ifs.getCondition();
-        if (Evaluator.isValueConstantValued(cond)) {
-          cond = Evaluator.getConstantValueOf(cond);
+        if (Evaluator.isValueConstantValued(cond, constantFactory)) {
+          cond = Evaluator.getConstantValueOf(cond, constantFactory);
 
           if (((IntConstant) cond).value == 1) {
             // if condition always true, convert if to goto

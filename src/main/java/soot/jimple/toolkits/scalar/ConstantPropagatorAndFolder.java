@@ -128,8 +128,8 @@ public class ConstantPropagatorAndFolder extends BodyTransformer {
       for (ValueBox useBox : u.getUseBoxes()) {
         Value value = useBox.getValue();
         if (!(value instanceof Constant)) {
-          if (Evaluator.isValueConstantValued(value)) {
-            Value constValue = Evaluator.getConstantValueOf(value);
+          if (Evaluator.isValueConstantValued(value, constantFactory)) {
+            Value constValue = Evaluator.getConstantValueOf(value, constantFactory);
             if (useBox.canContainValue(constValue)) {
               useBox.setValue(constValue);
               numFolded++;

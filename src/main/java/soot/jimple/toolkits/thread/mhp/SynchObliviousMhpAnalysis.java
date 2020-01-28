@@ -146,7 +146,7 @@ public class SynchObliviousMhpAnalysis implements MhpTester, Runnable {
     // Find allocation nodes that are run more than once
     // Also find methods that are run more than once
     // logger.debug(" MHP: AllocNodesFinder");
-    AllocNodesFinder anf = new AllocNodesFinder(pecg, callGraph, (PAG) pta);
+    AllocNodesFinder anf = new AllocNodesFinder(pecg, callGraph, (PAG) pta, myScene);
     Set<AllocNode> multiRunAllocNodes = anf.getMultiRunAllocNodes();
     Set<SootMethod> multiCalledMethods = anf.getMultiCalledMethods();
 

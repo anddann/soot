@@ -106,7 +106,7 @@ public class ThrowFinder {
     if (myScene.hasCallGraph()) {
       cg = myScene.getCallGraph();
     } else {
-      new CallGraphBuilder().build();
+      new CallGraphBuilder(myScene, myDumbPointerAnalysis).build();
       cg = myScene.getCallGraph();
       myScene.releaseCallGraph();
     }
