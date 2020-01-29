@@ -31,7 +31,7 @@ public class ManualAndInnerHeuristic implements FieldCheckHeuristic {
   final InnerTypesIncrementalHeuristic inner;
 
   public ManualAndInnerHeuristic(TypeManager tm, int maxPasses) {
-    inner = new InnerTypesIncrementalHeuristic(tm, maxPasses);
+    inner = new InnerTypesIncrementalHeuristic(tm, maxPasses, myScene);
   }
 
   public boolean runNewPass() {

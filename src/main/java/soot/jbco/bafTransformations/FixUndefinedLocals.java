@@ -171,7 +171,7 @@ public class FixUndefinedLocals extends BodyTransformer implements IJbcoTransfor
     if (t instanceof IntegerType) {
       return Baf.newPushInst(constantFactory.createIntConstant(soot.jbco.util.Rand.getInt()));
     } else if (t instanceof RefLikeType || t instanceof StmtAddressType) {
-      return Baf.newPushInst(myNullConstant);
+      return Baf.newPushInst(constantFactory.getNullConstant());
     } else if (t instanceof LongType) {
       return Baf.newPushInst(constantFactory.createLongConstant(soot.jbco.util.Rand.getLong()));
     } else if (t instanceof FloatType) {

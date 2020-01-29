@@ -208,7 +208,7 @@ public class SparkTransformer extends SceneTransformer {
     if (opts.cs_demand()) {
       // replace by demand-driven refinement-based context-sensitive analysis
       Date startOnDemand = new Date();
-      PointsToAnalysis onDemandAnalysis = DemandCSPointsTo.makeWithBudget(opts.traversal(), opts.passes(), opts.lazy_pts());
+      PointsToAnalysis onDemandAnalysis = DemandCSPointsTo.makeWithBudget(opts.traversal(), opts.passes(), opts.lazy_pts(), myScene, DemandCSPointsTo.myEmptyPointsToSet, DemandCSPointsTo.myVirtualCalls);
       Date endOndemand = new Date();
       reportTime("Initialized on-demand refinement-based context-sensitive analysis", startOnDemand, endOndemand);
       myScene.setPointsToAnalysis(onDemandAnalysis);

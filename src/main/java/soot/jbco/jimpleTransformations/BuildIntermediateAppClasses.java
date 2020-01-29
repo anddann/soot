@@ -186,7 +186,7 @@ public class BuildIntermediateAppClasses extends SceneTransformer implements IJb
             } else if (returnType instanceof PrimType) {
               units.add(Jimple.newReturnStmt(constantFactory.createIntConstant(0)));
             } else {
-              units.add(Jimple.newReturnStmt(myNullConstant));
+              units.add(Jimple.newReturnStmt(constantFactory.getNullConstant()));
             }
             newmethods++;
           } // end build new junk method to call original method

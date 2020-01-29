@@ -51,10 +51,12 @@ public class InnerTypesIncrementalHeuristic implements FieldCheckHeuristic {
   private final int passesInDirection;
 
   private boolean allNotBothEnds = false;
+  private Scene myScene;
 
-  public InnerTypesIncrementalHeuristic(TypeManager manager, int maxPasses) {
+  public InnerTypesIncrementalHeuristic(TypeManager manager, int maxPasses, Scene myScene) {
     this.manager = manager;
     this.passesInDirection = maxPasses / 2;
+    this.myScene = myScene;
   }
 
   public boolean runNewPass() {

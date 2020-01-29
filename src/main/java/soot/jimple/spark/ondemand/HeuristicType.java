@@ -35,7 +35,7 @@ public enum HeuristicType {
         ret = new ManualFieldCheckHeuristic();
         break;
       case INCR:
-        ret = new InnerTypesIncrementalHeuristic(tm, maxPasses);
+        ret = new InnerTypesIncrementalHeuristic(tm, maxPasses, myScene);
         break;
       case EVERY:
         ret = new EverythingHeuristic();

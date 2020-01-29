@@ -130,7 +130,7 @@ public class JimpleAST {
    * @return the Set of RefTypes for the reference types contained this AST.
    */
   public Set<String> getCstPool() {
-    CstPoolExtractor cpe = new CstPoolExtractor(mTree);
+    CstPoolExtractor cpe = new CstPoolExtractor(mTree, myScene);
     return cpe.getCstPool();
   }
 

@@ -79,7 +79,7 @@ public class NativeMethodDriver {
 
   public NativeMethodDriver(NativeHelper helper, Environment myEnvironment) {
     this.myEnvironment = myEnvironment;
-    cnameToSim.put("java.lang.Object", new JavaLangObjectNative(helper));
+    cnameToSim.put("java.lang.Object", new JavaLangObjectNative(helper, myEnvironment));
     cnameToSim.put("java.lang.System", new JavaLangSystemNative(helper, myEnvironment));
     cnameToSim.put("java.lang.Runtime", new JavaLangRuntimeNative(helper, myEnvironment));
     cnameToSim.put("java.lang.Shutdown", new JavaLangShutdownNative(helper));

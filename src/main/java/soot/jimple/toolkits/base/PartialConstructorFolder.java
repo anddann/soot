@@ -70,9 +70,9 @@ public class PartialConstructorFolder extends BodyTransformer {
   public void internalTransform(Body b, String phaseName, Map<String, String> options) {
     JimpleBody body = (JimpleBody) b;
 
-    if (myOptions.verbose()) {
+//    if (myOptions.verbose()) {
       logger.debug("[" + body.getMethod().getName() + "] Folding Jimple constructors...");
-    }
+//    }
 
     Chain<Unit> units = body.getUnits();
     List<Unit> stmtList = new ArrayList<Unit>();

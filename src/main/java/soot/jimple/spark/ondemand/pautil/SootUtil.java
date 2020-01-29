@@ -23,7 +23,6 @@ package soot.jimple.spark.ondemand.pautil;
  */
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -38,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import soot.ArrayType;
-import soot.CompilationDeathException;
 import soot.PointsToAnalysis;
 import soot.RefType;
 import soot.Scene;
@@ -64,8 +62,6 @@ import soot.jimple.spark.sets.DoublePointsToSet;
 import soot.jimple.spark.sets.HybridPointsToSet;
 import soot.jimple.spark.sets.P2SetVisitor;
 import soot.jimple.spark.sets.PointsToSetInternal;
-import soot.jimple.toolkits.callgraph.VirtualCalls;
-import soot.options.Options;
 import soot.toolkits.scalar.Pair;
 import soot.util.Chain;
 import soot.util.queue.ChunkedQueue;
@@ -258,11 +254,11 @@ public class SootUtil {
   }
 
   public static PointsToSetInternal constructIntersection(final PointsToSetInternal set1, final PointsToSetInternal set2,
-      PAG pag) {
+                                                          PAG pag, Scene myScene) {
     HybridPointsToSet hybridSet1 = null, hybridSet2 = null;
     hybridSet1 = convertToHybrid(set1);
     hybridSet2 = convertToHybrid(set2);
-    HybridPointsToSet intersection = HybridPointsToSet.intersection(hybridSet1, hybridSet2, pag);
+    HybridPointsToSet intersection = HybridPointsToSet.intersection(hybridSet1, hybridSet2, pag, myScene);
     // checkSetsEqual(intersection, set1, set2, pag);
     return intersection;
 
@@ -429,21 +425,21 @@ public class SootUtil {
     return invokedMethod.getName().equals("<init>");
   }
 
-  public static String createDirIfNotExist(String dirName) {
-    File dir = new File(dirName);
-
-    if (!dir.exists()) {
-      try {
-        if (!myOptions.output_jar()) {
-          dir.mkdirs();
-        }
-      } catch (SecurityException se) {
-        logger.debug("Unable to create " + dirName);
-        throw new CompilationDeathException(CompilationDeathException.COMPILATION_ABORTED);
-      }
-    }
-    return dirName;
-  }
+//  public static String createDirIfNotExist(String dirName) {
+//    File dir = new File(dirName);
+//
+//    if (!dir.exists()) {
+//      try {
+//        if (!myOptions.output_jar()) {
+//          dir.mkdirs();
+//        }
+//      } catch (SecurityException se) {
+//        logger.debug("Unable to create " + dirName);
+//        throw new CompilationDeathException(CompilationDeathException.COMPILATION_ABORTED);
+//      }
+//    }
+//    return dirName;
+//  }
 
   public static long getFreeLiveMemory() {
     Runtime r = Runtime.getRuntime();

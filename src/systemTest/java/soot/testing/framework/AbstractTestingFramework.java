@@ -214,7 +214,7 @@ public abstract class AbstractTestingFramework {
         myJimple.newSpecialInvokeExpr(allocatedTestObj, testCaseType.getSootClass().getMethodByName("<init>").makeRef())));
     ArrayList args = new ArrayList(sootTestMethod.getParameterCount());
     for (int i = 0; i < sootTestMethod.getParameterCount(); i++) {
-      args.add(myNullConstant);
+      args.add(constantFactory.getNullConstant());
     }
     body.getUnits()
         .add(myJimple.newInvokeStmt(myJimple.newVirtualInvokeExpr(allocatedTestObj, sootTestMethod.makeRef(), args)));

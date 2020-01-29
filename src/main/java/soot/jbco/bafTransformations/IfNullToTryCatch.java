@@ -113,10 +113,10 @@ public class IfNullToTryCatch extends BodyTransformer implements IJbcoTransform 
           units.insertBefore(throwu, u);
           units.remove(u);
 
-          units.insertBefore(Baf.newPushInst(myNullConstant), throwu);
+          units.insertBefore(Baf.newPushInst(constantFactory.getNullConstant()), throwu);
           Unit ifunit = Baf.newIfCmpNeInst(primTypeCollector.getRefType(), succ);
           units.insertBefore(ifunit, throwu);
-          units.insertBefore(Baf.newPushInst(myNullConstant), throwu);
+          units.insertBefore(Baf.newPushInst(constantFactory.getNullConstant()), throwu);
 
           b.getTraps().add(Baf.newTrap(exc, throwu, succ, pop));
         }
@@ -127,7 +127,7 @@ public class IfNullToTryCatch extends BodyTransformer implements IJbcoTransform 
 
         Unit methCall = Baf.newVirtualInvokeInst(eq.makeRef());
         units.insertBefore(methCall, u);
-        units.insertBefore(Baf.newPushInst(myNullConstant), methCall);
+        units.insertBefore(Baf.newPushInst(constantFactory.getNullConstant()), methCall);
         if (Rand.getInt(2) == 0) {
           Unit pop = Baf.newPopInst(primTypeCollector.getBooleanType());
           units.insertBefore(pop, u);
@@ -143,7 +143,7 @@ public class IfNullToTryCatch extends BodyTransformer implements IJbcoTransform 
         } else {
           Unit iffalse = Baf.newIfEqInst(targ);
           units.insertBefore(iffalse, u);
-          units.insertBefore(Baf.newPushInst(myNullConstant), u);
+          units.insertBefore(Baf.newPushInst(constantFactory.getNullConstant()), u);
           Unit pop = Baf.newPopInst(primTypeCollector.getRefType());
           units.insertAfter(pop, u);
           units.remove(u);

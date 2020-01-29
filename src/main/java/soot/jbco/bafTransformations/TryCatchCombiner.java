@@ -202,7 +202,7 @@ public class TryCatchCombiner extends BodyTransformer implements IJbcoTransform 
           units.insertBeforeNoRedirect(Baf.newStoreInst(type, varLocal), first);
         }
       }
-      units.add(Baf.newPushInst(myNullConstant));
+      units.add(Baf.newPushInst(constantFactory.getNullConstant()));
       units.add(Baf.newGotoInst(begUnit));
 
       // for each pred of the beginUnit of the try, we must insert goto initializer

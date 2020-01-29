@@ -85,57 +85,57 @@ public class Parse {
     return w.getSootClass();
   }
 
-  public static void main(String args[]) throws java.lang.Exception
-
-  {
-    boolean verbose = false;
-    InputStream inFile;
-
-    // check arguments
-    if (args.length < 1) {
-      logger.debug("" + USAGE);
-      System.exit(0);
-    }
-
-    myScene.setPhantomRefs(true);
-
-    for (String arg : args) {
-      if (arg.startsWith("-")) {
-        arg = arg.substring(1);
-        if (arg.equals("d")) {
-        } else if (arg.equals("v")) {
-          verbose = true;
-        }
-      } else {
-
-        try {
-          if (verbose) {
-            logger.debug(" ... looking for " + arg);
-          }
-          inFile = new FileInputStream(arg);
-        } catch (FileNotFoundException e) {
-          if (arg.endsWith(EXT)) {
-            logger.debug(" *** can't find " + arg);
-            continue;
-          }
-          arg = arg + EXT;
-          try {
-            if (verbose) {
-              logger.debug(" ... looking for " + arg);
-            }
-            inFile = new BufferedInputStream(new FileInputStream(arg));
-          } catch (FileNotFoundException ee) {
-            logger.debug(" *** can't find " + arg);
-            continue;
-          }
-        }
-
-        Parser p = new Parser(new Lexer(new PushbackReader(new InputStreamReader(inFile), 1024)));
-
-        Start tree = p.parse();
-
-        tree.apply(new Walker(constantFactory, null, myScene, myOptions, myPackageNamer));
-      }
-    }
-  } // main
+//  public static void main(String args[]) throws java.lang.Exception
+//
+//  {
+//    boolean verbose = false;
+//    InputStream inFile;
+//
+//    // check arguments
+//    if (args.length < 1) {
+//      logger.debug("" + USAGE);
+//      System.exit(0);
+//    }
+//
+//    myScene.setPhantomRefs(true);
+//
+//    for (String arg : args) {
+//      if (arg.startsWith("-")) {
+//        arg = arg.substring(1);
+//        if (arg.equals("d")) {
+//        } else if (arg.equals("v")) {
+//          verbose = true;
+//        }
+//      } else {
+//
+//        try {
+//          if (verbose) {
+//            logger.debug(" ... looking for " + arg);
+//          }
+//          inFile = new FileInputStream(arg);
+//        } catch (FileNotFoundException e) {
+//          if (arg.endsWith(EXT)) {
+//            logger.debug(" *** can't find " + arg);
+//            continue;
+//          }
+//          arg = arg + EXT;
+//          try {
+//            if (verbose) {
+//              logger.debug(" ... looking for " + arg);
+//            }
+//            inFile = new BufferedInputStream(new FileInputStream(arg));
+//          } catch (FileNotFoundException ee) {
+//            logger.debug(" *** can't find " + arg);
+//            continue;
+//          }
+//        }
+//
+//        Parser p = new Parser(new Lexer(new PushbackReader(new InputStreamReader(inFile), 1024)));
+//
+//        Start tree = p.parse();
+//
+//        tree.apply(new Walker(constantFactory, null, myScene, myOptions, myPackageNamer));
+//      }
+//    }
+//  } // main
 } // Parse

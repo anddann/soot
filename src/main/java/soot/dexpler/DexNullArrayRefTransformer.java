@@ -110,7 +110,7 @@ public class DexNullArrayRefTransformer extends BodyTransformer {
               createThrowStmt(body, s, lc);
               changed = true;
             }
-          } else if (base == myNullConstant || isAlwaysNullBefore(s, (Local) base, defs)) {
+          } else if (base == constantFactory.getNullConstant() || isAlwaysNullBefore(s, (Local) base, defs)) {
             createThrowStmt(body, s, lc);
             changed = true;
           }
@@ -145,7 +145,7 @@ public class DexNullArrayRefTransformer extends BodyTransformer {
         return false;
       }
       DefinitionStmt defStmt = (DefinitionStmt) u;
-      if (defStmt.getRightOp() != myNullConstant) {
+      if (defStmt.getRightOp() != constantFactory.getNullConstant()) {
         return false;
       }
     }

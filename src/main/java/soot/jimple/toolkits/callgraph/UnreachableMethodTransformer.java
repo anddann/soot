@@ -88,7 +88,7 @@ public class UnreachableMethodTransformer extends BodyTransformer {
 
     /*
      * Stmt r; if( method.getReturnType() instanceof VoidType ) { list.add( r=Jimple.newReturnVoidStmt() ); } else if(
-     * method.getReturnType() instanceof RefLikeType ) { list.add( r=Jimple.newReturnStmt( myNullConstant ) ); } else
+     * method.getReturnType() instanceof RefLikeType ) { list.add( r=Jimple.newReturnStmt( constantFactory.getNullConstant() ) ); } else
      * if( method.getReturnType() instanceof PrimType ) { if( method.getReturnType() instanceof DoubleType ) { list.add(
      * r=Jimple.newReturnStmt( constantFactory.createDoubleConstant( 0 ) ) ); } else if( method.getReturnType() instanceof LongType ) {
      * list.add( r=Jimple.newReturnStmt( constantFactory.createLongConstant( 0 ) ) ); } else if( method.getReturnType() instanceof FloatType

@@ -28,8 +28,11 @@ import soot.jimple.toolkits.pointer.representations.ReferenceVariable;
 import soot.jimple.toolkits.pointer.util.NativeHelper;
 
 public class JavaLangObjectNative extends NativeMethodClass {
-  public JavaLangObjectNative(NativeHelper helper) {
+  private Environment myEnvironment;
+
+  public JavaLangObjectNative(NativeHelper helper, Environment myEnvironment) {
     super(helper);
+    this.myEnvironment = myEnvironment;
   }
 
   /**

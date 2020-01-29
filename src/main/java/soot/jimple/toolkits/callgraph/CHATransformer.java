@@ -29,6 +29,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import soot.EntryPoints;
 import soot.Scene;
 import soot.SceneTransformer;
 import soot.jimple.toolkits.pointer.DumbPointerAnalysis;
@@ -39,6 +40,7 @@ public class CHATransformer extends SceneTransformer {
   private static final Logger logger = LoggerFactory.getLogger(CHATransformer.class);
   private DumbPointerAnalysis myDumbPointerAnalysis;
   private Scene myScene;
+  private EntryPoints myEntryPoints;
 
   @Inject
   public CHATransformer(DumbPointerAnalysis myDumbPointerAnalysis, Scene myScene) {

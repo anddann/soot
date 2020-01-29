@@ -35,16 +35,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import soot.AnySubType;
-import soot.ArrayType;
-import soot.Context;
-import soot.Local;
-import soot.PointsToAnalysis;
-import soot.PointsToSet;
-import soot.RefType;
-import soot.SootField;
-import soot.SootMethod;
-import soot.Type;
+import soot.*;
 import soot.jimple.spark.ondemand.genericutil.ArraySet;
 import soot.jimple.spark.ondemand.genericutil.HashSetMultiMap;
 import soot.jimple.spark.ondemand.genericutil.ImmutableStack;
@@ -70,6 +61,7 @@ import soot.jimple.spark.sets.HybridPointsToSet;
 import soot.jimple.spark.sets.P2SetVisitor;
 import soot.jimple.spark.sets.PointsToSetEqualsWrapper;
 import soot.jimple.spark.sets.PointsToSetInternal;
+import soot.jimple.toolkits.callgraph.VirtualCalls;
 import soot.toolkits.scalar.Pair;
 import soot.util.NumberedString;
 
@@ -82,6 +74,9 @@ import soot.util.NumberedString;
  */
 public final class DemandCSPointsTo implements PointsToAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(DemandCSPointsTo.class);
+  private PointsToSet myEmptyPointsToSet;
+  private Scene myScene;
+  private VirtualCalls myVirtualCalls;
 
   @SuppressWarnings("serial")
   protected static final class AllocAndContextCache extends HashMap<AllocAndContext, Map<VarNode, CallingContextSet>> {
@@ -201,15 +196,18 @@ public final class DemandCSPointsTo implements PointsToAnalysis {
    * Make a default analysis. Assumes Spark has already run.
    *
    * @return
+   * @param myScene
+   * @param myEmptyPointsToSet
+   * @param myVirtualCalls
    */
-  public static DemandCSPointsTo makeDefault() {
-    return makeWithBudget(DEFAULT_MAX_TRAVERSAL, DEFAULT_MAX_PASSES, DEFAULT_LAZY);
+  public static DemandCSPointsTo makeDefault(Scene myScene, PointsToSet myEmptyPointsToSet, VirtualCalls myVirtualCalls) {
+    return makeWithBudget(DEFAULT_MAX_TRAVERSAL, DEFAULT_MAX_PASSES, DEFAULT_LAZY, myScene, myEmptyPointsToSet, myVirtualCalls);
   }
 
-  public static DemandCSPointsTo makeWithBudget(int maxTraversal, int maxPasses, boolean lazy) {
+  public static DemandCSPointsTo makeWithBudget(int maxTraversal, int maxPasses, boolean lazy, Scene myScene, PointsToSet myEmptyPointsToSet, VirtualCalls myVirtualCalls) {
     PAG pag = (PAG) myScene.getPointsToAnalysis();
     ContextSensitiveInfo csInfo = new ContextSensitiveInfo(pag);
-    return new DemandCSPointsTo(csInfo, pag, maxTraversal, maxPasses, lazy);
+    return new DemandCSPointsTo(myEmptyPointsToSet, myScene, myVirtualCalls, csInfo, pag, maxTraversal, maxPasses, lazy);
   }
 
   protected final AllocAndContextCache allocAndContextCache = new AllocAndContextCache();
@@ -274,11 +272,14 @@ public final class DemandCSPointsTo implements PointsToAnalysis {
 
   private final boolean lazy;
 
-  public DemandCSPointsTo(ContextSensitiveInfo csInfo, PAG pag) {
-    this(csInfo, pag, DEFAULT_MAX_TRAVERSAL, DEFAULT_MAX_PASSES, DEFAULT_LAZY);
+  public DemandCSPointsTo(ContextSensitiveInfo csInfo, PAG pag, PointsToSet myEmptyPointsToSet, Scene myScene, VirtualCalls myVirtualCalls) {
+    this(myEmptyPointsToSet, myScene, myVirtualCalls, csInfo, pag, DEFAULT_MAX_TRAVERSAL, DEFAULT_MAX_PASSES, DEFAULT_LAZY);
   }
 
-  public DemandCSPointsTo(ContextSensitiveInfo csInfo, PAG pag, int maxTraversal, int maxPasses, boolean lazy) {
+  public DemandCSPointsTo(PointsToSet myEmptyPointsToSet, Scene myScene, VirtualCalls myVirtualCalls, ContextSensitiveInfo csInfo, PAG pag, int maxTraversal, int maxPasses, boolean lazy) {
+    this.myEmptyPointsToSet = myEmptyPointsToSet;
+    this.myScene = myScene;
+    this.myVirtualCalls = myVirtualCalls;
     this.csInfo = csInfo;
     this.pag = pag;
     this.maxPasses = maxPasses;
@@ -1096,7 +1097,7 @@ public final class DemandCSPointsTo implements PointsToAnalysis {
               if (DEBUG) {
                 debugPrint("match source " + matchTgt);
               }
-              PointsToSetInternal intersection = SootUtil.constructIntersection(storeBaseP2Set, loadBaseP2Set, pag);
+              PointsToSetInternal intersection = SootUtil.constructIntersection(storeBaseP2Set, loadBaseP2Set, pag, myScene);
 
               boolean checkField = fieldCheckHeuristic.validateMatchesForField(field);
               if (checkField) {
@@ -1255,7 +1256,7 @@ public final class DemandCSPointsTo implements PointsToAnalysis {
               if (DEBUG) {
                 debugPrint("match source " + matchTgt);
               }
-              PointsToSetInternal intersection = SootUtil.constructIntersection(storeBaseP2Set, loadBaseP2Set, pag);
+              PointsToSetInternal intersection = SootUtil.constructIntersection(storeBaseP2Set, loadBaseP2Set, pag, myScene);
 
               boolean checkField = fieldCheckHeuristic.validateMatchesForField(field);
               if (checkField) {
@@ -1459,7 +1460,7 @@ public final class DemandCSPointsTo implements PointsToAnalysis {
               if (DEBUG) {
                 debugPrint("match source " + matchSrc);
               }
-              PointsToSetInternal intersection = SootUtil.constructIntersection(storeBaseP2Set, loadBaseP2Set, pag);
+              PointsToSetInternal intersection = SootUtil.constructIntersection(storeBaseP2Set, loadBaseP2Set, pag, myScene);
 
               boolean checkGetfield = fieldCheckHeuristic.validateMatchesForField(field);
 
@@ -1698,7 +1699,7 @@ public final class DemandCSPointsTo implements PointsToAnalysis {
               }
             }
             if (!skipMatch) {
-              final PointsToSetInternal intersection = SootUtil.constructIntersection(storeBaseP2Set, loadBaseP2Set, pag);
+              final PointsToSetInternal intersection = SootUtil.constructIntersection(storeBaseP2Set, loadBaseP2Set, pag, myScene);
               AllocAndContextSet allocContexts = null;
               boolean oldRefining = refiningCallSite;
               int oldNesting = nesting;

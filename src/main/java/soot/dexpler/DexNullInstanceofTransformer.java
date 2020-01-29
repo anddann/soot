@@ -63,7 +63,7 @@ public class DexNullInstanceofTransformer extends BodyTransformer {
           // If the operand of the "instanceof" expression is null or
           // the zero constant, we replace the whole operation with
           // its outcome "false"
-          if (iof.getOp() == myNullConstant) {
+          if (iof.getOp() == constantFactory.getNullConstant()) {
             assignStmt.setRightOp(constantFactory.createIntConstant(0));
           }
           if (iof.getOp() instanceof IntConstant && ((IntConstant) iof.getOp()).value == 0) {

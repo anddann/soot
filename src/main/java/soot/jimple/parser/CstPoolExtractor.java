@@ -44,9 +44,11 @@ class CstPoolExtractor {
 
   private Set<String> mRefTypes = null;
   private Start mParseTree;
+  private Scene myScene;
 
-  public CstPoolExtractor(Start parseTree) {
+  public CstPoolExtractor(Start parseTree, Scene myScene) {
     mParseTree = parseTree;
+    this.myScene = myScene;
   }
 
   public Set<String> getCstPool() {

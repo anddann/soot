@@ -28,14 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import soot.ArrayType;
-import soot.Body;
-import soot.BodyTransformer;
-import soot.FastHierarchy;
-import soot.RefType;
-import soot.SootClass;
-import soot.SootMethod;
-import soot.Trap;
+import soot.*;
 import soot.jimple.AssignStmt;
 import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InterfaceInvokeExpr;
@@ -51,8 +44,11 @@ public class ExceptionChecker extends BodyTransformer {
   FastHierarchy hierarchy;
   ExceptionCheckerErrorReporter reporter;
 
-  public ExceptionChecker(ExceptionCheckerErrorReporter r) {
+  private Scene myScene;
+
+  public ExceptionChecker(ExceptionCheckerErrorReporter r, Scene myScene) {
     this.reporter = r;
+    this.myScene = myScene;
   }
 
   @Override
@@ -90,7 +86,7 @@ public class ExceptionChecker extends BodyTransformer {
   // Error and subclasses do not need to be declared
   protected boolean isThrowDeclared(Body b, SootClass throwClass) {
     if (hierarchy == null) {
-      hierarchy = new FastHierarchy();
+      hierarchy = new FastHierarchy(myScene);
     }
 
     // handles case when exception is RuntimeException or Error
@@ -134,7 +130,7 @@ public class ExceptionChecker extends BodyTransformer {
   // is the throw caught inside the method
   protected boolean isExceptionCaught(Body b, Stmt s, RefType throwType) {
     if (hierarchy == null) {
-      hierarchy = new FastHierarchy();
+      hierarchy = new FastHierarchy(myScene);
     }
     Iterator it = b.getTraps().iterator();
     while (it.hasNext()) {

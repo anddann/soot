@@ -42,9 +42,11 @@ import soot.toolkits.graph.interaction.InteractionHandler;
 public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalysis {
   private static final Logger logger = LoggerFactory.getLogger(SimpleMethodLocalObjectsAnalysis.class);
   public static int mlocounter = 0;
+  private PrimTypeCollector primTypeCollector;
 
-  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, ClassLocalObjectsAnalysis cloa, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollector) {
+  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, ClassLocalObjectsAnalysis cloa, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollector, PrimTypeCollector primTypeCollector1) {
     super(g, dfa, true, true, myOptions,myInteractionHandler); // special version doesn't run analysis yet
+    this.primTypeCollector = primTypeCollector1;
 
     mlocounter++;
 
@@ -79,8 +81,9 @@ public class SimpleMethodLocalObjectsAnalysis extends SimpleMethodInfoFlowAnalys
     }
   }
 
-  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, CallLocalityContext context, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollector) {
+  public SimpleMethodLocalObjectsAnalysis(UnitGraph g, CallLocalityContext context, InfoFlowAnalysis dfa, Options myOptions, InteractionHandler myInteractionHandler, PrimTypeCollector primTypeCollector, PrimTypeCollector primTypeCollector1) {
     super(g, dfa, true, true,  myOptions,myInteractionHandler); // special version doesn't run analysis yet
+    this.primTypeCollector = primTypeCollector1;
 
     mlocounter++;
 
